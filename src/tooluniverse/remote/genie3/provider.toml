@@ -85,46 +85,7 @@ venv route, Python 3.10.13, torch 2.7.1+cu128, triton 3.3.1, kit mode `exact`
 
 Smoke: one unconditional 50-mer request, two designs at batch 1, 20 DDIM steps
 -- 11.7 s wall, model_setup_s 6.4, s_per_design_steady 0.288, peak reserved
-0.25 GiB. Three files written, the two PDB files matched by # ===========================================================================
-# KNOWN DEFECT, MEASURED 2026-10-17: THE FOOTPRINT GROWS ~0.04 GiB PER
-# REQUEST, ON BYTE-IDENTICAL INPUT, AND DOES NOT PLATEAU.
-#
-# Twenty consecutive identical requests into one held worker:
-# #   0.45 0.51 0.55 0.59 0.63 0.67 0.71 0.74 0.78 0.82
-#   0.86 0.90 0.94 0.98 1.02 1.06 1.10 1.13 1.17 1.21
-#
-# That is +0.040 GiB per request, linear, with no sign of settling in 20.
-# Wall time stays flat, so nothing is getting slower -- it is only the
-# memory. This worker reports `torch.cuda.max_memory_reserved()` with no
-# reset, so each line is the most it has ever reserved -- and torch only
-# raises that when the allocator actually reserves MORE, so a rising line is
-# real growth of the reserved pool, which is exactly what a co-tenant cannot
-# have.
-#
-# WHY THIS MATTERS MORE THAN ITS SIZE. Residency is the whole point of this
-# provider, and a worker that holds a model is meant to stay up. At this rate
-# the declared budget of 4.84 GiB is reached by the leak alone after
-# roughly 110 requests from a cold start -- which is a working afternoon,
-# not an edge case. A scheduler that admitted this provider against its
-# declared figure would be wrong by a growing amount.
-#
-# IT IS INVISIBLE TO EVERYTHING SHORTER. One smoke request shows nothing.
-# The acceptance suite's four repeats show +0.1 to +0.2, which reads as
-# allocator noise and was very nearly dismissed as such. Twenty repeats cost
-# 36 seconds of card time and make it a straight line.
-#
-# CAUSE NOT IDENTIFIED, and deliberately not guessed at here. What is known:
-# `chai1` and `genie3` both show it at the SAME rate (~0.039 and ~0.040
-# GiB/request) while `boltz` and `boltzgen` -- same worker base, same serve
-# loop, same protocol -- show none at all, boltzgen being flat to the
-# hundredth across seven requests. So it is not the harness and not the
-# shared lifecycle.
-#
-# Reproduce with:
-#   python scripts/remote_validation/verify_provider.py genie3 --repeats 20
-# ===========================================================================
-
-[runtime] outputs
+0.25 GiB. Three files written, the two PDB files matched by [runtime] outputs
 and the composed request.yaml correctly not matched.
 
 FOUR CONSECUTIVE IDENTICAL REQUESTS in one held worker, which is the acceptance
@@ -171,8 +132,59 @@ The single-engine hold is visible too: mixed 0 builds (24.3 s), mixed 1
 reuses (4.7 s), mixed 2 at 400 rebuilds (78.7 s), mixed 3 back at 100
 rebuilds again (22.6 s).
 
-Found here and recorded above: the footprint grows ~0.040 GiB per request on
-identical input and does not plateau in 20.
+Found here: the footprint grew ~0.040 GiB per request on identical input and
+did not plateau in 20. FOUND AND FIXED 2026-10-17 -- see below.
+
+THE 0.040 GiB A REQUEST, AND WHAT IT WAS. torch allocates a cuBLAS workspace
+the first time a GEMM runs on a (handle, stream) pair and keeps it in a C++
+static map that nothing clears. The kit warms up each CUDA-graph capture on a
+fresh side stream (`g3fast.py`, a `torch.cuda.Stream()` beside the
+`CUDAGraph()`), so every request abandoned a stream and stranded its
+workspace: exactly `torch.backends.cuda.blas_workspace_size()`, 33554432
+bytes, every request, forever.
+
+It hid from every ordinary check, which is why it took twenty repeats and a
+purpose-built census to find. The bytes are in `memory_allocated` but
+reachable from no Python object, so a census of every reachable CUDA tensor
+stayed frozen (0.087 GiB in 563 storages, unchanged across eight requests)
+while `memory_allocated` climbed by 0.031 each time; `gc.collect()` returned
+nothing and `empty_cache()` returned nothing, because the blocks are live
+rather than cached. From outside, the signature is one new fully-allocated
+allocator segment per request on a stream id that was not there before:
+streams 3, 4, 5, 6, 7 ... each carrying one 32 MiB block.
+
+Proved causally rather than inferred from the size:
+`CUBLAS_WORKSPACE_CONFIG=:4096:2` shrinks the workspace to 8 MiB and the
+per-request increment became exactly 8 MiB.
+
+The fix is `WB.release_cublas_workspaces()` at the end of `_design`, and it
+is NOT run when `GENIE3_RESIDENT_KEEP_GRAPHS=1`: a held graph captured those
+cuBLAS calls and would replay against a freed workspace, which is a wrong
+answer rather than a crash.
+
+ACCEPTANCE AFTER THE FIX, 2026-10-17: 12/12 answered, every one
+produced=yes. Twelve consecutive identical requests, peak reserved:
+
+    0.25 0.28 0.28 0.28 0.28 0.28 0.28 0.28 0.28 0.28 0.28 0.28
+
+Flat to the hundredth after the first, against 0.45 -> 1.21 over twenty
+before. It is also FASTER: wall time had been climbing with the leak
+(4.1 s -> 6.7 s by the eighth request) and is now 1.5-1.7 s throughout.
+
+One more thing this run changed, and it is why the ladder numbers above are
+not the ladder numbers below. This worker reported
+`torch.cuda.max_memory_reserved()` with NO reset, so every figure it had ever
+published was the most the process had ever reserved -- a high-water mark,
+which can only rise, and which reads as per-request growth whether or not any
+is happening. It now resets per request like every other provider on this
+standard (`on_reset=_reset`). The same four rungs, re-measured as true
+per-request peaks:
+
+    100 aa -> 0.31    200 aa -> 0.57    400 aa -> 1.27    670 aa -> 3.11
+
+Lower than the high-water figures, as they must be, and still well under the
+declared 4.84. The budget stands and was never in the dangerous direction:
+a high-water mark overstates, so the figure derived from it was conservative.
 """
 
 [runtime]
