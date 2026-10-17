@@ -118,7 +118,7 @@
   {
     "type": "FDAOrangeBookTool",
     "name": "FDA_OrangeBook_get_patent_info",
-    "description": "Get patent information for approved drugs. Note: Full patent details (numbers, expiration dates) require Orange Book data files download. Returns guidance on accessing complete patent data. Use for regulatory exclusivity planning.",
+    "description": "Get the patents FDA lists in the Orange Book for a drug product: patent number, expiration date, drug substance/drug product flags, every patent use code, delist request and submission date, per product. Reads FDA's monthly Orange Book data files from a local copy: download the zip from https://www.fda.gov/drugs/drug-approvals-and-databases/orange-book-data-files and set TOOLUNIVERSE_ORANGE_BOOK_DATA to the zip or its extracted folder; returns an error when it is not set. The file date is returned in source.files_dated. Search by application_number (e.g. 'NDA021695', 'N021695' or '021695') or exact brand_name. Covers NDA/ANDA drug products, not biologics. Use for patent expiry and generic entry questions. For product details and marketing status without local data files, use FDA_OrangeBook_search_drug; for therapeutic equivalence codes, use FDA_OrangeBook_get_te_code.",
     "parameter": {
       "type": "object",
       "required": [],
@@ -130,34 +130,116 @@
         },
         "application_number": {
           "type": "string",
-          "description": "FDA application number"
+          "description": "FDA application number, e.g. NDA021695, N021695 or 021695"
         },
         "brand_name": {
           "type": "string",
-          "description": "Brand name of drug"
+          "description": "Brand (trade) name of the drug, exact match, case-insensitive"
         }
       }
     },
     "return_schema": {
       "type": "object",
       "properties": {
+        "products": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "application_number": {
+                "type": "string"
+              },
+              "product_number": {
+                "type": "string"
+              },
+              "trade_name": {
+                "type": "string"
+              },
+              "ingredient": {
+                "type": "string"
+              },
+              "strength": {
+                "type": "string"
+              },
+              "applicant": {
+                "type": "string"
+              },
+              "marketing_category": {
+                "type": "string"
+              },
+              "patents": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "patent_number": {
+                      "type": "string"
+                    },
+                    "expiration_date": {
+                      "type": "string"
+                    },
+                    "pediatric_extension": {
+                      "type": "boolean"
+                    },
+                    "drug_substance": {
+                      "type": "boolean"
+                    },
+                    "drug_product": {
+                      "type": "boolean"
+                    },
+                    "use_codes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "delist_requested": {
+                      "type": "boolean"
+                    },
+                    "submission_date": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "count": {
+          "type": "integer"
+        },
+        "patent_count": {
+          "type": "integer"
+        },
+        "source": {
+          "type": "object",
+          "description": "FDA Orange Book data files used, with their file date",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
+            },
+            "page": {
+              "type": "string"
+            },
+            "files_dated": {
+              "type": "string"
+            }
+          }
+        },
         "note": {
-          "type": "string"
-        },
-        "download_url": {
-          "type": "string"
-        },
-        "drugs": {
-          "type": "array"
-        },
-        "recommendation": {
           "type": "string"
         }
       }
     },
     "test_examples": [
       {
-        "brand_name": "ADVIL"
+        "application_number": "NDA021695"
       }
     ],
     "fields": {
@@ -167,7 +249,7 @@
   {
     "type": "FDAOrangeBookTool",
     "name": "FDA_OrangeBook_get_exclusivity",
-    "description": "Get drug exclusivity information (NCE, orphan, pediatric). Note: Specific expiration dates require Orange Book data files. Returns exclusivity types (5-year NCE, 3-year clinical study, 7-year orphan, 180-day generic). Use for generic launch planning.",
+    "description": "Get the exclusivity codes and expiration dates FDA lists in the Orange Book for a drug product (e.g. NCE, ODE orphan, PED pediatric, I-nnn new indication), every listed date per code, per product. Reads FDA's monthly Orange Book data files from a local copy: download the zip from https://www.fda.gov/drugs/drug-approvals-and-databases/orange-book-data-files and set TOOLUNIVERSE_ORANGE_BOOK_DATA to the zip or its extracted folder; returns an error when it is not set. The file date is returned in source.files_dated. Search by application_number (e.g. 'NDA212306') or exact brand_name. Covers NDA/ANDA drug products, not biologics. Use for generic launch planning. For product details and marketing status without local data files, use FDA_OrangeBook_search_drug; for therapeutic equivalence codes, use FDA_OrangeBook_get_te_code.",
     "parameter": {
       "type": "object",
       "required": [],
@@ -179,37 +261,92 @@
         },
         "application_number": {
           "type": "string",
-          "description": "FDA application number"
+          "description": "FDA application number, e.g. NDA212306, N212306 or 212306"
         },
         "brand_name": {
           "type": "string",
-          "description": "Brand name of drug"
+          "description": "Brand (trade) name of the drug, exact match, case-insensitive"
         }
       }
     },
     "return_schema": {
       "type": "object",
       "properties": {
+        "products": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "application_number": {
+                "type": "string"
+              },
+              "product_number": {
+                "type": "string"
+              },
+              "trade_name": {
+                "type": "string"
+              },
+              "ingredient": {
+                "type": "string"
+              },
+              "strength": {
+                "type": "string"
+              },
+              "applicant": {
+                "type": "string"
+              },
+              "marketing_category": {
+                "type": "string"
+              },
+              "exclusivity": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "expiration_date": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "count": {
+          "type": "integer"
+        },
+        "exclusivity_count": {
+          "type": "integer"
+        },
+        "source": {
+          "type": "object",
+          "description": "FDA Orange Book data files used, with their file date",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
+            },
+            "page": {
+              "type": "string"
+            },
+            "files_dated": {
+              "type": "string"
+            }
+          }
+        },
         "note": {
-          "type": "string"
-        },
-        "download_url": {
-          "type": "string"
-        },
-        "drugs": {
-          "type": "array"
-        },
-        "exclusivity_types": {
-          "type": "array"
-        },
-        "recommendation": {
           "type": "string"
         }
       }
     },
     "test_examples": [
       {
-        "brand_name": "ADVIL"
+        "application_number": "NDA212306"
       }
     ],
     "fields": {
