@@ -193,7 +193,11 @@ def test_reference_mode_preserved_and_both_modes_titrate():
 
 def test_digest_order_invariant_but_reference_sensitive():
     args = request()
+    for label in ("bound_groups", "free_groups", "expected_groups"):
+        args[label].append({**args[label][0], "residue_number": 2, "group_type": "C-"})
     original = calculate(args)["data"]["calculation_sha256"]
+    for label in ("bound_groups", "free_groups", "expected_groups"):
+        args[label].reverse()
     args["bound_groups"][0]["insertion_code"] = ""
     assert calculate(args)["data"]["calculation_sha256"] == original
     args["reference_kind"] = "same_coordinate_components"

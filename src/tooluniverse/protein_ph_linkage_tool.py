@@ -179,7 +179,7 @@ class ProteinPHLinkageTool(BaseTool):
             "reference_kind": mode,
             "reference_ph": reference,
             "temperature_kelvin": temperature,
-            "convention": "Association: energy(pH)-energy(reference_ph); positive at acidic pH is a release-direction linkage term only. d(log10 K_assoc)/d(pH) = -delta_proton_count.",
+            "convention": "Association: energy(pH)-energy(reference_ph); positive energy at a requested pH below reference_ph is a release-direction contribution only; reversing the interval reverses this interpretation. d(log10 K_assoc)/d(pH) = -delta_proton_count.",
             "inventory": {
                 "group_count": len(keys),
                 "component_counts": {n: len(ks) for n, ks in components.items()},
