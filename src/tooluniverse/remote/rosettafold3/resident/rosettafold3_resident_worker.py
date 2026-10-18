@@ -451,6 +451,26 @@ def _predict_one(req: dict) -> dict:
         "kit_active": KIT_ACTIVE,
     }
     if DEVICE == "cuda":
+        # The kit captures a CUDA graph of the diffusion step per fold and
+        # warms it up on a fresh side stream, which its own comment says is
+        # there to fill the "cuBLAS/cuDNN workspace"
+        # (rf3_xattempt_addon/.../inference_sampler.py, the
+        # `torch.cuda.Stream()` in `_sample_diffusion_predrawn`). Every fold
+        # therefore abandoned a stream and left torch holding a 32 MiB
+        # workspace for it: measured at +32.0 MiB a fold over five identical
+        # folds, with no plateau, and a clear at the end giving back exactly
+        # 7 x 32 MiB. Released, the same five folds hold flat.
+        #
+        # `WB.serve` gives them back after every request now and reports the
+        # figure as `cublas_workspaces_freed_mib`; this worker briefly did it
+        # itself. It is safe here although this provider's `fast` mode DOES
+        # keep captured graphs across folds -- up to FPF_RF3_TG_MAX
+        # pairformer-stack graphs in the FPF add-on's cache, replayed on later
+        # requests. A workspace a capture allocates belongs to that graph's
+        # private memory pool, so clearing hands the block back to a pool
+        # nothing but a capture into the same pool draws from; see
+        # `release_cublas_workspaces` for what was measured, on this torch and
+        # on the other seven in the fleet.
         body["peak_reserved_gib"] = round(torch.cuda.max_memory_reserved() / 2**30, 2)
     return body
 

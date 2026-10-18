@@ -2661,3 +2661,205 @@ class TestApNovoFixedInputShape:
             147,
             None,
         ]
+
+
+class TestCublasWorkspacesAreReleased:
+    """The 32 MiB a request that no Python object held.
+
+    torch keeps one cuBLAS workspace per (handle, stream) in a C++ static map
+    that nothing clears. A kit that captures a CUDA graph warms it up on a
+    fresh side stream, so every request abandoned a stream and left its
+    workspace behind: measured at exactly
+    `torch.backends.cuda.blas_workspace_size()` -- 32 MiB on the GB10 -- for
+    `chai1` and `genie3`, linear, with no plateau in twenty requests, and for
+    `rosettafold3`, found by a sweep of all 26 GPU providers afterwards.
+
+    It was invisible to every ordinary check, which is why these tests exist
+    at the call site rather than on a number: the bytes are in
+    `memory_allocated` but reachable from no tensor, so `gc.collect()` freed
+    nothing and `empty_cache()` freed nothing.
+    """
+
+    @staticmethod
+    def _base():
+        import importlib.util
+
+        path = (
+            Path(__file__).resolve().parents[2]
+            / "src/tooluniverse/remote_resident/worker_base.py"
+        )
+        spec = importlib.util.spec_from_file_location("_wb_cublas", path)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return mod
+
+    @staticmethod
+    def _worker_src(slug: str) -> str:
+        return (
+            Path(__file__).resolve().parents[2]
+            / f"src/tooluniverse/remote/{slug}/resident/{slug}_resident_worker.py"
+        ).read_text()
+
+    def test_the_helper_is_offered_by_the_shared_runtime(self):
+        base = self._base()
+        assert callable(base.release_cublas_workspaces)
+        assert "release_cublas_workspaces" in base.__all__
+
+    def test_a_build_without_the_call_gives_back_nothing_rather_than_raising(self):
+        """Not every pinned stack has `_cuda_clearCublasWorkspaces`, and a
+        worker must not die at the end of a successful request because of it."""
+        base = self._base()
+        assert base.release_cublas_workspaces() >= 0
+
+    @staticmethod
+    def _one_request(base, payload, **serve_kwargs):
+        """Drive a real `serve` over a real socket and return (reply, calls).
+
+        A source grep would only say the words are there. What matters is
+        that a provider which does nothing itself still gets the release,
+        because that is the whole point of moving it off the providers.
+        """
+        import socket as _socket
+        import tempfile
+        import threading
+
+        freed = serve_kwargs.pop("freed", 32 * 2**20)
+        calls = []
+
+        def fake_release():
+            calls.append(1)
+            return freed
+
+        base.release_cublas_workspaces = fake_release
+        P = base.protocol()
+        with tempfile.TemporaryDirectory() as d:
+            sock_path = str(Path(d) / "s.sock")
+            t = threading.Thread(
+                target=base.serve,
+                kwargs=dict(
+                    slug="probe",
+                    socket_path=sock_path,
+                    on_predict=lambda req: {"echo": req.get("x")},
+                    log=lambda msg: None,
+                    **serve_kwargs,
+                ),
+                daemon=True,
+            )
+            t.start()
+            for _ in range(200):
+                if os.path.exists(sock_path):
+                    break
+                time.sleep(0.02)
+            c = _socket.socket(_socket.AF_UNIX, _socket.SOCK_STREAM)
+            c.connect(sock_path)
+            buf = bytearray()
+            P.send_line(c, payload)
+            reply = P.recv_line(c, buf)
+            P.send_line(c, {"op": P.OP_SHUTDOWN})
+            P.recv_line(c, buf)
+            c.close()
+            t.join(timeout=10)
+        return reply, calls
+
+    def test_serve_releases_for_a_provider_that_does_nothing_itself(self):
+        base = self._base()
+        reply, calls = self._one_request(base, {"op": "predict", "x": 7})
+        assert reply["ok"] and reply["result"]["echo"] == 7
+        assert len(calls) == 1, "serve did not release after the prediction"
+        assert reply["result"]["cublas_workspaces_freed_mib"] == 32.0
+
+    def test_serve_does_not_release_on_a_ping(self):
+        base = self._base()
+        _, calls = self._one_request(base, {"op": "ping"})
+        assert calls == [], "a ping is not a request that stranded anything"
+
+    def test_a_provider_can_turn_it_off_and_so_can_the_environment(self):
+        """Both ways out exist so the leak stays reproducible on a provider
+        that no longer has it -- which is how the fix was checked."""
+        base = self._base()
+        _, calls = self._one_request(
+            base, {"op": "predict", "x": 1}, release_cublas=False
+        )
+        assert calls == []
+
+        base = self._base()
+        os.environ[base.NO_CUBLAS_RELEASE_ENV] = "1"
+        try:
+            _, calls = self._one_request(base, {"op": "predict", "x": 1})
+        finally:
+            os.environ.pop(base.NO_CUBLAS_RELEASE_ENV, None)
+        assert calls == []
+
+    def test_a_request_that_raised_still_releases(self):
+        """A fold can get far enough to capture a graph and abandon its
+        stream and then raise, and a worker answering a run of bad requests
+        is where that adds up unnoticed."""
+        import socket as _socket
+        import tempfile
+        import threading
+
+        base = self._base()
+        calls = []
+        base.release_cublas_workspaces = lambda: (calls.append(1), 0)[1]
+        P = base.protocol()
+
+        def boom(req):
+            raise RuntimeError("the fold failed after it captured")
+
+        with tempfile.TemporaryDirectory() as d:
+            sock_path = str(Path(d) / "s.sock")
+            t = threading.Thread(
+                target=base.serve,
+                kwargs=dict(
+                    slug="probe",
+                    socket_path=sock_path,
+                    on_predict=boom,
+                    log=lambda msg: None,
+                ),
+                daemon=True,
+            )
+            t.start()
+            for _ in range(200):
+                if os.path.exists(sock_path):
+                    break
+                time.sleep(0.02)
+            c = _socket.socket(_socket.AF_UNIX, _socket.SOCK_STREAM)
+            c.connect(sock_path)
+            buf = bytearray()
+            P.send_line(c, {"op": "predict"})
+            reply = P.recv_line(c, buf)
+            P.send_line(c, {"op": P.OP_SHUTDOWN})
+            P.recv_line(c, buf)
+            c.close()
+            t.join(timeout=10)
+        assert reply["ok"] is False and "the fold failed" in reply["error"]
+        assert calls == [1], "the failure path skipped the release"
+
+    def test_nothing_freed_adds_no_field(self):
+        """Most requests of most providers strand nothing, and a 0.0 in every
+        reply would read as a measurement rather than as silence."""
+        base = self._base()
+        reply, calls = self._one_request(base, {"op": "predict", "x": 1}, freed=0)
+        assert calls == [1]
+        assert "cublas_workspaces_freed_mib" not in reply["result"]
+
+    def test_no_provider_makes_the_call_itself_any_more(self):
+        """Two mechanisms doing the same thing is how one of them rots."""
+        root = Path(__file__).resolve().parents[2] / "src/tooluniverse/remote"
+        offenders = [
+            str(p.relative_to(root))
+            for p in root.rglob("*_resident_worker.py")
+            if "WB.release_cublas_workspaces()" in p.read_text()
+        ]
+        assert offenders == [], (
+            f"{offenders} still release on their own; serve does it for "
+            f"everybody, and a second call site would hide the first"
+        )
+
+    def test_genie3_reports_a_per_request_peak_not_a_session_mark(self):
+        """`max_memory_reserved` without a reset can only ever rise, so it
+        reads as per-request growth whether or not any is happening -- and it
+        is not what the other providers on this standard report."""
+        src = self._worker_src("genie3")
+        assert "torch.cuda.reset_peak_memory_stats()" in src
+        assert "on_reset=_reset" in src

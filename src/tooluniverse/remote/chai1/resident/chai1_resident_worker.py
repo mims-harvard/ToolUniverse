@@ -176,6 +176,15 @@ def _predict_one(req: dict) -> dict:
             except Exception:  # noqa: BLE001 - a score we cannot read is not fatal
                 pass
     if DEVICE == "cuda":
+        # The kit captures a CUDA graph per fold and warms it up on a fresh
+        # side stream (chai1_eager/hoist.py step_graphed), which leaves torch
+        # holding a 32 MiB cuBLAS workspace for a stream nothing will use
+        # again -- 0.039 GiB a fold forever, the whole declared budget in
+        # about 140 folds. `WB.serve` gives those back after every request
+        # now, for every provider, and puts the figure in
+        # `cublas_workspaces_freed_mib`; this worker used to do it on its own
+        # last line. See `release_cublas_workspaces` for why it is safe to do
+        # for everybody.
         body["peak_reserved_gib"] = round(torch.cuda.max_memory_reserved() / 2**30, 2)
     return body
 

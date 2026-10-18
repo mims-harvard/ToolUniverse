@@ -27,6 +27,39 @@
 # this one pays them once. The `fast` and `exact` modes additionally capture
 # CUDA graphs of the sampler and the pairformer stack, and a graph captured
 # on one request is collectable only by a process that survives to the next.
+#
+# 32 MiB A FOLD THAT NO PYTHON OBJECT HELD, found 2026-10-18 by a sweep of
+# all 26 GPU providers after chai1 and genie3 turned out to have it. torch
+# allocates a cuBLAS workspace the first time a GEMM runs on a (handle,
+# stream) pair and keeps it in a C++ static map that nothing clears. This
+# kit's sampler warms each capture up on a fresh side stream -- the comment
+# on that line in `rf3_xattempt_addon/.../inference_sampler.py` names the
+# "cuBLAS/cuDNN workspace" as what the warm-up is for -- so every fold
+# abandoned a stream and stranded its workspace.
+#
+# MEASURED, five identical folds in one held worker, nothing released during
+# the run so the bytes could be attributed rather than inferred:
+#
+#     streams  4 -> 5 -> 6 -> 7 -> 8      (+1 a fold)
+#     allocated 3351.7 -> 3383.7 -> 3415.7 -> 3447.7 -> 3479.7 MiB
+#     one clear at the end gave back 224.0 MiB = 7 x 32
+#
+# Released -- `WB.serve` does it after every request, for every provider --
+# the same five folds hold allocated flat at 3255.7 MiB and the stream count
+# stops growing. The first pass's rising peak ladder in `verified_on` was
+# this, unrecognised.
+#
+# THE SAFETY ARGUMENT IS NOT THE ONE chai1 AND genie3 USED, because this
+# provider cannot use it: `fast` keeps up to FPF_RF3_TG_MAX pairformer-stack
+# graphs across folds and replays them, so a captured graph does outlive the
+# request. It releases anyway, and the reason is measured rather than
+# reasoned -- a workspace allocated during a capture belongs to that graph's
+# private memory pool, which no ordinary allocation is ever handed. That is
+# also why the release is no longer a provider's own call: this provider is
+# the one that forced the question, and the answer applies to all of them.
+# See `release_cublas_workspaces` in remote_resident/worker_base.py, which
+# carries the experiment and the correction to what that docstring used to
+# claim.
 
 [provider]
 slug = "rosettafold3"
@@ -38,13 +71,31 @@ verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver
 this kit's modes require its five overlay files in place on disk, checked by
 sha256, and this environment therefore cannot run `mode = "off"`).
 
-VERIFIED ON 4 CONSECUTIVE IDENTICAL REQUESTS IN ONE HELD WORKER, not on one
+VERIFIED ON CONSECUTIVE IDENTICAL REQUESTS IN ONE HELD WORKER, not on one
 fold -- the standard's acceptance test since openfold3 passed a one-request
-smoke while being unable to answer a second request at the same shape. The
-89-residue smoke, four times, one worker held start to stop:
+smoke while being unable to answer a second request at the same shape.
+
+First pass, 2026-10-17, the 89-residue smoke four times:
 
     build 41.3 s, then 20.7 / 16.2 / 16.1 / 16.2 s
     peak reserved 3.56 -> 3.62 -> 3.66 -> 3.70 GiB
+
+That ladder is not noise and it was not read as the defect it was: +0.04 GiB
+a fold is one 32 MiB cuBLAS workspace a fold, the leak the section above
+this one describes. Re-run after the release, 2026-10-18, the whole suite in
+one worker (`verify_provider.py rosettafold3 --repeats 5`):
+
+    ladder   100 / 200 / 400 / 800 aa
+             12.6 / 20.5 / 34.0 / 109.2 s
+             peak 3.59 / 4.21 / 5.84 / 13.04 GiB
+    mixed    100, 100, 400, 100 aa -- a change and a repeat both survive
+    repeats  5/5 answered, 12.1 / 11.0 / 11.7 / 12.1 / 11.6 s
+             peak reserved 4.29 -> 4.27 -> 4.27 -> 4.27 -> 4.27 GiB
+
+Flat to the hundredth after the first, where it used to rise every fold. The
+repeat peaks sit above the first pass's because the 800 aa rung ran earlier
+in the same worker and the allocator keeps the pool it grew; what the
+acceptance test reads is the shape of the ladder, not its offset.
 
 Every request wrote structures; the smoke step asserts that against
 [runtime] outputs. The card was shared with another session throughout, so the
