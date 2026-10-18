@@ -5,12 +5,12 @@ robust to preparation and free-reference choice. It is a single-axis paired
 sensitivity comparison, not a binding-performance estimate.
 
 `paired_deltas.csv` contains all 33 matched reference combinations from the
-native preparation pilot: three structural families, each with ten independent
+baseline predicted-pose preparation pilot: three structural families, each with ten independent
 free-reference combinations and one same-coordinate reference. Every comparison
 uses the same bound sample before/after preparation; RoseTTAFold3 uses sample 0.
 `reference_sensitivity.csv` retains the minimum and maximum of each of the six
 family/reference groups before and after preparation. No rows were removed
-within this pilot. Other RoseTTAFold3 bound samples were outside the native
+within this pilot. Other RoseTTAFold3 bound samples were outside the baseline predicted-pose
 re-preparation pilot and are not mixed into its before/after comparisons.
 
 Each independent-reference group combines five own free-binder samples and two

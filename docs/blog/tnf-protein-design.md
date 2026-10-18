@@ -65,13 +65,13 @@ Partial neural pKa analyses and a selected-histidine learned-energy diagnostic o
 
 ## The most informative next step was a preparation control
 
-A local interaction near the proposed switching environment appeared weaker in some M48L structures. It was tempting to explain that observation as a mutation effect. Before accepting that explanation, we repeated hydrogenation and restrained physical preparation for the **unchanged parent and unchanged M48L native poses**.
+A local interaction near the proposed switching environment appeared weaker in some M48L structures. It was tempting to explain that observation as a mutation effect. Before accepting that explanation, we repeated hydrogenation and restrained physical preparation for the **unchanged parent and M48L predicted starting poses**.
 
-We ran a bounded pilot of **15 prepared contexts**: three parent native poses, three M48L native poses, and nine M48L sidechain starts across the three structural families. All 15 passed the existing physical requirements and retained a compatible human glycan-root placement. Passing those requirements still did not establish an equilibrium ensemble.
+We ran a bounded pilot of **15 prepared contexts**: three parent starting poses, three M48L starting poses, and nine M48L sidechain starts across the three structural families. All 15 passed the existing physical requirements and retained a compatible human glycan-root placement. Passing those requirements still did not establish an equilibrium ensemble.
 
-The control changed the interpretation. Re-preparing an unchanged M48L pose restored the histidine–receptor contact whose absence had motivated concern. Contact loss was preparation-sensitive; the original observation could not establish that the mutation destroyed that interaction.
+The control changed the interpretation. Re-preparing an unchanged M48L predicted pose restored the histidine–receptor contact whose absence had motivated concern. Contact loss was preparation-sensitive; the original observation could not establish that the mutation destroyed that interaction.
 
-The pH comparison changed too. After matched native re-preparation, the Protenix independent-reference difference moved to **+0.190 to +0.308 kcal/mol**, while its same-coordinate result remained negative at **−0.134 kcal/mol**.
+The pH comparison changed too. After matched starting-pose re-preparation, the Protenix independent-reference difference moved to **+0.190 to +0.308 kcal/mol**, while its same-coordinate result remained negative at **−0.134 kcal/mol**.
 
 ![Paired mutation effects before and after native re-preparation, separated by structural model family and free-state convention.](assets/tnf-design/reference_sensitivity.svg)
 

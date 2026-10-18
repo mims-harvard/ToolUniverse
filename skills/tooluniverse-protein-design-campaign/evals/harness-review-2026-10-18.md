@@ -36,7 +36,7 @@ Scientific acceptance checks include:
   temperature scales energy without changing the logarithmic trend.
 - Structural completeness and experimental verification always remain false.
 
-The updated skill also retains negative results, requires parent/mutant native
+The updated skill also retains negative results, requires parent/mutant starting-pose
 re-preparation controls, separates acid-wash retention from equilibrium affinity,
 keeps partial-site/learned-unit scope visible, and treats a queued request that
 never starts as zero model calls. Its eight behavioral prompts are evaluations,

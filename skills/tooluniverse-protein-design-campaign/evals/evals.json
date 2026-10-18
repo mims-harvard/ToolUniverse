@@ -63,7 +63,7 @@
     {
       "id": 6,
       "name": "paired-preparation-and-free-fold",
-      "prompt": "A mutant meets an independent free-fold core RMSD gate of 2 A; its matched parent is 2.18 A and fails. The mutant initially lacks a contact seen in the parent, but unchanged mutant native re-hydrogenation and minimization restores it. Nine local rotamer starts have mixed pH score signs. Decide whether the mutant is an improvement without changing gates or launching jobs.",
+      "prompt": "A mutant meets an independent free-fold core RMSD gate of 2 A; its matched parent is 2.18 A and fails. The mutant initially lacks a contact seen in the parent, but unchanged mutant predicted-pose re-hydrogenation and minimization restores it. Nine local rotamer starts have mixed pH score signs. Decide whether the mutant is an improvement without changing gates or launching jobs.",
       "assertions": [
         "Does not claim paired independent free-fold validation when the parent failed.",
         "Recognizes preparation sensitivity before assigning the contact loss to mutation.",
