@@ -151,6 +151,68 @@ def release_cublas_workspaces() -> int:
     return max(0, before - torch.cuda.memory_allocated())
 
 
+def _fatal_reply(exc: BaseException) -> Dict[str, Any]:
+    """The last thing a worker says when a request takes it down with it.
+
+    A ``SystemExit`` raised out of ``on_predict`` is not a failed request. It
+    is the process declaring that it must not answer another one, and three of
+    the kits do exactly that: ``af3_jax``, ``rfdiffusion3`` and ``opendde``
+    each define a ``KernelsRefused(SystemExit)`` and raise it from inside a
+    prediction when the kernel route they required is not the route that
+    loaded. All three carry code **5**, which is this standard's own code for
+    an expected accelerator absent (section 8). That verdict is about the
+    PROCESS, not about the request, and honouring it is right: a provider that
+    advertises a kit's kernels and then answers on stock ones is returning
+    results whose provenance is a lie.
+
+    **Swallowing it would not even keep the worker alive.** af3_jax's
+    ``refuse_exit`` arms a ``threading.Timer`` that calls ``os._exit(5)``
+    sixty seconds later, in its own words "should anything swallow the
+    SystemExit", and rfdiffusion3's ``finish_at_exit`` hook forces the same
+    code at interpreter end. Catching the refusal and carrying on buys one
+    minute of serving and then an abrupt death in the middle of whichever
+    request is running by then -- strictly worse than dying now, and harder to
+    attribute.
+
+    So the worker still dies. What it must not do is die SILENTLY, which is
+    what it did before this existed: the refusal unwound the whole loop, the
+    client's ``recv_line`` hit EOF and raised ``ProtocolError: peer closed the
+    connection mid-message``, and the KERNELS line naming the cause sat in a
+    transcript nobody was pointed at. This builds the reply that names it; the
+    loop sends it, then re-raises so the exit still happens.
+    """
+    code = exc.code if isinstance(exc, SystemExit) else None
+    # ``SystemExit(int)`` exits with that status; ``SystemExit(anything else)``
+    # prints it and exits 1; ``SystemExit()`` exits 0. KeyboardInterrupt has no
+    # code at all.
+    exit_code = code if isinstance(code, int) else (None if code is None else 1)
+    # All three KernelsRefused classes pass the CODE to ``SystemExit``, so
+    # ``str(exc)`` is the bare number and the readable part is on an attribute
+    # instead: ``.reason`` on rfdiffusion3's, ``.line`` on opendde's. Prefer
+    # whichever is there over printing "5" twice. This is a convenience, not a
+    # protocol -- an exception with neither is reported as it prints.
+    said = next(
+        (
+            str(v).strip()
+            for v in (getattr(exc, "reason", None), getattr(exc, "line", None))
+            if isinstance(v, str) and v.strip()
+        ),
+        str(exc),
+    )
+    tail = (
+        f"the worker exits {exit_code} rather than answering again"
+        if exit_code is not None
+        else "the worker is exiting rather than answering again"
+    )
+    return {
+        "ok": False,
+        "error": f"{type(exc).__name__}: {said} \u2014 {tail}",
+        "reason": "worker_exiting",
+        "exit_code": exit_code,
+        "traceback": traceback.format_exc(limit=8),
+    }
+
+
 def serve(
     *,
     slug: str,
@@ -169,6 +231,11 @@ def serve(
     the caller and the model stays up, because a bad request must not cost the
     minutes it took to build one. ``on_reset`` runs just before each prediction
     (peak-memory counters and the like); ``ready`` adds fields to the ping.
+
+    Raising something that is *not* an ``Exception`` is the other case, and it
+    is not a failed request: the caller is told and then the worker goes down.
+    :func:`_fatal_reply` is where that is argued, because the argument is the
+    whole of why this loop has two except clauses instead of one.
 
     One request at a time, by construction. Two inside one CUDA context would
     interleave their allocations and make an out-of-memory attributable to
@@ -277,6 +344,17 @@ def serve(
                             "reason": "request_failed",
                             "traceback": traceback.format_exc(limit=8),
                         }
+                    except BaseException as exc:  # noqa: BLE001 - see below
+                        # NOT an Exception, so the model is not staying up:
+                        # answer first, then let it go. :func:`_fatal_reply`
+                        # carries the reasoning for both halves of that.
+                        reply = _fatal_reply(exc)
+                        say(reply["error"])
+                        try:
+                            P.send_line(conn, reply)
+                        except OSError:
+                            pass  # the caller is gone; the exit is what matters
+                        raise
                     state["last_request"] = time.time()
                     P.send_line(conn, reply)
                     if req.get("op") == P.OP_SHUTDOWN:
