@@ -495,6 +495,31 @@ skills came to pin the SDK wheel's digest and none of the weights. A name table
 cannot drift, because the names come from the code: add a refusal name and the
 table gains a row; delete one and its row is detectably orphaned.
 
+**A code is only branchable if the thing that dies gets to say it.** The same
+eighteen-provider mistake has a mirror image, and we shipped that one too. Three
+of the kits refuse a wrong kernel route by raising `KernelsRefused`, a
+`SystemExit(5)` subclass, from inside a prediction — code 5, "an expected
+accelerator absent", exactly as this table reads it. The shared serve loop
+caught `Exception`, and `SystemExit` is not one, so the refusal unwound the
+whole worker: the caller's `recv_line` hit EOF and raised `ProtocolError: peer
+closed the connection mid-message`, and the KERNELS line naming the cause sat in
+a transcript nobody was pointed at. A right code behind no message at all is the
+same contract broken from the other end.
+
+**The worker still dies, deliberately.** The verdict is about the process, not
+the request — a provider that advertises a kit's kernels and then answers on
+stock ones returns results whose provenance is a lie — and swallowing it would
+not even keep the worker alive: af3_jax's `refuse_exit` arms an `os._exit(5)`
+sixty seconds out "should anything swallow the SystemExit", and rfdiffusion3's
+exit hook forces the same code at interpreter end. Catching the refusal and
+carrying on buys one minute of serving and then an abrupt death in the middle of
+whichever request is running by then. So `serve` answers first and re-raises:
+one reply naming the refusal, then the exit the kit asked for. The supervisor
+adds the two things the worker could not know — where its transcript is, and
+what its code is called — and when a worker cannot answer at all (`os._exit`,
+the OOM killer, a segfault) it reports the code the process exited with instead
+of the socket error.
+
 **Design the failure out where you can, rather than document it.** The kits do
 this: files fetched over HTTP lose their executable bit, so every command in
 their READMEs invokes `bash script.sh` rather than `./script.sh`, and the failure
@@ -777,6 +802,8 @@ card, the way out was a flag its CLI already offered -- atlasfold's
 | An instruction selector can refuse a conversion | measured: bf16->f16 at ColabFold's recycle boundary, uncatchable abort |
 | `idle_timeout_s` follows upstream's caching, not model size | measured: colabfold 300 s because XLA persists; af3_jax 900 s because tokamax does not |
 | A worker can die between requests invisibly | measured: 6 starts, 5 clean shutdowns, one silent exit |
+| A worker can die DURING one just as invisibly | measured: `KernelsRefused(SystemExit)` unwound `serve` past `except Exception`; the caller got `ProtocolError`, the cause stayed in the transcript |
+| An exit code is branchable only if something says it | measured: exit 5 reached the caller as a closed socket until `serve` answered before re-raising |
 | A residency multiple is largest at the smallest input | measured: af3_jax 26x at 35 aa, 3.5x at its budget row |
 | A launch must STRIP undeclared names, not merely not set them | measured: af3_jax's `.pth` exits 3 on an inherited variable |
 | A budget may err high, never low | measured: complexa kept 20.25 above 19.00 reproduced; colabdesign's placeholder 8.0 sat below a 12.0 it produces |

@@ -25,6 +25,7 @@ from tooluniverse.remote_resident.supervisor import (
     ResidentWorker,
     WorkerRequestError,
     WorkerStartError,
+    exit_hint,
 )
 
 BOLTZ_MANIFEST = os.path.join(
@@ -1439,13 +1440,21 @@ class TestRefusalsExitThree:
         assert "nope: do the thing" in capsys.readouterr().err
 
     def test_the_supervisor_names_a_refusal(self):
+        """A refusal and a crash must not read the same.
+
+        This asked for the literal `rc == 3` until the sentences moved into
+        `EXIT_HINTS`, which is where a second named code (5, an expected
+        accelerator absent) could be added without writing a second branch.
+        What it was protecting is the distinction, so that is what it reads
+        now -- and a distinction survives a refactor where a spelling does not.
+        """
         import inspect
 
         from tooluniverse.remote_resident import supervisor
 
-        src = inspect.getsource(supervisor)
-        assert "rc == 3" in src, "a refusal and a crash read the same otherwise"
-        assert "exited {rc} before it bound" in src
+        assert "refusal" in exit_hint(3)
+        assert exit_hint(1) == "", "an unnamed code must not read as a refusal"
+        assert "exited {rc} before it bound" in inspect.getsource(supervisor)
 
 
 class TestLauncherCanRemoveAVariable:
@@ -2863,3 +2872,268 @@ class TestCublasWorkspacesAreReleased:
         src = self._worker_src("genie3")
         assert "torch.cuda.reset_peak_memory_stats()" in src
         assert "on_reset=_reset" in src
+
+
+class TestARefusalEndsTheWorkerAndSaysSo:
+    """A `SystemExit` out of a prediction, which is how the kits refuse.
+
+    `af3_jax`, `rfdiffusion3` and `opendde` each define a
+    `KernelsRefused(SystemExit)` and raise it from inside a prediction when
+    the kernel route they required is not the route that loaded. All three
+    carry code 5 -- STANDARD section 8's "an expected accelerator absent".
+
+    The loop caught `Exception`, and a `SystemExit` is not one, so it unwound
+    the whole worker: the caller's `recv_line` hit EOF and raised
+    `ProtocolError: peer closed the connection mid-message`, and the KERNELS
+    line naming the cause stayed in a transcript nobody was pointed at.
+
+    The worker STILL dies -- that verdict is about the process, and swallowing
+    it would not even keep the worker alive, because af3_jax arms an
+    `os._exit(5)` sixty seconds out "should anything swallow the SystemExit"
+    and rfdiffusion3's exit hook forces the same code at interpreter end. What
+    these tests pin is that it no longer dies silently.
+    """
+
+    BASE = (
+        Path(__file__).resolve().parents[2]
+        / "src/tooluniverse/remote_resident/worker_base.py"
+    )
+
+    # The shape all three kits define: SystemExit(5) with the readable part on
+    # an attribute, so `str(exc)` is the bare number "5".
+    WORKER = textwrap.dedent(
+        """
+        import importlib.util, os, sys
+        base_path, sock_path, mode = sys.argv[1], sys.argv[2], sys.argv[3]
+        spec = importlib.util.spec_from_file_location("_wb", base_path)
+        WB = importlib.util.module_from_spec(spec); spec.loader.exec_module(WB)
+
+        class KernelsRefused(SystemExit):
+            def __init__(self, reason):
+                super().__init__(5)
+                self.reason = reason
+
+        def on_predict(req):
+            if mode == "hardexit":
+                sys.stderr.flush(); os._exit(5)
+            raise KernelsRefused("KERNELS trimul=stock expected=kit")
+
+        sys.exit(WB.serve(slug="probe", socket_path=sock_path,
+                          on_predict=on_predict, release_cublas=False))
+        """
+    )
+
+    @staticmethod
+    def _base():
+        import importlib.util
+
+        spec = importlib.util.spec_from_file_location(
+            "_wb_refuse", TestARefusalEndsTheWorkerAndSaysSo.BASE
+        )
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return mod
+
+    @staticmethod
+    def _drive(base, on_predict, payloads, **serve_kwargs):
+        """Run a real `serve` over a real socket; return (replies, what it raised).
+
+        Driving the loop rather than reading the source, for the same reason
+        the release tests do: the defect was never a missing word, it was a
+        reply the caller did not get.
+        """
+        import tempfile
+
+        raised = {}
+
+        def run(**kw):
+            try:
+                base.serve(**kw)
+            except BaseException as exc:  # noqa: BLE001 - that is the finding
+                raised["exc"] = exc
+
+        with tempfile.TemporaryDirectory() as d:
+            sock_path = str(Path(d) / "s.sock")
+            t = threading.Thread(
+                target=run,
+                kwargs=dict(
+                    slug="probe",
+                    socket_path=sock_path,
+                    on_predict=on_predict,
+                    log=lambda msg: None,
+                    **serve_kwargs,
+                ),
+                daemon=True,
+            )
+            t.start()
+            for _ in range(200):
+                if os.path.exists(sock_path):
+                    break
+                time.sleep(0.02)
+            c = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            c.connect(sock_path)
+            buf = bytearray()
+            replies = []
+            for payload in payloads:
+                P.send_line(c, payload)
+                try:
+                    replies.append(P.recv_line(c, buf))
+                except P.ProtocolError as exc:
+                    replies.append(exc)
+                    break
+            c.close()
+            t.join(timeout=10)
+        return replies, raised.get("exc")
+
+    class _Refused(SystemExit):
+        def __init__(self, reason):
+            super().__init__(5)
+            self.reason = reason
+
+    def test_a_refusal_is_answered_before_the_worker_goes(self):
+        def on_predict(req):
+            raise self._Refused("KERNELS trimul=stock expected=kit")
+
+        base = self._base()
+        replies, raised = self._drive(
+            base, on_predict, [{"op": "predict"}], release_cublas=False
+        )
+        reply = replies[0]
+        assert isinstance(reply, dict), "the caller got EOF instead of an answer"
+        assert reply["ok"] is False
+        assert reply["reason"] == "worker_exiting"
+        assert reply["exit_code"] == 5
+        assert isinstance(raised, SystemExit), "the refusal must still end the worker"
+        assert raised.code == 5, "and with the code the kit chose"
+
+    def test_the_readable_part_is_the_attribute_not_the_bare_code(self):
+        """All three `KernelsRefused` classes pass the CODE to `SystemExit`,
+        so `str(exc)` is "5" and the diagnosis is on `.reason` / `.line`."""
+
+        def on_predict(req):
+            raise self._Refused("KERNELS trimul=stock expected=kit")
+
+        base = self._base()
+        replies, _ = self._drive(
+            base, on_predict, [{"op": "predict"}], release_cublas=False
+        )
+        assert "KERNELS trimul=stock expected=kit" in replies[0]["error"]
+        assert "_Refused" in replies[0]["error"], "name the class that refused"
+
+    def test_an_exception_with_neither_attribute_still_reports_as_it_prints(self):
+        def on_predict(req):
+            raise SystemExit("the plain form")
+
+        base = self._base()
+        replies, _ = self._drive(
+            base, on_predict, [{"op": "predict"}], release_cublas=False
+        )
+        assert "the plain form" in replies[0]["error"]
+        # SystemExit(str) prints it and exits 1; it is not an exit code.
+        assert replies[0]["exit_code"] == 1
+
+    def test_an_ordinary_exception_still_leaves_the_worker_serving(self):
+        """The guard on the half that must NOT change: a bad request must not
+        cost the minutes it took to build the model."""
+        seen = []
+
+        def on_predict(req):
+            seen.append(req)
+            if len(seen) == 1:
+                raise ValueError("a bad request")
+            return {"n": len(seen)}
+
+        base = self._base()
+        replies, raised = self._drive(
+            base,
+            on_predict,
+            [{"op": "predict"}, {"op": "predict"}, {"op": "shutdown"}],
+            release_cublas=False,
+        )
+        assert replies[0]["reason"] == "request_failed"
+        assert replies[1]["ok"] and replies[1]["result"]["n"] == 2
+        assert raised is None, "an ordinary failure must not end the worker"
+
+    def test_the_workspaces_are_still_released_on_the_way_out(self):
+        """The release is in a `finally`, and a refusal is exactly the request
+        that got far enough to capture a graph and abandon its stream."""
+        base = self._base()
+        calls = []
+        base.release_cublas_workspaces = lambda: (calls.append(1), 0)[1]
+
+        def on_predict(req):
+            raise self._Refused("refused")
+
+        self._drive(base, on_predict, [{"op": "predict"}])
+        assert calls == [1], "the fatal path skipped the release"
+
+    # ------------------------------------------------------- through the supervisor
+    @pytest.fixture
+    def refusing_worker(self, tmp_path):
+        script = tmp_path / "refusing_worker.py"
+        script.write_text(self.WORKER)
+        workers = []
+
+        def make(mode):
+            w = ResidentWorker(
+                slug=f"refuse-{mode}-{os.getpid()}",
+                build_command=lambda worker: (
+                    [
+                        sys.executable,
+                        str(script),
+                        str(self.BASE),
+                        worker.socket_path,
+                        mode,
+                    ],
+                    {},
+                ),
+                start_timeout_s=30.0,
+                log_path=str(tmp_path / f"{mode}.log"),
+            )
+            workers.append(w)
+            return w
+
+        yield make
+        for w in workers:
+            w.stop(grace_s=5)
+
+    def test_the_caller_is_told_what_refused_and_where_to_read_it(
+        self, refusing_worker
+    ):
+        w = refusing_worker("refuse")
+        with pytest.raises(WorkerRequestError) as exc:
+            w.request({"op": "predict"})
+        assert exc.value.reason == "worker_exiting"
+        message = str(exc.value)
+        assert "KERNELS trimul=stock expected=kit" in message
+        # The two things the worker could not know itself.
+        assert "transcript" in message and "refuse.log" in message
+        assert "exit 5" in message
+        for _ in range(100):  # it is on its way out
+            if w._proc.poll() is not None:
+                break
+            time.sleep(0.05)
+        assert w._proc.poll() == 5, "the kit's code must survive the reply"
+
+    def test_a_worker_that_cannot_answer_is_named_by_its_exit_code(
+        self, refusing_worker
+    ):
+        """`os._exit` leaves no chance to reply -- as do the OOM killer and a
+        segfault. `ProtocolError: peer closed the connection mid-message` is
+        true and useless; the code it exited with is not."""
+        w = refusing_worker("hardexit")
+        with pytest.raises(WorkerRequestError) as exc:
+            w.request({"op": "predict"})
+        assert exc.value.reason == "worker_died"
+        assert "exited 5" in str(exc.value) and "exit 5" in str(exc.value)
+
+    def test_the_exit_code_sentences_have_one_source(self):
+        """STANDARD section 8 is only worth anything if what reads a code says
+        what it means, and only stays worth anything if it says it once."""
+        assert exit_hint(3) and exit_hint(5)
+        assert exit_hint(1) == "" and exit_hint(None) == ""
+        src = (
+            Path(__file__).resolve().parents[2]
+            / "src/tooluniverse/remote_resident/supervisor.py"
+        ).read_text()
+        assert src.count("that is a refusal (exit 3)") == 1

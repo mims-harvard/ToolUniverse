@@ -47,6 +47,27 @@ class WorkerRequestError(RuntimeError):
         self.reason = reason
 
 
+# STANDARD section 8: the exit codes are stable and branchable, which is only
+# worth anything if what reads them says what they mean. A bare number in an
+# error message makes an operator look the table up; these sentences are the
+# table, and they are here once so the start path and the request path cannot
+# drift apart on what a 5 is.
+EXIT_HINTS = {
+    3: "that is a refusal (exit 3), so its last line names what it refused and why",
+    5: (
+        "that is an expected accelerator absent (exit 5): a kit's kernel "
+        "census refuses this way when the route it required is not the route "
+        "that loaded, and the KERNELS line above names it"
+    ),
+}
+
+
+def exit_hint(rc: Optional[int]) -> str:
+    """The clause naming what ``rc`` means, or nothing when it has no name."""
+    text = EXIT_HINTS.get(rc) if isinstance(rc, int) else None
+    return f" \u2014 {text}" if text else ""
+
+
 # (argv, extra environment) for one worker process. A provider builds it: the
 # interpreter must be the model environment's own, never the one running
 # ToolUniverse, because the two do not share a dependency set.
@@ -187,19 +208,12 @@ class ResidentWorker:
         while not os.path.exists(self.socket_path):
             rc = self._proc.poll()
             if rc is not None:
-                where = (
-                    f" (its transcript is in {self.log_path})" if self.log_path else ""
-                )
-                # 3 is "refused" per STANDARD section 8, and the distinction is
-                # worth saying out loud: a refusal has a cause an operator can
-                # act on and its last stderr line names it, where any other
-                # non-zero code is a crash whose transcript has to be read.
-                why = (
-                    " \u2014 that is a refusal (exit 3), so its last line names "
-                    "what it refused and why"
-                    if rc == 3
-                    else ""
-                )
+                where = self._transcript()
+                # A named code per STANDARD section 8, said out loud: a
+                # refusal has a cause an operator can act on and its last
+                # stderr line names it, where an unnamed non-zero code is a
+                # crash whose transcript has to be read.
+                why = exit_hint(rc)
                 raise WorkerStartError(
                     f"{self.slug}: the resident worker exited {rc} before it bound "
                     f"{self.socket_path}{where}{why}"
@@ -217,20 +231,63 @@ class ResidentWorker:
 
     # ------------------------------------------------------------------- call
     def request(self, payload: Dict[str, Any]) -> Dict[str, Any]:
-        """One request, serialized against every other on this worker."""
+        """One request, serialized against every other on this worker.
+
+        A worker that dies answering is named rather than guessed at, in both
+        of the shapes that takes. Usually it manages a last reply first --
+        ``worker_base`` sends one for any ``SystemExit`` out of a prediction,
+        which is how the kits' ``KernelsRefused`` arrives -- and then the only
+        thing missing is what the worker could not know: where its transcript
+        is, and what its exit code is called. Sometimes it cannot answer at
+        all (``os._exit``, the OOM killer, a segfault), and then the socket
+        just ends; a bare ``ProtocolError: peer closed the connection
+        mid-message`` is true and useless, so the code it exited with goes in
+        its place.
+        """
         with self.lock:
             self.ensure_started()
             self._last_used = time.time()
             try:
                 reply = self._roundtrip(payload, timeout=self.request_timeout_s)
+            except (OSError, P.ProtocolError) as exc:
+                raise self._died_mid_request(exc) from exc
             finally:
                 self._last_used = time.time()
             if not reply.get("ok"):
-                raise WorkerRequestError(
-                    reply.get("error") or "the worker reported a failure",
-                    reason=reply.get("reason", "request_failed"),
-                )
+                message = reply.get("error") or "the worker reported a failure"
+                reason = reply.get("reason", "request_failed")
+                if reason == "worker_exiting":
+                    message = (
+                        f"{self.slug}: {message}{self._transcript()}"
+                        f"{exit_hint(reply.get('exit_code'))}"
+                    )
+                raise WorkerRequestError(message, reason=reason)
             return reply
+
+    def _transcript(self) -> str:
+        return f" (its transcript is in {self.log_path})" if self.log_path else ""
+
+    def _died_mid_request(self, exc: BaseException) -> BaseException:
+        """``exc``, or a better-named error when the worker is the reason.
+
+        The wait is short and bounded and only ever runs on this path: a
+        process that has just closed its socket is milliseconds from being
+        reapable, but ``poll()`` asked immediately still answers None often
+        enough to lose the code. A worker that is still alive -- a request
+        that simply outran ``request_timeout_s``, say -- gets ``exc`` back
+        unchanged, because then the socket failed and the worker did not.
+        """
+        if self._proc is None:
+            return exc
+        try:
+            rc = self._proc.wait(timeout=2.0)
+        except subprocess.TimeoutExpired:
+            return exc
+        return WorkerRequestError(
+            f"{self.slug}: the resident worker exited {rc} during the request "
+            f"without answering{self._transcript()}{exit_hint(rc)}",
+            reason="worker_died",
+        )
 
     def _roundtrip(self, payload: Dict[str, Any], *, timeout: float) -> Dict[str, Any]:
         sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)

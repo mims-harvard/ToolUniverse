@@ -804,13 +804,16 @@ def _rfdiffusion3_case(text, n):
     DO NOT LADDER ABOVE THE MEASURED 400 RESIDUES. The kit pins its
     dense-versus-sparse atom-attention decision per shape for the process, and
     on this route a shape it sends sparse is REFUSED -- by raising
-    `KernelsRefused`, which subclasses `SystemExit`. The shared serve loop
-    catches `Exception`, and SystemExit is not one, so that refusal does not
-    fail a request: it takes the whole resident worker down with exit 5, and
-    every later rung and repeat in the run then fails to connect. A ladder
-    that dies partway is that, not a harness fault. The threshold is a joint
-    function of length, diffusion batch and CURRENTLY FREE memory, so a
-    co-tenant can trip it at a rung that passed before.
+    `KernelsRefused`, which subclasses `SystemExit`. That still takes the whole
+    resident worker down with exit 5, deliberately: the verdict is about the
+    process, not the rung. What has changed is that it is now legible. `serve`
+    answers the refusal before it re-raises, so the rung fails with
+    `WorkerRequestError(reason="worker_exiting")` naming the route and the
+    transcript rather than the connection error it used to be, and the later
+    rungs fail to connect as before. A ladder that dies partway is that, not a
+    harness fault. The threshold is a joint function of length, diffusion batch
+    and CURRENTLY FREE memory, so a co-tenant can trip it at a rung that passed
+    before.
 
     None of the levers the kit refuses by name (classifier-free guidance,
     low-memory mode, the symmetry sampler, compile_model) is set here.
