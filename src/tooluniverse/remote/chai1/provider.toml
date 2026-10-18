@@ -77,16 +77,31 @@ with the leak -- a control ladder with the release disabled reproduces it.
 # exactly 8 MiB.
 #
 # THE FIX is `WB.release_cublas_workspaces()` at the end of `_predict_one`.
-# It is safe here because the kit captures and replays its graph inside
-# `run_inference`, which has returned by then: a graph that outlived the
-# request would be replaying against a freed workspace, which is a wrong
-# answer rather than a crash, and that is why the call is a provider's own
-# rather than something the shared serve loop does for everybody.
+# Nothing here has to outlive anything for that to be safe, though this
+# comment first claimed it did. The claim was that a graph still alive at the
+# clear would replay against a freed workspace and give a wrong answer; both
+# halves are wrong, and `release_cublas_workspaces` carries the measurements.
+# A replay cannot read a freed workspace, because the workspace is scratch
+# every kernel writes before it reads; and the write it does make lands in
+# the graph's own private memory pool, which no ordinary allocation is ever
+# handed. The call stays a provider's own rather than the serve loop's for a
+# smaller reason: the measurement is of torch 2.13, which is this provider's
+# stack but not every provider's.
 #
 # `genie3` had the same defect from the same cause at the same 32 MiB, from
-# its own kit's side stream. `boltz` and `boltzgen` never had it: they
-# capture no graph per request, so they create no stream and hold one
-# workspace for the life of the process.
+# its own kit's side stream, and a sweep of all 26 GPU providers on
+# 2026-10-18 found one more -- `rosettafold3`, at the same 32 MiB a fold;
+# its manifest carries its own numbers and its own safety argument.
+#
+# `boltz` and `boltzgen` do not have it, but NOT for the reason first written
+# here, which was wrong on its facts: boltz DOES create a stream per request.
+# It simply runs no GEMM on that stream, so no workspace is ever keyed to it,
+# and clearing after five folds freed 0 bytes. What boltz grows instead is
+# *reserved* rather than allocated -- 56 MiB a fold -- and `empty_cache()`
+# gives all of it back (3574 -> 3234 MiB), so it inflates what a scheduler
+# reading `max_memory_reserved` has to budget without costing the card.
+# boltzgen runs its GPU work in a fresh subprocess per request, so nothing of
+# it outlives the request at all.
 #
 # Reproduce the absence with:
 #   python scripts/remote_validation/verify_provider.py chai1 --repeats 20

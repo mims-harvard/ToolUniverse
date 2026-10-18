@@ -2671,7 +2671,8 @@ class TestCublasWorkspacesAreReleased:
     fresh side stream, so every request abandoned a stream and left its
     workspace behind: measured at exactly
     `torch.backends.cuda.blas_workspace_size()` -- 32 MiB on the GB10 -- for
-    `chai1` and `genie3`, linear, with no plateau in twenty requests.
+    `chai1` and `genie3`, linear, with no plateau in twenty requests, and for
+    `rosettafold3`, found by a sweep of all 26 GPU providers afterwards.
 
     It was invisible to every ordinary check, which is why these tests exist
     at the call site rather than on a number: the bytes are in
@@ -2711,28 +2712,53 @@ class TestCublasWorkspacesAreReleased:
         assert base.release_cublas_workspaces() >= 0
 
     def test_the_providers_that_capture_a_graph_per_request_release(self):
-        for slug in ("chai1", "genie3"):
+        for slug in ("chai1", "genie3", "rosettafold3"):
             src = self._worker_src(slug)
             assert "WB.release_cublas_workspaces()" in src, (
                 f"{slug} captures a CUDA graph per request on a fresh side "
                 f"stream, which strands a cuBLAS workspace every time"
             )
 
-    def test_genie3_does_not_release_while_it_is_holding_its_graphs(self):
-        """The one unsafe case, and it is reachable by an environment variable.
+    def test_rosettafold3_releases_although_it_keeps_graphs_across_folds(self):
+        """The provider that made the old "no graph may outlive the request"
+        rule testable, because it breaks that rule and is still safe.
 
-        A held CUDA graph captured those cuBLAS calls, so freeing the
-        workspace under it makes replay read memory the allocator has given
-        away. `GENIE3_RESIDENT_KEEP_GRAPHS=1` is exactly that case.
+        `fast` mode keeps up to FPF_RF3_TG_MAX pairformer-stack graphs in the
+        FPF add-on's cache and replays them on later folds. The release is
+        unguarded anyway: a workspace a capture allocates lives in that
+        graph's private memory pool, so clearing hands it back to a pool no
+        ordinary allocation draws from. A guard appearing here later would
+        mean somebody reinstated the rule without reading the measurement.
+        """
+        src = self._worker_src("rosettafold3")
+        line = next(
+            ln for ln in src.splitlines() if "WB.release_cublas_workspaces()" in ln
+        )
+        # `if DEVICE == "cuda":` is the only thing it may sit under, so its
+        # body's indent is the deepest the call may have. Anything further in
+        # is a second condition, which is the thing this test is about.
+        assert len(line) - len(line.lstrip()) == 8, (
+            "the release is nested under a second condition; rosettafold3 "
+            "keeps graphs across folds on purpose and releases anyway"
+        )
+
+    def test_genie3_does_not_release_while_it_is_holding_its_graphs(self):
+        """The conservative case, and it is reachable by an environment variable.
+
+        The held-graph hazard this guard was written for turned out not to
+        exist on the torch the measurement was taken on (2.13: the workspace
+        a capture allocates is in that graph's private memory pool). genie3
+        pins 2.7.1, which that measurement does not reach, so under
+        `GENIE3_RESIDENT_KEEP_GRAPHS=1` it still declines to clear.
         """
         src = self._worker_src("genie3")
         call = src.index("WB.release_cublas_workspaces()")
         guard = src.rindex("if not KEEP_GRAPHS:", 0, call)
         between = src[guard:call]
         assert between.count("\n") <= 3, (
-            "the release must sit directly under `if not KEEP_GRAPHS:` -- a "
-            "held graph replaying against a freed workspace is a wrong answer, "
-            "not a crash"
+            "the release must sit directly under `if not KEEP_GRAPHS:` -- "
+            "this provider's torch is not the one the private-pool "
+            "measurement was taken on"
         )
 
     def test_genie3_reports_a_per_request_peak_not_a_session_mark(self):

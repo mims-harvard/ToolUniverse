@@ -89,14 +89,35 @@ def release_cublas_workspaces() -> int:
     each grew ~0.04 GiB per request until this call, which is 140 requests to
     chai1's whole declared budget; their manifests carry the measurements.
 
-    ONLY SAFE WHERE NO CAPTURED GRAPH OUTLIVES THE REQUEST. A CUDA graph that
-    captured cuBLAS calls holds the workspace pointer, and replaying it after
-    the workspace is freed reads memory the allocator has given away. Both
-    providers that call this capture and drop their graphs inside one request,
-    so nothing replays across the call -- and genie3, which can be told to keep
-    its graphs, does not call this when it has been. That is why this is a call
-    a provider makes for itself with its own reason, and not something
-    :func:`serve` does on everybody's behalf.
+    A HELD GRAPH, MEASURED RATHER THAN FEARED. This used to say the call was
+    safe only where no captured graph outlives the request, on the reasoning
+    that a graph which captured cuBLAS calls holds the workspace pointer. The
+    reasoning was wrong twice over, and `rosettafold3` -- whose `fast` mode
+    keeps pairformer-stack graphs across folds -- is why it got tested
+    (torch 2.13.0+cu130, the stack `chai1` and `rosettafold3` run):
+
+    * A replay cannot read a freed workspace's contents, because the
+      workspace is scratch that each kernel writes before it reads. Poisoning
+      it and replaying returns the same answer to the bit, every time, so
+      "the output did not change" was never evidence of anything either.
+    * The failure that WOULD be real is the other direction -- the replay
+      still writes to that address, and writing over a tensor the allocator
+      has since handed to someone else corrupts it. It does not happen: a
+      workspace allocated during a capture belongs to that graph's private
+      memory pool, not the general one, so clearing the map hands the block
+      back to a pool only a capture into the same pool can draw from. Checked
+      by reading the bytes back to confirm a replay does write there, then
+      allocating 34 x 32 MiB on the default stream and on new ones: none
+      landed on that address, twenty cleared replays scribbled on nothing,
+      and with five graphs captured and four dropped the survivor still wrote
+      only into its own private pool.
+
+    So this is not a call a provider has to prove its graphs dead to make.
+    It stays a provider's own rather than something :func:`serve` does for
+    everybody because the measurement above is of one torch version -- on
+    torch 2.7.1 the workspace is not 32 MiB and the probe did not cover it --
+    and genie3, which runs that version and can be told to keep its graphs,
+    therefore still skips the call when it has been.
     """
     # The one function here that touches the model's stack rather than the
     # standard library, and it imports inside the call so that the module's

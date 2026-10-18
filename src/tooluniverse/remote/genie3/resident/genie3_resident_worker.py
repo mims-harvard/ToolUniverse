@@ -1061,8 +1061,13 @@ def _design(req: dict) -> dict:
     # every request left torch holding a 32 MiB cuBLAS workspace for a stream
     # nothing would use again: 0.040 GiB a request, and the wall time climbed
     # with it (6.7 s by the eighth request against 2.2 s flat once released).
-    # NOT when the graphs are kept: a held graph captured those cuBLAS calls
-    # and would replay against a freed workspace.
+    # NOT when the graphs are kept -- though not for the reason first given
+    # here. A held graph replaying against a freed workspace was measured on
+    # torch 2.13 and does not happen: the workspace a capture allocates lives
+    # in that graph's private memory pool, which no ordinary allocation is
+    # handed (see `release_cublas_workspaces`). This provider pins 2.7.1,
+    # where the workspace is not even 32 MiB and the measurement does not
+    # reach, so the guard stays.
     if not KEEP_GRAPHS:
         freed = WB.release_cublas_workspaces()
         if freed:

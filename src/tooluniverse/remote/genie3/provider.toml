@@ -158,9 +158,14 @@ Proved causally rather than inferred from the size:
 per-request increment became exactly 8 MiB.
 
 The fix is `WB.release_cublas_workspaces()` at the end of `_design`, and it
-is NOT run when `GENIE3_RESIDENT_KEEP_GRAPHS=1`: a held graph captured those
-cuBLAS calls and would replay against a freed workspace, which is a wrong
-answer rather than a crash.
+is NOT run when `GENIE3_RESIDENT_KEEP_GRAPHS=1`. The reason given for that
+guard -- a held graph replaying against a freed workspace -- was later
+measured and did not hold: the workspace a capture allocates lives in that
+graph's private memory pool, which no ordinary allocation is handed, and the
+bytes are write-before-read scratch a replay cannot read stale. The guard
+stays anyway, because that measurement is of torch 2.13 and this provider
+pins 2.7.1, where the workspace is not even the same size. See
+`release_cublas_workspaces` for what was checked and how.
 
 ACCEPTANCE AFTER THE FIX, 2026-10-17: 12/12 answered, every one
 produced=yes. Twelve consecutive identical requests, peak reserved:
