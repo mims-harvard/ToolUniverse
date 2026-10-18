@@ -10,6 +10,12 @@ Different weights or soluble/vanilla checkpoints of one architecture are not ind
 
 For requests to run every relevant model, enumerate applicability and coverage, then run feasible models in stages. Mark unavailable, licensed, memory-limited or inapplicable models. Do not call a monomer model a complex validator to fill the matrix.
 
+## Reuse completed requests before queueing
+
+Compare semantic request identity: exact sequences and component stoichiometry, construct/terminal state, coordinate and MSA/template content hashes, model family/version/weights, seeds, samples and scientific parameters. Filenames and job labels are not scientific identity. Reuse a matching request only after checking its exit state and required artifact counts, identities and hashes; retain both positive and negative results. A matching input with partial outputs needs recovery of missing stages, not a claim of completion. A changed preparation or parser invalidates dependent analyses without necessarily requiring another structure prediction.
+
+A queue admission deadline is a resource decision. If it expires before a model starts, report **not started / queue expired**, with zero model calls. Do not report it as running, a prediction failure or a biological negative. Keep the last completed checkpoint and the missing work explicit.
+
 ## Observe usable memory
 
 Inspect current device allocatable/free memory, host available/free memory, other processes and disk space. Unified-memory systems may have high host available RAM while CUDA allocations fail. Hardware totals or `nvidia-smi` alone may not provide admission evidence.

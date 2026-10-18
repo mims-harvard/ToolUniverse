@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2879 scientific tools.
+Type-safe Python interface to 2880 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -2145,6 +2145,7 @@ from .PRIDE_get_projects_for_protein import PRIDE_get_projects_for_protein
 from .PRIDE_search_proteomics import PRIDE_search_proteomics
 from .PROPKA_compare_partner_pka import PROPKA_compare_partner_pka
 from .PROPKA_predict_pka import PROPKA_predict_pka
+from .Protein_calculate_pH_linkage import Protein_calculate_pH_linkage
 from .PROSITE_get_entry import PROSITE_get_entry
 from .PROSITE_scan_sequence import PROSITE_scan_sequence
 from .PROSITE_search import PROSITE_search
@@ -5166,6 +5167,7 @@ __all__ = [
     "PRIDE_search_proteomics",
     "PROPKA_compare_partner_pka",
     "PROPKA_predict_pka",
+    "Protein_calculate_pH_linkage",
     "PROSITE_get_entry",
     "PROSITE_scan_sequence",
     "PROSITE_search",

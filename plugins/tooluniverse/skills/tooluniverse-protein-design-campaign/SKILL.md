@@ -20,9 +20,10 @@ For competitions, verify the live challenge, account track, deadlines, novelty d
 
 1. Resolve execution or input defects before generating more designs. Missing atoms, misidentified glycans or incomplete pKa inventories invalidate downstream scores.
 2. Test known positive controls through the **same preparation and scoring pipeline**. If a known binder fails, diagnose the pipeline before treating the cutoff as a candidate veto. Keep the original result and any revised criterion separate.
-3. Spend compute on distinct uncertainty: foldability, complex pose, receptor/glycan compatibility, protonation mechanism, or cross-species compatibility. More seeds assess sampling but do not supply another model family.
-4. When models disagree, compare constructs, component retention, protonation conventions and coordinate preparation. Do not average unrelated units into an apparent consensus.
-5. Keep an experimental route visible: matched SPR/BLI or an equivalent binding assay at the specified pHs, with receptor species and construct controls. Computation cannot establish an assay detection threshold.
+3. Before attributing a parent/mutant difference to sequence, re-prepare both unchanged native poses with the same hydrogenation, force field and restraints. Compare this preparation effect with the mutation effect. See the structure reference.
+4. Spend compute on distinct uncertainty: foldability, complex pose, receptor/glycan compatibility, protonation mechanism, or cross-species compatibility. More seeds assess sampling but do not supply another model family.
+5. When models disagree, compare constructs, component retention, protonation conventions and coordinate preparation. Do not average unrelated units into an apparent consensus.
+6. Keep an experimental route visible: matched SPR/BLI or an equivalent binding assay at the specified pHs, with receptor species and construct controls. Computation cannot establish an assay detection threshold.
 
 Use [structure-validation.md](references/structure-validation.md) for identity mapping, sidechains, glycans and controls. Read [ph-selectivity.md](references/ph-selectivity.md) for conditional binding. Read [compute-and-provenance.md](references/compute-and-provenance.md) before restarting failed jobs or scaling model coverage.
 
@@ -67,4 +68,4 @@ Supply limits, class values and `--paired-classes` chain conventions from the ac
 - Promoted candidates have exact sequences and traceable rationale, with unsupported objectives labeled unverified.
 - Controls, incomplete inventories, disagreement, failed jobs and superseded scores remain visible.
 - Only intended data enter the reviewed package; required human review is actual, not inferred from AI work.
-- Submission success has a portal receipt and verified candidate count; an upload, preview or click alone is insufficient.
+- Submission success has a portal receipt, verified count, and persisted names, exact sequences/order and methodology matching the reviewed package; an upload, preview or click alone is insufficient.
