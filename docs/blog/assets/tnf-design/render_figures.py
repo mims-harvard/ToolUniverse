@@ -16,6 +16,7 @@ import matplotlib as mpl
 mpl.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyBboxPatch, FancyArrowPatch
+from matplotlib.lines import Line2D
 
 ROOT = Path(__file__).resolve().parent
 mpl.rcParams.update(
@@ -138,8 +139,18 @@ def sensitivity(qa_scripts):
         fontsize=8,
         color="#506176",
     )
-    fig.text(0.58, 0.79, "━ Original", color="#77818E", fontsize=9)
-    fig.text(0.75, 0.79, "━ Re-prepared", color="#1E7086", fontsize=9)
+    fig.legend(
+        handles=[
+            Line2D([0], [0], color="#9AA3AF", lw=3, label="Original"),
+            Line2D([0], [0], color="#1E7086", lw=3, label="Re-prepared"),
+        ],
+        loc="upper right",
+        bbox_to_anchor=(0.965, 0.835),
+        ncol=2,
+        frameon=False,
+        fontsize=9,
+        handlelength=2,
+    )
     export(fig, "reference_sensitivity", qa_scripts)
 
 
