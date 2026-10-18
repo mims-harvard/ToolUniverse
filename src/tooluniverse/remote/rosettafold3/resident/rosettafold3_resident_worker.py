@@ -461,16 +461,16 @@ def _predict_one(req: dict) -> dict:
         # folds, with no plateau, and a clear at the end giving back exactly
         # 7 x 32 MiB. Released, the same five folds hold flat.
         #
-        # Safe although this provider's `fast` mode DOES keep captured graphs
-        # across folds -- up to FPF_RF3_TG_MAX pairformer-stack graphs in the
-        # FPF add-on's cache, replayed on later requests. A workspace that a
-        # capture allocates belongs to that graph's private memory pool, so
-        # clearing the map hands the block back to the pool and nothing but a
-        # capture into the same pool can draw from it; see
-        # `release_cublas_workspaces` for what was measured.
-        freed = WB.release_cublas_workspaces()
-        if freed:
-            body["cublas_workspaces_freed_mib"] = round(freed / 2**20, 1)
+        # `WB.serve` gives them back after every request now and reports the
+        # figure as `cublas_workspaces_freed_mib`; this worker briefly did it
+        # itself. It is safe here although this provider's `fast` mode DOES
+        # keep captured graphs across folds -- up to FPF_RF3_TG_MAX
+        # pairformer-stack graphs in the FPF add-on's cache, replayed on later
+        # requests. A workspace a capture allocates belongs to that graph's
+        # private memory pool, so clearing hands the block back to a pool
+        # nothing but a capture into the same pool draws from; see
+        # `release_cublas_workspaces` for what was measured, on this torch and
+        # on the other seven in the fleet.
         body["peak_reserved_gib"] = round(torch.cuda.max_memory_reserved() / 2**30, 2)
     return body
 

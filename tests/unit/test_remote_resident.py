@@ -2711,54 +2711,149 @@ class TestCublasWorkspacesAreReleased:
         base = self._base()
         assert base.release_cublas_workspaces() >= 0
 
-    def test_the_providers_that_capture_a_graph_per_request_release(self):
-        for slug in ("chai1", "genie3", "rosettafold3"):
-            src = self._worker_src(slug)
-            assert "WB.release_cublas_workspaces()" in src, (
-                f"{slug} captures a CUDA graph per request on a fresh side "
-                f"stream, which strands a cuBLAS workspace every time"
+    @staticmethod
+    def _one_request(base, payload, **serve_kwargs):
+        """Drive a real `serve` over a real socket and return (reply, calls).
+
+        A source grep would only say the words are there. What matters is
+        that a provider which does nothing itself still gets the release,
+        because that is the whole point of moving it off the providers.
+        """
+        import socket as _socket
+        import tempfile
+        import threading
+
+        freed = serve_kwargs.pop("freed", 32 * 2**20)
+        calls = []
+
+        def fake_release():
+            calls.append(1)
+            return freed
+
+        base.release_cublas_workspaces = fake_release
+        P = base.protocol()
+        with tempfile.TemporaryDirectory() as d:
+            sock_path = str(Path(d) / "s.sock")
+            t = threading.Thread(
+                target=base.serve,
+                kwargs=dict(
+                    slug="probe",
+                    socket_path=sock_path,
+                    on_predict=lambda req: {"echo": req.get("x")},
+                    log=lambda msg: None,
+                    **serve_kwargs,
+                ),
+                daemon=True,
             )
+            t.start()
+            for _ in range(200):
+                if os.path.exists(sock_path):
+                    break
+                time.sleep(0.02)
+            c = _socket.socket(_socket.AF_UNIX, _socket.SOCK_STREAM)
+            c.connect(sock_path)
+            buf = bytearray()
+            P.send_line(c, payload)
+            reply = P.recv_line(c, buf)
+            P.send_line(c, {"op": P.OP_SHUTDOWN})
+            P.recv_line(c, buf)
+            c.close()
+            t.join(timeout=10)
+        return reply, calls
 
-    def test_rosettafold3_releases_although_it_keeps_graphs_across_folds(self):
-        """The provider that made the old "no graph may outlive the request"
-        rule testable, because it breaks that rule and is still safe.
+    def test_serve_releases_for_a_provider_that_does_nothing_itself(self):
+        base = self._base()
+        reply, calls = self._one_request(base, {"op": "predict", "x": 7})
+        assert reply["ok"] and reply["result"]["echo"] == 7
+        assert len(calls) == 1, "serve did not release after the prediction"
+        assert reply["result"]["cublas_workspaces_freed_mib"] == 32.0
 
-        `fast` mode keeps up to FPF_RF3_TG_MAX pairformer-stack graphs in the
-        FPF add-on's cache and replays them on later folds. The release is
-        unguarded anyway: a workspace a capture allocates lives in that
-        graph's private memory pool, so clearing hands it back to a pool no
-        ordinary allocation draws from. A guard appearing here later would
-        mean somebody reinstated the rule without reading the measurement.
-        """
-        src = self._worker_src("rosettafold3")
-        line = next(
-            ln for ln in src.splitlines() if "WB.release_cublas_workspaces()" in ln
+    def test_serve_does_not_release_on_a_ping(self):
+        base = self._base()
+        _, calls = self._one_request(base, {"op": "ping"})
+        assert calls == [], "a ping is not a request that stranded anything"
+
+    def test_a_provider_can_turn_it_off_and_so_can_the_environment(self):
+        """Both ways out exist so the leak stays reproducible on a provider
+        that no longer has it -- which is how the fix was checked."""
+        base = self._base()
+        _, calls = self._one_request(
+            base, {"op": "predict", "x": 1}, release_cublas=False
         )
-        # `if DEVICE == "cuda":` is the only thing it may sit under, so its
-        # body's indent is the deepest the call may have. Anything further in
-        # is a second condition, which is the thing this test is about.
-        assert len(line) - len(line.lstrip()) == 8, (
-            "the release is nested under a second condition; rosettafold3 "
-            "keeps graphs across folds on purpose and releases anyway"
-        )
+        assert calls == []
 
-    def test_genie3_does_not_release_while_it_is_holding_its_graphs(self):
-        """The conservative case, and it is reachable by an environment variable.
+        base = self._base()
+        os.environ[base.NO_CUBLAS_RELEASE_ENV] = "1"
+        try:
+            _, calls = self._one_request(base, {"op": "predict", "x": 1})
+        finally:
+            os.environ.pop(base.NO_CUBLAS_RELEASE_ENV, None)
+        assert calls == []
 
-        The held-graph hazard this guard was written for turned out not to
-        exist on the torch the measurement was taken on (2.13: the workspace
-        a capture allocates is in that graph's private memory pool). genie3
-        pins 2.7.1, which that measurement does not reach, so under
-        `GENIE3_RESIDENT_KEEP_GRAPHS=1` it still declines to clear.
-        """
-        src = self._worker_src("genie3")
-        call = src.index("WB.release_cublas_workspaces()")
-        guard = src.rindex("if not KEEP_GRAPHS:", 0, call)
-        between = src[guard:call]
-        assert between.count("\n") <= 3, (
-            "the release must sit directly under `if not KEEP_GRAPHS:` -- "
-            "this provider's torch is not the one the private-pool "
-            "measurement was taken on"
+    def test_a_request_that_raised_still_releases(self):
+        """A fold can get far enough to capture a graph and abandon its
+        stream and then raise, and a worker answering a run of bad requests
+        is where that adds up unnoticed."""
+        import socket as _socket
+        import tempfile
+        import threading
+
+        base = self._base()
+        calls = []
+        base.release_cublas_workspaces = lambda: (calls.append(1), 0)[1]
+        P = base.protocol()
+
+        def boom(req):
+            raise RuntimeError("the fold failed after it captured")
+
+        with tempfile.TemporaryDirectory() as d:
+            sock_path = str(Path(d) / "s.sock")
+            t = threading.Thread(
+                target=base.serve,
+                kwargs=dict(
+                    slug="probe",
+                    socket_path=sock_path,
+                    on_predict=boom,
+                    log=lambda msg: None,
+                ),
+                daemon=True,
+            )
+            t.start()
+            for _ in range(200):
+                if os.path.exists(sock_path):
+                    break
+                time.sleep(0.02)
+            c = _socket.socket(_socket.AF_UNIX, _socket.SOCK_STREAM)
+            c.connect(sock_path)
+            buf = bytearray()
+            P.send_line(c, {"op": "predict"})
+            reply = P.recv_line(c, buf)
+            P.send_line(c, {"op": P.OP_SHUTDOWN})
+            P.recv_line(c, buf)
+            c.close()
+            t.join(timeout=10)
+        assert reply["ok"] is False and "the fold failed" in reply["error"]
+        assert calls == [1], "the failure path skipped the release"
+
+    def test_nothing_freed_adds_no_field(self):
+        """Most requests of most providers strand nothing, and a 0.0 in every
+        reply would read as a measurement rather than as silence."""
+        base = self._base()
+        reply, calls = self._one_request(base, {"op": "predict", "x": 1}, freed=0)
+        assert calls == [1]
+        assert "cublas_workspaces_freed_mib" not in reply["result"]
+
+    def test_no_provider_makes_the_call_itself_any_more(self):
+        """Two mechanisms doing the same thing is how one of them rots."""
+        root = Path(__file__).resolve().parents[2] / "src/tooluniverse/remote"
+        offenders = [
+            str(p.relative_to(root))
+            for p in root.rglob("*_resident_worker.py")
+            if "WB.release_cublas_workspaces()" in p.read_text()
+        ]
+        assert offenders == [], (
+            f"{offenders} still release on their own; serve does it for "
+            f"everybody, and a second call site would hide the first"
         )
 
     def test_genie3_reports_a_per_request_peak_not_a_session_mark(self):

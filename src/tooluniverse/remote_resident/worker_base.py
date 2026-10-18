@@ -42,6 +42,11 @@ from typing import Any, Callable, Dict, Optional
 PROTOCOL_ENV = "TOOLUNIVERSE_REMOTE_PROTOCOL"
 ORPHAN_GRACE_ENV = "TOOLUNIVERSE_RESIDENT_ORPHAN_GRACE_S"
 DEFAULT_ORPHAN_GRACE_S = 120.0
+# Set to "1" to stop :func:`serve` releasing cuBLAS workspaces after each
+# request. Nothing in the fleet needs it; it is here so that the leak can be
+# reproduced on a provider that no longer has it, which is how the fix was
+# checked in the first place and how the next one will be.
+NO_CUBLAS_RELEASE_ENV = "TOOLUNIVERSE_RESIDENT_NO_CUBLAS_RELEASE"
 
 
 def _load_by_path(name: str, path: Path):
@@ -91,33 +96,45 @@ def release_cublas_workspaces() -> int:
 
     A HELD GRAPH, MEASURED RATHER THAN FEARED. This used to say the call was
     safe only where no captured graph outlives the request, on the reasoning
-    that a graph which captured cuBLAS calls holds the workspace pointer. The
-    reasoning was wrong twice over, and `rosettafold3` -- whose `fast` mode
-    keeps pairformer-stack graphs across folds -- is why it got tested
-    (torch 2.13.0+cu130, the stack `chai1` and `rosettafold3` run):
+    that a graph which captured cuBLAS calls holds the workspace pointer, and
+    on that reasoning it was a call each provider had to make for itself.
+    `rosettafold3` is why it finally got tested rather than repeated: its
+    `fast` mode keeps pairformer-stack graphs across folds, so it could not
+    use the argument. The reasoning is wrong twice over.
 
     * A replay cannot read a freed workspace's contents, because the
-      workspace is scratch that each kernel writes before it reads. Poisoning
-      it and replaying returns the same answer to the bit, every time, so
-      "the output did not change" was never evidence of anything either.
+      workspace is scratch that each kernel writes before it reads.
+      ``cudaMemset`` it to 0xAB and the replay returns the same bits, so "the
+      output did not change" was never evidence of anything either.
     * The failure that WOULD be real is the other direction -- the replay
       still writes to that address, and writing over a tensor the allocator
       has since handed to someone else corrupts it. It does not happen: a
-      workspace allocated during a capture belongs to that graph's private
-      memory pool, not the general one, so clearing the map hands the block
-      back to a pool only a capture into the same pool can draw from. Checked
-      by reading the bytes back to confirm a replay does write there, then
-      allocating 34 x 32 MiB on the default stream and on new ones: none
-      landed on that address, twenty cleared replays scribbled on nothing,
-      and with five graphs captured and four dropped the survivor still wrote
-      only into its own private pool.
+      workspace allocated during a capture belongs to that graph's PRIVATE
+      memory pool (``segment_pool_id`` (1, 0), not (0, 0)), so clearing the
+      map hands the block back to a pool only a capture into the same pool
+      draws from.
 
-    So this is not a call a provider has to prove its graphs dead to make.
-    It stays a provider's own rather than something :func:`serve` does for
-    everybody because the measurement above is of one torch version -- on
-    torch 2.7.1 the workspace is not 32 MiB and the probe did not cover it --
-    and genie3, which runs that version and can be told to keep its graphs,
-    therefore still skips the call when it has been.
+    Checked on every torch in this fleet -- 2.7.0+cu128, 2.7.1+cu128,
+    2.8.0+cu129, 2.10.0+cu128, 2.11.0+cu128, 2.11.0+cu130, 2.12.0+cu130,
+    2.13.0+cu130 -- and on each one with a POSITIVE CONTROL first, because
+    without one the test is vacuous and two of the first three written here
+    were. The control reads the workspace bytes back to show that this build's
+    replay does write to them; which GEMM does that is a function of the
+    cuBLAS version and has to be searched for per build (fp32 ``mm`` works
+    everywhere here; fp16 writes on 13.0 and not on 12.8, and a square
+    ``1024**3`` writes on neither). With the control passing, 34 workspaces'
+    worth of live tensors on the default stream and on fresh ones never
+    landed on the address, twenty cleared replays scribbled on nothing, and
+    with five graphs captured and four dropped the survivor still wrote only
+    into its own private pool. The workspace is 32 MiB on torch >= 2.12 and
+    8.12 MiB before it, and on the older builds it sits INSIDE a 20 MiB
+    segment -- a probe that filters segments by size rather than blocks finds
+    nothing there and proves nothing, which is how the first pass missed it.
+
+    So this is not a call a provider has to prove its graphs dead to make,
+    and it is no longer a call a provider makes at all: :func:`serve` does it
+    after every request, for everybody. See ``NO_CUBLAS_RELEASE_ENV`` for the
+    way back out.
     """
     # The one function here that touches the model's stack rather than the
     # standard library, and it imports inside the call so that the module's
@@ -143,6 +160,7 @@ def serve(
     on_reset: Optional[Callable[[], None]] = None,
     log: Optional[Callable[[str], None]] = None,
     orphan_grace_s: Optional[float] = None,
+    release_cublas: bool = True,
 ) -> int:
     """Answer requests on ``socket_path`` until told to stop.
 
@@ -155,6 +173,12 @@ def serve(
     One request at a time, by construction. Two inside one CUDA context would
     interleave their allocations and make an out-of-memory attributable to
     neither, so this loop accepts and answers serially and callers queue.
+
+    After each prediction it calls :func:`release_cublas_workspaces`, which is
+    where the reasoning for doing that for everybody is written down. A
+    provider that wants it off passes ``release_cublas=False``; so does
+    ``TOOLUNIVERSE_RESIDENT_NO_CUBLAS_RELEASE=1``, which exists to reproduce
+    the leak rather than to live in a deployment.
     """
     P = protocol()
     say = log or (lambda msg: print(f"[{slug}-resident] {msg}", flush=True))
@@ -165,6 +189,7 @@ def serve(
         if orphan_grace_s is not None
         else float(os.environ.get(ORPHAN_GRACE_ENV, DEFAULT_ORPHAN_GRACE_S))
     )
+    release = release_cublas and os.environ.get(NO_CUBLAS_RELEASE_ENV) != "1"
 
     def handle(req: Dict[str, Any]) -> Dict[str, Any]:
         op = req.get("op")
@@ -184,7 +209,28 @@ def serve(
             state["last_request"] = time.time()
             if on_reset is not None:
                 on_reset()
-            return {"ok": True, "result": on_predict(req)}
+            result = None
+            try:
+                result = on_predict(req)
+            finally:
+                # After on_predict rather than inside it, which is the same
+                # moment: the providers that used to do this themselves did
+                # it on their last line. It does not disturb the peak they
+                # report either -- clearing returns allocated bytes, and the
+                # allocator goes on caching the blocks, so memory_reserved
+                # does not move.
+                #
+                # In a `finally` because a request that RAISED can have got
+                # far enough to capture a graph and abandon its stream, and a
+                # worker answering a run of bad requests is exactly where
+                # that would add up unnoticed.
+                if release:
+                    freed = release_cublas_workspaces()
+                    if freed and isinstance(result, dict):
+                        result.setdefault(
+                            "cublas_workspaces_freed_mib", round(freed / 2**20, 1)
+                        )
+            return {"ok": True, "result": result}
         return {"ok": False, "error": f"unknown op {op!r}", "reason": "unknown_op"}
 
     def orphan_watchdog() -> None:
@@ -271,4 +317,5 @@ __all__ = [
     "release_cublas_workspaces",
     "PROTOCOL_ENV",
     "ORPHAN_GRACE_ENV",
+    "NO_CUBLAS_RELEASE_ENV",
 ]

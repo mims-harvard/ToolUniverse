@@ -179,13 +179,12 @@ def _predict_one(req: dict) -> dict:
         # The kit captures a CUDA graph per fold and warms it up on a fresh
         # side stream (chai1_eager/hoist.py step_graphed), which leaves torch
         # holding a 32 MiB cuBLAS workspace for a stream nothing will use
-        # again. Unreleased, that was 0.039 GiB a fold forever -- the whole
-        # declared budget in about 140 folds. The graph is captured and
-        # replayed inside run_inference, which has returned by here, so no
-        # replay can reach the workspace being freed.
-        freed = WB.release_cublas_workspaces()
-        if freed:
-            body["cublas_workspaces_freed_mib"] = round(freed / 2**20, 1)
+        # again -- 0.039 GiB a fold forever, the whole declared budget in
+        # about 140 folds. `WB.serve` gives those back after every request
+        # now, for every provider, and puts the figure in
+        # `cublas_workspaces_freed_mib`; this worker used to do it on its own
+        # last line. See `release_cublas_workspaces` for why it is safe to do
+        # for everybody.
         body["peak_reserved_gib"] = round(torch.cuda.max_memory_reserved() / 2**30, 2)
     return body
 

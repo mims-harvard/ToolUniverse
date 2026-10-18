@@ -76,17 +76,17 @@ with the leak -- a control ladder with the release disabled reproduces it.
 # shrinks the workspace to 8 MiB, and the per-request increment became
 # exactly 8 MiB.
 #
-# THE FIX is `WB.release_cublas_workspaces()` at the end of `_predict_one`.
-# Nothing here has to outlive anything for that to be safe, though this
+# THE FIX is `release_cublas_workspaces()`, which `WB.serve` now calls after
+# every request for every provider; this worker made the call itself for a
+# day. Nothing here has to outlive anything for that to be safe, though this
 # comment first claimed it did. The claim was that a graph still alive at the
 # clear would replay against a freed workspace and give a wrong answer; both
-# halves are wrong, and `release_cublas_workspaces` carries the measurements.
+# halves are wrong, and `release_cublas_workspaces` carries the measurements
+# -- on all eight torch builds in this fleet, each with a positive control.
 # A replay cannot read a freed workspace, because the workspace is scratch
 # every kernel writes before it reads; and the write it does make lands in
 # the graph's own private memory pool, which no ordinary allocation is ever
-# handed. The call stays a provider's own rather than the serve loop's for a
-# smaller reason: the measurement is of torch 2.13, which is this provider's
-# stack but not every provider's.
+# handed.
 #
 # `genie3` had the same defect from the same cause at the same 32 MiB, from
 # its own kit's side stream, and a sweep of all 26 GPU providers on

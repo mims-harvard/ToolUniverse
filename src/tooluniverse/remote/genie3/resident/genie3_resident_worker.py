@@ -1058,20 +1058,16 @@ def _design(req: dict) -> dict:
             f"pass is incomplete; read the worker log for the kit's own lines"
         )
     # The kit warms up each capture on a fresh side stream (g3fast.py), so
-    # every request left torch holding a 32 MiB cuBLAS workspace for a stream
-    # nothing would use again: 0.040 GiB a request, and the wall time climbed
-    # with it (6.7 s by the eighth request against 2.2 s flat once released).
-    # NOT when the graphs are kept -- though not for the reason first given
-    # here. A held graph replaying against a freed workspace was measured on
-    # torch 2.13 and does not happen: the workspace a capture allocates lives
-    # in that graph's private memory pool, which no ordinary allocation is
-    # handed (see `release_cublas_workspaces`). This provider pins 2.7.1,
-    # where the workspace is not even 32 MiB and the measurement does not
-    # reach, so the guard stays.
-    if not KEEP_GRAPHS:
-        freed = WB.release_cublas_workspaces()
-        if freed:
-            body["cublas_workspaces_freed_mib"] = round(freed / 2**20, 1)
+    # every request left torch holding a cuBLAS workspace for a stream nothing
+    # would use again: 0.040 GiB a request, and the wall time climbed with it
+    # (6.7 s by the eighth request against 2.2 s flat once released).
+    # `WB.serve` gives them back after every request now, including under
+    # KEEP_GRAPHS, which this worker used to refuse. The refusal was for a
+    # hazard that has since been measured on this provider's own torch
+    # (2.7.1+cu128, where the workspace is 8.12 MiB and not 32) and does not
+    # exist: a workspace a capture allocates belongs to that graph's private
+    # memory pool, so clearing hands it back to a pool no ordinary allocation
+    # draws from, held graph or not. See `release_cublas_workspaces`.
     body["peak_reserved_gib"] = round(torch.cuda.max_memory_reserved() / 2**30, 2)
     return body
 

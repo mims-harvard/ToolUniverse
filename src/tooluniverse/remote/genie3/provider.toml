@@ -157,15 +157,27 @@ Proved causally rather than inferred from the size:
 `CUBLAS_WORKSPACE_CONFIG=:4096:2` shrinks the workspace to 8 MiB and the
 per-request increment became exactly 8 MiB.
 
-The fix is `WB.release_cublas_workspaces()` at the end of `_design`, and it
-is NOT run when `GENIE3_RESIDENT_KEEP_GRAPHS=1`. The reason given for that
-guard -- a held graph replaying against a freed workspace -- was later
-measured and did not hold: the workspace a capture allocates lives in that
-graph's private memory pool, which no ordinary allocation is handed, and the
-bytes are write-before-read scratch a replay cannot read stale. The guard
-stays anyway, because that measurement is of torch 2.13 and this provider
-pins 2.7.1, where the workspace is not even the same size. See
-`release_cublas_workspaces` for what was checked and how.
+The fix is `release_cublas_workspaces()`, which `WB.serve` now calls after
+every request for every provider. This worker made the call itself for a
+day, and skipped it under `GENIE3_RESIDENT_KEEP_GRAPHS=1`; that guard is
+gone. The reason given for it -- a held graph replaying against a freed
+workspace -- was measured on this provider's own torch (2.7.1+cu128, where
+the workspace is 8.12 MiB rather than 32) and does not hold: the workspace a
+capture allocates lives in that graph's private memory pool, which no
+ordinary allocation is handed, and the bytes are write-before-read scratch a
+replay cannot read stale. So `KEEP_GRAPHS` now releases too. See
+`release_cublas_workspaces` for what was checked and how, including why a
+test of this without a positive control proves nothing.
+
+Re-run 2026-10-18 with the release in `serve` rather than here, both ways:
+
+    default        8/8, peak 0.25 -> 0.28 flat, 2.0-2.2 s a request
+    KEEP_GRAPHS=1  8/8, peak 0.25 -> 0.21 flat, 1.5-1.7 s a request
+
+KEEP_GRAPHS is now the cheaper of the two on both axes, which it was not
+while it was the one mode that declined to give the workspaces back: it
+saves the re-capture AND no longer pays for a stranded workspace a
+request.
 
 ACCEPTANCE AFTER THE FIX, 2026-10-17: 12/12 answered, every one
 produced=yes. Twelve consecutive identical requests, peak reserved:

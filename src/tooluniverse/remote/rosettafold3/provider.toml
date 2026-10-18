@@ -44,8 +44,8 @@
 #     allocated 3351.7 -> 3383.7 -> 3415.7 -> 3447.7 -> 3479.7 MiB
 #     one clear at the end gave back 224.0 MiB = 7 x 32
 #
-# With `WB.release_cublas_workspaces()` at the end of `_predict_one`, the
-# same five folds hold allocated flat at 3255.7 MiB and the stream count
+# Released -- `WB.serve` does it after every request, for every provider --
+# the same five folds hold allocated flat at 3255.7 MiB and the stream count
 # stops growing. The first pass's rising peak ladder in `verified_on` was
 # this, unrecognised.
 #
@@ -54,8 +54,10 @@
 # graphs across folds and replays them, so a captured graph does outlive the
 # request. It releases anyway, and the reason is measured rather than
 # reasoned -- a workspace allocated during a capture belongs to that graph's
-# private memory pool, which no ordinary allocation is ever handed. See
-# `release_cublas_workspaces` in remote_resident/worker_base.py, which
+# private memory pool, which no ordinary allocation is ever handed. That is
+# also why the release is no longer a provider's own call: this provider is
+# the one that forced the question, and the answer applies to all of them.
+# See `release_cublas_workspaces` in remote_resident/worker_base.py, which
 # carries the experiment and the correction to what that docstring used to
 # claim.
 
