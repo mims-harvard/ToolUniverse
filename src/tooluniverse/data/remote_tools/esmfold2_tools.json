@@ -1,0 +1,115 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "esmfold2_fold",
+    "description": "Predict a protein (or protein complex) structure with ESMFold2 directly from sequence -- no MSA and no template search. Give one chain for a monomer or several for a complex. Returns pTM/ipTM per sampled structure; the mmCIF text itself is opt-in.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "chains": {
+          "type": "array",
+          "description": "Protein chains of one complex. Each item is either a bare sequence string or an object with 'sequence' and an optional 'id'.",
+          "minItems": 1,
+          "maxItems": 8,
+          "items": {
+            "type": "object",
+            "properties": {
+              "sequence": {
+                "type": "string",
+                "minLength": 1
+              },
+              "id": {
+                "type": "string",
+                "description": "Chain label; defaults to A, B, C..."
+              }
+            },
+            "required": [
+              "sequence"
+            ]
+          }
+        },
+        "seed": {
+          "type": "integer",
+          "description": "Random seed; the same seed reproduces the fold.",
+          "default": 0,
+          "minimum": 0
+        },
+        "num_diffusion_samples": {
+          "type": "integer",
+          "description": "Structures to sample (default 1). Each is scored separately, so >1 is how to compare conformations.",
+          "default": 1,
+          "minimum": 1,
+          "maximum": 5
+        },
+        "return_structures": {
+          "type": "boolean",
+          "description": "Return the mmCIF text as well as the scores (default false: megabytes).",
+          "default": false
+        }
+      },
+      "required": [
+        "chains"
+      ],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "variant": {
+          "type": "string"
+        },
+        "n_structures": {
+          "type": "integer"
+        },
+        "scores": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "structures": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "structures_note": {
+          "type": "string"
+        },
+        "timing": {
+          "type": "object"
+        },
+        "weights_held_by": {
+          "type": "string"
+        },
+        "kit_mode": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "ESMFold2FoldTool",
+      "url": "https://github.com/anthropics/uplifting-biomolecular-modeling",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/esmfold2",
+      "mcp_tool_name": "esmfold2_fold"
+    },
+    "test_examples": [
+      {
+        "chains": [
+          {
+            "sequence": "KKAVINGEQIRSISDLHQTLKKELALPEYYGENLDALWDALTGWVEYPLVLEWRQFEQSKQLTENGAESVLQVFREAKAEGADITIILS"
+          }
+        ],
+        "seed": 0
+      }
+    ]
+  }
+]

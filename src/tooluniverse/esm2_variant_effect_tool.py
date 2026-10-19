@@ -30,6 +30,8 @@ with a ``status`` key.
 """
 
 import math
+import os
+import threading
 from typing import Any, Dict, Optional
 
 from .base_tool import BaseTool
@@ -45,6 +47,91 @@ _VOCAB_TOP_K = 33
 _MAX_CONTEXT = 1022
 # The 20 standard amino acids — the only residues a missense call substitutes.
 _STANDARD_AA = set("ACDEFGHIKLMNPQRSTVWY")
+
+
+# Loading a 650M-parameter model costs seconds and ~2.5 GB of RAM, so the
+# local path keeps one instance per model id for the life of the process.
+_local_models: Dict[str, Any] = {}
+_local_lock = threading.Lock()
+
+# Set once the hosted provider has refused on authentication grounds, so the
+# rest of the process goes straight to local inference.
+_hf_refused = False
+
+
+def _looks_like_auth_failure(reply: Dict[str, Any]) -> bool:
+    """True when the remote refusal is one that a local run would not hit."""
+    text = f"{reply.get('error', '')} {reply.get('detail', '')}".lower()
+    return any(
+        token in text
+        for token in ("unauthorized", "401", "403", "forbidden", "token", "api key")
+    )
+
+
+def _fill_mask_local(model_id: str, masked: str, top_k: int) -> Dict[str, Any]:
+    """Run ESM-2 fill-mask on this machine, in the hf-inference reply shape.
+
+    HuggingFace's free ``hf-inference`` provider now rejects this model without
+    a token, which broke the premise this tool was written on -- its own
+    description promises "no API key". Rather than demote it to key-only, fall
+    back to running the model locally with transformers, which is already a
+    dependency of the ml extra. The returned shape matches the remote provider
+    exactly so the scoring code above stays unaware of which path ran.
+    """
+    try:
+        import torch
+        from transformers import AutoModelForMaskedLM, AutoTokenizer
+    except ImportError as exc:
+        return {
+            "status": "error",
+            "error": (
+                "ESM-2 needs either a HuggingFace token (set HF_TOKEN) or a local "
+                f"install of transformers+torch to run offline. Neither is "
+                f"available: {exc}. Install with 'pip install tooluniverse[ml]'."
+            ),
+        }
+
+    try:
+        with _local_lock:
+            cached = _local_models.get(model_id)
+            if cached is None:
+                tokenizer = AutoTokenizer.from_pretrained(model_id)
+                model = AutoModelForMaskedLM.from_pretrained(model_id)
+                model.eval()
+                cached = (tokenizer, model)
+                _local_models[model_id] = cached
+        tokenizer, model = cached
+
+        inputs = tokenizer(masked, return_tensors="pt")
+        mask_positions = (inputs["input_ids"] == tokenizer.mask_token_id).nonzero(
+            as_tuple=True
+        )
+        if len(mask_positions[0]) == 0:
+            return {"status": "error", "error": "No mask token survived tokenization."}
+        row, col = int(mask_positions[0][0]), int(mask_positions[1][0])
+
+        with torch.no_grad():
+            logits = model(**inputs).logits
+        probabilities = torch.softmax(logits[row, col], dim=-1)
+        scores, indices = torch.topk(probabilities, min(top_k, probabilities.shape[-1]))
+
+        predictions = [
+            {
+                "token_str": tokenizer.convert_ids_to_tokens(int(idx)),
+                "score": float(score),
+            }
+            for score, idx in zip(scores, indices)
+        ]
+        return {
+            "status": "success",
+            "data": {"predictions": predictions},
+            "metadata": {"provider": "local transformers"},
+        }
+    except Exception as exc:
+        return {
+            "status": "error",
+            "error": f"Local ESM-2 inference failed: {type(exc).__name__}: {exc}",
+        }
 
 
 @register_tool("ESM2VariantEffectTool")
@@ -110,15 +197,43 @@ class ESM2VariantEffectTool(BaseTool):
         )
         model_id = args.get("model_id") or _DEFAULT_MODEL
 
-        fill = self._hf.run(
-            {
-                "operation": "fill_mask",
-                "model_id": model_id,
-                "text": masked,
-                "top_k": _VOCAB_TOP_K,
-                "wait_for_model": bool(args.get("wait_for_model", False)),
-            }
-        )
+        # Try the hosted provider first, and fall back to local inference only
+        # when it refuses for a reason local execution can fix. A "loading"
+        # reply is NOT such a reason -- it means the remote model is warming
+        # up and the caller should retry, so it is propagated unchanged.
+        #
+        # The first auth refusal is remembered for the process: HuggingFace now
+        # requires a token for this model, so without one every call would
+        # otherwise spend a round trip earning the same 401 before going local,
+        # which is wasteful across a batch.
+        global _hf_refused
+        provider = "hf-inference"
+        fill = None
+        if not _hf_refused:
+            fill = self._hf.run(
+                {
+                    "operation": "fill_mask",
+                    "model_id": model_id,
+                    "text": masked,
+                    "top_k": _VOCAB_TOP_K,
+                    "wait_for_model": bool(args.get("wait_for_model", False)),
+                }
+            )
+            if fill.get("status") == "loading":
+                return fill
+            if fill.get("status") != "success":
+                if _looks_like_auth_failure(fill):
+                    _hf_refused = True
+                fill = None
+
+        if fill is None:
+            fill = _fill_mask_local(model_id, masked, _VOCAB_TOP_K)
+            provider = (
+                "local transformers (remote unavailable)"
+                if _hf_refused
+                else "local transformers"
+            )
+
         if fill.get("status") != "success":
             return fill  # propagate the loading/error dict unchanged
 
@@ -158,7 +273,7 @@ class ESM2VariantEffectTool(BaseTool):
             },
             "metadata": {
                 "method": "ESM-2 masked-marginal LLR (Meier et al. 2021)",
-                "source": "HuggingFace hf-inference (no API key required)",
+                "source": provider,
                 "windowed": windowed,
                 "window": window_span,
                 "note": (

@@ -1,0 +1,279 @@
+# ESM C's model environment -- the stack this provider was built against, as
+# `pip freeze --all --exclude-editable` of it.
+#
+# Python 3.12.1, which is the interpreter version the kit's stock/PINS.json
+# pins ("python": "3.12.1") and the one its own lock header describes
+# (python-build-standalone 20240107). torch 2.11.0 from PyPI, which on this
+# machine resolves to torch-2.11.0-cp312-cp312-manylinux_2_28_aarch64.whl and
+# reports itself as 2.11.0+cu130 -- the CUDA 13.0 build the kit's pins name.
+#
+# The fifth distinct stack in this repository and it coexists with none of the
+# others: ESM C pins torch 2.11.0+cu130 on Python 3.12.1 with numpy 2.5.2,
+# ESMFold2 torch 2.13.0+cu130 on Python 3.12.10, Chai-1 torch 2.13.0+cu130 on
+# Python 3.11.5, Boltz-2 torch 2.12.0+cu130 with numpy 1.26.4, Enformer torch
+# 2.13.0 with numpy 2.4.6. One model, one environment, one socket each.
+#
+# CAN THE PINNED TORCH DRIVE THIS CARD? YES. Read off the installed build
+# rather than inferred from the version:
+#
+#   torch 2.11.0+cu130  cuda 13.0
+#   arch_list ['sm_80', 'sm_90', 'sm_100', 'sm_110', 'sm_120']
+#   device NVIDIA GB10, capability (12, 1)
+#
+# sm_120 is binary compatible with sm_121, which is the rule
+# remote_resident/setup.py's _check_torch_targets_this_gpu applies, so the
+# environment step does not refuse torch_arch_unsupported here. The kit itself
+# carries NO prebuilt host objects at all -- a scan of the whole esmc/
+# subtree finds no .so, .a, .o, .cubin or .fatbin -- so kit_foreign_objects,
+# which is what stops Enformer's kit on this architecture, cannot arise. Its
+# one compiled piece, the fused residual+LayerNorm extension, is nvcc'd from
+# kernels.cu by `run.sh install` for the card it sees.
+#
+# Rebuild (an NVIDIA driver >= 580, the CUDA 13.0 toolkit's nvcc on PATH, git,
+# a C++ compiler; network for the index and for github.com):
+#
+#   uv venv --seed --managed-python --python 3.12.1 ~/esmc-venv
+#   export TOOLUNIVERSE_ESMC_PYTHON=~/esmc-venv/bin/python
+#   grep -v -E '^(#|flash_attn|transformer_engine_torch)' requirements.lock \
+#       > /tmp/esmc-base.txt
+#   $TOOLUNIVERSE_ESMC_PYTHON -m pip install --no-deps -r /tmp/esmc-base.txt
+#   # then the two accelerator lines, from source -- see DEVIATION 2:
+#   SPK=$(dirname $TOOLUNIVERSE_ESMC_PYTHON)/../lib/python3.12/site-packages
+#   export CUDA_HOME=/usr/local/cuda PATH=/usr/local/cuda/bin:$PATH
+#   export CPATH=$(find $SPK/nvidia -maxdepth 3 -type d -name include | tr '\n' :)
+#   export LIBRARY_PATH=$(find $SPK/nvidia -maxdepth 3 -type d -name lib | tr '\n' :)
+#   TORCH_CUDA_ARCH_LIST=12.0 MAX_JOBS=6 NVTE_FRAMEWORK=pytorch \
+#       $TOOLUNIVERSE_ESMC_PYTHON -m pip install --no-build-isolation --no-deps \
+#       transformer_engine_torch==2.15.0
+#   cd <kit>/esmc && PATH=$(dirname $TOOLUNIVERSE_ESMC_PYTHON):$PATH \
+#       bash run.sh install
+#
+# --no-deps is deliberate: the list is complete, and letting a resolver
+# re-derive it is how a stack stops being the one that was measured. The kit
+# (esmc_opt) installs editable on top and is not here -- `--exclude-editable`
+# leaves it out by construction.
+#
+# NOT `uv venv`? It IS uv venv here, and that was checked rather than assumed.
+# uv seeds `_virtualenv.pth`, which puts a class named `_Finder` on
+# sys.meta_path, and OpenFold3's kit reads any such name as a rival kit hook
+# and refuses every mode. This kit has no such check: it scans no .pth file
+# and inspects sys.meta_path only in its own `_OnImport` helper, which calls
+# other finders rather than counting them (grep for HOOK_FINDER / meta_path in
+# opt/esmc_opt/). The kit's own README route C uses `uv venv` too.
+#
+# DEVIATIONS from the kit's own esmc/environment/requirements.lock, which its
+# header describes as the freeze of an x86-64 image. The two lock files were
+# diffed line by line: 137 lines each, and 135 of the 137 are byte-identical
+# -- IT IS NOT BYTE-IDENTICAL OVERALL, and these are the three differences.
+#
+# 1. TWO PINS ARE DIRECT x86-64 WHEEL URLS and cannot be installed on this
+#    architecture at all:
+#
+#      flash_attn @ https://github.com/evolutionaryscale/wheels/releases/
+#        download/py312-pt211-cu13-sm80-90/
+#        flash_attn-2.7.4.post1-cp312-cp312-linux_x86_64.whl#sha256=94468e84...
+#      transformer_engine_torch @ .../
+#        transformer_engine_torch-2.15.0-cp312-cp312-linux_x86_64.whl#sha256=b8ad3d9a...
+#
+#    Both are substituted by NAME AND THE SAME VERSION, as the standard says
+#    to. Neither version publishes a wheel of any kind on PyPI -- `pip
+#    download --only-binary :all:` finds "no matching distribution" for both,
+#    on x86-64 as well -- so by-name means the PyPI sdist, built here.
+#
+# 2. transformer_engine_torch==2.15.0 IS BUILT FROM ITS PyPI SDIST, for
+#    compute capability 12.0 (TORCH_CUDA_ARCH_LIST=12.0; an sm_120 cubin runs
+#    on this sm_121 card). Two things the sdist does not tell pip and that a
+#    bare `pip install` therefore gets wrong: it needs cudnn.h and nccl.h,
+#    which on this stack live inside the nvidia-* wheels rather than in
+#    /usr/local/cuda, so CPATH and LIBRARY_PATH must name those wheels'
+#    include/ and lib/ directories (the recipe above does). Without them the
+#    build dies on `fatal error: cudnn.h: No such file or directory`, which
+#    reads as a missing system package and is not one. A NOTE FOR WHOEVER
+#    IMPORTS IT: `import transformer_engine.pytorch` fails on its own with
+#    "undefined symbol: cublasLtGroupedMatrixLayoutInit_internal, version
+#    libcublasLt.so.13" unless torch has been imported first -- torch is what
+#    preloads the nvidia-cublas 13.6 wheel that carries that symbol. The
+#    resident worker imports torch before esm, so this is a fact about
+#    hand-running things, not about the provider.
+#
+# 3. FLASH-ATTENTION IS ABSENT, and its absence is named rather than hidden.
+#    flash_attn 2.7.4.post1 predates CUDA 13 and predates this card; its
+#    setup.py will emit an sm_120 cubin (the `arch=compute_120,code=sm_120`
+#    branch, gated on CUDA >= 12.8, and 13.0 satisfies it) but upstream's own
+#    prebuilt wheel is tagged sm80-90 and nothing upstream has run 2.7.x on
+#    Blackwell. A FROM-SDIST BUILD WAS ATTEMPTED HERE AND ABANDONED. It
+#    compiles: no error appeared in 45 minutes. It does not finish in a usable
+#    time on this box, because flash-attn's setup.py ignores
+#    TORCH_CUDA_ARCH_LIST and reads its own FLASH_ATTN_CUDA_ARCHS, which
+#    defaults to "80;90;100;120" -- so every one of its ~84 translation units
+#    was being built four times over, forward and backward kernels alike. At
+#    MAX_JOBS=12 it had produced 5 of them; that is roughly twelve hours, on a
+#    machine shared with other work. To finish it, narrow the arch list:
+#
+#      FLASH_ATTN_CUDA_ARCHS=120 MAX_JOBS=12 FLASH_ATTENTION_FORCE_BUILD=TRUE \
+#        $TOOLUNIVERSE_ESMC_PYTHON -m pip install --no-build-isolation \
+#        --no-deps flash_attn==2.7.4.post1
+#
+#    and add the resulting `flash_attn==2.7.4.post1` line to this file.
+#    WHAT ITS ABSENCE COSTS, in the kit's own words rather than mine.
+#    `stock/check_pins.py` exits 0 and prints
+#      check_pins: drift (named, not refused): flash_attn: import fails on this
+#        stack ... a lever that needs it steps aside by name
+#    and esm degrades by design: `EsmcForMaskedLM.__init__` computes
+#    `_use_flash_attn = on_cuda and FLASH_ATTN_INSTALLED and ...`
+#    (esm/models/esmc/model.py:286-291), so the attention path becomes
+#    F.scaled_dot_product_attention and the RoPE path becomes pure torch.
+#    esm's own kernels.py quantifies the numerical difference: "~1 bf16 ULP
+#    per attention block; compounded across the 80-block stack this reaches
+#    ~O(100) max-diff on the unnormalized residual stream", with perplexity
+#    within rounding noise. THE KIT'S `exact` MODE CLAIMS BYTE-IDENTICAL
+#    OUTPUTS AGAINST STOCK ON THE SAME STACK, which still holds -- both sides
+#    of that comparison run without flash-attention here -- but this stack is
+#    not the stack the kit's numbers were taken on, which was an H100.
+#
+# 4. pip==26.2.1 IS HERE AND IS NOT IN THE KIT'S LOCK. The kit's header says
+#    it excludes "the interpreter's bundled pip 23.3.2"; `uv venv --seed`
+#    installs its own, and --exclude-editable does not drop it. It is listed
+#    because this file is a freeze and pip is in the environment.
+#
+# 5. The kit's lock names three git URLs -- dockq, esm and the Biohub
+#    transformers fork. Those are architecture-neutral and are reproduced
+#    below exactly; both esm 3.4.0 and transformers 4.57.6 installed from
+#    their pinned commits and the kit's own pin check confirms the commits.
+accelerate==1.14.0
+annotated-types==0.8.0
+anyio==4.14.2
+asttokens==3.0.2
+attrs==26.1.0
+biopython==1.88
+biotite==1.7.1
+biotraj==1.2.2
+boto3==1.43.79
+botocore==1.43.79
+brotli==1.2.0
+certifi==2026.7.22
+charset-normalizer==3.5.1
+cloudpathlib==0.25.0
+colorama==0.4.6
+comm==0.2.3
+contourpy==1.3.3
+cuda-bindings==13.3.1
+cuda-pathfinder==1.7.0
+cuda-toolkit==13.0.2
+cuequivariance==0.11.1
+cuequivariance-ops-cu13==0.11.1
+cuequivariance-ops-torch-cu13==0.11.1
+cuequivariance-torch==0.11.1
+cycler==0.12.1
+dna_features_viewer==3.1.5
+dockq @ git+https://github.com/nrontsis/DockQ.git@ba4df5adaad7c77fd60851d0b7b05f2b77061ba2
+einops==0.8.2
+esm @ git+https://github.com/Biohub/esm.git@43ccece2ad485f27db46afdb67da2a9601e8f106
+executing==2.2.1
+filelock==3.32.4
+fonttools==4.63.0
+fsspec==2026.7.0
+h11==0.16.0
+hf-xet==1.6.0
+httpcore==1.0.9
+httpx==0.28.1
+huggingface_hub==0.36.2
+idna==3.19
+iniconfig==2.3.0
+inquirerpy==0.3.4
+ipython==9.16.1
+ipython_pygments_lexers==1.1.1
+ipywidgets==8.1.9
+jedi==0.20.0
+Jinja2==3.1.6
+jmespath==1.1.0
+joblib==1.5.3
+jupyterlab_widgets==3.0.17
+kiwisolver==1.5.0
+MarkupSafe==3.0.3
+matplotlib==3.11.1
+matplotlib-inline==0.2.2
+ml_dtypes==0.6.0
+mpmath==1.3.0
+msgpack==1.2.1
+msgpack-numpy==0.4.8
+narwhals==2.25.0
+networkx==3.6.1
+ninja==1.13.2
+numpy==2.5.2
+nvdlfw_inspect==0.2.2
+nvidia-cublas==13.6.1.10
+nvidia-cuda-cupti==13.0.85
+nvidia-cuda-nvrtc==13.0.88
+nvidia-cuda-runtime==13.0.96
+nvidia-cudnn-cu13==9.19.0.56
+nvidia-cufft==12.0.0.61
+nvidia-cufile==1.15.1.6
+nvidia-curand==10.4.0.35
+nvidia-cusolver==12.0.4.66
+nvidia-cusparse==12.6.3.3
+nvidia-cusparselt-cu13==0.8.0
+nvidia-ml-py==13.610.43
+nvidia-nccl-cu13==2.28.9
+nvidia-nvjitlink==13.0.88
+nvidia-nvshmem-cu13==3.4.5
+nvidia-nvtx==13.0.85
+onnx==1.22.0
+onnx-ir==1.0.0
+onnxscript==0.7.1
+opt_einsum==3.4.0
+packaging==26.3
+pandas==3.0.5
+parallelbar==2.5
+parso==0.8.7
+pexpect==4.9.0
+pfzy==0.3.4
+pillow==12.3.0
+pip==26.2.1
+platformdirs==4.11.4
+pluggy==1.6.0
+prompt_toolkit==3.0.53
+protobuf==7.36.0
+psutil==7.2.2
+ptyprocess==0.7.0
+pure_eval==0.2.3
+py3Dmol==2.5.5
+pyarrow==25.0.1
+pydantic==2.13.4
+pydantic_core==2.46.4
+pydssp==0.9.1
+Pygments==2.21.0
+pygtrie==2.5.0
+pyparsing==3.3.2
+pytest==9.1.1
+python-dateutil==2.9.0.post0
+PyYAML==6.0.3
+rdkit==2026.3.5
+regex==2026.7.19
+requests==2.34.2
+s3transfer==0.19.2
+safetensors==0.8.0
+scikit-learn==1.9.0
+scipy==1.18.1
+setuptools==84.0.0
+six==1.17.0
+stack-data==0.6.3
+sympy==1.14.0
+tenacity==9.1.4
+threadpoolctl==3.6.0
+tokenizers==0.22.2
+torch==2.11.0
+tqdm==4.70.0
+traitlets==5.16.1
+transformer_engine==2.15.0
+transformer_engine_cu13==2.15.0
+transformer_engine_torch==2.15.0
+transformers @ git+https://github.com/huggingface/transformers.git@ef32577f55da19a4989cd7b22e004dc43a4998cb
+triton==3.6.0
+typing-inspection==0.4.4
+typing_extensions==4.16.0
+urllib3==2.7.0
+wcwidth==0.8.2
+widgetsnbextension==4.0.16
+zstandard==0.25.0
+zstd==1.5.7.2

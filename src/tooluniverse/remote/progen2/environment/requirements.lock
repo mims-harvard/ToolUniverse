@@ -1,0 +1,278 @@
+# ProGen2 (salesforce/progen @ c27a419c) -- the pinned stack for ToolUniverse's `progen2`
+# remote provider, installed into ~/progen2-venv with `pip install --no-deps -r` (one pass,
+# no resolver).
+#
+# PROVENANCE. This is the ProGen2 optimization kit's own
+# progen2/environment/requirements.lock at commit
+# f4f62fa6592ae4938d49b1757bea0cfeff9f468e, whose header reads: "`python -m pip freeze
+# --all` of its interpreter, the virtual environment /opt/venv on python-build-standalone
+# CPython 3.9.23 (release 20250818, the build uv 0.8.13 installs for
+# cpython-3.9.23-linux-x86_64-gnu) on Ubuntu 22.04 with the CUDA 12.8.1 runtime base and
+# gcc 11.4". This kit (progen2/opt, package progen2_opt) installs editable on top.
+#
+# Of its 44 distribution lines, 41 are reproduced here BYTE FOR BYTE. `pip freeze --all` of
+# the built environment differs from the kit's file in exactly three lines, and all three are
+# below with their reason. Everything else -- numpy 2.0.2, transformers 4.16.2,
+# huggingface_hub 0.36.2, the fourteen nvidia-*-cu12 12.8 wheels, pip 26.0.1,
+# setuptools 82.0.1 -- is the kit's pin unchanged, and every one of those publishes an
+# aarch64 wheel at the pinned version (a pure-python wheel, a `cp39-cp39-*aarch64` wheel, a
+# `py3-none-*aarch64` wheel, or `cp38-abi3-manylinux_2_28_aarch64` for hf-xet).
+#
+# PYTHON 3.9 IS THE PIN, AND IT IS THE OLDEST INTERPRETER OF THE FIFTEEN PROVIDERS.
+# stock/PINS.json carries `python = "3.9"` and `pinned_stack.python = "3.9.23"`; STOCK.md
+# says "any 3.9.x passes the pin check as `pinned (3.9.x)`", and stock/check_pins.py
+# compares `sys.version_info[:2]` against `pins.python`, so a 3.9.x other than .23 is
+# `pinned` and not even a note. The interpreter here is uv's own managed
+# cpython-3.9.25-linux-aarch64-gnu -- the same python-build-standalone family the kit's
+# image builds from, which is what route C of the kit's README types
+# (`uv venv --seed --managed-python --python 3.9`). The VENV around it is the stdlib's
+# `python -m venv`, not `uv venv`: see provider.toml's [env] note.
+#
+# cp39 is why two of the three deviations below exist. It is the limiting factor, not torch:
+# wheels for 2021-vintage compiled dependencies and for Triton are both thinner at cp39 than
+# at cp312, and in opposite directions (tokenizers published aarch64 for cp39 and then
+# stopped at one patch release; Triton started publishing aarch64 at cp310 and never built
+# cp39 at all).
+#
+# ---------------------------------------------------------------------------------
+# DEVIATION 1 -- the kit's torch line is a DIRECT x86-64 URL, replaced by a version pin
+# plus an index.
+#
+#   The kit pins
+#
+#     torch @ https://download.pytorch.org/whl/cu128/torch-2.8.0%2Bcu128-cp39-cp39-manylinux_2_28_x86_64.whl#sha256=b9357a87595a3d7b2a565ba602b97392a37c56f0b85698f0ccf0a2c58fbef5ec
+#
+#   -- a file for one architecture, so a lock that names it cannot install on any other.
+#   stock/PINS.json says the same thing three ways: `pinned_stack.torch = "2.8.0+cu128"`,
+#   `pinned_stack.torch_wheel = "torch-2.8.0+cu128-cp39-cp39-manylinux_2_28_x86_64.whl"`,
+#   `pins.torch = "2.8.0+cu128"`.
+#
+#   THERE IS NO cu128 aarch64 BUILD OF torch 2.8.0 ANYWHERE. Checked, not assumed:
+#   download.pytorch.org/whl/cu128/torch/ lists no aarch64 file at 2.8.0, and PyPI's own
+#   `torch==2.8.0` aarch64 wheel is a CPU-only build (`__version__ = '2.8.0+cpu'`,
+#   `cuda: None`). The only CUDA aarch64 build of that version that exists is +cu129:
+#
+#     torch-2.8.0+cu129-cp39-cp39-manylinux_2_28_aarch64.whl
+#     sha256=c0253539dc076fa23ab6042e5c4ecd8384c4675ace8d5e13095ce11c5dac1daf
+#     (download.pytorch.org/whl/cu129)
+#
+#   So this lock takes that one -- same version, same source project, one CUDA minor newer.
+#   It is the narrowest substitution available rather than a choice, and it is the same
+#   substitution `remote/e1/` makes for the same torch version at cp312.
+#
+#   The fourteen nvidia-*-cu12 runtime wheels stay at the kit's 12.8 pins and torch loads
+#   them: CUDA 12 minor-version compatibility, sonames libcudart.so.12 / libcublas.so.12.
+#
+#   WHAT THE KIT DOES WITH THE DIFFERENCE, AND WHY IT IS NOT A REFUSAL HERE. This is the
+#   one place this provider has it easier than e1, and the fact was read before anything was
+#   built. Two readers compare the torch version and NEITHER refuses:
+#
+#     * stock/check_pins.py (which `run.sh install` runs) -- "the interpreter and the three
+#       pinned packages are REPORTED against the pinned stack: a version off its pin is
+#       noted, never refused (the levers were tested on the pinned stack; a package absent
+#       is refused: nothing runs without it)".
+#     * opt/progen2_opt/stack.py `pins_gate()` -- compares `got == want` against
+#       `pins.torch = "2.8.0+cu128"`, so `2.8.0+cu129` IS a literal mismatch, and puts it in
+#       `detail["mismatch"]`, which becomes a NOTE on the activation's `stack` line
+#       (`STACK_NOTE`). THE refusal in `pins_gate` is a different thing entirely: a stock
+#       file under stock/src/progen2 off its sha256.
+#
+#   This is a third answer to the question `remote/e1/` raised. e1's kit builds an expected
+#   WORD from `pins.STACK["torch_version_str"]` and refuses `exact` when the word does not
+#   match, which puts e1 permanently on mode = "off"; evo2's strips after `+`. This kit
+#   compares the literal string AND does not care. So the torch substitution costs this
+#   provider nothing. (Its kit mode is off for an unrelated reason -- see provider.toml
+#   [kit] -- and that reason would stand even on x86-64 with the exact pin.)
+#
+# ---------------------------------------------------------------------------------
+# DEVIATION 2 -- triton is DROPPED, because no cp39 build of it exists for this
+# architecture, and the kit's own lock says it is unused.
+#
+#   The kit pins
+#
+#     triton @ https://download.pytorch.org/whl/triton-3.4.0-cp39-cp39-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl#sha256=1b1389a284a8c5f29749f643e3b1fc7513e3d162ca6d50f4e3d658de7dba631b
+#
+#   download.pytorch.org/whl/triton/ publishes triton 3.4.0 for cp310, cp311, cp312, cp313
+#   and cp313t on BOTH x86_64 and aarch64 -- and for cp39 on x86_64 only. There is no
+#   `triton-3.4.0-cp39-cp39-*aarch64*` file on that index or on PyPI. Unlike torch there is
+#   no nearest-neighbour substitution either: the whole aarch64 cp39 row is empty for every
+#   3.x triton.
+#
+#   THE KIT'S OWN LOCK HEADER SAYS IT IS NOT NEEDED, in these words: "triton 3.4.0 is
+#   torch's dependency, IMPORTABLE AND UNUSED ON THE KIT'S ROUTES". CHANGES.md agrees from
+#   the other side -- "The kit's one native library is its own prebuilt libew_progen2.so;
+#   nothing is compiled at install or run time" -- and `grep -rn 'triton\|torch.compile\|
+#   @triton.jit' progen2/opt progen2/stock/src` over the whole kit and the whole stock tree
+#   returns NOTHING. Neither stock ProGen2 nor the kit calls `torch.compile`, loads a hub
+#   Triton kernel, or carries a `@triton.jit` of its own. torch 2.8.0 imports triton lazily
+#   (torch._inductor / torch._dynamo only), and `import torch` does not touch it.
+#
+#   So this provider is the first of the fifteen with NO TRITON IN ITS ENVIRONMENT AT ALL,
+#   which is a stronger statement than any version of the Triton/ptxas story the other
+#   providers tell: there is no second toolchain to point at a ptxas, no `sm_121a` to ask
+#   for, and no LLVM stage to abort in. `nvidia-cuda-nvcc-cu12` is NOT added here for the
+#   same reason -- e1 and atlasfold need it to give Triton a CUDA 12.9 ptxas, and there is
+#   no Triton here to give one to.
+#
+#   `step_environment`'s Triton compile probe is the measured confirmation rather than this
+#   paragraph. What it reported on this host, run against the built environment:
+#
+#     _probe_arch:            {"torch": "2.8.0+cu129",
+#                              "arch_list": ["sm_80", "sm_90", "sm_100", "sm_120"],
+#                              "device_sm": "sm_121", "device": "NVIDIA GB10"}
+#     _arch_problem:          None                 (sm_120 runs on sm_121)
+#     triton target notes:    []
+#     _probe_triton_compile:  {"skipped": "no triton"}
+#     _toolchain_problems:    (None, "", [])       -- no refusal, no NOTE
+#
+#   `{"skipped": "no triton"}` IS the measured answer here, and it is a stronger one than
+#   the probe gives any other provider: the `tl.sum` kernel is not compiled because there
+#   is nothing to compile it with, and nothing on either ProGen2 route would ever ask.
+#   A reader comparing this provider with e1 or atlasfold should read the absence of a
+#   NOTE as that, not as a probe that passed.
+#
+# ---------------------------------------------------------------------------------
+# DEVIATION 3 -- tokenizers==0.10.3 -> tokenizers==0.11.0, the nearest release whose
+# aarch64 wheel both EXISTS and RUNS. Two separate failures, in two different releases,
+# and the second was only found by running the import.
+#
+#   The kit pins `tokenizers==0.10.3`, which is upstream ProGen2's own pin
+#   (stock/PINS.json `pins.tokenizers`, and `tokenizers_wheel.file =
+#   "tokenizers-0.10.3-cp39-cp39-manylinux_2_5_x86_64...whl"`). tokenizers is a Rust
+#   extension, so a wheel is per (python, platform) and there is no pure-python fallback.
+#
+#   FAILURE ONE -- 0.10.3 PUBLISHED NO aarch64 WHEEL FOR ANY PYTHON. Its sixteen wheels are
+#   x86-64 linux, macOS x86-64 and Windows, cp36-cp39; the only other artifact is the sdist,
+#   which needs a Rust toolchain and a 2021-vintage setuptools-rust/pyo3. 0.10.3 is the ONE
+#   release in the 0.10 line without an aarch64 build, which is how this was found rather
+#   than guessed:
+#
+#     tokenizers 0.10.0  cp39-cp39-manylinux2014_aarch64.whl                       published
+#     tokenizers 0.10.1  cp39-cp39-manylinux2014_aarch64.whl                       published
+#     tokenizers 0.10.2  cp39-cp39-manylinux2014_aarch64.whl                       published
+#     tokenizers 0.10.3  --                                                        NONE
+#     tokenizers 0.11.0  cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64    published
+#
+#   FAILURE TWO -- AND THE 0.10 LINE'S aarch64 WHEELS DO NOT RUN ON THIS HOST. The obvious
+#   narrowest substitution, 0.10.2, was installed and it crashes the interpreter at import:
+#
+#     $ python -c "import tokenizers"
+#     Illegal instruction (core dumped)          # SIGILL, exit 132
+#
+#   Measured in a throwaway cp39 venv, one version per `--force-reinstall`, every one of the
+#   three aarch64 wheels the 0.10 line published:
+#
+#     tokenizers 0.10.0   import -> Illegal instruction (core dumped), rc 132
+#     tokenizers 0.10.1   import -> Illegal instruction (core dumped), rc 132
+#     tokenizers 0.10.2   import -> Illegal instruction (core dumped), rc 132
+#     tokenizers 0.11.0   import ok, tokenizer loaded, ids produced
+#     tokenizers 0.11.6   import ok
+#     tokenizers 0.12.1   import ok
+#     tokenizers 0.13.3   import ok
+#
+#   Nothing in the ELF header or in `pip install` says so: the wheel is a well-formed
+#   `manylinux2014_aarch64` file and it installs with rc 0. It is a 2021 Rust build emitting
+#   an instruction this ARMv9 core does not implement, and a SIGILL is not catchable, so the
+#   failure mode in a worker would have been the supervisor's `smoke_protocolerror -- peer
+#   closed the connection mid-message` with no traceback at all. This is the atlasfold LLVM
+#   abort's shape in a different library: a prebuilt artifact that passes every static check
+#   and kills the process.
+#
+#   So the pin here is 0.11.0 -- the nearest release that exists AND runs, one minor above
+#   the kit's pin. It is within transformers 4.16.2's OWN runtime check, which matters
+#   because transformers verifies tokenizers' version at import and raises otherwise. Read
+#   out of the pinned wheel (transformers/dependency_versions_table.py, enforced by
+#   transformers/dependency_versions_check.py's `pkgs_to_check_at_runtime`):
+#
+#     "tokenizers": "tokenizers>=0.10.1,!=0.11.3"
+#
+#   0.11.0 satisfies it, and the excluded 0.11.3 is avoided.
+#
+#   WHY THE VERSION CANNOT CHANGE THE TOKENISATION, read from the file and then measured.
+#   The kit states what its tokenizer is (stock/PINS.json `tokenizer.model`): "BPE with an
+#   empty merge list (character tokens), ByteLevel pre-tokenizer / post-processor /
+#   decoder", vocab_size 30. An empty merge list means there is no merge order to differ
+#   over, no dropout and no unk path for an in-vocab character: every character is its own
+#   token. Both stock CLIs use exactly two tokenizers calls --
+#   `Tokenizer.from_str(open('tokenizer.json').read())` and `.encode(s).ids`, plus
+#   `.decode_batch` on the generation route (sample.py L60-62, L149; likelihood.py L60-62).
+#
+#   MEASURED id-for-id on the kit's own tokenizer.json, over all five stock sanity /default
+#   sequences plus `'1'` and `'<|pad|>'`, in four tokenizers versions:
+#
+#     0.11.0  ids digest 989e91a3a47e319e   lengths 225 126 195 422 422 1 1
+#     0.11.6  ids digest 989e91a3a47e319e   lengths 225 126 195 422 422 1 1
+#     0.12.1  ids digest 989e91a3a47e319e   lengths 225 126 195 422 422 1 1
+#     0.13.3  ids digest 989e91a3a47e319e   lengths 225 126 195 422 422 1 1
+#
+#   Identical, and the 422-character default context yields 422 ids -- one per character,
+#   which is the empty-merge behaviour confirming itself. `decode` round-trips the first
+#   sequence. 0.10.3 could not be put in that table on this architecture, which is the
+#   residual uncertainty and is why the smoke runs the kit's own `--sanity` cross-entropy
+#   assertion (`abs(ce_eval - ce_target) < 0.1`, likelihood.py L160-186) -- an end-to-end
+#   check that the tokenizer AND the checkpoint agree with a number upstream measured.
+#
+#   The kit NAMES this and does not refuse it, by the same two readers as DEVIATION 1:
+#   check_pins.py notes a package version off its pin, and `pins_gate` puts it in the stack
+#   line's notes.
+#
+# ---------------------------------------------------------------------------------
+# NOTHING ELSE DEVIATES, AND TWO ABSENCES ARE DELIBERATE.
+#
+# * flash-attn, xformers, cuequivariance: not in the kit's lock and not added. ProGen2's
+#   attention is the stock `modeling_progen.py`'s own einsum/softmax; nothing asks for a
+#   fused attention kernel on either route.
+# * `wheel` is not in the kit's lock and is not added. The one editable install
+#   (progen2/opt) runs with `--no-build-isolation` against the setuptools 82.0.1 pinned
+#   here, which carries its own wheel builder.
+#
+# INSTALL ORDER. `remote_resident/setup.py` splits this file into a `pip`/`wheel` batch and
+# a `stack` batch and installs each with `--no-deps`, so pip 26.0.1 is in place before the
+# 41 stack lines. The `--extra-index-url` line below is read by pip from this file.
+
+--extra-index-url https://download.pytorch.org/whl/cu129
+
+certifi==2026.7.22
+charset-normalizer==3.5.1
+click==8.1.8
+filelock==3.19.1
+fsspec==2025.10.0
+hf-xet==1.6.0
+huggingface_hub==0.36.2
+idna==3.19
+importlib_metadata==7.1.0
+Jinja2==3.1.6
+joblib==1.5.3
+MarkupSafe==3.0.2
+mpmath==1.3.0
+networkx==3.2.1
+numpy==2.0.2
+nvidia-cublas-cu12==12.8.4.1
+nvidia-cuda-cupti-cu12==12.8.90
+nvidia-cuda-nvrtc-cu12==12.8.93
+nvidia-cuda-runtime-cu12==12.8.90
+nvidia-cudnn-cu12==9.10.2.21
+nvidia-cufft-cu12==11.3.3.83
+nvidia-cufile-cu12==1.13.1.3
+nvidia-curand-cu12==10.3.9.90
+nvidia-cusolver-cu12==11.7.3.90
+nvidia-cusparse-cu12==12.5.8.93
+nvidia-cusparselt-cu12==0.7.1
+nvidia-nccl-cu12==2.27.3
+nvidia-nvjitlink-cu12==12.8.93
+nvidia-nvtx-cu12==12.8.90
+packaging==26.3
+pip==26.0.1
+PyYAML==6.0.3
+regex==2026.1.15
+requests==2.32.5
+sacremoses==0.2.0
+setuptools==82.0.1
+sympy==1.14.0
+tokenizers==0.11.0
+torch==2.8.0+cu129
+tqdm==4.70.0
+transformers==4.16.2
+typing_extensions==4.16.0
+urllib3==2.6.3
+zipp==3.19.2

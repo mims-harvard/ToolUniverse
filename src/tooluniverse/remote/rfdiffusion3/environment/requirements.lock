@@ -1,0 +1,200 @@
+# RFdiffusion3's model environment — the exact stack the provider in
+# ../provider.toml was installed and verified on, as
+# `pip freeze --all --exclude-editable` of it.
+#
+# The fourth distinct stack in this repository and it coexists with none of the
+# others: Python 3.12.1 exactly, torch 2.13.0+cu130, triton 3.7.1, numpy 2.4.4.
+# The kit's own check compares the interpreter's major.minor.micro against
+# 3.12.1 (it reports rather than refuses, but the pinned stack is that one).
+#
+# Rebuild (an NVIDIA driver the stack's CUDA build needs, a C compiler on PATH,
+# and — for the one source build below — nvcc 13.0 and git):
+#
+#   uv venv --seed --managed-python --python 3.12.1 ~/rfdiffusion3-venv
+#   export TOOLUNIVERSE_RFDIFFUSION3_PYTHON=~/rfdiffusion3-venv/bin/python
+#   $TOOLUNIVERSE_RFDIFFUSION3_PYTHON -m pip install --no-deps -r requirements.lock
+#   tu remote setup rfdiffusion3            # the kit, the overlay and the weights
+#
+# --no-deps is deliberate: the list is complete, and letting a resolver
+# re-derive it is how a stack stops being the one that was measured. The kit
+# (rfdiffusion3_opt) and its shared core (opt_core) install editable on top and
+# are not in this freeze.
+#
+# TWO LINES ARE NOT INDEX PACKAGES, and the plain `pip install -r` above cannot
+# fetch them. They are the same two the kit's own lock names, and the kit's
+# STOCK.md "Stack" section is the recipe for both — it is the authority, this
+# is only a pointer to it:
+#
+#   rc-foundry==0.2.1.dev13+g4010e3e2e  stock RFdiffusion3 (RosettaCommons
+#       foundry at the pinned commit). It is built from the archive the kit
+#       ships, `rfdiffusion3/stock/foundry-4010e3e.tar.gz`, which carries no
+#       .git and therefore needs
+#       SETUPTOOLS_SCM_PRETEND_VERSION=0.2.1.dev13+g4010e3e2e at build time.
+#       The kit's pin check accepts an install from a local directory, a git
+#       checkout at the commit, or that archive — and refuses an install from
+#       an index, so there is no index version of this line to want.
+#
+#   apex==0.1  NVIDIA apex at the commit the kit's stock/PINS.json names, with
+#       its C++/CUDA extensions built against this torch. No public wheel
+#       exists for this torch and the kit ships none. It is not optional: at
+#       this pin upstream binds apex.FusedRMSNorm for every RMSNorm of the
+#       network whenever apex imports (layer_utils.py:13-23), and the kit's
+#       KERNELS census REQUIRES that binding — a pass that fell back to
+#       torch.nn.RMSNorm is refused, exit 5.
+#
+# DEVIATIONS from the kit's own environment/requirements.lock, both
+# architectural, and both to do with the fact that this host is aarch64 while
+# the kit's stack was tested on x86-64:
+#
+#   1. apex. The kit's lock pins the version and its PINS.json records the
+#      sha256 of one wheel file, `apex-0.1-cp312-cp312-linux_x86_64.whl`. The
+#      wheel built here is `apex-0.1-cp312-cp312-linux_aarch64.whl` and has a
+#      different digest, necessarily: PINS.json says as much ("a wheel compiled
+#      elsewhere has another digest"). It was built from the pinned commit the
+#      way STOCK.md says to, with APEX_CPP_EXT=1 APEX_CUDA_EXT=1 and
+#      TORCH_CUDA_ARCH_LIST="12.0+PTX" in place of the kit's "8.0;9.0+PTX",
+#      because this card is sm_121 and a 12.0 cubin is what runs on it.
+#      `pip freeze` renders it as a local `apex @ file://…` URL naming the
+#      build machine's path; the line below is the version pin instead, since
+#      the file URL would be meaningless anywhere else.
+#
+#   2. ninja==1.13.0 is present here and absent from the kit's lock. It is the
+#      build tool STOCK.md's own apex line installs from pip at that version,
+#      and it stayed in the environment afterwards. Nothing imports it at run
+#      time.
+#
+# NOT a deviation, and worth recording because it is what the standard warns
+# about: this kit's lock pins nothing by direct wheel URL. Every line below but
+# the two named above resolved from the index for aarch64 at the pinned
+# version, unchanged.
+absl-py==2.5.0
+aiohappyeyeballs==2.7.1
+aiohttp==3.14.3
+aiosignal==1.4.0
+annotated-doc==0.0.5
+annotated-types==0.8.0
+antlr4-python3-runtime==4.9.3
+apex==0.1
+assertpy==1.1
+asttokens==3.0.2
+atomworks==2.2.1
+attrs==26.1.0
+beartype==0.22.9
+biotite==1.4.0
+biotraj==1.2.2
+certifi==2026.7.22
+charset-normalizer==3.5.1
+click==8.5.0
+comm==0.2.3
+cuda-bindings==13.3.1
+cuda-pathfinder==1.7.0
+cuda-toolkit==13.0.3.0
+Cython==3.3.0
+cytoolz==1.1.0
+debugpy==1.8.21
+dm-tree==0.1.10
+einops==0.8.2
+einx==0.4.3
+environs==15.1.0
+executing==2.2.1
+filelock==3.32.4
+frozendict==2.4.7
+frozenlist==1.8.0
+fsspec==2026.7.0
+hydra-core==1.3.5
+hydride==1.2.3
+idna==3.19
+ipykernel==7.3.0
+ipython==9.16.1
+ipython_pygments_lexers==1.1.1
+jaxtyping==0.3.11
+jedi==0.20.0
+Jinja2==3.1.6
+jupyter_client==8.9.1
+jupyter_core==5.9.1
+lightning==2.6.5
+lightning-utilities==0.15.3
+loralib==0.1.2
+markdown-it-py==4.2.0
+MarkupSafe==3.0.3
+marshmallow==4.3.1
+matplotlib-inline==0.2.2
+mdurl==0.1.2
+mpmath==1.3.0
+msgpack==1.2.1
+multidict==6.7.1
+nest-asyncio2==1.7.2
+networkx==3.6.1
+ninja==1.13.0
+numpy==2.4.4
+nvidia-cublas==13.1.1.3
+nvidia-cuda-cupti==13.0.85
+nvidia-cuda-nvrtc==13.0.88
+nvidia-cuda-runtime==13.0.96
+nvidia-cudnn-cu13==9.20.0.48
+nvidia-cufft==12.0.0.61
+nvidia-cufile==1.15.1.6
+nvidia-curand==10.4.0.35
+nvidia-cusolver==12.0.4.66
+nvidia-cusparse==12.6.3.3
+nvidia-cusparselt-cu13==0.8.1
+nvidia-nccl-cu13==2.29.7
+nvidia-nvjitlink==13.3.33
+nvidia-nvshmem-cu13==3.4.5
+nvidia-nvtx==13.0.85
+omegaconf==2.3.1
+opentelemetry-api==1.44.0
+opt_einsum==3.4.0
+packaging==26.3
+pandas==3.0.5
+parso==0.8.7
+pexpect==4.9.0
+pillow==12.3.0
+pip==26.2.1
+platformdirs==4.11.4
+prompt_toolkit==3.0.53
+propcache==0.5.2
+protobuf==7.36.0
+psutil==7.2.2
+ptyprocess==0.7.0
+pure_eval==0.2.3
+py3Dmol==2.5.5
+pyarrow==25.0.1
+pydantic==2.13.4
+pydantic_core==2.46.4
+Pygments==2.21.0
+pymol_remote==1.1.0
+python-dateutil==2.9.0.post0
+python-dotenv==1.2.3
+pytorch-lightning==2.6.5
+PyYAML==6.0.3
+pyzmq==27.2.0
+rc-foundry==0.2.1.dev13+g4010e3e2e
+rdkit==2026.3.5
+requests==2.34.2
+rich==15.0.0
+rootutils==1.0.7
+scipy==1.18.1
+sentry-sdk==2.68.1
+setuptools==84.0.0
+shellingham==1.5.4
+six==1.17.0
+stack-data==0.6.3
+sympy==1.14.0
+toolz==1.1.0
+torch==2.13.0
+torchmetrics==1.9.0
+tornado==6.5.8
+tqdm==4.70.0
+traitlets==5.16.1
+triton==3.7.1
+typer==0.27.1
+typing-inspection==0.4.4
+typing_extensions==4.16.0
+urllib3==2.7.0
+wadler_lindig==0.1.7
+wandb==0.28.2
+wcwidth==0.8.2
+wrapt==2.3.0
+yarl==1.24.5
+zstandard==0.25.0

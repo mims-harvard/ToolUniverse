@@ -1,0 +1,314 @@
+# RoseTTAFold3 -- all-atom biomolecular structure prediction, held resident.
+#
+# VERIFIED on the card named in `verified_on`, and verified on four consecutive
+# identical requests rather than on one fold -- the acceptance test this
+# standard adopted after openfold3 passed a one-request smoke and then could
+# not answer a second request at the same shape. Every step has run here,
+# smoke included, and `vram_budget_gb` is a measurement that carries the
+# envelope it was taken at rather than a bare number: peak is a function of
+# token count, as it is for every structure predictor.
+#
+# The seventh provider on the standard and the first whose kit needs the
+# model environment's own site-packages EDITED before any mode will engage.
+# Where Boltz-2's kit hooks the model through `worker_launch` and the other
+# five patch it in memory from a `.pth`, rosettafold3_opt does both: its
+# `.pth` arms a finder on `import rf3`, and the finder then REFUSES unless
+# five files of the installed `rf3` package are byte-equal to the ones the
+# kit ships (opt/forward/rf3_xattempt_addon/patched/). Activation is a tree
+# state plus an environment row, and the tree state is on disk. See [kit]
+# `install`, which is where that lands, and the DEVIATION note beneath it.
+#
+# Residency buys what the kit's own README measures and declines to hide:
+# "Every call also pays ~25 s of start-up and checkpoint load plus each
+# input's CPU featurization in any mode, so the four-tile example gains less
+# end to end than its prediction time does." A process that exits after each
+# request pays the 3,038,876,446-byte checkpoint read, the model
+# construction, the CUDA context and the Triton compiles again every time;
+# this one pays them once. The `fast` and `exact` modes additionally capture
+# CUDA graphs of the sampler and the pairformer stack, and a graph captured
+# on one request is collectable only by a process that survives to the next.
+#
+# 32 MiB A FOLD THAT NO PYTHON OBJECT HELD, found 2026-10-18 by a sweep of
+# all 26 GPU providers after chai1 and genie3 turned out to have it. torch
+# allocates a cuBLAS workspace the first time a GEMM runs on a (handle,
+# stream) pair and keeps it in a C++ static map that nothing clears. This
+# kit's sampler warms each capture up on a fresh side stream -- the comment
+# on that line in `rf3_xattempt_addon/.../inference_sampler.py` names the
+# "cuBLAS/cuDNN workspace" as what the warm-up is for -- so every fold
+# abandoned a stream and stranded its workspace.
+#
+# MEASURED, five identical folds in one held worker, nothing released during
+# the run so the bytes could be attributed rather than inferred:
+#
+#     streams  4 -> 5 -> 6 -> 7 -> 8      (+1 a fold)
+#     allocated 3351.7 -> 3383.7 -> 3415.7 -> 3447.7 -> 3479.7 MiB
+#     one clear at the end gave back 224.0 MiB = 7 x 32
+#
+# Released -- `WB.serve` does it after every request, for every provider --
+# the same five folds hold allocated flat at 3255.7 MiB and the stream count
+# stops growing. The first pass's rising peak ladder in `verified_on` was
+# this, unrecognised.
+#
+# THE SAFETY ARGUMENT IS NOT THE ONE chai1 AND genie3 USED, because this
+# provider cannot use it: `fast` keeps up to FPF_RF3_TG_MAX pairformer-stack
+# graphs across folds and replays them, so a captured graph does outlive the
+# request. It releases anyway, and the reason is measured rather than
+# reasoned -- a workspace allocated during a capture belongs to that graph's
+# private memory pool, which no ordinary allocation is ever handed. That is
+# also why the release is no longer a provider's own call: this provider is
+# the one that forced the question, and the answer applies to all of them.
+# See `release_cublas_workspaces` in remote_resident/worker_base.py, which
+# carries the experiment and the correction to what that docstring used to
+# claim.
+
+[provider]
+slug = "rosettafold3"
+description = "RoseTTAFold3 all-atom structure prediction from a chain/ligand specification JSON"
+operations = ["rosettafold3_predict"]
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver
+580.173.02), venv route, kit mode fast on the patched interpreter (see [kit]:
+this kit's modes require its five overlay files in place on disk, checked by
+sha256, and this environment therefore cannot run `mode = "off"`).
+
+VERIFIED ON CONSECUTIVE IDENTICAL REQUESTS IN ONE HELD WORKER, not on one
+fold -- the standard's acceptance test since openfold3 passed a one-request
+smoke while being unable to answer a second request at the same shape.
+
+First pass, 2026-10-17, the 89-residue smoke four times:
+
+    build 41.3 s, then 20.7 / 16.2 / 16.1 / 16.2 s
+    peak reserved 3.56 -> 3.62 -> 3.66 -> 3.70 GiB
+
+That ladder is not noise and it was not read as the defect it was: +0.04 GiB
+a fold is one 32 MiB cuBLAS workspace a fold, the leak the section above
+this one describes. Re-run after the release, 2026-10-18, the whole suite in
+one worker (`verify_provider.py rosettafold3 --repeats 5`):
+
+    ladder   100 / 200 / 400 / 800 aa
+             12.6 / 20.5 / 34.0 / 109.2 s
+             peak 3.59 / 4.21 / 5.84 / 13.04 GiB
+    mixed    100, 100, 400, 100 aa -- a change and a repeat both survive
+    repeats  5/5 answered, 12.1 / 11.0 / 11.7 / 12.1 / 11.6 s
+             peak reserved 4.29 -> 4.27 -> 4.27 -> 4.27 -> 4.27 GiB
+
+Flat to the hundredth after the first, where it used to rise every fold. The
+repeat peaks sit above the first pass's because the 800 aa rung ran earlier
+in the same worker and the allocator keeps the pool it grew; what the
+acceptance test reads is the shape of the ladder, not its offset.
+
+Every request wrote structures; the smoke step asserts that against
+[runtime] outputs. The card was shared with another session throughout, so the
+peaks are trustworthy and the wall times are an upper bound."""
+
+[runtime]
+mode = "resident"
+worker = "resident/rosettafold3_resident_worker.py"
+launch = "tooluniverse.remote_resident.kit_launch:build_command"
+worker_args = [
+  "--socket", "{socket}",
+  "--slug", "{slug}",
+  "--weights-root", "{weights_root}",
+]
+# The build reads a 2.83 GiB fp32 checkpoint, constructs the network and
+# launches Lightning Fabric; the first request additionally compiles the
+# kit's Triton kernels and runs the shared core's one-time numerical
+# self-check of the fused kernels (the kit's README: "seconds on H100; up to
+# ~30 s on A100") before capturing the sampler's CUDA graphs. Generous on
+# purpose: a deadline that fires during a first-run compile reports a stall
+# that is not one.
+start_timeout_s = 1800.0
+request_timeout_s = 3600.0
+idle_timeout_s = 900.0
+smoke = "smoke/input.json"
+smoke_timeout_s = 3600.0
+# What a successful fold leaves behind. Upstream writes, per example,
+# <out_dir>/<example_id>/<example_id>_model.cif (the top-ranked model),
+# _ranking_scores.csv, _summary_confidences.json and one
+# seed-<s>_sample-<i>/ directory per diffusion sample. An exit code is not
+# evidence: RF3's own run() catches an early-stopping outcome
+# (early_stopping_plddt_threshold, default 0.5), writes a ranking_scores.csv
+# saying so and writes NO structure, returning normally. `outputs` is what
+# catches that.
+outputs = ["*.cif"]
+output_keys = ["predictions"]
+
+[gpu]
+policy = "required"
+# MEASURED, with the envelope stated. The derived reserve this replaces argued
+# from the 2.83 GiB checkpoint plus a pair track plus a CUDA-graph pool and
+# arrived at 16.0; the measurement at its own envelope is 13.25, so the
+# arithmetic was close and slightly conservative -- unlike openfold3's, which
+# was 3.8x high.
+#
+# Ladder, one held worker, steady state, single chain, upstream defaults
+# (n_recycles 10, diffusion_batch_size 5, num_steps 50), no MSA:
+#
+#     residues   peak reserved
+#          100       3.59 GiB
+#          200       4.27 GiB
+#          400       6.00 GiB
+#          800      13.25 GiB   <- the reference this budget declares
+#
+# 800 residues costs 3.7x what 100 does, the same N^2-dominated shape as
+# openfold3 (3.6x) and unlike esmfold2 (1.8x, where a constant 6B term
+# dominates). A host that will not fold past 400 residues holds this in 6 GiB.
+# Past 800 it re-measures.
+#
+# One caveat that is this kit's rather than ours: cuEquivariance cannot read a
+# GB10 through pynvml ("Failed to get GPU information from pynvml: Not
+# Supported. Using default values") and substitutes a made-up memory figure.
+# Anything in the kit budgeting off that record is budgeting off a guess, which
+# is a second instance of the unified-memory hole STANDARD.md section 9 records
+# for `nvidia-smi --query-gpu=memory.total`.
+vram_budget_gb = 13.25
+driver_min = 580
+driver_min_reason = "its pinned stack is CUDA 13.0 (torch 2.13.0+cu130)"
+shareable = true
+isolation = "process"
+
+[env]
+kind = "venv"
+python = "$TOOLUNIVERSE_ROSETTAFOLD3_PYTHON"
+lock = "environment/requirements.lock"
+# rc-foundry carries no importable __version__, so the installed
+# distribution is what is asked -- and the version string is the pin's own
+# (hatch-vcs derives 0.2.1.dev13+g4010e3e2e from the pinned commit; an
+# install from the kit's vendored tarball would report 0.0.0 instead, which
+# is precisely the install route the kit's pin check rejects for this
+# provider). rosettafold3_opt is the kit, installed editable on top of the
+# lock and deliberately absent from it.
+verify = "import torch, rf3, rosettafold3_opt; from importlib.metadata import version; assert version('rc-foundry') == '0.2.1.dev13+g4010e3e2e'"
+
+[weights]
+# The kit names no cache-root variable of its own: it takes a DIRECTORY on
+# `run.sh install --weights DIR` and then a FILE in ROSETTAFOLD3_OPT_CKPT.
+# ROSETTAFOLD3_OPT_CKPT cannot be this root_env -- it is a file, and
+# kit_launch exports root_env as the directory. It must also not be spelled
+# under the kit's own prefix: rosettafold3_opt._autoload.undeclared()
+# refuses the whole process (exit 3) for any ROSETTAFOLD3_OPT_* name it does
+# not declare, so a root_env of, say, ROSETTAFOLD3_OPT_DIR would take every
+# mode to NOT ACTIVE before rf3 was imported. Hence a neutral name.
+root_env = "ROSETTAFOLD3_WEIGHTS"
+root_default = "~/.rosettafold3"
+# The kit's own fetcher, which is documented as `python -m
+# rosettafold3_opt.weights DIR` and is what `run.sh install --weights DIR`
+# calls. It goes through UPSTREAM's downloader -- `foundry install rf3
+# --checkpoint-dir DIR` = foundry_cli.download_checkpoints of the pinned
+# rc-foundry -- and then hash-checks the result against stock/PINS.json. No
+# URL is restated in ToolUniverse. It needs no MODEL_OPT: rosettafold3_opt
+# is installed editable from the kit tree, so the package derives the tree
+# from its own location.
+fetch = "{python} -m rosettafold3_opt.weights {weights_root}"
+
+# GENERATED from the kit's stock/PINS.json "weights" by a script, not
+# transcribed: one entry, one checkpoint, every mode uses it. PINS.json
+# carries both the byte count and the sha256 for this one, so both are
+# declared. The checkpoint is served from files.ipd.uw.edu: no credential,
+# no licence click-through.
+[[weights.files]]
+name = "rf3_foundry_01_24_latest_remapped.ckpt"
+size = 3038876446
+sha256 = "364ef592fd8042a9cf4176d045015190f8322f961ccca38d891b20ca578d3bb0"
+
+[kit]
+# No mode environment row: neither probe shape matched, and the kit's own
+# `modes.resolve(mode, kit_home, fpf_home=...)` returns a Resolution carrying
+# no env or exports. Its TRITON_CACHE_DIR and TORCHINDUCTOR_CACHE_DIR normally
+# come from `configs/<card>.env`, which ships for h100/h200/a100 only -- so on
+# this card Triton uses its default cache and a worker restart recompiles
+# kernels a card config would have kept.
+env_row = "none"
+env_row_reason = "modes.resolve returns a Resolution with no env/exports; the cache variables live in configs/<card>.env and the kit ships none for GB10"
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "rosettafold3"
+# The checkout is shared with the Boltz-2, Enformer, Chai-1, RFdiffusion3,
+# OpenFold3 and ESMFold2 providers; the sparse set is the union of what its
+# providers declare.
+sparse = ["rosettafold3", "common"]
+package = "rosettafold3_opt"
+# Activation is the common `.pth` form, not boltz2's worker_launch. The
+# variable's name is read off the kit, never guessed from the slug: this kit
+# defines ENV in BOTH places the probe looks and they agree --
+# rosettafold3_opt/modes.py:63 `ENV = "ROSETTAFOLD3_OPT"` and
+# rosettafold3_opt/_autoload.py `ENV = "ROSETTAFOLD3_OPT"` -- so kit_launch
+# takes modes.ENV and gets the same answer either way. kit_launch's probe
+# on this box reports:
+#   {"activation": "autoload", "mode_env": "ROSETTAFOLD3_OPT",
+#    "modes": ["off","exact","fast","big"], "env": {},
+#    "row_error": "no resolve() shape matched"}
+#
+# `fast` resolves on this card. The kit's own dry run, after the add-on was
+# applied, exits 0 and prints:
+#   DRY-RUN mode=fast row=RF3_CUDAGRAPH=1,RF3_HOIST=1
+#   fpf=fast.fast+gflash+ttr+apb.fast+res+tg+xmul.eager+xln+msa@L1.warm
+#   tree=patched(5/5) foundry=0.2.1.dev13+g4010e3e2e@4010e3e2 torch=2.13.0
+#   gpu=NVIDIA GB10(sm121)
+#   levers=graph,graph_safe_ops,hoist,fpf_trimul,fpf_gflash,fpf_ttr,fpf_apb,
+#          fpf_res,fpf_tg,fpf_xmul,fpf_xln,fpf_msa,warm,mkdit,confhoist,
+#          confln,hostlean,prefetch,awrite
+#   applied=dry-run n_gpu=1 sharding=none
+#   MEM policy=capped seams=rf3.graph_flags.hoist_begin,...hoist_end
+#   alloc_conf=expandable_segments:True,garbage_collection_threshold:0.5
+#   fpf_tg_max=1
+# 19 levers, none declined by card. That is a DRY RUN: it loads no model, so
+# it is not the smoke step.
+mode = "fast"
+#
+# THE INSTALL STEP, AND THE ONE DEVIATION FROM THE KIT'S OWN `run.sh
+# install`. Read this before changing the line below.
+#
+# This kit is the only one of the seven whose modes require the model
+# environment's `rf3` package to have been OVERWRITTEN on disk: five files
+# (graph_flags.py -- new -- plus inference_sampler.py, RF3_structure.py,
+# af3_diffusion_transformer.py, loss.py) must be byte-equal to
+# opt/forward/rf3_xattempt_addon/patched/. rosettafold3_opt/tree.py proves
+# it by sha256 at every activation and stack.activate() refuses by name
+# otherwise:
+#   this interpreter's tree is stock(5/5), not patched: row fast runs only
+#   on the patched interpreter (rosettafold3-opt install; opt/venv)
+#
+# The kit therefore keeps TWO interpreters -- a pristine one for its
+# `--mode off` stock route and a patched one for the kit modes -- and its
+# own `run.sh install` REFUSES to run with one:
+#   the patched interpreter resolves rf3 from the stock interpreter's
+#   site-packages (<path>): refused (two interpreters, never one switched
+#   in place)                     [rosettafold3_opt/install.py, run()]
+# and its `--make-venv` would derive the second one INSIDE the shared
+# checkout, at rosettafold3/opt/venv. This deployment has one environment
+# per provider by the standard's rule (STANDARD.md section 2) and never
+# writes into the kit checkout, so neither is available.
+#
+# What runs instead is the four lines `run.sh install` itself runs for the
+# PATCHED interpreter, in its order, each of them the kit's own command and
+# none of them modified:
+#   1-2. the shared core and the kit, editable, exactly as run.sh's own
+#        `"$OPT" -m pip install -q --no-build-isolation --no-deps -e ...`
+#        lines;
+#   3.   the pin check, run.sh's own `"$_p" -I "$HERE/stock/check_pins.py"`;
+#   4.   the add-on, through the kit's own installer script with the model
+#        environment's bin first on PATH -- which is precisely what
+#        rosettafold3_opt/install.py's apply_kit() does. `--rebind` rather
+#        than the bare `apply` verb because the kit documents it as "the
+#        verb for a pre-built environment": it prints OVERLAY_PRESTATE,
+#        installs on `pristine` or on an earlier copy of the same files,
+#        does nothing on `current` (so the step is idempotent, which
+#        `tu remote setup` requires), and exits 4 touching nothing on
+#        anything foreign.
+#
+# WHAT IS GIVEN UP, said rather than discovered: this environment cannot run
+# the kit's `--mode off` stock comparison, because a stock pass on a patched
+# tree is not a stock pass -- the patched graph_flags.py defaults
+# RF3_CUDAGRAPH to 1 (tree.py's own docstring says so). `[kit] mode = "off"`
+# is consequently NOT a valid fallback for this provider as written; a host
+# that wants the stock route builds a second, pristine interpreter and uses
+# the kit's own run.sh. Nothing silently degrades: with the tree patched and
+# ROSETTAFOLD3_OPT unset the kit prints nothing and rf3 would run with
+# CUDA graphs on, so the worker refuses to serve unless a kit mode is set.
+install = """
+{python} -m pip install -q --no-build-isolation --no-deps -e ../common/opt_core &&
+{python} -m pip install -q --no-build-isolation --no-deps -e opt &&
+{python} -I stock/check_pins.py &&
+PATH="$(dirname "{python}")":"$PATH" bash opt/forward/rf3_xattempt_addon/install.sh --rebind
+"""

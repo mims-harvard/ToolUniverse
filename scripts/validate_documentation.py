@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Flag deprecated wording in the user-facing docs (Phase A of devtu-docs-quality).
+"""Flag deprecated wording in the user-facing docs (Phase A of devtu-docs-quality,
+which ships in the separate tu-harness plugin rather than in this repository).
 
 Checks ``docs/``, ``README.md`` and ``skills/`` for text that must not reappear:
 
@@ -8,7 +9,10 @@ Checks ``docs/``, ``README.md`` and ``skills/`` for text that must not reappear:
 
 Files that *describe* these checks (``docs/dev_docs/`` and the ``devtu-docs-quality``
 skill, whose examples quote the deprecated text on purpose) are skipped, as is any line
-carrying ``noqa: docs-validate``.
+carrying ``noqa: docs-validate``. The ``devtu-docs-quality`` entry in ``SKIP_PARTS``
+stays after that skill moved out of this repository: it is the pattern
+``tests/unit/test_validate_documentation_script.py`` exercises, against a synthetic
+tree, and it would need to come back the moment a copy of the skill did.
 
 Usage:
     python scripts/validate_documentation.py

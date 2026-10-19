@@ -1,0 +1,134 @@
+# Boltz-2's model environment — the exact stack the measurements in
+# ../provider.toml were taken on, as `pip freeze --all` of it.
+#
+# This environment is NOT ToolUniverse's and must not be installed into it:
+# torch 2.12.0+cu130 / triton 3.7.0 / numpy 1.26.4 conflict with what the rest
+# of the package needs. That separation is the reason the MCP server talks to
+# this model over a socket instead of importing it.
+#
+# Rebuild (Python 3.11, an NVIDIA driver of the 580 series or newer, a C
+# compiler on PATH for Triton; no CUDA toolkit — the CUDA 13.0 libraries are the
+# nvidia-* wheels below):
+#
+#   uv venv --seed --managed-python --python 3.11.12 ~/boltz2-venv
+#   . ~/boltz2-venv/bin/activate
+#   grep -E '^(pip|wheel)==' requirements.lock > /tmp/pip.txt
+#   python -m pip install --no-deps -r /tmp/pip.txt
+#   printf 'setuptools==82.0.1\n' > /tmp/bc.txt
+#   grep -v -E '^(#|pip==|wheel==)' requirements.lock > /tmp/stack.txt
+#   python -m pip install --no-deps --build-constraint /tmp/bc.txt -r /tmp/stack.txt
+#   export LD_LIBRARY_PATH=$(python -c 'import site; print(site.getsitepackages()[0])')/nvidia/cu13/lib
+#
+# --no-deps is deliberate: the list is complete, and letting a resolver re-derive
+# it is how a stack stops being the one that was measured. Then install the
+# optimization kit into it (its own README's `run.sh install`), which adds the
+# two editable packages the freeze below deliberately omits: boltz2_opt and
+# opt_core, whose versions are pinned in ../provider.toml under [kit].
+#
+# Every distribution here resolves on linux-aarch64 as well as x86_64; four of
+# them (antlr4-python3-runtime, fairscale, ihm, modelcif) are pure-Python source
+# distributions and build anywhere.
+aiohappyeyeballs==2.6.2
+aiohttp==3.13.5
+aiosignal==1.4.0
+antlr4-python3-runtime==4.9.3
+attrs==26.1.0
+biopython==1.84
+# boltz 2.2.1 is installed from the wheel the optimization kit vendors at
+# boltz2/stock/boltz-2.2.1-py3-none-any.whl (sha256 b8c62bbdede19229…,
+# the PyPI file); the kit's stock/check_pins.py verifies the installed tree
+# file for file and refuses a modified one. Installing from PyPI by version
+# gives the same release.
+boltz==2.2.1
+certifi==2026.5.20
+charset-normalizer==3.4.7
+chembl-structure-pipeline==1.2.2
+click==8.1.7
+cuda-bindings==13.3.1
+cuda-pathfinder==1.5.5
+cuda-toolkit==13.0.2
+cuequivariance==0.10.0
+cuequivariance-ops-cu13==0.10.0
+cuequivariance-ops-torch-cu13==0.10.0
+cuequivariance-torch==0.10.0
+dm-tree==0.1.8
+docker-pycreds==0.4.0
+einops==0.8.0
+einx==0.3.0
+fairscale==0.4.13
+filelock==3.29.0
+frozendict==2.4.7
+frozenlist==1.8.0
+fsspec==2026.4.0
+gemmi==0.6.5
+gitdb==4.0.12
+GitPython==3.1.50
+hydra-core==1.3.2
+idna==3.17
+ihm==2.10
+Jinja2==3.1.6
+joblib==1.5.3
+lightning-utilities==0.15.3
+llvmlite==0.44.0
+MarkupSafe==3.0.3
+mashumaro==3.14
+modelcif==1.2
+mpmath==1.3.0
+msgpack==1.1.2
+multidict==6.7.1
+networkx==3.6.1
+numba==0.61.0
+numpy==1.26.4
+nvidia-cublas==13.1.1.3
+nvidia-cublas-cu12==12.9.2.10
+nvidia-cuda-cupti==13.0.85
+nvidia-cuda-nvrtc==13.0.88
+nvidia-cuda-nvrtc-cu12==12.9.86
+nvidia-cuda-runtime==13.0.96
+nvidia-cudnn-cu13==9.20.0.48
+nvidia-cufft==12.0.0.61
+nvidia-cufile==1.15.1.6
+nvidia-curand==10.4.0.35
+nvidia-cusolver==12.0.4.66
+nvidia-cusparse==12.6.3.3
+nvidia-cusparselt-cu13==0.8.1
+nvidia-ml-py==13.595.45
+nvidia-nccl-cu13==2.29.7
+nvidia-nvjitlink==13.0.88
+nvidia-nvshmem-cu13==3.4.5
+nvidia-nvtx==13.0.85
+omegaconf==2.3.0
+opt_einsum==3.4.0
+packaging==26.2
+pandas==3.0.3
+pillow==12.2.0
+pip==26.1.1
+platformdirs==4.10.0
+propcache==0.5.2
+protobuf==5.29.6
+psutil==7.2.2
+python-dateutil==2.9.0.post0
+pytorch-lightning==2.5.0
+PyYAML==6.0.2
+rdkit==2026.3.2
+requests==2.32.3
+scikit-learn==1.6.1
+scipy==1.13.1
+sentry-sdk==2.61.0
+setproctitle==1.3.7
+setuptools==65.5.1
+six==1.17.0
+smmap==5.0.3
+sympy==1.14.0
+threadpoolctl==3.6.0
+torch==2.12.0
+torchmetrics==1.9.0
+tqdm==4.67.3
+triton==3.7.0
+types-requests==2.33.0.20260518
+typing_extensions==4.15.0
+urllib3==2.7.0
+uv==0.11.17
+wandb==0.18.7
+wheel==0.47.0
+yarl==1.24.2

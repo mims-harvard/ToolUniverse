@@ -1,0 +1,199 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "protenix_v1_fold",
+    "description": "Predict an all-atom biomolecular structure with Protenix 1.1.0, ByteDance's open AlphaFold3 reproduction. The query is a list of chains, each with a molecule_type (protein, dna, rna, ligand or ion) and a sequence -- SMILES or CCD_<id> for a ligand. Returns per-sample confidence scores (rank on ranking_score) and timings; the mmCIF text itself is opt-in. No MSA search is performed: pass alignments on a chain for an MSA-fed prediction.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "chains": {
+          "type": "array",
+          "description": "The chains of one complex.",
+          "minItems": 1,
+          "maxItems": 20,
+          "items": {
+            "type": "object",
+            "properties": {
+              "molecule_type": {
+                "type": "string",
+                "enum": [
+                  "protein",
+                  "dna",
+                  "rna",
+                  "ligand",
+                  "ion"
+                ],
+                "default": "protein"
+              },
+              "sequence": {
+                "type": "string",
+                "description": "Residue sequence; SMILES or CCD_<id> when molecule_type is 'ligand'; the element symbol when it is 'ion'.",
+                "minLength": 1
+              },
+              "count": {
+                "type": "integer",
+                "description": "Identical copies of this chain in the complex (default 1).",
+                "default": 1,
+                "minimum": 1,
+                "maximum": 16
+              },
+              "unpairedMsa": {
+                "type": "string",
+                "description": "A3M text of the unpaired MSA for this chain. Nothing is searched for: this is the only way the provider gets one."
+              },
+              "pairedMsa": {
+                "type": "string",
+                "description": "A3M text of the paired MSA."
+              },
+              "unpairedMsaPath": {
+                "type": "string",
+                "description": "Path to an A3M file readable by the worker, instead of inline text."
+              },
+              "pairedMsaPath": {
+                "type": "string",
+                "description": "Path to a paired A3M file."
+              }
+            },
+            "required": [
+              "sequence"
+            ]
+          }
+        },
+        "name": {
+          "type": "string",
+          "description": "A label for this complex; it names the output files. Defaults to 'complex'."
+        },
+        "seed": {
+          "type": "integer",
+          "description": "Random seed; the same seed reproduces the prediction. Upstream's default is 101.",
+          "default": 101,
+          "minimum": 0
+        },
+        "num_diffusion_samples": {
+          "type": "integer",
+          "description": "Structures to sample (upstream's default is 5). Each is scored separately, so this is how to compare conformations; rank them on `scores`.",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "num_diffusion_steps": {
+          "type": "integer",
+          "description": "Diffusion steps per sample (upstream's default is 200). Fewer is faster and coarser.",
+          "minimum": 1,
+          "maximum": 400
+        },
+        "num_recycles": {
+          "type": "integer",
+          "description": "Pairformer recycling cycles (upstream's default is 10). Fewer is faster and less accurate.",
+          "minimum": 1,
+          "maximum": 20
+        },
+        "out_dir": {
+          "type": "string",
+          "description": "Write the predicted structures to this directory on the server instead of a temporary one, and return their paths. This is how to get a structure larger than the transport can carry, and how to hand one provider's output to another's input without the mmCIF making a round trip through the caller.",
+          "minLength": 1,
+          "maxLength": 4096
+        },
+        "return_structures": {
+          "type": "boolean",
+          "description": "Return the mmCIF text (default false: megabytes). The confidence scores come back either way.",
+          "default": false
+        }
+      },
+      "required": [
+        "chains"
+      ],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "n_structures": {
+          "type": "integer"
+        },
+        "structures": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "structures_note": {
+          "type": "string"
+        },
+        "structure_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Server-side mmCIF paths, when out_dir was given."
+        },
+        "out_dir": {
+          "type": "string",
+          "description": "The directory the structures were written to."
+        },
+        "seeds": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "scores": {
+          "type": "object"
+        },
+        "inputs": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "use_msa": {
+          "type": "boolean"
+        },
+        "msa_note": {
+          "type": "string"
+        },
+        "options_applied": {
+          "type": "object"
+        },
+        "timing": {
+          "type": "object"
+        },
+        "peak_reserved_gib": {
+          "type": "number"
+        },
+        "weights_held_by": {
+          "type": "string"
+        },
+        "kit_mode": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "ProtenixV1FoldTool",
+      "url": "https://github.com/anthropics/uplifting-biomolecular-modeling",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/protenix_v1",
+      "mcp_tool_name": "protenix_v1_fold"
+    },
+    "test_examples": [
+      {
+        "chains": [
+          {
+            "molecule_type": "protein",
+            "sequence": "LSDEDFKAVFGMTRSAFANLPLWKQQNLKKEKGLF"
+          }
+        ]
+      }
+    ]
+  }
+]

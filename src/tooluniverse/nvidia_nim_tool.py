@@ -205,6 +205,30 @@ class NvidiaNIMTool(BaseTool):
                 "status_code": 401,
             }
 
+        if response.status_code == 403:
+            # Distinct from 401. NVIDIA returns 403 "Authorization failed" when
+            # the key is syntactically accepted but not permitted on
+            # health.api.nvidia.com -- an expired/revoked key, or an account
+            # without the NIM biology (healthcare) APIs enabled, which are
+            # entitled separately from the general build.nvidia.com catalogue.
+            # Without this branch the message was a bare "API returned status
+            # 403", which gives the caller nothing to act on and reads like an
+            # outage rather than an account setting.
+            return {
+                "status": "error",
+                "error": "Authorization failed",
+                "detail": (
+                    "NVIDIA rejected this NVIDIA_API_KEY for the NIM biology API "
+                    "(403 Forbidden). The key is present and well-formed, so this "
+                    "is an entitlement or validity problem, not a missing key: "
+                    "check that the key has not expired or been revoked, and that "
+                    "your account has the healthcare/biology NIM endpoints enabled "
+                    "at https://build.nvidia.com. Upstream said: "
+                    + (response.text or "")[:200]
+                ),
+                "status_code": 403,
+            }
+
         if response.status_code == 429:
             return {
                 "status": "error",

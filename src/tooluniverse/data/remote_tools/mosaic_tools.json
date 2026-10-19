@@ -1,0 +1,162 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "mosaic_design_binder",
+    "description": "Design a protein binder against a target protein by gradient descent through Boltz-2 (escalante-bio/mosaic). Give the target's amino-acid sequence and a binder length; it invents the binder: 125 optimiser steps, each a full Boltz-2 forward+backward pass under a contact + inverse-folding loss, then one refold to score the result. Returns the binder sequence, ipTM, pLDDT and binder-to-target PAE, and (opt-in) the designed complex as PDB text. Single-sequence: no MSA is built or fetched. A request takes minutes; the first request of a new size also pays a compilation of minutes.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "target_sequence": {
+          "type": "string",
+          "description": "The target protein, one chain, standard amino acids only.",
+          "minLength": 1,
+          "maxLength": 376
+        },
+        "binder_length": {
+          "type": "integer",
+          "description": "Residues in the binder to invent.",
+          "default": 80,
+          "minimum": 8,
+          "maximum": 200
+        },
+        "target_copies": {
+          "type": "integer",
+          "description": "Copies of the target chain in the complex (for a homo-oligomeric target).",
+          "default": 1,
+          "minimum": 1,
+          "maximum": 4
+        },
+        "epitope": {
+          "type": "string",
+          "description": "Optional target residues the binder must contact, 1-based along target_sequence, e.g. '12,15,40-48'; applied on every copy."
+        },
+        "seed": {
+          "type": "integer",
+          "description": "Random seed for the starting sequence and the optimiser. Vary it for different designs.",
+          "default": 0,
+          "minimum": 0
+        },
+        "steps1": {
+          "type": "integer",
+          "description": "Optimiser steps in stage 1 (upstream: 75). Time is linear in the total of steps1 + steps2.",
+          "default": 75,
+          "minimum": 1,
+          "maximum": 400
+        },
+        "steps2": {
+          "type": "integer",
+          "description": "Optimiser steps in stage 2 (upstream: 50).",
+          "default": 50,
+          "minimum": 1,
+          "maximum": 400
+        },
+        "return_structure": {
+          "type": "boolean",
+          "description": "Return the designed complex as PDB text (default false).",
+          "default": false
+        }
+      },
+      "required": [
+        "target_sequence"
+      ],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "binder_sequence": {
+          "type": "string"
+        },
+        "binder_length": {
+          "type": "integer"
+        },
+        "target_copies": {
+          "type": "integer"
+        },
+        "n_tokens": {
+          "type": "integer"
+        },
+        "epitope": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "steps": {
+          "type": "object"
+        },
+        "scores": {
+          "type": "object"
+        },
+        "sequence_sharpness": {
+          "type": "number"
+        },
+        "loss": {
+          "type": "object"
+        },
+        "shape_compiled_before": {
+          "type": "boolean"
+        },
+        "shapes_held": {
+          "type": "integer"
+        },
+        "requests_served": {
+          "type": "integer"
+        },
+        "timing": {
+          "type": "object"
+        },
+        "peak_reserved_gib": {
+          "type": "number"
+        },
+        "peak_in_use_gib": {
+          "type": "number"
+        },
+        "weights_held_by": {
+          "type": "string"
+        },
+        "kit_mode": {
+          "type": "string"
+        },
+        "complex_pdb": {
+          "type": "string"
+        },
+        "structure_note": {
+          "type": "string"
+        },
+        "structure_error": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "MosaicDesignBinderTool",
+      "url": "https://github.com/anthropics/uplifting-biomolecular-modeling",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/mosaic",
+      "mcp_tool_name": "mosaic_design_binder"
+    },
+    "test_examples": [
+      {
+        "target_sequence": "KKAVINGEQIRSISDLHQTLKKELALPEYYGENLDALWDALTGWVEYPLVLEWRQFEQSKQLTENGAESVLQVFREAKAEGADITIILS",
+        "binder_length": 80,
+        "steps1": 10,
+        "steps2": 5,
+        "seed": 0
+      }
+    ]
+  }
+]

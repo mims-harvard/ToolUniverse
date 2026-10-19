@@ -1,0 +1,52 @@
+# The smallest thing that exercises BoltzGen's generation path end to end.
+#
+# One unconditional 60-residue monomer, two designs in ONE diffusion batch, the
+# design step alone. No target structure, so nothing outside this file has to
+# exist; no `files:` block, so the smoke also proves that the plain
+# specification reading works.
+#
+# TWO designs and not one, which is the one place this smoke cannot copy
+# RFdiffusion3's. Under `exact` and `fast` the kit's `hoist` lever compares the
+# strides of its aligned (1, 16, N, N) attention-mask slice with stock's
+# contiguous tensor when the diffusion batch holds a single design, disables
+# itself unless the token count is a multiple of 16, and a mode is all of its
+# levers -- so the kit refuses the whole run, exit 3 (boltzgen/CHANGES.md, the
+# `hoist` entry; README.md "The kit modes have three requirements"). The kit's
+# own `warm` verb designs one structure and is documented as needing
+# `--mode big` for exactly this reason. Two designs in a batch of two is the
+# smallest shape the default mode will run.
+#
+# The design step ALONE, and not the kit's `warm` pair of design +
+# inverse_folding: this is a smoke for the generation path, and the four steps
+# after `design` are scoring and ranking. A caller that wants the ranked output
+# asks for the whole pipeline by leaving `steps` out.
+#
+# UPSTREAM'S OWN 500 SAMPLING STEPS, and no `sampling_steps` here, which is
+# worth saying because it was nearly the other way round. The first smoke ran
+# 40 minutes without finishing and `sampling_steps: 500` in upstream's
+# design.yaml was the obvious suspect -- rfdiffusion3's comparable smoke runs
+# 20 denoiser steps and finishes in seconds. It was the wrong suspect. The
+# design step was not slow, it was stalled: an OpenMP pool that does not exist
+# in upstream's forked DataLoader worker, fixed by [kit.env] OMP_NUM_THREADS.
+# With that in place the step count turns out to cost almost nothing, because
+# the kit's CUDA-graph sampler replays one captured step:
+#
+#     sampling_steps  20 -> 31.6 s      500 (upstream's own) -> 40.0 s
+#
+# So the smoke runs upstream's own sampling. A `sampling_steps` option does now
+# exist on this provider -- it is a real knob, upstream's `--config design
+# sampling_steps=N`, and the kit tolerates a small value (both of the runs above
+# were kit mode fast with all eight levers applied) -- but a smoke that lowered
+# it would be exercising a sampling schedule no caller uses, to save 8 seconds.
+#
+# The envelope form is used deliberately, so the smoke proves the reading that
+# carries the run parameters as well as the specification.
+specification:
+  entities:
+    - protein:
+        id: A
+        sequence: 60..60
+options:
+  num_designs: 2
+  diffusion_batch_size: 2
+  steps: ["design"]

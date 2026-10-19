@@ -1,0 +1,133 @@
+# esm_if1's model environment -- the stack this provider was built against.
+#
+# It is the kit's own `esm_if1/environment/requirements.lock` with the
+# deviations below and nothing else. Of its 47 pin lines, 37 are reproduced
+# here byte for byte, 1 is re-pointed to the aarch64 artifact of the SAME
+# version, and 9 are omitted. Nothing is added.
+#
+# THIS IS A CPU STACK, ON PURPOSE AND BY MEASUREMENT, not a consolation.
+# `[gpu] policy = "none"` in provider.toml carries the evidence; the short
+# version is three facts, each checked rather than assumed:
+#
+#   1. The kit pins torch by DIRECT URL to
+#      `torch-2.4.0+cu121-cp311-cp311-linux_x86_64.whl`. That artifact cannot
+#      install on aarch64 at all -- the platform tag, before any question
+#      about CUDA.
+#   2. PyPI's `torch-2.4.0-cp311-cp311-manylinux2014_aarch64.whl` is 89.8 MB
+#      and carries `libtorch_cpu.so` and no `libtorch_cuda.so`; every
+#      `nvidia-*` dependency in its metadata is marked
+#      `platform_machine == "x86_64"`. That is the wheel installed here, and
+#      it is the SAME VERSION as the pin.
+#   3. download.pytorch.org/whl/cu124 DOES publish a CUDA-enabled aarch64
+#      build of this exact torch version (`torch-2.4.0-cp311-cp311-
+#      linux_aarch64.whl`, 2,355,105,760 bytes), so "no CUDA aarch64 torch
+#      below 2.7" is true of PyPI and not of that index. It was still rejected,
+#      and measured rather than argued: `cuobjdump --list-elf` on
+#      `nvidia_cublas_cu12-12.4.5.8-py3-none-manylinux2014_aarch64.whl`'s
+#      `libcublas.so.12` and `libcublasLt.so.12` lists
+#      sm_50 sm_60 sm_61 sm_70 sm_75 sm_80 sm_86 sm_89 sm_90 -- and
+#      `--list-ptx` lists NOTHING, in either library. There is no sm_12x cubin
+#      and no PTX to compile forward from, so every GEMM of this model would
+#      raise `no kernel image is available for execution on the device` on
+#      sm_121 whatever torch itself carries. A CUDA 12.4 stack cannot drive
+#      this card.
+#
+# Residency still earns its place on the CPU, and for this model it earns it
+# more than for most: the checkpoint is 1.7 GB read through `torch.load`, the
+# model is 142M parameters, and a single design is seconds. See [runtime] in
+# provider.toml for the measured ratio.
+#
+# THE NINE OMISSIONS, each with its reason:
+#
+#   * the thirteen `nvidia-*-cu12` pins (cublas, cuda-cupti, cuda-nvrtc,
+#     cuda-runtime, cudnn, cufft, curand, cusolver, cusparse, nccl, nvjitlink,
+#     nvtx) -- torch's own metadata marks every one of them
+#     `platform_machine == "x86_64"`, and a CPU torch loads none of them.
+#     (Counted as one omission line-class; thirteen lines.)
+#   * `triton==3.0.0` -- publishes no aarch64 artifact of any kind, and a CPU
+#     torch never imports it. (`torch.compile` is not on any path here:
+#     STOCK.md says "upstream has no torch.compile, CUDA-graph or
+#     flash-attention path".)
+#   * `torch_scatter==2.1.2+pt24cu121`, `torch_sparse==0.6.18+pt24cu121`,
+#     `torch_cluster==1.6.3+pt24cu121` -- data.pyg.org publishes these builds
+#     for linux_x86_64 only; there is no aarch64 wheel of any version of any
+#     of them. They are also NOT NEEDED, which is upstream's own statement
+#     rather than a hope: `esm/inverse_folding/gvp_modules.py:439` reads
+#     "# Guarding this import here to remove the dependency on torch_scatter,
+#     since this isn't used in ESM-IF1", and the `from torch_scatter import
+#     scatter_add` beneath it sits inside `if autoregressive_x is not None:`,
+#     a branch ESM-IF1's encoder never takes. `torch_sparse` and
+#     `torch_cluster` are not imported anywhere under `esm/` at all (checked:
+#     the only PyG import in the whole tree is
+#     `from torch_geometric.nn import MessagePassing`, and torch-geometric
+#     2.6.1 is pure Python and requires none of the three). `[env] verify`
+#     imports the module that holds that import so a regression shows up at
+#     setup time, not at request time.
+#   * `fair-esm @ git+https://github.com/facebookresearch/esm.git@2b369911…` --
+#     deliberately not installed by this lock, exactly as the kit's own
+#     `environment/Dockerfile` does it ("installs this file with
+#     `pip install --no-deps -r` (the fair-esm line filtered out by name) and
+#     then fair-esm from the archive"). `[kit] install` installs
+#     `stock/fair-esm-2b369911.tar.gz`, the bytes the kit ships and the bytes
+#     `run.sh install`'s pin check compares against; a git fetch of the same
+#     commit would be a second route to the same files and one more thing to
+#     be offline-fragile about.
+#
+# THE ONE RE-POINTED LINE: `biotite==0.39.0` publishes macOS-arm64, Windows
+# and manylinux-x86_64 wheels and NO linux-aarch64 wheel, so pip builds it
+# from the pinned sdist (`biotite-0.39.0.tar.gz`, 33 MB) with Cython and a
+# compiler. Same version, same source, locally compiled; it took 2m09s on 20
+# cores. The pin is unchanged, which is why this is "re-pointed" and not
+# "deviated".
+#
+# Python 3.11 EXACTLY. The kit says so ("exactly 3.11 (cp311 wheels; another
+# minor version fails at `pip install -r`)") and so does this lock: numpy
+# 1.26.4, scipy 1.11.4 and torch 2.4.0 all publish cp311 and not cp312.
+#
+# Rebuild (a C/C++ compiler for biotite; network for PyPI; ~2.5 GB of disk):
+#
+#   python3.11 -m venv ~/esm_if1-venv
+#   export TOOLUNIVERSE_ESM_IF1_PYTHON=~/esm_if1-venv/bin/python
+#   $TOOLUNIVERSE_ESM_IF1_PYTHON -m pip install --upgrade pip
+#   $TOOLUNIVERSE_ESM_IF1_PYTHON -m pip install --no-deps -r requirements.lock
+#   cd <kit>/esm_if1 && $TOOLUNIVERSE_ESM_IF1_PYTHON -m pip install --no-deps \
+#       stock/fair-esm-2b369911.tar.gz
+#   PATH=$(dirname $TOOLUNIVERSE_ESM_IF1_PYTHON):$PATH bash run.sh install
+#
+# `python -m venv` rather than `uv venv`, and it does not matter here either
+# way: this kit ships NO autoload `.pth` (its `opt/pyproject.toml` says "this
+# kit ships no autoload .pth (the mode is chosen on the command line; no
+# import is hooked)"), so nothing scans site-packages for one and uv's
+# `_virtualenv.pth`, which broke openfold3's hook detection, has nothing here
+# to confuse. The stdlib is used because it is the one with no extra pin.
+aiohappyeyeballs==2.7.1
+aiohttp==3.14.3
+aiosignal==1.4.0
+attrs==26.1.0
+biotite==0.39.0
+certifi==2026.7.22
+charset-normalizer==3.5.1
+filelock==3.29.0
+frozenlist==1.8.0
+fsspec==2026.4.0
+idna==3.19
+Jinja2==3.1.6
+MarkupSafe==3.0.3
+mpmath==1.3.0
+msgpack==1.2.2
+multidict==6.7.1
+networkx==3.6.1
+numpy==1.26.4
+propcache==0.5.2
+psutil==7.2.2
+pyparsing==3.3.2
+requests==2.34.2
+scipy==1.11.4
+setuptools @ https://files.pythonhosted.org/packages/4f/ab/0bcfebdfc3bfa8554b2b2c97a555569c4c1ebc74ea288741ea8326c51906/setuptools-68.1.2-py3-none-any.whl#sha256=3d8083eed2d13afc9426f227b24fd1659489ec107c0e86cec2ffdde5c92e790b
+sympy==1.14.0
+torch==2.4.0
+torch-geometric==2.6.1
+tqdm==4.70.0
+typing_extensions==4.15.0
+urllib3==2.7.0
+yarl==1.24.5

@@ -1,0 +1,11 @@
+{
+    "_comment": "The smallest thing that exercises the design path end to end: one unconditional 60-residue backbone, one roll-out, one design per roll-out. No input PDB, so nothing outside this file has to exist; upstream accepts a specification with `length` and no `input` (input_parsing.py:246-248). The envelope form is used deliberately, so the smoke proves the reading that carries the run parameters as well as the specification; `n_batches` is the only one it moves, and it moves it to the value that makes the run smallest.",
+    "specification": {
+        "smoke60": {
+            "length": "60"
+        }
+    },
+    "options": {
+        "n_batches": 1
+    }
+}

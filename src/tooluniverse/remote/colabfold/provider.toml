@@ -1,0 +1,673 @@
+# ColabFold -- stock ColabFold 1.6.1 (`colabfold_batch`, alphafold-colabfold
+# 2.3.13) on the public AlphaFold2-Multimer v3 parameters, held resident.
+# THE SECOND JAX PROVIDER ON THIS STANDARD (af3_jax is the first); everything
+# below that is new is new because of that or because of the MSA question.
+#
+# STATUS: verified on one card, named in `verified_on`. It folds from a
+# precomputed MSA and it contacts nothing. The one thing that stopped it was
+# neither this manifest's doing nor an arch-list problem -- see THE WALL below,
+# which is a fifth kind of stack-versus-card failure and whose fix is one of
+# upstream's own parameters.
+#
+# ---------------------------------------------------------------------------
+# THE FIRST THING TO SETTLE: THIS PROVIDER CONTACTS NO MSA SERVER, AND THE
+# ROUTE THAT MAKES THAT TRUE IS UPSTREAM'S OWN.
+#
+# ColabFold's headline behaviour is to build an MSA by calling a remote
+# MMseqs2 API (`colabfold.colabfold.run_mmseqs2`, default host
+# `https://api.colabfold.com`). This provider never reaches it, and not by
+# policy alone -- by which of upstream's two code paths it takes. In
+# `colabfold.batch.run` the branch is literally:
+#
+#     if a3m_lines is None:                  -> get_msa_and_templates(...)  # the server
+#     elif a3m_lines is not None:            -> unserialize_msa(...)        # no network
+#
+# and `colabfold.input.get_queries` sets `a3m_lines` for exactly one input
+# shape: a `.a3m` file (and a `.csv` with an `a3mpath` column, which is the same
+# thing one row at a time). So a precomputed-MSA route exists, it is first
+# class, and it is the ONLY route this provider exposes: the worker accepts a3m
+# TEXT, writes it to a file, and hands that file to upstream's own
+# `get_queries`, so the dialect stays upstream's.
+#
+# THE INPUT DIALECT, read out of `unserialize_msa` rather than guessed:
+#
+#   * A PLAIN a3m -- first line not `#...` with two tab-separated fields -- is
+#     ONE protein chain. The whole file is that chain's unpaired MSA, the query
+#     is its first sequence, templates are `mk_mock_template` (none).
+#   * A COLABFOLD COMPLEX a3m begins `#<len1>,<len2>,...\t<card1>,<card2>,...`:
+#     the aligned-column lengths of the unique chains and how many copies of
+#     each. Line 3 is the concatenated query. Every later pair of lines is split
+#     by aligned columns into per-chain segments and sorted into the PAIRED MSA
+#     (a row with amino acids in two or more chains) or the per-chain UNPAIRED
+#     MSAs. This is the dialect the kit's own `tests/inputs/1BRS_AD.a3m` is in
+#     and the dialect `colabfold_batch` writes beside its own results.
+#   * A single-sequence a3m (one `>query` + the sequence) is the MSA-FREE
+#     sentinel -- the kit's own example input is one, and its README says pLDDT
+#     near 35 is the expected consequence. There is no `null`-vs-`""`
+#     distinction to make here as there is in af3_jax's fold-input JSON: an a3m
+#     either carries alignment rows or it does not.
+#
+# NO LOCAL MMseqs2 DATABASE IS REQUIRED, AND NOTHING LARGE IS HIDDEN. The
+# MMseqs2 search is the remote service's, so there is no local UniRef/env
+# database in any route of this kit -- `environment/Dockerfile` installs
+# `hhsuite` and `kalign` and NOTHING else of a search stack, and those two are
+# upstream's TEMPLATE path (`--templates`, which needs a pdb70 or a
+# `--custom-template-path`). This provider runs with templates OFF and the
+# worker refuses `use_templates` by name, for two reasons that are both
+# measured in upstream's source: `get_msa_and_templates` is the only template
+# route for an a3m input and it calls `run_mmseqs2` for the template hits (the
+# network again), and `mk_hhsearch_db` would need a database nothing here
+# declares. So the only bytes this provider fetches are the 1.86 GB of
+# parameters under [weights], with a digest each.
+#
+# ---------------------------------------------------------------------------
+# WHAT HAS BEEN PROVED ON THIS MACHINE (NVIDIA GB10, aarch64, cc 12.1, driver
+# 580.173.02, 130.6 GB unified, 20 cores):
+#
+#   * The pinned stack installs natively, with ONE substitution that is a
+#     package NAME rather than a version: `tensorflow_cpu` -> `tensorflow`,
+#     same release 2.21.0, because `tensorflow_cpu` publishes x86-64 and
+#     Windows wheels only. environment/requirements.lock has the record and the
+#     evidence. All 76 other pins resolve to an aarch64 cp311 or py3-none-any
+#     wheel at the kit's exact version.
+#   * THE ROUND'S BRIEF SAID JAXLIB'S aarch64 WHEELS BEGIN AT 0.7.2. THEY DO
+#     NOT, and this provider only exists because that was checked instead of
+#     believed. jaxlib publishes `manylinux2014_aarch64` artifacts from 0.4.18
+#     onwards; 0.5.3 -- this kit's pin -- publishes eight of them, and
+#     jax-cuda12-plugin 0.5.3 and jax-cuda12-pjrt 0.5.3 publish aarch64 wheels
+#     too (checked against the PyPI index, per file). Measured in the model
+#     interpreter afterwards: jax 0.5.3 `default_backend()` -> "gpu",
+#     `devices()` -> [CudaDevice(id=0)], `device_kind` "NVIDIA GB10",
+#     `compute_capability` "12.1", a 2048x2048 matmul correct, no PTX JIT
+#     message and no warning. A two-year-old jax line drives this card.
+#   * It folds, from a precomputed MSA, with no network access in the request
+#     path. Four consecutive identical requests, a mixed-shape sequence, an
+#     ascending ladder, and a request that rebuilds the engine -- see
+#     `verified_on`.
+#
+# ---------------------------------------------------------------------------
+# THE WALL THIS PROVIDER HIT, AND THE SWITCH THAT CLEARS IT. A FIFTH KIND OF
+# STACK-VERSUS-CARD FAILURE: the compiler's BACK END cannot select an
+# instruction for one dtype pair on this target.
+#
+# The four on this standard before it are: no CUDA aarch64 torch below 2.7
+# (read the wheel); the kit's levers have no tile table for this compute
+# capability (read the table); a pinned dependency ships kernels the pinned
+# compiler cannot build (read the compiler's target list); and a kernel that
+# BUILDS and does not FIT (af3_jax, 110592 bytes wanted against 101376). This
+# is none of them. Stock ColabFold, mode `off`, no kit lever anywhere near it:
+#
+#     Unsupported conversion from bf16 to f16
+#     LLVM ERROR: Unsupported rounding mode for conversion.
+#
+# WHAT IT IS, named rather than guessed, by the method section 12 prescribes:
+#
+#   * BOTH STRINGS ARE IN `jax_plugins/xla_cuda12/xla_cuda_plugin.so`, four
+#     bytes apart from "Unsupported rounding mode for conversion to fp8:".
+#     They are LLVM's NVPTX instruction selector -- the LLVM that jaxlib 0.5.3
+#     bundles -- refusing to select a `cvt` for one (source dtype, destination
+#     dtype, rounding mode) triple on this target. Not XLA's own emitter, not
+#     tokamax (there is none on this jax line), not the kit.
+#   * IT IS A COMPILE FAILURE OF THE WHOLE MODULE, so there is no Python
+#     traceback and no kernel name: `report_fatal_error` aborts the process.
+#     The HLO dump names the module -- `module_0189.jit_apply_fn`, the model's
+#     forward pass -- and stops at `before_optimizations.txt` with no PTX and
+#     no LLVM IR beside it, where every module that compiled has all three.
+#   * WHY bf16 AND f16 MEET AT ALL is the part no dependency list predicts, and
+#     the HLO answers it in two lines out of 17,010. The ONLY f16 values in the
+#     module are its two recycle-state parameters, `f16[51,256]` and
+#     `f16[51,51,128]`, tagged `batch['prev']['prev_msa_first_row']` and
+#     `batch['prev']['prev_pair']`. ColabFold keeps the recycle state in
+#     float16 to save host memory -- `colabfold/alphafold/../model.py:153` is
+#     `zeros = lambda shape: np.zeros(shape, dtype=np.float16)` and :170 casts
+#     every iteration's output back with `np.asarray(v, np.float16)` -- while
+#     every activation in the trunk is bf16 under AlphaFold's global config. So
+#     f16 and bf16 meet at the recycle boundary of a model nobody would
+#     describe as mixed between those two types.
+#   * AND IT IS NOT THE OBVIOUS CONVERT, which is why reading the error as "this
+#     card cannot do bf16->f16" would have been wrong.
+#     `jax.jit(lambda a: (a * a).astype(jnp.float16))` over a real bf16 device
+#     array compiles and runs correctly here. What the model asks for is the
+#     same conversion under a rounding mode this LLVM has no pattern for. The
+#     kit measured this stock path on an H100 with this same jax, so the
+#     difference is the target rather than the code.
+#
+# THE FIX IS UPSTREAM'S OWN PARAMETER, and like af3_jax's tokamax flag it is
+# configuration rather than a patch: `colabfold.batch.run`'s `use_bfloat16`,
+# threaded to `load_models_and_params` and from there to
+# `model_config.model.global_config.bfloat16`. With it False the trunk is f32,
+# f16 then meets f32 -- a pair LLVM selects without complaint -- and the model
+# folds. The worker sets it and says so in every reply (`use_bfloat16: false`).
+#
+# WHAT IT COSTS: f32 activations instead of bf16 in the Evoformer, the extra-MSA
+# stack and the template stack. The whole [gpu] ladder below was measured with
+# it, so the budget is the cost rather than an estimate of it.
+#
+# AND ONE CONSEQUENCE WORTH STATING PLAINLY, because it is a fact about the
+# upstream and not about this provider: `use_bfloat16` IS NOT REACHABLE FROM
+# `colabfold_batch`'s COMMAND LINE. It is a `run()` keyword with no argparse
+# flag -- `grep -c "add_argument.*bfloat"` over `colabfold/batch.py` is 0, and
+# `main()` passes 50-odd named arguments to `run()` and not that one. MEASURED,
+# not inferred: the stock console script on this card,
+#
+#     colabfold_batch --num-models 1 --data ~/.colabfold smoke/input.a3m out/
+#
+# exits 134 (SIGABRT) with those same two lines, having written `cite.bibtex`,
+# `config.json`, `input.a3m`, `input_coverage.png` and `log.txt` and no
+# structure. So the resident wrapper is not a faster route to this model on this
+# card -- it is the only one, because it calls the library and can pass the
+# keyword. (The kit's own `run.sh` cannot reach the model here at all for a
+# second and unrelated reason: every verb runs `check_pins.py --quiet` first,
+# which refuses with `tensorflow_cpu: expected 2.21.0 got None` -- the
+# architecture substitution environment/requirements.lock declares. [kit] install
+# accepts that one mismatch after proving it is that one; `run.sh pred` has no
+# such provision, so it exits 3 in every mode on aarch64.)
+#
+# ---------------------------------------------------------------------------
+# THE JAX MEMORY TRAP IS THE SAME ONE AND IT IS WORSE HERE. af3_jax measured
+# `XLA_PYTHON_CLIENT_PREALLOCATE` left at its default reporting 91.22 GiB for a
+# 2.0 GiB model. This kit's pinned environment does not merely leave it at the
+# default: `stock/PINS.json image.env` sets
+# `XLA_PYTHON_CLIENT_MEM_FRACTION = "0.95"`, which RAISES jax's preallocation
+# from 75% to 95% of the card. Measured here, in this environment, with one
+# 2048x2048 matmul and nothing else:
+#
+#     preallocate default (true)   peak_pool_bytes 97,947,141,120  (91.22 GiB)
+#     XLA_PYTHON_CLIENT_PREALLOCATE=false   peak_pool_bytes 153,092,096 (0.14 GiB)
+#
+# -- a factor of 640 on a trivial kernel, and the figure a scheduler would have
+# read. [kit.env] therefore sets it false and says why there. `peak_bytes_reserved`
+# reads 0 on this stack too, exactly as the standard records: the field whose
+# NAME says reserved is not the analogue of torch's `max_memory_reserved`;
+# `peak_pool_bytes` is.
+#
+# ---------------------------------------------------------------------------
+# WHY THE PARAMETER SET IS THE MULTIMER ONE FOR EVERY QUERY, INCLUDING ONE
+# CHAIN -- a decision, and it removes a run-time download rather than adding a
+# restriction. `colabfold_batch --model-type auto` resolves a single-chain query
+# to `alphafold2_ptm`, whose `params_model_{1..5}_ptm.npz` this kit does not pin
+# and does not fetch (its own parameter lines print them `NOT PINNED`). Upstream
+# would then call `download_alphafold_params("AlphaFold2-ptm")` and pull
+# `alphafold_params_2021-07-14.tar` FROM THE NETWORK, at request time, which is
+# the thing this provider must not do. So the worker passes
+# `model_type="alphafold2_multimer_v3"` unconditionally: the only parameter set
+# on disk, the only one with digests in [weights], and AlphaFold-Multimer on a
+# single chain is a supported configuration of upstream's own feature builder
+# (`generate_input_feature`'s `"multimer" in model_type` branch handles any
+# chain count). The reply says `model_type` so the choice is never invisible.
+#
+# Structurally, not only by argument: `download_alphafold_params` is called in
+# `colabfold.batch.main()` and nowhere else -- not in `run()`, not in
+# `load_models_and_params`, not in `get_model_haiku_params`. This worker does
+# not call `main()`, so there is no path from a request to a fetch.
+#
+# ---------------------------------------------------------------------------
+# THERE IS NO PADDING ROW ON THIS PATH, WHICH MAKES THE SHAPE CHANGE THE WHOLE
+# TEST. af3_jax pads every input to a multiple of 64 and its repeats test
+# therefore exercises one bucket. ColabFold pads only the MONOMER path
+# (`predict_structure`'s `if seq_len < pad_len: pad_input(...)` sits inside the
+# `else` of `if "multimer" in model_type`, and `run()`'s own comment at the
+# multimer branch is `# TODO: add pad_input_mulitmer()`). This provider runs the
+# multimer parameters, so:
+#
+#   * every distinct TOTAL QUERY LENGTH is its own XLA compilation, and
+#   * the reply says `padded_length = <seq_len>` and `padding = "none"`, so
+#     nobody reads an af3_jax-style bucket into a number that does not have one.
+#
+# The MSA axis is padded, by upstream, to the model config's `num_msa` /
+# `num_extra_msa` (508 / 2048 for multimer v3), so alignment DEPTH does not
+# change the shape. That is load-bearing for residency and is why this worker
+# does NOT take upstream's one-query `max_seq = min(num_seqs, max_seq)`
+# shortcut: that line is a speed optimisation for shallow MSAs inside a
+# one-shot CLI, and in a resident worker it would make every distinct alignment
+# depth a fresh model build. The deviation is stated in the worker's docstring
+# and the reply carries `max_seq` / `max_extra_seq`.
+
+[provider]
+slug = "colabfold"
+description = "ColabFold 1.6.1 / AlphaFold2-Multimer v3 structure prediction from a PRECOMPUTED MSA (.a3m): no MMseqs2 server is contacted and no alignment is built"
+operations = ["colabfold_predict"]
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver
+580.173.02), venv route, CPython 3.11.12, jax/jaxlib 0.5.3 + jax-cuda12-plugin,
+kit mode `off`, through this provider's own `launch.py` rather than kit_launch
+(see [runtime] launch), with upstream's `use_bfloat16=False` (see THE WALL in
+the header -- without it nothing on this card compiles at all).
+
+THE SECOND JAX PROVIDER ON THIS STANDARD. Three things had to work that nobody
+had tried: the whole jax 0.5.3 CUDA stack on aarch64 (it publishes there, which
+the round's brief said it did not), a TensorFlow substitution that is a package
+NAME rather than a version, and an AlphaFold2 forward pass whose bf16 trunk
+meets ColabFold's f16 recycle state on a target whose LLVM cannot select that
+conversion.
+
+VERIFIED ON 11 REQUESTS THROUGH THE ACCEPTANCE SUITE -- an ascending ladder,
+then a mixed-shape sequence, then 4 consecutive IDENTICAL requests -- plus 6
+more through two further harnesses, every one asserted to have written a ranked
+PDB. 17 requests, 17 results, 0 failures.
+
+    ladder   100 / 200 / 400 aa   3/3   194.8 / 610.3 / 1736.0 s   (5 models each)
+    mixed    100, 100, 200, 100   4/4   124.3 / 114.0 / 524.7 / 113.7 s
+    repeats  4 x the 51-aa smoke  4/4    85.3 /  73.4 /  73.4 / 73.4 s
+
+THE REPEATS ROW IS THE SMALLEST RESIDENCY GAIN ON THIS STANDARD, 1.16x, AND THE
+REASON IS WORTH MORE THAN THE NUMBER: this is the first provider whose expensive
+fixed cost is PERSISTED BY UPSTREAM, which is exactly the opposite of af3_jax's
+unpersisted tokamax autotune and pushes `idle_timeout_s` the other way.
+`jax_compilation_cache_dir` holds the XLA executable for every query length this
+worker has ever compiled, so a restart does not recompile -- it reloads. What
+residency still keeps is the 7.5 s of imports, the 1.86 GB parameter read and
+the model trace (build_s 4.2-5.6 s warm) plus the in-process executable cache,
+about 12-22 s per request against 73 s of work at the smoke's size.
+
+Measured from both ends rather than claimed:
+
+  * 85.3 -> 73.4 s over four identical 5-model requests, with the persistent
+    cache already holding that length (1.16x, and the last three agree to
+    0.03 s).
+  * 128.0 -> 4.7 s in one process for a 1-model, 3-recycle request with the
+    cache EMPTY -- 27x. Same model, same card: the gain is the ratio of fixed
+    cost to work, and here the work can be 15x the fixed cost or a third of it.
+  * The compile itself, isolated by the mixed phase: 194.8 s cold at 100 aa
+    against 124.3 s for the same length in a later worker that loaded it from
+    the persistent cache, against 113.7 s warm in process. So ~70 s is the
+    compile, ~10 s is the cache load, and ~114 s is the work.
+
+THE ENGINE REBUILDS, WHICH NO NUMBER OF IDENTICAL REQUESTS COULD SHOW. Three
+sets of model runners were built in one process and all three served
+predictions: the default 5-model complex engine, then a SINGLE-CHAIN request
+(`is_complex` False makes upstream's `rank_by` "plddt" instead of "multimer" --
+a different engine key, and the second real user request can trigger it), then a
+homo-oligomer back on the multimer key. 88.1 s for the rebuild-plus-compile,
+6.2 s for the same shape again, `engine_builds` 1 -> 2 -> 3 in the replies.
+genie3's hazard is absent here and was checked before the worker was written:
+`alphafold.model.config.model_config` deep-copies `CONFIG_MULTIMER` per call, so
+three builds in one process are three independent configs (verified on the CPU,
+and then on the card).
+
+ONE SILENT WORKER RESTART IN 17 REQUESTS, reported because it is exactly the
+class of thing this standard exists to catch and because it is NOT explained.
+Between the 200 aa and 400 aa rungs the worker exited with no log line, no
+traceback and no refusal; the supervisor restarted it transparently and the next
+NINE consecutive requests -- the 400 aa rung, all four mixed, all four repeats --
+ran in that one process, so the residency numbers above are a single worker's.
+It did not reproduce: a harness holding the child's Popen handle ran the same
+ascending ladder with three 10-second idle gaps and read `None` after every one,
+exiting 0 on shutdown. Core dumps are disabled on this host (`ulimit -c` 0) and
+the kernel log is root-only, so the exit code was not recoverable after the
+fact. What a reader should take from it: `grep -c "ready device"` in
+`~/.cache/tooluniverse/remote-logs/colabfold-resident.log` is how you find out
+whether a "warm" number was warm, because from the supervisor's side a death
+between requests is invisible.
+
+REPEATABLE ACROSS WORKERS AND ACROSS REBUILDS, which is the claim genie3 made
+falsifiable and this provider can also answer: the same three inputs run in two
+separate workers, at different points in each worker's build history, returned
+identical confidence terms to four decimal places (mean_plddt 58.1250, 45.0625,
+43.0312; pTM 0.3518, 0.2610, 0.2595). Residency does not move the answer here,
+and neither does having rebuilt the engine twice first.
+
+Wall times are from a quiet card (`nvidia-smi --query-compute-apps` empty but
+for this worker). Peaks reproduce under contention; wall times do not."""
+
+[runtime]
+mode = "resident"
+worker = "resident/colabfold_resident_worker.py"
+# NOT tooluniverse.remote_resident.kit_launch:build_command, for the same two
+# reasons af3_jax has its own launcher plus one of this kit's own:
+#
+#  1. The hook refuses on names it does not recognise. `colabfold_opt/_autoload.py`
+#     installs its meta-path finder when COLABFOLD_OPT names a kit mode OR when
+#     any `COLABFOLD_OPT*` name outside its eight-name ENV_NAMES tuple is set OR
+#     when MODEL_OPT_LEVERS_OFF is set with no kit mode -- and the last two fire
+#     with the mode unset or `off`. The finder then exits 3 at the first
+#     `import colabfold.batch`, which a resident worker must do. So the child's
+#     environment has to be PRUNED, not merely left alone: `kit_launch` adds
+#     names and removes none.
+#  2. [kit.env] has to be applied by whoever builds the command, and on this
+#     provider one of its entries (XLA_PYTHON_CLIENT_PREALLOCATE) is the
+#     difference between measuring the model and measuring a 95% preallocation.
+launch = "tooluniverse.remote.colabfold.launch:build_command"
+worker_args = [
+    "--socket", "{socket}",
+    "--slug", "{slug}",
+    "--mode", "{kit_mode}",
+    "--data-dir", "{weights_root}",
+    "--cache-dir", "{cache_dir}",
+]
+# Build = importing tensorflow, jax, haiku, colabfold and alphafold (7.5 s of
+# imports alone, measured), reading five 373 MB parameter files and tracing one
+# multimer RunModel. The FIRST REQUEST additionally pays one XLA compilation for
+# its length, which this kit's own README puts at "about 2 min with no message
+# while it does, in every mode, off included" -- on an H100, whose compiler this
+# is not.
+start_timeout_s = 1800.0
+request_timeout_s = 3600.0
+# 300 s, and this is the first provider on this standard that argues DOWN rather
+# than up. af3_jax sets 900 because a restart pays its unpersisted tokamax
+# autotune again, per bucket. Here the expensive artefact IS persisted, by
+# upstream's own mechanism: `jax_compilation_cache_dir` (set in the worker, under
+# --cache-dir) holds the XLA executable for every query length this provider has
+# ever compiled, so a restart reloads in ~10 s what it first spent ~70 s
+# compiling. What a restart actually costs is the 7.5 s of imports, the 1.86 GB
+# parameter read and the model trace -- measured at build_s 4.2-5.6 s warm. So
+# giving a shared card back after five idle minutes is cheap here, and holding it
+# for fifteen would be hoarding.
+idle_timeout_s = 300.0
+smoke = "smoke/input.a3m"
+smoke_timeout_s = 2400.0
+# WHAT A RUN THAT ACTUALLY RAN LEAVES BEHIND, and the glob is chosen against
+# upstream's write order rather than from the file list.
+#
+# `predict_structure` writes `<prefix>_unrelaxed_<tag>.pdb` per model as it
+# goes, and only after EVERY model has finished does it rank them and RENAME
+# each file to `<prefix>_unrelaxed_rank_<nnn>_<tag>.pdb`. So a `rank_` file
+# cannot exist unless a structure was produced and the ranking pass completed.
+# The unranked `*_unrelaxed_*.pdb` would have been the obvious glob and would
+# have passed a run that predicted model 1 and then died.
+#
+# Nothing else is written at all. Upstream's `run()` writes `config.json`, a
+# bibtex file, `<job>.a3m` and a coverage PNG BEFORE inference -- the
+# boltzgen/openfold3 shape exactly -- and this worker does not call `run()`:
+# its first write of any request is the PDB of a finished prediction.
+# TESTED AGAINST A RUN THAT PRODUCED NOTHING, which is the half of this check
+# that usually goes untested (boltzgen's `design_spec.cif`). The stock
+# `colabfold_batch` CLI aborts on this card -- see THE WALL -- and the run that
+# aborted left behind exactly `cite.bibtex`, `config.json`, `input.a3m`,
+# `input_coverage.png` and `log.txt`, with no structure anywhere. Every obvious
+# glob (`*.json`, `*.a3m`, `*.png`) would have passed it. `*_unrelaxed_rank_*.pdb`
+# matches none of them, and cannot exist before the ranking pass.
+outputs = ["*_unrelaxed_rank_*.pdb"]
+output_keys = ["structures"]
+
+[gpu]
+policy = "required"
+# MEASURED, on the ladder in verified_on. The number is
+# `jax.local_devices()[0].memory_stats()["peak_pool_bytes"]` -- the BFC pool's
+# high-water mark, the analogue of torch's `max_memory_reserved` that every
+# other provider's `peak_reserved_gib` means. `peak_bytes_reserved` reads 0 on
+# this stack as it does on af3_jax's and is NOT the analogue: in XLA "reserved"
+# means held outside the pool. `peak_bytes_in_use` comes back beside it as
+# `peak_in_use_gib` and is the number to read for "what did this input cost".
+#
+# A JAX BUDGET IS A ROUNDED-UP CEILING, AND THIS LADDER IS THE CLEAREST CASE OF
+# IT YET ON THIS STANDARD. The BFC pool grows by doubling, so `peak_pool_bytes`
+# reads 4.0 GiB at EVERY rung -- 100, 200 and 400 residues -- while the working
+# set underneath it barely moves. One column would have said nothing at all:
+#
+#     residues  chains  peak_pool  peak_in_use  wall (5 models, cold compile)
+#          100       2    4.0 GiB     2.52 GiB        194.8 s
+#          200       2    4.0 GiB     2.52 GiB        610.3 s
+#          400       2    4.0 GiB     2.52 GiB       1736.0 s   <- declared
+#
+# `peak_in_use` from a separate ascending ladder in a fresh worker (1 model per
+# rung, which changes no shape -- the models run sequentially through one traced
+# RunModel), so the two columns are not from one run and do not need to be.
+#
+# THE SHAPE OF THIS LADDER IS esmc's, NOT openfold3's, and it decides
+# co-tenancy: a constant term dominates. 1.86 GB of held parameters plus the
+# model's fixed buffers set the high-water mark at the first request, and the
+# pair track at <= 400 residues never exceeds it -- 400 x 400 x 128 in f32 is
+# 82 MB. So this provider is a flat ~4 GiB tenant for anything it will accept,
+# and capping the length buys a host nothing in memory. What the length buys is
+# TIME: 195 -> 610 -> 1736 s over 100 -> 200 -> 400 residues, about 2.9x and
+# 2.8x per doubling, which is why the server's ceiling is 400 residues and why
+# that ceiling is about latency rather than about the budget.
+#
+# AND THE MARGIN AGAINST `request_timeout_s` MUST BE READ AT THE CONTENDED
+# FIGURE, not the idle one. The 1736 s above is from a quiet card. The same
+# rung re-measured with four other providers' builds on the machine took
+# **2380.1 s**, which is 66% of the declared 3600 s rather than 48%. Nothing
+# is wrong -- the structure came back and the peak was identical at 4.0 GiB --
+# but a timeout is a promise about the worst case, and the worst case is the
+# busy card, which is the one a co-tenanted host actually has. This is
+# progen2's finding in the time dimension: two individually sane numbers
+# (a 400-residue ceiling and a 3600 s timeout) have to be checked against each
+# other at the upper bound, not at the figure that flatters them.
+#
+# ENVELOPE: 400 polymer residues over up to 16 chains, the AlphaFold2-Multimer
+# v3 parameters, 5 models, 1 seed, upstream's default 20 recycles with early
+# stop at tolerance 0.5, the MSA axes at the model config's own 508 / 2048, f32
+# activations (`use_bfloat16=False`; see the header), XLA_PYTHON_CLIENT_PREALLOCATE
+# false. Anything past 400 residues must be re-measured rather than
+# extrapolated, and the worker refuses a raised `max_seq` / `max_extra_seq` by
+# name because those two move the envelope without changing the length the
+# server checks.
+vram_budget_gb = 4.0
+driver_min = 580
+driver_min_reason = "two floors, and the higher one binds. The kit's own README asks for a CUDA 12 driver, 550 or newer, for its CUDA 12.4 base image, and the lock's jax-cuda12 wheels carry the CUDA 12.9 runtime (minor-version-compatibility floor 525). But jaxlib must emit code for sm_121, and a compute capability is only driven by a driver that enumerates it: the 580 series is the first that does for GB10-class parts. 580.173.02 is what this card runs."
+shareable = true
+isolation = "process"
+
+[env]
+kind = "venv"
+# BUILD RECIPE (the kit's README route C, with this host's one substitution):
+#
+#   uv venv --seed --managed-python --python 3.11 ~/colabfold-venv
+#   ~/colabfold-venv/bin/pip install --no-deps -r environment/requirements.lock
+#   export TOOLUNIVERSE_COLABFOLD_PYTHON=~/colabfold-venv/bin/python
+#
+# `uv venv` rather than stdlib `python -m venv`, deliberately and after
+# checking the hazard the standard records (openfold3: a kit that finds its
+# hook by GLOBBING `*.pth` is confused by uv's `_virtualenv.pth`). This kit
+# does not glob: `colabfold_opt/stack.py` opens ONE hard-coded filename,
+# `colabfold_opt_autoload.pth`, in each site directory by path, and
+# `opt/_build_backend.py` globs only inside the kit's own source tree. uv is
+# also the kit's own recipe, and it is the only route that supplies a CPython
+# 3.11 on a host whose system python is 3.12 (this one).
+#
+# THE ASSEMBLER IS A PIP PACKAGE, which is worth saying because the preflight
+# step's `compiler_missing` is about a host `cc` for Triton and this provider
+# has no Triton. XLA assembles its PTX with `ptxas`, and the lock's
+# `nvidia-cuda-nvcc-cu12==12.9.86` is where that binary comes from: during a
+# compiling request this worker's children were eight
+# `nvidia/cuda_nvcc/bin/ptxas` processes on temporary files. No host CUDA
+# installation is involved anywhere.
+python = "$TOOLUNIVERSE_COLABFOLD_PYTHON"
+lock = "environment/requirements.lock"
+# Every compiled pin is IMPORTED here, which is what this key is for: the
+# standard records a wheel that installs cleanly and then raises
+# `Illegal instruction` at import (tokenizers 0.10.x, aarch64), and the
+# substituted tensorflow wheel is exactly the kind of artifact that deserves
+# the check. jax's backend is asserted because `policy = "required"` is a claim
+# about this environment, not about the host.
+verify = "import tensorflow, numpy, scipy, h5py, pandas, haiku, chex, jax, colabfold.batch, alphafold, colabfold_opt, opt_core; assert jax.__version__ == '0.5.3', jax.__version__; assert tensorflow.__version__ == '2.21.0', tensorflow.__version__; assert jax.default_backend() == 'gpu', jax.default_backend()"
+
+[weights]
+# The kit's own variable and the directory it means: the PARAMETERS ROOT, under
+# which upstream expects a `params/` directory (`alphafold` joins "params"
+# itself, which `colabfold/download.py`'s own comment apologises for). Hence
+# the two-component names below.
+root_env = "COLABFOLD_OPT_DATA_DIR"
+root_default = "~/.colabfold"
+# The kit's own step, unmodified: `python -m colabfold_opt.weights DIR` runs
+# upstream's own downloader (`colabfold.download.download_alphafold_params`,
+# which streams `alphafold_params_colab_2022-12-06.tar` from the public Google
+# bucket -- CC BY 4.0, no licence gate, no credential) and then checks the five
+# files against `stock/PINS.json` by sha256. No URL is restated here.
+#
+# A file already present and at its pin is hash-checked and left alone; the
+# marker file is what stops `colabfold_batch` fetching at run time, which is
+# why it is declared below as well.
+fetch = """
+cd {kit} || exit 1
+PATH="$(dirname {python}):$PATH" python -m colabfold_opt.weights {weights_root}
+"""
+
+# GENERATED from the kit's stock/PINS.json `weights.files` and `weights.marker`
+# by a script (scratch: colabfold-genweights.py), not transcribed.
+[[weights.files]]
+name = "params/params_model_1_multimer_v3.npz"
+size = 373043148
+sha256 = "611da8fc7478928f68de12e8b226260ef1f4ce62bcc29b008572e52f4f212959"
+
+[[weights.files]]
+name = "params/params_model_2_multimer_v3.npz"
+size = 373043148
+sha256 = "51362b0844382ae0f5720c59b81dd13a43eea40fbf9995dd2573bdab88865378"
+
+[[weights.files]]
+name = "params/params_model_3_multimer_v3.npz"
+size = 373043148
+sha256 = "46d9bcad288edc7ad5a6362ee8e5f84307a69712e00e6c36b1ef9daf96ebc9ce"
+
+[[weights.files]]
+name = "params/params_model_4_multimer_v3.npz"
+size = 373043148
+sha256 = "59bdabd2d69c07fe26b37882d544acbd1b9f89f196828f4220da49e0610b572c"
+
+[[weights.files]]
+name = "params/params_model_5_multimer_v3.npz"
+size = 373043148
+sha256 = "917742be5a105d6b80f13f1f13f20459f27ec3fdcd34ea088b359f4502d6177f"
+
+# DECLARED ON PURPOSE, THOUGH IT IS A ZERO-BYTE FILE. `stock/PINS.json`
+# `weights.marker` records it because `colabfold.download.download_alphafold_params`
+# returns early if and only if it exists -- so a parameters directory holding
+# all five correct files and NOT this marker is a directory from which upstream
+# would re-download 2 GB at run time. A zero-byte file is also the one thing a
+# size check alone cannot distinguish from a failed write, so the digest is the
+# empty-string sha256 and says so.
+[[weights.files]]
+name = "params/download_complexes_multimer_v3_finished.txt"
+size = 0
+sha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+
+[kit]
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "colabfold"
+sparse = ["colabfold", "common"]
+package = "colabfold_opt"
+# `off` -- the kit's stock route -- and the reason is ARCHITECTURAL here rather
+# than a card question, which makes it a different answer from af3_jax's even
+# though the word is the same. Three findings, in the order they bind:
+#
+#  1. THE KIT'S ACTIVATION POINT IS `colabfold.batch.run`, AND A RESIDENT WORKER
+#     DOES NOT CALL IT. `colabfold_opt/_autoload.py` arms a meta-path finder on
+#     the module `colabfold.batch` and `stack.hook_run` wraps the `run` FUNCTION;
+#     the activation happens at the `run` call, with that run's queries and its
+#     data_dir. This worker holds the model that `run` rebuilds on every call --
+#     `load_models_and_params` is called inside `run` -- so under a kit mode the
+#     levers would attach to a function nothing invokes, and the worker would
+#     report a mode while running stock. Reporting a mode that did not engage is
+#     the one thing this kit's own hook exists to prevent, and it is worth more
+#     than the levers.
+#  2. THE ALTERNATIVE WAS PRICED, NOT ASSUMED. A worker could call `run()` per
+#     request and get the levers. It would also re-read 1.86 GB of parameters and
+#     re-trace the model every time, because nothing memoises either: the kit's
+#     `weights.py` is a DIGEST memo for the parameter check, not a parameter
+#     cache, and the kit's own README puts a fresh process at ">= 25-35 s tracing
+#     and loading the model before its first structure (stock behaviour, every
+#     mode)" plus "about 2 min" of compilation per new length. Measured here, the
+#     held worker answers a repeated request in a few seconds (see verified_on).
+#     The levers' advertised gain is "prediction time per model" against a
+#     per-call cost of 40-50 s that residency removes outright.
+#  3. AND THE LEVERS ARE NOT WHAT RULES THEM OUT ON THIS CARD, which is the
+#     honest shape of this entry and the difference from af3_jax. af3_jax's
+#     `fast` REFUSES on cc 12.1 by name, because opt_core's FlashPairformer has
+#     no tile row for it. This kit's shared-core provider has an explicit
+#     inheritance rule for exactly this case (`PALLAS_CELLS.json`
+#     `unmeasured_cc_rule`): its 1,794 measured cells cover cc 8.0 and 9.0 only,
+#     and a part with major >= 9 inherits the nearest measured column at or below
+#     it, so cc 12.1 would be served H100's rows with the census token
+#     `inherited_cc:unmeasured(from 9.0)` -- source-compiled Pallas rows
+#     inherited, the prebuilt per-arch bridge rows (the sm_90a triangle kernels)
+#     deliberately NOT. So `fast` is plausibly reachable on this card THROUGH THE
+#     KIT'S OWN CLI, and an operator who wants the levers should use
+#     `bash run.sh pred`, which is a different deployment with a different cost
+#     model. Except that on this card that CLI cannot fold at all -- see the
+#     bfloat16 section in the header -- which is why this provider is the only
+#     working route here and why `off` costs nothing that is currently available.
+mode = "off"
+env_row = "none"
+# A SEVENTH SPELLING, and the first that is a KEY NAME rather than a signature.
+# `kit_launch.ask_kit` reads the child's variables from `resolve(...)`'s `env`
+# or `exports`. This kit's `modes.resolve(mode)` takes exactly one positional
+# argument (so the probe's plain `resolve(mode)` call SUCCEEDS) and returns
+# {"mode", "levers", "kit_env", "tier"} -- the row is spelled `kit_env`, which
+# is neither of the two the probe knows, so the probe would read an empty row
+# and nothing would say why. Under `off` that row is `{}` in any case
+# (`TABLE["off"] = ((), {}, "stock")`), and the kit asserts that emptiness
+# itself before launching stock. So "none" here means "this MODE has no row,
+# and must not" -- af3_jax's third sense of empty -- with a fourth fact beside
+# it: the key the probe would have to read is `kit_env`. Moot for this
+# provider, like af3_jax's, because [runtime] launch is this provider's own
+# module and never calls the build_command that reads these keys; recorded so
+# that the next JAX kit's agent does not spend an hour on it. The model
+# process's non-lever environment lives in `stock/PINS.json image.env`, which no
+# probe reads either -- [kit.env] below is where this provider states it.
+env_row_reason = "the row is empty because the MODE is `off` (modes.TABLE[\"off\"] = ((), {}, \"stock\"); mode_env is {}), not because the kit keeps none -- `fast` carries AF_PALLAS_ATTN=1. And the key resolve() returns it under is spelled `kit_env`, which is neither of the two spellings kit_launch's probe reads (`env`, `exports`), so a probe here would read an empty row for a second, unrelated reason. Moot: [runtime] launch is tooluniverse.remote.colabfold.launch:build_command."
+# THE KIT'S OWN INSTALL COMMAND, RUN UNMODIFIED FIRST -- and then one named
+# exception, which is this provider's only deviation from "the kit's gate is the
+# gate".
+#
+# `bash run.sh install` does three things: `pip install -e ../common/opt_core -e
+# opt`, then `stock/check_pins.py --checks packages,files`, then (only with
+# `--weights DIR`) the parameter fetch. The fetch is deliberately NOT asked for
+# here: it belongs to the weights step, which has the deep digest check and the
+# named refusal. `--weights` is also the only thing in this command that would
+# touch the network.
+#
+# THE ONE EXCEPTION. `check_pins.py` compares `importlib.metadata.version(name)`
+# against the KIT's own requirements.lock for its nineteen `check_packages`, and
+# one of them is `tensorflow_cpu`, which publishes no aarch64 wheel at any
+# version. On this architecture that check CANNOT pass, however correct the
+# environment is: `tensorflow` 2.21.0 -- the same release, CPU-only here because
+# NVIDIA ships no aarch64 CUDA TensorFlow -- is what is installed, and
+# `md.version("tensorflow_cpu")` is None. So the gate is run, and its refusal is
+# accepted ONLY when re-reading its own JSON shows that the single failing
+# package is `tensorflow_cpu` and that `tensorflow` is present at the pinned
+# version. Any other mismatch, and any failure of the `files` check (the three
+# stock files byte-compared against the kit's own copies), still exits 3 with
+# the kit's words. That is the rosettafold3 precedent -- a provider may run what
+# the kit's install runs when the kit's own command cannot be used verbatim --
+# narrowed to one named package rather than to "ignore the gate".
+install = """
+set -u
+PY={python}
+export PATH="$(dirname "$PY"):$PATH"
+cd {kit} || exit 1
+bash run.sh install && exit 0
+rc=$?
+echo "[colabfold] run.sh install exited $rc; re-reading its own report to see whether its only complaint is this lock's one declared aarch64 substitution" >&2
+R="$HOME/.cache/tooluniverse/colabfold-check-pins.json"
+mkdir -p "$(dirname "$R")"
+"$PY" -I stock/check_pins.py --checks packages,files --json > "$R" || true
+REPORT="$R" "$PY" - <<'PINCHECK'
+import importlib.metadata as md
+import json
+import os
+import sys
+
+report = json.load(open(os.environ["REPORT"]))
+packages = report["packages"]["packages"]
+bad = sorted(name for name, d in packages.items() if not d["ok"])
+if not report["files"]["ok"]:
+    sys.stderr.write("[colabfold] REFUSED: the kit's three pinned stock files are not "
+                     "the installed ones; this is not an architecture question and "
+                     "nothing here accepts it\\n")
+    raise SystemExit(3)
+if bad != ["tensorflow_cpu"]:
+    sys.stderr.write("[colabfold] REFUSED: packages off their pins: " + ", ".join(bad) +
+                     " -- only tensorflow_cpu is accepted, and only because it "
+                     "publishes no aarch64 wheel at any version\\n")
+    raise SystemExit(3)
+want = packages["tensorflow_cpu"]["expected"]
+have = md.version("tensorflow")
+if have != want:
+    sys.stderr.write("[colabfold] REFUSED: tensorflow_cpu " + str(want) + " is unpublished "
+                     "for aarch64 and tensorflow is at " + str(have) + ", not " + str(want) +
+                     "; the substitution environment/requirements.lock declares is one "
+                     "release, not any release\\n")
+    raise SystemExit(3)
+print("[colabfold] kit installed; the kit's pin gate refused exactly one package and it is "
+      "the declared substitution: tensorflow_cpu " + str(want) + " has no aarch64 wheel, "
+      "tensorflow " + str(have) + " (the same release) is installed in its place. "
+      "Everything else -- colabfold, alphafold-colabfold, the whole jax 0.5.3 stack, the "
+      "three stock files byte for byte -- is at its pin.")
+PINCHECK
+"""
+
+[kit.env]
+XLA_PYTHON_CLIENT_PREALLOCATE = "false"

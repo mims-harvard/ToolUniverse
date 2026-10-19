@@ -1,0 +1,727 @@
+# AF3-JAX -- AlphaFold 3 (the sokrypton/alphafold3 open JAX fork) on the public
+# OpenFold3-preview2 weights. THE FIRST JAX PROVIDER ON THIS STANDARD; the
+# fourteen before it are PyTorch, and three of the notes below exist only
+# because of that.
+#
+# STATUS: verified on one card, named in `verified_on`. It folds, and the one
+# thing that stopped it was neither this manifest's doing nor an arch-list
+# problem -- see THE SHARED-MEMORY WALL below, which is a fourth kind of
+# stack-versus-card failure and whose fix is one of upstream's own flags.
+#
+# WHAT HAS BEEN PROVED ON THIS MACHINE (NVIDIA GB10, aarch64, cc 12.1, driver
+# 580.173.02, 121 GB unified):
+#
+#   * The pinned stack installs natively. All 81 lock lines resolve to aarch64
+#     wheels at the kit's exact versions -- jax / jaxlib / jax-cuda12-plugin /
+#     jax-cuda12-pjrt 0.10.2, every nvidia-*-cu12 at CUDA 12.9.x, cuDNN
+#     9.17.1.4 -- with ONE substitution (torch's x86-64 URL for the aarch64
+#     file of the same release). environment/requirements.lock has the record.
+#   * JAX 0.10.2 drives this card on the kit's cu12 stack. Measured in the
+#     model interpreter: `jax.default_backend()` -> "gpu",
+#     `jax.devices()` -> [CudaDevice(id=0)], `device_kind` "NVIDIA GB10",
+#     `compute_capability` "12.1". No warning, no PTX JIT message.
+#   * The stock distribution builds on aarch64. alphafold3-open 3.1.4 ships no
+#     wheel anywhere (stock/wheels/ holds only .keep, and it is not on PyPI):
+#     every route COMPILES it. `pip wheel --no-deps` over
+#     `stock/unpack_src.sh`'s output produced
+#     alphafold3_open-3.1.4-cp312-cp312-linux_aarch64.whl (251,485,617 bytes)
+#     with `alphafold3/cpp.cpython-312-aarch64-linux-gnu.so` inside, no
+#     portability patch, in about three minutes; `build_data` then wrote 51,346
+#     CCD codes. (The kit's pinned x86-64 wheel carries 50,885: the CCD
+#     snapshot is whatever wwPDB serves on the build day, which stock/PINS.json
+#     `upstream.wheel.build_yourself` says in as many words.)
+#   * The weights are present and at their pin, bit for bit. See [weights].
+#   * It folds. Four consecutive identical requests, a mixed-shape sequence and
+#     an ascending ladder, all with a structure asserted per request. See
+#     `verified_on` and [gpu].
+#
+# ---------------------------------------------------------------------------
+# THE SHARED-MEMORY WALL, and the flag that clears it. This is the fourth kind
+# of stack-versus-card failure on this standard, after "no CUDA aarch64 torch
+# below 2.7", "the kit's own levers cannot run on this cc", and "a pinned
+# dependency ships kernels the pinned compiler cannot build". It is none of
+# those: the kernel BUILDS, and it does not FIT.
+#
+#     JaxRuntimeError: RESOURCE_EXHAUSTED: Shared memory size limit exceeded:
+#       requested 110592, available: 101376, context: []
+#
+# 108 KiB wanted, 99 KiB available -- about 9% over. H100 (sm_90) offers 227 KiB
+# of shared memory per block; this part offers 101,376 bytes, and a tile tuned
+# for the former lands just the wrong side of the line.
+#
+# NAMING THE KERNEL took three eliminations and an HLO dump, because the error
+# arrives from XLA's own compiler (the string lives in
+# jax_plugins/xla_cuda12/xla_cuda_plugin.so, not in jaxlib or tokamax) during
+# `backend_compile_and_load` -- so it is a COMPILE failure of the whole module,
+# the Python traceback cannot name the kernel, and `context: []` is empty:
+#
+#   * NOT the attention. `--flash_attention_implementation=cudnn` fails with the
+#     byte-identical 110592, as does `triton`.
+#   * NOT the fifteen config-switchable GLUs. Setting `use_glu_kernel = False`
+#     on every site in the config tree (evoformer pairformer, template stack,
+#     msa stack, confidence pairformer) leaves 110592 unchanged.
+#   * NOT XLA's Triton GEMM. The kit's pinned
+#     `--xla_gpu_enable_triton_gemm=false` changes nothing either.
+#   * The XLA-emitted kernels are innocent: of the 477 PTX modules XLA dumps for
+#     the forward pass, the largest asks 8,320 bytes of shared memory.
+#   * So it is one of the 175 `__gpu$xla.gpu.triton` custom calls -- the tokamax
+#     Pallas kernels -- and their `metadata={op_name="..."}` identifies them.
+#     Every FlashAttention call is bf16 and inside a named pairformer scope;
+#     every f32 call is a `PallasTritonGatedLinearUnit`, and the f32 ones sit at
+#     `vmap(diffusion_head)`, `vmap(diffusion_head)/vmap(` and one at top level.
+#     One is spelled out in the dump: operands `f32[1536,128]` and
+#     `f32[128,2,256]`, config `block_m=128, block_n=32, block_k=32,
+#     num_warps=4, num_stages=4`. (128*32 + 32*2*32) x 4 bytes x 4 stages =
+#     98,304 before the epilogue -- the right size class, in f32, at four
+#     stages.
+#
+# THE DIFFUSION HEAD'S GLU HAS NO SWITCH. `use_glu_kernel` is a real upstream
+# config field with an exactly equivalent XLA else-branch, on
+# TransitionBlock.Config and TriangleMultiplication.Config -- but
+# `diffusion_transformer.transition_block` takes it as a FUNCTION DEFAULT
+# (`use_glu_kernel: bool = True`) and none of its three call sites passes it. So
+# the only GLUs that cannot be turned off are exactly the ones that are f32 and
+# too big. That is why eliminating all fifteen config sites changed nothing.
+#
+# THE FIX IS UPSTREAM'S OWN FLAG, listed by `run_alphafold.py --helpfull`
+# because tokamax registers it as an absl flag at import:
+#
+#     --tokamax_autotuning_cache_miss_fallback=<heuristics|autotune|error>
+#
+# Default `heuristics`. tokamax ships no tuned config for an NVIDIA GB10 -- the
+# transcript is full of "Autotuning cache miss for
+# PallasTritonGatedLinearUnit ... on NVIDIA GB10" -- so it builds one from
+# heuristics written for cards with far more shared memory. `autotune` makes it
+# measure its own default config set ON THIS CARD and keep the fastest config
+# that compiles and runs. It is a public, documented, flag-backed option whose
+# entire purpose is an unseen device; it is not a tile override, not a reach
+# into tokamax internals, and not a patch. The worker passes it on the same
+# absl parse it already does, and the same single flag fixes the kit's CLI
+# route too, because the kit passes stock flags through verbatim:
+#
+#     bash run.sh pred --mode off ... \
+#         --tokamax_autotuning_cache_miss_fallback=autotune
+#
+# WHAT IT COSTS, measured: the autotune runs per op shape at first use, in
+# process, and is NOT persisted. Upstream has a persistence path --
+# `ModelRunner._load_autotune_cache` reads `<cache_dir>/tokamax_autotune.json`
+# at construction -- but the call that would write it
+# (`tokamax.autotune(self._model, ...)` at the top of `run_inference`) is
+# wrapped in `except Exception: pass` and does not succeed here, so no file
+# appears and a restarted worker pays the autotune again. That is the residency
+# argument stated as a number: the first request into a bucket takes 170-780 s
+# and the second takes 7-15 s.
+#
+# ---------------------------------------------------------------------------
+# THE SHARED-LAYER DEFECT THIS PROVIDER FOUND IS FIXED. For the record, because
+# it is the sort of thing that comes back: `setup.step_environment` used to
+# refuse `torch_arch_unsupported` here --
+#
+#     REFUSED  torch reports no usable GPU: no device
+#
+# -- because `_arch_problem` judged the card by the model interpreter's
+# **torch**, and this provider's torch is 2.7.1+**cpu**, present only because
+# the kit's lock carries it for the weights converter and `check_pins.py` lists
+# it in `check_packages`. The arch probe now also reports
+# `jax.default_backend()` and `jax.local_devices(backend="gpu")`, so torch's
+# silence is no longer a refusal when another framework holds the card. The
+# manifest was not changed to buy a green step: `[gpu] policy` stayed
+# "required", because the GPU is required.
+#
+# ---------------------------------------------------------------------------
+# ACTIVATION: A FIFTH SHAPE. The taxonomy so far was `.pth` autoload (30 of 36
+# kits), `worker_launch` (boltz2), a replacement entry script (chrombpnet), and
+# autoload-plus-a-patched-tree (rosettafold3). af3_jax installs the same shaped
+# `.pth` and uses it only to REFUSE. af3_jax_opt/_autoload.py, first sentence:
+#
+#     On this model the hook applies nothing: the levers are a script plus a
+#     flag row and a launcher on the command line (modes.py), never an
+#     in-process patch, so no import of the model family could activate
+#     anything. It exists only to refuse.
+#
+# Concretely the hook arms a meta-path finder on `alphafold3` when AF3_JAX_OPT
+# names a mode other than `off`, OR when ANY `AF3_JAX_*` name outside its
+# DECLARED_ENV tuple is set -- the second trigger fires even with the mode
+# unset. Either way the first `import alphafold3` exits 3. A resident worker
+# must import alphafold3, so [runtime] launch below is this provider's own and
+# it STRIPS undeclared AF3_JAX_* names rather than merely not setting them.
+#
+# AND THAT STRIPPING DID NOT WORK WHEN THIS PROVIDER WAS FIRST COMMITTED, which
+# is recorded here because the way it passed review is the interesting part. The
+# launcher pruned a copy of os.environ and returned it; `supervisor._start`
+# built the child's environment as `dict(os.environ)` updated with that mapping,
+# so every pruned name came straight back. The check that was run read the
+# RETURNED MAPPING, which is the one place a pruned copy looks correct, and with
+# `AF3_JAX_BOGUS=1` exported the worker in fact exited 3 at `import alphafold3`.
+# The supervisor now treats a None value as a removal, this launcher returns
+# removals, and the test is three hostile names exported with a worker that
+# starts and answers. See STANDARD section 12.
+#
+# The levers themselves are reachable in principle: the kit's `levers_launch.py`
+# and `fpf_launch.py` run an arbitrary script after applying their patches, so
+# a resident worker could sit where `run_alphafold_fast.py` sits -- boltz2's
+# shape. On THIS card it would not help; see [kit] mode.
+#
+# WHO HOLDS THE WEIGHTS: the worker. Under `off` nothing replaces upstream's
+# loader, and upstream's own `ModelRunner.model_params` is a
+# `functools.cached_property` over `params.get_model_haiku_params`, which
+# zstd-streams the 1.37 GB record file into `jnp.array`s. The worker holds that
+# ModelRunner for its whole life; its ready line and every reply say
+# `weights_held_by = "worker"`.
+#
+# WHAT RESIDENCY KEEPS HERE, and why it is the largest gain on this standard --
+# 24x, measured, against RFdiffusion3's 12x. Three things, and the third is
+# this provider's own:
+#
+#  1. The 1.37 GB zstd read into device arrays
+#     (`ModelRunner.model_params`, a functools.cached_property).
+#  2. The XLA executables. This fork pads every input to a bucket (the kit's own
+#     row: every multiple of 64 up to 5120, 80 rungs, read from
+#     `modes.pad_flags` rather than copied), and every featurised batch's shape
+#     is a pure function of the bucket -- not of the token count, MSA depth,
+#     chain count or template count (pipeline.py calculate_bucket_size and
+#     PaddingShapes). So two requests in one bucket are a jit cache HIT and two
+#     in different buckets cost one compile each, paid once per bucket per
+#     process. A per-request process pays every compile every time.
+#  3. TOKAMAX'S PER-SHAPE AUTOTUNE, which this provider has to turn on to run at
+#     all (the header) and which nothing persists -- the fork's own
+#     `tokamax_autotune.json` is never written here. That is the bulk of the
+#     24x: 170.5 s for the first request of a bucket, 7.0 s for the second.
+#
+# The honest corollary: a worker RESTART costs the full first-request price
+# again, per bucket. `idle_timeout_s` is set to 900 rather than something
+# shorter for exactly that reason.
+#
+# ---------------------------------------------------------------------------
+# THE STOCK PATCH IS NOT OPTIONAL AND IS NOT UPSTREAM'S. stock/PINS.json
+# declares one exception to stock == upstream:
+# `04_of3_empty_template_restype_gap`, nine lines in
+# `alphafold3/model/network/template_modules.py`, gated on
+# `global_config.of3_weights`. Absent template slots are featurised as GAP
+# (OpenFold3's convention) instead of restype 0 (alanine). Upstream AF3-JAX
+# never runs OF3 weights and so never needs it; this provider runs nothing but
+# OF3 weights. The wheel in [env] was built from `stock/unpack_src.sh`'s
+# output, which applies it, so it is inside the installed package -- and
+# `check_pins.py` checks the pinned files' PRESENCE, not their content, so
+# nothing downstream would catch an environment assembled another way.
+
+[provider]
+slug = "af3_jax"
+description = "AlphaFold 3 (sokrypton/alphafold3 JAX fork) on OpenFold3-preview2 weights: all-atom structure prediction from an AlphaFold 3 fold-input JSON carrying its own MSAs"
+operations = ["af3_jax_predict"]
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver
+580.173.02), venv route, CPython 3.12.1, jax/jaxlib 0.10.2 + jax-cuda12-plugin,
+kit mode `off`, through this provider's own `launch.py` rather than kit_launch
+(see [runtime] launch), with
+`--tokamax_autotuning_cache_miss_fallback=autotune` (see the header).
+
+THE FIRST JAX PROVIDER ON THIS STANDARD. Three things had to work that nobody
+had tried: aarch64 CUDA wheels for the whole jax 0.10.2 stack (all 81 lock
+lines, one substitution), a from-source build of alphafold3-open's C++
+extension on aarch64 (3 minutes, no portability patch), and a kernel set tuned
+for H100 running on a card with 99 KiB of shared memory per block (it does not,
+until tokamax is told to autotune).
+
+VERIFIED ON 4 CONSECUTIVE IDENTICAL REQUESTS plus a mixed-shape sequence plus
+an ascending ladder, one held worker per phase, every request asserted to have
+written a structure. 13 requests, 13 structures sets of 5, 0 failures.
+
+    repeats  4 x the 35-residue smoke     4/4   170.5 / 8.3 / 7.0 / 7.0 s
+    mixed    100, 100, 200, 100           4/4   258.6 / 14.7 / 286.3 / 13.5 s
+    ladder   100 / 200 / 400 / 800        4/4   see [gpu]
+
+170.5 -> 7.0 s is a 24x residency gain, the largest on this standard
+(RFdiffusion3's 12x was the previous best) -- and the reason is specific: this
+provider's first request into a bucket pays an XLA compilation AND tokamax's
+per-shape autotune, and holds both. The mixed row is the same fact from the
+other side: a NEW bucket costs ~4.5 minutes, a bucket already seen costs 13-15
+seconds, in the same worker.
+
+Bit-for-bit repeatable within a worker: all four 35-residue repeats returned
+ranking_score 0.3782, and all three 100-residue requests returned 0.6605.
+
+Wall times are from a quiet card (`nvidia-smi --query-compute-apps` empty but
+for this worker). Peaks reproduce under contention; wall times do not.
+
+RE-VERIFIED INDEPENDENTLY, and that last sentence is why this paragraph exists.
+A second run of the whole suite, on a card carrying three other provider builds
+at the same time, 11 requests and 11 structure sets:
+
+    ladder   100 / 200 / 400    3/3   234.8 / 269.9 / 468.7 s   peak 2.0/4.0/4.0
+    mixed    100, 100, 200, 100 4/4   14.4 / 13.2 / 31.1 / 13.3 s
+    repeats  4 x the smoke      4/4   179.1 / 6.8 / 6.8 / 6.8 s
+
+The PEAKS came back identical (2.0, 4.0, 4.0 at the same three rungs), which is
+what a host schedules on and is therefore the half that had to reproduce. The
+LADDER's wall times reproduced too, rung for rung, within a few percent and in
+both directions: 234.8 against 228.5 at 100 residues, 269.9 against 269.6 at
+200, and 468.7 against 503.0 at 400 -- the contended run was FASTER at the
+largest rung. So the three other builds sharing the card cost this provider
+less than expected, which is itself worth knowing before refusing to co-tenant
+it.
+
+Where the two runs differ is the one request that matters to the residency
+claim: the first of the four identical repeats took 179.1 s against 170.5, and
+the replays 6.8 against 7.0, making the multiple 26.3x rather than 24x. The
+multiple went UP under load because contention slows work and a replay is almost
+no work, so a residency figure measured on a busy card flatters itself. The
+honest statement of this provider's gain is 24-26x with the method named, not a
+single number.
+
+THE DECLARED ROW ITSELF was then measured in a third run, a clean worker taken
+straight to 800 residues, because it is the one number a host actually schedules
+on and the three rungs above it are not it:
+
+    ladder   800 aa, cold bucket    1/1   755.0 s   peak 8.0 GiB
+    mixed    800 x4, held bucket    4/4   217.8 / 216.3 / 217.9 / 223.5 s
+    repeat   the 35-residue smoke   1/1   182.4 s   peak 8.0 GiB
+
+8.0 GiB, matching, at 755.0 s against the original 781.3. 6 requests, 6 structure
+sets. Two details in that run are the standard's own rules showing up as
+measurements rather than as advice. The four held-bucket requests at 800 residues
+cost 217 s each against the cold one's 755 -- a 3.5x gain, far short of the 24x
+at 35 residues, because at this size real compute rather than compilation
+dominates and residency can only return what it holds. And the final request, 35
+residues in a worker that had just folded 800, reports peak 8.0 rather than the
+2.0 a clean worker reports for the same input: `peak_pool_bytes` is a high-water
+mark and this worker deliberately does not reset, so that figure answers "what
+does this worker hold now" and not "what does this input cost". Both answers are
+wanted; they are not the same number, and a ladder that does not ascend conflates
+them.
+
+The smoke and the weights step were also re-run on their own: 192 s / 2.0 GiB,
+and 1/1 weight entries at their pins.
+
+And one claim in the [kit.env] comment below was WRONG and has been corrected:
+it said `check_pins.py` reports an unset XLA_CLIENT_MEM_FRACTION as a NOTE. It
+reports it as drift. See that comment for the measurement."""
+
+[runtime]
+mode = "resident"
+worker = "resident/af3_jax_resident_worker.py"
+# NOT tooluniverse.remote_resident.kit_launch:build_command. Two reasons, both
+# measured against the kit at its pin:
+#
+#  1. `kit_launch`'s probe reads `modes.ENV` and then `_autoload.ENV`. This kit
+#     has NEITHER: `af3_jax_opt.modes` has no module-level ENV or ENV_MODE at
+#     all (only ENV_N_GPU), and the name lives at
+#     `af3_jax_opt._autoload.ENV_MODE == "AF3_JAX_OPT"`. So `mode_env` comes
+#     back empty and `build_command` raises KitUnavailable before anything
+#     else. This is the SIXTH spelling the fourteen providers have produced,
+#     and the first where `modes` carries no spelling whatsoever.
+#  2. The hook refuses on any UNDECLARED `AF3_JAX_*` name even with the mode
+#     unset, so the worker's environment has to be pruned rather than merely
+#     left alone. `kit_launch` adds names; it removes none.
+launch = "tooluniverse.remote.af3_jax.launch:build_command"
+worker_args = [
+    "--socket", "{socket}",
+    "--slug", "{slug}",
+    "--mode", "{kit_mode}",
+    "--repo", "{repo}",
+    "--params-dir", "{params_dir}",
+    "--cache-dir", "{cache_dir}",
+]
+# Build = a 1.37 GB zstd stream into device arrays plus the import of jax,
+# haiku, tokamax and the fork. The FIRST REQUEST additionally pays one XLA
+# compilation for its bucket (the kit's README: "about half a minute a bucket
+# on H100", on a card whose compiler this is not) and tokamax's one autotune
+# attempt (~20 s, which no cache holds). Generous on purpose: a deadline that
+# fires during a first compile reports a stall that is not one.
+start_timeout_s = 1800.0
+request_timeout_s = 3600.0
+idle_timeout_s = 900.0
+smoke = "smoke/input.json"
+smoke_timeout_s = 2400.0
+# What a run that actually ran leaves behind, and the choice is deliberate.
+#
+# Upstream writes `<job>_data.json` into the output directory BEFORE inference
+# (run_alphafold.py `write_fold_input_json`, called at :1032, with
+# `predict_structure` at :1041), so an obvious `*.json` glob would pass a run
+# that folded nothing -- boltzgen's `design_spec.cif` failure exactly. This
+# worker does not call `write_fold_input_json` at all: it writes NOTHING until
+# a sample has been extracted, and then writes through upstream's own
+# `post_processing.write_output`, whose names are
+# `<prefix>_model.cif`, `<prefix>_confidences.json` and
+# `<prefix>_summary_confidences.json`. `*_model.cif` therefore cannot exist
+# unless a structure was produced.
+outputs = ["*_model.cif"]
+output_keys = ["structures"]
+
+[gpu]
+policy = "required"
+# WHERE THIS PROVIDER'S PEAK NUMBER COMES FROM, since there is no torch to take
+# it off and the shared layer only reads it off the worker's reply. It is
+# `jax.local_devices()[0].memory_stats()["peak_pool_bytes"]`, the high-water
+# mark of the BFC pool -- all the device memory the process has taken and not
+# given back, which is the analogue of torch's `max_memory_reserved` that every
+# other provider's `peak_reserved_gib` means. Measured on this host so that the
+# choice is checkable rather than argued: one 2048x2048 matmul reads
+# peak_bytes_in_use 150,995,200 / peak_pool_bytes 287,309,824 /
+# peak_bytes_reserved 0. The field whose NAME says reserved is 0 and is not the
+# analogue -- in XLA "reserved" means held OUTSIDE the pool -- so reporting it
+# would have reported zero for every request forever. `peak_bytes_in_use` (the
+# analogue of torch's *allocated*, and the field the kit's own instrument
+# samples) comes back beside it as `peak_in_use_gib`.
+#
+# A JAX PROVIDER'S "RESERVED" IS COARSE, which is new and matters to anything
+# adding budgets up. `peak_pool_bytes` reads 2.0 / 4.0 / 8.0 GiB across the
+# ladder below while the true working set moves 2.00 / 2.32 / 3.38 / 6.37. A
+# torch provider's `max_memory_reserved` tracks its allocator's segments and
+# lands on arbitrary values; this one lands on powers of two.
+#
+# CORRECTION, from af2ig: "lands on powers of two" is true OF THIS LADDER and is
+# not a property of the pool. af2ig on the same jax line reads 0.5 / 1.0 / 2.0 /
+# 6.0, and 6.0 is not a power of two -- so "the BFC pool grows by doubling its
+# arena", which an earlier version of this comment gave as the mechanism, is
+# wrong. The standard generalised from this one ladder and has been corrected
+# too. What is true is coarse rounding of unpredictable tightness. The declared
+# budget is therefore coarser than the model's actual appetite BY CONSTRUCTION,
+# and
+# `peak_in_use_gib` is the number to read when asking "what does this input
+# cost" rather than "what does this worker hold".
+#
+# AND IT IS 45x LARGER WITH PREALLOCATION ON, which is the whole reason
+# [kit.env] overrides the kit's pin. Measured by accident, on the same input:
+# with the kit's own XLA_PYTHON_CLIENT_PREALLOCATE=true the worker reports
+# peak_pool 91.22 GiB -- the entire bytes_limit -- and peak_in_use 1.63. With it
+# false, 2.0 and 1.76. A provider shipping the kit's pinned value would have
+# reported 91 GiB and been unschedulable beside anything.
+#
+# MEASURED, on the ladder below, and the derived reserve this replaces was
+# 12.0 -- 1.5x high, which is the most accurate pre-measurement estimate on this
+# standard so far (against openfold3's 3.8x, esmfold2's 1.6x, af3_torch's 9x).
+# It was close because it was anchored on two SIBLINGS that had already measured
+# the same architecture on the same checkpoint (openfold3 9.12 GiB, af3_torch
+# 9.21 GiB at 800 aa) rather than on tensor arithmetic. It was still high, and
+# for a reason worth keeping: both siblings are torch, and a torch caching
+# allocator's reserved figure is not the same quantity as a BFC pool's.
+#
+# Ladder, one held worker, ascending, nothing larger run before it (the mixed
+# phase showed why: after a 200-residue request, a 100-residue request still
+# reports 4.0 GiB, because this worker does NOT reset per request -- which the
+# standard asks of a new provider -- and JAX offers no reset for
+# `peak_pool_bytes` anyway):
+#
+#     residues  bucket  peak_reserved  peak_in_use   wall (cold bucket)
+#          100     128       2.0 GiB      2.00 GiB         228.5 s
+#          200     256       4.0 GiB      2.32 GiB         269.6 s
+#          400     448       4.0 GiB      3.38 GiB         503.0 s
+#          800     832       8.0 GiB      6.37 GiB         781.3 s   <- declared
+#
+# 3.2x in working set over 8x the length -- flatter than af3_torch's 5.3x on the
+# identical architecture and checkpoint, because ~2 GiB of parameters dominate
+# at the small end. A host capping chains at 400 residues holds this provider in
+# 4 GiB rather than 8.
+#
+# ENVELOPE: the 832-token bucket (<= 800 polymer residues on the kit's
+# 64-multiple padding row), one model seed, five diffusion samples, `off` mode,
+# tokamax Triton attention with the autotune fallback,
+# XLA_PYTHON_CLIENT_PREALLOCATE false. Anything past 832 tokens must be
+# re-measured rather than extrapolated, and a worker that fell back to
+# upstream's 16-rung padding row (the reply says `padding_source`) is a
+# DIFFERENT envelope -- the same 800 residues would then pad to 1024.
+vram_budget_gb = 8.0
+driver_min = 580
+driver_min_reason = "two floors, and the higher one binds. The kit's own README asks for driver >= 550 for its CUDA 12.6 base image, and the lock's jax-cuda12 wheels carry the CUDA 12.9 runtime, whose minor-version-compatibility floor is 525. But jaxlib must emit code for sm_121, and a compute capability is only driven by a driver that enumerates it: the 580 series is the first that does for GB10-class parts. 580.173.02 is what this card runs."
+shareable = true
+isolation = "process"
+
+[env]
+kind = "venv"
+# ONE INTERPRETER, and that is worth stating because the sibling provider on
+# the same architecture needs two. af3_torch runs its featuriser and writers
+# under a SECOND, CPU-only environment holding this very fork, and records
+# `[env] aux` as a gap in the standard. af3_jax does not inherit that gap: the
+# kit's own recipe asks for two venvs (a stock one at CPython 3.12 and a kit
+# one at "any released Python >= 3.10"), and those two sets are satisfiable by
+# one 3.12 environment. `run.sh` finds af3_jax_opt on PATH and AF3_JAX_PY names
+# the stock interpreter; pointing both at this venv is legal and is what
+# [kit] install does.
+#
+# BUILD RECIPE (the kit's STOCK.md section Stack, with the two aarch64 facts
+# this host established). `uv venv` is used rather than stdlib `python -m venv`,
+# deliberately and after checking: the hazard the standard records is a kit
+# that finds its hook by SCANNING `*.pth` in site-packages, which uv's
+# `_virtualenv.pth` then shadows (openfold3). This kit does not scan. Its only
+# `.pth` logic is `run.sh`'s hook probe, which opens ONE hard-coded filename,
+# `af3_jax_opt_autoload.pth`, by path -- no glob, no listing -- and
+# `opt/_build_backend.py`, which globs `*_autoload.pth` in the KIT's own source
+# directory at build time. Neither can see `_virtualenv.pth`. uv is also what
+# the kit's own recipe prescribes, and it is the only route that supplies the
+# pinned CPython 3.12.1 exactly.
+#
+#   uv venv --managed-python --python 3.12.1 --seed ~/af3_jax-venv
+#   ~/af3_jax-venv/bin/pip install --no-deps -r environment/requirements.lock
+#   bash <kit>/stock/unpack_src.sh ~/af3_jax-repo          # pinned source + the patch
+#   cp -a ~/af3_jax-repo /tmp/build && cd /tmp/build && \
+#       ~/af3_jax-venv/bin/pip wheel --no-deps -w /tmp/wheels .
+#   ~/af3_jax-venv/bin/pip install --no-deps /tmp/wheels/alphafold3_open-*.whl
+#   ~/af3_jax-venv/bin/build_data
+#   export TOOLUNIVERSE_AF3_JAX_PYTHON=~/af3_jax-venv/bin/python
+#   export AF3_JAX_REPO=~/af3_jax-repo        # the checkout; must stay writable
+#
+# AF3_JAX_REPO is the one per-machine path this manifest cannot supply: it is
+# the fork CHECKOUT (run_alphafold.py, convert_of3_weights.py), not an
+# installed package, and `[env]` has no key for it. The worker and the weights
+# fetch both refuse by name when it is unset, with that recipe.
+python = "$TOOLUNIVERSE_AF3_JAX_PYTHON"
+lock = "environment/requirements.lock"
+# af3_jax_opt and opt_core are the kit, installed editable by [kit] install and
+# deliberately absent from the lock. Importing af3_jax_opt is safe only while
+# no undeclared AF3_JAX_* name is set -- see the header -- and pulls in neither
+# jax nor the fork.
+verify = "import jax, alphafold3, af3_jax_opt, opt_core; assert jax.__version__ == '0.10.2', jax.__version__; assert jax.default_backend() == 'gpu', jax.default_backend()"
+
+[weights]
+# The kit's own variable and the directory it means: the PARAMETERS ROOT, under
+# which each variant has a directory of its own
+# (af3_jax_opt/variants.py `params_dir` -> os.path.join(root, variant); STOCK.md
+# section Variables: "<root>/<variant>/of3_ported_weights.bin.zst"). That is why
+# the entry below is a two-component name rather than a bare filename.
+root_env = "AF3_JAX_PARAMS_ROOT"
+root_default = "~/.af3_jax"
+# The kit's own step. It hash-checks a converted file already present
+# (`CONVERT ... status=PRESENT ... matches_pin=True`, and then `continue`s:
+# nothing fetched, nothing converted, nothing deleted), and otherwise fetches
+# the public OpenFold3-preview2 checkpoint into <root>/checkpoints/ and runs the
+# fork's own `convert_of3_weights.py` on it. No URL is restated here.
+#
+# The guard is not decoration: without AF3_JAX_REPO the kit defaults it to
+# `/app/alphafold`, the path inside its own container image, and the converter
+# would be reported missing from a directory that does not exist on this host.
+fetch = """
+cd {kit} || exit 1
+if [ -z "$AF3_JAX_REPO" ]; then
+  echo "[af3_jax] NOT ACTIVE reason=weights_converter_unavailable" >&2
+  echo "  of3_ported_weights.bin.zst is PRODUCED, not downloaded: the public" >&2
+  echo "  OpenFold3-preview2 checkpoint (Apache-2.0, no licence gate, no" >&2
+  echo "  credential) is converted into AlphaFold 3 parameter records by the" >&2
+  echo "  sokrypton/alphafold3 fork's own convert_of3_weights.py, which lives" >&2
+  echo "  in the fork CHECKOUT rather than in the installed package." >&2
+  echo "  The fix: lay the pinned source out and point the kit at it --" >&2
+  echo "    bash stock/unpack_src.sh ~/af3_jax-repo" >&2
+  echo "    export AF3_JAX_REPO=~/af3_jax-repo" >&2
+  echo "  then re-run this step. See environment/requirements.lock and the" >&2
+  echo "  [env] recipe for the rest of the build." >&2
+  exit 3
+fi
+AF3_JAX_PY={python} bash run.sh install --weights {weights_root}
+"""
+
+# GENERATED from the kit's stock/PINS.json `variants.*.converted` records by a
+# script (scratch: af3jax-genweights.py), not transcribed. af3_jax's PINS puts
+# weights under `variants.<v>` with a `checkpoint` half and a `converted` half
+# -- a shape no earlier provider had. Only the converted half is declared: the
+# checkpoint is an INPUT to a step that legitimately never runs on a host that
+# already holds the output, and declaring it would refuse exactly those hosts.
+[[weights.files]]
+# stock/PINS.json variants.p2.converted (OpenFold3-preview2, layout of3-preview2)
+name = "p2/of3_ported_weights.bin.zst"
+size = 1369240911
+sha256 = "0c9a00607352395486e33a98367810e1ad56c87459289f40974579525d3959cf"
+
+# WHERE THIS FILE CAME FROM, AND WHO MADE IT -- stated because a weights file
+# whose provenance is assumed is the exact failure [[weights.files]] exists to
+# prevent, and because the convenient answer here was checked and is only half
+# right.
+#
+# A scouting pass noticed that this digest already sat at
+# ~/.af3_torch/of3_ported_weights.bin.zst and concluded the conversion was
+# unnecessary. The conclusion is wrong as reasoning: a digest match proves the
+# bytes, never the provenance. The filesystem does prove the provenance, and it
+# says something better than the scout's guess:
+#
+#   ~/.af3_torch                      born 2026-10-01 07:11:00
+#   ~/.af3_torch/of3_ported_weights.bin.zst
+#                                     born 2026-10-01 07:12:42  (+00:01:42)
+#
+# so that file is the OUTPUT of the af3_torch provider's own conversion run on
+# this host, created a hundred seconds after the run made the directory. It was
+# not lying around, and nothing downloaded it: it has no URL anywhere.
+#
+# WHY IT IS NEVERTHELESS THE RIGHT FILE FOR THIS PROVIDER, which is the part a
+# digest match alone cannot tell you. The two kits declare the identical digest
+# because they share a converter: af3_jax's stock/PINS.json names
+# `convert_of3_weights.py (the stock script ...) on the public checkpoint`, and
+# af3_torch's second, CPU-only environment runs THAT SAME SCRIPT from THAT SAME
+# fork at THAT SAME commit (bc32b22f). The two kits are two consumers of one
+# conversion, not two coincidences. The reuse is therefore the move esmc made
+# with esmfold2's snapshot, and it is recorded as such:
+#
+#   ~/.af3_jax/p2/of3_ported_weights.bin.zst  is a HARD LINK to
+#   ~/.af3_torch/of3_ported_weights.bin.zst   (link count 2, one copy on disk,
+#   1.37 GB not spent, 2.3 GB not downloaded, and the converter not re-run).
+#
+# Verified here, not inherited: sha256 0c9a0060...3959cf over 1,369,240,911
+# bytes, read in full, matching `variants.p2.converted` exactly. That digest was
+# measured by the kit's authors on x86-64 and reproduces on aarch64.
+#
+# If an operator has neither sibling, the [weights] fetch above does the whole
+# thing from the public bucket -- there is no licence gate and no DeepMind
+# parameter involved anywhere in this provider. What there IS is a conversion,
+# and this host has run it once.
+#
+# NOT DECLARED: nothing else. Unlike af3_torch's kit, this one's PINS has no
+# conventions record and nothing in the kit reads one (`grep -rni conventions`
+# over the whole af3_jax tree returns nothing); `variants.check_params` tests
+# `os.path.isfile` on exactly one file per variant, and so does
+# `check_pins.digest_report`. One variant, one file.
+
+[kit]
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "af3_jax"
+# common/opt_core is the shared core this checkout already carries for the
+# boltz2, enformer, chai1, rfdiffusion3, openfold3, esmfold2, af3_torch and
+# other providers pinning the same commit.
+sparse = ["af3_jax", "common"]
+package = "af3_jax_opt"
+# `off` -- the kit's stock route -- and it is the kit's OWN answer for this
+# card rather than a retreat from one. Three findings, in the order they bind:
+#
+#  1. `fast` and `big` REFUSE on compute capability 12.1, by name, from inside
+#     the model process. The FlashPairformer add-on asks the shared core for
+#     tile tables; `opt_core/kernels/fpf_pallas_serve.py` has tuned rows for
+#     "8.0", "9.0", "10.0", "10.3" and generation-safe rows for {"8.x", "9.x",
+#     "10.x"} only. `generation("12.1")` -> "12.x", which is in neither, so
+#     `tables_for` raises `Refusal(no_tiles)`, `patch.py` puts both kernels in
+#     HELD, and `fpf_launch.refuse_held()` prints NOT ACTIVE and exits 3. The
+#     refusal's own text names the way out: "set
+#     OPT_CORE_PALLAS_ALLOW_FALLBACK_CC=1 to run the 9.0 table on this part
+#     ... or run the kit's stock mode (--mode off)". Taking the 9.0 tiles on an
+#     untested card, in a provider that cannot run a smoke, would be a guess
+#     wearing a measurement's clothes.
+#  2. `exact` would not refuse -- its GLU lever declines per call and runs the
+#     stock class body, counted in the kit's own ASIDE -- but on this card that
+#     is what it would do, so `exact` buys the pinned attention tile config
+#     (AF3P_ATTN_CFG=64,64,4,3) and little else. Its other two levers, L1 and
+#     WRITER, are flags on a REPLACEMENT SCRIPT a resident worker does not run;
+#     and L1 is a `ProcessPoolExecutor` with `mp_context=get_context('fork')`
+#     and three children (fast_inference/patches/.../run_alphafold.py:778-795),
+#     which is precisely the shape the standard forbids a resident worker that
+#     has already touched host tensors. Choosing `off` makes that fork
+#     impossible rather than merely unused.
+#  3. And underneath both: this kit applies NOTHING in process. Its `.pth`
+#     exists only to refuse (see the header). Under `off` nothing replaces
+#     upstream's loader, which is why the worker may legitimately hold the
+#     weights.
+#
+# WHAT `off` COSTS, since the standard records that turning a kit off can cost
+# VRAM and not only speed (esmc, 9.6 GiB): forgone here are the FlashPairformer
+# triangle kernels, the fused GLU, the bf16 sampler, the diffusion hoists, and
+# -- the one that may matter for a scheduler -- `big`, the memory mode, which is
+# the kit's answer for inputs above 1,408 padded tokens. Without it this
+# provider's ceiling is the stock program's, which is the budget under [gpu]
+# and the limit the MCP server enforces.
+#
+# AND ONE COST THAT ONLY SHOWED UP WHEN IT RAN, worth recording because it cuts
+# the other way from esmc's. The kernel that does not fit this card's shared
+# memory (the header) is a tokamax GLU over **f32** operands in the diffusion
+# head -- and the kit's `fast` mode carries a lever named `AF3_JAX_SAMPLER_BF16`,
+# "a bf16 sampler", which would have halved exactly that kernel's shared-memory
+# demand and taken 110,592 bytes to ~55,296: under the limit, with no autotune
+# needed. So the kit's own optimisation would have fixed this particular wall as
+# a side effect, and `off` is what makes the wall visible. `fast` is still
+# unreachable here for an unrelated reason -- its FlashPairformer kernels have no
+# tile table for cc 12.1 and refuse by name -- so the two facts do not cancel.
+# They do mean the honest description of `off` on this card is "stock, which
+# needs one of upstream's flags to compile", not "stock, which just works".
+mode = "off"
+# The kit's own install: `pip install -e ../common/opt_core -e opt`, then
+# `stock/check_pins.py`, which is the deployment's own gate -- it asks the
+# interpreter AF3_JAX_PY for the pinned package versions and the checkout
+# AF3_JAX_REPO for nine named stock files. Running the kit's unmodified command
+# is the point: a narrower one would install the same bytes and be unable to
+# tell a built deployment from a half-built one.
+#
+# `env -u AF3_JAX_PARAMS_ROOT` is load-bearing. `setup.step_kit` exports
+# `[weights] root_env` into this command's environment (so that a kit reading
+# its root from the environment needs no restatement), and THIS kit's
+# `run.sh install` branches on exactly that variable: with it set it proceeds
+# to `python -m af3_jax_opt.convert install`, i.e. the 2.3 GB fetch and the
+# conversion. That belongs in the weights step, which has the refusal text and
+# the deep digest check; here it would run the parameters step inside the kit
+# step and report the wrong thing on failure. Unsetting it leaves the kit
+# printing its own "installed and the pin check passed; no parameters root
+# named" line, which is the truth about this step.
+#
+# AF3_JAX_PY is the kit's name for the interpreter `[env] python` already
+# declares, handed over rather than left for an operator to export twice --
+# enformer's `PYTHON={python} bash run.sh install` is the same move.
+install = "env -u AF3_JAX_PARAMS_ROOT AF3_JAX_PY={python} bash run.sh install"
+
+# `env_row` IS A PROPERTY OF (KIT, MODE) HERE, NOT OF THE KIT -- which is new,
+# and is why this entry says more than "none".
+#
+# The probe CAN read a row from this kit. `af3_jax_opt.modes.resolve` has the
+# signature `resolve(mode, cache_dir=None, kit=None, region=None, size=None)`,
+# so the probe's plain `resolve(mode)` call succeeds, and the dict it returns
+# carries a key named `env` -- 12 lever switches for `fast`
+# (AF3_FLASHPAIRFORMER, AF3_DIFFUSION_HOIST and ten AF3_JAX_<LEVER> names), two
+# for `exact`. For `off` it is EMPTY, by construction: `modes.mode_env("off")`
+# returns `{}` and `off` has no levers, because `off` is the stock route and a
+# stock route with kit variables in it would not be stock. The kit enforces
+# that itself -- `stock_pred.proof()` asserts no AF3_JAX_*, AF3P_*,
+# AF3_FLASHPAIRFORMER or AF3_DIFFUSION_HOIST name survives into the stock model
+# process, and prints `STOCK ... proof=ok`.
+#
+# So "empty" here is neither "this kit keeps no row" (esmfold2, esmc,
+# rosettafold3) nor "we failed to read one" (openfold3). It is "this MODE has
+# no row, and must not". `env_row = "none"` is the closest true value the
+# vocabulary has; the reason below says which of the three it is.
+#
+# Moot either way for this provider, like af3_torch's: [runtime] launch is this
+# provider's own module, which never calls the `build_command` that reads these
+# keys. They are set to the honest values so that a reader comparing providers
+# does not spend an hour working out whether an empty row here is a defect.
+env_row = "none"
+env_row_reason = "the row is empty because the MODE is `off`, not because the kit keeps none. `modes.resolve(mode)` does carry an `env` key and fills it for exact/fast/big (12 switches under fast); `modes.mode_env(\"off\")` returns {} and `off` has no levers, and the kit then asserts that emptiness itself in `stock_pred.proof()` before launching the stock script. Separately, the model process's non-lever environment lives in `stack.model_process_env()` -- the XLA trio from stock/PINS.json `image.env`, applied with setdefault -- which no probe reads either. Moot here: [runtime] launch is tooluniverse.remote.af3_jax.launch:build_command."
+
+# The kit's own documented knobs, applied to the model process before it
+# starts. Both are OVERRIDES OF THE KIT'S OWN PINNED VALUES and both are about
+# co-tenancy rather than speed, so they are stated here rather than buried in
+# the worker.
+[kit.env]
+# THE SINGLE MOST IMPORTANT LINE IN THIS FILE FOR A SHARED CARD. JAX
+# preallocates 75% of the device at the first allocation, and this kit's own
+# pinned environment makes that worse rather than better:
+# stock/PINS.json `image.env` is
+# {XLA_FLAGS: --xla_gpu_enable_triton_gemm=false,
+#  XLA_PYTHON_CLIENT_PREALLOCATE: "true", XLA_CLIENT_MEM_FRACTION: "0.95"},
+# applied by `stack.model_process_env` with setdefault. Those are right for the
+# kit's own deployment -- one job, one H100, measured end to end -- and exactly
+# wrong for a card holding fourteen other resident providers: the worker would
+# take 95% of the device at build and every peak this provider ever reported
+# would be a measurement of the preallocation rather than of the model. Set to
+# false, the pool grows on demand and `peak_pool_bytes` means what every other
+# provider's `peak_reserved_gib` means.
+XLA_PYTHON_CLIENT_PREALLOCATE = "false"
+# The kit's third pinned variable, kept verbatim. It is a correctness/perf
+# choice of upstream's about XLA's Triton GEMM path, not a memory policy, and
+# nothing here has grounds to differ from it.
+XLA_FLAGS = "--xla_gpu_enable_triton_gemm=false"
+# DELIBERATELY NOT SET: XLA_CLIENT_MEM_FRACTION. The kit pins "0.95". With
+# preallocation off it is only a ceiling, but it is a ceiling that says this
+# process may grow to 95% of a shared card, which is not a promise this
+# provider should make. Left unset, the plugin's own default cap applies:
+# `jaxlib/xla_client.py` puts `memory_fraction` in the client options only when
+# the variable is non-empty, so nothing is passed and the C++ BFC allocator's
+# 0.75 stands.
+#
+# AND `check_pins.py` CALLS THAT DRIFT, not a NOTE -- corrected here because an
+# earlier version of this comment said the opposite, and the difference is the
+# kind a reader would take on trust. `env_report` gives a memory-pool variable a
+# NOTE only when `actual is not None and actual != v`; a pinned variable that is
+# UNSET falls through to the drift branch whatever its class, which the
+# function's own docstring says in as many words. Measured, with
+# PREALLOCATE=false and this one unset:
+#
+#     [af3-jax-opt] NOTE XLA_PYTHON_CLIENT_PREALLOCATE=false (...)
+#     [af3-jax-opt] PINS drift XLA_CLIENT_MEM_FRACTION=unset (pinned '0.95')
+#
+# and setting it to "0.75" instead turns that second line into a NOTE. The drift
+# line is accepted rather than silenced: it is never a refusal (the kit says so
+# on the line itself), and buying a clean report would mean writing down a cap
+# this provider would then be claiming. A named deviation is worth more than a
+# green line, which is the same trade [kit] mode makes above.

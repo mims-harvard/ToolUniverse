@@ -1,0 +1,632 @@
+# af2ig -- AlphaFold 2 "initial guess" (dl_binder_design), held resident.
+#
+# WHAT THIS IS, because the slug does not say it. "ig" is INITIAL GUESS. This
+# is not AlphaFold 2 structure prediction from sequence. It is the
+# `af2_initial_guess` step of nrbennet/dl_binder_design (Bennett et al. 2023,
+# Nat. Commun.) -- the standard in-silico filter for designed protein binders.
+# You hand it a binder-target COMPLEX as coordinates; it re-predicts that
+# complex with AlphaFold 2 (`model_1_ptm`) given the complex itself as the
+# structural initial guess and the target's residues as a template, and
+# reports how confident AF2 is in the interface. The score a designer reads is
+# `pae_interaction`; the field's working threshold is < 10, and the paper's
+# own result is that this filter raises binder design success rates by roughly
+# an order of magnitude.
+#
+# FOUR CONSEQUENCES OF "INITIAL GUESS" THAT DECIDE THIS WHOLE PROVIDER:
+#
+#  1. THE INPUT IS A STRUCTURE, NOT A SEQUENCE. One PDB file holding the
+#     complex: chain 1 is the binder, every following chain is the target
+#     (the dl_binder_design convention). A one-chain file is a monomer. There
+#     is no sequence-only route -- without coordinates there is no initial
+#     guess and no template, and the model is a different model.
+#
+#  2. THERE IS NO MSA AND THERE IS NO SERVER. `AF2_runner.featurize` calls
+#     `pipeline.make_msa_features(msas=[[feat_holder.seq]], ...)` -- a
+#     single-sequence "alignment" that IS the query -- and
+#     `af2_util.generate_template_features` builds the template from the
+#     coordinates in hand. `max_msa_clusters = 5`, `max_extra_msa = 5`.
+#     Nothing searches, nothing aligns, nothing is fetched at request time.
+#     The standard asks every provider whether its normal route calls a remote
+#     MSA server and whether a precomputed alignment can be passed instead;
+#     for this one the question does not arise, and that is a property of the
+#     method rather than a configuration of it. Compare colabfold, where it is
+#     the central question.
+#
+#  3. THERE ARE NO BUCKETS. This is the opposite of af3_jax and it changes
+#     what the acceptance suite proves. The AF3 fork pads every input to a
+#     multiple of 64, so a repeat and a nearby length share one compiled
+#     program. Here `L = len(feat_holder.seq)` is the exact total residue
+#     count and `self.seen_lengths` is keyed on it, so EVERY DISTINCT RESIDUE
+#     COUNT IS ITS OWN XLA PROGRAM, compiled on first use. Padding granularity
+#     is one residue. Four identical requests therefore exercise exactly one
+#     program and one trace -- the weakest half of the test -- and the
+#     mixed-shape phase is the whole of it.
+#
+#  4. THE SEED IS FIXED UPSTREAM. `jax.random.PRNGKey(0)`, hard-coded in the
+#     driver (predict_pdb.py:516), and `process_features(random_seed=0)`.
+#     There is no seed argument, so this provider does not offer one: a `seed`
+#     field a caller could set and that changed nothing would be a lie in a
+#     schema. The consequence is useful rather than limiting -- one input has
+#     one answer, and residency is shown not to change it (see [runtime]).
+#
+# WHERE THE NAMES COME FROM. `pae_interaction`, `plddt_binder`,
+# `binder_aligned_rmsd` and the rest are upstream's own score dictionary
+# (`AF2_runner.generate_scoredict`), written to `out.sc` in predict.py's
+# format. Nothing here renames or rescales them.
+
+[provider]
+slug = "af2ig"
+description = "AlphaFold 2 initial-guess re-prediction of a designed binder-target complex (nrbennet/dl_binder_design, model_1_ptm): takes the complex as a PDB, returns the predicted complex plus the interface confidence scores (pae_interaction, plddt_binder, RMSDs). No MSA is built and no external service is contacted."
+operations = ["af2ig_predict"]
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver
+580.173.02), venv route, CPython 3.11.5, jax/jaxlib/jax-cuda12-plugin/
+jax-cuda12-pjrt 0.5.3, dm-haiku 0.0.16, tensorflow 2.21.0 (CPU-only on this
+architecture, by design), kit mode `off` plus the one lever named in
+[runtime] worker_args, through this provider's own launch.py rather than
+kit_launch.
+
+THE TWO FACTS THAT DECIDED WHETHER THIS KIT COULD RUN AT ALL, in the order the
+standard asks for them:
+
+ 1. ARE THE WEIGHTS SERVED? Yes, and this was the first action taken. One HEAD
+    request against the URL in the kit's stock/PINS.json, 89 ms:
+    `HTTP/2 200`, `content-length: 5587968000`, `last-modified: Tue, 06 Dec
+    2022 19:08:46 GMT` -- byte-for-byte the count PINS.json declares, served by
+    DeepMind's own bucket under CC BY 4.0 with no credential and no gate. No
+    third-party mirror was consulted and none was needed.
+
+ 2. IS THERE AN aarch64 WHEEL FOR THE PINNED jax? Yes, and the premise that
+    there would not be was WRONG and was checked rather than inherited. The
+    kit pins jax/jaxlib 0.5.3, a line about two years old, and the expectation
+    going in was that aarch64 jaxlib wheels begin far above it. Against the
+    index, per file: `jaxlib` 0.5.3 publishes four `manylinux2014_aarch64`
+    wheels (cp310-cp313, 95.7-95.8 MB each), `jax_cuda12_plugin` 0.5.3
+    publishes five, `jax_cuda12_pjrt` 0.5.3 publishes one. Then measured in the
+    installed interpreter: `jax.default_backend()` -> 'gpu',
+    `jax.devices()` -> [CudaDevice(id=0)], `device_kind` 'NVIDIA GB10',
+    `compute_capability` '12.1', a 2048x2048 float32 matmul correct, no PTX JIT
+    message, and `peak_bytes_reserved` 0 (the trap field, confirmed on this
+    stack). A two-year-old JAX line drives a Blackwell-class card. An old
+    pinned version is a question for the index and the card, not a conclusion
+    from the number.
+
+ONE LOCK LINE MOVED AND NOTHING ELSE. `tensorflow-cpu` 2.21.0 publishes eight
+wheels, all x86-64 or Windows, and no aarch64 wheel at any version;
+environment/requirements.lock substitutes `tensorflow` 2.21.0, the same release,
+whose `manylinux_2_27_aarch64` wheel is the CPU-only build (asserted, not
+argued: `tf.config.list_physical_devices('GPU') == []` in [env] verify). All 56
+other lines installed unchanged, one pass. The kit's own `check_pins.py --gpu`
+names that one line and [kit] install permits that one line.
+
+FIVE SETUP STEPS, EACH RUN ON ITS OWN WITH --only, ALL GREEN:
+    preflight    OK   GPU NVIDIA GB10, driver 580.173.02, cc 12.1
+    environment  OK   56 pinned distributions (then `present` on re-run)
+    kit          OK   checkout 68/68 pinned files; idempotent on re-run
+    weights      OK   1/1 entries at their pins under ~/.af2ig (0.3 GiB)
+    smoke        OK   one prediction in 118-120 s, peak reserved 1.0 GiB
+
+ACCEPTANCE: 29 held-worker requests, 29 structures, 0 failures. Every phase
+asserted that a `*_af2pred.pdb` existed, and the glob was tested against a
+directory holding only the files upstream writes anyway (see [runtime]
+outputs).
+
+    ladder   100 / 200 / 400 aa      3/3   95.0 / 98.2 / 190.4 s   0.5/1.0/2.0
+    mixed    100, 100, 200, 100      4/4   4.2 / 3.7 / 12.1 / 3.6 s
+    repeats  4 x the 195 aa smoke    4/4   142.4 / 9.9 / 6.3 / 6.7 s
+    ladder   800 aa, clean worker    1/1   272.1 s                 6.0
+    mixed    800 x4, held            4/4   163.2 / 163.1 / 163.7 / 165.1 s
+    repeat   195 aa after the 800    1/1   145.8 s                 6.0
+    rebuild  recycle 3 / 5 / 3       3/3   139.9 / 72.2 / 65.2 s
+    L6 A/B   195 aa x3               3/3   231.5 / 13.3 / 12.8 s
+    det A/B  stock vs L6             2/2   133.4 / 99.8 s
+    smoke    195 aa                  1/1   114.5 s                 1.0
+    example  the documented one      2/2   85.4 / 1.1 s            0.5
+
+THERE ARE NO BUCKETS, WHICH MOVES WHERE THE EVIDENCE IS. af3_jax pads to
+multiples of 64 and its repeats phase is the cheap half; here L = the exact
+total residue count and every distinct count is its own XLA program, so four
+identical requests exercise exactly ONE program. The mixed phase is the real
+test and it passed in both directions: 100 -> 100 -> 200 -> 100 took
+4.2 / 3.7 / 12.1 / 3.6 s, so the third request after the engine switched was
+not slower than the first -- the worker holds both programs and chooses, rather
+than rebuilding whichever it last used.
+
+THE SECOND ENGINE BUILD WAS EXERCISED SEPARATELY, because the shaper changes
+LENGTH and length does not rebuild anything here. This provider's engine key is
+(num_recycle, initial_guess), both baked into `model_config` before
+`model.RunModel` is constructed. Three requests in one worker, recycle 3 -> 5
+-> 3: 139.9 s, then `config_rebuilt=True` at 72.2 s, then `config_rebuilt=True`
+again at 65.2 s -- and request 3 reproduced request 1 BYTE FOR BYTE
+(sha256 fee2d1c7...). genie3's hazard, one model build per process, does not
+apply: `alphafold.model.config.model_config` deep-copies its module-level
+CONFIG before touching it, checked by calling it three times in one process
+before this worker was written and then checked again here against the real
+weights and the real output bytes.
+
+RESIDENCY: 26x AT THE BEST RUNG AND 1.7x AT THE DECLARED ROW. 95.0 -> 3.6 s at
+100 residues; 142.4 -> 6.3 s at 195; 272.1 -> 163.1 s at 800. The multiple is
+largest where the request is cheapest and a host plans with the other end, so
+both are stated. WHAT IS HELD, in the order of size: the XLA executables (one
+per exact residue count, 90-270 s each to build, and nothing persists them
+across a restart unless an operator points AF2IG_JIT_ROOT somewhere lasting),
+XLA's per-process autotuning results, the 355.7 MiB haiku parameter tree, and
+TensorFlow's feature pipeline imported and warm. The weights are the SMALLEST
+of those: a fresh process reads them in 2.4-4.3 s, so unlike esmc or esmfold2
+this provider's residency argument is almost entirely the compiler's.
+    For the subprocess comparison the standard asks for, the kit's own CLI is
+    the honest reference rather than our own cold start: `bash run.sh pred
+    --mode off` on the same single input took 281.0 s wall end to end, every
+    time, because it is a fresh process per campaign.
+
+WALL TIMES WERE TAKEN ON A CONTENDED CARD except the five setup steps and the
+smoke. A sibling provider's build held 2.8-10.6 GB and 95% utilisation through
+the ladder, the mixed phase and the repeats. The peaks are unaffected -- 0.5 /
+1.0 / 2.0 reproduced identically across two complete runs of the suite in two
+different worker configurations -- and the wall times are therefore upper
+bounds. The one clean-card measurement to compare against: the 195-residue cold
+request is 114.5 s idle against 142.4 s contended, and 311.0 s in the
+pre-L6 build.
+
+EQUIVALENCE WITH THE KIT, WHICH IS WHAT LICENSES CALLING THIS A WRAP RATHER
+THAN A REIMPLEMENTATION. Under the kit's own deterministic recipe (`--det 1`,
+i.e. `XLA_FLAGS=--xla_gpu_autotune_level=0`) THREE ROUTES produce the same file:
+
+    81d69b99410824b7fad9ca5a9b9134d8e52f789580fe5202d1ce74ca8e70dc89
+
+      bash run.sh pred --mode off --det 1      (the kit's own CLI, a subprocess)
+      this resident worker, stock
+      this resident worker, with -host_outputs
+
+and the score lines agree to every decimal. Without `--det 1` the agreement is
+four significant figures instead of all of them -- pae_interaction 27.2307 from
+the kit's CLI against 27.232 from the worker -- and the cause is XLA's default
+autotuning choosing algorithms by timing them, not anything about this wrap:
+two of OUR OWN worker processes disagree with each other by the same amount,
+while WITHIN one worker everything is bit-identical. A separate cross-check
+that needs no determinism flag: the kit's CLI reports `inuse_gib=0.61` for the
+195-residue smoke and this worker's upstream timer records 0.614.
+
+RESIDENCY DOES NOT CHANGE THE ANSWER, shown rather than assumed, on a provider
+whose seed is a literal upstream (`jax.random.PRNGKey(0)`, no seed argument):
+  * four identical 195-residue requests -> one sha256 (9df914f1...);
+  * a 100-residue request, then 200, then 100 again -> the two 100-residue
+    outputs identical (e8cb400a...), so the engine switch is lossless;
+  * the 200-residue cold and held results identical (72d7dfc2...);
+  * the recycle 3 -> 5 -> 3 round trip identical (fee2d1c7...).
+
+WHAT THE OUTPUTS GLOB WAS TESTED AGAINST, because openfold3 was once committed
+as verified having folded nothing. `setup._what_it_produced` was run against a
+directory holding only what upstream writes regardless of success --
+`check.point` (appended even for a tag that RAISED), `out.sc`, an empty `pdbs/`
+and a copy of the input PDB -- and REFUSED, naming what it found. The same
+directory with one `pdbs/smoke_af2pred.pdb` added PASSED. And the naive glob
+`*.pdb` was run against the design-less directory too: it PASSED, matching the
+input file, which is the whole reason the suffix is in the glob.
+
+THE LAUNCHER'S STRIPPING WAS VERIFIED IN THE CHILD, not in the return value --
+the one place a pruned copy looks correct, and how af3_jax's broken version
+passed review. With `AF2IG_OPT=fast`, `AF2IG_OPT_BOGUS=1`,
+`JAX_COMPILATION_CACHE_DIR`, `JAX_PERSISTENT_CACHE_MIN_COMPILE_TIME_SECS`,
+`AF2_SUBBATCH_SIZE` and `CUDA_MPS_PIPE_DIRECTORY` all exported in the parent,
+`/proc/<worker pid>/environ` carried none of the six, and did carry
+`XLA_PYTHON_CLIENT_PREALLOCATE=false`, `OMP_NUM_THREADS=1`, `AF2IG_DIR` and
+`AF2_PARAMS`. The mechanism is `None` in the returned mapping, which
+`supervisor.child_env` honours today -- no `env -u` in the argv was needed, and
+the earlier workaround for that is not in this launcher.
+
+THE ORPHAN WATCHDOG WAS OBSERVED, not assumed: the MCP server was killed with
+the worker holding the card, and the worker logged `orphaned (parent gone) and
+idle 123s >= 120s: releasing the GPU and exiting` and released its 704 MiB.
+That path calls `os._exit(0)` and so skips `atexit`, which is why the worker
+sweeps stale `/tmp/af2ig-worker-<pid>-*` trees at START-UP as well as removing
+its own at exit; the sweep was tested against a dead-pid directory and a
+live-pid one and removed only the first.
+
+THE DOCUMENTED EXAMPLE WAS EXECUTED through the live MCP endpoint on port 8053,
+not merely written down: discovery returned ['af2ig_predict'], the call
+returned pae_interaction 21.42 with upstream's full nine-column score set for
+its 20-residue toy complex, 85.4 s cold and 1.1 s on the held replay, and
+`return_structure=true` returned a 12,127-byte PDB of 152 lines. Running it is
+what found a real defect: the reply advertised a `structure_path` inside the
+per-request temporary directory the server had already deleted. The field is
+gone and the bytes are now the only route, which is stated in the schema.
+
+NOT MEASURED, and said so rather than implied: the three container routes
+([env] kind = "docker" / "apptainer"), concurrency above one in-flight request,
+anything through the TU Platform, and the scientific quality of the predictions
+-- the kit's public inputs are timing inputs rather than a benchmark, their own
+README says they contain no designed sequences, and no reference scores are
+published for them anywhere, so the equivalence above is with the kit's own
+output and is not a claim about accuracy."""
+
+[runtime]
+mode = "resident"
+worker = "resident/af2ig_resident_worker.py"
+launch = "tooluniverse.remote.af2ig.launch:build_command"
+worker_args = [
+    "--socket", "{socket}",
+    "--slug", "{slug}",
+    "--mode", "{kit_mode}",
+    "--af2ig-dir", "{af2ig_dir}",
+    "--params-dir", "{weights_root}",
+    "--cache-dir", "{cache_dir}",
+    # THE ONE KIT LEVER THIS PROVIDER ENGAGES, named here rather than hidden in
+    # a default, so the argv a reader can see is the argv that runs. It is
+    # upstream's `-host_outputs` (the kit's L6) and it is here because of a
+    # measurement that contradicted the estimate it replaced -- see [kit].
+    "--host-outputs",
+]
+# A new residue count costs one XLA trace+lower+compile of the whole
+# AlphaFold-2 forward pass. The kit's own README puts that at 2-4 minutes per
+# length and "the six-complex example takes 8-13 min on its first pass"; this
+# card is slower per length than the H100 that was measured on. 1800 s is the
+# worst first request this provider's declared ceiling admits plus margin.
+start_timeout_s = 1800.0
+request_timeout_s = 3600.0
+# 900 s, for the same reason af3_jax uses 900: a restart pays the compilation
+# again, per length, and there is no cache that survives the process unless
+# the operator points JAX's persistent compilation cache somewhere lasting
+# (see [kit.env] JAX_COMPILATION_CACHE_DIR, which this provider deliberately
+# does NOT set).
+idle_timeout_s = 900.0
+# smoke/input.pdb IS THE KIT'S OWN SMALLEST PUBLIC INPUT, byte for byte:
+# `opt/forward/af2ig_kit/tests/inputs/pdbs/1brs_bb_1to1.pdb` at the pinned
+# commit, sha256
+# a2fac360b1c166912e4c31b97543d7f8ff05ec79a155020d1ccb5775bd26e933.
+# Barstar (chain D of PDB 1BRS, 87 residues, re-chained to A to play the binder
+# role) against barnase (108 residues, chain B); 195 residues, 1557 ATOM
+# records, full side chains. Experimental coordinates from the RCSB under the
+# wwPDB usage policy (CC0), re-chained and renumbered by the kit's own
+# `tools/fetch_public_inputs.py` recipe, which its PUBLIC_INPUTS_README
+# documents and whose digests that script checks.
+#
+# IT IS A TIMING INPUT, NOT A BENCHMARK, and the kit says so: "The files
+# contain no designed sequences." No reference score is published for it
+# anywhere, which is why this provider's correctness evidence is agreement with
+# the kit's own output on the same bytes rather than a score threshold. For the
+# record, what it returns here under the deterministic recipe: pae_interaction
+# 27.228, plddt_binder 42.08, plddt_target 95.84. The target is templated and
+# predicted well; the binder is a natural protein being folded from a single
+# sequence with no MSA, which is the regime this method was built for designed
+# idealised folds rather than for natural ones.
+smoke = "smoke/input.pdb"
+smoke_timeout_s = 2400.0
+# THE GLOB IS `*_af2pred.pdb` AND THE SUFFIX IS LOAD-BEARING. Upstream writes
+# three things into an output directory and two of them appear whether or not
+# a structure was predicted:
+#
+#   check.point   `StructManager.record_checkpoint` -- appended for EVERY tag
+#                 the loop finishes, INCLUDING one that raised: `_run_one`
+#                 catches the exception, prints "Struct with tag X failed",
+#                 and records the checkpoint anyway (predict_pdb.py:1022).
+#                 A run that folded nothing still leaves this file.
+#   out.sc        the score file, written by `record_scores` only on success
+#                 -- but it is a bare path the caller names, so a glob of
+#                 `*.sc` would be matching a name rather than a result.
+#   pdbs/<tag>_af2pred.pdb   written by `StructManager.dump_structure`, which
+#                 is reached only from `process_output`, which is reached only
+#                 after a prediction result exists.
+#
+# `_af2pred` is upstream's own suffix (`FeatureHolder.outtag = tag +
+# '_af2pred'`), so this glob cannot match the input PDB either -- which
+# matters, because this provider's input is a PDB file and a careless `*.pdb`
+# would match a copy of it. TESTED, not reasoned: see the verified_on note.
+outputs = ["*_af2pred.pdb"]
+output_keys = ["structures"]
+
+[gpu]
+policy = "required"
+# 6.0 GiB, DECLARED AT 800 RESIDUES, which is the top of a measured ascending
+# ladder and the same number `af2ig_tool.py`'s MAX_RESIDUES_TOTAL refuses above.
+# A ceiling that admits a request the budget does not cover is not a bound, so
+# the two are one number rather than two that happen to look safe.
+#
+#   residues   wall (cold)   peak_pool_bytes   peak_bytes_in_use
+#   ---------  ------------  ---------------   -----------------
+#      100       95.0 s        0.5 GiB            0.49 GiB
+#      200       98.2 s        1.0 GiB            0.62 GiB
+#      400      190.4 s        2.0 GiB            1.23 GiB
+#      800      272.1 s        6.0 GiB            4.36 GiB   <- declared here
+#
+# Ascending, one clean worker per phase, nothing larger touched first -- the
+# worker does NOT reset peak statistics (a host adding budgets up needs the
+# worker's worst case) so a rung taken after a bigger one reads the bigger one.
+# That is visible in the same session rather than asserted: the last request of
+# the 800-residue run was the 195-residue smoke, and it reported 6.0 GiB where
+# a clean worker reports 1.0 for the same input. Both numbers are right and
+# they answer different questions -- "what does this worker hold now" and "what
+# does this input cost" -- and a ladder that does not ascend conflates them.
+#
+# READ IT AS A CEILING. This is a JAX provider, so the figure is
+# `jax.local_devices()[0].memory_stats()["peak_pool_bytes"]`, the allocator's
+# high-water mark, and it is COARSELY QUANTISED: 0.5 / 1.0 / 2.0 / 6.0 reported
+# over a working set that moves 0.49 / 0.62 / 1.23 / 4.36. Note what that
+# refines in the standard's own wording. af3_jax reported 2.0 / 4.0 / 4.0 / 8.0
+# and the rule written down from it was "quantised to powers of two"; 6.0 is
+# not a power of two, so the honest statement is coarse pool-granularity
+# rounding rather than binary rounding, and the actionable half is unchanged:
+# the gap between two rungs is not headroom, and this 6.0 is not the same kind
+# of number as a torch provider's 6.0. A host that wants the tighter figure
+# should read `peak_in_use_gib`, which this worker returns beside it, and should
+# know that the kit's own instrument samples that one -- its CLI reported
+# `inuse_gib=0.61` for the 195-residue smoke where this worker's upstream timer
+# recorded 0.614, which is the cross-route agreement that says both are
+# measuring the same model.
+#
+# WHAT A HOST CAN DO WITH THE SHAPE. 12x of growth over 8x of length, with a
+# large constant term: a deployment that caps complexes at 400 residues holds
+# this provider in 2 GiB rather than 6, and one that caps at 200 holds it in 1.
+# The cap is the budget. AlphaFold 2's pair track is N-squared and this fork
+# subbatches it at upstream's default 4 rows, which is what keeps the growth
+# well under the area ratio.
+vram_budget_gb = 6.0
+driver_min = 580
+driver_min_reason = "two floors, and the higher one binds, so the lower is stated rather than hidden. The kit's own README asks for `an NVIDIA driver >= 525.60.13 (CUDA 12)`, and that is right for the stack it pins: jax-cuda12-plugin 0.5.3 loads the CUDA 12.9 runtime from the nvidia-*-cu12 wheels, and CUDA 12.9 runs under minor-version compatibility from the 525 series. What 525 cannot do is DRIVE THIS CARD. jaxlib must emit code for sm_121 and a compute capability is only usable on a driver that enumerates the part at all; the 580 series is the first that does for GB10-class hardware, and 580.173.02 is what this card runs. A host on 525 would satisfy the kit's own sentence and get no device, which is why this number is 580 and not the kit's."
+shareable = true
+isolation = "process"
+
+[env]
+kind = "venv"
+python = "$TOOLUNIVERSE_AF2IG_PYTHON"
+lock = "environment/requirements.lock"
+# Every compiled pin is imported, because a wheel that installs is not a wheel
+# that runs (tokenizers 0.10.x installs cleanly on aarch64 and SIGILLs at
+# import). The two interesting assertions are the last two: jax must hold the
+# GPU, and tensorflow must NOT -- the lock substitutes `tensorflow` for
+# `tensorflow-cpu` on this architecture and the whole argument for that
+# substitution is that the aarch64 build has no GPU support, so it is checked
+# here rather than believed.
+verify = "import jax, jaxlib, tensorflow as tf, haiku, tree, numpy, scipy, Bio, ml_collections, af2ig_opt, opt_core; assert jax.__version__ == '0.5.3', jax.__version__; assert jax.default_backend() == 'gpu', jax.default_backend(); assert tf.config.list_physical_devices('GPU') == [], 'tensorflow must not hold the card'"
+
+[weights]
+# The kit's own variable, and its own meaning: AF2_PARAMS names the DIRECTORY
+# that holds `params/`, not the file and not the `params/` directory itself.
+root_env = "AF2_PARAMS"
+root_default = "~/.af2ig"
+# THE FIRST QUESTION, ANSWERED BEFORE ANYTHING ELSE WAS DOWNLOADED. One HEAD
+# request against the URL in the kit's stock/PINS.json, 89 ms:
+#
+#   HTTP/2 200 | content-length: 5587968000 | content-type: application/x-tar
+#   last-modified: Tue, 06 Dec 2022 19:08:46 GMT
+#
+# 5,587,968,000 bytes, which is PINS.json's `weights.source.bytes` exactly.
+# The weights ARE served, by DeepMind's own bucket, with no credential, no
+# licence click-through and no gate: `alphafold_params_2022-12-06.tar` under
+# CC BY 4.0. This provider therefore never had protenix_v2's problem, and the
+# check that would have found it cost 89 ms.
+#
+# WHAT IS FETCHED AND WHAT IS KEPT. The archive is 5.6 GB and holds 16
+# members; this model uses ONE of them, `params/params_model_1_ptm.npz` at
+# 373,103,340 bytes. The kit's own fetcher (`python -m af2ig_opt.weights DIR`,
+# which `run.sh install --weights DIR` invokes) streams the tar and keeps that
+# one member, so the 5.2 GB of other parameter sets never land on disk. No URL
+# is restated here: the kit names it, the kit fetches it, and a mirror change
+# upstream cannot break this manifest.
+fetch = "{python} -m af2ig_opt.weights {weights_root}"
+
+[[weights.files]]
+# Generated from the kit's stock/PINS.json `weights` object, not transcribed.
+name = "params/params_model_1_ptm.npz"
+size = 373103340
+sha256 = "5e564f79af5bcd54ccef6e2a6bb0ff01015d01650ebc41d4575e35f0de9ecc84"
+
+[kit]
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "af2ig"
+sparse = ["af2ig", "common"]
+package = "af2ig_opt"
+#
+# A SIXTH ACTIVATION SHAPE: ARGV ONLY. The taxonomy so far is autoload `.pth`
+# that patches (30 of 36 kits), `worker_launch`, a replacement entry script,
+# autoload plus a patched tree on disk, and af3_jax's `.pth` whose only job is
+# to refuse. This kit installs NO `.pth` AT ALL, and says so in its own
+# `opt/pyproject.toml`: "Every lever of this kit is a command-line flag of the
+# kit's driver, so there is no import-time hook and no .pth (the build backend
+# below adds none)". `opt/_build_backend.py` confirms it from the other side:
+# it globs for `*_autoload.pth` beside itself and there is none, so it builds
+# plain setuptools wheels.
+#
+# That is the whole reason this provider can be resident at all, and it is
+# worth saying plainly because it is the opposite of the last JAX provider's
+# situation. af3_jax's hook ends any process that imports `alphafold3` under
+# an undeclared `AF3_JAX_*` name, so its launcher must STRIP the operator's
+# environment or the worker dies at import. Here, importing the patched
+# upstream driver runs no kit code whatsoever. The launcher still prunes (see
+# launch.py) -- but as insurance against the kit's *stock caller* rules, not
+# against a hook that exists.
+#
+mode = "off"
+#
+# WHY `off`, with the three arguments in the order they bind.
+#
+# 1. THE LEVERS ARE FLAGS ON A BATCH DRIVER, AND THIS WORKER IS NOT A BATCH.
+#    Every one of them is an argparse flag of `predict_pdb.py` that the kit's
+#    CLI appends (`af2ig-opt pred --mode M` builds the argv and runs the
+#    driver as a subprocess). Four of the seven `exact` levers -- L7
+#    `-precompile`, L13 `-program_cache`, L15 `-prefetch`, L16
+#    `-overlap_output` -- exist to overlap work ACROSS the inputs of one
+#    campaign. A resident worker serves one request at a time by contract
+#    (STANDARD section 3), so there is no next input to prefetch, no second
+#    length to compile ahead, and no later design to write behind. They would
+#    cost two background threads and buy nothing. U1 `-sort_by_length` sorts a
+#    list of one.
+#
+# 2. THE KERNEL LEVERS HAVE NO ROW FOR THIS CARD. L8 (`-flash_attn`), L10
+#    (`-fused_triattn`) and L11 (`-fused_trimul`) all go through the shared
+#    core's Pallas kernels, and the kit's own README states the boundary:
+#    "The shared core has float32 tile tables for compute capability 8.0 and
+#    9.0 (A100, H100, H200); on a capability without float32 rows there, the
+#    two triangle kernels are skipped (skipped=L10,L11)." This card is 12.1.
+#    This is the same table that refused af3_jax's FlashPairformer, one kit
+#    over, and the same answer: the kit's stock route is the kit's own answer
+#    for an untabulated card, not a retreat from one.
+#
+# 3. L1 IS THE ONE THAT WOULD HAVE MATTERED, AND IT WAS MEASURED RATHER THAN
+#    ASSUMED. `-device_params` (L1) puts the parameter tree on the device once
+#    instead of handing host numpy arrays to every model call, and the kit
+#    describes it as bitwise-identical. On a card with a separate HBM pool
+#    behind PCIe that is ~370 MB of transfer per design and obviously worth
+#    having. On THIS card -- 130.6 GB UNIFIED, where host and device memory are
+#    the same physical memory and there is no bus to cross -- it is not
+#    obviously anything, so it was measured in the model interpreter: the whole
+#    tree is 338 arrays and 355.7 MiB, and one `jax.device_put` of it costs
+#
+#        23.0 ms (first) then 2.4 / 5.8 / 6.2 / 5.6 ms
+#
+#    against a held request of tens of seconds. That is the entire saving L1
+#    offers here -- under 0.1% of a warm request, and nothing at all of a cold
+#    one -- so the lever is declined on a measurement rather than on a
+#    preference, and the `--device-params` switch stays in the worker so the
+#    measurement can be repeated on a card where the answer would differ. L6
+#    (`-host_outputs`) is the same shape of question one layer on: it replaces
+#    many implicit device->host pulls during post-processing with one
+#    `jax.device_get`.
+#
+# 4. L6 IS THE ONE LEVER THIS PROVIDER ENGAGES, AND THE REASON IT DOES IS A
+#    MEASUREMENT THAT OVERTURNED THIS PARAGRAPH'S FIRST DRAFT. L6 was declined
+#    here with L1, on the argument that the model call is where the time goes.
+#    The acceptance suite's own records said otherwise, and the place to read
+#    them is upstream's per-design timers rather than the wall clock. On a WARM
+#    195-residue request under stock: `t_model` 14.3-17.1 s against `t_output`
+#    45.1-57.1 s. At 400 residues `t_output` is 88.1 s. The output step is
+#    numpy and scipy walking a tree of jax DEVICE arrays and pulling each one
+#    lazily, op by op, and on a held worker it is THREE TIMES the model. So the
+#    lever whose whole job is that -- one `jax.device_get` of the output tree
+#    before post-processing -- is not a micro-optimisation here; it is most of
+#    a warm request. Measured, same input, same card, fresh worker each:
+#
+#        stock        311.0 s cold, then 70.1 / 60.6 / 75.5 s held
+#        -host_outputs 231.5 s cold, then 13.3 / 12.8 s held
+#
+#    4.7-5.9x on the held request, which is the request this provider exists to
+#    serve. AND IT IS EXACT, which was checked rather than taken from the kit's
+#    word for it. Two ordinary runs cannot check it -- two PROCESSES disagree
+#    with each other anyway, in the 5th significant figure, because XLA's
+#    default autotuning picks algorithms by timing them. Under the kit's own
+#    deterministic recipe (`--det 1`, i.e.
+#    `XLA_FLAGS=--xla_gpu_autotune_level=0`) two workers on the same input,
+#    one stock and one with `-host_outputs`, produced
+#
+#        sha256 81d69b99410824b7fad9ca5a9b9134d8e52f789580fe5202d1ce74ca8e70dc89
+#
+#    the same file, and identical scores to every decimal. That is the kit's
+#    claim confirmed on this card, including the exception the kit handles on
+#    purpose: `-host_outputs` keeps the DEVICE array of final atom positions
+#    for `calculate_rmsds`, because a host float32 array would promote to
+#    float64 against the float64 reference coordinates and move the two RMSD
+#    columns in the third decimal.
+#
+#    WHAT THAT DOES TO `mode = "off"`, said plainly rather than finessed: the
+#    kit's own `off` arm passes no lever flag, so this provider is `off` plus
+#    exactly one of the kit's lever flags, which is a thing the kit's mode
+#    vocabulary has no word for. `off` is kept because it is true of the part
+#    the word is about -- no kit mode is resolved, no kit CLI runs, no ACTIVE
+#    line is printed, nothing of af2ig_opt is imported, and nothing replaces
+#    upstream's loader, which is what entitles the worker to hold the weights.
+#    The lever is not hidden behind that word: it is an element of
+#    `[runtime] worker_args` above, it is on the worker's ready line
+#    (`host_outputs=True`), and it is in every reply. L1 stays off because it
+#    was measured and does not pay; L6 goes on because it was measured and
+#    does.
+#
+levers_declined = [
+    "L1 device_params -- MEASURED, not assumed: the per-call host->device transfer it removes is 355.7 MiB over 338 arrays and costs 2.4-6.2 ms steady state on this card's unified memory (23.0 ms first pass), against a held request of tens of seconds",
+    "L7 precompile -- compiles other inputs' lengths ahead of the loop; a resident worker has no other inputs",
+    "L13 program_cache -- a cross-process serialized-program store; residency holds the same executables in jax's own jit cache, in memory, which is strictly the faster of the two",
+    "L15 prefetch -- featurises the NEXT design on a background thread; there is no next design inside one request",
+    "L16 overlap_output -- writes the PREVIOUS design's outputs while this one runs; same reason, and it would also move the one write this provider's [runtime] outputs assertion depends on onto another thread",
+    "U1 sort_by_length -- orders a campaign's inputs; one request is one input",
+    "L8 flash_attn -- opt_core.kernels.pallas_attn, no float32 tile row for compute capability 12.1",
+    "L10 fused_triattn -- opt_core.kernels.fpf_pallas_serve, same table, same gap; the kit prints skipped=L10",
+    "L11 fused_trimul -- same block, same table; the kit prints skipped=L11",
+    "L9 subbatch / L18 tmpl_pointwise_sub -- pure shape levers that WOULD apply here, declined because they change the compiled program and this provider's VRAM ladder and its equivalence check are both quoted against the stock one; a measured case for them is a later change, not an unmeasured one now",
+    "M1 trimul_chunk -- the `big` memory lever; the declared budget does not need it at the declared ceiling",
+]
+# Out of tree, and that is forced rather than preferred. `bash run.sh install`
+# unpacks the pinned dl_binder_design archive to `$HERE/dl_binder_design` --
+# INSIDE the kit checkout -- and `step_kit` refuses a checkout with untracked
+# content it does not recognise (`kit_modified`), which it would do on the
+# second run of a step the standard requires to be idempotent. So the install
+# does out of tree exactly what `run.sh install` does in tree, with the kit's
+# own archive, the kit's own 13-diff patch series and the kit's own checker,
+# and the checkout stays byte-identical to its pinned commit. The precedent is
+# genie3, whose install extracts its stock tarball to
+# ~/.cache/tooluniverse/genie3-stock for the same reason.
+#
+# THE ONE DEVIATION IS NAMED AND BOUNDED. `stock/check_pins.py --gpu` reports
+# `tensorflow-cpu: not installed` because environment/requirements.lock
+# substitutes `tensorflow` 2.21.0 (no aarch64 wheel exists for the `-cpu`
+# distribution at any version; the substituted one is the same release and its
+# aarch64 build has no GPU support, asserted in [env] verify). The install
+# permits that ONE line and re-raises the kit's refusal, verbatim and with its
+# exit code, if any other pin is unmet. It does not pass AF2IG_OPT_FORCE,
+# which would have suppressed every pin failure at once.
+install = """
+set -u
+TREE="$HOME/.cache/tooluniverse/af2ig-stock"
+TMP=$(mktemp -d)
+trap 'rm -rf "$TMP"' EXIT
+
+{python} -m pip install -q --no-build-isolation --no-deps -e ../common/opt_core || exit 1
+{python} -m pip install -q --no-build-isolation --no-deps -e opt || exit 1
+
+if [ ! -f "$TREE/dl_binder_design/af2_initial_guess/predict_pdb.py" ]; then
+  command -v tar >/dev/null && command -v patch >/dev/null || \\
+    echo "af2ig: GNU tar and patch are needed on PATH to unpack and patch the pinned upstream tree" >&2
+  rm -rf "$TREE"
+  mkdir -p "$TREE" || exit 1
+  tar -xzf stock/dl_binder_design-cafa3853.tar.gz -C "$TREE" || exit 1
+  for p in opt/forward/af2ig_kit/patches/[0-9][0-9]_*.diff; do
+    patch -d "$TREE/dl_binder_design" -p1 -s < "$p" || exit 1
+  done
+  echo "af2ig: unpacked stock/dl_binder_design-cafa3853.tar.gz and applied the kit's 13-diff series at $TREE/dl_binder_design"
+else
+  echo "af2ig: the patched upstream tree is at $TREE/dl_binder_design already -- kept, and checked against the pin below"
+fi
+
+{python} -I stock/check_pins.py --checkout "$TREE/dl_binder_design" || exit 1
+
+if ! {python} -I stock/check_pins.py --gpu > "$TMP/pins.txt" 2>&1; then
+  grep '^check_pins: ' "$TMP/pins.txt" | grep -v '^check_pins: tensorflow-cpu: not installed' > "$TMP/other.txt"
+  if [ -s "$TMP/other.txt" ]; then
+    cat "$TMP/pins.txt" >&2
+    echo "af2ig: the kit's pin check refused for a reason other than the one documented substitution (above)" >&2
+    exit 3
+  fi
+  echo "af2ig: pins met except tensorflow-cpu 2.21.0, which publishes no aarch64 wheel at any version; environment/requirements.lock substitutes tensorflow 2.21.0 -- the same release, CPU-only on this architecture, asserted in [env] verify"
+fi
+echo "af2ig: AF2IG_DIR=$TREE/dl_binder_design/af2_initial_guess"
+"""
+env_row = "none"
+env_row_reason = """the row is empty because this kit HAS no environment row to read, not because the probe failed. Its modes are not applied through environment variables at all: `af2ig_opt/modes.py` resolves a mode into a list of COMMAND-LINE FLAGS for `predict_pdb.py` (`-device_params`, `-fused_triattn`, ...), which the kit's CLI appends to the argv it then runs. There is no `.pth`, no import hook and no `modes.ENV` -- `opt/pyproject.toml` says so in as many words -- so `kit_launch.ask_kit`'s two probe shapes (`modes.ENV`, then `_autoload.ENV`) have nothing to find and would raise `KitUnavailable` before anything else happened. That is why [runtime] launch is this provider's own `build_command` rather than kit_launch's. The kit's few genuine environment names (AF2IG_OPT, AF2IG_OPT_JIT_ROOT, AF2IG_OPT_FORCE, ...) are read by the kit's CLI, which this provider does not run; under mode `off` none of them is set, and launch.py removes any the operator exported."""
+
+[kit.env]
+# NOT OPTIONAL, AND THE SINGLE MOST LOAD-BEARING LINE IN THIS FILE for a card
+# that holds other tenants. Left at its default, JAX takes 75% of the device
+# at the first allocation and `peak_pool_bytes` -- the figure this provider
+# reports and a host schedules on -- becomes a measurement of that
+# preallocation rather than of the model. af3_jax measured 91.22 GiB against a
+# real 2.0: 45x. The kit's own stock/PINS.json lists
+# XLA_PYTHON_CLIENT_PREALLOCATE in `stock_environment.pass_through` rather
+# than pinning a value, so unlike af3_jax there is no kit pin to override
+# here; the kit simply leaves it to the caller, and the caller is this
+# manifest. See [gpu] for what the resulting number does and does not mean.
+XLA_PYTHON_CLIENT_PREALLOCATE = "false"
+# THE SAME SETTING AS boltzgen AND esm_if1 AND FOR A THIRD REASON, which is
+# why the argument is written down rather than the value copied. boltzgen set
+# it because a library forked while an OpenMP pool was up (0 designs in 420 s,
+# then 31.6 s). esm_if1 set it because one thread measured 1.6x faster than
+# twenty on tensors too small to amortise a thread barrier. Here it is neither
+# of those: it is TensorFlow. AlphaFold's feature pipeline runs inside
+# tensorflow-cpu in this process (`model_runner.process_features`), and TF
+# brings up its own intra-op thread pool on first use, inside a worker that
+# has already initialised CUDA and will do so again for every later request.
+# Nothing in this provider's request path forks -- checked: no
+# multiprocessing, no ProcessPoolExecutor, no os.fork, and the three kit
+# levers that DO start threads are declined above -- so this is the cheapest
+# guarantee that the state boltzgen hit cannot arise, not a fix for an
+# observed stall. The featurisation it single-threads is a few hundred
+# milliseconds; see verified_on for the measured per-request split.
+OMP_NUM_THREADS = "1"

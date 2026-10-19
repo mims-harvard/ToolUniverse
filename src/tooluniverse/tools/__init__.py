@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2879 scientific tools.
+Type-safe Python interface to 2883 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -3415,6 +3415,10 @@ from .pdbe_get_entry_secondary_structure import pdbe_get_entry_secondary_structu
 from .pdbe_get_entry_status import pdbe_get_entry_status
 from .pdbe_get_entry_summary import pdbe_get_entry_summary
 from .phykit_batch_analysis import phykit_batch_analysis
+from .predict_binding_affinity import predict_binding_affinity
+from .predict_molecular_property import predict_molecular_property
+from .predict_protein_structure import predict_protein_structure
+from .predict_variant_effect import predict_variant_effect
 from .proteins_api_get_comments import proteins_api_get_comments
 from .proteins_api_get_epitopes import proteins_api_get_epitopes
 from .proteins_api_get_features import proteins_api_get_features
@@ -6300,6 +6304,10 @@ __all__ = [
     "pdbe_get_entry_status",
     "pdbe_get_entry_summary",
     "phykit_batch_analysis",
+    "predict_binding_affinity",
+    "predict_molecular_property",
+    "predict_protein_structure",
+    "predict_variant_effect",
     "proteins_api_get_comments",
     "proteins_api_get_epitopes",
     "proteins_api_get_features",

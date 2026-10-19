@@ -628,10 +628,16 @@ class BoltzBoundaryTests(unittest.TestCase):
         self.assertEqual(result["affinity_prediction"]["affinity"], 0.5)
         self.assertEqual(result["msa_mode"], "server")
         self.assertIn("sequence: ACDEFGHIKLMNPQRSTVWY", observed["yaml"])
-        command = run.call_args.args[0]
+        # Admission now probes the machine before the model runs (`ps`, then
+        # nvidia-smi twice), so `run` is no longer called once -- but the
+        # property this test is for is that the *provider* command runs once.
+        provider_calls = [
+            call for call in run.call_args_list if call.args[0][0] == "boltz"
+        ]
+        self.assertEqual(len(provider_calls), 1)
+        command = provider_calls[0].args[0]
         self.assertEqual(command[command.index("--num_workers") + 1], "0")
         self.assertIn("--use_msa_server", command)
-        run.assert_called_once()
 
     def test_explicit_single_sequence_mode_does_not_contact_msa_server(self):
         module = self._load_boltz()

@@ -29,6 +29,61 @@ Setup & Configuration
 
       :bdg-info:`host-and-share-remote-tool`
 
+   .. grid-item-card:: ⚙️ Setup: Af2Ig Remote Tool
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-af2ig-remote-tool
+      :class-card: hover-lift
+      :shadow: md
+
+      Set up, launch, validate, and troubleshoot the AlphaFold 2 initial-guess (dl_binder_design) ToolUniverse remote tool and optionally relay it throug...
+
+      +++
+
+      :bdg-info:`setup-af2ig-remote-tool`
+
+   .. grid-item-card:: ⚙️ Setup: Af3_Jax Remote Tool
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-af3_jax-remote-tool
+      :class-card: hover-lift
+      :shadow: md
+
+      Set up, launch, validate, and troubleshoot the AlphaFold 3 (JAX fork) ToolUniverse remote tool and optionally relay it through ToolUniverse Connect...
+
+      +++
+
+      :bdg-info:`setup-af3_jax-remote-tool`
+
+   .. grid-item-card:: ⚙️ Setup: Af3_Torch Remote Tool
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-af3_torch-remote-tool
+      :class-card: hover-lift
+      :shadow: md
+
+      Set up, launch, validate, and troubleshoot the AF3-torch ToolUniverse remote tool and optionally relay it through ToolUniverse Connect. Use when de...
+
+      +++
+
+      :bdg-info:`setup-af3_torch-remote-tool`
+
+   .. grid-item-card:: ⚙️ Setup: Apnovo Remote Tool
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-apnovo-remote-tool
+      :class-card: hover-lift
+      :shadow: md
+
+      Set up, launch, validate, and troubleshoot the AlphaProtein Novo (de novo enzyme design) ToolUniverse remote tool. Use when deploying or auditing t...
+
+      +++
+
+      :bdg-info:`setup-apnovo-remote-tool`
+
+   .. grid-item-card:: ⚙️ Setup: Atlasfold Remote Tool
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-atlasfold-remote-tool
+      :class-card: hover-lift
+      :shadow: md
+
+      Set up, launch, validate, and troubleshoot the AtlasFold ToolUniverse remote tool and optionally relay it through ToolUniverse Connect. Use when de...
+
+      +++
+
+      :bdg-info:`setup-atlasfold-remote-tool`
+
    .. grid-item-card:: ⚙️ Setup: Boltz Remote Tool
       :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-boltz-remote-tool
       :class-card: hover-lift
@@ -40,6 +95,17 @@ Setup & Configuration
 
       :bdg-info:`setup-boltz-remote-tool`
 
+   .. grid-item-card:: ⚙️ Setup: Boltzgen Remote Tool
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-boltzgen-remote-tool
+      :class-card: hover-lift
+      :shadow: md
+
+      Set up, launch, validate, and troubleshoot the BoltzGen ToolUniverse remote tool and optionally relay it through ToolUniverse Connect. Use when dep...
+
+      +++
+
+      :bdg-info:`setup-boltzgen-remote-tool`
+
    .. grid-item-card:: ⚙️ Setup: Borzoi Remote Tool
       :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-borzoi-remote-tool
       :class-card: hover-lift
@@ -50,6 +116,17 @@ Setup & Configuration
       +++
 
       :bdg-info:`setup-borzoi-remote-tool`
+
+   .. grid-item-card:: ⚙️ Setup: Borzoi_Calico Remote Tool
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-borzoi_calico-remote-tool
+      :class-card: hover-lift
+      :shadow: md
+
+      Set up, launch, validate, and troubleshoot the calico/borzoi variant-scoring (SAD/logSAD/D2/logD2) ToolUniverse remote tool and optionally relay it...
+
+      +++
+
+      :bdg-info:`setup-borzoi_calico-remote-tool`
 
    .. grid-item-card:: ⚙️ Setup: Cell2Location Remote Tool
       :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-cell2location-remote-tool
@@ -84,6 +161,17 @@ Setup & Configuration
 
       :bdg-info:`setup-celltypist-remote-tool`
 
+   .. grid-item-card:: ⚙️ Setup: Chai1 Remote Tool
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-chai1-remote-tool
+      :class-card: hover-lift
+      :shadow: md
+
+      Set up, launch, validate, and troubleshoot the Chai-1 ToolUniverse remote tool and optionally relay it through ToolUniverse Connect. Use when deplo...
+
+      +++
+
+      :bdg-info:`setup-chai1-remote-tool`
+
    .. grid-item-card:: ⚙️ Setup: Chrombpnet Remote Tool
       :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-chrombpnet-remote-tool
       :class-card: hover-lift
@@ -94,6 +182,39 @@ Setup & Configuration
       +++
 
       :bdg-info:`setup-chrombpnet-remote-tool`
+
+   .. grid-item-card:: ⚙️ Setup: Colabdesign Remote Tool
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-colabdesign-remote-tool
+      :class-card: hover-lift
+      :shadow: md
+
+      Set up, launch, validate, and troubleshoot the ColabDesign (BindCraft binder design) ToolUniverse remote tool and optionally relay it through ToolU...
+
+      +++
+
+      :bdg-info:`setup-colabdesign-remote-tool`
+
+   .. grid-item-card:: ⚙️ Setup: Colabfold Remote Tool
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-colabfold-remote-tool
+      :class-card: hover-lift
+      :shadow: md
+
+      Set up, launch, validate, and troubleshoot the ColabFold (AlphaFold2-Multimer) ToolUniverse remote tool and optionally relay it through ToolUnivers...
+
+      +++
+
+      :bdg-info:`setup-colabfold-remote-tool`
+
+   .. grid-item-card:: ⚙️ Setup: Complexa Remote Tool
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-complexa-remote-tool
+      :class-card: hover-lift
+      :shadow: md
+
+      Set up, launch, validate, and troubleshoot the Proteina-Complexa ToolUniverse remote tool and optionally relay it through ToolUniverse Connect. Use...
+
+      +++
+
+      :bdg-info:`setup-complexa-remote-tool`
 
    .. grid-item-card:: ⚙️ Setup: Depmap 24Q2 Remote Tool
       :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-depmap-24q2-remote-tool
@@ -106,6 +227,28 @@ Setup & Configuration
 
       :bdg-info:`setup-depmap-24q2-remote-tool`
 
+   .. grid-item-card:: ⚙️ Setup: E1 Remote Tool
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-e1-remote-tool
+      :class-card: hover-lift
+      :shadow: md
+
+      Set up, launch, validate, and troubleshoot the Profluent E1 ToolUniverse remote tool and optionally relay it through ToolUniverse Connect. Use when...
+
+      +++
+
+      :bdg-info:`setup-e1-remote-tool`
+
+   .. grid-item-card:: ⚙️ Setup: Ef2Inv Remote Tool
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-ef2inv-remote-tool
+      :class-card: hover-lift
+      :shadow: md
+
+      Set up, launch, validate, and troubleshoot the ESMFold2-binder-design ToolUniverse remote tool and optionally relay it through ToolUniverse Connect...
+
+      +++
+
+      :bdg-info:`setup-ef2inv-remote-tool`
+
    .. grid-item-card:: ⚙️ Setup: Enformer Remote Tool
       :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-enformer-remote-tool
       :class-card: hover-lift
@@ -116,6 +259,17 @@ Setup & Configuration
       +++
 
       :bdg-info:`setup-enformer-remote-tool`
+
+   .. grid-item-card:: ⚙️ Setup: Enformer_Deepmind Remote Tool
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-enformer_deepmind-remote-tool
+      :class-card: hover-lift
+      :shadow: md
+
+      Set up, launch, validate, and troubleshoot the official DeepMind Enformer (TF-Hub SavedModel) genomic track prediction ToolUniverse remote tool and...
+
+      +++
+
+      :bdg-info:`setup-enformer_deepmind-remote-tool`
 
    .. grid-item-card:: ⚙️ Setup: Esm Remote Tool
       :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-esm-remote-tool
@@ -128,6 +282,50 @@ Setup & Configuration
 
       :bdg-info:`setup-esm-remote-tool`
 
+   .. grid-item-card:: ⚙️ Setup: Esm_If1 Remote Tool
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-esm_if1-remote-tool
+      :class-card: hover-lift
+      :shadow: md
+
+      Set up, launch, validate, and troubleshoot the ESM-IF1 inverse-folding ToolUniverse remote tool and optionally relay it through ToolUniverse Connec...
+
+      +++
+
+      :bdg-info:`setup-esm_if1-remote-tool`
+
+   .. grid-item-card:: ⚙️ Setup: Esmc Remote Tool
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-esmc-remote-tool
+      :class-card: hover-lift
+      :shadow: md
+
+      Set up, launch, validate, and troubleshoot the ESM Cambrian ToolUniverse remote tool and optionally relay it through ToolUniverse Connect. Use when...
+
+      +++
+
+      :bdg-info:`setup-esmc-remote-tool`
+
+   .. grid-item-card:: ⚙️ Setup: Esmfold2 Remote Tool
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-esmfold2-remote-tool
+      :class-card: hover-lift
+      :shadow: md
+
+      Set up, launch, validate, and troubleshoot the ESMFold2 ToolUniverse remote tool and optionally relay it through ToolUniverse Connect. Use when dep...
+
+      +++
+
+      :bdg-info:`setup-esmfold2-remote-tool`
+
+   .. grid-item-card:: ⚙️ Setup: Evo2 Remote Tool
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-evo2-remote-tool
+      :class-card: hover-lift
+      :shadow: md
+
+      Set up, launch, validate, and troubleshoot the Evo 2 ToolUniverse remote tool and optionally relay it through ToolUniverse Connect. Use when deploy...
+
+      +++
+
+      :bdg-info:`setup-evo2-remote-tool`
+
    .. grid-item-card:: ⚙️ Setup: Expert Feedback Remote Tool
       :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-expert-feedback-remote-tool
       :class-card: hover-lift
@@ -138,6 +336,28 @@ Setup & Configuration
       +++
 
       :bdg-info:`setup-expert-feedback-remote-tool`
+
+   .. grid-item-card:: ⚙️ Setup: Genie3 Remote Tool
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-genie3-remote-tool
+      :class-card: hover-lift
+      :shadow: md
+
+      Set up, launch, validate, and troubleshoot the Genie 3 ToolUniverse remote tool and optionally relay it through ToolUniverse Connect. Use when depl...
+
+      +++
+
+      :bdg-info:`setup-genie3-remote-tool`
+
+   .. grid-item-card:: ⚙️ Setup: Gpnstar Remote Tool
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-gpnstar-remote-tool
+      :class-card: hover-lift
+      :shadow: md
+
+      Set up, launch, validate, and troubleshoot the GPN-Star ToolUniverse remote tool (single-nucleotide variant effect scores from a multi-species-alig...
+
+      +++
+
+      :bdg-info:`setup-gpnstar-remote-tool`
 
    .. grid-item-card:: ⚙️ Setup: Harmony Remote Tool
       :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-harmony-remote-tool
@@ -227,6 +447,50 @@ Setup & Configuration
 
       :bdg-info:`setup-monocle3-remote-tool`
 
+   .. grid-item-card:: ⚙️ Setup: Mosaic Remote Tool
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-mosaic-remote-tool
+      :class-card: hover-lift
+      :shadow: md
+
+      Set up, launch, validate, and troubleshoot the mosaic (Boltz-2 binder hallucination) ToolUniverse remote tool and optionally relay it through ToolU...
+
+      +++
+
+      :bdg-info:`setup-mosaic-remote-tool`
+
+   .. grid-item-card:: ⚙️ Setup: Opendde Remote Tool
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-opendde-remote-tool
+      :class-card: hover-lift
+      :shadow: md
+
+      Set up, launch, validate, and troubleshoot the OpenDDE ToolUniverse remote tool and optionally relay it through ToolUniverse Connect. Use when depl...
+
+      +++
+
+      :bdg-info:`setup-opendde-remote-tool`
+
+   .. grid-item-card:: ⚙️ Setup: Openfold3 Remote Tool
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-openfold3-remote-tool
+      :class-card: hover-lift
+      :shadow: md
+
+      Set up, launch, validate, and troubleshoot the OpenFold3 ToolUniverse remote tool and optionally relay it through ToolUniverse Connect. Use when de...
+
+      +++
+
+      :bdg-info:`setup-openfold3-remote-tool`
+
+   .. grid-item-card:: ⚙️ Setup: Openfold3_Ob0 Remote Tool
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-openfold3_ob0-remote-tool
+      :class-card: hover-lift
+      :shadow: md
+
+      Set up, launch, validate, and troubleshoot the OpenFold3 OpenBind-0 ToolUniverse remote tool and optionally relay it through ToolUniverse Connect. ...
+
+      +++
+
+      :bdg-info:`setup-openfold3_ob0-remote-tool`
+
    .. grid-item-card:: ⚙️ Setup: Paga Remote Tool
       :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-paga-remote-tool
       :class-card: hover-lift
@@ -248,6 +512,61 @@ Setup & Configuration
       +++
 
       :bdg-info:`setup-pinnacle-remote-tool`
+
+   .. grid-item-card:: ⚙️ Setup: Progen2 Remote Tool
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-progen2-remote-tool
+      :class-card: hover-lift
+      :shadow: md
+
+      Set up, launch, validate, and troubleshoot the ProGen2 ToolUniverse remote tool and optionally relay it through ToolUniverse Connect. Use when depl...
+
+      +++
+
+      :bdg-info:`setup-progen2-remote-tool`
+
+   .. grid-item-card:: 🧬 Setup: Proteinmpnn Remote Tool
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-proteinmpnn-remote-tool
+      :class-card: hover-lift
+      :shadow: md
+
+      Set up, launch, validate, and troubleshoot the ProteinMPNN / SolubleMPNN fixed-backbone sequence-design ToolUniverse remote tool and optionally rel...
+
+      +++
+
+      :bdg-info:`setup-proteinmpnn-remote-tool`
+
+   .. grid-item-card:: ⚙️ Setup: Protenix_V1 Remote Tool
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-protenix_v1-remote-tool
+      :class-card: hover-lift
+      :shadow: md
+
+      Set up, launch, validate, and troubleshoot the Protenix ToolUniverse remote tool and optionally relay it through ToolUniverse Connect. Use when dep...
+
+      +++
+
+      :bdg-info:`setup-protenix_v1-remote-tool`
+
+   .. grid-item-card:: ⚙️ Setup: Rfdiffusion3 Remote Tool
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-rfdiffusion3-remote-tool
+      :class-card: hover-lift
+      :shadow: md
+
+      Set up, launch, validate, and troubleshoot the RFdiffusion3 ToolUniverse remote tool and optionally relay it through ToolUniverse Connect. Use when...
+
+      +++
+
+      :bdg-info:`setup-rfdiffusion3-remote-tool`
+
+   .. grid-item-card:: ⚙️ Setup: Rosettafold3 Remote Tool
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-rosettafold3-remote-tool
+      :class-card: hover-lift
+      :shadow: md
+
+      Set up, launch, validate, and troubleshoot the RoseTTAFold3 ToolUniverse remote tool and optionally relay it through ToolUniverse Connect. Use when...
+
+      +++
+
+      :bdg-info:`setup-rosettafold3-remote-tool`
 
    .. grid-item-card:: ⚙️ Setup: Scanvi Remote Tool
       :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/setup-scanvi-remote-tool
@@ -342,7 +661,7 @@ Setup & Configuration
       :class-card: hover-lift
       :shadow: md
 
-      Install and configure ToolUniverse for any use case — MCP server (chat-based), CLI (command line with 9 subcommands), or Python SDK (Coding API wit...
+      Install and configure ToolUniverse for any use case — MCP server (chat-based), CLI (command line with 14 subcommands), or Python SDK (Coding API wi...
 
       +++
 
@@ -494,6 +813,17 @@ Research Skills
 
       :bdg-info:`tooluniverse-binder-discovery`
 
+   .. grid-item-card:: ✨ Bioinformatics Resource Discovery
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-bioinformatics-resource-discovery
+      :class-card: hover-lift
+      :shadow: md
+
+      "Discover which bioinformatics software tool, biomedical REST API, R/Bioconductor package, CRAN package, or training material exists for a task, be...
+
+      +++
+
+      :bdg-info:`tooluniverse-bioinformatics-resource-discovery`
+
    .. grid-item-card:: ✨ Biomedical Fact Lookup
       :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-biomedical-fact-lookup
       :class-card: hover-lift
@@ -626,6 +956,17 @@ Research Skills
 
       :bdg-info:`tooluniverse-clinical-risk-scoring`
 
+   .. grid-item-card:: ✨ Clinical Terminology Lookup
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-clinical-terminology-lookup
+      :class-card: hover-lift
+      :shadow: md
+
+      Fast autocomplete/normalization lookups against the NLM Clinical Table Search Service — resolve a partial or informal drug name to its RxTerms disp...
+
+      +++
+
+      :bdg-info:`tooluniverse-clinical-terminology-lookup`
+
    .. grid-item-card:: ✨ Clinical Trial Design
       :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-clinical-trial-design
       :class-card: hover-lift
@@ -647,6 +988,17 @@ Research Skills
       +++
 
       :bdg-info:`tooluniverse-clinical-trial-matching`
+
+   .. grid-item-card:: ✨ Clinical Trial Protocol
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-clinical-trial-protocol
+      :class-card: hover-lift
+      :shadow: md
+
+      Generate a full clinical trial protocol document (ICH E6(R2)/FDA-style) for a drug or medical device, including background, objectives/endpoints, s...
+
+      +++
+
+      :bdg-info:`tooluniverse-clinical-trial-protocol`
 
    .. grid-item-card:: ✨ Codex Plugin
       :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-codex-plugin
@@ -735,6 +1087,17 @@ Research Skills
       +++
 
       :bdg-info:`tooluniverse-data-wrangling`
+
+   .. grid-item-card:: ✨ Database Logins
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-database-logins
+      :class-card: hover-lift
+      :shadow: md
+
+      Help the user add the login (API key) that a ToolUniverse tool needs for a database such as NCBI/PubMed, OMIM, DisGeNET, UMLS or OpenAlex, without ...
+
+      +++
+
+      :bdg-info:`tooluniverse-database-logins`
 
    .. grid-item-card:: ✨ Dataset Discovery
       :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-dataset-discovery
@@ -879,6 +1242,17 @@ Research Skills
 
       :bdg-info:`tooluniverse-electron-microscopy`
 
+   .. grid-item-card:: ✨ Enzyme Design
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-enzyme-design
+      :class-card: hover-lift
+      :shadow: md
+
+      De novo enzyme design by catalytic-motif scaffolding — build a transition-state motif, generate scaffolds with AlphaProtein Novo, fold every mechan...
+
+      +++
+
+      :bdg-info:`tooluniverse-enzyme-design`
+
    .. grid-item-card:: ✨ Enzyme Kinetics
       :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-enzyme-kinetics
       :class-card: hover-lift
@@ -961,7 +1335,7 @@ Research Skills
       :class-card: hover-lift
       :shadow: md
 
-      Gene-disease association analysis across DisGeNET, OpenTargets, Monarch, OMIM, GenCC, Orphanet. Cross-references multiple sources for evidence-grad...
+      Gene-disease association analysis across DisGeNET, OpenTargets, Monarch, OMIM, GenCC, Orphanet, Gene2Phenotype (G2P). Cross-references multiple sou...
 
       +++
 
@@ -999,6 +1373,17 @@ Research Skills
       +++
 
       :bdg-info:`tooluniverse-gene-regulatory-networks`
+
+   .. grid-item-card:: ✨ Glycobiology
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-glycobiology
+      :class-card: hover-lift
+      :shadow: md
+
+      Glycobiology and glycomics research using GlyGen — glycan structure lookup by GlyTouCan accession, glycan search by mass/monosaccharide-count/type,...
+
+      +++
+
+      :bdg-info:`tooluniverse-glycobiology`
 
    .. grid-item-card:: ✨ Gpcr Structural Pharmacology
       :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-gpcr-structural-pharmacology
@@ -1165,6 +1550,28 @@ Research Skills
 
       :bdg-info:`tooluniverse-kegg-disease-drug`
 
+   .. grid-item-card:: ✨ Lab Data Standardization
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-lab-data-standardization
+      :class-card: hover-lift
+      :shadow: md
+
+      Convert lab instrument output files (CSV, TSV, Excel, PDF — plate readers, spectrophotometers like NanoDrop, qPCR instruments, cell counters, chrom...
+
+      +++
+
+      :bdg-info:`tooluniverse-lab-data-standardization`
+
+   .. grid-item-card:: ✨ Lab Protocols
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-lab-protocols
+      :class-card: hover-lift
+      :shadow: md
+
+      Find and inspect published, peer-reviewed or community lab protocols from protocols.io — search by technique/keyword, pull a protocol's full descri...
+
+      +++
+
+      :bdg-info:`tooluniverse-lab-protocols`
+
    .. grid-item-card:: ✨ Lipidomics
       :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-lipidomics
       :class-card: hover-lift
@@ -1186,6 +1593,17 @@ Research Skills
       +++
 
       :bdg-info:`tooluniverse-literature-deep-research`
+
+   .. grid-item-card:: ✨ Medical Imaging Radiology
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-medical-imaging-radiology
+      :class-card: hover-lift
+      :shadow: md
+
+      Discover and characterize cancer radiology imaging cohorts from The Cancer Imaging Archive (TCIA) — list public collections (e.g. LIDC-IDRI, TCGA-G...
+
+      +++
+
+      :bdg-info:`tooluniverse-medical-imaging-radiology`
 
    .. grid-item-card:: ✨ Mendelian Randomization
       :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-mendelian-randomization
@@ -1269,18 +1687,29 @@ Research Skills
       :class-card: hover-lift
       :shadow: md
 
-      Microbiome research using MGnify, GTDB, ENA, OLS (ENVO biomes), and EuropePMC. Covers study discovery, taxonomic profiling, host-microbe interactio...
+      Microbiome research using MGnify, GTDB, ENA, OLS (ENVO biomes), EuropePMC, BacDive (strain phenotypes), MediaDive (growth media recipes), and GMrep...
 
       +++
 
       :bdg-info:`tooluniverse-microbiome-research`
+
+   .. grid-item-card:: ✨ Ml Inference Utility
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-ml-inference-utility
+      :class-card: hover-lift
+      :shadow: md
+
+      Generic ML/NLP/vision inference against any HuggingFace-hosted model (serverless hf-inference provider) — text classification/sentiment, dense text...
+
+      +++
+
+      :bdg-info:`tooluniverse-ml-inference-utility`
 
    .. grid-item-card:: ✨ Model Organism Genetics
       :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-model-organism-genetics
       :class-card: hover-lift
       :shadow: md
 
-      Cross-species genetic analysis using model organism databases (MGI mouse, ZFIN zebrafish, FlyBase fruit fly, WormBase worm, SGD yeast, RGD rat, GBI...
+      Cross-species genetic analysis using model organism databases (MGI mouse, IMPC systematic knockout phenotyping, ZFIN zebrafish, FlyBase fruit fly, ...
 
       +++
 
@@ -1352,6 +1781,39 @@ Research Skills
 
       :bdg-info:`tooluniverse-neuroscience`
 
+   .. grid-item-card:: ✨ Neurosynth Meta Analysis
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-neurosynth-meta-analysis
+      :class-card: hover-lift
+      :shadow: md
+
+      Meta-analytic decoding of human fMRI coordinates using the Neurosynth coordinate database (14,371 studies, ~3,228 cognitive/neuroscience terms) — g...
+
+      +++
+
+      :bdg-info:`tooluniverse-neurosynth-meta-analysis`
+
+   .. grid-item-card:: ✨ Nfcore Pipelines
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-nfcore-pipelines
+      :class-card: hover-lift
+      :shadow: md
+
+      Run real end-to-end bioinformatics pipelines (nf-core rnaseq, sarek, atacseq) via Nextflow + Docker/Singularity, for raw FASTQ/BAM data — either lo...
+
+      +++
+
+      :bdg-info:`tooluniverse-nfcore-pipelines`
+
+   .. grid-item-card:: ✨ Nih Funding Landscape
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-nih-funding-landscape
+      :class-card: hover-lift
+      :shadow: md
+
+      Analyze NIH grant portfolios and funding history using the OpenNIH FY1985-present corpus, then connect grants to investigators, institutions, publi...
+
+      +++
+
+      :bdg-info:`tooluniverse-nih-funding-landscape`
+
    .. grid-item-card:: ✨ Noncoding Rna
       :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-noncoding-rna
       :class-card: hover-lift
@@ -1362,6 +1824,17 @@ Research Skills
       +++
 
       :bdg-info:`tooluniverse-noncoding-rna`
+
+   .. grid-item-card:: ✨ Nutrition Food Composition
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-nutrition-food-composition
+      :class-card: hover-lift
+      :shadow: md
+
+      "Look up nutrient composition, ingredients, allergens, additives, and processing-level classification for foods and branded products via USDA FoodD...
+
+      +++
+
+      :bdg-info:`tooluniverse-nutrition-food-composition`
 
    .. grid-item-card:: ✨ Organic Chemistry
       :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-organic-chemistry
@@ -1539,12 +2012,23 @@ Research Skills
 
       :bdg-info:`tooluniverse-product-safety-surveillance`
 
+   .. grid-item-card:: 🧬 Protein Design Campaign
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-protein-design-campaign
+      :class-card: hover-lift
+      :shadow: md
+
+      "Run and review iterative protein binder design campaigns with multiple model families, structural and glycan checks, conditional pH hypotheses, re...
+
+      +++
+
+      :bdg-info:`tooluniverse-protein-design-campaign`
+
    .. grid-item-card:: 🧬 Protein Interactions
       :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-protein-interactions
       :class-card: hover-lift
       :shadow: md
 
-      Protein-protein interaction (PPI) network analysis — STRING (predicted + experimental), BioGRID (curated), SASBDB (small-angle scattering). Disting...
+      Protein-protein interaction (PPI) network analysis — STRING (predicted + experimental), BioGRID (curated), SASBDB (small-angle scattering), Complex...
 
       +++
 
@@ -1610,7 +2094,7 @@ Research Skills
       :class-card: hover-lift
       :shadow: md
 
-      Protein structure retrieval from RCSB PDB, PDBe, and AlphaFold with disambiguation, quality assessment (resolution, R-factor, pLDDT), and metadata....
+      Protein structure retrieval from RCSB PDB, PDBe, AlphaFold, SWISS-MODEL, 3D-Beacons (cross-provider structure aggregator), and PDB-REDO (re-refined...
 
       +++
 
@@ -1643,11 +2127,22 @@ Research Skills
       :class-card: hover-lift
       :shadow: md
 
-      Find and retrieve proteomics datasets from MassIVE and ProteomeXchange. Search by species, keyword, or accession; retrieve detailed metadata (instr...
+      Find and retrieve proteomics datasets from MassIVE, ProteomeXchange, PRIDE Archive, and the NCI Proteomics Data Commons (PDC). Search by species, k...
 
       +++
 
       :bdg-info:`tooluniverse-proteomics-data-retrieval`
+
+   .. grid-item-card:: ✨ Publish Tool
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-publish-tool
+      :class-card: hover-lift
+      :shadow: md
+
+      Help the user publish one tool from their shared computer to ToolUniverse so other scientists' AI assistants can find and run it, choosing whether ...
+
+      +++
+
+      :bdg-info:`tooluniverse-publish-tool`
 
    .. grid-item-card:: 🏥 Rare Disease Diagnosis
       :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-rare-disease-diagnosis
@@ -1676,7 +2171,7 @@ Research Skills
       :class-card: hover-lift
       :shadow: md
 
-      Transcription factor binding, cis-regulatory elements (cCREs), chromatin accessibility, and regulatory annotation using JASPAR (motifs), ENCODE (cC...
+      Transcription factor binding, cis-regulatory elements (cCREs), chromatin accessibility, and regulatory annotation using JASPAR (motifs), UniBind, E...
 
       +++
 
@@ -1714,6 +2209,39 @@ Research Skills
       +++
 
       :bdg-info:`tooluniverse-rnaseq-deseq2`
+
+   .. grid-item-card:: ✨ Scientific Peer Review
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-scientific-peer-review
+      :class-card: hover-lift
+      :shadow: md
+
+      Review scientific manuscripts, abstracts, methods, statistical analyses, results, discussions, protocols, and experimental designs using calibrated...
+
+      +++
+
+      :bdg-info:`tooluniverse-scientific-peer-review`
+
+   .. grid-item-card:: ✨ Scientific Problem Selection
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-scientific-problem-selection
+      :class-card: hover-lift
+      :shadow: md
+
+      Conversational framework for choosing what scientific problem to work on, pitching a new project idea, troubleshooting a stuck project, or making a...
+
+      +++
+
+      :bdg-info:`tooluniverse-scientific-problem-selection`
+
+   .. grid-item-card:: ✨ Scvi Tools
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-scvi-tools
+      :class-card: hover-lift
+      :shadow: md
+
+      Deep learning for single-cell omics using scvi-tools — probabilistic (VAE-based) batch correction and integration with scVI, semi-supervised integr...
+
+      +++
+
+      :bdg-info:`tooluniverse-scvi-tools`
 
    .. grid-item-card:: 🐍 Sdk
       :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-sdk
@@ -1758,6 +2286,17 @@ Research Skills
       +++
 
       :bdg-info:`tooluniverse-sequence-retrieval`
+
+   .. grid-item-card:: ✨ Share Computer
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-share-computer
+      :class-card: hover-lift
+      :shadow: md
+
+      Share tools that live on this computer (the user's own Python function, script or notebook code, a model, a program they already run, or ToolUniver...
+
+      +++
+
+      :bdg-info:`tooluniverse-share-computer`
 
    .. grid-item-card:: ✨ Single Cell
       :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-single-cell
@@ -1847,6 +2386,17 @@ Research Skills
 
       :bdg-info:`tooluniverse-structural-variant-analysis`
 
+   .. grid-item-card:: ✨ Synthetic Biology Parts
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-synthetic-biology-parts
+      :class-card: hover-lift
+      :shadow: md
+
+      Look up synthetic biology genetic parts (promoters, RBS, CDS/genes, terminators, reporters, composite devices) from the SynBioHub repository, inclu...
+
+      +++
+
+      :bdg-info:`tooluniverse-synthetic-biology-parts`
+
    .. grid-item-card:: ✨ Systems Biology
       :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-systems-biology
       :class-card: hover-lift
@@ -1874,11 +2424,22 @@ Research Skills
       :class-card: hover-lift
       :shadow: md
 
-      Drug and chemical toxicity assessment via adverse outcome pathways (AOPs), real-world FAERS adverse event signals, FDA labels, and toxicogenomic as...
+      Drug and chemical toxicity assessment via adverse outcome pathways (AOPs), real-world FAERS adverse event signals, FDA labels, toxicogenomic associ...
 
       +++
 
       :bdg-info:`tooluniverse-toxicology`
+
+   .. grid-item-card:: ✨ Use Shared Computer
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-use-shared-computer
+      :class-card: hover-lift
+      :shadow: md
+
+      Use tools that run on a colleague's computer (for example models on their lab GPU) or tools other scientists published, through ToolUniverse. Cover...
+
+      +++
+
+      :bdg-info:`tooluniverse-use-shared-computer`
 
    .. grid-item-card:: ✨ Vaccine Design
       :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-vaccine-design
@@ -1950,19 +2511,8 @@ Research Skills
 Development Skills
 ------------------
 
-.. grid:: 1 1 2 3
+.. grid:: 1 1 2 2
    :gutter: 3
-
-   .. grid-item-card:: 🛠️ DevTU: Auto Discover Apis
-      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/devtu-auto-discover-apis
-      :class-card: hover-lift
-      :shadow: md
-
-      Automatically discover life science APIs online, create ToolUniverse tools, validate them, and prepare integration PRs. Performs gap analysis to id...
-
-      +++
-
-      :bdg-info:`devtu-auto-discover-apis`
 
    .. grid-item-card:: 🛠️ DevTU: Benchmark Harness
       :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/devtu-benchmark-harness
@@ -1975,93 +2525,16 @@ Development Skills
 
       :bdg-info:`devtu-benchmark-harness`
 
-   .. grid-item-card:: 🛠️ DevTU: Code Optimization
-      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/devtu-code-optimization
+   .. grid-item-card:: 🛠️ DevTU: Remote Provider
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/devtu-remote-provider
       :class-card: hover-lift
       :shadow: md
 
-      > Code quality patterns and guidelines for ToolUniverse tool development. Apply when writing, fixing, or refactoring tool Python code in the ToolUn...
+      Bring up, standardise or debug a GPU-backed ToolUniverse remote tool in src/tooluniverse/remote/<slug>/ — the provider.toml manifest, the resident ...
 
       +++
 
-      :bdg-info:`devtu-code-optimization`
-
-   .. grid-item-card:: 🛠️ DevTU: Create Tool
-      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/devtu-create-tool
-      :class-card: hover-lift
-      :shadow: md
-
-      Create new scientific tools for ToolUniverse framework with proper structure, validation, and testing. Use when users need to add tools to ToolUniv...
-
-      +++
-
-      :bdg-info:`devtu-create-tool`
-
-   .. grid-item-card:: 🛠️ DevTU: Docs Quality
-      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/devtu-docs-quality
-      :class-card: hover-lift
-      :shadow: md
-
-      "TOP PRIORITY skill — find and immediately fix or remove every piece of wrong, outdated, or redundant information in ToolUniverse docs. Wrong code,...
-
-      +++
-
-      :bdg-info:`devtu-docs-quality`
-
-   .. grid-item-card:: 🛠️ DevTU: Fix Tool
-      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/devtu-fix-tool
-      :class-card: hover-lift
-      :shadow: md
-
-      Fix failing ToolUniverse tools by diagnosing test failures, identifying root causes, implementing fixes, and validating solutions. Use when ToolUni...
-
-      +++
-
-      :bdg-info:`devtu-fix-tool`
-
-   .. grid-item-card:: 🛠️ DevTU: Github
-      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/devtu-github
-      :class-card: hover-lift
-      :shadow: md
-
-      GitHub workflow for ToolUniverse - push code safely by moving temp files, activating pre-commit hooks, running tests, and cleaning staged files. Us...
-
-      +++
-
-      :bdg-info:`devtu-github`
-
-   .. grid-item-card:: 🛠️ DevTU: Optimize Descriptions
-      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/devtu-optimize-descriptions
-      :class-card: hover-lift
-      :shadow: md
-
-      Optimize tool descriptions in ToolUniverse JSON configs for clarity and usability. Reviews descriptions for missing prerequisites, unexpanded abbre...
-
-      +++
-
-      :bdg-info:`devtu-optimize-descriptions`
-
-   .. grid-item-card:: 🛠️ DevTU: Optimize Skills
-      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/devtu-optimize-skills
-      :class-card: hover-lift
-      :shadow: md
-
-      Optimize ToolUniverse skills for better report quality, evidence handling, and user experience. Apply patterns like tool verification, foundation d...
-
-      +++
-
-      :bdg-info:`devtu-optimize-skills`
-
-   .. grid-item-card:: 🛠️ DevTU: Self Evolve
-      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/devtu-self-evolve
-      :class-card: hover-lift
-      :shadow: md
-
-      > Orchestrate the full ToolUniverse self-improvement cycle: discover APIs, create tools, test with researcher personas, fix issues, optimize skills...
-
-      +++
-
-      :bdg-info:`devtu-self-evolve`
+      :bdg-info:`devtu-remote-provider`
 
 
 How to Use Skills

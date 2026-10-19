@@ -337,12 +337,33 @@ where = ["src"]
 [tool.setuptools.package-data]
 # Recursive, because naming subdirectories one by one silently drops the ones
 # nobody remembered. "data/*" does not reach into a subdirectory, so
-# data/remote_tools/ -- the 42 remote tool definitions that list_built_in_tools
+# data/remote_tools/ -- the remote tool definitions that list_built_in_tools
 # reads -- was in no wheel from its introduction through 1.5.6, and
 # data/schemas/ and most of data/broken_apis/ were missing too.
 # tests/unit/test_package_data_covers_data_dir.py fails if a file under data/
 # stops being covered.
-tooluniverse = ["data/*", "data/**/*"]
+#
+# Remote providers ship more than Python, and a built wheel used to carry only
+# their .py files. `remote/boltz/boltz_client_tools.json` is opened at import by
+# boltz_mcp_server.py, which raises "Boltz tool configuration is missing."
+# without it, and the R halves of singler, monocle3 and slingshot were dropped
+# outright -- so a pip-installed copy could not run either.
+#
+# Under remote/, only what is read at run time or by `tu remote setup` is
+# listed. Provider READMEs, screenshots and .env templates are documentation:
+# they stay in the repository and out of the install. Model code and weights are
+# never here at all -- a provider's `provider.toml` names its upstream and
+# pinned commit, and setup fetches them into a cache outside the package.
+tooluniverse = [
+    "data/*",
+    "data/**/*",
+    "remote/*/*.json",        # client tool definitions, read at import
+    "remote/*/*.toml",        # provider.toml, read by the manifest layer
+    "remote/*/*.R",           # the R half of the R-backed providers
+    "remote/*/*.txt",         # per-provider requirements, read by setup
+    "remote/*/environment/*", # pinned lock files, read by setup
+    "remote/*/smoke/*",       # the input `tu remote setup` proves the model with
+]
 
 [dependency-groups]
 dev = [

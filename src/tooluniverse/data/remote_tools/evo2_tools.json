@@ -1,0 +1,264 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "run_evo2_score",
+    "description": "Score DNA sequences with the Evo 2 genomic foundation model: the mean log-likelihood the model assigns each sequence, and its perplexity. Use it to compare a reference allele against an alternate one (score both windows and take the difference), to rank designed or synthetic sequences by how genome-like they are, or to flag unusual regions. Returns one score per FASTA record, in input order.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "DNA in IUPAC nucleotide codes: one sequence, or a FASTA of up to 8 records. At most 8192 bp per record and 16384 bp in total.",
+          "minLength": 1
+        },
+        "reduce": {
+          "type": "string",
+          "description": "'mean' for the mean per-base log-likelihood (the default, and comparable between sequences of different length), or 'sum' for the pseudo-log-likelihood of the whole sequence (which grows with length).",
+          "enum": [
+            "mean",
+            "sum"
+          ],
+          "default": "mean"
+        },
+        "average_reverse_complement": {
+          "type": "boolean",
+          "description": "Score each sequence on both strands and average. Doubles the work; use it when the strand of the input is arbitrary.",
+          "default": false
+        },
+        "decimals": {
+          "type": "integer",
+          "description": "Decimal places for returned floats (default 5).",
+          "default": 5,
+          "minimum": 1,
+          "maximum": 8
+        }
+      },
+      "required": [
+        "sequence"
+      ],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "model_name": {
+          "type": "string"
+        },
+        "ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sequence_lengths": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "scores": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "scores_hex": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "perplexity": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "reduce": {
+          "type": "string"
+        },
+        "average_reverse_complement": {
+          "type": "boolean"
+        },
+        "timing": {
+          "type": "object"
+        },
+        "weights_held_by": {
+          "type": "string"
+        },
+        "kit_mode": {
+          "type": "string"
+        },
+        "kit_route": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "Evo2ScoreTool",
+      "url": "https://github.com/anthropics/uplifting-biomolecular-modeling",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/evo2",
+      "mcp_tool_name": "run_evo2_score"
+    },
+    "test_examples": [
+      {
+        "sequence": "ACGGCTAATAATCAATACTAAAGTCACGTCGCAGCTCATCCATGCGTCCTGAAAGTCACTATTCCCAGAGTCATAATCAAATGGAACTCGTAACACAAGGTATTCTGTATCGGGAGCAGTAGCCGCCTAATTTTTTATGAGCGTCGTCGAAACAATCAGACAATCTTCTTGATAATGAAGAAGACGGTTGGGATTTACATAAGATTCCTTCTTGTACCATGAAGTCAAGTCATGGTCCACTACAACCGGGCTAACATAATGCTGGAGGGCCCCATTTCTACCATCTATGTATAAAGGAATACCTGAAATTACGTCGCATG"
+      }
+    ]
+  },
+  {
+    "type": "RemoteTool",
+    "name": "run_evo2_embed",
+    "description": "Embed one DNA sequence with the Evo 2 genomic foundation model and return the mean-pooled embedding vector of one hidden layer, plus the sequence's log-likelihood. Use it to compare, cluster or search genomic regions by learned representation. The full per-position matrix is NOT returned inline (4096 floats per base): ask for 'position_range' to get a bounded window of position vectors, or 'per_position_file' to get the whole matrix written as a .npy file whose path comes back.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "ONE DNA sequence in IUPAC nucleotide codes, or a single-record FASTA. At most 8192 bp.",
+          "minLength": 1
+        },
+        "layer_name": {
+          "type": "string",
+          "description": "Which hidden layer to take the embedding from, as 'blocks.<i>.mlp.l3'. Defaults to the last block's. Only these are offered: the optimization kit folds the input-projection weights, so a hook on a projection layer would return that folded layout."
+        },
+        "position_range": {
+          "type": "array",
+          "description": "Inclusive 1-based [start, end] window of position vectors to return inline. Refused, not clipped, when (end - start + 1) * embedding_dim exceeds 20000 floats -- at Evo 2's 4096 dimensions that is 4 positions.",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "per_position_file": {
+          "type": "boolean",
+          "description": "Write the whole (length x embedding_dim) float32 matrix to a .npy file on the provider host and return its path, shape and size instead of its contents.",
+          "default": false
+        },
+        "per_position_log_prob": {
+          "type": "boolean",
+          "description": "Also return the log-probability of every observed base, one number per position -- L-1 of them, for 1-based positions 2..L, since the first base has no preceding context. Refused for sequences longer than 4000 bp.",
+          "default": false
+        },
+        "decimals": {
+          "type": "integer",
+          "description": "Decimal places for returned floats (default 5).",
+          "default": 5,
+          "minimum": 1,
+          "maximum": 8
+        }
+      },
+      "required": [
+        "sequence"
+      ],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "model_name": {
+          "type": "string"
+        },
+        "ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "sequence_lengths": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "layer_name": {
+          "type": "string"
+        },
+        "embedding_dim": {
+          "type": "integer"
+        },
+        "pooling": {
+          "type": "string"
+        },
+        "mean_embedding": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "mean_embedding_norm": {
+          "type": "number"
+        },
+        "position_embeddings": {
+          "type": "object"
+        },
+        "per_position_file": {
+          "type": "object"
+        },
+        "per_position_log_prob": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "per_position_log_prob_positions": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "scores": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "perplexity": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "timing": {
+          "type": "object"
+        },
+        "weights_held_by": {
+          "type": "string"
+        },
+        "kit_mode": {
+          "type": "string"
+        },
+        "kit_route": {
+          "type": "string"
+        },
+        "kit_path": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "Evo2EmbedTool",
+      "url": "https://github.com/anthropics/uplifting-biomolecular-modeling",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/evo2",
+      "mcp_tool_name": "run_evo2_embed"
+    }
+  }
+]

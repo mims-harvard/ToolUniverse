@@ -1,0 +1,96 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "rfdiffusion3_design",
+    "description": "Design protein backbones with RFdiffusion3. Either give a 'length' to build an unconditional backbone of that size, or a 'contigs' string with an 'input_pdb' to scaffold a motif out of an existing structure. Returns per-design metrics; the mmCIF text itself is opt-in.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "length": {
+          "type": "string",
+          "description": "Backbone length for unconditional design: '60', or a sampled range '60-100'. Maximum 400."
+        },
+        "contigs": {
+          "type": "string",
+          "description": "Motif-scaffolding contig string, e.g. '10-40/A163-181/10-40'. Requires input_pdb."
+        },
+        "input_pdb": {
+          "type": "string",
+          "description": "Path to the input structure the contigs refer to. Required with 'contigs', and must be readable by the provider."
+        },
+        "n_designs": {
+          "type": "integer",
+          "description": "How many backbones to sample (default 1, max 8).",
+          "default": 1,
+          "minimum": 1,
+          "maximum": 8
+        },
+        "seed": {
+          "type": "integer",
+          "description": "Random seed; the same seed reproduces the designs.",
+          "default": 0,
+          "minimum": 0
+        },
+        "return_structures": {
+          "type": "boolean",
+          "description": "Return the mmCIF text of every backbone (default false: megabytes).",
+          "default": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "n_designs": {
+          "type": "integer"
+        },
+        "designs": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "structures_note": {
+          "type": "string"
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "timing": {
+          "type": "object"
+        },
+        "weights_held_by": {
+          "type": "string"
+        },
+        "kit_mode": {
+          "type": "string"
+        },
+        "engine_rebuilt": {
+          "type": "boolean"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "RFdiffusion3DesignTool",
+      "url": "https://github.com/anthropics/uplifting-biomolecular-modeling",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/rfdiffusion3",
+      "mcp_tool_name": "rfdiffusion3_design"
+    },
+    "test_examples": [
+      {
+        "length": "60",
+        "n_designs": 1,
+        "seed": 0
+      }
+    ]
+  }
+]
