@@ -5,19 +5,21 @@ robust to preparation and free-reference choice. It is a single-axis paired
 sensitivity comparison, not a binding-performance estimate.
 
 `paired_deltas.csv` contains all 33 matched reference combinations from the
-baseline predicted-pose preparation pilot: three structural families, each with ten independent
-free-reference combinations and one same-coordinate reference. Every comparison
-uses the same bound sample before/after preparation; RoseTTAFold3 uses sample 0.
+baseline predicted-pose preparation pilot: three structural families, each with
+ten combinations of independently modeled free structures and one same-coordinate
+reference. Every comparison uses bound sample 0 before and after preparation.
 `reference_sensitivity.csv` retains the minimum and maximum of each of the six
 family/reference groups before and after preparation. No rows were removed
 within this pilot. Other RoseTTAFold3 bound samples were outside the baseline predicted-pose
 re-preparation pilot and are not mixed into its before/after comparisons.
 
-Each independent-reference group combines five own free-binder samples and two
-same-family apo-receptor references. These combinations share inputs. Their
-extrema are sensitivity ranges, not confidence intervals, biological replicates,
+Each independent-reference group combines five sequence-specific RoseTTAFold3
+free-binder samples and two apo-receptor references from the same family as the
+complex prediction. The shared apo-receptor terms cancel in each paired mutation
+contrast, leaving five varying free-binder pairs within the ten combinations.
+Their extrema are sensitivity ranges, not confidence intervals, biological replicates,
 thermodynamic populations or independent model calls. Same-coordinate points
-are single reference comparisons. Values are full 174-group protein-only PROPKA
+are single reference comparisons. Values are full 174-group human protein-only PROPKA
 independent-site linkage terms at 298.15 K, pH 6.0 minus 7.4; differences are
 M48L minus parent. Positive values mean a larger conditional release-direction
 contribution. Neither sign establishes affinity or measured pH selectivity.
