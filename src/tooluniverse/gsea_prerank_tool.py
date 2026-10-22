@@ -122,11 +122,12 @@ class GSEAPrerankTool(BaseTool):
         else:
             denom = float(np.mean(np.abs(null))) or 1.0
         nes = es / denom if denom else 0.0
-        # permutation p: fraction of null at least as extreme (same tail)
+        # Nominal p conditions on the observed ES direction, not the full null.
+        # Retain the +1 correction; no matching-sign permutations gives p = 1.
         if es >= 0:
-            p = (np.sum(null >= es) + 1) / (n_perm + 1)
+            p = (np.sum(null >= es) + 1) / (np.sum(null >= 0) + 1)
         else:
-            p = (np.sum(null <= es) + 1) / (n_perm + 1)
+            p = (np.sum(null <= es) + 1) / (np.sum(null < 0) + 1)
         return {
             "gene_set": name,
             "n_overlap": int(len(hits)),
