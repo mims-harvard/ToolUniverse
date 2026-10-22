@@ -1,11 +1,34 @@
 # fda_orange_book_tool.py
 
+import os
+import re
+import threading
+import zipfile
+from datetime import date, datetime
+from pathlib import Path
+from typing import Dict, Any, List, Optional, Tuple
+
 import requests
-from typing import Dict, Any, List
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 FDA_BASE_URL = "https://api.fda.gov"
+
+# Patents and exclusivity come from FDA's monthly Orange Book data files, not
+# from openFDA. Drugs@FDA has no patent data, and openFDA's /drug/orangebook
+# endpoint keeps one use code per product-patent pair and one date per
+# exclusivity code, so it drops facts the files list (FDA/openfda#225).
+# The tool does not download the files. fda.gov redirects a scripted request
+# for them (the default python-requests client) to an abuse-detection page, so
+# a person downloads the zip from ORANGE_BOOK_PAGE_URL and sets the environment
+# variable below to the zip or to the folder it was extracted into.
+ORANGE_BOOK_ENV = "TOOLUNIVERSE_ORANGE_BOOK_DATA"
+ORANGE_BOOK_PAGE_URL = (
+    "https://www.fda.gov/drugs/drug-approvals-and-databases/orange-book-data-files"
+)
+_ORANGE_BOOK_FILES = ("products.txt", "patent.txt", "exclusivity.txt")
+_orange_book_cache: Dict[str, Any] = {}
+_orange_book_lock = threading.Lock()
 
 # openFDA joins search clauses with a literal " AND "/" OR " (the operator must
 # survive URL-encoding as a real space). Writing "+AND+" into a requests params
@@ -273,77 +296,248 @@ class FDAOrangeBookTool(BaseTool):
                 "error": f"Failed to get approval history: {str(e)}",
             }
 
-    def _get_patent_info(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Get patent information for a drug (Note: Full patent data requires Orange Book download)."""
+    @staticmethod
+    def _parse_ob_date(text: str) -> Optional[str]:
+        """'May 31, 2033' -> '2033-05-31'. Blank -> None; unparseable text is kept."""
+        text = (text or "").strip()
+        if not text:
+            return None
         try:
-            app_number = arguments.get("application_number")
-            brand_name = arguments.get("brand_name")
+            return datetime.strptime(text, "%b %d, %Y").date().isoformat()
+        except ValueError:
+            return text
 
-            if not app_number and not brand_name:
-                return {
-                    "status": "error",
-                    "error": "Must provide application_number or brand_name",
+    @staticmethod
+    def _parse_ob_rows(raw: bytes) -> List[Dict[str, str]]:
+        lines = raw.decode("latin-1").splitlines()
+        header = lines[0].split("~")
+        return [dict(zip(header, line.split("~"))) for line in lines[1:] if line]
+
+    @staticmethod
+    def _read_ob_source(path: Path) -> Tuple[Dict[str, bytes], List[str]]:
+        """Raw bytes of the three data files and their file dates, from a zip or folder."""
+        raw: Dict[str, bytes] = {}
+        dates: List[str] = []
+        if path.is_dir():
+            for name in _ORANGE_BOOK_FILES:
+                member = next(
+                    (f for f in path.iterdir() if f.name.lower() == name), None
+                )
+                if member is None:
+                    raise ValueError(f"{name} not found in {path}")
+                raw[name] = member.read_bytes()
+                dates.append(date.fromtimestamp(member.stat().st_mtime).isoformat())
+            return raw, dates
+        with zipfile.ZipFile(path) as zf:
+            for name in _ORANGE_BOOK_FILES:
+                info = next(
+                    (i for i in zf.infolist() if i.filename.lower().endswith(name)),
+                    None,
+                )
+                if info is None:
+                    raise ValueError(f"{name} not found in {path}")
+                raw[name] = zf.read(info)
+                dates.append(datetime(*info.date_time).date().isoformat())
+        return raw, dates
+
+    def _load_orange_book(self) -> Dict[str, Any]:
+        """Index the local Orange Book data files.
+
+        The index is cached per process and rebuilt when the file or folder changes.
+        """
+        configured = os.environ.get(ORANGE_BOOK_ENV, "").strip()
+        if not configured:
+            raise FileNotFoundError(
+                f"{ORANGE_BOOK_ENV} is not set; download the Orange Book data files "
+                f"zip from {ORANGE_BOOK_PAGE_URL} and set {ORANGE_BOOK_ENV} to the "
+                "zip or to the folder it was extracted into"
+            )
+        path = Path(configured).expanduser()
+        if not path.exists():
+            raise FileNotFoundError(
+                f"{ORANGE_BOOK_ENV} points to {path}, which does not exist"
+            )
+        with _orange_book_lock:
+            # A folder's own mtime misses files overwritten in place.
+            members = sorted(path.iterdir()) if path.is_dir() else [path]
+            stamp = (str(path), tuple(m.stat().st_mtime_ns for m in members))
+            cached = _orange_book_cache.get("data")
+            if cached and cached["stamp"] == stamp:
+                return cached
+
+            raw, dates = self._read_ob_source(path)
+
+            products: Dict[Tuple[str, str, str], Dict[str, str]] = {}
+            for row in self._parse_ob_rows(raw["products.txt"]):
+                key = (row["Appl_Type"], row["Appl_No"], row["Product_No"])
+                products[key] = row
+
+            patents: Dict[Tuple[str, str, str], Dict[Tuple[str, str], Dict]] = {}
+            for row in self._parse_ob_rows(raw["patent.txt"]):
+                key = (row["Appl_Type"], row["Appl_No"], row["Product_No"])
+                patent_no = row["Patent_No"]
+                expires = self._parse_ob_date(row["Patent_Expire_Date_Text"])
+                # One file row per use code: fold them into one patent entry.
+                entry = patents.setdefault(key, {}).setdefault(
+                    (patent_no, expires or ""),
+                    {
+                        "patent_number": patent_no,
+                        "expiration_date": expires,
+                        "pediatric_extension": patent_no.endswith("*PED"),
+                        "drug_substance": row["Drug_Substance_Flag"] == "Y",
+                        "drug_product": row["Drug_Product_Flag"] == "Y",
+                        "use_codes": [],
+                        "delist_requested": row["Delist_Flag"] == "Y",
+                        "submission_date": self._parse_ob_date(row["Submission_Date"]),
+                    },
+                )
+                code = row["Patent_Use_Code"].strip()
+                if code and code not in entry["use_codes"]:
+                    entry["use_codes"].append(code)
+
+            exclusivity: Dict[Tuple[str, str, str], List[Dict[str, Any]]] = {}
+            for row in self._parse_ob_rows(raw["exclusivity.txt"]):
+                key = (row["Appl_Type"], row["Appl_No"], row["Product_No"])
+                item = {
+                    "code": row["Exclusivity_Code"],
+                    "expiration_date": self._parse_ob_date(row["Exclusivity_Date"]),
                 }
+                if item not in exclusivity.setdefault(key, []):
+                    exclusivity[key].append(item)
 
-            # Search for the drug
-            search_result = self._search_drug(arguments)
-            if search_result.get("status") != "success":
-                return search_result
-
-            drugs = search_result.get("drugs", [])
-            if not drugs:
-                return {"status": "error", "error": "No drugs found matching criteria"}
-
-            # Note: Drugs@FDA API doesn't include full patent details
-            # Full patent info requires Orange Book data download
-            return {
-                "status": "success",
-                "note": "Full patent information requires Orange Book data files from FDA",
-                "download_url": "https://www.fda.gov/drugs/drug-approvals-and-databases/orange-book-data-files",
-                "drugs": drugs,
-                "recommendation": "Use Orange Book downloadable data files for patent numbers and expiration dates",
+            data = {
+                "stamp": stamp,
+                "products": products,
+                "patents": patents,
+                "exclusivity": exclusivity,
+                "source": {
+                    "name": "FDA Orange Book data files",
+                    "path": str(path),
+                    "page": ORANGE_BOOK_PAGE_URL,
+                    "files_dated": max(dates),
+                },
             }
+            _orange_book_cache["data"] = data
+            return data
+
+    @staticmethod
+    def _parse_application_number(value: str) -> Optional[Tuple[Optional[str], str]]:
+        """'NDA021695', 'N021695', '021695' or '21695' -> ('N'|'A'|None, '021695')."""
+        match = re.fullmatch(
+            r"(NDA|ANDA|N|A)?\s*-?\s*0*(\d{1,6})", (value or "").strip().upper()
+        )
+        if not match:
+            return None
+        prefix = match.group(1)
+        appl_type = {"NDA": "N", "N": "N", "ANDA": "A", "A": "A"}.get(prefix)
+        return appl_type, match.group(2).zfill(6)
+
+    def _match_ob_products(
+        self, ob: Dict[str, Any], arguments: Dict[str, Any]
+    ) -> Tuple[Optional[List[Tuple[str, str, str]]], Optional[str]]:
+        app_number = arguments.get("application_number")
+        brand_name = (arguments.get("brand_name") or "").strip().upper()
+        if not app_number and not brand_name:
+            return None, "Must provide application_number or brand_name"
+
+        parsed = None
+        if app_number:
+            parsed = self._parse_application_number(str(app_number))
+            if parsed is None:
+                return None, (
+                    f"Unrecognized application_number {app_number!r}; "
+                    "use a form like NDA021695, N021695 or 021695"
+                )
+
+        keys = []
+        for key, row in ob["products"].items():
+            if parsed and (key[1] != parsed[1] or (parsed[0] and key[0] != parsed[0])):
+                continue
+            if brand_name and row["Trade_Name"].strip().upper() != brand_name:
+                continue
+            keys.append(key)
+        return sorted(keys), None
+
+    def _ob_product_summary(self, ob: Dict[str, Any], key) -> Dict[str, Any]:
+        row = ob["products"][key]
+        return {
+            "application_number": f"{key[0]}{key[1]}",
+            "product_number": key[2],
+            "trade_name": row["Trade_Name"],
+            "ingredient": row["Ingredient"],
+            "strength": row["Strength"],
+            "applicant": row["Applicant_Full_Name"] or row["Applicant"],
+            "marketing_category": row["Type"],
+        }
+
+    def _get_patent_info(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Patents listed in the Orange Book for each matching product."""
+        try:
+            ob = self._load_orange_book()
+            keys, error = self._match_ob_products(ob, arguments)
+            if error:
+                return {"status": "error", "error": error}
+
+            products = []
+            for key in keys:
+                summary = self._ob_product_summary(ob, key)
+                summary["patents"] = sorted(
+                    ob["patents"].get(key, {}).values(),
+                    key=lambda p: (p["expiration_date"] or "", p["patent_number"]),
+                )
+                products.append(summary)
+
+            payload = {
+                "status": "success",
+                "products": products,
+                "count": len(products),
+                "patent_count": sum(len(p["patents"]) for p in products),
+                "source": ob["source"],
+            }
+            if not products:
+                payload["note"] = (
+                    "No Orange Book product matched. The Orange Book covers NDA and "
+                    "ANDA drug products, not biologics (see the Purple Book)."
+                )
+            elif not payload["patent_count"]:
+                payload["note"] = "No patents are listed for the matched products."
+            return payload
 
         except Exception as e:
             return {"status": "error", "error": f"Failed to get patent info: {str(e)}"}
 
     def _get_exclusivity(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Get exclusivity information for a drug."""
+        """Exclusivity codes and expiration dates listed for each matching product."""
         try:
-            app_number = arguments.get("application_number")
-            brand_name = arguments.get("brand_name")
+            ob = self._load_orange_book()
+            keys, error = self._match_ob_products(ob, arguments)
+            if error:
+                return {"status": "error", "error": error}
 
-            if not app_number and not brand_name:
-                return {
-                    "status": "error",
-                    "error": "Must provide application_number or brand_name",
-                }
+            products = []
+            for key in keys:
+                summary = self._ob_product_summary(ob, key)
+                summary["exclusivity"] = sorted(
+                    ob["exclusivity"].get(key, []),
+                    key=lambda x: (x["expiration_date"] or "", x["code"]),
+                )
+                products.append(summary)
 
-            # Search for the drug
-            search_result = self._search_drug(arguments)
-            if search_result.get("status") != "success":
-                return search_result
-
-            drugs = search_result.get("drugs", [])
-            if not drugs:
-                return {"status": "error", "error": "No drugs found matching criteria"}
-
-            # Note: Drugs@FDA API has limited exclusivity data
-            # Full exclusivity details in Orange Book data files
-            return {
+            payload = {
                 "status": "success",
-                "note": "Full exclusivity details require Orange Book data files from FDA",
-                "download_url": "https://www.fda.gov/drugs/drug-approvals-and-databases/orange-book-data-files",
-                "drugs": drugs,
-                "exclusivity_types": [
-                    "NCE (New Chemical Entity) - 5 years",
-                    "New Clinical Study - 3 years",
-                    "Orphan Drug - 7 years",
-                    "Pediatric - 6 month extension",
-                    "Patent Challenge - 180 days",
-                ],
-                "recommendation": "Check Orange Book exclusivity.txt file for dates",
+                "products": products,
+                "count": len(products),
+                "exclusivity_count": sum(len(p["exclusivity"]) for p in products),
+                "source": ob["source"],
             }
+            if not products:
+                payload["note"] = (
+                    "No Orange Book product matched. The Orange Book covers NDA and "
+                    "ANDA drug products, not biologics (see the Purple Book)."
+                )
+            elif not payload["exclusivity_count"]:
+                payload["note"] = "No exclusivity is listed for the matched products."
+            return payload
 
         except Exception as e:
             return {"status": "error", "error": f"Failed to get exclusivity: {str(e)}"}
