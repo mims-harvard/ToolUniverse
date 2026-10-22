@@ -1,236 +1,149 @@
 [
   {
     "name": "MAGICapp_list_guidelines",
-    "description": "List all publicly available clinical guidelines from MAGICapp (Making GRADE the Irresistible Choice). MAGICapp hosts GRADE-based living guidelines from organizations like WHO, Stroke Foundation, American Dental Association, and others. Returns guideline metadata including name, owner organization, publication date, recommendation count, and guideline IDs for detailed lookups. Use this tool to discover available evidence-based clinical guidelines, then use MAGICapp_get_guideline or MAGICapp_get_recommendations for details.",
+    "description": "Find clinical practice guidelines on MAGICapp (Making GRADE the Irresistible Choice), the platform for GRADE-based living guidelines of WHO (including maternal and perinatal health), BMJ Rapid Recommendations / MAGIC, the European Stroke Organisation, Cancer Council Australia, EAES and other societies: about 460 public guidelines, half in English. Give query words (a condition, intervention or organization, e.g. 'stroke thrombolysis', 'postpartum haemorrhage', 'WHO tuberculosis'); a guideline matches when its name, organization or description holds every word (word beginnings: 'pregnan' finds pregnancy), and when none holds them all the guidelines holding most of them are returned and metadata.matched_by says so. language filters by code ('en' also matches 'en-gb'). Without a query, lists guidelines newest first. Returns each guideline's publishedId, name, owner, language, publication date, number of published recommendations and link, with metadata.matching and next_offset for paging (limit at most 100). Pass publishedId (not guidelineId, the unpublished draft) as guideline_id to MAGICapp_get_recommendations for the GRADE-rated recommendation statements, or to MAGICapp_get_sections / MAGICapp_get_guideline.",
     "parameter": {
       "type": "object",
-      "properties": {},
+      "properties": {
+        "query": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Words to find in a guideline's name, organization or description, e.g. 'stroke thrombolysis' or 'WHO maternal'. Omit to list all."
+        },
+        "language": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Language code to keep, e.g. 'en' (also matches 'en-gb'), 'nl', 'dk'. Omit for all languages."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Guidelines to return (default 20, at most 100)."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Matching guidelines to skip, for paging (metadata.next_offset)."
+        }
+      },
       "required": []
     },
     "fields": {
       "endpoint": "https://api.magicapp.org/api/v1/guidelines"
     },
-    "type": "BaseRESTTool",
+    "type": "MAGICappGuidelineListTool",
     "test_examples": [
+      {
+        "query": "stroke",
+        "language": "en"
+      },
+      {
+        "query": "WHO maternal",
+        "limit": 5
+      },
       {}
     ],
     "return_schema": {
       "oneOf": [
         {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string"
-              },
-              "byName": {
-                "type": "string"
-              },
-              "shortCode": {
-                "type": "string"
-              },
-              "owner": {
-                "type": "string"
-              },
-              "mainEditor": {
-                "type": "string"
-              },
-              "startDate": {
-                "type": "string"
-              },
-              "lastEdit": {
-                "type": "string"
-              },
-              "language": {
-                "type": "string"
-              },
-              "countryFlag": {
-                "type": "string"
-              },
-              "sponsors": {
-                "type": "string"
-              },
-              "disclaimer": {
-                "type": "string"
-              },
-              "description": {
-                "type": "string"
-              },
-              "contactName": {
-                "type": "string"
-              },
-              "contactAddress": {
-                "type": "string"
-              },
-              "contactEmail": {
-                "type": "string"
-              },
-              "contactTelephone": {
-                "type": "string"
-              },
-              "institutionId": {
-                "type": [
-                  "integer",
-                  "number"
-                ]
-              },
-              "institutionName": {
-                "type": "string"
-              },
-              "institutionUrl": {
-                "type": "string"
-              },
-              "institutionLogoUrl": {
-                "type": "string"
-              },
-              "institutionShortName": {
-                "type": "string"
-              },
-              "institutionGradeStrength": {
-                "type": "string"
-              },
-              "hasAltGrade": {
-                "type": "boolean"
-              },
-              "guidelineId": {
-                "type": [
-                  "integer",
-                  "number"
-                ]
-              },
-              "currentDraftId": {
-                "type": [
-                  "integer",
-                  "number"
-                ]
-              },
-              "publishedId": {
-                "type": [
-                  "integer",
-                  "number"
-                ]
-              },
-              "editDraft": {
-                "type": "boolean"
-              },
-              "editPublish": {
-                "type": "boolean"
-              },
-              "permissionDraft": {
-                "type": [
-                  "integer",
-                  "number"
-                ]
-              },
-              "permissionPublish": {
-                "type": [
-                  "integer",
-                  "number"
-                ]
-              },
-              "isLatestPublished": {
-                "type": "boolean"
-              },
-              "isDraftEditable": {
-                "type": "boolean"
-              },
-              "isPublic": {
-                "type": "boolean"
-              },
-              "versionMajor": {
-                "type": [
-                  "integer",
-                  "number"
-                ]
-              },
-              "versionMinor": {
-                "type": [
-                  "integer",
-                  "number"
-                ]
-              },
-              "versionLabel": {
-                "type": "string"
-              },
-              "draftPicoCount": {
-                "type": [
-                  "integer",
-                  "number"
-                ]
-              },
-              "draftRecommendationCount": {
-                "type": [
-                  "integer",
-                  "number"
-                ]
-              },
-              "publishedPicoCount": {
-                "type": [
-                  "integer",
-                  "number"
-                ]
-              },
-              "publishedRecommendationCount": {
-                "type": [
-                  "integer",
-                  "number"
-                ]
-              },
-              "pdfPublishedPath": {
-                "type": "string"
-              },
-              "jsonPath": {
-                "type": "string"
-              },
-              "contentAdmin": {
-                "type": "boolean"
-              },
-              "status": {
-                "type": "string"
-              },
-              "commentsInPublished": {
-                "type": "boolean"
-              },
-              "publishCreationTime": {
-                "type": "string"
-              },
-              "publishDate": {
-                "type": "string"
-              },
-              "publishLastSearchDate": {
-                "type": "string"
-              },
-              "trackChanges": {
-                "type": "boolean"
-              },
-              "sectionNumbers": {
-                "type": "boolean"
-              },
-              "showRecByline": {
-                "type": "boolean"
-              },
-              "showRecNumbers": {
-                "type": "string"
-              },
-              "showConflicts": {
-                "type": "boolean"
-              },
-              "showCertaintyStrengthLabels": {
-                "type": "boolean"
-              },
-              "showSectionPreview": {
-                "type": "boolean"
-              },
-              "subscriptions": {
-                "type": "boolean"
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "publishedId": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Id of the published version: pass it as guideline_id to MAGICapp_get_recommendations, MAGICapp_get_sections or MAGICapp_get_guideline"
+                  },
+                  "guidelineId": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Id of the current draft (often not public)"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "byName": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "owner": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "language": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "publishDate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "publishedRecommendationCount": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "shortCode": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "url": {
+                    "type": "string"
+                  }
+                }
               }
+            },
+            "metadata": {
+              "type": "object"
             }
-          }
+          },
+          "required": [
+            "status",
+            "data"
+          ]
         },
         {
           "type": "object",
           "properties": {
+            "status": {
+              "type": "string"
+            },
             "error": {
               "type": "string"
             }
