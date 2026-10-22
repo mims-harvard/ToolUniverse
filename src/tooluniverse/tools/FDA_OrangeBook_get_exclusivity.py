@@ -1,7 +1,7 @@
 """
 FDA_OrangeBook_get_exclusivity
 
-Get drug exclusivity information (NCE, orphan, pediatric). Note: Specific expiration dates requir...
+Get the exclusivity codes and expiration dates FDA lists in the Orange Book for a drug product (e...
 """
 
 from typing import Any, Optional, Callable
@@ -18,16 +18,16 @@ def FDA_OrangeBook_get_exclusivity(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get drug exclusivity information (NCE, orphan, pediatric). Note: Specific expiration dates requir...
+    Get the exclusivity codes and expiration dates FDA lists in the Orange Book for a drug product (e...
 
     Parameters
     ----------
     operation : str
         Operation type (fixed)
     application_number : str
-        FDA application number
+        FDA application number, e.g. NDA212306, N212306 or 212306
     brand_name : str
-        Brand name of drug
+        Brand (trade) name of the drug, exact match, case-insensitive
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
