@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import no_type_check, Optional, Dict, Any
 import hashlib
 import inspect
+import re
 
 from .credentials import get_credential
 
@@ -612,14 +613,26 @@ class BaseTool:
         except Exception as e:
             return ToolValidationError(f"Validation error: {str(e)}")
 
+    # Require credential context: scientific errors also mention tokens,
+    # authors, auth_seq_id, and residue/coordinate values containing 401/403.
+    _AUTH_ERROR_PATTERNS = tuple(
+        re.compile(pattern, re.IGNORECASE)
+        for pattern in (
+            r"\b(?:authentication|authori[sz]ation|unauthori[sz]ed|unauthenticated|forbidden)\b",
+            r"\bauth[ _-]+(?:failed|failure|error|required|missing|denied)\b",
+            r"\bapi[ _-]?key\b",
+            r"\b(?:access|refresh|bearer|auth(?:entication)?)[ _-]+token\b",
+            r"\btoken(?:\s+(?:is|has))?\s+(?:expired|revoked)\b",
+            r"\b(?:expired|revoked)\s+token\b",
+            r"^\s*(?:(?:invalid|missing|incorrect)\s+token|token\s+(?:invalid|missing|incorrect))[.!]?\s*$",
+            r"\b(?:http(?:/\d+(?:\.\d+)?)?|status(?:[_ -]?code)?|response)\s*[:=]?\s*(?:401|403)\b",
+            r"^\s*(?:401|403)\s*$",
+        )
+    )
+
     # Maps keyword groups to (ToolError subclass, message prefix).
     # Checked in order; first match wins.
     _ERROR_CLASSIFICATION = [
-        (
-            {"auth", "unauthorized", "401", "403", "api key", "token"},
-            ToolAuthError,
-            "Authentication failed",
-        ),
         (
             {"rate limit", "429", "quota", "limit exceeded"},
             ToolRateLimitError,
@@ -684,6 +697,11 @@ class BaseTool:
 
         error_str = str(exception).lower()
         full_msg = f"{exception}{response_detail}"
+
+        if getattr(response, "status_code", None) in (401, 403) or any(
+            pattern.search(error_str) for pattern in self._AUTH_ERROR_PATTERNS
+        ):
+            return ToolAuthError(f"Authentication failed: {full_msg}")
 
         for keywords, error_class, prefix in self._ERROR_CLASSIFICATION:
             if any(kw in error_str for kw in keywords):
