@@ -1,7 +1,7 @@
 [
   {
     "name": "FDA_search_drug_labels",
-    "description": "Search FDA-approved drug labels (prescribing information) by drug name or medical indication. Drug labels contain official clinical guidance: indications, dosing regimens, contraindications, black box warnings, drug interactions, and adverse reactions. Use drug_name for drug-specific lookups (e.g., 'metformin', 'warfarin') or indication for condition-based searches (e.g., 'hypertension', 'type 2 diabetes'). Returns a list of matching drug labels with key clinical sections. This is a compact multi-record summary view: each clinical section is limited to max_section_chars (default 2000) so a 20-record search stays small. Whenever a section is shortened the response carries top-level 'truncated': true and a 'truncation_note' naming the affected sections; raise max_section_chars, or use FDA_get_drug_label for the full text of one drug.",
+    "description": "Search FDA-approved drug labels (prescribing information) by drug name or medical indication. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops). Drug labels contain official clinical guidance: indications, dosing regimens, contraindications, black box warnings, drug interactions, and adverse reactions. Use drug_name for drug-specific lookups (e.g., 'metformin', 'warfarin') or indication for condition-based searches (e.g., 'hypertension', 'type 2 diabetes'). Returns a list of matching drug labels with key clinical sections. This is a compact multi-record summary view: each clinical section is limited to max_section_chars (default 2000) so a 20-record search stays small. Whenever a section is shortened the response carries top-level 'truncated': true and a 'truncation_note' naming the affected sections; raise max_section_chars, or use FDA_get_drug_label for the full text of one drug.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -31,6 +31,13 @@
           ],
           "description": "Maximum characters returned per clinical section (default: 2000, 0 = no limit). Sections longer than this are cut and the response then carries top-level 'truncated': true plus 'truncation_note' naming the affected sections. Raise this value to retrieve longer sections; note that a 20-result search at a high limit returns a very large response.",
           "default": 2000
+        },
+        "route": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional route of administration of the product whose label you want, as openFDA names it (case-insensitive), for example ORAL, TOPICAL, OPHTHALMIC, INTRAVENOUS, INTRAMUSCULAR, SUBCUTANEOUS, RECTAL, NASAL, TRANSDERMAL, VAGINAL, SUBLINGUAL, RESPIRATORY (INHALATION) or AURICULAR (OTIC). One name often covers products of several routes (atropine: injection, eye drops, and combination tablets); without a route the tool returns whichever labels openFDA lists first. A label whose openFDA block names no route is matched when its description or carton text names the route. An unknown route is rejected with the full list."
         }
       },
       "required": []
@@ -153,7 +160,7 @@
   },
   {
     "name": "FDA_get_drug_label",
-    "description": "Get the complete FDA-approved prescribing information for a specific drug by name. Returns all clinical sections of the official drug label: indications, dosing regimens, contraindications, black box warnings, drug interactions, use in specific populations (pregnancy, pediatrics, renal/hepatic impairment), pharmacokinetics, mechanism of action, and adverse reactions. This is the authoritative source for FDA-approved drug clinical information in the US. Each section is returned up to max_section_chars characters (default 25000, which holds a full clinical section for essentially every label); if any section is longer it is cut and the response carries top-level 'truncated': true plus a 'truncation_note' naming the cut sections, so a shortened section is never presented as complete. Pass max_section_chars=0 for the whole label with no limit.",
+    "description": "Get the complete FDA-approved prescribing information for a specific drug by name. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops). Returns all clinical sections of the official drug label: indications, dosing regimens, contraindications, black box warnings, drug interactions, use in specific populations (pregnancy, pediatrics, renal/hepatic impairment), pharmacokinetics, mechanism of action, and adverse reactions. This is the authoritative source for FDA-approved drug clinical information in the US. Each section is returned up to max_section_chars characters (default 25000, which holds a full clinical section for essentially every label); if any section is longer it is cut and the response carries top-level 'truncated': true plus a 'truncation_note' naming the cut sections, so a shortened section is never presented as complete. Pass max_section_chars=0 for the whole label with no limit.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -168,6 +175,13 @@
           ],
           "description": "Maximum characters returned per clinical section (default: 25000, 0 = no limit). Sections longer than this are cut and the response then carries top-level 'truncated': true plus 'truncation_note' naming the affected sections. Raise this value (or pass 0) to retrieve those sections in full; a complete label is roughly 50-110 KB of text.",
           "default": 25000
+        },
+        "route": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional route of administration of the product whose label you want, as openFDA names it (case-insensitive), for example ORAL, TOPICAL, OPHTHALMIC, INTRAVENOUS, INTRAMUSCULAR, SUBCUTANEOUS, RECTAL, NASAL, TRANSDERMAL, VAGINAL, SUBLINGUAL, RESPIRATORY (INHALATION) or AURICULAR (OTIC). One name often covers products of several routes (atropine: injection, eye drops, and combination tablets); without a route the tool returns whichever labels openFDA lists first. A label whose openFDA block names no route is matched when its description or carton text names the route. An unknown route is rejected with the full list."
         }
       },
       "required": [

@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2884 scientific tools.
+Type-safe Python interface to 2886 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -2097,6 +2097,8 @@ from .PANTHER_ortholog import PANTHER_ortholog
 from .PDBTM_get_topology import PDBTM_get_topology
 from .PDB_REDO_get_structure_quality import PDB_REDO_get_structure_quality
 from .PDB_REDO_get_version_info import PDB_REDO_get_version_info
+from .PDB_check_alpha_stereochemistry import PDB_check_alpha_stereochemistry
+from .PDB_check_beta_stereochemistry import PDB_check_beta_stereochemistry
 from .PDB_compare_declared_links import PDB_compare_declared_links
 from .PDB_inspect_structure import PDB_inspect_structure
 from .PDB_search_similar_structures import PDB_search_similar_structures
@@ -5123,6 +5125,8 @@ __all__ = [
     "PDBTM_get_topology",
     "PDB_REDO_get_structure_quality",
     "PDB_REDO_get_version_info",
+    "PDB_check_alpha_stereochemistry",
+    "PDB_check_beta_stereochemistry",
     "PDB_compare_declared_links",
     "PDB_inspect_structure",
     "PDB_search_similar_structures",

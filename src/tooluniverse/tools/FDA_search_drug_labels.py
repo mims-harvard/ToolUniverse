@@ -1,7 +1,7 @@
 """
 FDA_search_drug_labels
 
-Search FDA-approved drug labels (prescribing information) by drug name or medical indication. Dru...
+Search FDA-approved drug labels (prescribing information) by drug name or medical indication. Pas...
 """
 
 from typing import Any, Optional, Callable
@@ -13,13 +13,14 @@ def FDA_search_drug_labels(
     indication: Optional[str] = None,
     limit: Optional[int] = 5,
     max_section_chars: Optional[int] = 2000,
+    route: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search FDA-approved drug labels (prescribing information) by drug name or medical indication. Dru...
+    Search FDA-approved drug labels (prescribing information) by drug name or medical indication. Pas...
 
     Parameters
     ----------
@@ -31,6 +32,8 @@ def FDA_search_drug_labels(
         Maximum number of results to return (default: 5, max: 20)
     max_section_chars : int
         Maximum characters returned per clinical section (default: 2000, 0 = no limit...
+    route : str
+        Optional route of administration of the product whose label you want, as open...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def FDA_search_drug_labels(
             "indication": indication,
             "limit": limit,
             "max_section_chars": max_section_chars,
+            "route": route,
         }.items()
         if v is not None
     }

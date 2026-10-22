@@ -300,6 +300,9 @@ def test_tools_that_request_no_safety_section_are_untouched():
         "openfda.route",
     }
     assert "section_note" not in result
+    # the label's other sections are only named, never attached
+    # (test_fda_label_route_and_other_sections.py)
+    assert "warnings_and_cautions" in result["other_section_tools"]
 
 
 # --------------------------------------------------------------------------
