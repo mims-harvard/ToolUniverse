@@ -613,6 +613,7 @@ STATIC_LAZY_REGISTRY = {
     "ProtacDBTool": "protacdb_tool",
     "ProteinMSAInventoryTool": "protein_msa_tool",
     "ProteinPHLinkageTool": "protein_ph_linkage_tool",
+    "ProteinPKAITool": "protein_pkai_tool",
     "ProteinPKATool": "protein_pka_tool",
     "ProteinStructure3DTool": "protein_structure_3d_tool",
     "ProteinsAPIRESTTool": "proteins_api_tool",

@@ -1601,6 +1601,7 @@
   "PGSCatalog_get_score": "50ce00b7e4e97e2c265fb5c7cdb33482",
   "PGSCatalog_get_scores_by_trait": "9c50d22e8767308fe12db77f50940c23",
   "PGSCatalog_search_traits": "c3b092aa0fd9737e795b02b8c1bf6a82",
+  "PKAI_predict_sidechain_pka": "7b120619fab1f22dce85a1ddc6cbf020",
   "PMC_search_papers": "772a064683502abc3ba0fd9d7f2de322",
   "POWO_get_taxon": "3241951c6c3db00e0d1ba7df79896aad",
   "POWO_search_plants": "e1bddc929fea88e0139ec49fbaf98381",

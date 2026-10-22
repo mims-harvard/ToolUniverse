@@ -233,6 +233,7 @@ default_tool_files = {
     # DTU protein predictors (DeepTMHMM / SignalP via biolib)
     "dtu_protein": os.path.join(current_dir, "data", "dtu_protein_tools.json"),
     "protein_pka": os.path.join(current_dir, "data", "protein_pka_tools.json"),
+    "protein_pkai": os.path.join(current_dir, "data", "protein_pkai_tools.json"),
     "protein_ph_linkage": os.path.join(
         current_dir, "data", "protein_ph_linkage_tools.json"
     ),
