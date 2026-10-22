@@ -1,7 +1,7 @@
 """
 FDA_OrangeBook_get_patent_info
 
-Get patent information for approved drugs. Note: Full patent details (numbers, expiration dates) ...
+Get the patents FDA lists in the Orange Book for a drug product: patent number, expiration date, ...
 """
 
 from typing import Any, Optional, Callable
@@ -18,16 +18,16 @@ def FDA_OrangeBook_get_patent_info(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get patent information for approved drugs. Note: Full patent details (numbers, expiration dates) ...
+    Get the patents FDA lists in the Orange Book for a drug product: patent number, expiration date, ...
 
     Parameters
     ----------
     operation : str
         Operation type (fixed)
     application_number : str
-        FDA application number
+        FDA application number, e.g. NDA021695, N021695 or 021695
     brand_name : str
-        Brand name of drug
+        Brand (trade) name of the drug, exact match, case-insensitive
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
