@@ -1033,6 +1033,17 @@ Research Skills
 
       :bdg-info:`tooluniverse-computational-biophysics`
 
+   .. grid-item-card:: ✨ Connect
+      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-connect
+      :class-card: hover-lift
+      :shadow: md
+
+      "How to use ToolUniverse Connect (connect.aiscientist.tools), the hosted ToolUniverse service, and when to use it instead of ToolUniverse installed...
+
+      +++
+
+      :bdg-info:`tooluniverse-connect`
+
    .. grid-item-card:: ✨ Crispr Screen Analysis
       :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/tooluniverse-crispr-screen-analysis
       :class-card: hover-lift
@@ -2138,7 +2149,7 @@ Research Skills
       :class-card: hover-lift
       :shadow: md
 
-      Help the user publish one tool from their shared computer to ToolUniverse so other scientists' AI assistants can find and run it, choosing whether ...
+      Help the user publish one tool from their shared computer to ToolUniverse so other scientists' AI scientists can find and run it, choosing whether ...
 
       +++
 
@@ -2524,17 +2535,6 @@ Development Skills
       +++
 
       :bdg-info:`devtu-benchmark-harness`
-
-   .. grid-item-card:: 🛠️ DevTU: Remote Provider
-      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/devtu-remote-provider
-      :class-card: hover-lift
-      :shadow: md
-
-      Bring up, standardise or debug a GPU-backed ToolUniverse remote tool in src/tooluniverse/remote/<slug>/ — the provider.toml manifest, the resident ...
-
-      +++
-
-      :bdg-info:`devtu-remote-provider`
 
 
 How to Use Skills
