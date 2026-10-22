@@ -17,6 +17,7 @@ import requests
 from typing import Any
 
 from .base_tool import BaseTool
+from .fda_label_routes import normalise_route, route_clause
 from .http_utils import request_with_retry
 from .tool_registry import register_tool
 
@@ -200,6 +201,28 @@ def _names_product_itself(product_text: str, drug_name: str) -> bool:
     )
     matches = list(pattern.finditer(block))
     return bool(matches) and (matches[0].start() == 0 or len(matches) >= 2)
+
+
+def _with_route(query: str, route: str | None) -> str:
+    return f"({query}) AND {route_clause(route)}" if route else query
+
+
+def _route_argument(arguments: dict) -> tuple[str | None, str | None]:
+    """(route, error) from the caller's optional `route`; (None, None) when absent."""
+    route = arguments.get("route")
+    if route is None or not str(route).strip():
+        return None, None
+    return normalise_route(route)
+
+
+def _no_match_suggestion(route: str | None) -> str:
+    if not route:
+        return _NO_MATCH_SUGGESTION
+    return (
+        f"No label of this drug matched route {route}. Call again without route to "
+        f"see which routes its labels have (each label's 'route' field); if that "
+        f"finds nothing either: " + _NO_MATCH_SUGGESTION
+    )
 
 
 def _valid_api_key(value: Any) -> bool:
@@ -411,7 +434,11 @@ class FDALabelTool(BaseTool):
             return {"status": "error", "error": f"Unexpected error: {e}"}
 
     def _query_drug_fields(
-        self, drug_name: str, limit: int, max_chars: int | None = None
+        self,
+        drug_name: str,
+        limit: int,
+        max_chars: int | None = None,
+        route: str | None = None,
     ) -> tuple[list[dict] | None, list[str]]:
         """Search generic_name then brand_name, exact phrase then all-tokens,
         then the product text of labels openFDA never linked.
@@ -419,6 +446,7 @@ class FDALabelTool(BaseTool):
         Returns (extracted label results, truncated section names) on the first
         match, or (None, []) if no results found. See `_name_queries` for the
         query forms and why every term has to stay bound to the name field.
+        A `route` (openFDA's spelling) is ANDed onto every query.
         """
         for field in ("openfda.generic_name", "openfda.brand_name"):
             for q in _name_queries(field, drug_name):
@@ -426,7 +454,7 @@ class FDALabelTool(BaseTool):
                     _RetryableGet,
                     "GET",
                     FDA_LABEL_URL,
-                    params=self._params(search=q, limit=limit),
+                    params=self._params(search=_with_route(q, route), limit=limit),
                     timeout=20,
                 )
                 if resp.status_code == 404:
@@ -435,10 +463,10 @@ class FDALabelTool(BaseTool):
                 results = resp.json().get("results", [])
                 if results:
                     return self._extract_all(results, max_chars)
-        return self._query_unlinked_labels(drug_name, limit, max_chars)
+        return self._query_unlinked_labels(drug_name, limit, max_chars, route)
 
     def _query_unlinked_labels(
-        self, drug_name: str, limit: int, max_chars: int | None
+        self, drug_name: str, limit: int, max_chars: int | None, route: str | None
     ) -> tuple[list[dict] | None, list[str]]:
         """Last resort: labels openFDA never linked, found by their product text.
 
@@ -451,7 +479,7 @@ class FDALabelTool(BaseTool):
             "GET",
             FDA_LABEL_URL,
             params=self._params(
-                search=_phrase(_PRODUCT_TEXT_FIELD, drug_name),
+                search=_with_route(_phrase(_PRODUCT_TEXT_FIELD, drug_name), route),
                 limit=max(limit, _PRODUCT_TEXT_FETCH),
             ),
             timeout=20,
@@ -492,23 +520,29 @@ class FDALabelTool(BaseTool):
         if not drug_name and not indication:
             return {"status": "error", "error": "Provide drug_name or indication"}
 
+        route, error = _route_argument(arguments)
+        if error:
+            return {"status": "error", "error": error}
         if drug_name:
-            labels, truncated = self._query_drug_fields(drug_name, limit, max_chars)
+            labels, truncated = self._query_drug_fields(
+                drug_name, limit, max_chars, route
+            )
             response = _disclose_truncation(
                 _ok(
                     labels or [],
                     query=drug_name,
                     query_field="drug_name",
                     max_section_chars=max_chars or 0,
+                    **({"route": route} if route else {}),
                 ),
                 truncated,
                 max_chars,
             )
             if not labels:
-                response["suggestion"] = _NO_MATCH_SUGGESTION
+                response["suggestion"] = _no_match_suggestion(route)
             return response
 
-        q = _phrase("indications_and_usage", indication)
+        q = _with_route(_phrase("indications_and_usage", indication), route)
         resp = request_with_retry(
             _RetryableGet,
             "GET",
@@ -541,16 +575,22 @@ class FDALabelTool(BaseTool):
             return {"status": "error", "error": "drug_name is required"}
 
         max_chars = self._max_section_chars(arguments)
+        route, error = _route_argument(arguments)
+        if error:
+            return {"status": "error", "error": error}
 
         # Fetch candidates untruncated so the best-match choice below is made on
         # complete records, and only the record we actually return gets cut --
         # otherwise the disclosure would name sections from discarded matches.
-        results, _ = self._query_drug_fields(drug_name, limit=10, max_chars=None)
+        results, _ = self._query_drug_fields(
+            drug_name, limit=10, max_chars=None, route=route
+        )
         if not results:
             return {
                 "status": "error",
-                "error": f"No FDA label found for '{drug_name}'",
-                "suggestion": _NO_MATCH_SUGGESTION,
+                "error": f"No FDA label found for '{drug_name}'"
+                + (f" with route {route}" if route else ""),
+                "suggestion": _no_match_suggestion(route),
             }
 
         dn_upper = drug_name.upper()
@@ -565,7 +605,12 @@ class FDALabelTool(BaseTool):
         results.sort(key=_match_score)
         label, truncated = _apply_section_limit(results[0], max_chars)
         return _disclose_truncation(
-            _ok(label, query=drug_name, max_section_chars=max_chars or 0),
+            _ok(
+                label,
+                query=drug_name,
+                max_section_chars=max_chars or 0,
+                **({"route": route} if route else {}),
+            ),
             truncated,
             max_chars,
         )

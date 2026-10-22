@@ -1,3 +1,4 @@
+import collections
 import copy
 import hashlib
 import json
@@ -8,6 +9,7 @@ import requests
 
 from .base_rest_tool import BaseRESTTool
 from .base_tool import BaseTool
+from .fda_label_routes import normalise_route, route_clause
 from .openfda_adv_tool import faers_drug_name_clause
 from .tool_registry import register_tool
 import urllib.parse
@@ -103,6 +105,60 @@ LABEL_SECTION_TOOLS = {
     "other_safety_information": "FDA_get_other_safety_info_by_drug_name",
     "user_safety_warnings": "FDA_get_user_safety_warning_by_drug_names",
 }
+
+# The label sections a prescribing or dispensing decision usually turns on, in
+# label order. A label tool returns one section, so a caller who asked for a
+# drug's interactions was never told that the same label also carries a boxed
+# warning or a pregnancy section; the name-based label tools now say which of
+# these the returned labels carry, and the tool for each (`other_section_tools`).
+LABEL_DECISION_SECTIONS = (
+    "boxed_warning",
+    "indications_and_usage",
+    "dosage_and_administration",
+    "dosage_forms_and_strengths",
+    "contraindications",
+    "warnings_and_cautions",
+    "warnings",
+    "precautions",
+    "adverse_reactions",
+    "drug_interactions",
+    "use_in_specific_populations",
+    "pregnancy",
+    "nursing_mothers",
+    "pediatric_use",
+    "geriatric_use",
+    "overdosage",
+    "clinical_pharmacology",
+    "pharmacokinetics",
+    "do_not_use",
+    "ask_doctor",
+    "when_using",
+    "stop_use",
+)
+# Tools for the decision sections LABEL_SECTION_TOOLS has no entry for. That map
+# is not extended, because it also decides which sections the NOT_FOUND probe
+# reports as present.
+_DECISION_SECTION_TOOLS = {
+    "indications_and_usage": "FDA_get_indications_by_drug_name",
+    "dosage_and_administration": "FDA_get_dosage_and_storage_information_by_drug_name",
+    "dosage_forms_and_strengths": "FDA_get_dosage_forms_and_strengths_by_drug_name",
+    "use_in_specific_populations": "FDA_get_population_use_info_by_drug_name",
+    "pregnancy": "FDA_get_pregnancy_effects_info_by_drug_name",
+    "nursing_mothers": "FDA_get_info_for_nursing_mothers_by_drug_name",
+    "pediatric_use": "FDA_get_pediatric_use_info_by_drug_name",
+    "geriatric_use": "FDA_get_geriatric_use_info_by_drug_name",
+    "overdosage": "FDA_get_overdosage_info_by_drug_name",
+    "clinical_pharmacology": "FDA_get_clinical_pharmacology_by_drug_name",
+    "pharmacokinetics": "FDA_get_pharmacokinetics_by_drug_name",
+    "do_not_use": "FDA_get_do_not_use_info_by_drug_name",
+    "ask_doctor": "FDA_get_conditions_info_for_doctor_consult_by_drug_name",
+    "when_using": "FDA_get_when_using_info",
+    "stop_use": "FDA_get_stop_use_info_by_drug_name",
+}
+
+
+def _section_tool(section):
+    return LABEL_SECTION_TOOLS.get(section) or _DECISION_SECTION_TOOLS.get(section)
 
 
 def _get_drug_names_query():
@@ -231,7 +287,12 @@ def contributes_content_keywords(field):
 
 
 def extract_nested_fields(
-    records, fields, keywords=None, identity_fields=None, sibling_sections=None
+    records,
+    fields,
+    keywords=None,
+    identity_fields=None,
+    sibling_sections=None,
+    other_sections=None,
 ):
     """
     Recursively extracts nested fields from a list of dictionaries.
@@ -254,6 +315,11 @@ def extract_nested_fields(
         else said. Like ``identity_fields`` it runs AFTER the keep test, so it
         can never resurrect a record that would otherwise have been dropped, and
         it never overwrites a key that extraction already populated.
+    :param other_sections: Optional section names (see
+        ``LABEL_DECISION_SECTIONS``). Each kept record lists, under
+        ``other_sections_present``, those of them its raw label populates that
+        the record does not already carry. Names only, never content, and after
+        the keep test like the two options above.
 
     :return: List of dictionaries containing only the specified fields
     """
@@ -321,6 +387,12 @@ def extract_nested_fields(
                             extracted_record[sib] = value
                 if present:
                     extracted_record["related_sections_present"] = present
+        if other_sections and isinstance(record, dict):
+            present = [
+                s for s in other_sections if s not in extracted_record and record.get(s)
+            ]
+            if present:
+                extracted_record["other_sections_present"] = present
         if keep:
             extracted_records.append(extracted_record)
     return extracted_records
@@ -616,7 +688,16 @@ def search_openfda(
     exist_option="OR",
     search_keyword_option="AND",
     keywords_filter=True,
+    product_clause=None,
+    other_sections=None,
 ):
+    # `product_clause`: an extra openFDA filter every query stage must keep (the
+    # label tools' route, see `fda_label_routes.route_clause`). It is ANDed onto the first query
+    # and re-applied by `_guarded` to each broadening stage, so no stage can
+    # answer for another route than the one asked for. `other_sections`: section
+    # names each returned row lists under `other_sections_present` when its raw
+    # label carries them (see `extract_nested_fields`).
+    #
     # Return-field fallback mapping:
     # Some label sections are absent in many Rx labels (e.g., `do_not_use`), but
     # the closest equivalent section exists (e.g., `contraindications`). When a
@@ -704,6 +785,8 @@ def search_openfda(
         # neither the first field nor, necessarily, having that field at all.
         params["search"] = "+AND+".join(search_query)
         params["search"] = "(" + params["search"] + ")"
+        if product_clause:
+            params["search"] += "+AND+" + product_clause
 
     def _normalize_indication_terms(text: str) -> list[str]:
         """Normalize indication text into tokens for term-based search fallback."""
@@ -1048,6 +1131,8 @@ def search_openfda(
         answer. Routing all stages through one function is what stops the next
         stage from forgetting it too.
         """
+        if product_clause:
+            search_str += "+AND+" + product_clause
         ex = _filter_exists(exists, allowed_fields)
         if not ex:
             return search_str
@@ -1724,6 +1809,7 @@ def search_openfda(
         keywords_list,
         identity_fields=identity_fields,
         sibling_sections=sibling_map or None,
+        other_sections=other_sections,
     )
 
     # Apply return-field mapping after extraction (generic)
@@ -2308,6 +2394,12 @@ def _label_names(row):
     return " ".join(parts).lower()
 
 
+def _route_counts(rows):
+    """Labels per route (``_label_route``), most common first."""
+    counts = collections.Counter(_label_route(r) for r in rows if isinstance(r, dict))
+    return dict(sorted(counts.items(), key=lambda kv: (-kv[1], kv[0])))
+
+
 def _default_label_window(result, arguments, window=DEFAULT_LABEL_WINDOW):
     """Show the first ``window`` labels when the caller gave no limit, and say what else matched.
 
@@ -2323,10 +2415,7 @@ def _default_label_window(result, arguments, window=DEFAULT_LABEL_WINDOW):
         if len(rows) <= window:
             return result
         labels = [r for r in rows if isinstance(r, dict)]
-        routes = {}
-        for r in labels:
-            routes[_label_route(r)] = routes.get(_label_route(r), 0) + 1
-        routes = dict(sorted(routes.items(), key=lambda kv: (-kv[1], kv[0])))
+        routes = _route_counts(labels)
         combination = sum(
             " and " in _label_names(r) or "/" in _label_names(r) for r in labels
         )
@@ -2349,8 +2438,9 @@ def _default_label_window(result, arguments, window=DEFAULT_LABEL_WINDOW):
             "same drug from other manufacturers. Routes among all matched labels: "
             + ", ".join(f"{k} {v}" for k, v in routes.items())
             + f". {combination} are combination products and {no_identity} carry no product identity. "
-            "To see other labels, for example another route or formulation, call again with limit "
-            "(up to 100) and skip."
+            "To see the labels of one route only, call again with route set to one of the openFDA "
+            "routes named above ('not stated' labels name none, and are matched on their own text); "
+            "to see other labels of any route, call again with limit (up to 100) and skip."
         )
         return out
     except Exception:
@@ -2379,7 +2469,7 @@ class FDATool(BaseTool):
         # Keep direct assignment working for callers that configure a key in code.
         self._explicit_api_key = value
 
-    def run(self, arguments):
+    def run(self, arguments, product_clause=None, other_sections=None):
         arguments = copy.deepcopy(arguments)
         # Set default limit to 100 if not provided
         if "limit" not in arguments or arguments["limit"] is None:
@@ -2394,6 +2484,8 @@ class FDATool(BaseTool):
             exists=self.exists,
             return_fields=self.return_fields,
             exist_option="OR",
+            product_clause=product_clause,
+            other_sections=other_sections,
         )
 
 
@@ -2454,6 +2546,78 @@ _NAME_FORM_WORDS = sorted(
     reverse=True,
 )
 _NAME_FORM_ABBREVIATIONS = ("sr", "er", "xr", "xl", "cr", "dr", "la", "odt", "ir")
+
+
+def _explain_route(result, route, arguments, run_unfiltered):
+    """Say which route was applied; on a NOT_FOUND, say which routes the name has.
+
+    A NOT_FOUND under a route is a different answer from a NOT_FOUND for the
+    name: the drug may well have labels, only not for that route. The name is
+    looked up once more without the route -- through ``run_unfiltered``, the
+    same search and shorter-name retry, up to 100 labels -- and the routes of
+    those labels are reported, so "no ophthalmic label" is never read as "no
+    such drug". A count query would be cheaper but would also count the
+    products that merely list the drug as an ingredient.
+    """
+    try:
+        if not _is_not_found(result):
+            if isinstance(result, dict) and isinstance(result.get("results"), list):
+                result = dict(result)
+                result["route_applied"] = route
+            return result
+        unfiltered = run_unfiltered(dict(arguments, limit=100))
+        rows = (
+            unfiltered.get("results") if isinstance(unfiltered, dict) else None
+        ) or []
+        out = dict(result) if isinstance(result, dict) else {}
+        out["route_applied"] = route
+        out["routes_found_without_route"] = _route_counts(rows)
+        name = arguments.get("drug_name")
+        out["route_note"] = f"No label of '{name}' matched route {route}. " + (
+            f"Without the route, {len(rows)} label(s) matched, with routes: "
+            + ", ".join(
+                f"{k} {v}" for k, v in out["routes_found_without_route"].items()
+            )
+            + ". Call again with one of the openFDA routes named there, or without route."
+            if rows
+            else "Without the route nothing matched either, so the name itself found no label."
+        )
+        return out
+    except Exception:
+        return result
+
+
+def _attach_other_section_tools(result):
+    """Replace the rows' ``other_sections_present`` with one map: section -> its tool and label count.
+
+    Built from the rows actually returned (after the label window), so it never
+    points at a section only a label left out of the response carries.
+    """
+    try:
+        if not isinstance(result, dict) or not isinstance(result.get("results"), list):
+            return result
+        rows = [dict(r) if isinstance(r, dict) else r for r in result["results"]]
+        counts = collections.Counter(
+            s
+            for r in rows
+            if isinstance(r, dict)
+            for s in r.pop("other_sections_present", None) or ()
+        )
+        out = dict(result, results=rows)
+        if counts:
+            out["other_section_tools"] = {
+                s: {"tool": _section_tool(s), "labels": counts[s]}
+                for s in LABEL_DECISION_SECTIONS
+                if s in counts
+            }
+            out["other_sections_note"] = (
+                f"Of the {len(rows)} label(s) returned, 'labels' of them also carry "
+                "each section in other_section_tools; its 'tool' returns that section "
+                "(call it with the same drug_name, and the same route if one was given)."
+            )
+        return out
+    except Exception:
+        return result
 
 
 def _strip_form_words(text):
@@ -2643,16 +2807,45 @@ class FDADrugLabelTool(FDATool):
                 # Not a ChEMBL ID, use original value (strip whitespace)
                 arguments["drug_name"] = drug_name
 
+        # The route selects among the products a name covers. On the tools that
+        # search by name it is not an openFDA search field but a filter every
+        # query stage keeps; FDA_get_drug_names_by_route searches on it itself.
+        route = clause = None
+        if "route" not in self.search_fields:
+            route = arguments.pop("route", None)
+            if route is not None and str(route).strip():
+                route, error = normalise_route(route)
+                if error:
+                    return {"status": "error", "error": error}
+                clause = route_clause(route)
+            else:
+                route = None
+        other_sections = (
+            LABEL_DECISION_SECTIONS if "drug_name" in self.search_fields else None
+        )
+
         # Call parent run method. A NOT_FOUND caused only by dosage-form words or
         # a bracketed second name is retried with the shorter name (#660), and
         # the window is applied to whatever that finally returns -- so a caller
         # who gave no limit gets the first labels plus an inventory of the rest
         # whether the match came from their spelling or from the retry.
-        run_parent = super().run
-        result = _retry_with_normalised_names(
-            run_parent(arguments), arguments, run_parent
-        )
-        return _default_label_window(result, arguments)
+        def search(args, product_clause):
+            def run_parent(a):
+                return FDATool.run(
+                    self,
+                    a,
+                    product_clause=product_clause,
+                    other_sections=other_sections,
+                )
+
+            return _retry_with_normalised_names(run_parent(args), args, run_parent)
+
+        result = search(arguments, clause)
+        if route is not None:
+            result = _explain_route(
+                result, route, arguments, lambda args: search(args, None)
+            )
+        return _attach_other_section_tools(_default_label_window(result, arguments))
 
 
 @register_tool("FDADrugLabelSearchTool")
