@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2883 scientific tools.
+Type-safe Python interface to 2884 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -2136,6 +2136,7 @@ from .PGSCatalog_get_performance_metrics import PGSCatalog_get_performance_metri
 from .PGSCatalog_get_score import PGSCatalog_get_score
 from .PGSCatalog_get_scores_by_trait import PGSCatalog_get_scores_by_trait
 from .PGSCatalog_search_traits import PGSCatalog_search_traits
+from .PKAI_predict_sidechain_pka import PKAI_predict_sidechain_pka
 from .PMC_search_papers import PMC_search_papers
 from .POWO_get_taxon import POWO_get_taxon
 from .POWO_search_plants import POWO_search_plants
@@ -5161,6 +5162,7 @@ __all__ = [
     "PGSCatalog_get_score",
     "PGSCatalog_get_scores_by_trait",
     "PGSCatalog_search_traits",
+    "PKAI_predict_sidechain_pka",
     "PMC_search_papers",
     "POWO_get_taxon",
     "POWO_search_plants",
