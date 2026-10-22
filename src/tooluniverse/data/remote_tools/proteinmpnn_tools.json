@@ -1,0 +1,63 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "proteinmpnn_design",
+    "description": "Design protein SEQUENCES for a fixed backbone with ProteinMPNN (inverse folding). Give the backbone as PDB text; returns num_sequences designed sequences with each one's score and its sequence recovery against the structure's own sequence. Raise 'temperature' for diversity. 'weight_set' selects ProteinMPNN (vanilla) or SolubleMPNN. Reproduces upstream's released protein_mpnn_run.py field for field at the same seed, which is checked by byte-comparison in this provider's acceptance suite. Runs on the CPU and holds no GPU memory, so it can share a host with any folding model: expect ~20 s for 8 sequences of a 106-residue backbone on a quiet 20-core box, roughly linear in both length and sequence count.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "structure": {
+          "type": "string",
+          "description": "The backbone, as the text of a PDB file. ATOM lines of amino-acid residues are read (N, CA, C, O); waters, ligands and side chains are ignored. Every chain in the file is designed. Up to 8 MB and 3000 residues."
+        },
+        "num_sequences": {
+          "type": "integer",
+          "description": "How many sequences to design (default 8, max 128). Must be a whole number of batches of 'batch_size'.",
+          "default": 8
+        },
+        "batch_size": {
+          "type": "integer",
+          "description": "How many sequences are decoded per forward pass (default: all of them). Upstream's own option; lower it only to hold memory down on a long backbone."
+        },
+        "temperature": {
+          "type": "number",
+          "description": "Sampling temperature, in (0, 1]. Upstream's default is 0.1, which is close to greedy; 0.2-0.3 trades score for diversity.",
+          "default": 0.1
+        },
+        "weight_set": {
+          "type": "string",
+          "enum": [
+            "vanilla",
+            "soluble"
+          ],
+          "description": "'vanilla' is ProteinMPNN as released and upstream's default. 'soluble' is SolubleMPNN, the same architecture trained without membrane proteins; use it for soluble designs.",
+          "default": "vanilla"
+        },
+        "seed": {
+          "type": "integer",
+          "description": "Random seed, >= 1 (default 37). The same seed and the same backbone give the same sequences; the worker will not draw one for you.",
+          "default": 37
+        }
+      },
+      "required": [
+        "structure"
+      ],
+      "additionalProperties": false
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "ProteinMPNNDesignTool",
+      "url": "https://github.com/anthropics/uplifting-biomolecular-modeling",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/proteinmpnn",
+      "mcp_tool_name": "proteinmpnn_design"
+    },
+    "test_examples": [
+      {
+        "structure": "ATOM      1  N   MET A   1      27.340  24.430   2.614  1.00  0.00           N\n",
+        "num_sequences": 4,
+        "seed": 37
+      }
+    ]
+  }
+]

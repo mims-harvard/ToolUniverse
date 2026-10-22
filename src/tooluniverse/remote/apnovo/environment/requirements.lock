@@ -1,0 +1,94 @@
+# AlphaProtein Novo -- the model environment, frozen from a working install.
+#
+# PROVENANCE: resolved with `uv pip compile` from upstream's own pyproject.toml
+# at commit e7ce276cb4a1f68c2ba7d5aa793192cfcb4845c8 for CPython 3.12 on
+# aarch64 (72 packages, 13 of them nvidia-*-cu12 at CUDA 12.9.x with cuDNN
+# 9.27.0.42), then installed --no-deps into a venv verified to drive this
+# card (jax.default_backend() == "gpu", CudaDevice NVIDIA GB10, cc 12.1).
+#
+# TWO THINGS TO KNOW BEFORE INSTALLING THIS.
+#
+# 1. `alphafold3` is a git dependency with a C++ extension, and its build
+#    fetches Eigen from gitlab.com DURING the build. A first attempt here
+#    failed three retries with "GitLab is currently unable to handle this
+#    request"; an unchanged retry succeeded. Retry before diagnosing.
+#    (Constraining cmake<4 was tried first and changed nothing -- the
+#    deprecated-FetchContent_Populate theory was wrong.)
+#
+# 2. Pinning by version, not by URL: none of the 13 nvidia-*-cu12 wheels is
+#    named by an x86-64 direct link, which is why this kit installs natively on
+#    aarch64 where about twenty of the surveyed kits do not.
+#
+# `alphaprotein_novo` itself is NOT listed: it is installed from the pinned
+# upstream checkout that [kit] names, editable, by the kit step.
+absl-py==2.5.0
+aiofiles==25.1.0
+alphafold3==3.0.5.dev34+gc121cd877
+alphaprotein_novo==0.1.0
+annotated-types==0.8.0
+attrs==26.1.0
+chex==0.1.92
+dm-haiku==0.0.17
+dm-tree==0.1.10
+einshape==1.0
+etils==1.14.0
+flax==0.12.8
+fsspec==2026.9.0
+humanize==4.16.0
+immutabledict==4.3.1
+jax==0.10.2
+jax-cuda12-pjrt==0.10.2
+jax-cuda12-plugin==0.10.2
+jaxlib==0.10.2
+jaxtyping==0.3.11
+jmp==0.0.4
+markdown-it-py==4.2.0
+mdurl==0.1.2
+ml_dtypes==0.6.0
+msgpack==1.2.3
+numpy==2.5.3
+nvidia-cublas-cu12==12.9.2.10
+nvidia-cuda-cccl-cu12==12.9.27
+nvidia-cuda-cupti-cu12==12.9.79
+nvidia-cuda-nvcc-cu12==12.9.86
+nvidia-cuda-nvrtc-cu12==12.9.86
+nvidia-cuda-runtime-cu12==12.9.79
+nvidia-cudnn-cu12==9.27.0.42
+nvidia-cufft-cu12==11.4.1.4
+nvidia-cusolver-cu12==11.7.5.82
+nvidia-cusparse-cu12==12.5.10.65
+nvidia-nccl-cu12==2.32.3
+nvidia-nvjitlink-cu12==12.9.86
+nvidia-nvshmem-cu12==3.8.0
+opt_einsum==3.4.0
+optax==0.2.8
+orbax-checkpoint==0.12.6
+packaging==26.3
+pillow==12.3.0
+prometheus_client==0.26.0
+protobuf==7.36.2
+psutil==7.2.2
+pydantic==2.13.5
+pydantic_core==2.46.5
+pygments==2.21.0
+pyyaml==6.0.3
+qwix==0.1.8
+rdkit==2026.3.3
+rich==15.0.0
+scipy==1.18.1
+simplejson==4.2.0
+tabulate==0.10.0
+tensorboardx==2.6.5
+tensorstore==0.1.85
+tokamax==0.0.12
+toolz==1.1.0
+tqdm==4.70.1
+treescope==0.1.10
+typeguard==2.13.3
+typing-inspection==0.4.4
+typing_extensions==4.16.0
+uvloop==0.23.0
+wadler_lindig==0.1.7
+wrapt==2.5.0
+zipp==4.1.1
+zstandard==0.25.0

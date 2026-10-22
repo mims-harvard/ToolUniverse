@@ -1,0 +1,246 @@
+# ESMFold2 — protein complex structure prediction from sequence, held resident.
+#
+# The fourth provider on the standard and the largest: the three pinned
+# snapshots are 25.6 GiB in sixteen files, and every variant loads the 6B-
+# parameter ESMC language model beside its folding trunk. The kit's own README
+# measures roughly 25 s of start-up per process in EVERY mode -- interpreter,
+# checkpoint load and digest -- which a per-request process pays on every call
+# and a held worker pays once. Its `exact` and `fast` modes additionally
+# capture CUDA graphs of the trunk, the encoders and the sampler, and a graph
+# captured on one request is only collectable by a process that survives to the
+# next.
+#
+# Every number below was measured on the card named in `verified_on`. Holding
+# this one costs more than the other five put together -- 25.6 GiB of weights,
+# 14.2 GiB resident -- and buys the largest relative saving: a fold of the
+# smoke drops from 2.7 s to 1.1 s once the weights are read, and they are read
+# once per process rather than once per request.
+
+[provider]
+slug = "esmfold2"
+description = "ESMFold2 protein complex structure prediction from sequence (mmCIF + pLDDT/PAE)"
+operations = ["esmfold2_fold"]
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver 580.173.02),
+venv route, kit mode fast, variant fast. Three folds of the 89-residue smoke in
+one held worker: 2.7 s, 1.1 s, 1.1 s after a 6.2 s build -- the 25.6 GiB of
+weights are read once. The VRAM ladder under [gpu] was measured in one further
+held worker on the same card."""
+
+[runtime]
+mode = "resident"
+worker = "resident/esmfold2_resident_worker.py"
+launch = "tooluniverse.remote_resident.kit_launch:build_command"
+# --variant is the kit's own rule, not ours: one variant per process, never
+# two. `fast` is ESMFold2-Fast (24-layer trunk, no MSA module); full_msa /
+# full_nomsa load ESMFold2 with / without MSAs from the other snapshot.
+worker_args = ["--socket", "{socket}", "--slug", "{slug}", "--variant", "fast"]
+# Sixteen files, 25.6 GiB, and the 6B language model among them.
+start_timeout_s = 1800.0
+request_timeout_s = 3600.0
+# What a run that actually worked leaves behind; the smoke step refuses if no
+# file matched.
+outputs = ["*.cif"]
+idle_timeout_s = 900.0
+smoke = "smoke/input.json"
+smoke_timeout_s = 3600.0
+
+[gpu]
+policy = "required"
+# MEASURED. The derived estimate this line replaced -- ESMC-6B at bf16
+# (~11.8 GiB) plus the Fast trunk plus one small input -- came to 16 GiB and
+# was close: 89 residues costs 14.02 GiB on the first request and 14.21 GiB
+# steady. Almost all of that is the 6B language model, which is why this
+# provider is the most expensive of the six to hold and the flattest in
+# length. Ladder, one held worker, steady state, single chain:
+#
+#     residues   peak reserved
+#           89      14.21 GiB   (the smoke)
+#          100      14.14 GiB
+#          200      15.07 GiB
+#          400      17.70 GiB
+#          800      25.28 GiB   <- the reference this budget declares
+#
+# 800 residues costs 1.8x what 100 does, against openfold3's 2.9x, because the
+# constant ESMC term dominates. A host that will not fold past ~200 residues
+# can hold this provider in 16 GiB; one that accepts long chains budgets the
+# figure below and re-measures past 800.
+vram_budget_gb = 25.28
+driver_min = 580
+driver_min_reason = "its pinned stack is CUDA 13.0 (torch 2.13.0+cu130)"
+shareable = true
+isolation = "process"
+
+[env]
+kind = "venv"
+python = "$TOOLUNIVERSE_ESMFOLD2_PYTHON"
+lock = "environment/requirements.lock"
+verify = "import torch, esm, transformers, esmfold2_opt; assert esm.__version__ == '3.3.0' and transformers.__version__ == '4.57.6'"
+
+[weights]
+# Hugging Face's own cache in its own layout, which is what the kit's
+# weights.py writes and what upstream reads offline: HF_HOME/hub/models--<org>--<name>/
+# snapshots/<commit>/<file>, at the snapshot commits stock/PINS.json pins.
+root_env = "HF_HOME"
+root_default = "~/.esmfold2"
+# The kit's own downloader (opt/esmfold2_opt/weights.py, which run.sh install
+# --weights calls and which documents itself as `python -m esmfold2_opt.weights
+# DIR`). It goes through huggingface_hub at the pinned commits and checks every
+# sha256 itself. No URL is restated in ToolUniverse. run.sh is not used here
+# because the weights step, unlike the kit step, does not put the model
+# environment's bin on PATH -- {python} is how that environment is named.
+fetch = "{python} -m esmfold2_opt.weights {weights_root}"
+
+# The sixteen entries below are generated from the kit's own stock/PINS.json
+# "weights" (three repositories), not transcribed.
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/model-00002-of-00006.safetensors"
+size = 4971211344
+sha256 = "f75e2144d8269fe2eb4b3e0823fb089b94f176d8024153e85b8fb573a42294fa"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/model-00004-of-00006.safetensors"
+size = 4971211344
+sha256 = "46add1b7be098bbfdc3073884851ba3057f1b33ea23a158b650a37007dabd13d"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/model-00001-of-00006.safetensors"
+size = 4864457920
+sha256 = "bd90149ff223e6ac1a0cac6147a5ae0df20d3a21df4f65356a1f19cd14f4aa8a"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/model-00003-of-00006.safetensors"
+size = 4863752992
+sha256 = "f699f01ecc9691d9c6470492765fe54b8b5d2e9f277c139e89427433ffdfe0b2"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/model-00005-of-00006.safetensors"
+size = 4863752992
+sha256 = "1e1cb62f060a34e18f54a31a76683ef888b8cec59e73315f5b31d25d45a1f88c"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/model-00006-of-00006.safetensors"
+size = 873762296
+sha256 = "56c73e13ae96e777ce65eee99364056069ef93b646470f352f83c5f1037b1b18"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/model.safetensors.index.json"
+size = 97349
+sha256 = "6846456e20e6ee2c37461f7bfc21d316d69bdaf165b925691afcb39e583244da"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/tokenizer.json"
+size = 2879
+sha256 = "8d3447b278176e65fb3ef0224472927bf5fee3be46ea2bd77fad0111423cee1f"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/tokenizer_config.json"
+size = 1392
+sha256 = "e8d8e40c9f92b334f0272e80bb65ed4043cb9836523cbae899e9859e8cbb8833"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/config.json"
+size = 341
+sha256 = "c5566fab6a17fd674141331fe75de917b7904d99fb7a410d2b1593c21e576913"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/special_tokens_map.json"
+size = 171
+sha256 = "0b7245ec86c8c3aeaf61523ba70dfa79be137e6283f127bd651adc30b4f15c74"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMFold2/snapshots/1ebf0e3481a5184eb6171d40615c79e384b48796/model.safetensors"
+size = 939505228
+sha256 = "138fd4350d6892b81ce6be7ff9bf5a93ae9d4d3751f46a27438a3f9f0dcefa0e"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMFold2/snapshots/1ebf0e3481a5184eb6171d40615c79e384b48796/ccd.pkl"
+size = 417306584
+sha256 = "9ff44b1927c6b9198e38ffe0928706827a09a350c15530beeeabebfa88038fc5"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMFold2/snapshots/1ebf0e3481a5184eb6171d40615c79e384b48796/config.json"
+size = 2337
+sha256 = "e9ec2496ec433a1dce18627ed4bf3785b4ce0c1d69e4bb4663dad1ab895da012"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMFold2-Fast/snapshots/b28d8ace5e05e61e5bec1e6820cfd3e221819d12/model.safetensors"
+size = 755416924
+sha256 = "60ca19f2898188beba92944365f7b909efd9c99212f5018af75cc47cd9a6184a"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMFold2-Fast/snapshots/b28d8ace5e05e61e5bec1e6820cfd3e221819d12/config.json"
+size = 2338
+sha256 = "d24456b797ddcfb60ac6c53621b550db5e14b1575ee2d9ab5a380eb5b09902f2"
+
+[kit]
+# This kit keeps NO mode environment row, and that is a fact about the kit
+# rather than a gap in the probe: `modes.resolve(mode, variant, kit_home)`
+# returns a Resolution with no `env` and no `exports` attribute at all. Its
+# deployment variables live in `configs/<card>.env`, shipped for h100, h200 and
+# a100 and not for this one, so there is nothing here to read even with the
+# right call. What the provider therefore supplies itself is listed below.
+env_row = "none"
+env_row_reason = "modes.resolve(mode, variant, kit_home) returns a Resolution with neither env nor exports; the kit's variables live in configs/<card>.env and it ships none for GB10"
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "esmfold2"
+# The checkout is shared with every provider pinning this commit; the sparse
+# set is the union of what its providers declare.
+sparse = ["esmfold2", "common"]
+package = "esmfold2_opt"
+# Activation is the common form -- the mode variable ESMFOLD2_OPT plus the
+# kit's own esmfold2_opt_autoload.pth -- not boltz2's worker_launch. The
+# variable's name is read off the kit (_autoload.ENV; this kit's modes module
+# defines no ENV), never guessed from the slug. kit_launch detects which form
+# the kit uses; nothing about it is declared here.
+mode = "fast"
+# run.sh install installs the shared core and the kit editable, runs the pin
+# check and verifies the shipped cubin manifest. Weights are the weights step's
+# job, so no --weights here.
+install = "bash run.sh install"
+# Declined on THIS card, by the kit's own name for it. `bash run.sh check
+# --variant fast --mode fast` on the GB10 exits 0 and prints
+#   DRY-RUN mode=fast variant=fast server_mode=opt14_msa gpu=NVIDIA GB10(sm121)
+#   levers=fused,t3,t5,t10,tx,ax,af,fz,tg,sg,eg,ec,fc,pb,ls,rg,t15,xln,ro,kd,
+#          dit,x2b,x3,x6,x7,x8,x10
+#   not_for_variant=msa,m15,m16,m17,mh,t15msa  not_for_class=t16
+#   kernel_key=12.1|3.7  flash_attn=2.8.3.post1
+#   transformer_engine=2.15.0+42b8400  xformers=0.0.35+03b91d7.d20260904
+# so 27 levers resolve here and one, t16, declines by class: it is a
+# compute-capability-9.0 kernel (the kit ships its cubins for sm_90a only) and
+# the portable statement serves in its place. The six `not_for_variant` names
+# are the MSA levers, absent because [runtime] worker_args picks --variant fast
+# (ESMFold2-Fast has no MSA module), not because of the card.
+#
+# That is a DRY RUN: it loads no model, so it is not the smoke step. The smoke
+# has since run on the same card and its numbers are in `verified_on`.
+levers_declined = ["t16"]
+#
+# THIS KIT HAS NO MODE ENVIRONMENT ROW, and that is a fact about the kit rather
+# than a gap in the probe. kit_launch reads `modes.resolve(mode)["env"]` where a
+# kit keeps one; here `resolve` takes (mode, variant, kit_home) and returns a
+# `Resolution` object with no `env` attribute at all, so the probe records a
+# row_error and applies nothing. Nothing is lost by that: what a run of this kit
+# normally gets from the environment is configs/<card>.env, which `run.sh
+# --config` sources and which the kit ships only for h100, h200 and a100. There
+# is no config for a GB10, so this provider supplies the pieces itself:
+#   * HF_HOME        - kit_launch exports it from [weights] root_env;
+#   * MODEL_OPT_STACK_KEY - the probe reads it from the kit
+#                      (torch2.13.0-cu130-sm121 on this box);
+#   * HF_HUB_OFFLINE / TRANSFORMERS_OFFLINE - the worker sets both, because
+#                      run.sh would have and the worker is not run through it;
+#   * ESMCFOLD_CCD_PATH - the kit derives it from HF_HOME when unset;
+#   * ESMFOLD2_VARIANT - the worker sets it from --variant before the trigger
+#                      import, which is when the kit reads it;
+#   * TRITON_CACHE_DIR - NOT set. The configs point it inside MODEL_OPT_JIT_ROOT;
+#                      here Triton uses its own default cache directory, so a
+#                      worker restart recompiles kernels that a card config
+#                      would have kept.
+#   * ESMFOLD2_OPT_REQUIRE_FAST_ENV - NOT set, so it is off. Every shipped
+#                      config sets it to 1, which makes every route refuse
+#                      (exit 3) unless flash-attn and TransformerEngine are
+#                      live. Both are installed with their kernels here (see
+#                      the lock's deviations), so the switch would be a guard
+#                      rather than a blocker -- set it to 1 once the smoke step
+#                      has shown the accelerated words on this card.

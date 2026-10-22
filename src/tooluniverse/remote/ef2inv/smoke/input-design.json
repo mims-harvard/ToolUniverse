@@ -1,0 +1,9 @@
+{
+  "_what": "One real design: the cookbook's 150-step gradient-guided loop on its own example case (the 115-residue pd-l1 target, an 80-residue binder -- 195 tokens, the row provider.toml's [gpu] budget declares), then the four hero critics' refolds.",
+  "_how": "NOT wired as [runtime] smoke, deliberately: a slow design must not be able to block this provider the way boltzgen's 500-step smoke blocked that one. Run it by hand on a free card:  tu remote run ef2inv  (or the MCP tool) with these fields, and then at least four identical requests followed by a mixed-shape sequence -- openfold3 passed its smoke and failed on the second request of the same shape.",
+  "pass": "design",
+  "target_name": "pd-l1",
+  "binder_len": 80,
+  "n_designs": 1,
+  "seed": 0
+}

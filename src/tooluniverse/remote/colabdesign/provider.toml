@@ -1,0 +1,212 @@
+# ColabDesign -- BindCraft's binder-hallucination design step on stock ColabDesign
+# 1.1.3 (AlphaFold-Multimer v3 parameters), held in one resident process.
+#
+# RELEASED 2026-10-14: the deployment-table entry landed and `status` is
+# "verified". It was held at "untested" while remote_runtime.py carried another
+# session's uncommitted provider; that session's work is untouched and was
+# backed up before this commit. That session's apnovo entry claimed PORT 8058,
+# and the sentence that used to stand here called 8058 "THIS PROVIDER'S port":
+# it is not. 8058 is OPENDDE's, and this note was released in the same commit
+# as opendde's, whose copy of the sentence is the true one. THIS PROVIDER IS ON
+# 8054 -- what every line of verified_on was measured on, what the setup skill
+# publishes and what the deployment table now carries -- so the collision was
+# never with this provider at all. It was real between apnovo and opendde, and
+# nothing caught it, which is why that commit also adds
+# test_remote_runtime.py::test_ports_are_unique.
+#
+# THE COLLISION IS RESOLVED, later the same day: apnovo was committed at PORT
+# 8059 and test_ports_are_unique passes.
+#
+# WHAT WAS ESTABLISHED. The acceptance run, the 400-token row, the recycles axis and
+# the documented example have all since completed (see verified_on), on a quiet
+# machine behind scripts/remote_validation/wait_for_memory.py.
+#
+# `vram_budget_gb` IS 12.0 AND WAS A PLACEHOLDER OF 8.0 -- below a figure this
+# provider turned out to produce, which is the direction that lets a scheduler
+# oversell. The bring-up had peak_pool flat at 4.0 through 200 tokens and so
+# could not tell which axis the budget hung on. It hangs on TOKENS: 400 tokens
+# reads 12.0. RECYCLES DOES NOT MOVE MEMORY AT ALL -- 4.0 at 1, 2 and 3 recycles
+# with peak_in_use identical at 2.31 and only the step time growing -- so the
+# corner planned as tokens x recycles is just the token row. The pool is the
+# budget rather than peak_in_use (10.21) because JAX does not give it back: it
+# is what the OTHER tenants cannot have, and a budget is for adding tenants up.
+# No MSA and no external service is used at request time (binder hallucination
+# takes a target PDB, a chain, a binder length and optional hotspots).
+# Kit mode `exact` (bitwise with stock on the smoke case, persistent compile cache).
+
+[provider]
+slug = "colabdesign"
+description = "BindCraft binder hallucination on ColabDesign 1.1.3 / AlphaFold-Multimer v3: design a protein binder against a target PDB, with no MSA and no external service"
+operations = ["colabdesign_design"]
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver 580.173.02), venv route,
+CPython 3.10, jax/jaxlib 0.6.0 (aarch64 wheels), kit mode EXACT (bitwise with
+stock on the smoke case, persistent compile cache). Wall times are from a card
+shared with other sessions and do not reproduce; peaks do.
+
+THE BUDGET IS 12.0 GiB AND THE PLACEHOLDER WAS 8.0, which was BELOW a figure
+this provider had already produced. That is the dangerous direction for a budget
+and the opposite of complexa's, which sits above every observation it could
+reproduce and says so. A budget below an observation lets a scheduler oversell.
+
+THE BUDGET IS THE POOL, NOT peak_in_use. JAX takes the pool from the device and
+does not return it, so the pool is what the other tenants cannot have, while
+peak_in_use (10.21 GiB at the worst corner) is only what this provider needs.
+A budget exists for a host that adds its tenants up, so it is the pool.
+
+WHICH AXIS DRIVES IT: TOKENS ALONE, and this corrected the bring-up's open
+question rather than confirming it. peak_pool reads 4.0 at 100 and 200 tokens
+and 12.0 at 400. On the RECYCLES axis it does not move at all: 4.0 / 4.0 / 4.0
+at num_recycles_design 1 / 2 / 3, with peak_in_use identical to the hundredth
+(2.31 at every one) and only the step time growing (1.14 / 1.46 / 1.79 s).
+Recycling reuses the same buffers, so it costs time and not memory. The corner
+that was planned as tokens 400 x recycles 3 is therefore the same figure as
+400 x 1: both fresh workers read pool 12.0 and in_use 10.21.
+
+MEASURED WITH ONE FRESH WORKER PER CORNER, because the pool never comes back
+down: after the acceptance's 400 rung, every later request in that worker --
+the 100aa ones included -- reported 12.0. A peak read from a worker that has
+already run something larger is its whole life's high-water mark and not the
+current shape's. Three independent reads of 12.0: the acceptance run and two
+fresh workers.
+
+THE SHAPER'S CLAIM, CHECKED RATHER THAN QUOTED: it says the memory is a function
+of the shape and not of how many steps are taken at it. 400 tokens at the smoke
+profile's 65 iterations and at this provider's own floors (50/0/0/0) both read
+pool 12.0 and in_use 10.21. The floors are what the provider allows -- an
+attempt to shorten the corner run further was refused by its own validation
+("'soft_iterations' must be an integer between 50 and 200"), so no real
+shortcut existed and the comparison is a 23% cut, not a substitute.
+
+ACCEPTANCE (scripts/remote_validation/verify_provider.py colabdesign --lengths
+100,200,400 --repeats 4, one held worker): ladder 3/3, mixed 100,100,200,100
+4/4, 4 consecutive identical requests 4/4, 11/11 asserted to have produced
+sequences. CAVEAT ON THAT OUTPUT, owed as a harness fix: its per-request peak
+column is a process high-water mark for a JAX provider, which is why every row
+after the 400 rung reads 12.0 regardless of its own shape. The column is not
+wrong about this provider's cost; it is wrong about which request caused it.
+
+BOTH CEILINGS REFUSE, exercised rather than read. Tokens, at the tool layer
+(colabdesign_tool._check, which RETURNS {"error": ...} and does not raise): 400
+admitted, 401 and 800 refused by name with the target/binder split quoted back.
+Recycles, at the worker: num_recycles_design = 4 refused ("must be between 1
+and 3"). The worker carries the token ceiling too; the acceptance reached it
+from below and never crossed it there.
+
+THE DOCUMENTED EXAMPLE, through the live endpoint: the arguments in
+skills/setup-colabdesign-remote-tool/SKILL.md, parsed out of the skill rather
+than retyped, sent to http://127.0.0.1:8054/mcp -- discovery lists
+colabdesign_design, is_error False, sequence QLTWTEEGKITE. It comes back
+accepted_by_stage_gates false with gate_fired Trajectory_logits_pLDDT,
+Trajectory_Clashes, which is what the skill says to expect of it: a 12-residue
+binder on a 20-residue crop exercises the whole path and is not a design anyone
+should expect to pass BindCraft's gates.
+
+RESIDENCY IS PER SHAPE, and the compile is the whole of it: first_calls_s drops
+from 11.6 (100 tokens) / 16.9 (200) / 51.8 (400) on a shape's first request to
+1.2 / 4.2 on a shape already seen, while the steady step time is unchanged.
+build_s is 1.16 s, so the process itself is cheap to hold and what residency
+buys here is the per-shape compile.
+
+REGISTERED, on PORT 8054, in remote_runtime.py's deployment table and in
+setup_skill_preflight.py's catalog. It was owed for as long as those files
+carried another session's uncommitted provider, since editing them would have
+committed their work; the entry landed with this note's release. `tu remote
+setup colabdesign` resolves by provider directory and never needed an entry;
+`tu remote check/run/share` do, and now have one.
+
+THE HARNESS CAVEAT IS DISCLOSED RATHER THAN FIXED, and for this provider it
+still bites. verify_provider.py now states in its own docstring and beside the
+ladder that `peak_reserved_gib` is a running high-water mark in most of these
+workers, and it runs the ladder FIRST and ASCENDING so the rungs are read in
+the only order that keeps them honest. The workers that escape it reset the
+counter per request through `on_reset`; this one has no `on_reset`, so its
+per-request peak column is still a process high-water mark and every row after
+the 400-token rung still reads 12.0 because of that rung, not because of
+itself."""
+
+[runtime]
+mode = "resident"
+worker = "resident/colabdesign_resident_worker.py"
+launch = "tooluniverse.remote.colabdesign.launch:build_command"
+worker_args = [
+    "--socket", "{socket}",
+    "--slug", "{slug}",
+    "--mode", "{kit_mode}",
+    "--params-dir", "{weights_root}",
+    "--cache-dir", "{cache_dir}",
+    "--kit", "{kit}",
+]
+start_timeout_s = 1800.0
+request_timeout_s = 21600.0
+idle_timeout_s = 300.0
+smoke = "smoke/input.json"
+smoke_timeout_s = 21600.0
+outputs = ["design.pdb"]
+output_keys = ["sequences"]
+
+[gpu]
+policy = "required"
+vram_budget_gb = 12.0
+driver_min = 580
+driver_min_reason = "jaxlib 0.6.0 must emit code for sm_121, and a compute capability is only driven by a driver that enumerates it: the 580 series is the first that does for GB10-class parts. 580.173.02 is what this card runs."
+shareable = true
+isolation = "process"
+
+[env]
+kind = "venv"
+python = "$TOOLUNIVERSE_COLABDESIGN_PYTHON"
+lock = "environment/requirements.lock"
+verify = "import jax, haiku, colabdesign, freesasa, Bio, scipy, numpy, matplotlib, ml_collections, chex, optax; assert jax.__version__ == '0.6.0', jax.__version__; assert jax.default_backend() == 'gpu', jax.default_backend()"
+
+[weights]
+root_env = "COLABDESIGN_PARAMS_DIR"
+root_default = "~/.colabdesign"
+fetch = """
+cd {kit} || exit 1
+PATH="$(dirname {python}):$PATH" python -m colabdesign_opt.weights {weights_root}
+"""
+
+[[weights.files]]
+name = "params/params_model_1_multimer_v3.npz"
+size = 373043148
+sha256 = "611da8fc7478928f68de12e8b226260ef1f4ce62bcc29b008572e52f4f212959"
+
+[[weights.files]]
+name = "params/params_model_2_multimer_v3.npz"
+size = 373043148
+sha256 = "51362b0844382ae0f5720c59b81dd13a43eea40fbf9995dd2573bdab88865378"
+
+[[weights.files]]
+name = "params/params_model_3_multimer_v3.npz"
+size = 373043148
+sha256 = "46d9bcad288edc7ad5a6362ee8e5f84307a69712e00e6c36b1ef9daf96ebc9ce"
+
+[[weights.files]]
+name = "params/params_model_4_multimer_v3.npz"
+size = 373043148
+sha256 = "59bdabd2d69c07fe26b37882d544acbd1b9f89f196828f4220da49e0610b572c"
+
+[[weights.files]]
+name = "params/params_model_5_multimer_v3.npz"
+size = 373043148
+sha256 = "917742be5a105d6b80f13f1f13f20459f27ec3fdcd34ea088b359f4502d6177f"
+
+[kit]
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "colabdesign"
+sparse = ["colabdesign", "common"]
+package = "colabdesign_opt"
+mode = "exact"
+env_row = "none"
+env_row_reason = "pending"
+install = """
+set -u
+export PATH="$(dirname {python}):$PATH"
+cd {kit} || exit 1
+bash run.sh install
+"""
+
+[kit.env]
+XLA_PYTHON_CLIENT_PREALLOCATE = "false"

@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2880 scientific tools.
+Type-safe Python interface to 2884 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -2145,7 +2145,6 @@ from .PRIDE_get_projects_for_protein import PRIDE_get_projects_for_protein
 from .PRIDE_search_proteomics import PRIDE_search_proteomics
 from .PROPKA_compare_partner_pka import PROPKA_compare_partner_pka
 from .PROPKA_predict_pka import PROPKA_predict_pka
-from .Protein_calculate_pH_linkage import Protein_calculate_pH_linkage
 from .PROSITE_get_entry import PROSITE_get_entry
 from .PROSITE_scan_sequence import PROSITE_scan_sequence
 from .PROSITE_search import PROSITE_search
@@ -2242,6 +2241,7 @@ from .ProteinSimilarity_search_structure_local import (
     ProteinSimilarity_search_structure_local,
 )
 from .Protein_MSA_inspect import Protein_MSA_inspect
+from .Protein_calculate_pH_linkage import Protein_calculate_pH_linkage
 from .ProteinsPlus_analyze_binding_site_similarity import (
     ProteinsPlus_analyze_binding_site_similarity,
 )
@@ -3416,6 +3416,10 @@ from .pdbe_get_entry_secondary_structure import pdbe_get_entry_secondary_structu
 from .pdbe_get_entry_status import pdbe_get_entry_status
 from .pdbe_get_entry_summary import pdbe_get_entry_summary
 from .phykit_batch_analysis import phykit_batch_analysis
+from .predict_binding_affinity import predict_binding_affinity
+from .predict_molecular_property import predict_molecular_property
+from .predict_protein_structure import predict_protein_structure
+from .predict_variant_effect import predict_variant_effect
 from .proteins_api_get_comments import proteins_api_get_comments
 from .proteins_api_get_epitopes import proteins_api_get_epitopes
 from .proteins_api_get_features import proteins_api_get_features
@@ -5167,7 +5171,6 @@ __all__ = [
     "PRIDE_search_proteomics",
     "PROPKA_compare_partner_pka",
     "PROPKA_predict_pka",
-    "Protein_calculate_pH_linkage",
     "PROSITE_get_entry",
     "PROSITE_scan_sequence",
     "PROSITE_search",
@@ -5256,6 +5259,7 @@ __all__ = [
     "ProteinSimilarity_search_sequence_local",
     "ProteinSimilarity_search_structure_local",
     "Protein_MSA_inspect",
+    "Protein_calculate_pH_linkage",
     "ProteinsPlus_analyze_binding_site_similarity",
     "ProteinsPlus_generate_interaction_diagram",
     "ProteinsPlus_predict_binding_sites",
@@ -6302,6 +6306,10 @@ __all__ = [
     "pdbe_get_entry_status",
     "pdbe_get_entry_summary",
     "phykit_batch_analysis",
+    "predict_binding_affinity",
+    "predict_molecular_property",
+    "predict_protein_structure",
+    "predict_variant_effect",
     "proteins_api_get_comments",
     "proteins_api_get_epitopes",
     "proteins_api_get_features",

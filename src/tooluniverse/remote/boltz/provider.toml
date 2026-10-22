@@ -1,0 +1,176 @@
+# Boltz-2 — structure prediction and binding affinity, held resident on the GPU.
+#
+# Every number below was measured on this project's GB10 box (aarch64, compute
+# capability 12.1, 130.6 GB unified memory, driver 580.173.02) with the pinned
+# stack of `[env] lock`. Re-measure on other hardware before trusting them.
+
+[provider]
+slug = "boltz"
+description = "Boltz-2 protein-ligand co-folding with an affinity pass"
+operations = ["boltz2_docking"]
+# "verified" is a claim about hardware AND about mode, so it names both. Every
+# number in this file was measured there; on anything else they are a reference
+# to re-measure against, not a prediction. See STANDARD.md section 9.
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver 580.173.02).
+All three execution routes, same peak reserved 3.21 GiB on the same input:
+venv 15 s, docker 13 s, apptainer 22 s. The apptainer run was SingularityCE
+4.1.1, not Linux Foundation Apptainer -- Ubuntu 24.04 packages that one and
+upstream Apptainer publishes no aarch64 build. Both modes: the smoke's
+`msa: empty`, and `use_msa_server` against api.colabfold.com, which is the one
+a user should choose -- single-sequence mean TM-score to experiment was 0.637
+against 0.960 with the server, on five PDB entries released after every model's
+cutoff, so a pass in the smoke's mode alone does not verify this provider.
+
+ACCEPTANCE 2026-10-17: 13/13 answered, every one produced=yes -- the ladder,
+the mixed phase, four repeats and the declared MSA-server mode. Rungs are
+100/200/290/400 residues (DEFAULT_LENGTHS), chosen around
+BOLTZ_GRAPH_TRUNK_MAX_TOKENS=300 rather than evenly: peak 3.33 / 3.82 / 4.86
+/ 5.20 GiB, so the declared 5.54 stands and is above every observation.
+
+The ceiling behaves as the kit documents. 290 residues (graphed) costs 11.8 s
+and 400 (above the cap, so eager by name) costs 21.8 s -- a clear
+per-residue jump at the boundary, and the generations below it survive the
+step-aside. The default 100,200,400,800 ladder would have sent two of its
+four rungs above the cap, where nothing is captured.
+
+No footprint drift: the four repeats read 3.74 / 3.46 / 3.52 / 3.57, i.e.
+noise with no trend, which is worth recording because chai1 and genie3 --
+same worker base -- grow 0.04 GiB per request on identical input.
+"""
+
+[runtime]
+mode = "resident"
+# Per request, same input (330-residue protein + aspirin, single-sequence, with
+# the affinity property), same machine, same weights:
+#
+#     stock `boltz predict` per call ....................... 110 s
+#     optimization kit --mode fast, fresh worker per call ... 102 s
+#     this worker, held, first request ....................... 67 s
+#     this worker, held, steady state ........................ 47 s
+#
+# Most of the difference is not the kit's kernels (8 % here; three of its levers
+# decline on sm121) but the holding: the structure pass alone falls from ~23 s
+# to 5.8 s because `graph_trunk` replays CUDA graphs captured on an earlier
+# request -- a saving a per-call worker can never collect, since it exits before
+# the second request arrives.
+worker = "resident/boltz_resident_worker.py"
+# The generic launcher: it asks [kit] package's own interpreter for that kit's
+# mode row and launch options, so nothing about the kit is copied here.
+launch = "tooluniverse.remote_resident.kit_launch:build_command"
+# What the worker script itself is given. {socket}, {slug}, {weights_root},
+# {python} and {kit} are filled in by the launcher.
+worker_args = [
+    "--socket", "{socket}",
+    "--cache", "{weights_root}",
+    "--checkpoint", "{weights_root}/boltz2_conf.ckpt",
+    "--slug", "{slug}",
+]
+# The cold path is weights, CUDA context and a first-pass kernel compile.
+start_timeout_s = 900.0
+request_timeout_s = 3600.0
+# What a run that actually worked leaves behind. The smoke step matches these
+# globs against the files the run produced and refuses if none matched -- see
+# openfold3, which exited 0 and folded nothing because upstream caught its own
+# per-query exception.
+outputs = ["*.cif"]
+# `tu remote setup` ends here: one real prediction, under a deadline. Three of
+# the four problems this provider hit on its first machine appeared only at run
+# time, and one of them presented as a stall rather than an error.
+smoke = "smoke/input.yaml"
+smoke_timeout_s = 900.0
+# Retire the worker after 15 minutes with no requests, so an idle provider stops
+# occupying the card. Set to 0 on a box dedicated to this one model.
+idle_timeout_s = 900.0
+
+[gpu]
+policy = "required"
+# Peak reserved over three consecutive requests in one held worker
+# (torch.cuda.max_memory_reserved): 4.31, 5.15, 5.54 GiB. The highest is the
+# number a host should budget, not the first.
+vram_budget_gb = 5.54
+driver_min = 580
+driver_min_reason = "its pinned stack is CUDA 13.0 (torch 2.12.0+cu130)"
+shareable = true
+# What this deployment actually provides, not what one would wish for. GB10
+# reports "No MIG-supported devices found" and gVisor's nvproxy carries no
+# Blackwell ABI, so co-tenants here are separated by process and by the budget
+# above -- there is no hardware boundary between them. A host running untrusted
+# tenants needs different hardware, and should read this field to find that out.
+isolation = "process"
+
+[env]
+kind = "venv"
+# The model's own interpreter. Boltz-2's pinned stack (torch 2.12.0+cu130,
+# triton 3.7.0, cuequivariance 0.10.0, numpy 1.26.4) does not coexist with
+# ToolUniverse's, which is the whole reason providers get their own environment
+# and the MCP server talks to this one over a socket.
+python = "$TOOLUNIVERSE_BOLTZ_PYTHON"
+lock = "environment/requirements.lock"
+# What setup runs in that interpreter to decide the lock is already satisfied,
+# so a re-run costs a second rather than reinstalling 99 distributions. It
+# checks the outcome, not the route: uv, python -m venv, conda and pixi all
+# reach the same tree and all pass.
+verify = "import boltz, torch, boltz2_opt; assert boltz.__version__ == '2.2.1'"
+
+[weights]
+root_env = "BOLTZ_CACHE"
+root_default = "~/.boltz"
+# Digests are upstream's, as recorded by the optimization kit's stock/PINS.json
+# and re-verified here. This section is not bookkeeping: boltz2_conf.ckpt on
+# this box was once a 28.5 MB truncation of a 2,286 MB file -- 1.2 % of it --
+# and served predictions from it for over a month, because nothing checked.
+[[weights.files]]
+name = "boltz2_conf.ckpt"
+size = 2286561469
+sha256 = "090e82ac8c92f5e943fa1b39e7410a44027bea7243c0bbb3caa67a77fc1428e1"
+
+[[weights.files]]
+name = "boltz2_aff.ckpt"
+size = 2062139170
+sha256 = "dcc5cd3722b1c9eaa34267e4ae32f55cbbf1963f4c19319381ccfa30fdd2ca9e"
+
+[[weights.files]]
+name = "ccd.pkl"
+size = 345859128
+sha256 = "2d3b2f03a3c5665944adba51e33263511e51b21c9cd05d902f9c4b7c1e58d2f4"
+
+[[weights.files]]
+name = "mols.tar"
+size = 1855662080
+sha256 = "39e076d96dbec6b4e86982bbda16f3a53a2a60c9bdc17828d88f6f9a0c7d1fd7"
+unpacked_dir = "mols"
+
+[kit]
+# Anthropic's Boltz-2 optimization kit supplies the levers; nothing in it is
+# modified or vendored. `worker` above simply occupies the position the kit's
+# own batch worker occupies, so its import hooks attach to the model this
+# process builds. 25 of the 28 levers arrive that way; `resid`, `mask2` and
+# `dit_hoist` live inside the kit's own worker script and are forgone.
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+# The full sha, never a tag: setup names the shared checkout by it, and an
+# abbreviation can collide as the upstream history grows.
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "boltz2"
+# 35 of the 36 kits name their package <kit>_opt, which is the default;
+# stating it keeps the one exception (protenix_v2 -> protenix_opt) expressible.
+package = "boltz2_opt"
+# A sparse checkout of these two is 402 MB against 473 MB for the whole tree --
+# the other four kits are skipped, but common/opt_core (308 MB) is required.
+sparse = ["boltz2", "common"]
+mode = "fast"
+# The kit's own install step, run in `subdir` with the model environment's
+# interpreter first on PATH. It installs the kit editable, checks the boltz pin
+# file-for-file, and fetches the weights through upstream's own downloader.
+# {weights_root} is this manifest's; no URL is restated anywhere in ToolUniverse.
+install = "bash run.sh install --weights {weights_root}"
+# Declined on sm121, each by its own name on the worker's lines:
+#   exactln  — "cc:12.1_not_proven_(9.0,_8.0)": a deliberate step-aside, the
+#              core LayerNorm provider is certified for 9.0 and 8.0 only.
+#   fpf_opm  — Triton OutOfResources: the fused outer-product-mean tiles
+#              (BK=64, BZ=32, 8 warps, 3 stages, TMA) exceed what an SM here has.
+#   prefetch — declines by name as skipped_by_name:pipeline0, because this
+#              worker passes no --pipeline. That is deliberate: its zygote
+#              featurizer hangs on this box, waiting out the full
+#              BOLTZ_OPT_LOADER_TIMEOUT_S before falling back and hanging again.
+levers_declined = ["exactln", "fpf_opm", "prefetch"]

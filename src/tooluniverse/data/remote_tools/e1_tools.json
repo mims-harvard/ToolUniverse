@@ -1,0 +1,251 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "run_e1_score_variants",
+    "description": "Score protein point mutants against their parent sequence with the Profluent E1 masked protein language model: zero-shot variant effect prediction. Give one parent sequence and the mutant sequences, all of the same length (E1 scores substitutions, not insertions or deletions); each mutant comes back with a score that is the summed log-probability of its substituted residues minus that of the parent's, so a higher score means the model favours the mutant. Optionally condition the scores on retrieved homologues via 'context_sequences', which is what E1 is built for. Use it to rank designs, prioritise a mutagenesis library, or predict which substitutions a protein tolerates.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "parent_sequence": {
+          "type": "string",
+          "description": "One protein sequence in single-letter amino-acid code, or a single-record FASTA. At most 2048 residues. Upstream rejects 'X'.",
+          "minLength": 1
+        },
+        "mutant_sequences": {
+          "type": "string",
+          "description": "FASTA of the mutants to score, each the same length as the parent. At most 256 records. Record names come back as the score ids, so naming them 'S6R', 'R18V' and so on makes the reply readable.",
+          "minLength": 1
+        },
+        "context_sequences": {
+          "type": "string",
+          "description": "Optional FASTA of retrieved context sequences (homologues) to condition the scores on -- this is what distinguishes E1 from a context-free protein language model. At most 4 records of 1024 residues each; they need not be the parent's length. Omit for an unconditioned score."
+        },
+        "scoring_method": {
+          "type": "string",
+          "description": "'masked_marginal' (the default, and upstream's) masks each substituted position of the parent in turn, which costs one forward per mutated position and is the stronger predictor. 'wildtype_marginal' reads every position's logits off a single unmasked forward of the parent: one forward total, cheaper, less accurate.",
+          "enum": [
+            "masked_marginal",
+            "wildtype_marginal"
+          ],
+          "default": "masked_marginal"
+        },
+        "context_reduction": {
+          "type": "string",
+          "description": "With 'context_sequences': 'mean' (default) averages each mutant's score over the contexts and returns one row per mutant; 'none' returns one row per (mutant, context) pair. Ignored without contexts.",
+          "enum": [
+            "mean",
+            "none"
+          ],
+          "default": "mean"
+        },
+        "top_n": {
+          "type": "integer",
+          "description": "How many highest-scoring mutants to repeat under 'best' (default 10). The full 'scores' list is always returned; this is a convenience ordering.",
+          "default": 10,
+          "minimum": 0,
+          "maximum": 100
+        }
+      },
+      "required": [
+        "parent_sequence",
+        "mutant_sequences"
+      ],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "variant": {
+          "type": "string"
+        },
+        "parent_id": {
+          "type": "string"
+        },
+        "parent_length": {
+          "type": "integer"
+        },
+        "n_mutants": {
+          "type": "integer"
+        },
+        "n_scored": {
+          "type": "integer"
+        },
+        "scoring_method": {
+          "type": "string"
+        },
+        "context_reduction": {
+          "type": "string"
+        },
+        "context_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "score_units": {
+          "type": "string"
+        },
+        "scores": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "context_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "score": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "best": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "timing": {
+          "type": "object"
+        },
+        "peak_reserved_gib": {
+          "type": "number"
+        },
+        "weights_held_by": {
+          "type": "string"
+        },
+        "kit_mode": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "E1ScoreVariantsTool",
+      "url": "https://github.com/anthropics/uplifting-biomolecular-modeling",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/e1",
+      "mcp_tool_name": "run_e1_score_variants"
+    },
+    "test_examples": [
+      {
+        "parent_sequence": "FWDKESRSPHESAPQYARKIWEMAAAVAPHQATIRSVINIIRLAQVEGLEMTQTHLLWSTPWCSIPQGNVND",
+        "mutant_sequences": ">S6R\nFWDKERRSPHESAPQYARKIWEMAAAVAPHQATIRSVINIIRLAQVEGLEMTQTHLLWSTPWCSIPQGNVND\n>R18V\nFWDKESRSPHESAPQYAVKIWEMAAAVAPHQATIRSVINIIRLAQVEGLEMTQTHLLWSTPWCSIPQGNVND\n"
+      }
+    ]
+  },
+  {
+    "type": "RemoteTool",
+    "name": "run_e1_embed",
+    "description": "Embed one protein sequence with the Profluent E1 protein language model and return the mean-pooled embedding vector. Use it to compare, cluster or search proteins by learned representation. The full per-residue matrix is NOT returned inline (1280 floats per residue at the 600m size): ask for 'residue_range' to get a bounded window of residue vectors, or 'per_residue_file' to get the whole matrix written as a .npy file whose path comes back.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "One protein sequence in single-letter amino-acid code, or a single-record FASTA. At most 2048 residues. Upstream rejects 'X'.",
+          "minLength": 1
+        },
+        "residue_range": {
+          "type": "array",
+          "description": "Inclusive 1-based [start, end] window of residue vectors to return inline. Refused, not clipped, when (end - start + 1) * embedding_dim exceeds 20000 floats -- at the 600m size's 1280 dimensions that is 15 residues.",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "per_residue_file": {
+          "type": "boolean",
+          "description": "Write the whole (length x embedding_dim) float32 matrix to a .npy file on the provider host and return its path, shape and size instead of its contents.",
+          "default": false
+        },
+        "decimals": {
+          "type": "integer",
+          "description": "Decimal places for returned floats (default 5).",
+          "default": 5,
+          "minimum": 1,
+          "maximum": 8
+        }
+      },
+      "required": [
+        "sequence"
+      ],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "variant": {
+          "type": "string"
+        },
+        "sequence_id": {
+          "type": "string"
+        },
+        "sequence_length": {
+          "type": "integer"
+        },
+        "embedding_dim": {
+          "type": "integer"
+        },
+        "pooling": {
+          "type": "string"
+        },
+        "mean_embedding": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "mean_embedding_norm": {
+          "type": "number"
+        },
+        "residue_embeddings": {
+          "type": "object"
+        },
+        "per_residue_file": {
+          "type": "object"
+        },
+        "timing": {
+          "type": "object"
+        },
+        "peak_reserved_gib": {
+          "type": "number"
+        },
+        "weights_held_by": {
+          "type": "string"
+        },
+        "kit_mode": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "E1EmbedTool",
+      "url": "https://github.com/anthropics/uplifting-biomolecular-modeling",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/e1",
+      "mcp_tool_name": "run_e1_embed"
+    }
+  }
+]

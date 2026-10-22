@@ -11,6 +11,21 @@ REMOTE_CONFIG_ROOT = REPO_ROOT / "src" / "tooluniverse" / "data" / "remote_tools
 SETUP_SKILLS_ROOT = REPO_ROOT / "skills"
 
 
+def _expected_setup_skill_count():
+    """How many `setup-<slug>-remote-tool` skills there must be.
+
+    Derived from the deployment table rather than written down. The literal 30
+    that used to stand here went red the moment the thirty-first provider landed
+    and stayed red for every provider after it, which is the failure mode a
+    hardcoded inventory always has: it stops testing the thing and starts
+    testing the number. `test_remote_runtime` already asserts the table's own
+    size, so this is a parity check, not a second inventory.
+    """
+    from tooluniverse.remote_runtime import REMOTE_DEPLOYMENTS
+
+    return len(REMOTE_DEPLOYMENTS)
+
+
 def _without_descriptions(value):
     """Return schema structure while ignoring documentation-only wording."""
     if isinstance(value, dict):
@@ -24,10 +39,134 @@ def _without_descriptions(value):
     return value
 
 
-def _decorated_parameter_schemas():
+def _module_constants(tree):
+    """Module-level names bound to a resolvable value, for a schema's constants.
+
+    A decorator's `config=` is read statically because several of the older tool
+    modules import heavy dependencies at module scope and cannot be imported
+    here at all. But a schema is allowed to say `"maxItems": MAX_CHAINS`,
+    `"enum": list(_MOLECULE_TYPES)` or `MAX_SPEC_BYTES = 4 * 1024 * 1024`, and
+    plain `ast.literal_eval` reads none of those.
+    """
+    constants = {}
+    for node in tree.body:
+        if isinstance(node, ast.AnnAssign):
+            # `MAX_CHAINS: int = 8`
+            targets, value = [node.target], node.value
+            if value is None:
+                continue
+        elif isinstance(node, ast.Assign) and len(node.targets) == 1:
+            targets, value = [node.targets[0]], node.value
+        else:
+            continue
+        # `MIN_BINDER, MAX_BINDER = 8, 250` -- ordinary Python, and skipping it
+        # made a whole provider's schema unreadable until the loud-failure
+        # branch named the file.
+        if len(targets) == 1 and isinstance(targets[0], (ast.Tuple, ast.List)):
+            names = targets[0].elts
+            if not isinstance(value, (ast.Tuple, ast.List)) or len(value.elts) != len(
+                names
+            ):
+                continue
+            targets, values = names, value.elts
+        else:
+            values = [value]
+        for target, item in zip(targets, values):
+            if not isinstance(target, ast.Name):
+                continue
+            try:
+                constants[target.id] = _resolve(item, constants)
+            except (ValueError, TypeError, SyntaxError, KeyError):
+                continue
+    return constants
+
+
+_SAFE_CALLS = {"list": list, "tuple": tuple, "set": set, "sorted": sorted}
+_SAFE_BINOPS = {
+    ast.Add: lambda a, b: a + b,
+    ast.Sub: lambda a, b: a - b,
+    ast.Mult: lambda a, b: a * b,
+    ast.FloorDiv: lambda a, b: a // b,
+    ast.Pow: lambda a, b: a**b,
+}
+
+
+def _resolve(node, constants):
+    """`ast.literal_eval` plus module constants, container calls and arithmetic.
+
+    Raises on anything it cannot resolve. It must raise rather than return a
+    partial schema: a harvester that silently skipped an unreadable config hid
+    sixteen providers from this file's checks, and the test then reported
+    "unknown operation" -- blaming the skill for naming an operation the
+    harvester had quietly declined to read. A check that cannot read its input
+    must say so.
+    """
+    if isinstance(node, ast.Name):
+        if node.id not in constants:
+            raise ValueError(f"unresolved name {node.id}")
+        return constants[node.id]
+    if isinstance(node, ast.Dict):
+        return {
+            _resolve(k, constants): _resolve(v, constants)
+            for k, v in zip(node.keys, node.values)
+        }
+    if isinstance(node, ast.List):
+        return [_resolve(e, constants) for e in node.elts]
+    if isinstance(node, ast.Tuple):
+        return tuple(_resolve(e, constants) for e in node.elts)
+    if isinstance(node, ast.Set):
+        return {_resolve(e, constants) for e in node.elts}
+    if isinstance(node, ast.JoinedStr):
+        # An f-string, which in practice is only ever a description. This file
+        # discards descriptions before comparing (`_without_descriptions`), so
+        # the interpolated parts are rendered as a placeholder rather than
+        # making the whole schema unreadable.
+        out = []
+        for part in node.values:
+            if isinstance(part, ast.Constant):
+                out.append(str(part.value))
+            else:
+                out.append("{...}")
+        return "".join(out)
+    if isinstance(node, ast.Subscript):
+        # `RECYCLE_BOUNDS[0]` -- indexing a constant the module already defines.
+        # Deliberately narrow: a resolved container and a resolved key, nothing
+        # computed. This is a reader for schema literals, not an interpreter.
+        container = _resolve(node.value, constants)
+        key = _resolve(node.slice, constants)
+        try:
+            return container[key]
+        except (TypeError, KeyError, IndexError) as exc:
+            raise ValueError(f"unresolvable subscript: {exc}") from exc
+    if isinstance(node, ast.BinOp) and type(node.op) in _SAFE_BINOPS:
+        return _SAFE_BINOPS[type(node.op)](
+            _resolve(node.left, constants), _resolve(node.right, constants)
+        )
+    if isinstance(node, ast.Call):
+        func = node.func
+        if (
+            isinstance(func, ast.Attribute)
+            and func.attr == "join"
+            and not node.keywords
+            and len(node.args) == 1
+        ):
+            # `", ".join(SOME_TUPLE)` -- a description that lists a constant.
+            separator = _resolve(func.value, constants)
+            if not isinstance(separator, str):
+                raise ValueError("join on a non-string")
+            return separator.join(str(x) for x in _resolve(node.args[0], constants))
+        name = getattr(func, "id", None)
+        if name not in _SAFE_CALLS or node.keywords or len(node.args) != 1:
+            raise ValueError(f"unsupported call {name} in schema")
+        return _SAFE_CALLS[name](_resolve(node.args[0], constants))
+    return ast.literal_eval(node)
+
+
+def _decorated_parameter_schemas(unreadable=None):
     schemas = {}
     for source_path in REMOTE_SOURCE_ROOT.rglob("*.py"):
         tree = ast.parse(source_path.read_text(encoding="utf-8"), source_path)
+        constants = _module_constants(tree)
         for node in ast.walk(tree):
             if not isinstance(
                 node, (ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)
@@ -42,8 +181,16 @@ def _decorated_parameter_schemas():
                 arguments = {kw.arg: kw.value for kw in decorator.keywords if kw.arg}
                 try:
                     tool_name = ast.literal_eval(arguments["tool_type_name"])
-                    config = ast.literal_eval(arguments["config"])
                 except (KeyError, ValueError, TypeError):
+                    continue
+                try:
+                    config = _resolve(arguments["config"], constants)
+                except (KeyError, ValueError, TypeError) as exc:
+                    if unreadable is not None:
+                        unreadable.append(
+                            f"{source_path.relative_to(REPO_ROOT)}: "
+                            f"{tool_name}'s config is unreadable ({exc})"
+                        )
                     continue
                 parameter_schema = config.get("parameter_schema")
                 if parameter_schema is not None:
@@ -231,7 +378,7 @@ class RemoteSchemaParityTests(unittest.TestCase):
 
     def test_setup_skill_entrypoints_and_ports_match_sources(self):
         skill_paths = sorted(SETUP_SKILLS_ROOT.glob("setup-*-remote-tool/SKILL.md"))
-        self.assertEqual(len(skill_paths), 30)
+        self.assertEqual(len(skill_paths), _expected_setup_skill_count())
         problems = []
         for skill_path in skill_paths:
             text = skill_path.read_text(encoding="utf-8")
@@ -254,10 +401,19 @@ class RemoteSchemaParityTests(unittest.TestCase):
             port = port_match.group(1)
             source = source_path.read_text(encoding="utf-8")
             literal_port = re.search(rf"port[\"']?\s*[:=]\s*{port}\b", source)
+            # Several modules bind the number to a name first (`_PORT = 8044`)
+            # and then write `"port": _PORT`. That is the same declaration, and
+            # reading only the literal form reported four correct providers as
+            # mismatches -- a false failure, which is worse than no check.
+            named_port = re.search(rf"^_?PORT\s*=\s*{port}\b", source, re.MULTILINE)
             environment_default = re.search(
                 rf"TOOLUNIVERSE_MCP_PORT[\"'],\s*[\"']{port}[\"']", source
             )
-            if literal_port is None and environment_default is None:
+            if (
+                literal_port is None
+                and named_port is None
+                and environment_default is None
+            ):
                 problems.append(
                     f"{skill_path.parent.name}: port {port} differs from source"
                 )
@@ -266,9 +422,14 @@ class RemoteSchemaParityTests(unittest.TestCase):
 
     def test_setup_skill_examples_match_selected_operation_schemas(self):
         schemas = _published_parameter_schemas()
-        schemas.update(_decorated_parameter_schemas())
+        unreadable = []
+        schemas.update(_decorated_parameter_schemas(unreadable=unreadable))
+        # A config this harvester cannot read is a hole in every check below, so
+        # it fails here by name rather than resurfacing as "unknown operation"
+        # against whichever skill happened to mention the operation.
+        self.assertFalse(unreadable, "\n".join(unreadable))
         skill_paths = sorted(SETUP_SKILLS_ROOT.glob("setup-*-remote-tool/SKILL.md"))
-        self.assertEqual(len(skill_paths), 30)
+        self.assertEqual(len(skill_paths), _expected_setup_skill_count())
 
         problems = []
         for skill_path in skill_paths:
@@ -307,7 +468,7 @@ class RemoteSchemaParityTests(unittest.TestCase):
 
     def test_readmes_match_setup_skill_tou_contract(self):
         skill_paths = sorted(SETUP_SKILLS_ROOT.glob("setup-*-remote-tool/SKILL.md"))
-        self.assertEqual(len(skill_paths), 30)
+        self.assertEqual(len(skill_paths), _expected_setup_skill_count())
 
         problems = []
         readme_paths = set()
@@ -362,23 +523,26 @@ class RemoteSchemaParityTests(unittest.TestCase):
                     f"{skill_path.parent.name}: incomplete documented contract"
                 )
                 continue
-            if "authenticated 2026-08-16 Platform matrix" not in skill_text:
+            # Collapsed for the same reason as the README fragments below: these
+            # phrases wrap, and where a line breaks is not the thing under test.
+            flat_skill = " ".join(skill_text.split())
+            if "authenticated 2026-08-16 Platform matrix" not in flat_skill:
                 problems.append(
                     f"{skill_path.parent.name}: authenticated Platform evidence is absent"
                 )
-            if "unpublished owner drafts" not in skill_text:
+            if "unpublished owner drafts" not in flat_skill:
                 problems.append(
                     f"{skill_path.parent.name}: private-draft boundary is absent"
                 )
-            if "tu remote login" not in skill_text:
+            if "tu remote login" not in flat_skill:
                 problems.append(
                     f"{skill_path.parent.name}: one-time remote login is absent"
                 )
-            if "tu remote logout" not in skill_text:
+            if "tu remote logout" not in flat_skill:
                 problems.append(
                     f"{skill_path.parent.name}: remote logout recovery is absent"
                 )
-            if "expired, or revoked" not in skill_text:
+            if "expired, or revoked" not in flat_skill:
                 problems.append(
                     f"{skill_path.parent.name}: invalid-key recovery is absent"
                 )
@@ -484,14 +648,20 @@ class RemoteSchemaParityTests(unittest.TestCase):
                 "independent-caller limitation": "independent-caller",
                 "setup skill link": guide_link,
             }
+            # Matched against whitespace-collapsed text. A prose fragment that
+            # has to appear on one physical line tests the line width, not the
+            # content: all sixteen of these skills DO say "the authenticated
+            # 2026-08-16 Platform matrix", and all sixteen failed this check
+            # because the phrase wraps between "Platform" and "matrix".
+            flat_readme = " ".join(readme_text.split())
             for label, fragment in required_fragments.items():
-                if fragment not in readme_text:
+                if " ".join(fragment.split()) not in flat_readme:
                     problems.append(
                         f"{readme_path.relative_to(REPO_ROOT)}: missing {label}"
                     )
 
         self.assertFalse(problems, "\n".join(problems))
-        self.assertEqual(len(readme_paths), 30)
+        self.assertEqual(len(readme_paths), _expected_setup_skill_count())
 
     def test_decorator_and_published_schemas_have_identical_structure(self):
         decorated = _decorated_parameter_schemas()

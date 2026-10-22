@@ -1,0 +1,111 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "af3_torch_predict",
+    "description": "Predict the all-atom structure of a biomolecular complex with AF3-torch (the xfold PyTorch port of AlphaFold 3, running the public OpenFold3-preview2 parameters). Input is an AlphaFold 3 fold-input JSON (dialect 'alphafold3'), and every chain must carry its own MSAs inline: no genetic-database search is run. Returns the paths of the predicted mmCIF files and their confidence and ranking scores; the mmCIF text itself only when return_structures is true.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "fold_input": {
+          "type": "string",
+          "description": "An AlphaFold 3 fold-input JSON, as text. Example:\n{\"name\": \"x\", \"dialect\": \"alphafold3\", \"version\": 2, \"sequences\": [{\"protein\": {\"id\": \"A\", \"sequence\": \"MKTAYIAKQRQ...\", \"modifications\": [], \"templates\": [], \"unpairedMsa\": \">query\\nMKTAYIAKQRQ...\\n\", \"pairedMsa\": \"\"}}], \"modelSeeds\": [1]}\nmodelSeeds chooses the sampler seeds; one prediction runs per seed. unpairedMsa may be the query alone for a single-sequence prediction, but accuracy is much lower than with a real MSA.",
+          "minLength": 20,
+          "maxLength": 8388608
+        },
+        "name": {
+          "type": "string",
+          "description": "A job name used for the output file names (default 'fold'). Letters, digits, '-' and '_'.",
+          "default": "fold",
+          "maxLength": 64
+        },
+        "return_structures": {
+          "type": "boolean",
+          "description": "Return the mmCIF text of the best-ranked model (default false: it is megabytes for a real complex, and the transport truncates a reply at 100,000 characters). Paths and scores come back either way.",
+          "default": false
+        }
+      },
+      "required": [
+        "fold_input"
+      ],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "structure_paths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "n_structures": {
+          "type": "integer"
+        },
+        "structures": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "cif": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "structures_note": {
+          "type": "string"
+        },
+        "summary_confidences": {
+          "type": "object"
+        },
+        "ranking_scores_csv": {
+          "type": "string"
+        },
+        "seeds": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "out_dir": {
+          "type": "string"
+        },
+        "timing": {
+          "type": "object"
+        },
+        "peak_reserved_gib": {
+          "type": "number"
+        },
+        "weights_held_by": {
+          "type": "string"
+        },
+        "kit_mode": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "AF3TorchPredictTool",
+      "url": "https://github.com/anthropics/uplifting-biomolecular-modeling",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/af3_torch",
+      "mcp_tool_name": "af3_torch_predict"
+    },
+    "test_examples": [
+      {
+        "fold_input": "{\"name\": \"smoke\", \"dialect\": \"alphafold3\", \"version\": 2, \"sequences\": [{\"protein\": {\"id\": \"A\", \"sequence\": \"LSDEDFKAVFGMTRSAFANLPLWKQQNLKKEKGLF\", \"modifications\": [], \"templates\": [], \"unpairedMsa\": \">query\\nLSDEDFKAVFGMTRSAFANLPLWKQQNLKKEKGLF\\n\", \"pairedMsa\": \"\"}}], \"modelSeeds\": [1]}",
+        "name": "smoke"
+      }
+    ]
+  }
+]

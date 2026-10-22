@@ -1,0 +1,213 @@
+# mosaic -- Boltz-2 binder HALLUCINATION, held resident.
+#
+# WHAT THIS IS, because the slug says nothing at all. `mosaic` is
+# escalante-bio/mosaic: a JAX library that DESIGNS a protein binder by
+# gradient descent through a differentiable structure predictor. It is not a
+# structure predictor you hand a sequence to. You hand it a TARGET protein
+# sequence and a binder LENGTH, and it invents the binder.
+#
+# The mechanism, in the order one request executes it:
+#
+#   1. The Boltz-2 confidence checkpoint -- the same `boltz2_conf.ckpt` the
+#      `boltz` provider here folds with -- is read by torch and converted,
+#      leaf by leaf, into a JAX/equinox module by `joltz.from_torch`. 437
+#      leaves, 521,023,231 parameters. torch never touches the GPU; it is the
+#      checkpoint reader.
+#   2. The complex is featurised as [binder of length L, poly-X] + [target
+#      chain x copies], through boltz's own featuriser. Tokens =
+#      target_residues * copies + L.
+#   3. A LOSS is built over the SOFT sequence: 2 * BinderTargetContact +
+#      WithinBinderContact + 5.0 * InverseFoldingSequenceRecovery(ProteinMPNN
+#      v_48_020, T=0.01). Every term is differentiable with respect to a
+#      position-weight matrix over the 20 amino acids, because Boltz-2 is run
+#      on the PSSM rather than on a one-hot sequence.
+#   4. 125 steps of projected accelerated gradient descent on the simplex
+#      (`simplex_APGM`): 75 at stepsize 0.1, then 50 more at stepsize 0.5 and
+#      scale 1.5 starting from stage 1's best. EVERY STEP IS A FULL BOLTZ-2
+#      FORWARD AND BACKWARD PASS -- 1 recycle, 25 diffusion sampling steps --
+#      plus a ProteinMPNN inverse-folding pass. That is what makes one
+#      request minutes rather than seconds.
+#   5. The sharpened PSSM is argmaxed into a sequence and REFOLDED once
+#      (forward only, same model, key 0) to score it: ipTM, pLDDT, PAE, and
+#      the complex coordinates.
+#
+# SO ONE REQUEST IS ONE DESIGN: one target, one binder length, one seed ->
+# one binder sequence plus the predicted complex and its confidence. It is
+# the `examples/boltz_notebook.py` recipe of the pinned upstream commit, and
+# the kit's own `tools/recipe.py` -- the single module both the kit driver
+# and this worker call -- carries every literal of it with its source line.
+#
+# WHAT IT IS NOT, stated because each is a thing a caller might assume:
+#   * not a folder. There is no "predict this sequence" route here. (The
+#      `boltz` provider is that, from the same checkpoint.)
+#   * not an MSA service. The target chain is SINGLE-SEQUENCE by default and
+#      no server is ever contacted; upstream's `use_msa=True` needs a
+#      precomputed alignment file staged ahead of time, which this provider
+#      accepts as a path and never fetches.
+#   * not a sampler of many designs. One request is one design. A campaign is
+#      many requests, which is exactly the shape residency is for.
+#
+# -----------------------------------------------------------------------
+# THE FIRST QUESTION, ASKED FIRST: ARE THE WEIGHTS SERVED?
+#
+# Yes. One HEAD request against the URLs `boltz.main.download_boltz2` uses --
+# the source `stock/PINS.json` names -- before anything else was read:
+#
+#   https://model-gateway.boltz.bio/boltz2_conf.ckpt
+#     -> HTTP/2 307 to huggingface.co/boltz-community/boltz-2 -> 302 -> 200
+#        content-length: 2286561469    (PINS.json's pinned size, exactly)
+#   https://huggingface.co/boltz-community/boltz-2/resolve/main/mols.tar
+#     -> HTTP/2 302 -> 200, content-length: 1855662080
+#
+# Public, no credential, no gate, both files. protenix_v2's 403 is what this
+# question exists for and this kit is not that case. No third-party mirror
+# was consulted and none was needed.
+#
+# THE SECOND QUESTION, WHICH FOR THIS KIT IS NOT THE USUAL ONE. The torch
+# floor that closes six kits on aarch64 does not apply here, and not because
+# this host got lucky: THIS KIT'S TORCH IS CPU-ONLY BY DESIGN. `stock/
+# PINS.json` pins `torch 2.7.1+cpu` and names its job -- read the checkpoint,
+# convert it -- while `jax 0.10.2` + `jax-cuda12-plugin 0.10.2` drive the
+# card. So the question to ask was JAX's, and it was measured in a throwaway
+# interpreter before a line of this provider was written: jax 0.10.2 on
+# aarch64 reports backend `gpu`, `[CudaDevice(id=0)]`, device_kind
+# "NVIDIA GB10", compute capability 12.1, and computes correctly. Two lines
+# of the lock moved, both torch's, both to the SAME release and the SAME
+# index's aarch64 CPU wheel; see environment/requirements.lock's header.
+
+# -----------------------------------------------------------------------
+# WHAT WAS MEASURED HERE, AND WHAT IT DECIDED (NVIDIA GB10, 2026-10-02).
+#
+# KIT MODE IS `off`, and that is a measurement, not a default. The kit's `fast`
+# engages on this card (P1,E1,P6,K1,E10,F6,F8,F9,P7; F9 steps aside by name,
+# `probe_failed:JaxRuntimeError`, and K1 carries two NAMED_FALLBACK cells and five
+# cells inherited from cc 9.0) and was run in-process through MOSAIC_OPT=fast at
+# 169 tokens, 5+3 steps, against stock, on a contended card:
+#     first design step (compile)   stock 185 s   fast 234 s
+#     refold (forward-only compile) stock  27 s   fast 478 s
+#     steady step                   stock 4.4-5.0 s   fast 3.3-3.5 s   (~1.3x)
+# A held worker serving mixed shapes pays a compile per new shape, so fast costs
+# ~3x more compile for ~1.3x per step at the smallest size. The kit says its gain
+# grows with token count; fast was NOT measured above 169 tokens (the box was too
+# contended for a ratio to mean anything), so that is "unmeasured", not "worse".
+# launch.py already engages fast (set [kit] mode = "fast"); the worker refuses to
+# report fast unless the kit's own status says it activated.
+#
+# CEILING IS 384 TOKENS. Ladder, one held worker, ascending, 5-step requests,
+# JAX memory_stats (peak_pool = the allocator's high-water, coarse and doubling;
+# in_use = what the input costs):
+#     tokens   peak_pool   in_use   step (quiet-ish card)
+#       169       8.0       4.85     ~4.3 s
+#       256      16.0       8.13     ~12.6 s
+#       384      32.0      15.67     ~25 s
+#       512      64.0      26.25     ~120 s   <- 125 steps = ~4 h: not offered
+# The pool figure is declared (a host schedules on the ceiling): 32.0 at 384.
+# A deployment that caps at 256 tokens holds this provider in 16.
+#
+# RESIDENCY. Same worker, held vs the first request into a shape, 5-step requests:
+# 169 tokens 269.5 s -> 23.5 s (11.5x, the best case); 384 tokens 376.3 s ->
+# 134.0 s (2.8x, the budget row). With the FULL 125-step recipe the multiple is
+# far smaller because the work grows and the held-away cost (compile ~215-240 s
+# + ~30-55 s model build) does not: ~1.5x at 169 tokens, ~1.08x at 384. Quote the
+# second pair for planning. A shape change recompiles (169 -> 256 -> 384 each
+# paid); a repeat of a held shape does not (169 x4: 23.6/23.4/23.3/23.2 s).
+#
+# RESULTS ARE NOT BIT-REPRODUCIBLE across requests: boltz re-draws ref_pos at
+# every featurisation (the kit says so, det.py), so the same request gives the
+# same design to ~3 figures, not byte-identical.
+
+[provider]
+slug = "mosaic"
+description = "Designs a protein binder against a target sequence by gradient descent through Boltz-2 (escalante-bio/mosaic + joltz): 125 steps of simplex APGM on a position-weight matrix under a contact + inverse-folding loss, then one refold of the designed sequence. Returns the binder sequence, the predicted complex and its ipTM / pLDDT / PAE. No MSA server is contacted."
+operations = ["mosaic_design_binder"]
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, driver 580.173.02, 130.6 GB unified), venv
+route, CPython 3.12.1, jax/jaxlib 0.10.2 + jax-cuda12-plugin (torch 2.7.1+cpu on
+purpose: it only reads the checkpoint), kit mode `off`, through this provider's
+own launch.py. Acceptance, one held worker (one `ready device` line in the
+transcript, so no silent restart): ladder 169/256/384/512 tokens 4/4; mixed
+169,169,384,169 4/4 (23.7/23.6/134.0/23.5 s); 4 identical 169-token requests
+4/4 (23.6/23.4/23.3/23.2 s); every request asserted to have written a complex
+PDB. Axes verify_provider cannot reach, second worker: seed and step changes do
+not recompile; epitope and target_copies=2 (3 chains) do, cheaply; refused
+inputs leave the worker up. Wall times are from a SHARED card (a sibling's worker
+and, earlier, load average 60+); peaks reproduce under contention, times do not.
+Not claimed: bit-identical output across requests, fast-mode behaviour above 169
+tokens, the 512-token row as usable."""
+
+[runtime]
+mode = "resident"
+worker = "resident/mosaic_resident_worker.py"
+launch = "tooluniverse.remote.mosaic.launch:build_command"
+worker_args = [
+    "--socket", "{socket}",
+    "--slug", "{slug}",
+    "--mode", "{kit_mode}",
+    "--kit", "{kit}",
+    "--weights-root", "{weights_root}",
+]
+start_timeout_s = 1800.0
+request_timeout_s = 7200.0
+# Argued from what a restart loses: nothing persists the XLA executables in
+# `off` (the kit forbids JAX_COMPILATION_CACHE_DIR on the stock arm), so a
+# restart pays ~215-240 s of compile per shape plus the 30-55 s model build.
+idle_timeout_s = 900.0
+smoke = "smoke/input.json"
+smoke_timeout_s = 3600.0
+outputs = ["*_complex.pdb"]
+output_keys = ["binder_sequence"]
+
+[gpu]
+policy = "required"
+vram_budget_gb = 32.0
+shareable = true
+isolation = "process"
+driver_min = 550
+driver_min_reason = "the kit's own floor, and it is the binding one here rather than a restatement. mosaic/README.md asks for 'an NVIDIA driver 550 or newer' because jax-cuda12-plugin 0.10.2 loads the CUDA 12.9 runtime out of the nvidia-*-cu12 wheels and 12.9 runs under minor-version compatibility from the 550 series. A host below 550 would not load the plugin at all. This card runs 580.173.02."
+
+[env]
+kind = "venv"
+python = "$TOOLUNIVERSE_MOSAIC_PYTHON"
+lock = "environment/requirements.lock"
+verify = "import jax, jaxlib, torch, numpy, equinox, gemmi, jaxtyping, scipy, boltz, joltz, mosaic; import importlib.metadata as md; assert jax.__version__ == '0.10.2', jax.__version__; assert jax.default_backend() == 'gpu', jax.default_backend(); assert md.version('torch').startswith('2.7.1'), md.version('torch'); assert not torch.cuda.is_available(), 'this kit pins torch +cpu on purpose: JAX drives the card'"
+
+[weights]
+root_env = "MOSAIC_CACHE_DIR"
+root_default = "~/.cache/mosaic"
+fetch = "{python} -m mosaic_opt.weights {weights_root}"
+
+[[weights.files]]
+name = "boltz/boltz2_conf.ckpt"
+size = 2286561469
+sha256 = "090e82ac8c92f5e943fa1b39e7410a44027bea7243c0bbb3caa67a77fc1428e1"
+
+[[weights.files]]
+name = "boltz/mols.tar"
+size = 1855662080
+sha256 = "39e076d96dbec6b4e86982bbda16f3a53a2a60c9bdc17828d88f6f9a0c7d1fd7"
+unpacked_dir = "boltz/mols"
+
+[kit]
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "mosaic"
+sparse = ["mosaic", "common"]
+package = "mosaic_opt"
+mode = "off"
+env_row = "none"
+env_row_reason = "mode off contributes no row (the kit's own stock arm exports nothing), and the fast row is templated on a cache directory the caller must supply, so modes.resolve() cannot be called bare; launch.py states what it needs instead"
+install = """
+set -u
+{python} -m pip install -q --no-build-isolation --no-deps -e ../common/opt_core || exit 1
+{python} -m pip install -q --no-build-isolation --no-deps -e opt || exit 1
+{python} -I stock/check_pins.py || exit 3
+{python} -m mosaic_opt.leverfiles || exit $?
+"""
+
+[kit.env]
+# Argument: JAX preallocates 75% of the device pool by default, which on this
+# unified 121 GiB host is ~90 GiB claimed by one provider and makes the declared
+# budget meaningless. The kit's det.py warns growth mode can fragment and end a
+# design that fits under preallocation; at the 384-token ceiling it did not (a
+# 32.0 GiB pool, four rungs, no RESOURCE_EXHAUSTED).
+XLA_PYTHON_CLIENT_PREALLOCATE = "false"

@@ -1,0 +1,566 @@
+# Profluent E1 -- protein language-model variant scoring and embeddings, held resident.
+#
+# The eleventh provider on the standard and the third that answers with arrays
+# rather than files (Enformer and ESM C are the others), so it declares
+# `output_keys` and not `outputs`.
+#
+# status = "verified" on the card named in `verified_on`, against four
+# consecutive identical requests and a mixed-shape sequence -- not a single
+# smoke, which this standard stopped trusting after openfold3 passed one and
+# then could not answer a repeat. Every number under [gpu] is measured.
+#
+# THREE THINGS DECIDED THE SHAPE OF THIS PROVIDER, and all three are findings
+# rather than choices.
+#
+# 1. THE TORCH PIN IS NOT A RANGE. This kit looks like the one kit of eleven that
+#    pins torch loosely -- stock/PINS.json carries
+#    `upstream.E1.declared_ranges.torch = ">=2.7.0,<2.9.0"`. That range is the
+#    upstream PACKAGE's dependency metadata. The KIT pins `torch==2.8.0` in its
+#    lock and `pinned_stack.torch_version_str = "2.8.0+cu128"` in PINS.json, and
+#    `--no-deps` means the range is never consulted by anything at all. What the
+#    build resolved to, and why it is not 2.8.0+cu128, is DEVIATION 1 in
+#    environment/requirements.lock: on linux-aarch64 PyPI's `torch==2.8.0` is
+#    `2.8.0+cpu` with `torch.version.cuda is None`, and no cu128 aarch64 build of
+#    2.8.0 exists on any index. The CUDA aarch64 build of that version is
+#    `2.8.0+cu129`, which is what is installed:
+#
+#      torch 2.8.0+cu129 / torch.version.cuda 12.9 / triton 3.4.0
+#      get_arch_list() = ['sm_80', 'sm_90', 'sm_100', 'sm_120']
+#      wheel: torch-2.8.0+cu129-cp312-cp312-manylinux_2_28_aarch64.whl
+#             (download.pytorch.org/whl/cu129)
+#
+#    sm_120 runs on this card's sm_121, which is the rule
+#    remote_resident/setup.py's `_check_torch_targets_this_gpu` applies; a bf16
+#    matmul on the card confirms it.
+#
+# 2. TRITON 3.4.0 CANNOT COMPILE FOR THIS CARD, and no check the standard has
+#    would have said so. torch's cubins are fine (point 1), so
+#    `torch_arch_unsupported` does not fire -- but Triton is a second toolchain
+#    that emits PTX at run time and shells out to the `ptxas` inside its own
+#    wheel. triton 3.4.0's is CUDA 12.8, which has no sm_121 of any spelling,
+#    while Triton asks for `sm_121a`:
+#
+#      ptxas fatal : Value 'sm_121a' is not defined for option 'gpu-name'
+#      triton.runtime.errors.PTXASError: PTXAS error: Internal Triton PTX codegen error
+#
+#    That kills BOTH kit modes, because stock E1 itself puts its global layers
+#    through `torch.compile(flex_attention)` and loads a Triton RMSNorm kernel.
+#    The fix is one wheel and one variable, both recorded: see DEVIATION 2 in the
+#    lock and `_point_triton_at_a_usable_ptxas` in the worker. Measured after it:
+#
+#      OK triton 3.4.0 kernel compiled+launched on sm_121 in 0.6s max|err|=0.0e+00
+#      OK torch.compile(flex_attention) on sm_121 in 1.9s out=(1, 4, 128, 64)
+#
+# 2b. AND IT IS NOT THE OTHER TRITON FAILURE -- CHECKED, NOT ASSUMED. There are
+#    TWO independent ways Triton fails on this card, at two different stages, and
+#    a provider has to clear both. The sibling kit atlasfold (torch 2.7.1 /
+#    triton 3.3.1) passed all four non-GPU setup steps, activated 29 levers,
+#    verified its weights, reached `Starting monomer inference` and then ABORTED:
+#
+#      'sm_121a' is not a recognized processor for this target (ignoring processor)
+#      LLVM ERROR: Cannot select: intrinsic %llvm.nvvm.shfl.sync.bfly.i32
+#
+#    That is Triton's LLVM stage, not ptxas: the NVPTX backend does not know the
+#    target, silently falls back to a default, and then cannot lower a warp
+#    shuffle. It is an LLVM abort, so nothing catches it and the supervisor sees
+#    only `smoke_protocolerror -- peer closed the connection mid-message`. The
+#    boundary, read out of the wheels' own libtriton.so (download.pytorch.org,
+#    cp312 aarch64) rather than inferred:
+#
+#      triton 3.3.0  sm_100 sm_100a sm_101 sm_101a sm_120 sm_120a             -- NO sm_121a
+#      triton 3.3.1  sm_100 sm_100a sm_101 sm_101a sm_120 sm_120a             -- NO sm_121a
+#      triton 3.4.0  + sm_103 sm_103a + sm_121 + sm_121a                      -- YES
+#
+#    So sm_121a lands in triton 3.4.0, and the two stages come apart like this on
+#    a GB10 (bundled binaries read on this host):
+#
+#      triton   LLVM knows sm_121a   bundled ptxas              verdict here
+#      3.3.x    no                   12.8 only, no sm_121a      hard LLVM abort (atlasfold)
+#      3.4.0    YES                  12.8 only, no sm_121a      ptxas fatal -- fixable (e1, point 2)
+#      3.6.0    yes                  + ptxas-blackwell 12.9     works as shipped
+#      3.7.1    yes                  + ptxas-blackwell 13.1     works as shipped (8 verified providers)
+#
+#    E1 IS NOT EXPOSED TO THE LLVM ABORT, and the reason is exactly the torch
+#    range. torch 2.8.0 is the TOP of the kit's declared `>=2.7.0,<2.9.0` (pip
+#    offers 2.7.0, 2.7.1, 2.8.0 and no 2.8.1) and it requires `triton==3.4.0`,
+#    the first version with sm_121a. Had the range resolved low -- 2.7.x, which
+#    pulls triton 3.3.x -- this provider would have died the way atlasfold did.
+#    The range being at its top IS the mitigation, and it is already the kit's own
+#    pin. Nothing was changed to achieve it; this paragraph records that it was
+#    checked.
+#
+#    VERIFIED BY RUNNING THE INTRINSIC, not by reading the string table. Each in
+#    its own subprocess, because an LLVM abort kills the process outright and
+#    would otherwise hide whatever ran after it:
+#
+#      OK triton 3.4.0 BLOCK REDUCTION (shfl.sync.bfly) on sm_121 in 0.8s
+#         max|err|=1.22e-04
+#      OK hub Triton RMSNorm compiled+launched on sm_121 in 2.4s
+#         max|err| vs torch ref = 7.80e-03 (bf16 rounding)
+#         _layer_norm_fwd_1pass_kernel type: Autotuner
+#
+#    The second is the REAL kernel -- `kernels.get_kernel(
+#    "kernels-community/triton-layer-norm")` resolved offline from the staged
+#    snapshot, which also independently proves the weights step's kernel staging
+#    and its refs/main pointer. `tl.sum` / `tl.max` over a block is what emits
+#    `shfl.sync.bfly`, so the first is the same code path that aborted atlasfold.
+#
+#    WHICH E1 PATHS COMPILE TRITON, and none of them reaches the shared core.
+#    In BOTH modes, because they are STOCK's own and `mode = "off"` does NOT
+#    remove them -- this is the part that would be easy to misread:
+#      * torch.compile(flex_attention), E1/model/flex_attention.py L4-11, compiled
+#        at import whenever CUDA is available; Inductor emits Triton. The global
+#        layers (every 3rd of 30) use it, and with flash-attn absent the
+#        within-sequence layers reach it too via varlen_flex_attention_func.
+#      * the hub Triton RMSNorm kernel, E1/modeling.py L22-26, at import.
+#    Only under `exact`, which this provider does not run:
+#      * ew1:rope / ew1:glu / ew1:addnorm / ew1:embed -- four Triton kernels in
+#        kits/ew1/kernels.py, and ew1_i64_offsets, the same four in
+#        kits/ew1_i64/kernels.py. Those two files are the ONLY @triton.jit in the
+#        kit tree.
+#      * attn:A2_cheap_blockmask, attn:A3_flex_kernel_options, anylen_flex,
+#        multiseq:flex_opts -- torch.compile'd flex-attention variants.
+#      * rmsnorm_autotune_pin -- no new kernel; it pins the hub kernel's existing
+#        Autotuner config, which is the object verified above.
+#
+#    NO ROUTE INTO opt_core, so `ln/exactln` and `fpf_trimul` are unreachable from
+#    this provider's process. `grep -rn 'opt_core\|exactln\|fpf_trimul\|triattn'`
+#    over e1/opt/ matches two files and neither is code that runs: the .pth's
+#    header comment and _build_backend.py's note on where its template came from.
+#    e1/opt/pyproject.toml declares `dependencies = []`, and stack.forward_root()
+#    puts only `opt/forward` on sys.path, so the shared core is not importable
+#    here at all.
+#
+#    AND `levers_off` COULD NOT HAVE BEEN THE FIX even if it were needed: this kit
+#    has no per-lever switch (see [kit]). Had a kit lever been the exposed one,
+#    the only door would have been `mode = "off"` -- which, per the list above,
+#    would still not have closed stock's own two Triton paths.
+#
+# 3. `exact` CANNOT ENGAGE HERE FOR TWO INDEPENDENT REASONS, so [kit] mode is
+#    "off" -- which is a documented mode of this kit ("stock e1, exactly as
+#    released") and not a workaround. Both reasons are in [kit] below.
+
+[provider]
+slug = "e1"
+description = "Profluent E1 protein language model: zero-shot variant scoring and sequence embeddings"
+operations = ["run_e1_score_variants", "run_e1_embed"]
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver
+580.173.02), venv route, kit mode OFF -- stock Profluent E1, variant 600m.
+`off` is not a fallback here but the only reachable configuration, for two
+independent reasons recorded under [kit]: flash-attn publishes no aarch64 build
+for this torch, and the kit's accelerator proof compares against the literal
+string "2.8.0+cu128", which no aarch64 environment can satisfy because no CUDA
+build of torch 2.8.0 exists for this architecture at all (only +cu129).
+
+VERIFIED ON 4 CONSECUTIVE IDENTICAL REQUESTS plus a mixed-shape sequence, one
+held worker start to stop, every request asserted to have filled its declared
+output_keys:
+
+    ladder   100 / 200 / 400 / 800 residues   4.30 / 4.40 / 4.63 / 4.84 GiB
+    mixed    100, 100, 400, 100               4/4, peak flat at 4.84
+    repeats  4 x the 72-residue smoke         4/4, 0.080 / 0.077 / 0.075 / 0.080 s
+
+The smoke alone took 12 s and reserved 4.3 GiB."""
+
+[runtime]
+mode = "resident"
+worker = "resident/e1_resident_worker.py"
+launch = "tooluniverse.remote_resident.kit_launch:build_command"
+# --variant is the kit's own rule, not a preference, and it is stated in three
+# places: the README ("--variant 150m|300m|600m (or E1_VARIANT) names the model
+# size; one size per process"), run.sh ("one variant per process, never two") and
+# stack._effective_variant, which refuses a variant disagreeing with E1_VARIANT
+# by name. The size also chooses the checkpoint, so it cannot come from the kit's
+# mode row; it is the worker's own argument, pinned here as esmfold2 pins
+# `--variant fast` and esmc `--variant 6b`.
+#
+# 600m IS THE SIZE THIS PROVIDER SERVES. It is the size every example in the
+# kit's README and STOCK.md uses (`--variant 600m`), the largest of the three,
+# and the one whose quality claims the model card makes. What the other two would
+# cost a host that switches, from the three config.json files and the three
+# safetensors headers (all BF16 on disk, all loaded fp32 by upstream's own
+# `from_pretrained(..., dtype=torch.float)`):
+#
+#   size   params    hidden  layers  inter   fp32 weights   checkpoint
+#   150m   154.4 M      768      20   2304       0.58 GiB    308,869,268 B
+#   300m   274.3 M     1024      20   3072       1.02 GiB    548,657,620 B
+#   600m   641.4 M     1280      30   3840       2.39 GiB  1,282,911,716 B
+#
+# A HOST SWITCHING SIZE IS IN A DIFFERENT VRAM BUDGET AND MUST RE-MEASURE RATHER
+# THAN SCALE THE NUMBER UNDER [gpu]. The parameter term moves by 4x between 150m
+# and 600m, but it is not the only term and it is not the dominant one here (see
+# [gpu]): the activation term is capped by --max-batch-tokens and scales with
+# hidden_size and layer count, so 600m -> 150m is neither a 4x nor a linear
+# reduction. All three checkpoints are declared under [weights] and fetched
+# together by the kit's own downloader, so switching costs an edit here and a
+# re-measurement, not a download.
+#
+# --max-batch-tokens is upstream's own default (E1.tools.score). It is an
+# E1Scorer constructor argument, so it is fixed for the life of the process, and
+# it is what caps the input-driven half of the budget below.
+worker_args = [
+  "--socket", "{socket}",
+  "--slug", "{slug}",
+  "--variant", "600m",
+  "--max-batch-tokens", "65536",
+]
+# The 600m checkpoint is 1.28 GB read once. The ceiling is generous because the
+# FIRST request in a fresh process also compiles torch's flex-attention through
+# Inductor and the hub RMSNorm kernel through Triton, and on a cold JIT cache
+# that is minutes, not seconds -- the kit's README puts a session's first `score`
+# at about 20 s on an H100 with a warm cache.
+start_timeout_s = 900.0
+request_timeout_s = 1800.0
+idle_timeout_s = 900.0
+smoke = "smoke/input.fasta"
+smoke_timeout_s = 1800.0
+# This provider writes no files unless a caller asks for a .npy, so there is
+# nothing for `outputs` to match. These are the keys a reply must carry for the
+# smoke to count as a model having run, and they are the SCORING path's keys
+# because smoke/input.fasta is a parent plus five mutants: `scores` is the list
+# of per-mutant log-probability ratios and `parent_length` the length they were
+# taken over. openfold3 is why this is not optional -- its smoke exited 0 in 29 s
+# with a GPU peak and a summary file reading "Failed Queries: 1".
+output_keys = ["scores", "parent_length"]
+
+[gpu]
+policy = "required"
+# MEASURED, and the prediction this file made before measuring was right --
+# worth as much as the number, because it was right for a reason that
+# generalises. The derived reserve was 8.5 GiB with the argument that the ladder
+# would be "flatter than esmc's 1.19x, for TWO reasons rather than one": the
+# constant parameter term, and -- unlike esmc -- a capped activation term,
+# because `E1Predictor.group_by_length` packs masked copies until
+# `len(seq) * (n+1) > max_batch_tokens`, so a batch is at most 65,536 tokens
+# whatever the parent's length and doubling the parent halves the batch.
+#
+# Ladder, one held worker, ascending, nothing larger run before it:
+#
+#     residues   peak reserved
+#          100       4.30 GiB
+#          200       4.40 GiB
+#          400       4.63 GiB
+#          800       4.84 GiB   <- the reference this budget declares
+#
+# 1.13x from 100 to 800, against esmc's 1.19x over 16x the length and
+# openfold3's 3.6x. The flattest provider on the standard, and the cap is doing
+# exactly what the reads said it would. The derived 8.5 was 1.8x high, which is
+# the conservative direction.
+#
+# Envelope: variant 600m, --max-batch-tokens 65536, masked-marginal scoring,
+# parent <= 2048 residues, <= 256 mutants, <= 4 contexts of <= 1024 residues --
+# all enforced in both the tool and the worker. Raising --max-batch-tokens is
+# the one knob that invalidates this figure without changing the model. A host
+# switching to 150m or 300m is in a different budget and must re-measure, not
+# scale: the parameter term moves 4x while the activation term does not.
+vram_budget_gb = 4.84
+driver_min = 575
+driver_min_reason = "its stack resolved to CUDA 12.9 (torch 2.8.0+cu129), the only CUDA aarch64 build of that version"
+shareable = true
+isolation = "process"
+
+[env]
+kind = "venv"
+python = "$TOOLUNIVERSE_E1_PYTHON"
+lock = "environment/requirements.lock"
+# What the kit's own pin check reads, at the versions stock/PINS.json names.
+# torch is checked by its base version on purpose: the installed build is
+# 2.8.0+cu129 for the reason in the lock's DEVIATION 1, and asserting the kit's
+# literal "2.8.0+cu128" here would refuse the only CUDA aarch64 build of the
+# pinned version that exists.
+verify = "import torch, E1, e1_opt, triton; assert torch.__version__.split('+')[0] == '2.8.0' and triton.__version__ == '3.4.0'; import importlib.metadata as m; assert m.version('E1') == '1.0.0' and m.version('transformers') == '4.56.2'"
+
+[weights]
+# Hugging Face's own cache in its own layout, which is what upstream's resolver
+# writes and what E1 reads offline:
+# HF_HOME/hub/models--Profluent-Bio--E1-<size>/snapshots/<rev>/model.safetensors.
+#
+# A DIRECTORY OF ITS OWN, not esmfold2's. HF_HOME is shared as a VARIABLE NAME
+# with esmfold2 and esmc, which both default it to ~/.esmfold2 because they pin
+# the same ESMC-6B snapshot with byte-identical digests. Nothing of E1's is in
+# that cache -- no Profluent-Bio repository and no triton-layer-norm snapshot was
+# anywhere on this host before this provider -- so pointing at it would buy
+# nothing and would mix three kits' pins in one tree. Checked before deciding:
+# ~/.esmfold2, ~/.boltz, ~/.foundry, ~/.openfold3, ~/.rosettafold3 and
+# ~/.cache/huggingface hold no models--Profluent-Bio--* and no
+# models--kernels-community--triton-layer-norm.
+root_env = "HF_HOME"
+root_default = "~/.e1"
+# The kit's own downloader (opt/e1_opt/weights.py, which `run.sh install
+# --weights` calls and which documents itself as `python -m e1_opt.weights DIR`).
+# It goes through huggingface_hub.snapshot_download at the pinned revisions,
+# checks every sha256 against stock/PINS.json itself, and stages the hub RMSNorm
+# kernel from the tree's own copy with no network at all -- then points
+# refs/main at the pinned revision, because upstream asks the `kernels` package
+# for the branch name `main` and an offline cache answers from that ref. No URL
+# is restated in ToolUniverse. run.sh is not used because the weights step does
+# not put the model environment's bin on PATH; {python} is how that environment
+# is named.
+fetch = "{python} -m e1_opt.weights {weights_root}"
+
+# THE TEN ENTRIES BELOW ARE GENERATED from the kit's own stock/PINS.json by a
+# script, not transcribed: the three `weights.<size>` records (repo, rev, file,
+# sha256, bytes) and the seven files of `hub_kernel.files_sha256`. All three
+# checkpoints are declared although only 600m is served, because `python -m
+# e1_opt.weights DIR` fetches and digest-checks all three in one pass and
+# refuses unless every one of them matches -- declaring a subset would describe
+# a cache its own downloader does not produce, and it is what lets a host switch
+# size without a download. The seven kernel files are declared because
+# E1/modeling.py loads that kernel AT IMPORT in both modes and falls back to
+# torch rms_norm with a warning if it is absent, which is a different model
+# answering under the same name; the digests were additionally verified against
+# the vendored tree at e1/stock/hub_kernel/triton_layer_norm, file for file.
+# Only layer_norm.py carries a byte count in PINS, so the other six declare
+# sha256 alone (utils/__init__.py is the empty file, digest e3b0c442...).
+
+# ---- the three checkpoints (PINS.json "weights") ----
+[[weights.files]]
+name = "hub/models--Profluent-Bio--E1-150m/snapshots/c4dbfe827e4aa6ed7f95eaef50dc1e084f4d77dc/model.safetensors"
+size = 308869268
+sha256 = "ba2656339005e6598642836acfdafde480fecc7e145ce0058eb54adf572c3484"
+
+[[weights.files]]
+name = "hub/models--Profluent-Bio--E1-300m/snapshots/5a2871c587eadbcc9237bc686ea45e5b4d28dfb3/model.safetensors"
+size = 548657620
+sha256 = "31e09a2542f45b04e6ce4adafb3b657f21e2d56d12bf68fd2266b1576a80bc9b"
+
+[[weights.files]]
+name = "hub/models--Profluent-Bio--E1-600m/snapshots/52d959fb87a609d15cf223a485127b29ed5c382a/model.safetensors"
+size = 1282911716
+sha256 = "cfc108d4b98baaa62932331b40be265eae39dc382595bc3cde4a5ab55db1bf7a"
+
+# ---- the hub RMSNorm kernel snapshot (PINS.json "hub_kernel".files_sha256) ----
+[[weights.files]]
+name = "hub/models--kernels-community--triton-layer-norm/snapshots/5ebc83aa387c282ff3f233bc3022c3a8be33a013/build/torch-universal/triton_layer_norm/__init__.py"
+sha256 = "b65ec2ce248a3dca3ffeb503a6501f272e23d9a80e313dd71ed37770bc8f717b"
+
+[[weights.files]]
+name = "hub/models--kernels-community--triton-layer-norm/snapshots/5ebc83aa387c282ff3f233bc3022c3a8be33a013/build/torch-universal/triton_layer_norm/_ops.py"
+sha256 = "821ba40c6c652c2e1d7381797d2da4f5ce924c7f8ea8d3be2cd143650655a61d"
+
+[[weights.files]]
+name = "hub/models--kernels-community--triton-layer-norm/snapshots/5ebc83aa387c282ff3f233bc3022c3a8be33a013/build/torch-universal/triton_layer_norm/layer_norm.py"
+size = 42646
+sha256 = "e7a4a0000fc6254431adfbc99455ed838c2829d181962f7fa0efb4fbd371d529"
+
+[[weights.files]]
+name = "hub/models--kernels-community--triton-layer-norm/snapshots/5ebc83aa387c282ff3f233bc3022c3a8be33a013/build/torch-universal/triton_layer_norm/layers.py"
+sha256 = "6df68a1ea128428c96016af91d2f53599224df6b41967d564ff4712cd1c4db08"
+
+[[weights.files]]
+name = "hub/models--kernels-community--triton-layer-norm/snapshots/5ebc83aa387c282ff3f233bc3022c3a8be33a013/build/torch-universal/triton_layer_norm/utils/__init__.py"
+sha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+
+[[weights.files]]
+name = "hub/models--kernels-community--triton-layer-norm/snapshots/5ebc83aa387c282ff3f233bc3022c3a8be33a013/build/torch-universal/triton_layer_norm/utils/library.py"
+sha256 = "9ca4c99801cd4aa737d20f79fcd3c3b6fab33f819681837404d874d79005cd83"
+
+[[weights.files]]
+name = "hub/models--kernels-community--triton-layer-norm/snapshots/5ebc83aa387c282ff3f233bc3022c3a8be33a013/build/torch-universal/triton_layer_norm/utils/torch.py"
+sha256 = "ee6565585ac2184ed7b822cef681dae59f1ce073cb627134a2360e24787c2624"
+
+[kit]
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "e1"
+# e1/opt declares no dependency on common/ at all (opt/pyproject.toml:
+# `dependencies = []`), and `grep -rn opt_core e1/opt/` finds the word only in
+# _build_backend.py's note about where its template came from -- the kit tree
+# imports nothing from the shared core. So unlike rosettafold3 there is no second
+# editable install. "common" is named here because the checkout is shared with
+# every provider pinning this commit and the sparse set is the union of what its
+# providers declare.
+sparse = ["e1", "common"]
+package = "e1_opt"
+#
+# ENV ROW: NONE, AND FOR A FIFTH REASON -- the function does not exist.
+# The probe's record, read from this box:
+#
+#   KITROW {"model_opt": ".../e1", "env": {}, "opts": [], "activation":
+#   "autoload", "mode_env": "E1_OPT", "modes": ["off", "exact"], "row_errors":
+#   ["resolve(mode): AttributeError: module 'e1_opt.modes' has no attribute
+#   'resolve'", "resolve(mode, home): AttributeError: module 'e1_opt.modes' has
+#   no attribute 'resolve'"], "stack_key_error": "AttributeError: module
+#   'e1_opt.modes' has no attribute 'jit_cache_key'"}
+#
+# The four shapes recorded so far were all signature mismatches of a `resolve`
+# that existed. This kit's modes.py has no `resolve` at all: it is a pure mode
+# TABLE (MODES, DEFAULT_MODE, MODE_TABLE, kernels_expected, check_mode, entry,
+# plus an AST reader for the kit tree's own KIT/MODE constants) and nothing in it
+# produces an environment row. The kit's deployment variables live in
+# configs/<card>.env, which ship for h100, h200 and a100 and not for this card,
+# and the NAMES live in a module of their own -- e1_opt/_names.py, `ENV,
+# ENV_VARIANT, ENV_DET = "E1_OPT", "E1_VARIANT", "E1_OPT_DET"`. A correct call
+# would yield nothing either, so nothing is lost by declaring it.
+env_row = "none"
+env_row_reason = "e1_opt.modes has no resolve() at all -- it is a pure mode table; the kit's deployment variables live in configs/<card>.env (h100|h200|a100 only) and its variable NAMES in e1_opt/_names.py, which _autoload imports, so the probe reads mode_env=E1_OPT from _autoload.ENV"
+#
+# THE MODE VARIABLE'S NAME is E1_OPT, read off the kit and not derived from the
+# slug. It is NOT in modes.py -- the probe's first place -- and it is not in
+# _autoload.py's own body either; _autoload does
+# `from ._names import ENV, ENV_VARIANT, ENV_DET`, which binds it into that
+# module, which is how the probe's second place answers. A fifth spelling for
+# the record: the names module is `_names.py` and the canonical reference is
+# `e1_opt._names.ENV`.
+#
+# ACTIVATION is the common form: the mode variable plus the kit's own
+# e1_opt_autoload.pth, which imports e1_opt._autoload at interpreter start and
+# installs a meta-path finder on `E1.predictor` / `E1.scorer`. Verified: the
+# editable install puts e1_opt_autoload.pth in the venv's site-packages beside
+# setuptools' own __editable__.e1_opt-0.2.1.pth. With E1_OPT unset or "off"
+# `install()` returns None and NO finder is installed, which is what this
+# provider runs.
+#
+# ------------------------------------------------------------------------------
+# MODE = "off", FOR TWO INDEPENDENT REASONS. `off` is a documented mode of this
+# kit -- "stock e1, exactly as released" -- and the kit's README names it first
+# of the two. It is not a workaround and nothing degrades silently.
+#
+# REASON A -- `exact` requires flash-attn ENGAGED and refuses without it.
+# modes.py names all three of the stock's accelerators for every mode
+# (`KERNELS_ALL = ("flash_attn", "hub_layernorm", "flex_attention")`) and
+# accel.py's `proof()` compares each one's word in the process against
+# `engaged:<impl>@<pinned version>`; under a kit mode any mismatch raises
+# SystemExit(3) before the first forward:
+#
+#   NOT ACTIVE: mode exact: accelerator(s) not engaged in this process --
+#   flash_attn=absent(flash_attn_not_installed) (the pinned stack engages
+#   engaged:flash_attn@2.8.3.post1) -- the mode's levers run on them, so the mode
+#   cannot run here (mode off runs the stock's own fallback route); exit 3
+#
+# flash-attn 2.8.3.post1 publishes no aarch64 wheel for torch 2.8 / CUDA 12
+# (lock DEVIATION 3), and the one aarch64 build of that version on this host --
+# esmfold2's -- needs libcudart.so.13 and was built against torch 2.13 / CUDA
+# 13.0. Under `off` the same absence is upstream's OWN documented fallback:
+# E1/model/flash_attention.py catches the ImportError and
+# E1/model/attention.py L299-311 sends the within-sequence layers to
+# `varlen_flex_attention_func`, the route upstream itself takes under
+# USE_FLASH_ATTN=0.
+#
+# REASON B -- `exact` would refuse on the torch version string even WITH
+# flash-attn. `accel.expected()` builds the flex_attention word from
+# `pins.STACK["torch_version_str"]`, which is the literal "2.8.0+cu128", and this
+# environment is necessarily 2.8.0+cu129 (REASON 1 at the top of this file; there
+# is no cu128 aarch64 build of torch 2.8.0). So the word read would be
+# `engaged:torch.compile@2.8.0+cu129` against an expected
+# `engaged:torch.compile@2.8.0+cu128` and the mode would refuse by name again.
+# THIS ONE DOES NOT GO AWAY IF FLASH-ATTN IS EVER BUILT: `exact` is unreachable
+# on aarch64 for as long as the kit's pin names a CUDA minor that PyTorch does
+# not publish for this architecture. Worth stating because the obvious next move
+# after reading REASON A -- build flash-attn -- would not change the outcome.
+#
+# WHAT IS GIVEN UP, and it is more than esmc gave up. `exact` is seventeen levers
+# (sixteen on the a100 class), listed in CHANGES.md, and their claimed gain is
+# entirely in model forward time: the RMSNorm autotune pin, a bf16 weight
+# pre-cast, four fused Triton elementwise kernels, flash-attn varlen packing,
+# two flex-attention levers, int64 offsets, an any-length flex route, three
+# multi-sequence/KV-cache levers for the retrieval-augmented path, and a host-side
+# tokenisation memo. Residency still buys this provider what the kit's own README
+# says is the larger share for a small assay: "Every `score` process also spends
+# ~15 s on interpreter start and checkpoint read in either mode, so the small Run
+# example gains little end to end".
+mode = "off"
+#
+# NO `levers_off` HERE, AND THAT IS DELIBERATE -- the eighth question answered
+# rather than assumed. `MODEL_OPT_LEVERS_OFF` does not appear anywhere in the e1
+# kit (`grep -rn 'LEVERS_OFF\|levers_off' e1/` returns nothing; the only hits in
+# the repository are under common/opt_core, which this kit does not import). The
+# kit says so itself, in CHANGES.md's own words: "There is no per-lever switch:
+# the set applies whole or the mode refuses by name." So setting the variable
+# would do nothing at all, which is worse than saying so -- this is the boltzgen
+# finding repeated with a different mechanism: boltzgen HAS a row and ignores the
+# variable, this kit has neither.
+#
+# `levers_declined` is omitted rather than empty for the honest reason: no lever
+# has declined, because `exact` has never been attempted on this card. Nothing
+# has succeeded either.
+#
+# INSTALL: the kit package editable, then the kit's own PACKAGE pin check.
+# `bash run.sh install` is NOT used, and the reason is specific rather than
+# stylistic: run.sh runs `stock/check_pins.py --checks package,stack` and exits 3
+# on any drift, and the stack check drifts here by construction --
+#
+#   check_pins: DRIFT (4): stack.torch: torch 2.8.0+cu129 installed, pin 2.8.0 |
+#   stack.flash_attn: flash_attn is not installed, pin 2.8.3.post1 |
+#   stack.torch_build: torch 2.8.0+cu129 cuda 12.9, pin 2.8.0+cu128 cuda 12.8 |
+#   stack.flash_attn_import: flash_attn does not import (ModuleNotFoundError)
+#
+# -- all four being the lock's own declared deviations, and all four NAMED rather
+# than refused by every route the kit actually runs (pins.stack_report puts them
+# in the ACTIVE line's notes=). The PACKAGE check is the one that matters and is
+# run: it reads the PEP 610 direct_url.json the git install wrote and holds the
+# installed E1 to the pinned commit, which is the kit's one hard refusal. It
+# passes here:
+#
+#   check_pins: ok package.version: version=1.0.0
+#   check_pins: ok package.commit: commit=bfd2620a602248499f3d2583d85a7ecddf0b6e02, route=vcs
+#   check_pins: ok package.source: files=15, package_dir=.../site-packages/E1
+#   check_pins: ok (package: every pin checked matches)
+#
+# --no-build-isolation keeps the editable install off the network (setuptools
+# 80.9.0 is in the lock), and `-e` is required: opt/pyproject.toml says the kit
+# tree "is resolved from the package location, so the install must stay
+# editable". No --weights here: the weights step owns that.
+install = """
+{python} -m pip install -q --no-build-isolation --no-deps -e opt &&
+{python} -I stock/check_pins.py --checks package
+"""
+#
+# WHAT HAS BEEN RUN HERE, AND WHAT IT IS AND IS NOT EVIDENCE FOR.
+# The kit's own dry run loads no model and scores nothing. It passes, for BOTH
+# modes, and the second of those is a warning rather than a reassurance.
+#
+#   bash run.sh check --variant 600m --mode off     # rc 0
+#   [e1-opt] weights=Profluent-Bio/E1-600m@52d959fb87a6 sha256=cfc108d4b98b (pinned)
+#   [e1-opt] DRY-RUN mode=off variant=600m kit=v2.0 kit_mode=None gpu=NVIDIA GB10
+#     stack=torch2.8.0-cu129-sm121 package=0.2.1 card=untested mib=124546
+#     sm=sm121 det=0 pins=drift route=check notes="stack: torch 2.8.0+cu129 (pin
+#     2.8.0); stack: flash_attn absent (pin 2.8.3.post1); flash_attn does not
+#     import (ModuleNotFoundError ...): upstream takes its varlen-flex fallback,
+#     the levers on the flash route cannot engage; card 'NVIDIA GB10' (cc 12.1,
+#     124546 MiB) is outside the tested classes (a100|h100|h200) ..."
+#     would_refuse=none
+#
+# Three things in that line are worth reading. The weights gate re-derives the
+# snapshot path and the sha256 independently of this manifest and words it
+# `(pinned)`. The GPU is found -- which was NOT the prediction made before
+# running it, and the reason is instructive: stack.probe_gpu() tries nvidia-smi
+# first because it is torch-free, and `--query-gpu=memory.total` returns `[N/A]`
+# on this card's unified memory, so `int(float("[N/A]"))` raises and that probe
+# returns None. It still works because `gates()` calls `pins.stack_report()`,
+# which imports torch, BEFORE it calls probe_gpu(), so the torch probe -- tried
+# last and only when torch is loaded -- answers `{'name': 'NVIDIA GB10', 'mib':
+# 124546, 'cc': '12.1', 'sm': 'sm121', 'source': 'torch'}`. The same ordering is
+# why the JIT cache key reads `torch2.8.0-cu129-sm121` and not `...-smNA`, and
+# why the worker asks for it only after importing torch. And `card=untested`
+# with the note is the card gate doing exactly what it documents: named, never
+# refused.
+#
+# THE WARNING. `--mode exact` ALSO prints `would_refuse=none` and exits 0 on this
+# box, with `kit_mode=eager` and the identical notes. It is wrong -- not about
+# the gates it ran, but as a predictor. The KERNELS proof that refuses `exact`
+# here (accel.py, REASON A above) fires at the first E1Predictor construction in
+# a real model process, which a dry run never reaches, so the kit's own `check`
+# cannot see a refusal that is certain. This is the openfold3 lesson in another
+# shape: `check` exiting 0 is not evidence that the thing it checked will run.
+# Do not read that line as grounds for setting mode = "exact".
+#
+# THAT IS A DRY RUN PLUS A TOOLCHAIN PROBE. Together with the triton and
+# flex-attention compiles at the top of this file they say the environment can
+# emit and launch code for this card, and that the weights are the pinned ones.
+# They load no weights into the model, run no forward, and are not evidence that
+# E1 produces correct scores on sm121 -- the Boltz-2 bring-up found a Triton
+# kernel that compiled and then reported OutOfResources on this exact compute
+# capability.
+#
+# FOR WHOEVER RUNS THE SMOKE. Export, in the model environment's own terms:
+#   TOOLUNIVERSE_E1_PYTHON=$HOME/e1-venv/bin/python
+#   HF_HOME=$HOME/.e1
+# Everything else the worker sets itself (HF_HUB_OFFLINE, TRANSFORMERS_OFFLINE,
+# PYTHONDONTWRITEBYTECODE, TRITON_PTXAS_PATH, TRITON_CACHE_DIR,
+# TORCHINDUCTOR_CACHE_DIR) and MODEL_OPT / E1_OPT / MODEL_OPT_JIT_ROOT come from
+# kit_launch.build_command. The acceptance test is FOUR CONSECUTIVE IDENTICAL
+# requests and then a mixed-shape sequence, not one smoke: openfold3 passed a
+# one-request smoke and failed deterministically on the second request of the
+# same shape.

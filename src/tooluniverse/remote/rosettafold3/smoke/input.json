@@ -1,0 +1,12 @@
+[
+ {
+  "name": "rf3_smoke_barstar",
+  "components": [
+   {
+    "seq": "KKAVINGEQIRSISDLHQTLKKELALPEYYGENLDALWDALTGWVEYPLVLEWRQFEQSKQLTENGAESVLQVFREAKAEGADITIILS",
+    "chain_id": "A",
+    "chain_type": "polypeptide(L)"
+   }
+  ]
+ }
+]

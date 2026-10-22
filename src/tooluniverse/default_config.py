@@ -1521,6 +1521,10 @@ default_tool_files = {
     "data_quality": os.path.join(current_dir, "data", "data_quality_tools.json"),
     # Meta-Analysis - fixed/random effects, inverse-variance, DerSimonian-Laird (local)
     "meta_analysis": os.path.join(current_dir, "data", "meta_analysis_tools.json"),
+    # Unified Model Interface - one input/output contract in front of groups of
+    # interchangeable predictors; each tool dispatches to the tools in
+    # data/unified_model_backends.json rather than predicting anything itself
+    "unified_model": os.path.join(current_dir, "data", "unified_model_tools.json"),
 }
 
 # Auto-load any user-provided tools from ~/.tooluniverse/user_tools/

@@ -1,0 +1,234 @@
+# ef2inv's model environment -- the stack this provider was built against.
+#
+# It is the kit's own environment/requirements.lock (`uv pip freeze` of its
+# x86-64 image: Python 3.12.14, torch 2.11.0+cu128, triton 3.6.0, numpy 2.5.2,
+# xformers 0.0.35, cuequivariance 0.10.0, the Biohub transformers fork at
+# ef32577f) with the deviations below and nothing else. Of its 138 pin lines,
+# 134 are reproduced here byte for byte, 2 are re-pointed to the aarch64 file
+# of the same version from the same index, 2 are omitted, and 1 line is added.
+#
+# Rebuild (an NVIDIA driver >= 570, git, a C++ compiler and CUDA's nvcc --
+# xformers has no aarch64 wheel and is built from source here, which took
+# ~2 min on 20 cores; network for the index, for download.pytorch.org and for
+# github.com; ~14 GB of disk):
+#
+#   uv venv --seed --python 3.12.13 ~/ef2inv-venv
+#   export TOOLUNIVERSE_EF2INV_PYTHON=~/ef2inv-venv/bin/python
+#   $TOOLUNIVERSE_EF2INV_PYTHON -m pip install --no-deps -r requirements.lock
+#   git clone https://github.com/Biohub/esm ~/.cache/tooluniverse/ef2inv/esm \
+#     && git -C ~/.cache/tooluniverse/ef2inv/esm checkout d0207ea3c8cbf072679ece3bb332787d25e06852
+#   $TOOLUNIVERSE_EF2INV_PYTHON -m pip install --no-deps -e ~/.cache/tooluniverse/ef2inv/esm
+#   cd <kit>/ef2inv && PATH=$(dirname $TOOLUNIVERSE_EF2INV_PYTHON):$PATH bash run.sh install
+#
+# `uv venv` is used rather than the stdlib `python -m venv`, and that was
+# checked rather than assumed: NOTHING in this kit scans site-packages for
+# `.pth` files. It ships no autoload `.pth` at all -- its own
+# `opt/pyproject.toml` says so ("No autoload .pth: the upstream is a script")
+# and its build backend's `*_autoload.pth` glob looks only beside itself inside
+# the kit tree -- so uv's `_virtualenv.pth`, which broke openfold3's hook
+# detection, has nothing here to confuse.
+#
+# --no-deps is deliberate: the list is complete, and letting a resolver
+# re-derive it is how a stack stops being the one that was measured. The kit
+# (ef2inv_opt), its shared core (opt_core) and stock esm 3.4.0 install editable
+# on top and are not here -- a lock cannot carry an editable git checkout, and
+# the kit's own lock says the same of the same three.
+#
+# DEVIATIONS, every one of them:
+#
+# 1. torch is the SAME build pinned to the aarch64 file. The kit pins
+#    `torch 2.11.0+cu128` by direct link to
+#    `...-cp312-cp312-manylinux_2_28_x86_64.whl`; the line below is the
+#    aarch64 file of that same version from the same index, with its own
+#    sha256. The URL form is kept rather than substituted by name because it is
+#    the stronger pin here: PyPI publishes no `+cu128` local version, so
+#    `torch==2.11.0` would have installed a different CUDA build. Verified on
+#    this host: `torch.cuda.get_arch_list()` is
+#    ['sm_80', 'sm_90', 'sm_100', 'sm_120'] and the card is sm_121 -- an sm_120
+#    cubin runs on sm_121, which is the rule `tu remote setup` checks.
+#
+# 2. triton likewise: the kit pins the x86-64 file PyTorch publishes beside
+#    torch, this is the aarch64 file of the same version and index, sha256 and
+#    all.
+#
+# 3. flash-attn 2.8.3 is OMITTED. The kit's own header says it has no index
+#    build for this torch, and its route C filters the line out by name before
+#    installing (`grep -v -E '^(#|flash-attn==|transformer-engine==)'`), then
+#    compiles it with environment/build_wheels.sh. That script targets compute
+#    capability 9.0, and flash-attn 2.8.x ignores TORCH_CUDA_ARCH_LIST in
+#    favour of its own FLASH_ATTN_CUDA_ARCHS, so a build for this card is a
+#    separate exercise measured in hours. It is not needed in order to RUN, and
+#    this kit says so itself: "Without the two compiled packages every mode
+#    still runs" (STOCK.md, Stack) -- the fork guards the import
+#    (modeling_esmfold2_common.py:26-38, modeling_esmc.py:47-54), takes its
+#    SDPA / plain-torch paths, and every route prints one
+#    `stack flash_attn=None (pinned 2.8.3) NOT PINNED` line and proceeds. One
+#    kit lever is better off for it: ef2_esmc_rope serves exactly the branch
+#    the fork takes when the flash-attn Triton rotary is NOT bound, which is
+#    also the branch that carries the LM gradient -- the kit's opt-in upstream
+#    fix EF2INV-0003 exists to force that branch when flash-attn IS present.
+#
+# 4. transformer-engine 2.15.0+42b8400 is OMITTED, for the first half of the
+#    same reason: that version is published on no index at all. The fork
+#    guards this import too (modeling_esmfold2.py:24-25) and uses it for fp8,
+#    which this recipe never asks for; ef2_esmc_hoist asks it for row-count
+#    invariant GEMMs and steps aside by name without them -- which on this card
+#    it does anyway (see provider.toml's [kit] note).
+#
+# 5. Python 3.12.13, not the pinned 3.12.14: uv 0.12.2 on this box offers no
+#    3.12.14 aarch64 build ("No download found for request:
+#    cpython-3.12.14-linux-aarch64-gnu"). Every wheel here is cp312 and the
+#    kit's own pin check (stock/check_pins.py) reads no Python version, so the
+#    difference is the interpreter's patch level and nothing else. It is stated
+#    because it is the one line of the kit's `pinned_stack` this environment
+#    does not satisfy exactly.
+#
+# 6. `pip==26.2.1` is ADDED, which the kit's lock does not carry: this file is
+#    a complete freeze of the environment, and `tu remote setup`'s environment
+#    step installs any `pip==` line first and by itself.
+#
+# NOT a deviation, but worth knowing before rebuilding: xformers 0.0.35 is in
+# the list and PyPI publishes only an sdist of it for linux_aarch64, so pip
+# BUILDS it -- in isolation, against a torch of its own, emitting CUTLASS
+# kernels for sm_120 under the stable torch ABI (TORCH_TARGET_VERSION
+# 0x020a...). The result imports and runs under this environment's
+# torch 2.11.0+cu128: `xformers.ops.memory_efficient_attention` on a bf16 CUDA
+# tensor returns on this card. A host without nvcc cannot build it and must
+# drop the line, at the cost of one more word on the fast-environment line.
+abnumber==0.4.4
+accelerate==1.14.0
+anarci==2026.2.13.2
+anarcii==2.0.8
+annotated-types==0.8.0
+anyio==4.14.2
+asttokens==3.0.2
+attrs==26.1.0
+biopython==1.87
+biotite==1.6.0
+biotraj==1.2.2
+boto3==1.43.78
+botocore==1.43.78
+brotli==1.2.0
+certifi==2026.5.20
+charset-normalizer==3.4.7
+cloudpathlib==0.24.0
+colorama==0.4.6
+comm==0.2.3
+contourpy==1.3.3
+cuda-bindings==12.9.7
+cuda-pathfinder==1.6.1
+cuda-toolkit==12.8.1
+cuequivariance==0.10.0
+cuequivariance-ops-cu12==0.10.0
+cuequivariance-ops-cu13==0.11.1
+cuequivariance-ops-torch-cu12==0.10.0
+cuequivariance-ops-torch-cu13==0.11.1
+cuequivariance-torch==0.10.0
+cycler==0.12.1
+dna-features-viewer==3.1.5
+dockq @ git+https://github.com/nrontsis/DockQ.git@ba4df5adaad7c77fd60851d0b7b05f2b77061ba2
+einops==0.8.2
+executing==2.2.1
+filelock==3.32.3
+fonttools==4.63.0
+fsspec==2026.7.0
+gemmi==0.7.5
+h11==0.16.0
+hf-xet==1.6.0
+httpcore==1.0.9
+httpx==0.28.1
+huggingface-hub==0.36.2
+idna==3.18
+importlib-metadata==9.0.1
+ipython==9.16.1
+ipython-pygments-lexers==1.1.1
+ipywidgets==8.1.9
+jedi==0.20.0
+jinja2==3.1.6
+jmespath==1.1.0
+joblib==1.5.3
+jupyterlab-widgets==3.0.17
+kiwisolver==1.5.0
+markupsafe==3.0.3
+matplotlib==3.11.0
+matplotlib-inline==0.2.2
+ml-dtypes==0.6.0
+mpmath==1.3.0
+msgpack==1.1.2
+msgpack-numpy==0.4.8
+narwhals==2.25.0
+networkx==3.6.1
+numpy==2.5.2
+nvdlfw-inspect==0.2.2
+nvidia-cublas==13.6.1.10
+nvidia-cublas-cu12==12.8.4.1
+nvidia-cuda-cupti-cu12==12.8.90
+nvidia-cuda-nvrtc==13.3.33
+nvidia-cuda-nvrtc-cu12==12.8.93
+nvidia-cuda-runtime-cu12==12.8.90
+nvidia-cudnn-cu12==9.19.0.56
+nvidia-cufft-cu12==11.3.3.83
+nvidia-cufile-cu12==1.13.1.3
+nvidia-curand-cu12==10.3.9.90
+nvidia-cusolver-cu12==11.7.3.90
+nvidia-cusparse-cu12==12.5.8.93
+nvidia-cusparselt-cu12==0.7.1
+nvidia-ml-py==13.610.43
+nvidia-nccl-cu12==2.28.9
+nvidia-nvjitlink-cu12==12.8.93
+nvidia-nvshmem-cu12==3.4.5
+nvidia-nvtx-cu12==12.8.90
+onnx==1.22.0
+onnx-ir==1.0.0
+onnxscript==0.7.1
+opt-einsum==3.4.0
+packaging==26.2
+pandas==3.0.5
+parallelbar==2.5
+parso==0.8.7
+pexpect==4.9.0
+pillow==12.2.0
+platformdirs==4.11.3
+prompt-toolkit==3.0.53
+protobuf==7.36.1
+psutil==7.2.2
+ptyprocess==0.7.0
+pure-eval==0.2.3
+py3dmol==2.5.5
+pydantic==2.13.5
+pydantic-core==2.46.5
+pydssp==0.9.1
+pygments==2.21.0
+pygtrie==2.5.0
+pyparsing==3.3.2
+python-dateutil==2.9.0.post0
+pyyaml==6.0.3
+rdkit==2026.3.5
+regex==2026.7.19
+requests==2.34.2
+s3transfer==0.19.2
+safetensors==0.8.0
+scikit-learn==1.9.0
+scipy==1.18.1
+setuptools==81.0.0
+six==1.17.0
+sortedcontainers==2.4.0
+stack-data==0.6.3
+sympy==1.14.0
+tenacity==9.1.4
+threadpoolctl==3.6.0
+tokenizers==0.22.2
+torch @ https://download.pytorch.org/whl/cu128/torch-2.11.0%2Bcu128-cp312-cp312-manylinux_2_28_aarch64.whl#sha256=9c8f38efee365cb9d334de8a83ce52fc7e5fc9e5a7b0853285efa1b69e00b0f2
+tqdm==4.70.0
+traitlets==5.16.1
+transformers @ git+https://github.com/huggingface/transformers.git@ef32577f55da19a4989cd7b22e004dc43a4998cb
+triton @ https://download.pytorch.org/whl/triton-3.6.0-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl#sha256=6e42d084864d12b8784736fe51a0cd05f6cc56775b25c8102c9d80c421f4e298
+typing-extensions==4.16.0
+typing-inspection==0.4.4
+urllib3==2.7.0
+wcwidth==0.8.2
+widgetsnbextension==4.0.16
+xformers==0.0.35
+zipp==4.1.0
+zstd==1.5.7.2
+pip==26.2.1

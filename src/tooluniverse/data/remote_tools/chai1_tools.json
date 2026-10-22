@@ -1,0 +1,124 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "chai1_fold",
+    "description": "Fold a biomolecular complex with Chai-1 and return the predicted structures in CIF format with their ranking scores. Input is a chai-lab FASTA: one record per chain, headers of the form '>protein|name=A', '>ligand|name=LIG' (sequence line is SMILES), '>rna|name=R' or '>dna|name=D'. No MSA server is used.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "fasta": {
+          "type": "string",
+          "description": "chai-lab FASTA. Example:\n>protein|name=A\nMKTAYIAKQRQ...\n>ligand|name=LIG\nCC(=O)Oc1ccccc1C(=O)O",
+          "minLength": 10,
+          "maxLength": 262144
+        },
+        "seed": {
+          "type": "integer",
+          "description": "Random seed; the same seed reproduces the fold.",
+          "default": 0,
+          "minimum": 0
+        },
+        "num_trunk_recycles": {
+          "type": "integer",
+          "description": "Trunk recycles (default 3). More is slower and usually better.",
+          "default": 3,
+          "minimum": 1,
+          "maximum": 10
+        },
+        "num_diffn_timesteps": {
+          "type": "integer",
+          "description": "Diffusion steps (default 200).",
+          "default": 200,
+          "minimum": 10,
+          "maximum": 500
+        },
+        "num_diffn_samples": {
+          "type": "integer",
+          "description": "Structures to sample and rank (default 5).",
+          "default": 5,
+          "minimum": 1,
+          "maximum": 10
+        },
+        "return_structures": {
+          "type": "boolean",
+          "description": "Return the mmCIF text of every sampled structure (default false: megabytes). The ranking scores come back either way.",
+          "default": false
+        }
+      },
+      "required": [
+        "fasta"
+      ],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "structures": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "cif": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "n_structures": {
+          "type": "integer"
+        },
+        "structures_note": {
+          "type": "string"
+        },
+        "aggregate_score": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "ptm": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "iptm": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "timing": {
+          "type": "object"
+        },
+        "weights_held_by": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "Chai1FoldTool",
+      "url": "https://github.com/anthropics/uplifting-biomolecular-modeling",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/chai1",
+      "mcp_tool_name": "chai1_fold"
+    },
+    "test_examples": [
+      {
+        "fasta": ">protein|name=A\nMKTAYIAKQRQISFVKSHFSRQLEERLGLIEVQ\n",
+        "seed": 0,
+        "num_diffn_samples": 1
+      }
+    ]
+  }
+]

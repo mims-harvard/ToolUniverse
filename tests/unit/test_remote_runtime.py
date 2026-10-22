@@ -21,6 +21,29 @@ from tooluniverse.remote_runtime import (
 )
 
 
+def test_ports_are_unique():
+    """No two deployments may claim the same port.
+
+    Every provider in the table binds its port on this one host, so two
+    claiming the same number means whichever starts second cannot bind and the
+    failure arrives as a start timeout naming no cause. Nothing checked this
+    until two sessions, bringing up two providers in parallel against the same
+    table, both took the next number they saw free and both wrote 8058 -- one
+    in a commit, one in an uncommitted working tree, so no diff and no review
+    put the two side by side. A count assertion cannot catch it (the counts
+    stay right) and neither can `runtime == skills` (both halves agree on the
+    wrong thing). This is the cheapest possible check and it is overdue.
+    """
+    ports = [item.port for item in REMOTE_DEPLOYMENTS]
+    clashes = {p: [i.slug for i in REMOTE_DEPLOYMENTS if i.port == p] for p in ports if ports.count(p) > 1}
+    assert not clashes, f"two deployments claim one port: {clashes}"
+    # the same table reached through the setup-skill side, which is the copy a
+    # second session is as likely to edit
+    skill_ports = [item.port for item in DEPLOYMENTS]
+    skill_clashes = {p: [i.slug for i in DEPLOYMENTS if i.port == p] for p in skill_ports if skill_ports.count(p) > 1}
+    assert not skill_clashes, f"two setup skills claim one port: {skill_clashes}"
+
+
 def test_catalog_matches_setup_skills_and_covers_all_operations():
     runtime = {
         item.slug: (
@@ -43,8 +66,8 @@ def test_catalog_matches_setup_skills_and_covers_all_operations():
         for item in DEPLOYMENTS
     }
     assert runtime == skills
-    assert len(runtime) == 30
-    assert sum(len(item.operations) for item in REMOTE_DEPLOYMENTS) == 41
+    assert len(runtime) == 59
+    assert sum(len(item.operations) for item in REMOTE_DEPLOYMENTS) == 77
     assert {
         item.slug: item.relay_workers
         for item in REMOTE_DEPLOYMENTS

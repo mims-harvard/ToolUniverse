@@ -1,0 +1,434 @@
+# OpenFold3 0.5.0 with the OpenBind-0 parameters, held resident.
+#
+# WHAT "ob0" MEANS, AND WHY THIS IS NOT A MODE OF THE openfold3 PROVIDER.
+# "ob0" is OpenBind-0: upstream's checkpoint `of3-ob-2025-06-30-174k.pt`,
+# registry name `openbind-2025-06-30-174k`, 174,000 training steps, and the
+# DEFAULT_CHECKPOINT_NAME of OpenFold3 0.5.0. The `openfold3` provider beside
+# this one runs OpenFold3 0.4.1 with `of3-p2-155k.pt` ("preview-2"). The
+# difference is a whole upstream release plus its parameters, not a flag:
+#
+#   * `openfold3/entry_points/parameters.py` gates every checkpoint by version.
+#     OpenBind-0 declares `version_compatibility = ">=0.5.0"`; the preview
+#     checkpoints declare ">=0.4,<0.4.4dev0" AND are listed in
+#     `LEGACY_CHECKPOINTS`, which 0.5.0 refuses to download. Neither release
+#     can load the other's file; `_load_state_dict_with_version_validation`
+#     refuses it by name at setup.
+#   * Both releases are the SAME PyPI distribution, `openfold3`, at 0.4.1 and
+#     0.5.0. One interpreter holds one of them. The kit packages collide the
+#     same way: `openfold3_opt` and `openfold3_ob0_opt` each install an
+#     autoload `.pth`, and the shared core refuses a process that already has
+#     another kit's hook on `sys.meta_path` ("one route per process").
+#   * The two kits' locks differ in exactly two of 115 lines -- `openfold3`
+#     and `rdkit` -- so this is the same measured stack (torch 2.10.0+cu128,
+#     triton 3.6.0, numpy 2.4.6) in a second environment, which is the cheap
+#     half of the work and the reason this provider was quick.
+#   * The ob0 kit is not the openfold3 kit renamed. It adds a `big` mode (an
+#     offload port with a row-blocked confidence head) and a `tp` line that
+#     shards the pair representation across 2/4/8 GPUs, a CCD install step
+#     the 0.4.1 kit has none of, and a different pair-cell line.
+#
+# So: a second provider, a second environment, a second port. Adding a
+# "checkpoint" option to the openfold3 provider was considered and is not
+# possible -- it would have to install a different `openfold3` into the same
+# interpreter at request time.
+#
+# WHAT RESIDENCY BUYS. Stock OpenFold3's only entry point is `run_openfold
+# predict`, which builds an `InferenceExperimentRunner`, reads 2,287,872,989
+# bytes of checkpoint into it, calls `Trainer.predict` once and exits. This
+# worker pays that once: the runner, its `lightning_module`, its weights and
+# its CUDA context survive between requests, and only the output directory,
+# the query set, the callbacks and the Lightning trainer are rebuilt per call.
+#
+# INHERITED HAZARDS, BOTH CONFIRMED PRESENT BEFORE THEY WERE MET. The two
+# cells that bit the openfold3 provider -- `trunk_graph` and `post_release` --
+# are thin binders in this kit over the SAME shared `opt_core` modules
+# (`opt_core.of3_trunk.trunk_graph`, `opt_core.of3_sampler.post_release`), so
+# the second-identical-request defect is byte-for-byte the same defect. It was
+# read out of the source before the first request rather than met on the
+# second; see `[kit] env` below.
+#
+# AND A SECOND SECOND-REQUEST DEFECT, THIS ONE UPSTREAM'S OWN, which is the
+# finding this provider contributes. 0.5.0 added `MsaComputationSettings`:
+# `InferenceExperimentRunner.__init__` binds its record root once to the
+# directory the runner was BORN with, the settings object fixes its per-run
+# directory name once as a pydantic PrivateAttr, and the no-MSA-server path
+# every request here takes (`augment_main_msa_with_query_sequence`, which
+# writes a single-sequence dummy alignment per chain) then does
+# `output_directory.mkdir(parents=True, exist_ok=False)` on that one path.
+# Request one folds; request two of ANY shape raises `FileExistsError`, caught
+# per query, arriving as "wrote no structure". 0.4.1 has no MSA settings at
+# all, which is why the sibling provider never saw it.
+#
+# What matters for this standard is how it was found: NOT by the four-identical
+# -request test and NOT by reading the kit, but on RUNG TWO OF THE LADDER. The
+# standard's acceptance sequence exists because a repeat can fail where a shape
+# change passes; this is the converse case, a defect that does not care what the
+# shape is and fails every request after the first. Two independent defects of
+# the same observable shape, in two different layers, in one provider -- so "the
+# second request" is a property of residency, not of any one kit. The fix is
+# upstream's own public setter called per request plus upstream's own post-run
+# cleanup called per request; `_rebind_msa_workspace` in the worker carries the
+# citation.
+
+[provider]
+slug = "openfold3_ob0"
+description = "OpenFold3 0.5.0 (OpenBind-0) all-atom structure prediction from a query of chains"
+operations = ["openfold3_ob0_fold"]
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, driver 580.173.02, 130.6 GB
+unified memory, 20 cores), venv route on a stdlib-venv CPython 3.11.12, kit
+mode fast with `pair_transition` ablated through MODEL_OPT_LEVERS_OFF and the
+kit's `post_release` gate forced on every item through [kit] env, data loader
+forced to 0 workers.
+
+VERIFIED ON THE WHOLE ACCEPTANCE SEQUENCE, not on one fold. All five
+`tu remote setup` steps green, then, each phase one held worker from start to
+stop and every request asserted to carry structures:
+
+  * LADDER, ascending, in a worker nothing larger had touched: 100 / 200 / 400
+    residues -> 3/3, five mmCIF models each, peaks 2.52 / 3.29 / 6.20 GiB.
+  * MIXED SHAPES, 100, 100, 200, 100 residues -> 4/4, five models each. A
+    shape change and a shape repeat both survive, and the third request (a
+    return to 100 after 200) was not slower than the first, so the worker
+    holds both engines rather than rebuilding whichever it last used.
+  * FOUR CONSECUTIVE IDENTICAL REQUESTS -> 4/4, five models each, peaks 2.89 /
+    2.93 / 2.93 / 2.95 GiB. This is the phase that matters and the phase that
+    failed first: see the two second-request defects in the header.
+  * 800 RESIDUES, fresh worker, three consecutive requests -> 3/3, five models
+    each, peaks 9.97 / 9.94 / 9.96 GiB. The declared budget's row.
+  * A 35-residue fresh worker, four identical requests -> 4/4, peaks 2.20 ->
+    2.35 GiB.
+  * `setup._what_it_produced` run against a directory holding ONLY the files
+    an OpenFold3 run writes whether or not it folds anything
+    (`summary.txt`, `inference_query_set.json`, `experiment_config.json`,
+    `model_config.json`, `predict_times.csv`, and this provider's per-request
+    `msas/.../colabfold_main.npz`): REFUSED. The same directory with one
+    `*_model.cif` added: accepted. And a reply with structures on disk but an
+    empty `structures` list: refused by `output_keys`. The glob cannot pass a
+    fold-less run.
+  * The kit's own `bash run.sh pred --mode fast` on the same input, same
+    ablation: exit rule 0, 5/5 structures, `fallbacks=none`,
+    `cuda_max_reserved_mib=2298`, `trimul_v4 served=124 fallback=0`,
+    `triatt_block served=124 fallback=0`. The resident worker's census over
+    four identical requests agrees: `arm_complete=true levers_unavailable=none
+    fallbacks=none`, `trunk_graph captures=... drops=0 fallback=none`.
+  * Upstream's model builder called TWICE in one process before the worker was
+    written (the genie3 check): both builds OK, 368,293,788 parameters each,
+    same checkpoint path. No one-build-per-process module state here.
+  * EQUIVALENCE AGAINST THE KIT'S OWN CLI, same input, same seed 42, same
+    ablation: **0 of 5 structures byte-identical**. The difference was
+    predicted and written down before the run, which is what makes it a
+    result rather than a surprise: the resident route forces the featurisation
+    DataLoader to 0 workers where the kit's CLI runs 1, and the kit states
+    that cost itself -- with no worker processes `worker_init_fn` never runs
+    and featurisation's random draws come from the DataLoader's own generator
+    in the calling process. So this provider is a wrap of the kit's
+    CONFIGURATION (same levers, same census, same kernels, same runner yaml,
+    asked of the kit rather than copied) and NOT a bitwise reproduction of the
+    kit's CLI output. esm_if1 can claim the stronger thing; this one cannot,
+    and says so rather than leaving it to be discovered. The model seeds,
+    which `RankSpecificSeedCallback` owns, are untouched.
+
+WALL TIMES BELOW ARE FROM A CONTENDED CARD and are not measurements. One to
+three other providers' resident workers held the GPU at 95-96 % utilisation
+throughout; the standing rule is that peak reserved reproduces under
+contention and wall time does not, and that is why the peaks above are
+declared and these are only quoted.
+
+  35 residues, one held worker, four identical requests: 54.4 / 52.4 / 52.6 /
+  50.9 s. Build 10.4 s, start-to-ready 10.7 s.
+  800 residues, one held worker, three identical requests: 247.8 / 234.1 /
+  222.1 s. Build 9.9 s, start-to-ready 10.1 s.
+  Ladder: 64.3 s at 100, 70.9 s at 200, 137.6 s at 400.
+
+RESIDENCY'S GAIN HERE IS SMALL, and the reason is specific rather than
+disappointing. Against a fresh process per request -- start, import, build,
+fold -- residency returns 65.1 s -> 52.0 s = **1.25x at 35 residues** (the
+best rung) and 257.9 s -> 228.1 s = **1.13x at 800 residues** (the row the
+budget is declared on). Inside one held worker the first request against the
+later ones is 1.05x and 1.09x respectively. Both ends are quoted because only
+the second is useful for planning: the expensive requests are the ones being
+scheduled around.
+
+What bounds it is per-request cost UPSTREAM keeps paying, and the kit's own
+PHASE census separates it exactly. At 35 residues the forward is 24-31 s of a
+52-54 s request; at 800 it is 186-215 s of a 222-248 s request. So ~26 s at
+the small end and ~32 s at the large one is not the model at all: it is
+in-process featurisation (0 loader workers, by the resident route's rule), a
+Lightning `Trainer` built per request, the host-to-device weight upload
+Lightning's teardown forces by moving the module to the CPU between requests,
+and the output writers. Residency holds the 2.3 GB checkpoint read, the
+model construction and the CUDA context -- 10 s and change -- and the Triton
+caches, which `MODEL_OPT_JIT_ROOT` persists across worker lifetimes anyway, so
+a per-call process would get those warm too after the first ever run. A
+provider whose per-request floor is 30 s of framework cannot show a 12x, and
+the number to report is the one measured rather than the one the standard's
+range would suggest."""
+
+[runtime]
+mode = "resident"
+worker = "resident/openfold3_ob0_resident_worker.py"
+# The shared launcher fits: this kit is one of the 30 that activate through a
+# `.pth` autoload plus a mode variable, `modes.resolve(mode, home)` is one of
+# the two shapes the probe already tries, and `_autoload.ENV` is where the
+# variable's name lives. No provider-local launch.py.
+launch = "tooluniverse.remote_resident.kit_launch:build_command"
+worker_args = ["--socket", "{socket}", "--slug", "{slug}"]
+# The build reads a 2.3 GB checkpoint and constructs the model; the first
+# request additionally compiles Triton kernels and captures CUDA graphs.
+# Generous on purpose: a deadline that fires during a first-run compile
+# reports a stall that is not one.
+start_timeout_s = 1800.0
+request_timeout_s = 3600.0
+# What a run that actually worked leaves behind. The sibling provider is why
+# this key exists: it exited 0 in 29 s, reported a GPU peak, and wrote only a
+# summary saying "Failed Queries: 1", because upstream catches the per-query
+# exception itself and returns normally.
+#
+# An EXTENSION SET, not a count and not an exact name. A count is wrong
+# because the number of structures is a request option (five diffusion samples
+# by default, `num_diffusion_samples` x `num_model_seeds` in general), so the
+# only count that holds for every request is "at least one", which a glob
+# already asserts. An exact name would be a second copy of upstream's naming
+# (`<query>_seed_<n>_sample_<m>_model.cif`) and would fail a good run the day
+# upstream renames it.
+#
+# TESTED AGAINST A FAILING RUN, not only a passing one, which is the boltzgen
+# lesson (`design_spec.cif` is written whether or not anything is designed).
+# The two files a FAILED OpenFold3 run writes are `inference_query_set.json`
+# and `summary.txt`; 0.5.0's `setup()` additionally writes
+# `experiment_config.json` and `model_config.json` into the output directory
+# before anything is folded. None of those four shares an extension with a
+# structure, and `setup._what_it_produced` was run against a directory holding
+# exactly those four and refused -- see the provider's own notes.
+outputs = ["*.cif", "*.pdb"]
+# And the reply-side half of the same assertion, which catches the other
+# direction: a worker that wrote structures and reported none.
+output_keys = ["structures"]
+idle_timeout_s = 900.0
+smoke = "smoke/input.json"
+smoke_timeout_s = 1800.0
+
+[gpu]
+policy = "required"
+# MEASURED on this card. `peak_reserved_gib` is `torch.cuda.max_memory_reserved`
+# and this worker does NOT reset it per request, so every figure is the
+# worker's running high-water mark -- what a scheduler adding budgets up needs.
+#
+# The ladder ran FIRST and ASCENDING in a worker nothing larger had touched,
+# one protein chain, upstream's default five diffusion samples:
+#
+#     residues   peak reserved   where
+#           35       2.20 GiB    the smoke, first request of a held worker
+#           35       2.35 GiB    the same worker's fourth identical request
+#          100       2.52 GiB    ladder rung 1
+#          200       3.29 GiB    ladder rung 2
+#          400       6.20 GiB    ladder rung 3
+#          800       9.97 GiB    first request of a fresh worker   <- declared
+#          800       9.94 GiB    second request of that worker
+#          800       9.96 GiB    third
+#
+# The envelope is 800 polymer residues, which is also the ceiling the tool
+# enforces (`MAX_RESIDUES_TOTAL` in openfold3_ob0_tool.py): a bound that
+# admits a request no declared budget covers is not a bound, so the two are
+# the same number on purpose. 800 residues costs 4.0x what 100 does -- an N^2
+# pair track with a small constant term, the same family shape as the
+# `openfold3` sibling (3.6x) and the opposite of esmc's 1.19x. A host that
+# will not fold past 400 residues holds this provider in 7 GiB rather than 10.
+#
+# THE DECLARED ROW IS THE CEILING, NOT THE SMOKE: 9.97 GiB is 4.5x the
+# 2.20 GiB the smoke reserves. A budget quoted from the smoke would
+# under-declare an ordinary request by that factor.
+#
+# Why the 800-residue figure is FLAT across three requests where the
+# 35-residue one climbs 2.20 -> 2.35: `[kit] env` forces `post_release` on
+# every item, and its release is what returns the sampler's generation, the
+# pair cache's static buffers and `trunk_graph`'s graphs between requests. The
+# worker's exit census for the 800 session reads
+# `cuda_max_reserved_mib=10200 ... captures=3 replays=597 releases=6`.
+#
+# All peaks here were taken with one to three other providers' workers on the
+# card. That is deliberate and it is the usable half: peak reserved is this
+# process's own allocator bookkeeping and reproduces under contention (the
+# 100-residue rung read 2.5 GiB in two independent sessions), while the wall
+# times in `verified_on` did NOT and are labelled accordingly.
+vram_budget_gb = 9.97
+driver_min = 570
+driver_min_reason = "its pinned stack is CUDA 12.8 (torch 2.10.0+cu128)"
+shareable = true
+isolation = "process"
+
+[env]
+kind = "venv"
+python = "$TOOLUNIVERSE_OPENFOLD3_OB0_PYTHON"
+lock = "environment/requirements.lock"
+# The version assertion is the point: `openfold3` is the same distribution
+# name the sibling provider pins at 0.4.1, so an interpreter that has the
+# wrong one installs, imports and folds with the wrong parameters. rdkit and
+# biotite are imported because both are compiled aarch64 wheels and both moved
+# between the two kits' locks -- a wheel that installs is not a wheel that
+# runs (tokenizers 0.10.x publishes well-formed aarch64 artifacts that SIGILL
+# at import).
+verify = "import torch, openfold3, openfold3_ob0_opt, rdkit, biotite; from importlib.metadata import version; assert version('openfold3') == '0.5.0', version('openfold3')"
+
+[weights]
+# Upstream's own cache root (openfold3/entry_points/parameters.py:
+# OPENFOLD_CACHE, else ~/.openfold3). The kit's install step writes the
+# checkpoint here and the worker points OPENFOLD3_OB0_CKPT at it; nothing is
+# fetched at request time. The sibling provider's `of3-p2-155k.pt` lives in
+# the same directory under its own name; the two never collide because
+# upstream keys parameters by file name.
+root_env = "OPENFOLD_CACHE"
+root_default = "~/.openfold3"
+# The kit's own fetcher, which goes through upstream's unsigned public-S3
+# client for the URL its PINS.json pins and then hash-checks the result. No
+# URL is restated in ToolUniverse. It needs no MODEL_OPT: openfold3_ob0_opt is
+# installed editable from the kit tree, so the package derives the tree from
+# its own location.
+fetch = "{python} -m openfold3_ob0_opt.weights {weights_root}"
+
+# Generated from the kit's stock/PINS.json `weights` entry, which carries both
+# the sha256 and the byte count. SERVED: one HEAD against the URL the pin
+# names answered 200 with Content-Length 2287872989, exactly the pinned size,
+# before anything else was done -- the first of the kit-choosing questions,
+# and the one protenix_v2 fails.
+[[weights.files]]
+name = "of3-ob-2025-06-30-174k.pt"
+size = 2287872989
+sha256 = "bd43301c011d5f87580d3e8b548658869433e4488399feb03035ba248f8e29e4"
+
+[kit]
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "openfold3_ob0"
+# common/opt_core is shared with the boltz2, enformer, chai1 and openfold3
+# providers; the sparse set is the union of what its providers declare.
+sparse = ["openfold3_ob0", "common"]
+package = "openfold3_ob0_opt"
+# Activation is the common form: the kit's `.pth` imports
+# openfold3_ob0_opt._autoload at interpreter start, and with the mode variable
+# set a meta-path finder waits for `import openfold3` and patches the package
+# in place. The variable's name is read from the kit, not guessed:
+# `openfold3_ob0_opt.modes` has no module-level ENV, so kit_launch falls
+# through to `_autoload.ENV = "OPENFOLD3_OB0_OPT"`.
+#
+# THIS KIT'S .pth ALSO REFUSES. Like af3_jax's, it exits 3 in EVERY process on
+# any name under its own prefix that it does not read:
+#
+#   [openfold3_ob0-opt] NOT ACTIVE: undeclared variable(s) OPENFOLD3_OB0_OPT_X
+#   (the package reads OPENFOLD3_OB0_OPT, OPENFOLD3_OB0_OPT_N_GPU, ...)
+#
+# `_autoload.DECLARED` is the list. Everything this provider sets is on it
+# (`OPENFOLD3_OB0_OPT`, `OPENFOLD3_OB0_OPT_POST_RELEASE_NTOK`), and
+# `OPENFOLD3_OB0_CKPT` is outside the `OPENFOLD3_OB0_OPT` prefix, so no name
+# here trips it. An operator with a mistyped `OPENFOLD3_OB0_OPT_*` in their
+# shell will see that refusal rather than a silent stock run, which is the
+# design and worth knowing before it is read as our bug.
+#
+# `fast` resolves here. The kit's own dry run refuses nothing on this card:
+# `DRY-RUN mode=fast ... gpu=NVIDIA GB10(cc12.1) levers_requested=<33>
+# env_vars=40 precision=bf16 graph=capture gate=no_cap`, rc 0.
+mode = "fast"
+# THE ONE LEVER OF THE FAST LINE THAT CANNOT RUN ON THIS CARD, switched off
+# through the kits' own ablation door (MODEL_OPT_LEVERS_OFF) rather than
+# patched. It is the same lever, the same word and the same shared kernel
+# table as the `openfold3` provider's, and it was reproduced with the kit's
+# OWN CLI before anything of ours ran. `bash run.sh pred --mode fast` on the
+# 35-residue smoke, unablated, exits 1 with 0/1 queries and this in
+# `<output>/logs/predict_err_rank0.log`:
+#
+#   RuntimeError: [openfold3_ob0-opt/pairfused] pair_transition: the core
+#   refused the trunk shape (c_z=128, N=35):
+#   fold:v2:arch-sm121-not-measured — OPENFOLD3_OB0_OPT_PAIR_STRICT=1
+#
+# The cell table (`opt_core/attn/pair_fused_cells.json`, the SHARED core, not
+# this kit) has no cc 12.1 row for the transition piece, so resolution
+# inherits one, and the kernel that row names refuses every capability but the
+# one it was measured on. `arch-...` is not among the kit's STRICT_EXEMPT
+# prefixes ("n<", "N<", "chunk", "training", "stream:float32", "cell:"), and
+# the fast line exports OPENFOLD3_OB0_OPT_PAIR_STRICT=1, so what would be a
+# counted fallback raises instead. The refusal is on the trunk width, which is
+# c_z=128 at N=35 and at N=800 alike, so it fires on every input.
+#
+# WHY THIS DOOR AND NOT THE OTHER TWO THE KIT OFFERS, measured and read rather
+# than guessed:
+#
+#   * `OPENFOLD3_OB0_OPT_PAIR_STRICT=0` would turn this raise into a counted
+#     fallback and keep the cell installed. Rejected: STRICT is a guard over
+#     the WHOLE pair family, so disabling it for one cell also stops
+#     `trimul_v4` and `triatt_block` failing loudly if they ever start
+#     degrading on the trunk shape. A named failure traded for a silent count
+#     in two cells that currently work is the wrong trade.
+#   * unsetting `OPENFOLD3_OB0_OPT_PAIR`, which the error message itself
+#     suggests, drops all three pair cells. Rejected: more ablation than the
+#     defect needs, and measurably so -- with only `pair_transition` off,
+#     `trimul_v4` and `triatt_block` serve every call they are offered
+#     (`served=124 fallback=0 degraded=0` each, `fallbacks=none` on the kit's
+#     own exit line).
+#
+# `modes.apply_levers_off` removes the lever from the line before anything is
+# exported, so the ACTIVE line reads
+# `OPENFOLD3_OB0_OPT_PAIR=trimul_v4:triatt_block ... levers_off=pair_transition`
+# and the activation is recorded as an ablation of the mode -- the honest word.
+# What is forgone is one fused kernel; the pair transition runs upstream's own
+# SwiGLUTransition, as it does on any card the core has no cell for.
+levers_off = ["pair_transition"]
+# `bash run.sh install` does three things this provider needs and one it does
+# not have to be told twice: it installs openfold3_ob0_opt and opt_core
+# editable, places stock openfold3 0.5.0 at its pin and checks it file for
+# file, and -- the step the 0.4.1 kit has no analogue of -- fetches upstream's
+# FULL Chemical Component Dictionary (`components.bcif`, 63,393,643 bytes,
+# sha256 473d845c...) over the subset biotite 1.6.0 ships inside its own
+# package directory, hashing it against the same PINS.json. That file lands in
+# `<site-packages>/biotite/structure/info/components.bcif`, not under the
+# weights root, so it cannot be a `[[weights.files]]` entry -- it is named here
+# instead, because an environment that skipped it runs silently on biotite's
+# subset and mis-builds any ligand or modified residue outside it.
+#
+# openfold3_ob0's run.sh drives whatever `python` is on PATH; it does not read
+# a PYTHON variable. `tu remote setup` puts the manifest's interpreter first on
+# PATH for exactly this step, so the plain form is the correct one here.
+install = "bash run.sh install --weights {weights_root}"
+
+# Settings this provider states for the kit, applied before the worker starts.
+# These are the kit's own documented knobs -- a size gate -- which `levers_off`
+# cannot express because they are not levers.
+[kit.env]
+# THE SECOND REQUEST. This is the setting that lets a held worker answer twice
+# at a shape it has already folded, and it was put here before the first
+# request rather than after the second failed, because the defect is readable
+# in the shared core both providers' cells bind:
+#
+#   opt_core/of3_trunk/trunk_graph.py, the replay guard --
+#     if e["storage_sig"] != _storage_signature(self):
+#         del _G["entries"][key]          # the pool handle is NOT cleared
+#         return _fb("storage_moved", self, a, k)
+#   against release(), three lines above --
+#     _G["entries"].clear(); _G["n_tok"] = None; _G["pool"] = None
+#
+# Lightning moves the module to the CPU at the end of every `predict` and back
+# at the next one, so every parameter address changes between requests;
+# `trunk_graph` correctly refuses to replay a graph over moved storage and
+# deletes the entry, but keeps the graph POOL handle that the deleted graph
+# had just emptied. The re-capture hands that dead handle to
+# `torch.cuda.graph(...)` and dies inside the allocator
+# (`it->second->use_count > 0 INTERNAL ASSERT FAILED`); a capture that began
+# and never ended leaves the CUDA generator's `capturing_` flag set, and the
+# next eager draw raises `Offset increment outside graph capture encountered
+# unexpectedly` three call frames away. Upstream catches that per query, so it
+# arrives as "wrote no structure" rather than as a crash.
+#
+# A length ladder hides it completely -- a new token count makes the cell call
+# its own `release()`, which does clear the pool -- so only a REPEATED shape
+# reaches it. That is the whole reason the acceptance test is four consecutive
+# IDENTICAL requests before anything else.
+#
+# `post_release`'s gate is `n_tok >= 2400` or free device memory below 16 GB,
+# and a 35- to 800-residue fold on a 128 GB card is neither, so the lever is
+# on and never fires. Setting the gate to 0 puts it on every item, and its
+# release goes through `trunk_graph.release()`, which clears the pool with the
+# graphs. This is the kit's own knob, not an ablation and not a patch: the
+# fast line keeps every lever it had, `trunk_graph` included, and the kit's
+# conflict rule leaves a cell family's parameters -- "size gates, caps, core
+# pins" -- to the caller.
+OPENFOLD3_OB0_OPT_POST_RELEASE_NTOK = "0"
