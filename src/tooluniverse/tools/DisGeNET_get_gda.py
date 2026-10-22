@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def DisGeNET_get_gda(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_gda",
     gene: Optional[str] = None,
     disease: Optional[str] = None,
     source: Optional[str] = None,
