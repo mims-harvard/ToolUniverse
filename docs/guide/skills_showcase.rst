@@ -2536,17 +2536,6 @@ Development Skills
 
       :bdg-info:`devtu-benchmark-harness`
 
-   .. grid-item-card:: 🛠️ DevTU: Remote Provider
-      :link: https://github.com/mims-harvard/ToolUniverse/tree/main/skills/devtu-remote-provider
-      :class-card: hover-lift
-      :shadow: md
-
-      Bring up, standardise or debug a GPU-backed ToolUniverse remote tool in src/tooluniverse/remote/<slug>/ — the provider.toml manifest, the resident ...
-
-      +++
-
-      :bdg-info:`devtu-remote-provider`
-
 
 How to Use Skills
 -----------------
