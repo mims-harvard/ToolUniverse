@@ -1,0 +1,188 @@
+# OpenFold3 (OpenBind-0) model environment — the kit's own
+# openfold3_ob0/environment/requirements.lock with the three linux-aarch64
+# substitutions below applied. Python 3.11.12 (uv-managed CPython, installed
+# with the STDLIB venv module), linux-aarch64.
+#
+# THE STACK IS openfold3's STACK. The ob0 kit's lock and the openfold3 kit's
+# lock differ in exactly two of their 115 lines -- `openfold3` (0.5.0 against
+# 0.4.1) and `rdkit` (2025.9.3 against 2026.3.3) -- so torch 2.10.0+cu128,
+# triton 3.6.0, numpy 2.4.6, deepspeed 0.19.2, cuequivariance 0.10.0 and the
+# rest are pin for pin the stack the openfold3 provider measured. What the two
+# providers cannot share is an INTERPRETER: both pin the distribution named
+# `openfold3`, at versions whose checkpoints are mutually incompatible
+# (`version_compatibility` ">=0.5.0" against ">=0.4,<0.4.4dev0",
+# openfold3/entry_points/parameters.py), and each kit installs its own
+# autoload .pth whose hook refuses to share a process with the other's
+# ("one route per process"). Two environments, two sockets.
+#
+# Rebuild (an NVIDIA driver that runs CUDA 12.8 -- 570 or newer -- and a C
+# compiler on PATH for Triton and the kit's fused extensions):
+#
+#   uv python install 3.11
+#   "$(uv python find --managed-python 3.11)" -m venv ~/openfold3_ob0-venv
+#   ~/openfold3_ob0-venv/bin/python -m pip install --no-deps -r requirements.lock
+#   export TOOLUNIVERSE_OPENFOLD3_OB0_PYTHON=~/openfold3_ob0-venv/bin/python
+#   tu remote setup openfold3_ob0        # the kit, the CCD and the weights
+#
+# --no-deps is deliberate: the list is complete, and letting a resolver
+# re-derive it is how a stack stops being the one that was measured. The kit
+# (openfold3_ob0_opt) and its shared core (opt_core) install editable on top
+# and are not here.
+#
+# NOT `uv venv`, and this is not a style preference -- it is the openfold3
+# provider's finding, and it applies here because the hook is the same shared
+# core's. `uv venv` seeds `_virtualenv.pth`, which puts a class literally named
+# `_Finder` on sys.meta_path, and `_Finder` is one of the names in the kit's
+# HOOK_FINDER_CLASSES. The kit reads it as a rival kit hook and every mode
+# refuses with "a kit hook is already installed in this process". The stdlib
+# `venv` module run by the same uv-managed interpreter gives the same released
+# CPython 3.11 without the hook.
+#
+# THREE DEVIATIONS from the kit's own environment/requirements.lock, all forced
+# by linux-aarch64 and none of them a version change. They are the openfold3
+# provider's three, re-verified against this kit's lock:
+#
+#  1. torch is pinned as `torch==2.10.0+cu128` against
+#     `--extra-index-url https://download.pytorch.org/whl/cu128` rather than
+#     the bare `torch==2.10.0` the kit writes. Same version, same CUDA build:
+#     on x86-64 PyPI's torch 2.10.0 IS the +cu128 build, but PyPI's
+#     linux-aarch64 wheel for 2.10.0 is `2.10.0+cpu` -- `torch.version.cuda`
+#     is None and `get_arch_list()` is empty -- so the stack would install
+#     perfectly and not drive the card. The aarch64 +cu128 wheel is published
+#     on PyTorch's own index. It carries sm_80/sm_90/sm_100/sm_120, and an
+#     sm_120 cubin runs on this box's sm_121.
+#
+#     The extra index is additive, so a handful of entries that exist on both
+#     resolve from PyTorch's index rather than PyPI's: torch, triton,
+#     cuda-python, Jinja2, MarkupSafe, colorama and the nvidia-*-cu12 runtime
+#     wheels (which PyTorch's index links to pypi.nvidia.com). Same names, same
+#     pinned versions.
+#
+#  2. Seven distributions of the kit's lock are omitted because they publish no
+#     linux-aarch64 wheel at all: intel-cmplr-lib-ur, intel-openmp, mkl,
+#     onemkl-license, tbb, tcmlib and umf. They are torch's Intel MKL/oneAPI
+#     runtime on x86-64; the aarch64 torch wheel neither links against them nor
+#     requires them. Without them removed the install stops at
+#     `No matching distribution found for intel-cmplr-lib-ur==2026.0.0`.
+#
+#  3. `pip==24.0` appears here and not in the kit's lock, which subtracts the
+#     interpreter's bundled pip. `tu remote setup` installs pip and wheel
+#     first, so it is left in.
+#
+# Everything else is the kit's lock pin for pin: 108 of its 115 entries at the
+# version it names. The kit's lock pins nothing by URL, so no name substitution
+# was needed.
+#
+# `rdkit==2025.9.3` publishes a cp311 manylinux_2_28_aarch64 wheel; it is the
+# one line of this file that differs from the openfold3 provider's lock besides
+# `openfold3` itself, and it is the kit's own pin, not a downgrade chosen here.
+--extra-index-url https://download.pytorch.org/whl/cu128
+absl-py==2.4.0
+aiohappyeyeballs==2.6.2
+aiohttp==3.14.1
+aiosignal==1.4.0
+annotated-types==0.7.0
+aria2==0.0.1b0
+attrs==26.1.0
+awscli==1.45.37
+awscrt==0.35.0
+biotite==1.6.0
+biotraj==1.2.2
+boto3==1.43.37
+botocore==1.43.37
+certifi==2026.6.17
+charset-normalizer==3.4.7
+click==8.4.2
+colorama==0.4.6
+cuda-bindings==12.9.4
+cuda-pathfinder==1.5.6
+cuda-python==12.9.0
+cuequivariance==0.10.0
+cuequivariance-ops-cu12==0.10.0
+cuequivariance-ops-torch-cu12==0.10.0
+cuequivariance-torch==0.10.0
+deepspeed==0.19.2
+docutils==0.19
+einops==0.8.2
+filelock==3.29.4
+frozenlist==1.8.0
+fsspec==2026.6.0
+func_timeout==4.3.5
+gemmi==0.7.5
+gitdb==4.0.12
+GitPython==3.1.50
+hjson==3.1.0
+idna==3.18
+ijson==3.5.0
+Jinja2==3.1.6
+jmespath==1.1.0
+kalign-python==3.6.0
+lightning-utilities==0.15.3
+lmdb==2.2.1
+MarkupSafe==3.0.3
+memory-profiler==0.61.0
+ml_collections==1.1.0
+mpmath==1.3.0
+msgpack==1.2.1
+multidict==6.7.1
+networkx==3.6.1
+ninja==1.13.0
+numpy==2.4.6
+nvidia-cublas-cu12==12.8.4.1
+nvidia-cuda-cupti-cu12==12.8.90
+nvidia-cuda-nvrtc-cu12==12.8.93
+nvidia-cuda-runtime-cu12==12.8.90
+nvidia-cudnn-cu12==9.10.2.21
+nvidia-cufft-cu12==11.3.3.83
+nvidia-cufile-cu12==1.13.1.3
+nvidia-curand-cu12==10.3.9.90
+nvidia-cusolver-cu12==11.7.3.90
+nvidia-cusparse-cu12==12.5.8.93
+nvidia-cusparselt-cu12==0.7.1
+nvidia-cutlass==3.8.0.0
+nvidia-ml-py==13.610.43
+nvidia-nccl-cu12==2.27.5
+nvidia-nvjitlink-cu12==12.8.93
+nvidia-nvshmem-cu12==3.4.5
+nvidia-nvtx-cu12==12.8.90
+openfold3==0.5.0
+opt_einsum==3.4.0
+packaging==26.2
+pandas==3.0.3
+pdbeccdutils==1.0.3
+pillow==12.2.0
+pip==24.0
+platformdirs==4.10.0
+propcache==0.5.2
+protobuf==7.35.1
+psutil==7.2.2
+py-cpuinfo==9.0.0
+pyasn1==0.6.3
+pydantic==2.13.4
+pydantic_core==2.46.4
+pydot==4.0.1
+pyparsing==3.3.2
+python-dateutil==2.9.0.post0
+pytorch-lightning==2.6.5
+PyYAML==6.0.3
+rdkit==2025.9.3
+requests==2.34.2
+rsa==4.7.2
+s3transfer==0.19.0
+scipy==1.17.1
+sentry-sdk==2.63.0
+setuptools==68.1.2
+six==1.17.0
+smmap==5.0.3
+sympy==1.14.0
+torch==2.10.0+cu128
+torchmetrics==1.9.0
+tqdm==4.68.3
+treelib==1.8.0
+triton==3.6.0
+typing-inspection==0.4.2
+typing_extensions==4.15.0
+urllib3==2.7.0
+wandb==0.28.0
+wheel==0.48.0
+yarl==1.24.2

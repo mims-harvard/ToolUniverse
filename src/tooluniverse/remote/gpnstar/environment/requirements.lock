@@ -1,0 +1,117 @@
+# GPN-Star's model environment -- the stack this provider was built against.
+#
+# This is the optimization kit's own environment/requirements.lock (gpnstar/environment/
+# requirements.lock at commit f4f62fa6592ae4938d49b1757bea0cfeff9f468e): `pip freeze --all`
+# of the kit's tested interpreter, 86 distributions, less the kit (gpnstar/opt) and the
+# shared core (common/opt_core), which `[kit] install` puts on top editable. Every one of
+# the 85 distribution pins below is the kit's, unchanged.
+#
+# ONE DEVIATION, in form and not in version: the kit's lock names stock gpn by the path of
+# the byte-frozen archive it carries (`./gpnstar/stock/gpn-6f28c81b.tar.gz`, relative to the
+# bundle's top directory). This step runs BEFORE the kit is checked out, and pip reads a
+# relative path against whatever directory it runs in, so that line cannot be honoured
+# here. It is replaced by the byte-equivalent line the kit's own STOCK.md and PINS.json
+# (upstream.gpn.install) both name:
+#     gpn @ git+https://github.com/songlab-cal/gpn@6f28c81bcbfe7d65cb6d8ece9ce88f87ca583791
+# the same commit. `[kit] install` runs `run.sh install`, whose stock/check_pins.py then
+# compares the installed gpn module by module with the archive and refuses a difference by
+# name, so the replacement is checked, not trusted. pip builds it with hatchling in an
+# isolated environment fetched from the index: network and git are needed at this step.
+#
+# Python 3.13 (upstream requires >=3.13,<3.14). The kit measured 3.13.15; uv here has 3.13.14.
+#
+# torch 2.13.0 is PyPI's CUDA 13.0 build (2.13.0+cu130). Its aarch64 wheel carries an
+# sm_120 cubin, which runs on this card's sm_121 -- the same way boltz's 2.12.0+cu130 does.
+# That puts this provider on the >= 2.7 side of STANDARD section 10's torch question, so
+# the GPU is open: [gpu] policy = "required".
+#
+# Rebuild:
+#   uv venv --seed --managed-python --python 3.13 ~/gpnstar-venv
+#   export TOOLUNIVERSE_GPNSTAR_PYTHON=~/gpnstar-venv/bin/python
+#   tu remote setup gpnstar --only environment
+accelerate==1.15.0
+aiohappyeyeballs==2.7.1
+aiohttp==3.14.3
+aiosignal==1.4.0
+annotated-doc==0.0.5
+anyio==4.15.1
+attrs==26.1.0
+biopython==1.88
+certifi==2026.7.22
+charset-normalizer==3.5.1
+click==8.5.0
+cuda-bindings==13.4.1
+cuda-pathfinder==1.8.1
+cuda-toolkit==13.0.3.0
+cyclopts==4.25.2
+datasets==5.0.1
+dill==0.4.1
+docstring_parser==0.18.0
+donfig==0.8.1.post1
+filelock==3.32.6
+frozenlist==1.8.0
+fsspec==2026.6.0
+google-crc32c==1.8.0
+gpn @ git+https://github.com/songlab-cal/gpn@6f28c81bcbfe7d65cb6d8ece9ce88f87ca583791
+h11==0.16.0
+hf-xet==1.6.0
+httpcore==1.0.9
+httpx==0.28.1
+huggingface_hub==1.31.0
+idna==3.19
+jaxtyping==0.3.11
+Jinja2==3.1.6
+markdown-it-py==4.2.0
+MarkupSafe==3.0.3
+mdurl==0.1.2
+mpmath==1.3.0
+multidict==6.8.0
+multiprocess==0.70.19
+networkx==3.6.1
+numcodecs==0.16.5
+numpy==2.5.3
+nvidia-cublas==13.1.1.3
+nvidia-cuda-cupti==13.0.85
+nvidia-cuda-nvrtc==13.0.88
+nvidia-cuda-runtime==13.0.96
+nvidia-cudnn-cu13==9.20.0.48
+nvidia-cufft==12.0.0.61
+nvidia-cufile==1.15.1.6
+nvidia-curand==10.4.0.35
+nvidia-cusolver==12.0.4.66
+nvidia-cusparse==12.6.3.3
+nvidia-cusparselt-cu13==0.8.1
+nvidia-nccl-cu13==2.29.7
+nvidia-nvjitlink==13.4.52
+nvidia-nvshmem-cu13==3.4.5
+nvidia-nvtx==13.0.85
+packaging==26.3
+pandas==3.0.5
+pip==26.2.1
+propcache==0.5.2
+psutil==7.2.2
+pyarrow==25.0.1
+Pygments==2.21.0
+python-dateutil==2.9.0.post0
+PyYAML==6.0.3
+regex==2026.9.10
+requests==2.34.2
+rich-rst==2.1.0
+rich==15.0.0
+safetensors==0.8.0
+setuptools==84.0.0
+shellingham==1.5.4
+six==1.17.0
+sympy==1.14.0
+tokenizers==0.22.2
+torch==2.13.0
+tqdm==4.70.1
+transformers==5.15.0
+triton==3.7.1
+typer==0.27.2
+typing_extensions==4.16.0
+urllib3==2.7.0
+wadler_lindig==0.1.7
+xxhash==4.0.1
+yarl==1.24.5
+zarr==3.3.0

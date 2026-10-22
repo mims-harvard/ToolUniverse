@@ -1,0 +1,128 @@
+# opendde -- the model environment, installed --no-deps into the interpreter
+# $TOOLUNIVERSE_OPENDDE_PYTHON names. It is the kit's own
+# opendde/environment/requirements.lock with TWO deviations, each argued
+# below; every other line is byte-identical to the kit's (numpy 2.4.1, scipy
+# 1.17.1, triton 3.3.1, cuequivariance 0.10.0 and its two cu12 ops wheels,
+# rdkit 2025.9.3, biotite 1.4.0, pandas 2.3.1 ...).
+#
+# Python 3.11.5, the kit's own interpreter (PINS.json pinned_stack.python),
+# from uv's managed builds, but the venv is made with the STDLIB module:
+#
+#   ~/.local/share/uv/python/cpython-3.11.5-linux-aarch64-gnu/bin/python3.11 \
+#       -m venv ~/opendde-venv
+#   export TOOLUNIVERSE_OPENDDE_PYTHON=~/opendde-venv/bin/python
+#
+# `uv venv` writes a `_virtualenv.pth`, which broke openfold3's kit-hook
+# detection; the stdlib module has none, and this kit ACTIVATES through a .pth
+# (opt/opendde_opt_autoload.pth), so the cheap choice is the safe one.
+#
+# DEVIATION 1 -- torch 2.7.1+cu126 -> torch 2.7.1+cu128. The SAME upstream
+# version, only the CUDA build differs, and two facts force it, both measured:
+#   * the kit pins torch by the URL of an x86-64 file
+#     (torch-2.7.1+cu126-cp311-manylinux_2_28_x86_64.whl). A requirement that
+#     names an x86-64 file cannot install on this host at all, and
+#     download.pytorch.org/whl/cu126 publishes no aarch64 file at 2.7.1.
+#   * torch 2.7.1 is >= 2.7, so the question STANDARD.md section 10 asks first
+#     ("can its pinned torch drive this card?") has the answer yes -- but ONLY
+#     for the cu128 build, whose arch list is sm_75..sm_120 and whose sm_120
+#     cubin runs on this sm_121 card. The cu126 build lists nothing above
+#     sm_90 and would fail on the first device allocation, as 2.5.1 does.
+# The genie3 provider made the identical substitution for the identical pin
+# and its header records the kit's tolerance for it: stock/check_pins.py
+# compares the torch version with the local tag stripped. (opendde's kit
+# prints `STACK MISMATCH stack_mismatch:<pkg>=...` on another torch and
+# PROCEEDS: "only the upstream package's version and files are refused on".)
+#
+# DEVIATION 2 -- every `nvidia-*-cu12` line of the kit's freeze (sixteen) is
+# absent. This is what pip resolves, not a reduction: the aarch64 cu128 build of
+# torch 2.7.1 carries its CUDA runtime, cuBLAS, cuDNN, cuFFT, NVRTC ... inside
+# its own `torch/lib` and marks every `nvidia-*-cu12` requirement
+# `platform_machine == "x86_64"`. Measured: `torch.version.cuda` reads 12.8,
+# `torch.cuda.is_available()` is True and a 2048x2048 GEMM runs with no
+# nvidia-* distribution in the environment but `nvidia-ml-py`, which is pure
+# Python and kept at the kit's pin.
+#
+# INERT BUT KEPT: the four `cuequivariance*` pins. They install on aarch64
+# (cuequivariance-ops-cu12 0.10.0 publishes an aarch64 wheel) and are never
+# imported by a fold here, because upstream's OWN platform gate resolves the
+# triangle kernels `auto` to `torch` on anything but Linux x86_64 and refuses an
+# explicit `cuequivariance` ("cuEquivariance kernels are supported only on
+# Linux x86_64", opendde/utils/environment.py). They are left in so the lock
+# stays the kit's freeze line for line apart from the two deviations. If they
+# were ever reached, they would not work: cuEquivariance 0.10.0's
+# triangle-multiplication kernel is Triton, triton 3.3.1 cannot lower a warp
+# shuffle for sm_121, and a standalone probe aborts the whole PROCESS ("LLVM
+# ERROR: Cannot select: intrinsic %llvm.nvvm.shfl.sync.bfly.i32") at 128
+# tokens and up; and libcue_ops.so needs libnvrtc.so.12, which lives in
+# torch/lib and is not on the loader's path until something loads it.
+#
+# NOT A DEVIATION, though the kit's own recipe suggests one: the kit's README
+# strips the `opendde==1.1.1` line from this freeze and installs the bundled
+# wheel with --no-deps afterwards. It is KEPT here, because the environment
+# step installs this file and nothing else, and the kit step's pin check
+# (`stock/check_pins.py`) then needs `opendde` present. The kit's PINS.json says
+# in as many words that the PyPI file and the bundled wheel are the same bytes
+# ("stock/check_pins.py judges bytes, so this form and `pip install --no-deps
+# stock/opendde-1.1.1-py3-none-any.whl` both pass").
+#
+# torch is resolved from the cu128 index below; every other pin is PyPI's file.
+--extra-index-url https://download.pytorch.org/whl/cu128
+absl-py==2.5.0
+annotated-types==0.8.0
+biopython==1.85
+biotite==1.4.0
+biotraj==1.2.2
+certifi==2026.7.22
+charset-normalizer==3.5.1
+click==8.5.0
+cloudpickle==3.1.2
+cuda-bindings==12.8.0
+cuequivariance==0.10.0
+cuequivariance-ops-cu12==0.10.0
+cuequivariance-ops-torch-cu12==0.10.0
+cuequivariance-torch==0.10.0
+filelock==3.32.5
+fsspec==2026.7.0
+idna==3.19
+iniconfig==2.3.0
+Jinja2==3.1.6
+joblib==1.6.0
+MarkupSafe==3.0.3
+ml_collections==1.1.0
+mpmath==1.3.0
+msgpack==1.2.2
+networkx==3.6.1
+ninja==1.13.2
+numpy==2.4.1
+nvidia-ml-py==13.610.43
+opendde==1.1.1
+opt_einsum==3.4.0
+optree==0.17.0
+packaging==26.3
+pandas==2.3.1
+pillow==12.3.0
+platformdirs==4.11.7
+pluggy==1.6.0
+pydantic==2.13.5
+pydantic_core==2.46.5
+Pygments==2.21.0
+pytest==9.1.1
+python-dateutil==2.9.0.post0
+pytz==2026.3.post1
+PyYAML==6.0.3
+rdkit==2025.9.3
+requests==2.34.2
+scikit-learn==1.7.1
+scipy==1.17.1
+setuptools==68.1.2
+six==1.17.0
+sympy==1.14.0
+threadpoolctl==3.6.0
+torch==2.7.1+cu128
+tqdm==4.67.1
+triton==3.3.1
+typing-inspection==0.4.4
+typing_extensions==4.16.0
+tzdata==2026.3
+urllib3==2.7.0
+uv==0.8.15

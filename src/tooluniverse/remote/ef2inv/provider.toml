@@ -1,0 +1,535 @@
+# ef2inv -- ESMFold2 gradient-guided binder design, held resident.
+#
+# The eleventh provider on the standard and the FIRST that needs backward
+# passes. Every provider before it runs under torch.no_grad(); this one
+# optimises a soft binder sequence by gradient descent through two ESMFold2
+# distogram models and an ESMC-6B pseudo-perplexity term -- 150 steps, each a
+# fold under grad plus two autograd.grad calls -- and then refolds the result
+# with four frozen "hero critic" models. Two consequences are declared rather
+# than discovered:
+#
+#   * peak VRAM is much larger than a forward-only estimate of the same
+#     weights. ESMFold2 (the predictor provider, same stack, same ESMC-6B)
+#     measures 14.2 GiB on an 89-residue fold. The derived reserve below is
+#     41.6 GiB for a 195-token design, and for a long enough input this kit's
+#     own memory planner deliberately FILLS the card (see [gpu]).
+#
+#   * a resident worker holding autograd state across requests is a new
+#     failure surface. What this worker does about it is in the worker's
+#     docstring under "What is retained between designs"; the short version is
+#     that the design loop itself calls torch.autograd.grad rather than
+#     .backward, so no graph is retained past a step, the worker drops every
+#     reference to the trajectory and the critic structures once they are
+#     written, and the only cross-request state is the kit's own -- which the
+#     kit releases by name when the complex size changes.
+#
+# THIS KIT IS ARGV-ONLY, which is the fifth activation shape the standard has
+# seen. It ships no autoload `.pth` and patches nothing on import: its own
+# `opt/pyproject.toml` says "No autoload .pth: the upstream is a script, the
+# kit's switch is an environment variable the launcher sets per arm", and
+# `ef2inv_opt/__init__.py` repeats it. The kit's launcher (`launch.py`) runs an
+# ARM PROCESS -- `python -I -m ef2inv_opt.stock_design --mode <m> ...` -- with
+# EF2_FAST_KIT set, the design kit's `k/` directory on sys.path, and the kit
+# installed on the imported cookbook module from outside
+# (`fastkit.install`). One arm process is one design.
+#
+# So the resident worker is a different script in the position that arm script
+# occupies: it calls the same kit functions in the same order (every step of
+# `resident/ef2inv_resident_worker.py` cites the line of
+# `ef2inv_opt/stock_design.py` it mirrors), holds the loaded models, and runs
+# the cookbook's own `.design()` once per requested design. Nothing in the kit
+# is patched, copied or shadowed.
+#
+# Residency is worth a great deal here and the reason is the load, not the
+# kernels: `ESMFold2Design.load()` reads 28.0 GiB of fp32 weights -- the
+# ESMC-6B trunk shared by every model (REUSE_ESMC=True) plus six ESMFold2
+# models -- and torch.compile's the inversion models' MSA encoder and pair
+# blocks (COMPILE=True, the cookbook's own constant). An arm process pays all
+# of that per design. It is NOT measured yet on this card: see [provider]
+# status.
+
+[provider]
+slug = "ef2inv"
+description = "ESMFold2 gradient-guided binder sequence design (ESM cookbook binder_design recipe)"
+operations = ["ef2inv_design"]
+# Untested: no smoke has run on this machine. The GPU is serialized by the
+# caller and this provider was brought up without touching it.
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver
+580.173.02), venv route, kit mode fast, through this provider's own `launch.py`
+(the kit is argv-only and its mode variable must NOT reach the arm process --
+see [kit]).
+
+VERIFIED ON 4 CONSECUTIVE IDENTICAL REQUESTS in one held worker, the warm pass
+at 135 tokens, every request asserted to have filled its declared output_keys:
+
+    build 29.0 s, then 15.7 / 5.1 / 5.1 / 5.2 s
+    peak reserved 26.30 -> 26.34 -> 26.34 -> 26.34 GiB
+
+**The flat peak is the result worth having.** This is the only provider on the
+standard that runs BACKWARD passes -- the design loop calls
+`torch.autograd.grad` per step -- so the question a repeat answers here is not
+just "does a graph replay survive" but "does autograd state accumulate". It does
+not: the worker keeps no tensor from a request, drops trajectory and critic
+references once the kit's own writers have written them, and collects between
+designs. Four requests moved the high-water mark by 0.04 GiB.
+
+The smoke step measured 28.03 GiB on its own run, which is the figure [gpu]
+declares.
+
+ACCEPTANCE 2026-10-17: 12/12 answered, every one produced=yes. Rungs are
+TOKEN COUNTS (135/195/256/300), which is the real engine key here --
+n_tokens = len(target_seq) + binder_len keys the kit's composition memo, and
+a different value returns every shape-bound graph pool and re-plans the
+backward checkpoint policy. Kept on the warm pass, since the design pass's
+length is a pinned module constant the kit refuses to see changed.
+
+Growing past the 115-residue pd-l1 preset means leaving the preset route:
+resolve_target refuses a preset name carrying a target_sequence and refuses
+a non-preset name without one, so the ladder renames the target and supplies
+its own sequence, keeping input-design.json's own 80:195 binder share.
+
+Found here and recorded in [gpu]: the declared budget was a 135-token number
+(28.03 against 33.99 at 256), and the ladder is NON-MONOTONIC at the
+POOL_MAX_TOKENS=256 boundary -- 300 tokens is cheaper and faster than 256.
+"""
+
+[runtime]
+mode = "resident"
+worker = "resident/ef2inv_resident_worker.py"
+# NOT kit_launch:build_command, and for two reasons that are both properties of
+# the kit. See launch.py's docstring; in brief: this kit spells its mode
+# variable `modes.ENV_MODE`, not `modes.ENV`, so the shared probe finds no name
+# to set; and if it did set it, EF2INV_OPT in the worker's environment would
+# FAIL the kit's own environment proof -- `EF2INV_` is one of the prefixes
+# `stock/PINS.json stock_environment.must_be_absent_prefixes` requires to be
+# ABSENT from an arm process. The mode reaches the worker as `--mode` and the
+# arm's one allowed variable, EF2_FAST_KIT, is set by launch.py.
+launch = "tooluniverse.remote.ef2inv.launch:build_command"
+worker_args = [
+  "--socket", "{socket}",
+  "--slug", "{slug}",
+  "--kit", "{kit}",
+  "--mode", "{kit_mode}",
+]
+# 28.0 GiB of fp32 weights read once, six models built, and the cookbook's own
+# torch.compile of the MSA encoder and the pair-update blocks. The kit's README
+# puts one design line at 2-3.5 min on an H100 INCLUDING that load; nothing is
+# measured here yet, so this is generous on purpose.
+start_timeout_s = 5400.0
+# One request is N designs of 150 steps each, and 150 is NOT a parameter: it is
+# the cookbook's own module constant STEPS, and `settings.check_shipped`
+# refuses a changed one (see [runtime] smoke).
+request_timeout_s = 21600.0
+idle_timeout_s = 900.0
+# What a run that actually worked leaves behind. A design writes design.fasta /
+# design.pdb / design.cif / critics.json; the warm pass writes
+# warm_result.json. The smoke step matches against file NAMES, so one of the
+# three is enough -- and `output_keys` is declared beside them because an
+# exit code is not evidence that a model ran.
+outputs = ["warm_result.json", "design.fasta", "design.pdb"]
+output_keys = ["n_tokens", "weights_held_by"]
+# THE SMOKE IS THE WARM PASS, and that is forced by the recipe rather than
+# chosen. The design loop's length is the cookbook's own `STEPS = 150`
+# (binder_design.py l.97) and the kit REFUSES a changed loop constant --
+# `settings.SHIPPED_CONSTANTS` is read back off the imported module and
+# `check_shipped` makes a difference a refusal, not a deviation. There is no
+# `--steps` to make small, so the only knobs a smoke has are the target and
+# the binder length, and a 150-step design plus four critic folds (3 loops,
+# 200 sampling steps each) is minutes on an H100 and unmeasured here. A smoke
+# that might take forty minutes is not a smoke.
+#
+# So the smoke is the kit's OWN smallest end-to-end exercise of the gradient
+# path: its `warm` verb's work (stock_design.py --warm-only), which loads the
+# models, folds the case once per inversion model, and then runs ONE
+# design-step-shaped grad pass per inversion model -- the fold under grad, the
+# structure-loss backward with respect to the logits, and the pseudo-perplexity
+# term forward+backward. That is every piece of machinery a design step uses,
+# at 135 tokens, once.
+#
+# smoke/input-design.json beside it is the real thing -- one 150-step design of
+# the same case -- for the caller to run by hand when the card is free. It is
+# not wired here, so that a slow design cannot block this provider the way
+# boltzgen's 500-step smoke blocked that one.
+smoke = "smoke/input.json"
+smoke_timeout_s = 3600.0
+
+[gpu]
+policy = "required"
+# MEASURED AT ONE POINT ONLY, and this provider is the reason the standard needs
+# to say that an envelope may be the DEVICE rather than the input.
+#
+# 33.99 GiB, the top of the bounded ladder below, and the figure it replaces
+# was 28.03 -- the warm pass at 135 tokens only.
+#
+# Re-measured, 135 tokens now reads 23.49 peak and 23.46 steady over the
+# repeats, BELOW the 28.03/26.34 recorded before; but 256 tokens reads 32.91
+# on the ladder and 33.99 on reuse, ABOVE it by 21%. So the old figure was not
+# conservative, it was taken at the smallest rung a caller can ask for, while
+# the tool layer permits up to 300 tokens.
+#
+# The derived reserve was 41.62 at 195 tokens, so the arithmetic was 1.5x
+# high -- the conservative direction, and the closest any of this effort's
+# pre-measurement estimates has come for a backward-pass model.
+#
+# A LADDER IS NOW DECLARED, BOUNDED, and the paragraph it replaces was right
+# about the wrong range. Under `fast` the kit's checkpointing planner budgets
+# 0.90 x torch's reported total memory and keeps the most pair blocks whose
+# estimated peak fits it, so ABOVE ROUGHLY 500 TOKENS the plan grows to fill
+# whatever card it is on -- on this one 109 GiB -- and a ladder there would
+# measure the host rather than the model. That remains true and is why no
+# rung goes near it.
+#
+# Below the tool layer's own 300-token ceiling the planner's policy stays
+# `none` and the numbers are bounded and reproducible, so a ladder in THAT
+# range measures the model. DEFAULT_LENGTHS gives this provider
+# 135/195/256/300 tokens, and it measured:
+#
+#     135 tokens   peak 23.49    46.0 s
+#     195 tokens   peak 27.89    63.2 s
+#     256 tokens   peak 32.91    84.9 s
+#     300 tokens   peak 28.28    60.6 s   <- CHEAPER AND FASTER THAN 256
+#
+# THE NON-MONOTONICITY IS THE POINT AND IT IS NOT NOISE. `POOL_MAX_TOKENS` is
+# 256, so the trunk fwd+bwd CUDA-graph pool is installed only at or below it:
+# the 256 rung pays for that pool and the 300 rung does not. It is not merely
+# capture cost either -- the mixed phase re-runs 256 against a pool already
+# captured and still reads 33.99 GiB and 80.0 s. So at the top of its enabled
+# range the pool costs about 4.6 GiB and 24 s and does not earn either back.
+# That is a kit-tuning fact no smooth curve would have shown, and it is the
+# reason the rungs straddle 256 instead of being evenly spaced.
+#
+# `shareable = false` still says in the field a scheduler reads that this
+# provider cannot promise a co-tenant anything under `fast`.
+#
+# The bounded alternative is a different kit MODE, not a knob: `big` plans by a
+# floor rather than a budget and the kit's own planner puts it at 29.5-48.0 GiB
+# across 135-800 tokens. A deployment that must co-tenant runs `big` and
+# re-measures.
+#
+# Count does not move the peak, which is the opposite of rfdiffusion3: the kit
+# refuses `batch_size > 1` on every mode, so N designs are N sequential loops
+# and the peak is one design's.
+vram_budget_gb = 33.99
+# False, and deliberately: see the `card` paragraph above. At the declared
+# 195-token envelope this provider leaves most of a 121 GiB card free, but the
+# `fast` plan's own rule is to expand into whatever the card has, so a
+# co-tenant cannot be promised anything. A deployment that wants to share runs
+# `mode = "big"` and may set this true.
+driver_min = 570
+driver_min_reason = "its pinned stack is CUDA 12.8 (torch 2.11.0+cu128)"
+shareable = false
+isolation = "process"
+
+[env]
+kind = "venv"
+python = "$TOOLUNIVERSE_EF2INV_PYTHON"
+lock = "environment/requirements.lock"
+# esm is the editable checkout of the cookbook's own repository at the pinned
+# commit -- the recipe ships in the checkout, not in a wheel, and the kit's pin
+# check requires the editable form. ef2inv_opt and opt_core are the kit. The
+# fork's version is asserted because the modelling files the levers touch are
+# sha256-pinned against it by stock/check_pins.py.
+verify = "import torch, esm, transformers, ef2inv_opt; assert esm.__version__ == '3.4.0' and transformers.__version__ == '4.57.6'"
+
+[weights]
+# Hugging Face's own cache in its own layout, which is what the kit's
+# weights.py writes and what the fork reads offline:
+# HF_HOME/hub/models--<org>--<name>/snapshots/<commit>/<file>, at the snapshot
+# commits stock/PINS.json pins. The kit has NO other weights path and no
+# default ("no default, no other weights path", STOCK.md Weights).
+#
+# The root is shared with the esmfold2 provider on purpose: two of this kit's
+# six repositories are the two that provider already declares, at the SAME
+# snapshot commits -- biohub/ESMC-6B at 45b0fa5d (23.66 GiB) and
+# biohub/ESMFold2 at 1ebf0e34 (1.26 GiB). Both were already on disk here and
+# verified against THIS kit's pins, so bringing this provider up fetched only
+# the four biohub/ESMFold2-Experimental* snapshots, 3.02 GiB of the 27.95.
+root_env = "HF_HOME"
+root_default = "~/.esmfold2"
+# The kit's own downloader (opt/ef2inv_opt/weights.py, which `run.sh install
+# --weights DIR` calls and which documents itself as `python -m
+# ef2inv_opt.weights DIR`). It goes through huggingface_hub at the pinned
+# revisions and sha256-checks every file itself, so no URL is restated here and
+# nothing is fetched at request time. run.sh is not used because the weights
+# step, unlike the kit step, does not put the model environment's bin on PATH.
+fetch = "{python} -m ef2inv_opt.weights {weights_root}"
+
+# The 30 entries below are GENERATED from the kit's own stock/PINS.json
+# "weights" (six repositories), not transcribed. The generator is four lines:
+#   for repo in sorted(pins["weights"]):
+#       w = pins["weights"][repo]; org, name = repo.split("/")
+#       for rel in sorted(w["files"]):  # -> hub/models--<org>--<name>/
+#           ...                         #    snapshots/<w[snapshot_commit]>/<rel>
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/README.md"
+size = 14887
+sha256 = "59867d6e974fc0b2f6841615901e85c9a8144098534b03553828212ac611c7a4"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/config.json"
+size = 341
+sha256 = "c5566fab6a17fd674141331fe75de917b7904d99fb7a410d2b1593c21e576913"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/images/contact_pal.png"
+size = 30187
+sha256 = "5cdea45ca020c0489c8f46f98ef49825cf7d329a1dfe1bc1fc4f69d3dc8fe54d"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/model-00001-of-00006.safetensors"
+size = 4864457920
+sha256 = "bd90149ff223e6ac1a0cac6147a5ae0df20d3a21df4f65356a1f19cd14f4aa8a"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/model-00002-of-00006.safetensors"
+size = 4971211344
+sha256 = "f75e2144d8269fe2eb4b3e0823fb089b94f176d8024153e85b8fb573a42294fa"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/model-00003-of-00006.safetensors"
+size = 4863752992
+sha256 = "f699f01ecc9691d9c6470492765fe54b8b5d2e9f277c139e89427433ffdfe0b2"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/model-00004-of-00006.safetensors"
+size = 4971211344
+sha256 = "46add1b7be098bbfdc3073884851ba3057f1b33ea23a158b650a37007dabd13d"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/model-00005-of-00006.safetensors"
+size = 4863752992
+sha256 = "1e1cb62f060a34e18f54a31a76683ef888b8cec59e73315f5b31d25d45a1f88c"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/model-00006-of-00006.safetensors"
+size = 873762296
+sha256 = "56c73e13ae96e777ce65eee99364056069ef93b646470f352f83c5f1037b1b18"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/model.safetensors.index.json"
+size = 97349
+sha256 = "6846456e20e6ee2c37461f7bfc21d316d69bdaf165b925691afcb39e583244da"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/special_tokens_map.json"
+size = 171
+sha256 = "0b7245ec86c8c3aeaf61523ba70dfa79be137e6283f127bd651adc30b4f15c74"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/tokenizer.json"
+size = 2879
+sha256 = "8d3447b278176e65fb3ef0224472927bf5fee3be46ea2bd77fad0111423cee1f"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/tokenizer_config.json"
+size = 1392
+sha256 = "e8d8e40c9f92b334f0272e80bb65ed4043cb9836523cbae899e9859e8cbb8833"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMFold2/snapshots/1ebf0e3481a5184eb6171d40615c79e384b48796/README.md"
+size = 10573
+sha256 = "47557276c26c32cfbe5860c19c25fcf95726751be0f6a8d5a48196b74c1d6c13"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMFold2/snapshots/1ebf0e3481a5184eb6171d40615c79e384b48796/ccd.pkl"
+size = 417306584
+sha256 = "9ff44b1927c6b9198e38ffe0928706827a09a350c15530beeeabebfa88038fc5"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMFold2/snapshots/1ebf0e3481a5184eb6171d40615c79e384b48796/config.json"
+size = 2337
+sha256 = "e9ec2496ec433a1dce18627ed4bf3785b4ce0c1d69e4bb4663dad1ab895da012"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMFold2/snapshots/1ebf0e3481a5184eb6171d40615c79e384b48796/images/folding_evals.png"
+size = 121956
+sha256 = "207eeb14a3217cf31318bb8b50598a654def4119e34ef01a5a5ae848aacfca7c"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMFold2/snapshots/1ebf0e3481a5184eb6171d40615c79e384b48796/model.safetensors"
+size = 939505228
+sha256 = "138fd4350d6892b81ce6be7ff9bf5a93ae9d4d3751f46a27438a3f9f0dcefa0e"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMFold2-Experimental/snapshots/0515a1177d6e6aab93750cbadf7b54da77bac592/README.md"
+size = 800
+sha256 = "19937c11f9c419a9f90c23001973b92adf1e28678b611e7e72d72360bd2c8fcf"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMFold2-Experimental/snapshots/0515a1177d6e6aab93750cbadf7b54da77bac592/config.json"
+size = 2073
+sha256 = "82cb65b90547adf0dad9b6d33263e0cb4e9697f76c2b39b773f408fb2fab2be1"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMFold2-Experimental/snapshots/0515a1177d6e6aab93750cbadf7b54da77bac592/model.safetensors"
+size = 903213480
+sha256 = "a584de4e3c8e3ec07ed1132f8408d602190e29781e712c8afb9eb90998e95484"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMFold2-Experimental-Cutoff2025/snapshots/56f94f5c1069ecde17512c96928850518340d287/README.md"
+size = 800
+sha256 = "19937c11f9c419a9f90c23001973b92adf1e28678b611e7e72d72360bd2c8fcf"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMFold2-Experimental-Cutoff2025/snapshots/56f94f5c1069ecde17512c96928850518340d287/config.json"
+size = 2073
+sha256 = "82cb65b90547adf0dad9b6d33263e0cb4e9697f76c2b39b773f408fb2fab2be1"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMFold2-Experimental-Cutoff2025/snapshots/56f94f5c1069ecde17512c96928850518340d287/model.safetensors"
+size = 903213480
+sha256 = "01358c317428d38535e3db513cab177336fc0f7fab0d84002e64b7741d5181b3"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMFold2-Experimental-Fast/snapshots/04dec820ede9283c9893e318e5ca5a9ac2ab93bc/README.md"
+size = 800
+sha256 = "19937c11f9c419a9f90c23001973b92adf1e28678b611e7e72d72360bd2c8fcf"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMFold2-Experimental-Fast/snapshots/04dec820ede9283c9893e318e5ca5a9ac2ab93bc/config.json"
+size = 2073
+sha256 = "42a9d813421bcf50a285cbe9c6952db17cee14ddd6f8264f4fa2c32427ee68c7"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMFold2-Experimental-Fast/snapshots/04dec820ede9283c9893e318e5ca5a9ac2ab93bc/model.safetensors"
+size = 717341848
+sha256 = "3a28003d6c0aab7558a5ba4681a273f8e31648f36e950ba9462fe3d83120e8f5"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMFold2-Experimental-Fast-Cutoff2025/snapshots/74b88548bf19688b8727432db0d698cb2e1d8783/README.md"
+size = 800
+sha256 = "19937c11f9c419a9f90c23001973b92adf1e28678b611e7e72d72360bd2c8fcf"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMFold2-Experimental-Fast-Cutoff2025/snapshots/74b88548bf19688b8727432db0d698cb2e1d8783/config.json"
+size = 2073
+sha256 = "42a9d813421bcf50a285cbe9c6952db17cee14ddd6f8264f4fa2c32427ee68c7"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMFold2-Experimental-Fast-Cutoff2025/snapshots/74b88548bf19688b8727432db0d698cb2e1d8783/model.safetensors"
+size = 717341848
+sha256 = "4e903b740ad6ad704ec60881bfd593e0d6c874a630ffa0f0838276e0b665088f"
+
+[kit]
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "ef2inv"
+# The checkout is shared with every provider pinning this commit; the sparse
+# set is the union of what its providers declare.
+sparse = ["ef2inv", "common"]
+package = "ef2inv_opt"
+# THIS KIT KEEPS NO MODE ENVIRONMENT ROW, and it is a fact about the kit rather
+# than a gap in the probe. `modes.resolve(name)` takes one argument and returns
+# a frozen `modes.Mode` dataclass -- name, kit_switch, levers, numerics_class,
+# tier, what, and four model-switch fields -- with neither `env` nor `exports`
+# anywhere on it. That is a FIFTH resolve() shape for the record: boltz2's
+# returns a mapping with `env`, openfold3's a Resolution with `exports`,
+# esmfold2's a Resolution with neither, boltzgen applies its row to itself, and
+# this one returns a lever table. Its deployment variables live in
+# `configs/<card>.env`, shipped for h100, h200 and a100 and not for this card,
+# so there is nothing to read even with the right call. What the provider
+# therefore supplies itself is in launch.py and listed at the end of this file.
+env_row = "none"
+env_row_reason = "modes.resolve(name) returns a frozen modes.Mode lever table with neither env nor exports; this kit's deployment variables live in configs/<card>.env and it ships none for a GB10"
+# `fast` is the kit's own DEFAULT_MODE and the composition its speed claims are
+# made for: the exact lever set plus the tier-2 Triton / CUDA kernels for the
+# pair trunk's triangle multiplication, transition and LayerNorm backward UNDER
+# GRAD, a bf16 confidence head, and the memory plan that fills the card.
+# `exact` is bit-identical to stock under `--det 1` and is the mode to pick when
+# outputs must not move. `big` is `fast` at the memory floor. `off` runs the
+# upstream cookbook file unchanged -- and unlike rosettafold3, `off` IS
+# reachable from this provider: the kit patches nothing on disk, so this one
+# interpreter serves every mode. What `off` would need is a worker started with
+# `--mode off`, which skips fastkit.install and runs the recipe as shipped.
+mode = "fast"
+# Two steps in one line, and the first is not the kit's own -- it is the kit's
+# route C, which needs the upstream recipe before the pin check can pass.
+#
+# stock esm 3.4.0 is an EDITABLE git checkout, not a wheel: the cookbook file
+# this whole provider runs ships in the repository
+# (`<esm package dir>/../cookbook/tutorials/binder_design.py`) and
+# `stock/check_pins.py` resolves it through PEP 610 direct_url.json
+# `dir_info.editable`, refusing anything else. So the install step clones
+# github.com/Biohub/esm at stock/PINS.json `upstream.commit` (d0207ea3) and
+# installs it editable, into TOOLUNIVERSE_EF2INV_ESM or
+# ~/.cache/tooluniverse/ef2inv/esm. It is idempotent: an existing checkout is
+# checked out to the pin again and reinstalled in place.
+#
+# `bash run.sh install` is then the kit's usual step -- the shared core and the
+# kit installed editable into the python on PATH, then
+# `stock/check_pins.py --checks software`, which refuses by name (exit 3) if
+# esm is not that editable checkout, if transformers is not the fork at
+# ef32577f, or if any of the ten pinned fork modelling files differs. No
+# `--weights` here: the weights step is the weights step's job.
+install = "ESM_DIR=\"$TOOLUNIVERSE_EF2INV_ESM\"; test -n \"$ESM_DIR\" || ESM_DIR=\"$HOME/.cache/tooluniverse/ef2inv/esm\"; test -d \"$ESM_DIR/.git\" || git clone https://github.com/Biohub/esm \"$ESM_DIR\" && git -C \"$ESM_DIR\" checkout -q d0207ea3c8cbf072679ece3bb332787d25e06852 && {python} -m pip install -q --no-deps -e \"$ESM_DIR\" && bash run.sh install"
+# NOTHING IS DECLINED AND NOTHING IS SWITCHED OFF, and that is a statement
+# about this kit's failure style rather than about this card.
+#
+# Four of `fast`'s levers cannot serve on compute capability 12.1 and all four
+# say so themselves, by name, with the stock path serving in their place and
+# the run completing (exit 0). They are ASIDES in the kit's vocabulary, not
+# refusals, and `levers_off` would be the wrong instrument:
+#   * ef2_t16_transition -- its forward is a prebuilt sm_90a cubin
+#     (k/ef2_t16/sm_90a/ef2_transition_cute.cubin, the kit's ONE prebuilt
+#     object and a CUDA ELF rather than a host one, so `kit_foreign_objects`
+#     has nothing to refuse). `fastkit.enable` records a card it cannot serve
+#     and K-D3's own forward serves.
+#   * ef2_esmc_hoist -- installs only on a compute capability in its own
+#     PROVEN_CC set, because it needs row-count invariant GEMMs from
+#     TransformerEngine; elsewhere `stepped_aside=cc_unproven:sm_<cc>`.
+#   * ef2_kd3_gemmswiglu -- its launch table carries one tile entry per
+#     compute capability and none for this one (`cc_untuned:sm_<cc>`).
+#   * ef2_trimul_nosave -- picks the first kernel row the stack serves and
+#     names the reason when no row serves.
+# Whether that is exactly what happens here is the kit's `check` verb's
+# answer, which needs the weights in place; it is a dry run that loads no
+# model. Fill the list from its LEVER lines rather than from this comment.
+#
+# `MODEL_OPT_LEVERS_OFF` DOES reach this kit, unlike boltzgen's: the launcher
+# documents it as a kit arm's second allowed variable, `fastkit.install`
+# resolves it once per process by name, and an unknown or foreign lever name is
+# a LeversOffError rather than a silent no-op. So the door is open if a lever
+# ever has to be closed.
+levers_declined = []
+levers_off = []
+
+# Settings this provider states for the kit, applied before the process starts.
+# EMPTY on purpose. Two knobs were considered and rejected:
+#   * EF2_FAST_KIT_CKPT would override the checkpoint policy and make `fast`'s
+#     memory bounded -- but `evidence.collect_after` checks the installed
+#     composition word for word against `fastkit.COMPOSITION` and a composition
+#     that is not the kit's is a REFUSAL, so the bounded mode is `big`, by
+#     name, not `fast` with a knob.
+#   * EF2INV_REQUIRE_FAST_ENV is a CLI-side variable the launcher never passes
+#     into an arm, and `EF2INV_` is a forbidden prefix in an arm process
+#     anyway. The worker passes the same intent as `--require-fast-env`, off by
+#     default: with flash-attn and TransformerEngine absent (see the lock) it
+#     would word a difference on one info line and change nothing.
+[kit.env]
+
+# What a run of this kit normally gets from `configs/<card>.env`, which is not
+# shipped for this card, and where each piece comes from here instead:
+#   * HF_HOME                  -- launch.py, from [weights] root_env
+#   * HF_HUB_OFFLINE,
+#     TRANSFORMERS_OFFLINE     -- launch.py sets both: nothing is fetched at
+#                                 run time, which is the configs' own policy
+#   * PYTHONDONTWRITEBYTECODE  -- launch.py, as the kit's own arm_env does
+#   * EF2_FAST_KIT             -- launch.py, from [kit] mode; the arm's one
+#                                 allowed variable
+#   * PYTORCH_CUDA_ALLOC_CONF  -- launch.py sets expandable_segments:True
+#                                 exactly as the kit's launch.KIT_ALLOCATOR
+#                                 does for a kit arm, and only when the
+#                                 operator has not set it
+#   * MODEL_OPT                -- launch.py, the kit tree
+#   * MODEL_OPT_JIT_ROOT,
+#     TRITON_CACHE_DIR,
+#     TORCHINDUCTOR_CACHE_DIR  -- launch.py keys the Triton and Inductor caches
+#                                 under <jit root>/<stack key>/ the way
+#                                 configs/h100.env does, so a worker restart
+#                                 does not recompile. The stack key is read
+#                                 from the kit (modes.jit_cache_key()).
+#   * EF2INV_GPU, EF2INV_GPU_MIB -- NOT set, and cannot be: `EF2INV_` is a
+#                                 forbidden prefix in an arm process. The
+#                                 kit's hardware check is CLI-side; an arm
+#                                 words any card on one NOTE line and runs.

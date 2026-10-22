@@ -1,0 +1,24 @@
+; The smallest input that exercises E1's documented path: one parent and its
+; point mutants, which is what `python -m E1.tools.score` takes as
+; --parent-path plus --mutants-path. The first record is the parent; every
+; record after it is a mutant of the same length.
+;
+; The sequences are the kit's own warm fixture, verbatim --
+; e1/opt/e1_opt/tests/fixtures/warm/{parent,mutants}.fasta at commit
+; f4f62fa6592ae4938d49b1757bea0cfeff9f468e: a 72-residue synthetic parent and
+; five single-substitution mutants. Using the kit's fixture rather than a real
+; protein means the smoke scores exactly what `bash run.sh warm` scores, so a
+; difference between the two is a difference in this provider and not in the
+; input.
+>synthetic_parent_72aa
+FWDKESRSPHESAPQYARKIWEMAAAVAPHQATIRSVINIIRLAQVEGLEMTQTHLLWSTPWCSIPQGNVND
+>S6R
+FWDKERRSPHESAPQYARKIWEMAAAVAPHQATIRSVINIIRLAQVEGLEMTQTHLLWSTPWCSIPQGNVND
+>R18V
+FWDKESRSPHESAPQYAVKIWEMAAAVAPHQATIRSVINIIRLAQVEGLEMTQTHLLWSTPWCSIPQGNVND
+>Q31E
+FWDKESRSPHESAPQYARKIWEMAAAVAPHEATIRSVINIIRLAQVEGLEMTQTHLLWSTPWCSIPQGNVND
+>Q45G
+FWDKESRSPHESAPQYARKIWEMAAAVAPHQATIRSVINIIRLAGVEGLEMTQTHLLWSTPWCSIPQGNVND
+>W62T
+FWDKESRSPHESAPQYARKIWEMAAAVAPHQATIRSVINIIRLAQVEGLEMTQTHLLWSTPTCSIPQGNVND

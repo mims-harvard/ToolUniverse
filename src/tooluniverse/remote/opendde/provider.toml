@@ -1,0 +1,288 @@
+# OpenDDE 1.1.1 -- all-atom structure prediction, held resident.
+#
+# WHAT OPENDDE IS. Aureka AI Research's AlphaFold3-class co-folding model (PyPI
+# `opendde` 1.1.1, Apache 2.0, model `opendde_v1`, 655.8 M parameters, one
+# general-purpose checkpoint `opendde.pt` of 2,625,249,069 bytes; an
+# antibody-antigen checkpoint `opendde_abag.pt` exists upstream and is NOT in the
+# kit's pins, so it is not served). Its code descends from Protenix's: the CLI
+# shape (`opendde pred`), the dumper's file names and the input dialect are
+# Protenix's. INPUT DIALECT: a non-empty list of jobs
+# `{"name", "sequences": [<entity>...]}`, an entity being proteinChain /
+# dnaSequence / rnaSequence / ligand (CCD_<id>, SMILES, FILE_<path>) / ion, each
+# with a `count`. ONE REQUEST = ONE job (one complex) folded for ONE seed into
+# `num_diffusion_samples` scored mmCIF structures (default 5), through
+# `num_recycles` cycles (10) and `num_diffusion_steps` steps (200).
+#
+# WEIGHTS ARE SERVED (the first question, asked before anything else): one HEAD
+# against the URL stock/PINS.json names, https://huggingface.co/aurekaresearch/
+# OpenDDE/resolve/main/opendde.pt, answered 302 to the CDN with
+# `x-linked-size: 2625249069`, exactly the pinned byte count. Upstream's own
+# repository, no third-party copy. (The repo's `main` has moved past the pinned
+# revision eddd563...; the sha256 pin is what is held to.)
+#
+# TORCH. The kit pins torch 2.7.1+cu126 by the URL of an x86-64 file. 2.7.1 is
+# >= 2.7, so the card is not closed at the pin; the lock substitutes the SAME
+# version's cu128 build (genie3's precedent), whose arch list is
+# ['sm_90','sm_100','sm_120'] -- measured -- and an sm_120 cubin runs on sm_121.
+# A 2048x2048 GEMM ran. See environment/requirements.lock.
+#
+# KIT MODE OFF, and why. `tu remote setup --only kit` with mode "fast" was run
+# and REFUSED `kit_foreign_objects`: the kit ships
+# opt/forward/fast_inference/levers/LNSTREAM/prebuilt/.../
+# fast_layer_norm_cuda_v2_cs.so, ELF machine 0x3e (x86-64). The kit's own
+# README says that object is compiled for sm_80/sm_90 and rebuildable
+# (`python -m opendde_opt.lnstream prebuild`), so the refusal is conservative --
+# but it is the layer's rule and it is followed. Whether the `fast`/`exact`
+# levers would serve on cc 12.1 was NOT measured for opendde (the shared core's
+# cell tables are keyed by compute capability; that they have no 12.1 rows is
+# read from the sibling protenix_v1 provider's analysis, not run here). Mode off
+# is also what lets this worker hold upstream's InferenceRunner itself: under a
+# kit mode the kit wraps the runner's constructor and refuses a process that
+# built one first.
+#
+# WHO HOLDS THE WEIGHTS: the worker (`weights_held_by = "worker"`). Upstream's
+# own `inference_jsons` already builds one runner and loops `infer_predict`.
+#
+# UPSTREAM'S BUILDER IS RE-ENTRANT -- measured (probe, scratchpad
+# opendde_probe/build_twice.py): `get_default_runner` three times in one
+# process, the first runner still alive for the second and closed for the
+# third: all three built, 655.8 M parameters each, identical leading tensors,
+# 9.3 s then 4.7 s then 5.2 s. No module state limits a process to one build.
+# THERE IS NO ENGINE KEY that rebuilds anything: the model is built once, and
+# samples / steps / cycles / seed are read from `configs` at call time.
+#
+# KERNELS. Upstream's own platform gate (opendde/utils/environment.py) resolves
+# the triangle kernels `auto` to `torch` on anything but Linux x86_64 and
+# REFUSES an explicit `cuequivariance` ("supported only on Linux x86_64"), so
+# on this host cuEquivariance is never imported. That is lucky, and measured to
+# be: in a standalone probe cuEquivariance 0.10.0's triangle multiplication
+# (Triton) aborts the whole process at >= 128 tokens ("LLVM ERROR: Cannot
+# select: intrinsic %llvm.nvvm.shfl.sync.bfly.i32", triton 3.3.1 cannot lower a
+# warp shuffle for sm_121), while triangle attention ran at 35..400.
+#
+# LAYERNORM. Upstream's default is torch; the kit's stock arm exports
+# `fast_layernorm`. MEASURED: with ninja on PATH the fused extension BUILDS here
+# with the host nvcc 13.0 against torch 12.8 (no CUDA-version refusal), in 59 s,
+# and matches torch's layer_norm to 4.8e-7 with a CUDA op succeeding afterwards.
+# It is NOT enabled: its speed effect was not measured (a torch profiler run
+# recorded zero CUDA events on this card, and a wall-clock A/B on a shared card
+# is noise), and without ninja on PATH upstream silently falls back to torch
+# anyway, so the setting would not mean what it says. Unmeasured, not impossible.
+#
+# NO MSA, NO TEMPLATES: `opendde pred` posts sequences to an MSA service, and
+# OpenDDE reads alignments only from file paths. Every request is
+# single-sequence and says so (`use_msa: false`).
+#
+# RELEASED 2026-10-14: the deployment-table entry landed and `status` is
+# "verified". It was held at "untested" while remote_runtime.py carried another
+# session's uncommitted provider; that session's work is untouched and was
+# backed up before this commit, and its apnovo entry claimed PORT 8058, which
+# is THIS PROVIDER'S port and the one every line of verified_on was measured
+# on. The collision was real and nothing caught it, so this commit also adds
+# test_remote_runtime.py::test_ports_are_unique.
+#
+# THE COLLISION IS RESOLVED, later the same day: apnovo was committed at PORT
+# 8059 and test_ports_are_unique passes. This provider did not move and
+# nothing here was re-measured, because nothing needed to be -- 8058 is this
+# provider's alone, which is what the whole of verified_on below assumes.
+#
+# WHAT WAS ESTABLISHED. The bring-up established the five setup steps, a
+# 35-residue fold, and a ladder in two held workers -- and listed what it had
+# not: four consecutive identical requests, the mixed sequence, the
+# hostile-environment launcher test, the ceiling refusals, and the documented
+# example. All of those have since run (see verified_on), on a quiet machine
+# behind scripts/remote_validation/wait_for_memory.py.
+#
+# THE CEILING TEST IS THE ONE THAT PAID FOR ITSELF: it would not start at all,
+# because `kit_launch.ask_kit` ran its mode-row probe with the operator's stray
+# `OPENDDE_OPT_*` still in the environment, and this kit's `.pth` kills any
+# interpreter that inherits an undeclared one. That was a gap in the SHARED
+# layer, not in this provider: a launcher strips those names from the worker,
+# but the probe runs inside build_command, before the worker's command exists.
+# Fixed in `ask_kit`, which now drops any undeclared `<PACKAGE>_*` from the
+# probe environment and keeps the declared name, which the probe exists to read.
+
+[provider]
+slug = "opendde"
+description = "OpenDDE 1.1.1 (Aureka) AlphaFold3-class all-atom structure prediction for a protein, nucleic-acid, ligand and ion complex"
+operations = ["opendde_fold"]
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver 580.173.02), venv route,
+CPython 3.12.10, torch 2.7.1+cu128 with NVRTC 12.9.86 first on LD_LIBRARY_PATH,
+kit mode OFF (this kit's levers are not enabled here; see the header). Wall times
+are from a card shared with other sessions and do not reproduce; peaks do.
+
+ACCEPTANCE (scripts/remote_validation/verify_provider.py opendde --lengths
+100,200,400 --repeats 4, one held worker): ladder 3/3 at peak reserved 3.69 / 6.85
+/ 22.55 GiB, mixed 100,100,200,100 4/4, 4 consecutive identical requests 4/4,
+11/11 requests asserted to have produced structures. The 400-token rung reads
+22.55 GiB, which is this file's declared vram_budget_gb to the hundredth, and that
+is now the THIRD independent worker to read the figure (the bring-up read it in
+two). A budget sitting exactly on a reproduced measurement is the ordinary case;
+complexa's sits above every observation it could reproduce, and says so.
+
+THE CEILINGS REFUSE, exercised rather than read: 400 tokens admitted (peak 22.53),
+401 refused and 800 refused, both by the worker's own named ValueError ("featurised
+to N tokens, over this provider's 400-token ceiling"). The bring-up had recorded
+this code as present but never triggered, which is the distinction that matters:
+running it is what found the ask_kit defect described in the header.
+
+THE LAUNCHER'S STRIP, read from the CHILD and not from the mapping: with
+OPENDDE_OPT_BOGUS=1 and OPENDDE_OPT_X=stray exported, /proc/<worker pid>/environ
+contains neither, and OPENDDE_OPT='off' -- the one policed name that must stay --
+is present. Reading the child is deliberate: an earlier round found four launchers
+whose strip removed nothing, and the check that had passed them read the launcher's
+return value, the one place the defect was invisible.
+
+THE DOCUMENTED EXAMPLE, through the live endpoint: the arguments in
+skills/setup-opendde-remote-tool/SKILL.md, parsed out of the skill rather than
+retyped, sent to http://127.0.0.1:8058/mcp -- discovery lists opendde_fold,
+is_error False, 5 structures, pLDDT 93.50, pTM 0.821.
+
+RESIDENCY: the smoke shape costs 97 s cold (one prediction in a fresh worker) and
+18.9-26.4 s held across four consecutive requests, so ~4-5x on this shape. build_s
+is 22-42 s depending on contention.
+
+REGISTERED, on PORT 8058, in remote_runtime.py's deployment table and in
+setup_skill_preflight.py's catalog. It was owed for as long as those files
+carried another session's uncommitted provider, since editing them would have
+committed their work; the entry landed with this note's release. `tu remote
+setup opendde` resolves by provider directory and never needed an entry; `tu
+remote check/run/share` do, and now have one."""
+
+[runtime]
+mode = "resident"
+worker = "resident/opendde_resident_worker.py"
+# Provider-local: it wraps kit_launch.build_command and REMOVES (maps to None)
+# every inherited OPENDDE_OPT* name other than OPENDDE_OPT. Measured:
+# `OPENDDE_OPT_X=1 python -c ...` in the model interpreter exits 3 at start, kit
+# off or not (opendde_opt/_autoload.py runs its undeclared-name check before the
+# mode == "off" return).
+launch = "tooluniverse.remote.opendde.launch:build_command"
+worker_args = ["--socket", "{socket}", "--slug", "{slug}"]
+start_timeout_s = 1800.0
+request_timeout_s = 7200.0
+# Held 900 s: nothing persists the model between workers, and the build is ~12-50 s
+# of import + checkpoint read on a quiet card (more under contention).
+idle_timeout_s = 900.0
+# `<sample>_sample_<rank>.cif`, as runner/dumper.py writes it. TESTED against a
+# directory holding only what a FAILED run leaves (the job .json, ERR/<name>.txt,
+# and the `*_summary_confidence_sample_N.json` / `*_full_data_sample_N.json`
+# families): `setup._what_it_produced` REFUSED it; the same directory plus one
+# `x_sample_0.cif` was accepted; structures on disk with an empty `structures`
+# reply was refused by output_keys.
+outputs = ["*_sample_[0-9]*.cif"]
+output_keys = ["structures"]
+smoke = "smoke/input.json"
+smoke_timeout_s = 5400.0
+
+[gpu]
+policy = "required"
+# MEASURED, torch max_memory_reserved, bf16, 5 samples, one fresh ascending
+# worker, reproduced in two workers to the hundredth:
+#     35 tokens 3.12 (smoke)   100: 3.69   200: 6.85   400: 22.55  <- declared
+# DECLARED AT THE CEILING (tool and worker both refuse past 400 tokens), not at
+# the smoke: 22.55 is 7.2x the smoke. THE AXIS THAT DRIVES THE PEAK IS TOKENS,
+# NOT SAMPLES: 200 tokens read 6.85 at 1 sample and at 5; 400 read 22.53 at 1 and
+# 22.55 at 5 (allocated 19.69 GiB, so ~2.9 GiB is allocator slack).
+# Steps and cycles were not varied for memory. fp32 (not offered) read 10.98 at
+# 200 tokens, 1.6x bf16 and 2.1x the time, which is why it is not a request
+# option: it would multiply the envelope. The ceiling is 400 because 400 is the
+# largest point measured; 512 and 800 were NOT run. A host that never folds past
+# 200 tokens holds this in ~7 GiB. Wall times were taken on a heavily contended
+# card (3-7 other workers at 96% utilisation) and are not measurements: 100/200/
+# 400 tokens took 50-81 / 247-273 / 1014-1029 s.
+vram_budget_gb = 22.55
+driver_min = 570
+driver_min_reason = "its stack is CUDA 12.8 (torch 2.7.1+cu128)"
+shareable = true
+isolation = "process"
+
+[env]
+kind = "venv"
+python = "$TOOLUNIVERSE_OPENDDE_PYTHON"
+lock = "environment/requirements.lock"
+verify = "import torch, opendde, runner.batch_inference; from importlib.metadata import version; assert version('opendde') == '1.1.1'"
+
+[weights]
+# Upstream's own variable, read by opendde/config at import; no default.
+root_env = "OPENDDE_ROOT_DIR"
+root_default = "~/.opendde"
+# The kit's own fetcher: upstream's downloader (HF repo aurekaresearch/OpenDDE at
+# the revision in PINS.json), then a sha256 check against PINS.json. No URL is
+# restated here. [kit] install already runs it with --weights.
+fetch = "{python} -m opendde_opt.weights \"{weights_root}\""
+
+# From the kit's stock/PINS.json (checkpoint block + common.managed_assets).
+# release_date_cache.json and obsolete_to_successor.json are template-only but
+# upstream's downloader fetches all four common files, so all are declared.
+[[weights.files]]
+name = "checkpoint/opendde.pt"
+size = 2625249069
+sha256 = "7b826620390afad877ee2babc6a4d0df81b94d3a0be030959853d6a7da0807cc"
+
+[[weights.files]]
+name = "common/components.cif"
+size = 490777362
+sha256 = "bb31ae5cf6c8bc669924313077cb4231ee5ffefd3a20118cd14f3ec89f8bb6a5"
+
+[[weights.files]]
+name = "common/components.cif.rdkit_mol.pkl"
+size = 142498117
+sha256 = "d1cfb71f5993a3ebea7c47877022d7f597bbfbaf86e28a4770e957da6c50cd35"
+
+[[weights.files]]
+name = "common/obsolete_to_successor.json"
+size = 86882
+sha256 = "2bc08348d0efba438c109bb27be6fa25b611d371c60b8a8da3de387a4a0698ad"
+
+[[weights.files]]
+name = "common/release_date_cache.json"
+size = 12754898
+sha256 = "8b1ef12ddc01a0d5eb2d388c77ded91aa906eebce7440726c57b6f8d1a3ec142"
+
+[kit]
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "opendde"
+sparse = ["opendde", "common"]
+package = "opendde_opt"
+# See the header: mode "fast" was run and refused kit_foreign_objects.
+mode = "off"
+# Levers declined by name (opendde_opt.modes.resolve(mode, tree).levers, union of
+# exact / fast / big), so a reviewer on another host can see what is given up.
+levers_declined = [
+    "served_levers_hook", "cueq_tuned_cache", "dit_hoist", "dit_align", "arm_z",
+    "drop_bond_mask", "lnstream", "tmpl_dedup", "keep_pool", "sched_host",
+    "structok_sync", "json_oneshot", "prefetch", "zprep_hoist", "fpf_trimul_exact",
+    "alloc_auto", "stepgraph", "triattn_exact", "triattn_conf", "dit_attn_exact",
+    "trimul_exact", "transition_exact", "arm_u", "arm_u23", "triattn_core",
+    "dit_attn_apb", "atom_attn_apb", "cond_dedupe", "dit_fused", "dit_lowp",
+    "atom_fused", "trimul_core", "ln_core", "transition_core", "pair_offload_struct",
+    "pair_offload_trunk", "pair_offload_conf", "diffz", "bigln_guard", "free_templ",
+    "no_dit_hoist", "sample_chunk",
+]
+env_row = "none"
+env_row_reason = """mode off exports nothing: kit_launch's probe tries
+resolve(mode) (TypeError: resolve() needs a `tree` argument) and then
+resolve(mode, home), which answers with an empty `exports` for `off`
+(measured; for `fast` the same call returns 18 variables). The kit's per-card
+variables live in configs/<card>.env shell files that run.sh sources; a resident
+worker never goes through run.sh and the ones that matter are stated below."""
+install = "bash run.sh install --weights {weights_root}"
+
+[kit.env]
+# Upstream's own default (opendde/model/triangular/layers.py); the kit's stock
+# arm exports fast_layernorm instead. Not enabled -- see the header for what was
+# and was not measured.
+LAYERNORM_TYPE = "torch"
+# One thread. The reason is NOT that something forks (num_workers is 0): it is
+# boltzgen's rule applied pre-emptively -- a resident worker that has run host
+# tensor work (biotite parsing, the 490 MB CCD table, KDTree) must not let a
+# library fork over a live OpenMP pool. The speed effect on OpenDDE's
+# featuriser was not measured.
+OMP_NUM_THREADS = "1"
+# The kit package is installed EDITABLE from the shared checkout; without this
+# every interpreter start writes __pycache__ into a third-party tree that
+# `step_kit` re-reads with git status.
+PYTHONDONTWRITEBYTECODE = "1"

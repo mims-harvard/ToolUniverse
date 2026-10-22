@@ -1,0 +1,257 @@
+# Chai-1 — protein-ligand cofolding, held resident.
+#
+# The third provider on the standard, and the first whose upstream loads its
+# model inside the call that uses it: chai_lab's `load_exported` is not
+# memoised, so a plain `run_inference` re-reads all six TorchScript modules --
+# 5.4 GB of traced ESM among them -- every time. Residency is therefore not a
+# refinement here, it is the difference between a usable provider and one that
+# spends most of every request on disk: three folds of the same input in one
+# held worker took 67.6 s, 26.6 s and 25.7 s. The 2.6x is the largest of the
+# three providers on this standard, and it is the one whose upstream does the
+# least to help.
+#
+# Measured on the same GB10 box; re-measure anywhere else.
+
+[provider]
+slug = "chai1"
+description = "Chai-1 protein-ligand cofolding from a FASTA of chains"
+operations = ["chai1_fold"]
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver 580.173.02),
+venv route, kit mode fast with the alloc lever off (see [kit]). Three folds of
+an 89-residue chain in one held worker: 67.6 s, 26.6 s, 25.7 s.
+
+ACCEPTANCE 2026-10-17: 12/12 answered, every one produced=yes. Rungs
+250/380/500/760 residues, chosen to land in FOUR DIFFERENT CROPS
+(256/384/512/768) because the crop -- not the residue count -- is what keys
+the Inductor compile cache. The generic 100,200,400,800 ladder maps to
+256, 256, 512, 1024, i.e. its second rung is a byte-identical engine to its
+first and would print green having compiled nothing.
+
+The four compiles are visible in the timings: rung 250 costs 189.4 s and the
+mixed phase's 250 costs 51.1 s, so ~138 s of the first was the crop-256
+compile, replayed free afterwards; same shape at 500 (222.5 s -> 120.9 s).
+
+Found here and recorded in [gpu]: the declared budget was a crop-256 number,
+and the footprint grew ~0.039 GiB per request on identical input.
+
+ACCEPTANCE AFTER THE FIX, 2026-10-17: 12/12 answered, every one
+produced=yes, re-run alone on a quiet card with a warm Inductor cache.
+Twelve consecutive identical requests held flat at 9.73 GiB (9.65 on the
+first), against 9.92 -> 10.66 over twenty before. The cause and the fix are
+under the block below; the ladder this run produced is what moved the
+declared budget from 15.42 to 20.81, and that correction has nothing to do
+with the leak -- a control ladder with the release disabled reproduces it.
+"""
+
+# ===========================================================================
+# FOUND AND FIXED 2026-10-17: THE FOOTPRINT GREW 32 MiB PER REQUEST, ON
+# BYTE-IDENTICAL INPUT, AND IT WAS A cuBLAS WORKSPACE ON AN ABANDONED STREAM.
+#
+# Twenty consecutive identical requests into one held worker, before:
+#    9.92 9.96 10.00 10.04 10.07 10.11 10.15 10.19 10.23 10.27
+#   10.31 10.35 10.39 10.43 10.46 10.50 10.54 10.58 10.62 10.66
+#
+# Twelve, after:
+#    9.65 9.73 9.73 9.73 9.73 9.73 9.73 9.73 9.73 9.73 9.73 9.73
+#
+# WHAT IT WAS. torch allocates a cuBLAS workspace the first time a GEMM runs
+# on a (handle, stream) pair and keeps it in a C++ static map that nothing
+# clears. The kit warms up each CUDA-graph capture on a fresh side stream
+# (`chai1_eager/hoist.py` step_graphed: a `torch.cuda.Stream()` at line 149,
+# the warm-up at 153), so every fold abandoned a stream and stranded its
+# workspace -- exactly `torch.backends.cuda.blas_workspace_size()`, 33554432
+# bytes, per fold, for the life of the process.
+#
+# WHY IT TOOK TWENTY REPEATS AND A PURPOSE-BUILT CENSUS. The bytes are in
+# `memory_allocated` but reachable from no Python object. A census of every
+# reachable CUDA tensor stayed frozen at 7.509 GiB in 5380 storages across
+# nine requests while `memory_allocated` climbed 7.571 -> 7.821;
+# `gc.collect()` returned nothing and `empty_cache()` returned nothing, since
+# the blocks are live rather than cached. The outward signature is one new
+# fully-allocated allocator segment per request, on a stream id that was not
+# there before.
+#
+# PROVED, NOT INFERRED FROM THE SIZE. `CUBLAS_WORKSPACE_CONFIG=:4096:2`
+# shrinks the workspace to 8 MiB, and the per-request increment became
+# exactly 8 MiB.
+#
+# THE FIX is `release_cublas_workspaces()`, which `WB.serve` now calls after
+# every request for every provider; this worker made the call itself for a
+# day. Nothing here has to outlive anything for that to be safe, though this
+# comment first claimed it did. The claim was that a graph still alive at the
+# clear would replay against a freed workspace and give a wrong answer; both
+# halves are wrong, and `release_cublas_workspaces` carries the measurements
+# -- on all eight torch builds in this fleet, each with a positive control.
+# A replay cannot read a freed workspace, because the workspace is scratch
+# every kernel writes before it reads; and the write it does make lands in
+# the graph's own private memory pool, which no ordinary allocation is ever
+# handed.
+#
+# `genie3` had the same defect from the same cause at the same 32 MiB, from
+# its own kit's side stream, and a sweep of all 26 GPU providers on
+# 2026-10-18 found one more -- `rosettafold3`, at the same 32 MiB a fold;
+# its manifest carries its own numbers and its own safety argument.
+#
+# `boltz` and `boltzgen` do not have it, but NOT for the reason first written
+# here, which was wrong on its facts: boltz DOES create a stream per request.
+# It simply runs no GEMM on that stream, so no workspace is ever keyed to it,
+# and clearing after five folds freed 0 bytes. What boltz grows instead is
+# *reserved* rather than allocated -- 56 MiB a fold -- and `empty_cache()`
+# gives all of it back (3574 -> 3234 MiB), so it inflates what a scheduler
+# reading `max_memory_reserved` has to budget without costing the card.
+# boltzgen runs its GPU work in a fresh subprocess per request, so nothing of
+# it outlives the request at all.
+#
+# Reproduce the absence with:
+#   python scripts/remote_validation/verify_provider.py chai1 --repeats 20
+# ===========================================================================
+
+[runtime]
+mode = "resident"
+worker = "resident/chai1_resident_worker.py"
+launch = "tooluniverse.remote_resident.kit_launch:build_command"
+worker_args = ["--socket", "{socket}", "--slug", "{slug}"]
+# Six TorchScript modules and the traced ESM: minutes, not seconds.
+start_timeout_s = 1800.0
+request_timeout_s = 3600.0
+# What a run that actually worked leaves behind; the smoke step refuses if no
+# file matched. Chai-1 samples several structures and ranks them, so a run that
+# produced no .cif produced no answer whatever its exit code said.
+outputs = ["*.cif"]
+idle_timeout_s = 900.0
+smoke = "smoke/input.fasta"
+smoke_timeout_s = 1800.0
+
+[gpu]
+policy = "required"
+# MEASURED 20.81 GiB at crop 768 on a QUIET CARD. This figure has now been
+# wrong twice, in the same direction, for two different reasons -- both of
+# them "the ladder was run somewhere the number is smaller than it really is".
+#
+# 9.8 was a CROP-256 number: every fold behind it was the 89-residue smoke,
+# which pads to the smallest of chai-lab's seven exported crops.
+#
+# 15.42 was a CONTENDED number. It came off a lane that shared the card with
+# a sibling provider, and the four rungs were also the first compile of each
+# crop. Re-run alone on a warm cache, the same four rungs are:
+#
+#     rung 250 -> crop 256   9.55   (unchanged)
+#     rung 380 -> crop 384  11.83   (was 10.56)
+#     rung 500 -> crop 512  14.38   (was 11.83)
+#     rung 760 -> crop 768  20.69   (was 15.42)
+#
+# and a second ladder with this release deliberately disabled gives 9.55 /
+# 11.87 / 14.53 / 20.81, so the climb is NOT the workspace release -- the two
+# agree to within noise and the control is the higher of the pair, which is
+# the one quoted above.
+#
+# WHY A QUIET CARD RESERVES MORE, which is the part worth carrying forward.
+# `max_memory_reserved` is not a requirement, it is what the caching
+# allocator chose to keep. Under pressure it frees cached blocks and retries
+# rather than reserving afresh, so a contended run reports a LOWER figure for
+# the same work. STANDARD.md section 13 says peaks reproduce under contention
+# and wall times do not; that is right for a peak meaning "how much did this
+# need", and wrong for one meaning "how much did the allocator hold". A
+# budget has to be measured where the number is largest, which is alone.
+#
+# Each figure was below an observation at every crop above the smallest --
+# 9.8 by up to 112%, 15.42 by up to 35% -- which is the direction that lets
+# a scheduler oversell.
+#
+# THIS IS NOT A CEILING. 768 is the top of the measured ladder, not the top
+# of the model: crops 1024, 1536 and 2048 exist and are unmeasured here, and
+# they will be higher still. A caller who folds longer than 768 tokens is
+# outside this figure. 2048 tokens is where chai-lab itself refuses.
+#
+# The axis is the CROP rather than the residue count, which is also why this
+# provider's acceptance rungs are chosen to straddle crops -- see
+# _chai1_crop in scripts/remote_validation/verify_provider.py.
+vram_budget_gb = 20.81
+driver_min = 580
+driver_min_reason = "its pinned stack is CUDA 13.0 (torch 2.13.0+cu130)"
+shareable = true
+isolation = "process"
+
+[env]
+kind = "venv"
+python = "$TOOLUNIVERSE_CHAI1_PYTHON"
+lock = "environment/requirements.lock"
+verify = "import torch, chai_lab, chai1_opt; assert chai_lab.__version__ == '0.6.1'"
+
+[weights]
+root_env = "CHAI_DOWNLOADS_DIR"
+root_default = "~/.chai"
+# Upstream's own downloader through the kit's install step; no URL is restated
+# in ToolUniverse. Nothing is fetched at request time: the package refuses when
+# a file is missing rather than reaching for the CDN mid-fold.
+fetch = "cd {kit}/chai1 && PYTHON={python} bash run.sh install --weights {weights_root}"
+
+[[weights.files]]
+name = "esm/traced_sdpa_esm2_t36_3B_UR50D_fp16.pt"
+size = 5678940466
+sha256 = "074673b97e1c1ff9c3cf949294749dd446ad1c83cee50a466b4841bb4d89c27a"
+
+[[weights.files]]
+name = "models_v2/trunk.pt"
+size = 633042135
+sha256 = "b7a08e104455f76491088a5eeaea9bb95a08168c48969b0b892971346e51ccbc"
+
+[[weights.files]]
+name = "models_v2/diffusion_module.pt"
+size = 476546304
+sha256 = "bd77cf4095ad6b8a4eae7e390d01d24be1ebd819922ca3f28e8744f9945c9cad"
+
+[[weights.files]]
+name = "conformers_v1.apkl"
+size = 124726115
+sha256 = "f2161256b565bbd84198da8b3e3d3978ae2f179f778d0995cd135c4c0c57c41f"
+
+[[weights.files]]
+name = "models_v2/confidence_head.pt"
+size = 55259496
+sha256 = "82a4ac9f934fdd0e73870150f508cecbe010c1383234bdadcaa70d57323deb6b"
+
+[[weights.files]]
+name = "models_v2/token_embedder.pt"
+size = 6286772
+sha256 = "60cada19fd9c77d8298131a00368d162b6bc7d3c836dd36c715db04d21f7bbde"
+
+[[weights.files]]
+name = "models_v2/feature_embedding.pt"
+size = 4587962
+sha256 = "58600fb282827ee105b4bf33845c2eb2dce2a7d2ba7582951f76c9290c66c019"
+
+[[weights.files]]
+name = "models_v2/bond_loss_input_proj.pt"
+size = 5502
+sha256 = "98f3b2e415d11e460a684cdbfc213ca80447308022b1953cc5326ad468948851"
+
+[kit]
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "chai1"
+sparse = ["chai1", "common"]
+package = "chai1_opt"
+mode = "fast"
+install = "bash run.sh install --weights {weights_root}"
+# The kit replaces chai1.load_exported with its own loader, and refuses to
+# activate if anything else has replaced it first (stack.py's check). So the
+# worker must not memoise that function itself while the kit is on -- the kit
+# is what holds the modules between folds.
+levers_declined = []
+# The one lever this provider asks the kit not to attempt, and the reason is a
+# race it cannot win rather than a preference. `alloc` exports
+# PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True, and opt_core checks "CUDA
+# already initialised in this process" BEFORE it checks "the variable already
+# holds exactly this value" (mem/torch_alloc.py export(), lines 153-163). The
+# kit's trigger is `chai_lab.chai1`, whose own module body initialises CUDA, so
+# by the time the lever runs the answer is always yes and one opt-in refusal
+# takes the whole mode to NOT ACTIVE.
+#
+# Nothing is lost by turning it off: kit_launch puts the variable in the
+# environment before the process starts, which is what the policy needs, and
+# the kit's own EXIT line then reads `alloc_effective=true
+# alloc_source=snapshot`. What changes is the bookkeeping, and the kit records
+# the run as PARTIAL, which is accurate.
+levers_off = ["alloc"]

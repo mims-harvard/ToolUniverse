@@ -1,0 +1,511 @@
+[
+  {
+    "name": "predict_variant_effect",
+    "type": "UnifiedModelPredictTool",
+    "fields": {
+      "task": "variant_effect"
+    },
+    "description": "Score how damaging a genetic variant is, using one model or all 21 at once. Give the variant in whatever form you have -- HGVS, chrom/pos/ref/alt, an rsID, gene + protein change ('TP53 R175H'), or a raw protein sequence + position -- and it is resolved into whichever coordinate system each model needs. By default every applicable model runs and you get them side by side on a common axis, with a consensus, an agreement grade, named outliers, and an explicit reason for any model that could not run; set 'backend' to one id for a single cheap answer. This handles what makes these models hard to compare by hand: four different coordinate systems, different score scales, and several models (ESM-1v, ESM-2, popEVE, SIFT, Evo 2) that score in the opposite direction from the rest. Models answering a different question are reported separately rather than averaged in -- SpliceAI and Pangolin score splicing, CancerVar somatic oncogenicity. Coverage spans protein-level predictors (AlphaMissense, REVEL, VEST4, MetaRNN, SIFT, PolyPhen-2, EVE, ESM-1v, ESM-2, popEVE, MutationAssessor, MutationTaster, MetaSVM), genome and regulatory foundation models that also see non-coding variants (Evo 2, AlphaGenome, LINSIGHT), CADD, two splice models (SpliceAI, Pangolin), and rule-based classifiers (GeneBe ACMG, CancerVar). Use list_models=true to see them.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "variant": {
+          "type": "string",
+          "description": "Variant in any common form: HGVS ('17:g.7675088C>T'), 'chrom pos ref alt' ('17 7675088 C T'), dash-separated ('17-7675088-C-T'), an rsID ('rs28934578'), or gene + protein change ('TP53 R175H')."
+        },
+        "chrom": {
+          "type": "string",
+          "description": "Chromosome, if giving coordinates explicitly."
+        },
+        "pos": {
+          "type": "integer",
+          "description": "1-based genomic position."
+        },
+        "ref": {
+          "type": "string",
+          "description": "Reference allele."
+        },
+        "alt": {
+          "type": "string",
+          "description": "Alternate allele."
+        },
+        "rsid": {
+          "type": "string",
+          "description": "dbSNP rsID."
+        },
+        "gene": {
+          "type": "string",
+          "description": "HGNC gene symbol, e.g. 'TP53'."
+        },
+        "uniprot": {
+          "type": "string",
+          "description": "UniProt accession, e.g. 'P04637'."
+        },
+        "protein_change": {
+          "type": "string",
+          "description": "Protein change, e.g. 'R175H' or 'p.Arg175His'."
+        },
+        "sequence": {
+          "type": "string",
+          "description": "Protein sequence (1-letter). Use this to score a variant in a sequence that is in no database -- an engineered or non-human protein."
+        },
+        "position": {
+          "type": "integer",
+          "description": "1-based residue position, when scoring by sequence."
+        },
+        "mutant": {
+          "type": "string",
+          "description": "Mutant amino acid (1-letter), when scoring by sequence."
+        },
+        "assembly": {
+          "type": "string",
+          "description": "Genome build. Default GRCh38; use 'GRCh37' for hg19 coordinates."
+        },
+        "backend": {
+          "description": "Which model(s) to run. Omit or use 'all' to run every applicable model and get a consensus. Give one id ('alphamissense') to run just that one -- far cheaper. Give a list to run a subset. Ids come from list_models=true.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "list_models": {
+          "type": "boolean",
+          "description": "Return the catalogue of models for this task -- id, units, direction, API key needed, whether it can run right now -- and make no prediction. Costs nothing."
+        },
+        "include_notes": {
+          "type": "boolean",
+          "description": "With list_models, include per-model caveats. Default true."
+        },
+        "include_details": {
+          "type": "boolean",
+          "description": "Include each model's full canonical record, not just the summary table. Default true."
+        },
+        "include_raw": {
+          "type": "boolean",
+          "description": "Keep bulky payloads (structure coordinates, docking poses) in the reply. Default false."
+        },
+        "max_workers": {
+          "type": "integer",
+          "description": "Models to run concurrently. Default 6."
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "task": {
+              "type": "string"
+            },
+            "input": {
+              "type": "object",
+              "description": "What the input resolved to -- the first thing to check when a result looks wrong."
+            },
+            "predictions": {
+              "type": "array",
+              "description": "One row per model: backend, model, score, score_type, units, normalized_score, call, call_label, calibration, status."
+            },
+            "summary": {
+              "type": "object",
+              "description": "Present when several models ran: consensus, spread, agreement grade, call tally, outliers, and any models answering a different question."
+            },
+            "skipped": {
+              "type": "array",
+              "description": "Models that did not run, each with a reason."
+            },
+            "models": {
+              "type": "array",
+              "description": "With list_models=true: the catalogue instead of a prediction."
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "predict_protein_structure",
+    "type": "UnifiedModelPredictTool",
+    "fields": {
+      "task": "structure_prediction"
+    },
+    "description": "Fold a protein sequence, with one model or every available one at once. Accepts a raw 1-letter sequence (FASTA header tolerated), a UniProt accession, or a gene symbol, which is looked up for you. Returns coordinates as PDB or mmCIF text plus mean pLDDT always on a 0-100 scale -- some models report 0-1 natively and are rescaled here so the numbers are actually comparable -- a confident/low_confidence call at the standard pLDDT>=70 cutoff, and pTM where available. Multi-chain complexes are supported by AlphaFold2-Multimer, OpenFold3 and Boltz-2 via the 'sequences' input. Running several is informative: language-model folders (ESMFold) are fast but weaker on sequences with deep homolog coverage, where MSA-based folders (AlphaFold2, OpenFold2) do better, and only Boltz-2 co-folds a ligand. Most models need NVIDIA_API_KEY, so expect skips unless it is set -- call list_models=true to check first. Structures are omitted unless include_raw=true. Pass 'reference_pdb_id' to score each prediction against an experimental structure: you get measured C\u03b1 lDDT and a calibration gap (pLDDT minus lDDT) alongside the confidence, which is the only way to rank folders on accuracy rather than on how sure they sound.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "Protein sequence in 1-letter code. A FASTA record is accepted and its header stripped."
+        },
+        "sequences": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Several chains, to fold a complex. Only some models support this."
+        },
+        "uniprot": {
+          "type": "string",
+          "description": "UniProt accession to fold; its canonical sequence is fetched."
+        },
+        "gene": {
+          "type": "string",
+          "description": "Gene symbol to fold; resolved to a reviewed UniProt entry first."
+        },
+        "ligand_smiles": {
+          "type": "string",
+          "description": "Ligand to co-fold with the receptor. Only Boltz-2 supports this."
+        },
+        "backend": {
+          "description": "Which model(s) to run. Omit or use 'all' to run every applicable model and get a consensus. Give one id ('alphamissense') to run just that one -- far cheaper. Give a list to run a subset. Ids come from list_models=true.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "list_models": {
+          "type": "boolean",
+          "description": "Return the catalogue of models for this task -- id, units, direction, API key needed, whether it can run right now -- and make no prediction. Costs nothing."
+        },
+        "include_notes": {
+          "type": "boolean",
+          "description": "With list_models, include per-model caveats. Default true."
+        },
+        "include_details": {
+          "type": "boolean",
+          "description": "Include each model's full canonical record, not just the summary table. Default true."
+        },
+        "include_raw": {
+          "type": "boolean",
+          "description": "Keep bulky payloads (structure coordinates, docking poses) in the reply. Default false."
+        },
+        "max_workers": {
+          "type": "integer",
+          "description": "Models to run concurrently. Default 6."
+        },
+        "reference_pdb_id": {
+          "type": "string",
+          "description": "4-character PDB id of the experimental structure to score the prediction against. Supplying it adds measured C\u03b1 lDDT and a calibration gap to every model, turning self-reported confidence into accuracy."
+        },
+        "reference_structure": {
+          "type": "string",
+          "description": "Reference coordinates as PDB text, as an alternative to reference_pdb_id."
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "task": {
+              "type": "string"
+            },
+            "input": {
+              "type": "object",
+              "description": "What the input resolved to -- the first thing to check when a result looks wrong."
+            },
+            "predictions": {
+              "type": "array",
+              "description": "One row per model: backend, model, score, score_type, units, normalized_score, call, call_label, calibration, status."
+            },
+            "summary": {
+              "type": "object",
+              "description": "Present when several models ran: consensus, spread, agreement grade, call tally, outliers, and any models answering a different question."
+            },
+            "skipped": {
+              "type": "array",
+              "description": "Models that did not run, each with a reason."
+            },
+            "models": {
+              "type": "array",
+              "description": "With list_models=true: the catalogue instead of a prediction."
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "predict_molecular_property",
+    "type": "UnifiedModelPredictTool",
+    "fields": {
+      "task": "molecular_property"
+    },
+    "description": "Predict one ADMET property for one molecule, with one model or every model that covers it. REQUIRES 'property' -- a canonical id using Therapeutics Data Commons dataset names, so a prediction and its public benchmark share one vocabulary: bbb_martins, ames, herg, dili, ld50_zhu, caco2_wang, hia_hou, solubility_aqsoldb, lipophilicity_astrazeneca, half_life_obach, clearance_hepatocyte_az, vdss_lombardo, ppbr_az, cyp3a4_veith, pgp_broccatelli, qed, logp, tpsa and more (ADMET-AI covers 45, including the Tox21 nuclear-receptor and stress-response panels: nr-ar, nr-ahr, sr-p53, sr-mmp and the rest). Takes 'smiles', or a 'drug' name resolved via PubChem. Returns the value with explicit units -- a probability for classification endpoints, the physical quantity for regression ones -- a uniform positive/negative call, and the endpoint's own word for it (e.g. 'penetrant') as call_label. Models that do not cover the requested property are reported as skipped with the list they do cover. Pairs learned predictors against deterministic RDKit descriptors, the right baseline for endpoints like logP and TPSA where an exact calculation exists. Call list_models=true for the full per-model property list.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "smiles": {
+          "type": "string",
+          "description": "Molecule as SMILES."
+        },
+        "drug": {
+          "type": "string",
+          "description": "Compound name, resolved to SMILES via PubChem when 'smiles' is not given."
+        },
+        "property": {
+          "type": "string",
+          "description": "Canonical property id, using Therapeutics Data Commons dataset names: bbb_martins, ames, herg, dili, ld50_zhu, caco2_wang, hia_hou, solubility_aqsoldb, lipophilicity_astrazeneca, half_life_obach, clearance_hepatocyte_az, vdss_lombardo, ppbr_az, cyp3a4_veith, pgp_broccatelli, qed, logp, tpsa and more. Call list_models=true for the full per-model list."
+        },
+        "backend": {
+          "description": "Which model(s) to run. Omit or use 'all' to run every applicable model and get a consensus. Give one id ('alphamissense') to run just that one -- far cheaper. Give a list to run a subset. Ids come from list_models=true.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "list_models": {
+          "type": "boolean",
+          "description": "Return the catalogue of models for this task -- id, units, direction, API key needed, whether it can run right now -- and make no prediction. Costs nothing."
+        },
+        "include_notes": {
+          "type": "boolean",
+          "description": "With list_models, include per-model caveats. Default true."
+        },
+        "include_details": {
+          "type": "boolean",
+          "description": "Include each model's full canonical record, not just the summary table. Default true."
+        },
+        "include_raw": {
+          "type": "boolean",
+          "description": "Keep bulky payloads (structure coordinates, docking poses) in the reply. Default false."
+        },
+        "max_workers": {
+          "type": "integer",
+          "description": "Models to run concurrently. Default 6."
+        }
+      },
+      "required": [
+        "property"
+      ]
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "task": {
+              "type": "string"
+            },
+            "input": {
+              "type": "object",
+              "description": "What the input resolved to -- the first thing to check when a result looks wrong."
+            },
+            "predictions": {
+              "type": "array",
+              "description": "One row per model: backend, model, score, score_type, units, normalized_score, call, call_label, calibration, status."
+            },
+            "summary": {
+              "type": "object",
+              "description": "Present when several models ran: consensus, spread, agreement grade, call tally, outliers, and any models answering a different question."
+            },
+            "skipped": {
+              "type": "array",
+              "description": "Models that did not run, each with a reason."
+            },
+            "models": {
+              "type": "array",
+              "description": "With list_models=true: the catalogue instead of a prediction."
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "name": "predict_binding_affinity",
+    "type": "UnifiedModelPredictTool",
+    "fields": {
+      "task": "binding_affinity"
+    },
+    "description": "Dock or score one protein-ligand pair, with one model or all of them. Give 'ligand_smiles' (or a 'ligand' name resolved via PubChem) plus a receptor as 'pdb_id', 'protein_sequence', 'uniprot' or a 'target' gene symbol; receptor coordinates and a 3D ligand conformer are built for you. IMPORTANT: unlike the other tasks, these models report genuinely different quantities and are NOT interchangeable -- SwissDock returns an AutoDock Vina binding energy in kcal/mol (lower = tighter), DiffDock a pose-confidence logit, and Boltz-2 a co-folding interface pTM, which measures how confidently the ligand was placed and is NOT a binding affinity. Because of that this task deliberately produces no single consensus number: the models are listed under 'excluded_from_consensus' with the reason rather than averaged into a figure that would look meaningful and not be. Read each in its own units. Most models need NVIDIA_API_KEY; poses are omitted unless include_raw=true.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "ligand_smiles": {
+          "type": "string",
+          "description": "Ligand as SMILES."
+        },
+        "ligand": {
+          "type": "string",
+          "description": "Ligand name, resolved to SMILES via PubChem."
+        },
+        "pdb_id": {
+          "type": "string",
+          "description": "4-character PDB id of the receptor (required by structure-based docking)."
+        },
+        "protein_sequence": {
+          "type": "string",
+          "description": "Receptor sequence, for models that need no experimental structure."
+        },
+        "uniprot": {
+          "type": "string",
+          "description": "UniProt accession of the receptor."
+        },
+        "target": {
+          "type": "string",
+          "description": "Target gene symbol."
+        },
+        "backend": {
+          "description": "Which model(s) to run. Omit or use 'all' to run every applicable model and get a consensus. Give one id ('alphamissense') to run just that one -- far cheaper. Give a list to run a subset. Ids come from list_models=true.",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "list_models": {
+          "type": "boolean",
+          "description": "Return the catalogue of models for this task -- id, units, direction, API key needed, whether it can run right now -- and make no prediction. Costs nothing."
+        },
+        "include_notes": {
+          "type": "boolean",
+          "description": "With list_models, include per-model caveats. Default true."
+        },
+        "include_details": {
+          "type": "boolean",
+          "description": "Include each model's full canonical record, not just the summary table. Default true."
+        },
+        "include_raw": {
+          "type": "boolean",
+          "description": "Keep bulky payloads (structure coordinates, docking poses) in the reply. Default false."
+        },
+        "max_workers": {
+          "type": "integer",
+          "description": "Models to run concurrently. Default 6."
+        }
+      },
+      "required": []
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "task": {
+              "type": "string"
+            },
+            "input": {
+              "type": "object",
+              "description": "What the input resolved to -- the first thing to check when a result looks wrong."
+            },
+            "predictions": {
+              "type": "array",
+              "description": "One row per model: backend, model, score, score_type, units, normalized_score, call, call_label, calibration, status."
+            },
+            "summary": {
+              "type": "object",
+              "description": "Present when several models ran: consensus, spread, agreement grade, call tally, outliers, and any models answering a different question."
+            },
+            "skipped": {
+              "type": "array",
+              "description": "Models that did not run, each with a reason."
+            },
+            "models": {
+              "type": "array",
+              "description": "With list_models=true: the catalogue instead of a prediction."
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    }
+  }
+]

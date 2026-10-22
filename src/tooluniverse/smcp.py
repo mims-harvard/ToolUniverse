@@ -153,6 +153,36 @@ def _save_full_response(serialized: str) -> str:
     return path
 
 
+# The ceiling a tool response is held to before it reaches an LLM's context.
+# It was written as a bare `100_000` at both call sites; one number governing
+# one contract belongs in one place.
+MAX_RESPONSE_CHARS = 100_000
+
+
+def _fit_preview(envelope: Dict[str, Any], serialized: str, max_chars: int) -> str:
+    """``envelope`` carrying as much of ``serialized`` in ``_preview`` as fits.
+
+    The budget is measured rather than estimated: ``json.dumps`` escapes the
+    preview, so how many characters of ``serialized`` fit is not a subtraction.
+    When even the empty envelope is over ``max_chars`` it is returned anyway --
+    the metadata is the floor, and naming the overflow beats returning nothing.
+    """
+    best = json.dumps({**envelope, "_preview": ""}, ensure_ascii=False)
+    if len(best) > max_chars:
+        return best
+    lo, hi = 0, len(serialized)
+    while lo < hi:
+        mid = (lo + hi + 1) // 2
+        trial = json.dumps(
+            {**envelope, "_preview": serialized[:mid]}, ensure_ascii=False
+        )
+        if len(trial) <= max_chars:
+            lo, best = mid, trial
+        else:
+            hi = mid - 1
+    return best
+
+
 def _truncate_response(
     result: Any,
     serialized: str,
@@ -194,7 +224,7 @@ def _truncate_response(
                 lo = mid
             else:
                 hi = mid - 1
-        return json.dumps(
+        out = json.dumps(
             {
                 "data": result[:lo],
                 "_truncated": True,
@@ -206,6 +236,13 @@ def _truncate_response(
             ensure_ascii=False,
             default=_json_default,
         )
+        # The search starts at lo = 1 and never tests it, so a list whose
+        # FIRST item is itself oversized used to be returned in full under a
+        # `"_truncated": true` label: measured at 5,000,126 chars against a
+        # 100,000 cap, fifty times the limit this function exists to impose.
+        # A guard that reports success while not guarding is worse than none.
+        if len(out) <= max_chars:
+            return out
 
     # If result is a dict, try to truncate the largest list value
     if isinstance(result, dict):
@@ -231,11 +268,27 @@ def _truncate_response(
                     return trial
                 keep = keep // 2
 
-    # Fallback: raw string truncation
-    suffix = f"\n... [TRUNCATED: {len(serialized):,} chars total]"
-    if full_path:
-        suffix += f"\nFull response saved to: {full_path}"
-    return serialized[:max_chars] + suffix
+    # Fallback: a JSON envelope carrying the head of the response as text.
+    #
+    # This was `serialized[:max_chars] + suffix`, which cut a JSON document at
+    # an arbitrary character and appended to it, so the answer was neither
+    # valid JSON nor under the cap. Measured on four shapes -- a bare huge
+    # string, a dict whose bulk is one string, a single-item list, and a dict
+    # with a big list beside a huge sibling string -- every one came back
+    # 100,039 chars and unparseable. A caller holding the tool to its declared
+    # JSON return therefore got NOTHING from a response that had been
+    # truncated precisely so that it could get something.
+    envelope = {
+        "_truncated": True,
+        "_total_chars": len(serialized),
+        "_note": (
+            f"Response truncated: {len(serialized):,} chars exceeded the "
+            f"{max_chars:,} character limit, and its shape offered no list to "
+            f"trim. `_preview` holds the head of the JSON response as text."
+        ),
+        **truncation_meta,
+    }
+    return _fit_preview(envelope, serialized, max_chars)
 
 
 def _readable_tool_title(name: str) -> str:
@@ -686,11 +739,21 @@ class SMCP(FastMCP):
             self.logger.error(f"Error getting valid categories: {e}")
             return set()
 
-    def _load_tools_with_filters(self, tool_type=None):
+    def _load_tools_with_filters(self, tool_type=None, clear_existing=True):
         """Load tools with the common set of filter parameters.
 
         Centralizes the repeated pattern of calling load_tools with the same
         exclude/include/tools_file/config kwargs used across _setup_smcp_tools.
+
+        ``clear_existing`` defaults to True because this server's filters
+        describe what it is to serve, not what to add to whatever is loaded.
+        Something usually IS loaded by the time this runs: a workspace
+        profile.yaml is applied when ToolUniverse is constructed, and it loads
+        the whole catalogue unless it says otherwise. Before this was explicit,
+        `self.include_tools` being `[]` made load_tools infer "add", so the
+        server's own filters quietly kept every tool that profile had loaded.
+        The compact-mode step below is the one caller that really does mean
+        "as well", and says so.
         """
         self.tooluniverse.load_tools(
             tool_type=tool_type,
@@ -701,6 +764,7 @@ class SMCP(FastMCP):
             tool_config_files=self.tool_config_files,
             include_tool_types=self.include_tool_types,
             exclude_tool_types=self.exclude_tool_types,
+            clear_existing=clear_existing,
         )
 
     def _ensure_compact_mode_categories(self):
@@ -709,7 +773,10 @@ class SMCP(FastMCP):
             return
         for category in ("tool_finder", "compact_mode"):
             try:
-                self._load_tools_with_filters(tool_type=[category])
+                # ADDED to the selection above, not loaded instead of it.
+                self._load_tools_with_filters(
+                    tool_type=[category], clear_existing=False
+                )
             except Exception as e:
                 self.logger.debug(f"Could not load category {category}: {e}")
 
@@ -1012,7 +1079,7 @@ class SMCP(FastMCP):
                 )
 
             # Guard against oversized responses
-            max_chars = 100_000
+            max_chars = MAX_RESPONSE_CHARS
             if len(serialized) > max_chars:
                 serialized = _truncate_response(
                     result,
@@ -1503,7 +1570,12 @@ class SMCP(FastMCP):
                     "Attempting to load tool_finder category for search functionality"
                 )
                 try:
-                    self._load_tools_with_filters(tool_type=["tool_finder"])
+                    # ADDED to whatever is serving, like the compact-mode step:
+                    # this is a search capability the server lacked, not a new
+                    # selection of what to serve.
+                    self._load_tools_with_filters(
+                        tool_type=["tool_finder"], clear_existing=False
+                    )
                 except Exception as e:
                     self.logger.debug(f"Could not load tool_finder category: {e}")
 
@@ -2365,7 +2437,7 @@ class SMCP(FastMCP):
                         )
 
                     # Guard against oversized responses that overflow LLM context
-                    max_chars = 100_000
+                    max_chars = MAX_RESPONSE_CHARS
                     if len(serialized) > max_chars:
                         serialized = _truncate_response(
                             result,

@@ -1,0 +1,160 @@
+# Chai-1's model environment — the exact stack the measurements in
+# ../provider.toml were taken on, as `pip freeze --all` of it.
+#
+# The third distinct stack in this repository and it coexists with neither of
+# the others: Chai-1 pins torch 2.13.0+cu130 on Python 3.11.5, Boltz-2 pins
+# torch 2.12.0+cu130, Enformer torch 2.13.0 with numpy 2.4.6. One model, one
+# environment, one socket each.
+#
+# Worth knowing: the kit installs this stack deliberately outside the range
+# chai_lab itself declares (`torch<2.7,>=2.3.1`), and says so on its own install
+# line -- `torch 2.13.0+cu130: declared range torch<2.7,>=2.3.1 -> False`. That
+# is the kit's choice, stated rather than hidden, and it is why the pin check
+# passes anyway: the pin is the installed chai_lab tree, not what its metadata
+# asks for.
+#
+# Rebuild (Python 3.11, an NVIDIA driver the stack's CUDA build needs, a C
+# compiler on PATH):
+#
+#   uv venv --seed --managed-python --python 3.11.5 ~/chai1-venv
+#   . ~/chai1-venv/bin/activate
+#   python -m pip install --no-deps -r requirements.lock
+#   bash <kit>/chai1/run.sh install --weights ~/.chai
+#
+# --no-deps is deliberate: the list is complete, and letting a resolver
+# re-derive it is how a stack stops being the one that was measured. The kit
+# (chai1_opt) and its shared core install editable on top and are not here.
+aiobotocore==3.9.0
+aiohappyeyeballs==2.7.1
+aiohttp==3.14.3
+aioitertools==0.13.0
+aiosignal==1.4.0
+annotated-doc==0.0.5
+annotated-types==0.8.0
+antipickle==0.2.0
+attrs==26.1.0
+beartype==0.22.9
+biopython==1.88
+botocore==1.43.56
+certifi==2026.7.22
+cffi==2.1.1
+chai_lab==0.6.1
+charset-normalizer==3.5.1
+contourpy==1.3.3
+cryptography==50.0.1
+cuda-bindings==13.3.1
+cuda-pathfinder==1.8.0
+cuda-toolkit==13.0.3.0
+cuequivariance==0.11.1
+cuequivariance-ops-cu13==0.11.1
+cuequivariance-ops-torch-cu13==0.11.1
+cuequivariance-torch==0.11.1
+cycler==0.12.1
+db-dtypes==1.7.1
+decorator==5.3.1
+einops==0.8.2
+filelock==3.32.4
+fonttools==4.63.0
+frozenlist==1.8.0
+fsspec==2026.7.0
+gcsfs==2026.8.0
+gemmi==0.6.7
+google-api-core==2.34.0
+google-auth==2.57.0
+google-auth-oauthlib==1.4.1
+google-cloud-bigquery==3.44.0
+google-cloud-core==2.7.0
+google-cloud-storage==3.13.1
+google-cloud-storage-control==1.14.0
+google-crc32c==1.8.0
+google-resumable-media==2.10.2
+googleapis-common-protos==1.75.2
+grpc-google-iam-v1==0.14.5
+grpcio==1.83.1
+grpcio-status==1.83.1
+idna==3.19
+ihm==2.11
+jaxtyping==0.3.11
+Jinja2==3.1.6
+jmespath==1.1.0
+kiwisolver==1.5.1
+llvmlite==0.49.0
+markdown-it-py==4.2.0
+MarkupSafe==3.0.3
+matplotlib==3.11.1
+mdurl==0.1.2
+modelcif==1.8
+mpmath==1.3.0
+msgpack==1.2.2
+multidict==6.7.1
+mypy_extensions==1.1.0
+networkx==3.6.1
+ninja==1.13.0
+numba==0.67.0
+numpy==1.26.4
+nvidia-cublas==13.1.1.3
+nvidia-cuda-cupti==13.0.85
+nvidia-cuda-nvrtc==13.0.88
+nvidia-cuda-runtime==13.0.96
+nvidia-cudnn-cu13==9.20.0.48
+nvidia-cufft==12.0.0.61
+nvidia-cufile==1.15.1.6
+nvidia-curand==10.4.0.35
+nvidia-cusolver==12.0.4.66
+nvidia-cusparse==12.6.3.3
+nvidia-cusparselt-cu13==0.8.1
+nvidia-ml-py==13.610.43
+nvidia-nccl-cu13==2.29.7
+nvidia-nvjitlink==13.3.33
+nvidia-nvshmem-cu13==3.4.5
+nvidia-nvtx==13.0.85
+oauthlib==3.3.1
+opt_einsum==3.4.0
+packaging==26.3
+pandas==2.3.3
+pandas-gbq==0.35.2
+pandera==0.32.1
+pillow==12.3.0
+pip==26.2.1
+platformdirs==4.11.5
+propcache==0.5.2
+proto-plus==1.28.4
+protobuf==7.36.0
+psutil==7.2.2
+pyarrow==25.0.1
+pyasn1==0.6.4
+pyasn1_modules==0.4.2
+pycparser==3.0
+pydantic==2.13.5
+pydantic_core==2.46.5
+pydata-google-auth==1.9.1
+Pygments==2.21.0
+pyparsing==3.3.2
+python-dateutil==2.9.0.post0
+pytz==2026.3.post1
+rdkit==2024.9.6
+requests==2.34.2
+requests-oauthlib==2.0.0
+rich==15.0.0
+s3fs==2026.7.0
+scipy==1.17.1
+setuptools==84.0.0
+shellingham==1.5.4
+six==1.17.0
+sympy==1.14.0
+tmtools==0.3.0
+torch==2.13.0
+tqdm==4.70.0
+triton==3.7.1
+typeguard==4.6.0
+typer==0.27.2
+typer-slim==0.24.0
+typing-inspect==0.9.0
+typing-inspection==0.4.4
+typing_extensions==4.16.0
+tzdata==2026.3
+urllib3==2.7.0
+wadler_lindig==0.1.7
+wheel==0.48.0
+wrapt==2.3.0
+yarl==1.24.5

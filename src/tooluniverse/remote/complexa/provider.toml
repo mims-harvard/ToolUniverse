@@ -1,0 +1,455 @@
+# Proteina-Complexa -- de novo protein binder design, held resident.
+#
+# WHAT THIS MODEL IS, because the slug says nothing. `complexa` is NVIDIA's
+# Proteina-Complexa 1.1.0: a flow-matching BINDER GENERATOR, not a structure
+# predictor. Given a target protein's structure, a residue range to crop it to
+# and a list of hotspot residues on its surface, it invents proteins that bind
+# there. ONE REQUEST IS: take this target, make me N binders of length L against
+# these hotspots. Per design it integrates 400 flow-matching steps (default) of a
+# "local latents" transformer denoiser (14 layers x 768, pair-biased attention,
+# fp32 + TF32) over the binder's CA coordinates and an 8-dimensional per-residue
+# latent, conditioned on the target; a frozen autoencoder then decodes the
+# binder's full atoms AND its amino-acid sequence (415.2 M parameters in all).
+# The answer is one PDB per design, chain A the target crop and chain B the new
+# binder -- a backbone and a sequence that did not exist before, which is why the
+# output assertion below is about files only a completed decode can write.
+#
+# THE INPUT DIALECT. Not a sequence and not a FASTA: a target STRUCTURE (PDB
+# text), a crop `A1-115` of one of its chains, hotspot residues `["A37", ...]`
+# numbered as in that file, a binder length, a design count. It is the kit's own
+# `--input` entry (upstream's targets_dict form) with the file inlined.
+#
+# THIS PROVIDER RUNS THE GENERATION STAGE ALONE: upstream's own pair of overrides
+# `++generation.search.algorithm=single-pass ++generation.reward_model=null`,
+# which the kit's README gives as its `$GEN`. Upstream's shipped configuration
+# also scores every design with an AlphaFold2 reward model whose parameters this
+# deployment does not carry. The designs come back raw, unscored and unranked.
+#
+# THE TORCH QUESTION: torch 2.7.0 is >= 2.7, so this card is not closed at the
+# pin (below 2.7 there is no CUDA build for sm_121 at all -- STANDARD.md section
+# 10). The kit pins +cu126; this host runs +cu128 (no aarch64 +cu126 file exists
+# for 2.7.0, and PyPI's aarch64 wheel is CPU-only). Measured, not argued:
+# `torch.cuda.get_arch_list()` is ['sm_90', 'sm_100', 'sm_120'], and a GEMM, a
+# LayerNorm and an SDPA call all run on the card.
+#
+# ...AND IT STILL NEEDED A DEVIATION, found by the first request rather than by
+# any pre-check: torch 2.7.0+cu128 bundles NVRTC 12.8, which does not know
+# sm_121, so `torch.prod(x, dim=-1)` -- called by upstream's openfold transforms
+# on every target's side-chain torsion features -- fails on every CUDA dtype with
+# "nvrtc: error: invalid value for --gpu-architecture (-arch)", while every
+# other op in the model works. NVRTC 12.9 (nvidia-cuda-nvrtc-cu12==12.9.86) knows
+# the card; the lock carries it and launch.py puts it first on LD_LIBRARY_PATH.
+# The full account is in environment/requirements.lock. This is a fifth kind of
+# stack-versus-card failure on this standard: the kernels all exist, and one
+# reduction is JIT-compiled at run time by a compiler that predates the card.
+#
+# WHAT RESIDENCY BUYS, measured below under [provider] verified_on. The cost that
+# a fresh process pays and a held one does not is the interpreter and import
+# graph (jax, atomworks, lightning: 12-25 s), the checkpoint read and model
+# build (5-30 s; 6.6 GiB from disk, more on a cold page cache), and the CUDA
+# context. It is NOT a compile trace: nothing here compiles, so a restart loses
+# no cached artifact. What a held worker does NOT save is the host-to-device
+# upload of the weights, which Lightning's teardown undoes after every request
+# (the model returns to the CPU), and that is why the idle worker holds almost
+# no GPU memory -- a property worth having beside a residency number.
+
+[provider]
+slug = "complexa"
+description = "Proteina-Complexa de novo binder design: generate binder backbones and sequences against a target structure and hotspot residues"
+operations = ["complexa_design_binder"]
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver 580.173.02), venv route,
+CPython 3.12.10, torch 2.7.0+cu128 with NVRTC 12.9.86 first on LD_LIBRARY_PATH
+(see the header), kit mode FAST with all six levers state=on. The lock was
+rebuilt in an EMPTY venv by `tu remote setup` (157 pins, environment + kit steps
+exit 0) and that venv's worker produced the same design as the original's.
+Wall times are from a card shared with other sessions and do not reproduce; peaks do.
+
+ACCEPTANCE (scripts/remote_validation/verify_provider.py complexa --lengths
+100,200,400 --repeats 4, one held worker, final code): ladder 3/3, mixed
+100,100,200,100 4/4, 4 consecutive identical requests 4/4, every request asserted
+to have written a design. The ladder's rungs are N = 100/200/400 residues in total
+(target crop + binder, the smoke's 115:64 ratio); per-request peak reserved is in
+[gpu] below. A transcript of the final run shows one `model built` and one clean
+shutdown, 11 predict steps, 4,400 forwards, levers_on=all six.
+
+ENGINE KEY varied, then back: request 1 (smoke, 40 steps) -> num_steps 20 ->
+3 designs batch 3 -> 4 designs batch 2 -> binder 96 -> a different target (tiled
+crop, N=300) -> seed 7 -> request 1 again -> again. Requests 1, 8 and 9 are
+byte-identical (sha256 d887af28210f26ca), run twice, on the full worker.
+
+EQUIVALENCE: the held worker's design for the smoke target (seed 0, 400 steps),
+its second request, a worker built from the lock in an empty venv (4 requests)
+and the kit's own `run.sh design --mode fast` in a fresh process are all
+byte-identical (sha256 a37a8fd04cfc2596). The held worker does not change the
+answer.
+
+CEILINGS refuse past the row: binder 201, binder 19, 17 designs, batch 17, crop
+301, steps 9 and 401 each refused (worker and tool), the corner 300+200 residues x
+16 designs admitted, and a product guard that refuses (300+200)^2 x 32 when
+MAX_DESIGNS alone is raised. The outputs glob was run through
+setup._what_it_produced against a REAL failed run's directory (target.pdb and an
+empty inference/ directory) and refused.
+
+RESIDENCY, measured (contended card unless noted): best rung 5.4x (N=100, 10
+steps: fresh process 36.5 s build + 7.8 s = 44.3 s vs 8.3 s held); smoke shape
+(179 tokens, 400 steps) 1.6x on a card at 95% utilisation from other sessions and
+4.9-5.7x on a quieter one (build 15.5-21.4 s + first request 28-33 s against
+7.6-11 s held); AT THE BUDGET ROW (N=500, 16 designs, 400 steps) ~1.13x, the
+fixed cost being seconds against a request of minutes.
+
+The hostile-environment test: COMPLEXA_OPT_BOGUS, COMPLEXA_OPT_LEVERS and
+COMPLEXA_OPTX exported in the operator's shell, a real worker started, and
+/proc/<worker pid>/environ read: none of the three present, COMPLEXA_OPT=fast,
+LD_LIBRARY_PATH = the NVRTC directory then the operator's own value. The
+worker answered. Orphan watchdog: the MCP server SIGTERMed, the worker was gone
+in ~55 s. Every reply carried child_processes=0 and triton_cache_files=0.
+
+RE-VERIFIED INDEPENDENTLY, and one figure is NOT yet re-verified -- said here
+rather than left to be assumed. Through the repository's own interpreter:
+
+    five steps again   all green; smoke 51 s, peak reserved 7.93 GiB
+    ladder 100/200/400 59.2 / 61.5 / 70.2 s, 3/3 produced
+    mixed 100,100,200,100  73.2 / 72.2 / 107.5 / 112.8 s, 4/4
+    repeats x4         111.2 / 110.8 / 83.7 / 97.4 s, 4/4
+
+11 requests, 11 designs. The NVRTC deviation was confirmed by the narrowest
+experiment available: the same `torch.prod(x, dim=-1)` in the same interpreter
+raises without this lock's nvrtc 12.9.86 directory first on LD_LIBRARY_PATH and
+returns -0.006928586401045322 with it.
+
+THE ACCEPTANCE LADDER SAYS NOTHING ABOUT THE DECLARED ROW, which is worth
+stating because it looks as though it should. Every rung above reads 7.93 GiB --
+the BUILD's high-water mark -- because for this provider length is not the
+expensive axis, DESIGNS-PER-PASS is, and the suite varies length only.
+
+SO THE CORNER WAS MEASURED SEPARATELY, on a quiet machine, three ways, and the
+declared figure sits ABOVE all three. The corner is crop 300 + binder 200 = 500
+residues at 16 designs, built by the acceptance harness's own shaper rather than
+by hand (a first attempt wrote `target_input = "A1-300"` against the smoke's
+115-residue PD-L1 crop and upstream correctly answered
+`ValueError: No atoms found for selection: A/*/116`):
+
+    fresh worker, straight to the corner          17.75 GiB
+    after a SMALLER shape (n=200, 4 designs)      17.85 GiB
+    after climbing the DESIGN axis 2 -> 4 -> 8    19.00 GiB
+    the corner repeated, same shape               19.00 GiB
+
+17.75 and 19.00 both reproduce the bringup's own figures. **Its third figure,
+20.25 "after a shape change", did NOT reproduce in either sequence tried**, and
+20.25 was the one it derived rather than observed -- 17.75 plus a 2.51 GiB kit
+pair-bias buffer it reported as retained across a shape change. On this machine
+the retention is worth 1.25 GiB (17.75 -> 19.00) and only when the previous
+shape was LARGER on the design axis; arriving from a smaller target costs 0.10.
+
+`vram_budget_gb` STAYS 20.25 rather than dropping to the 19.00 measured here.
+A budget is an upper bound a host adds up, so being above every observed figure
+is the safe direction and lowering it to the highest number one happens to have
+reproduced is not. What a reader should take from this block is the shape of the
+curve -- the design axis drives the peak, a retained buffer adds about 1.25 GiB
+on top, and 20.25 has roughly a gigabyte of headroom over anything measured."""
+
+[runtime]
+mode = "resident"
+worker = "resident/complexa_resident_worker.py"
+# NOT the shared `tooluniverse.remote_resident.kit_launch:build_command`, and the
+# reasons are in launch.py's module docstring. The short form: this kit's
+# start-up hook exits 3 in any interpreter carrying an undeclared COMPLEXA_OPT*
+# name and the shared launcher can add names but cannot remove one; this kit keeps
+# no mode row for the shared probe to read; four of upstream's optional variables
+# are load-bearing because Hydra resolves ${oc.env:...} eagerly while composing;
+# and the card needs a newer NVRTC first on the loader's path.
+launch = "tooluniverse.remote.complexa.launch:build_command"
+worker_args = [
+    "--socket", "{socket}",
+    "--slug", "{slug}",
+    "--upstream", "{upstream}",
+    "--weights-root", "{weights_root}",
+]
+# Imports 12-25 s plus a model build of 5-30 s plus a cold-cache checkpoint read
+# of up to ~85 s on the kit's own account, all of it stretched by a contended
+# card. Generous on purpose: a deadline that fires during a first build reports a
+# stall that is not one.
+start_timeout_s = 1800.0
+# THE LONGEST REQUEST THE CEILINGS ADMIT, not a typical one. The declared corner
+# (300 target + 200 binder residues, 16 designs in one batch) is linear in steps
+# and was timed twice on a card other sessions were using at ~95% utilisation:
+# 74.7 s at 10 steps and 83.8 s at 20 (0.91 s/step, ~65 s fixed), i.e. ~430 s at
+# the default 400 steps; an earlier, busier moment measured 84 s at 10 steps with
+# a steeper slope, which extrapolates to ~3,400 s. The two differ 8x because the
+# card did, and wall times here are not reproducible (peaks are). 7,200 s covers
+# the worse of them twice over.
+request_timeout_s = 7200.0
+# What a run that actually designed something leaves behind.
+#
+# THE GLOB IS NARROW ON PURPOSE AND IT WAS TESTED AGAINST A RUN THAT DESIGNED
+# NOTHING. `save_predictions` (generate.py) is the only thing in this pipeline
+# that writes a file of this shape: for each design it makes a directory
+# `job_<job>_n_<nres>_id_<i>[_<tag>]` and writes `<same name>.pdb` inside it.
+# What a run writes whether or not it designs anything, and which a laxer glob
+# would have matched:
+#
+#   * `*.pdb` would match THE INPUT. This provider writes the caller's target
+#     structure into the request directory as `target.pdb` before composing, so
+#     a naive `*.pdb` passes on a run that decoded nothing -- which is exactly
+#     af2ig's recorded mistake, matched against its own input file.
+#   * `*.csv` would match the timing / results csv upstream's main() writes after
+#     save_predictions returns, with however many designs there were, zero
+#     included. (This worker does not call main(), so a real failed run here
+#     leaves only the next two; the csv is the case if that ever changes.)
+#   * upstream roots an empty `./inference/<config>_<task>_<run>/` directory at
+#     the working directory before the model is reached.
+#
+# Verified with setup._what_it_produced against a REAL failed run's directory
+# (target.pdb plus the empty inference/ tree, left by a request that raised after
+# the target was written) and against a reconstruction that adds the csv and a
+# log: both refused. See verified_on.
+outputs = ["job_*_n_*_id_*.pdb"]
+# The reply-side half. `designs` is the list of per-design records the worker
+# returns, each with its PDB path and the decoded binder sequence. The worker
+# raises rather than answering with an empty list, and rather than returning a
+# design whose chain B is not the requested length.
+output_keys = ["designs"]
+# ARGUED FROM WHAT IS LOST WHEN THE WORKER DIES, which STANDARD.md section 12 says
+# is a property of upstream's caching rather than of the model's size. Nothing is
+# persisted anywhere: no torch.compile, no CUDA graphs, no Triton, nothing
+# written to a jit cache -- so a restart pays the import graph and the model build
+# again at their full price, and the checkpoint read again if the page cache has
+# let go of 6.6 GiB. That is the af3_jax side of the argument rather than the
+# ColabFold side, but its price is seconds, not minutes, which keeps it at 900 s
+# rather than longer: the idle worker holds almost no GPU memory between requests
+# (the model is back on the CPU), so the case for holding it is the host RAM and
+# the page cache, not the card.
+idle_timeout_s = 900.0
+smoke = "smoke/input.json"
+smoke_timeout_s = 1800.0
+
+[gpu]
+policy = "required"
+# DECLARED AT THE CORNER THE CEILINGS ADMIT TOGETHER, not at the smoke. The input
+# has two axes that multiply -- (target crop + binder)^2 and the designs sampled
+# in one forward pass -- and the ceilings are 300 + 200 residues and 16 designs.
+# The worst point they admit together is N = 500, batch 16, and the declared row is
+# THAT, measured twice and then measured again after a shape change, because the
+# kit keeps one pair-bias buffer between requests and replaces it (old and new
+# coexist for an instant) when the shape changes:
+#
+#   ladder, ascending, per-request peak reserved, GiB (the ladder is in the
+#   manifest because the peak tracks the input, STANDARD.md section 6):
+#
+#     N =  100 (64 + 36)   batch  1   1.70
+#     N =  200 (128 + 72)  batch  1   1.88
+#     N =  300 (193 + 107) batch  1   2.17
+#     N =  400 (257 + 143) batch  1   2.65
+#     N =  500 (300 + 200) batch  1   3.18
+#     N =  500             batch  2   4.81
+#     N =  500             batch  4   6.03
+#     N =  500             batch  8  10.33
+#     N =  500             batch 16  17.75 fresh worker / 19.0 after batch 8 /
+#                                    20.25 after a shape change at the corner
+#
+#   DECLARED AT THE LAST: 20.25. It is not noise: 17.75 + 2.51 = 20.26, the corner's
+#   own peak plus one corner-sized pair-bias buffer from the previous request, so the
+#   ceiling is derived as well as observed. A smoke-sized request reserves 1.7 -- the
+#   declared row is 12x that, which is exactly the error RFdiffusion3's was.
+#
+#   The ladder's SHAPE: batch, not length, is the axis (1.09 GiB per design at
+#   N=500; 3.18 -> 19.0 over 16x the designs against 1.7 -> 3.18 over 5x the
+#   length), so a host that will not sample more than 4 designs per pass can hold
+#   this provider in ~9 GiB. The BUILD's own high-water mark is 7.93 GiB (upstream's
+#   loader restores the checkpoints' CUDA tensors onto the card) and is below the
+#   declared figure; between requests the worker holds 0.02 - 2.5 GiB.
+#
+#   Peak reserved reproduced to the hundredth across runs with other sessions on the
+#   card. Wall times did not, and every time quoted here is from a contended card.
+vram_budget_gb = 20.25
+shareable = true
+isolation = "process"
+# torch 2.7.0+cu128 needs a 570-series driver (CUDA 12.8); the kit's own README
+# says 560 for its +cu126 build.
+driver_min = 570
+driver_min_reason = "this deployment's torch is the CUDA 12.8 aarch64 build (2.7.0+cu128), which needs driver 570 or newer; the kit's README states 560 for its +cu126 build"
+
+[env]
+kind = "venv"
+python = "$TOOLUNIVERSE_COMPLEXA_PYTHON"
+lock = "environment/requirements.lock"
+# Every compiled pin is IMPORTED, not merely present. A wheel can be the right
+# file, install cleanly and still kill the interpreter -- tokenizers 0.10.x
+# publishes well-formed aarch64 artifacts that raise `Illegal instruction` at
+# import, and in a worker that arrives as a protocol error with no traceback.
+# torch_scatter is the one built from source here (by [kit] install, so it is
+# absent until that step and this probe runs again after it), jaxlib and
+# tokenizers are the other compiled aarch64 artifacts, and proteinfoundation is
+# upstream itself.
+#
+# THE TRITON AUDIT that `tu remote setup` asks to be recorded: triton 3.3.0 is in
+# this environment because torch 2.7.0 requires it, and on this card it cannot
+# lower a cross-lane reduction (tl.sum / tl.max / tl.dot abort the process, and
+# its bundled ptxas does not know sm_121). The audit of what on this provider's
+# path could reach it, each by reading source and then by measurement:
+#   * upstream src/proteinfoundation: no `import triton`, no `@triton.jit`, and
+#     `torch.compile` appears only as four COMMENTED-OUT decorators
+#     (local_latents_transformer.py:184, protein_transformer.py:76 and :383,
+#     local_latents_transformer_v2.py:184);
+#   * the kit's complexa_opt: no triton and no torch.compile (its levers are plain
+#     torch ops, CHANGES.md: "The kit binds no compiled kernels");
+#   * stock/PINS.json "accelerators": "torch.compile / CUDA graphs: none in
+#     upstream's generation path";
+#   * measured, twice. `triton` IS imported by the worker -- torch._dynamo's
+#     `has_triton_package` runs when lightning imports it, which means nothing.
+#     What matters is whether a kernel is COMPILED, so launch.py gives the worker
+#     a private, initially empty TRITON_CACHE_DIR and every reply carries
+#     `triton_cache_files`, the count of files in it: 0 (see verified_on). The same
+#     was checked once by hand with an empty directory outside the provider.
+# So nothing on this path reaches the broken Triton, and no 12.9 ptxas is wanted:
+# adding nvidia-cuda-nvcc-cu12 would be a dependency nothing calls.
+#
+# The NVRTC assertion is a FILE and a VERSION, not a run: `torch.prod` on this
+# card only works with the loader's path set by launch.py, which a bare
+# `python -c` does not have, so asking torch here would refuse a correct
+# environment. What can be checked here is that the library the launcher will put
+# first exists and is 12.9.
+verify = """import torch, torch_scatter, jax, biotite, tokenizers, proteinfoundation, complexa_opt, opt_core, os, sysconfig
+from importlib.metadata import version
+assert version('proteinfoundation') == '1.1.0', version('proteinfoundation')
+assert torch.__version__.startswith('2.7.0'), torch.__version__
+assert version('nvidia-cuda-nvrtc-cu12') == '12.9.86', version('nvidia-cuda-nvrtc-cu12')
+assert os.path.isfile(os.path.join(sysconfig.get_paths()['purelib'], 'nvidia', 'cuda_nvrtc', 'lib', 'libnvrtc.so.12'))"""
+
+[weights]
+# Upstream's and the kit's own variable name for the directory holding the two
+# checkpoints (STOCK.md 'Variables'); every route reads it, and it is passed
+# into the run as ++ckpt_path / ++autoencoder_ckpt_path.
+root_env = "CKPT_PATH"
+root_default = "~/complexa_weights"
+# The kit's own fetcher, which runs upstream's own `env/download_startup.sh
+# --complexa` from the pinned checkout and then recomputes both digests against
+# stock/PINS.json. No URL is restated in ToolUniverse.
+#
+# THE HEAD REQUEST WAS THE FIRST THING DONE FOR THIS PROVIDER, before anything
+# was installed, because STANDARD.md section 10 makes it the first question. Both
+# files answer `302` to the Hub's CDN and then `200` from
+# huggingface.co/nvidia/NV-Proteina-Complexa-Protein-Target-160M-v1 at the revision
+# stock/PINS.json pins (ffed199e32612b98ffa04f4640d34d37b137fca5), with
+# `x-linked-size` 2934289381 and 4100101779 -- the kit's two byte counts exactly
+# -- from the model's own NVIDIA repository, which is upstream's own source and
+# not a mirror. Forty milliseconds to know the rest of the work was worth doing.
+# protenix_v2 is the provider that is blocked here instead.
+fetch = "{python} -m complexa_opt.weights {weights_root}"
+
+# Generated from the kit's stock/PINS.json `weights.files`, which carries both
+# a byte count and a sha256 for each. Weights are under the NVIDIA Open Model
+# License (stock/src/licenses/license_weights.txt): commercially usable,
+# derivative models allowed, no ownership claim on outputs.
+[[weights.files]]
+name = "complexa.ckpt"
+size = 2934289381
+sha256 = "589db1741f29838c7961386f6b873087238c72682e56189b89e0ae02610c19e9"
+
+[[weights.files]]
+name = "complexa_ae.ckpt"
+size = 4100101779
+sha256 = "35f8865efd269995eeaf1670e1c1085acfe2988c40abdeda8e09a0e15eb40816"
+
+[kit]
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "complexa"
+sparse = ["complexa", "common"]
+package = "complexa_opt"
+# Activation is the common form, the one 30 of the 36 kits use: the kit's own
+# complexa_opt_autoload.pth imports complexa_opt._autoload at interpreter start
+# and, with COMPLEXA_OPT naming a kit mode, arms a meta-path finder on the
+# trigger module. The trigger is `proteinfoundation.proteina` -- the module
+# holding the `Proteina` class, which every route into the model passes through
+# before a checkpoint loads -- and the worker imports it first and whole for
+# that reason.
+#
+# The variable's name is READ from the kit, not derived from the slug:
+# complexa_opt.modes.ENV_MODE and complexa_opt._autoload.ENV both spell
+# "COMPLEXA_OPT". That matters more here than usual, because this same hook
+# exits 3 on any OTHER name beginning with those twelve characters -- see
+# launch.py.
+mode = "fast"
+# `fast` = the four exact-class levers (onehot_f32, target_hoist, pair_assembly,
+# loop_desync) plus pair_bias_fused and attn_sdpa. Every lever of this kit is a
+# class or function patch of upstream's pinned PyTorch code -- a fused
+# LayerNorm+Linear pass written with torch ops, and attention through
+# torch.nn.functional.scaled_dot_product_attention. There is no custom kernel
+# anywhere in it: the kit ships no Triton, no CUTLASS and no prebuilt object,
+# and STOCK.md states that nothing is compiled at run time on either route
+# ("no C compiler needed to run"). So the two classes of stack-versus-card
+# failure that cost other providers on this card -- a tile table with no row
+# for this compute capability, and a kernel that builds and does not fit --
+# have no surface here at all.
+#
+# THE ONE DECLARED GATE, so a LEVER line reading `skipped` is not read as a
+# defect: pair_assembly idles when the binder lengths within a batch differ,
+# which happens whenever a request asks for a binder_length RANGE rather than a
+# single value. The kit calls that `state=skipped reason=padded_batches`, counts
+# it, and says in levers.py that the bytes and the exit are unaffected. This
+# provider's tool takes one binder length, so the gate is normally closed and
+# the lever engages.
+env_row = "none"
+# Checked rather than assumed, twice over. (1) There is no `env_row()` and no
+# `modes.resolve()` returning a row anywhere under opt/complexa_opt/: grep for
+# both over the package finds neither, and the `resolve()` that does exist has
+# the signature `(cli_value, environ) -> str` and returns the MODE WORD. The
+# shared probe calls `modes.resolve(mode)`, gets the string "fast", finds
+# neither `.env` nor `.exports` on it and reports an empty row -- correctly,
+# but indistinguishably from a failure to read one, which is what this key
+# exists to separate. (2) Where the variables actually live is
+# configs/h100.env, configs/a100.env and configs/h200.env -- the esmfold2 /
+# esmc / rosettafold3 shape -- and none of the three is this card. The row is
+# therefore DERIVED rather than sourced, by launch.py's `_kit_row`, using the
+# same rules h100.env uses for the values it derives rather than states. Four
+# of them are load-bearing for a reason that has nothing to do with the kit:
+# Hydra resolves ${oc.env:DATA_PATH} and ${oc.env:AF2_DIR} eagerly while
+# composing binder_generate.yaml, so composition raises if the names do not
+# exist, even though a generation-stage run reads neither value.
+env_row_reason = "complexa_opt keeps no mode row: no env_row() and no row-returning resolve() exist in the package (its resolve() takes (cli_value, environ) and returns the mode word), and the kit's deployment variables live in configs/{h100,a100,h200}.env, none of which is this card. launch.py._kit_row derives the equivalent row by those files' own rules."
+# NOT SET, and the reason is recorded rather than the setting shipped.
+# MODEL_OPT_LEVERS_OFF reaches nothing in this kit: the files under
+# common/opt_core that read that name are its kernel registries (pallas,
+# triattn, trimul, pair_fused -- grep), none of which complexa_opt installs, and
+# complexa_opt's own modes.py, activate.py and levers.py never read it. So the
+# ablation door is not wired here. boltzgen is the recorded precedent for shipping
+# a setting through a door that is not open; this provider needs no ablation, and
+# if one were ever needed the honest route would be [kit] mode = "off".
+levers_off = []
+# And nothing is declined either: every lever of the `fast` line engages on
+# this card. The kit states it itself -- "one lever set per mode on every card
+# this kit serves (configs/h100.env, configs/a100.env name the card, not the
+# levers)" -- and the ACTIVE line prints gpu_class=other for a capability
+# outside {9.0, 8.0} without disengaging anything.
+levers_declined = []
+# THREE LINES, in this order, and the order is the argument.
+#
+#   1. torch_scatter 2.1.2, built from the PyPI sdist against the torch already
+#      in this environment. It cannot be a line of environment/requirements.lock
+#      because pip's isolated build cannot import torch (its setup.py does), and
+#      no aarch64 wheel of it exists anywhere (data.pyg.org's are x86-64). The
+#      build is CPU-ONLY on purpose, FORCE_ONLY_CPU=1: this host has nvcc 13 beside
+#      a cu128 torch, a pair torch_scatter's CUDA build would refuse, and nothing
+#      in this stack needs its compiled ops -- upstream imports exactly one name
+#      from it, `scatter_mean`, which is torch-native (scatter_add_ and a divide)
+#      and runs on CUDA tensors. Idempotent: pip skips a satisfied pin.
+#   2. the shared core, editable. run.sh's own install line does that too, but
+#      `--no-build-isolation` keeps both editable installs off the network
+#      (setuptools is in the lock) and the line is skipped by run.sh when it finds
+#      the core already installed from this tree.
+#   3. `bash run.sh install` WITHOUT --weights: the weights step fetches and
+#      verifies them separately, through the same kit entry point, so this step
+#      stays a fast idempotent install rather than a 7.0 GB download. run.sh
+#      drives whatever `python` is on PATH and `tu remote setup` puts the
+#      manifest's interpreter first for exactly this step. The step also runs the
+#      kit's own pin check (stock/check_pins.py), which asserts that the installed
+#      proteinfoundation is 1.1.0 from a clean checkout at the pinned commit -- so
+#      a tampered or mis-versioned upstream is refused here rather than at
+#      request time.
+install = """
+FORCE_ONLY_CPU=1 {python} -m pip install -q --no-deps --no-build-isolation torch_scatter==2.1.2 &&
+{python} -m pip install -q --no-build-isolation --no-deps -e ../common/opt_core &&
+bash run.sh install
+"""

@@ -98,14 +98,33 @@ npx skills add mims-harvard/ToolUniverse
 | `setup-tooluniverse` | Install and configure ToolUniverse (MCP, CLI, or SDK) |
 | `tooluniverse-cs-setup` | Install/update ToolUniverse in **Claude Science** (conda env + pip package + native skill; not MCP) |
 | `create-tooluniverse-skill` | Create new skills with test-driven methodology |
-| `devtu-auto-discover-apis` | Discover life science APIs and create tools automatically |
-| `devtu-create-tool` | Create new scientific tools with proper structure and testing |
-| `devtu-docs-quality` | Documentation quality validation and auditing |
-| `devtu-fix-tool` | Diagnose and fix failing tools |
-| `devtu-github` | GitHub workflow (push, pre-commit hooks, tests) |
-| `devtu-optimize-descriptions` | Optimize tool descriptions for clarity |
-| `devtu-optimize-skills` | Improve skill quality (evidence grading, disambiguation) |
-| `devtu-self-evolve` | Full self-improvement cycle (discover, create, test, fix) |
+| `devtu-benchmark-harness` | Run benchmarks, diagnose failures, route fixes |
+
+The other ten `devtu-*` skills now live in the **tu-harness** plugin
+([tooluniverse/tooluniverse-harness](https://github.com/tooluniverse/tooluniverse-harness),
+`plugin/skills/`), which is where the maintainer-facing tooling belongs: they
+operate on this repository rather than being something a user of it calls, and
+keeping a second copy here meant the two drifted. They had, in every case but
+one. Install them with `claude plugin install tu-harness@tooluniverse-harness`.
+
+`devtu-auto-discover-apis` and `devtu-self-evolve` are not there under those
+names: the harness retired both (`plugin/scripts/validate_plugin.py` lists them
+in `DELETED_SKILLS` -- the first was renamed `devtu-discovery-harness`, the
+second had its content distributed across the three harnesses).
+
+`devtu-benchmark-harness` is the one still here, because it is still wired
+into this repository: `benchmarks/bixbench/` runs its
+`scripts/run_eval.py` from four places including a test that asserts the path
+exists, and the harness deleted that script in favour of its own
+`scripts/run_benchmark.py`.
+
+`devtu-remote-provider` was the other, kept only until the harness copy was
+pushed somewhere. It has been
+([tooluniverse/tooluniverse-harness#26](https://github.com/tooluniverse/tooluniverse-harness/pull/26)),
+so the copy here is gone. It had drifted to 26 numbered mistakes against the
+harness copy's 66, and two files in this repository already cited mistakes
+55, 58 and 59 -- numbers the copy here did not contain. A reader who found it
+first got the stale one with nothing saying so.
 
 ## Skill Structure
 

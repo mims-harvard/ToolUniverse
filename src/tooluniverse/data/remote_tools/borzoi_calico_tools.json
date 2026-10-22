@@ -1,0 +1,123 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "run_borzoi_calico_sad",
+    "description": "Score regulatory variants with CALICO'S OWN Borzoi release (borzoi_sad.py at commit 5c93582, fold 0, reverse-complement ensemble) against pinned GRCh38. Returns upstream's four published statistics -- SAD, logSAD, D2, logD2 -- over 6,385 strand-summed human RNA tracks, with the strongest tracks per variant named. This is the paper's method rather than an approximation of it; use run_borzoi_variant_effect (the borzoi-pytorch port, GPU) for a fast central-bin delta from two sequences. CPU-only here: about four minutes per variant, four variants maximum.",
+    "parameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "variants": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "description": "Single-nucleotide variants to score, at most 4. Each costs about four minutes.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "chrom": {
+                "type": "string",
+                "description": "GRCh38 chromosome, with or without the 'chr' prefix."
+              },
+              "pos": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "1-based position, as in a VCF."
+              },
+              "ref": {
+                "type": "string",
+                "pattern": "^[ACGTacgt]+$",
+                "description": "Reference allele (ACGT; SNVs only)."
+              },
+              "alt": {
+                "type": "string",
+                "pattern": "^[ACGTacgt]+$",
+                "description": "Alternate allele (ACGT; SNVs only)."
+              },
+              "id": {
+                "type": "string",
+                "description": "Optional identifier, echoed into the output. Defaults to chrom_pos_ref_alt."
+              }
+            },
+            "required": [
+              "chrom",
+              "pos",
+              "ref",
+              "alt"
+            ]
+          }
+        },
+        "top_tracks": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 20,
+          "description": "How many tracks to name per variant, ranked by |SAD|. The full 6,385-track vectors stay in the provider's sad.h5, whose path the reply carries."
+        }
+      },
+      "required": [
+        "variants"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "implementation": {
+          "type": "string"
+        },
+        "n_variants": {
+          "type": "integer"
+        },
+        "n_tracks": {
+          "type": "integer"
+        },
+        "stats": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "variants": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Per variant: snp, chr, pos, alleles, max_abs_SAD and top_tracks with all four statistics."
+        },
+        "sad_h5": {
+          "type": "string",
+          "description": "Path to the sad.h5 stock's own writer produced."
+        },
+        "timing_s": {
+          "type": "object"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "SMCP",
+      "transport": "http",
+      "original_type": "BorzoiCalicoSadTool",
+      "url": "https://github.com/calico/borzoi",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/borzoi_calico",
+      "mcp_tool_name": "run_borzoi_calico_sad"
+    },
+    "test_examples": [
+      {
+        "variants": [
+          {
+            "chrom": "chr1",
+            "pos": 43110773,
+            "ref": "G",
+            "alt": "A",
+            "id": "chr1_43110773_G_A_b38"
+          }
+        ],
+        "top_tracks": 5
+      }
+    ]
+  }
+]

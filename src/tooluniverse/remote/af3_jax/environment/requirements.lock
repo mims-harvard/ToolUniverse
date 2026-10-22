@@ -1,0 +1,117 @@
+# af3_jax -- the model environment, GENERATED from the kit's own
+# environment/requirements.lock at commit f4f62fa6592ae4938d49b1757bea0cfeff9f468e
+# by scripts/genlock (see provider.toml [env]); 81 packages, installed --no-deps.
+#
+# ONE DEVIATION from the kit's lock, and it is a substitution of the same
+# version and the same build flavour:
+#
+#   torch 2.7.1+cpu -- the kit's line names PyTorch's own x86-64 wheel by URL
+#   and sha256. This host is aarch64. The line below names the aarch64 file of
+#   the same version on the same index (download.pytorch.org/whl/cpu), with its
+#   own sha256 read from that index. Same release, same CPU-only flavour, other
+#   architecture. This is STANDARD.md section 16's "a lock can pin an
+#   architecture by URL", and the kit's own STOCK.md Stack section says the
+#   pinned recipe is for "Linux x86-64", so the deviation is expected rather
+#   than surprising.
+#
+#   torch is in this list only because the kit's weights converter imports it
+#   (requirements.lock header: "the weights converter's only extra") and
+#   because stock/check_pins.py lists `torch` in check_packages, where a MISSING
+#   package is PINS NOT MET (exit 3) while another version is only PINS drift.
+#   Nothing in this provider's prediction path imports torch.
+#
+# EVERYTHING ELSE IS THE KIT'S PIN, UNCHANGED, and every one of them publishes
+# an aarch64 wheel at that exact version -- checked against PyPI before
+# installing, not discovered during it: jax / jaxlib / jax-cuda12-plugin /
+# jax-cuda12-pjrt 0.10.2 (manylinux_2_27_aarch64), every nvidia-*-cu12
+# (CUDA 12.9.x, cuDNN 9.17.1.4), rdkit 2025.9.4, gemmi 0.7.3, numpy 2.4.1,
+# dm-haiku 0.0.16, tokamax 0.0.12 (pure python), zstandard 0.25.0.
+#
+# NOT IN THIS LIST, on purpose, exactly as the kit's own lock has it:
+#   * alphafold3-open 3.1.4 -- the stock distribution. No wheel ships
+#     anywhere (stock/wheels/ holds only .keep) and PyPI has none: every route
+#     COMPILES it from stock/alphafold3-bc32b22f.tar.gz with the kit's one
+#     patch applied. [kit] install does that; see provider.toml [env].
+#   * af3_jax_opt and opt_core -- the kit itself, installed editable by
+#     [kit] install.
+absl-py==2.3.1
+aiofiles==25.1.0
+annotated-types==0.7.0
+chex==0.1.91
+dm-haiku==0.0.16
+einshape==1.0
+etils==1.13.0
+filelock==3.29.0
+flax==0.12.2
+fsspec==2026.6.0
+gemmi==0.7.3
+humanize==4.15.0
+immutabledict==4.2.2
+importlib-resources==6.5.2
+jax==0.10.2
+jax-cuda12-pjrt==0.10.2
+jax-cuda12-plugin==0.10.2
+jaxlib==0.10.2
+jaxtyping==0.3.5
+jinja2==3.1.6
+jmp==0.0.4
+markdown-it-py==4.0.0
+markupsafe==3.0.3
+mdurl==0.1.2
+ml-dtypes==0.5.4
+mpmath==1.3.0
+msgpack==1.1.2
+nest-asyncio==1.6.0
+networkx==3.6.1
+numpy==2.4.1
+nvidia-cublas-cu12==12.9.1.4
+nvidia-cuda-cccl-cu12==12.9.27
+nvidia-cuda-cupti-cu12==12.9.79
+nvidia-cuda-nvcc-cu12==12.9.86
+nvidia-cuda-nvrtc-cu12==12.9.86
+nvidia-cuda-runtime-cu12==12.9.79
+nvidia-cudnn-cu12==9.17.1.4
+nvidia-cufft-cu12==11.4.1.4
+nvidia-cusolver-cu12==11.7.5.82
+nvidia-cusparse-cu12==12.5.10.65
+nvidia-nccl-cu12==2.29.2
+nvidia-nvjitlink-cu12==12.9.86
+nvidia-nvshmem-cu12==3.5.19
+opt-einsum==3.4.0
+optax==0.2.6
+orbax-checkpoint==0.11.31
+packaging==25.0
+pandas==2.3.1
+pillow==12.1.0
+protobuf==6.33.3
+psutil==7.2.1
+pyarrow==21.0.0
+pydantic==2.12.5
+pydantic-core==2.41.5
+pygments==2.19.2
+python-dateutil==2.9.0.post0
+pytz==2026.3.post1
+pyyaml==6.0.3
+qwix==0.1.5
+rdkit==2025.9.4
+rich==14.2.0
+scipy==1.17.0
+setuptools==78.1.0
+simplejson==3.20.2
+six==1.17.0
+sympy==1.14.0
+tabulate==0.9.0
+tensorboardx==2.6.4
+tensorstore==0.1.80
+tokamax==0.0.12
+toolz==1.1.0
+torch @ https://download.pytorch.org/whl/cpu/torch-2.7.1%2Bcpu-cp312-cp312-manylinux_2_28_aarch64.whl#sha256=3bf2db5adf77b433844f080887ade049c4705ddf9fe1a32023ff84ff735aa5ad
+tqdm==4.67.1
+treescope==0.1.10
+typeguard==2.13.3
+typing-extensions==4.15.0
+typing-inspection==0.4.2
+tzdata==2026.3
+wadler-lindig==0.1.7
+zipp==3.23.0
+zstandard==0.25.0

@@ -1,0 +1,150 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "genie3_design",
+    "description": "Design protein backbones with Genie 3. Either give a 'length' to sample unconditional backbones of that size, or a 'target' from the shipped binder-design benchmark to design binders against it. Returns a per-design record; the PDB text itself is opt-in.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "length": {
+          "type": "string",
+          "description": "Backbone length for unconditional design: '100', or a range '100-200' sampled in steps. 10-670."
+        },
+        "length_step": {
+          "type": "integer",
+          "description": "Step between lengths when 'length' is a range (default: the whole range in one step, i.e. one length). n_designs backbones are sampled at EACH length.",
+          "minimum": 1
+        },
+        "target": {
+          "type": "string",
+          "description": "Binder-design target from the pinned checkout's benchmark: 01_bhrf1, 02_sc2rbd, 03_il7ra, 04_pdl1, 05_trka, 06_insulinr, 07_h1, 08_vegfa, 09_il17a, 10_tnfa.",
+          "enum": [
+            "01_bhrf1",
+            "02_sc2rbd",
+            "03_il7ra",
+            "04_pdl1",
+            "05_trka",
+            "06_insulinr",
+            "07_h1",
+            "08_vegfa",
+            "09_il17a",
+            "10_tnfa"
+          ]
+        },
+        "n_designs": {
+          "type": "integer",
+          "description": "Backbones per length or per target (default 1, max 8).",
+          "default": 1,
+          "minimum": 1,
+          "maximum": 8
+        },
+        "n_steps": {
+          "type": "integer",
+          "description": "DDIM sampling steps (default 100, upstream's own; max 200). Fewer is faster and lower quality.",
+          "default": 100,
+          "minimum": 1,
+          "maximum": 200
+        },
+        "batch_size": {
+          "type": "integer",
+          "description": "Designs per denoiser call (default 1, max 2). Higher is faster per design and costs proportionally more VRAM; the kit refuses a batch that does not fit by name, before it runs.",
+          "default": 1,
+          "minimum": 1,
+          "maximum": 2
+        },
+        "seed": {
+          "type": "integer",
+          "description": "Random seed; the same seed reproduces the designs.",
+          "default": 0,
+          "minimum": 0
+        },
+        "return_structures": {
+          "type": "boolean",
+          "description": "Return the PDB text of every backbone (default false).",
+          "default": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "n_designs": {
+          "type": "integer"
+        },
+        "designs_expected": {
+          "type": "integer"
+        },
+        "designs": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "structures_note": {
+          "type": "string"
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "batch_size": {
+          "type": "integer"
+        },
+        "timing": {
+          "type": "object"
+        },
+        "weights_held_by": {
+          "type": "string"
+        },
+        "kit_mode": {
+          "type": "string"
+        },
+        "tier": {
+          "type": "integer"
+        },
+        "levers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "engine_rebuilt": {
+          "type": "boolean"
+        },
+        "rng_restored": {
+          "type": "boolean"
+        },
+        "graph_cache": {
+          "type": "object"
+        },
+        "kernels_line": {
+          "type": "string"
+        },
+        "warning": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "Genie3DesignTool",
+      "url": "https://github.com/anthropics/uplifting-biomolecular-modeling",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/genie3",
+      "mcp_tool_name": "genie3_design"
+    },
+    "test_examples": [
+      {
+        "length": "60",
+        "n_designs": 1,
+        "seed": 0
+      }
+    ]
+  }
+]

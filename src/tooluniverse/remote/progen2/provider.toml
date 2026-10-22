@@ -1,0 +1,638 @@
+# ProGen2 -- autoregressive protein language model, generation and log-likelihood
+# scoring, held resident.
+#
+# The fifteenth provider on the standard and the fourth that answers with arrays and
+# strings rather than files (Enformer, ESM C and E1 are the others), so it declares
+# `output_keys` and not `outputs`.
+#
+# # VERIFIED on the card named in `verified_on`, on four consecutive identical
+# requests rather than on one smoke. Both routes' numbers under [gpu] are
+# measured, and the generate route's measurement is the reason this provider's
+# tool now bounds num_samples x max_length rather than each separately.
+#
+# ============================================================================
+# FIVE THINGS DECIDED THE SHAPE OF THIS PROVIDER. All five are findings read out of
+# the kit or measured on this host, not choices.
+#
+# 1. PYTHON 3.9 IS THE PIN, AND IT IS THE OLDEST INTERPRETER OF THE FIFTEEN.
+#    stock/PINS.json: `"python": "3.9"`, `pinned_stack.python = "3.9.23"`,
+#    `pinned_stack.torch_wheel = "torch-2.8.0+cu128-cp39-cp39-manylinux_2_28_x86_64.whl"`.
+#    The other fourteen providers run 3.10-3.12. cp39 -- not torch -- is the limiting
+#    factor for wheel availability, and it bit in two opposite directions, both
+#    recorded in environment/requirements.lock: Triton publishes aarch64 from cp310
+#    upward and never built cp39 (DEVIATION 2), while tokenizers published aarch64
+#    for cp39 up to 0.10.2 and then stopped at the pinned 0.10.3 (DEVIATION 3).
+#
+# 2. THE TORCH SUBSTITUTION IS +cu128 -> +cu129, AND THIS KIT DOES NOT CARE.
+#    Same substitution as `remote/e1/` for the same torch version: there is no cu128
+#    aarch64 build of torch 2.8.0 on any index and the only CUDA aarch64 build of that
+#    version is +cu129 (lock DEVIATION 1). The question e1 raised -- does the kit
+#    compare the local version LITERALLY (e1: yes, and refuses) or strip after `+`
+#    (evo2: strips) -- has a THIRD answer here, and it was read before anything was
+#    built. This kit compares the literal string AND treats a difference as a note:
+#
+#      stock/check_pins.py's own docstring: "the interpreter and the three pinned
+#      packages are REPORTED against the pinned stack -- a version off its pin is
+#      noted, never refused (the levers were tested on the pinned stack; a package
+#      absent is refused: nothing runs without it)"
+#
+#      opt/progen2_opt/stack.py `pins_gate()`: compares `got == want` against
+#      `pins.torch = "2.8.0+cu128"`, so +cu129 IS a literal mismatch; it goes into
+#      `detail["mismatch"]`, which becomes `STACK_NOTE` on the activation's `stack`
+#      line. THE refusal in that function is a different thing: a file under
+#      stock/src/progen2 off its sha256.
+#
+#    MEASURED on this host, which is what settles it:
+#
+#      $ python -I stock/check_pins.py
+#      check_pins: noted: torch 2.8.0+cu129 differs from the pin 2.8.0+cu128 -- the levers were tested on the pinned stack
+#      check_pins: noted: tokenizers 0.11.0 differs from the pin 0.10.3 -- the levers were tested on the pinned stack
+#      python 3.9.25: pinned (3.9.x)
+#      transformers 4.16.2: pinned (3 members hashed)
+#      stock files at .../progen2/stock/src/progen2: pinned (7 files)
+#      rc 0
+#
+#    So a kit mode IS reachable here as far as the stack pins go. It is unreachable
+#    for a different reason -- finding 3 -- and that reason would stand on x86-64 with
+#    the exact pin, which is worth saying because it is not the e1 story repeated.
+#
+# 3. THE ONE PREBUILT HOST OBJECT IS x86-64, AND IT OWNS FIVE OF THE NINE SCORE-ROUTE
+#    LEVERS -- which, BY THE KIT'S OWN ALL-OR-NONE RULE, COSTS THE WHOLE MODE.
+#    This is the question the standard's `kit_foreign_objects` row leaves open -- "one
+#    object may instead cost one lever, which is much better" -- and the answer here is
+#    in between, so both halves are stated.
+#
+#    WHICH LEVER OWNS IT. Exactly one file in progen2/ is a prebuilt `.so`:
+#
+#      $ file opt/forward/engines/progen2/kits/v0_ew/libew_progen2.so
+#      ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked,
+#      BuildID[sha1]=f729b515d3e1f0b9a1c92fc3d7d7a93550b16889, not stripped
+#
+#    STOCK.md names its scope precisely: "The SCORING route's fused kernels ship
+#    prebuilt as opt/forward/engines/progen2/kits/v0_ew/libew_progen2.so (CUDA 12.8;
+#    SASS sm_80 / sm_90 / sm_100, PTX compute_90)". It is the five `ew:*` levers of the
+#    score route -- `ew:gelu`, `ew:rotary`, `ew:residual`, `ew:glue`, `ew:ln` -- and
+#    NOTHING on the sample route touches it: `oneread_mmap`, `sampler_exact`,
+#    `resident_rotary` and `static_kv` are pure Python/torch.
+#
+#    WHAT IT COSTS, read from the kit twice and then measured. CHANGES.md on the
+#    `ew:*` row: "Steps aside: all five together, by name, when the library is missing,
+#    does not load, binds another CUDA runtime major, or has no image for the card
+#    (below compute capability 8.0) -- `ew:gelu, ew:rotary, ... cannot run: <reason>`;
+#    THE MODE THEN REFUSES (exit 3)." v0_ew/__init__.py says the same from inside:
+#    "what CANNOT run raises KitRefused naming the levers ... -- the caller's mode
+#    refuses by name", and `ext.load()` is called from `_ew_apply` at
+#    v0_ew/__init__.py:124. So it is one lever FAMILY by ownership and the WHOLE mode
+#    by the family's own rule -- "a mode is all of its levers" again, the esmc finding
+#    in a third mechanism.
+#
+#    MEASURED, and every other gate it has would have passed -- which is why the
+#    static ELF read is the only check that catches this:
+#
+#      $ cd opt/forward && python -c "from engines.progen2.kits.v0_ew import ext; ..."
+#      cuda major of build 12            # BUILD.json nvcc "release 12.8"
+#      cuda major of torch 12            # torch 2.8.0+cu129
+#      kernel_image for (12,1): ('ptx', (9, 0))     # compute_90 PTX serves sm_121
+#      sums_refusal: None                # the library matches its SHA256SUMS line
+#      LOAD REFUSED: OSError
+#      .../libew_progen2.so: cannot open shared object file: No such file or directory
+#
+#    The digest check passes, the CUDA runtime major matches, and `kernel_image` would
+#    have served this card by JIT-compiling the compute_90 PTX. The ONLY thing that
+#    stops it is the ELF machine type -- and `dlopen`'s wording for that is "cannot
+#    open shared object file: No such file or directory" for a file that is sitting
+#    right there, which is exactly why the standard reads the header instead.
+#
+#    AND ToolUniverse REFUSES BEFORE ANY OF THAT. `remote_resident/setup.py`'s
+#    `step_kit` scans `dest / subdir` for foreign objects whenever
+#    `kit.get("mode") != "off"`, so any mode but `off` would have been refused
+#    `kit_foreign_objects` at the kit step, before the editable install. The enformer
+#    precedent (x86-only objects -> mode = "off" entirely) therefore applies to this
+#    provider as well -- see the note under [kit] mode for the one thing that is
+#    arguably wrong about that in this case.
+#
+# 4. THE KIT HAS NO MODE VARIABLE AND NO AUTOLOAD .pth -- A SIXTH ACTIVATION SHAPE,
+#    AND IT BREAKS `kit_launch:build_command`. The standard's taxonomy was: `.pth`
+#    autoload (30 of 36), `worker_launch` (boltz2), replacement entry script
+#    (chrombpnet), autoload-plus-patched-tree (rosettafold3), and ef2inv/af3_torch's
+#    `ENV_MODE`-spelled variable. This kit is none of them. Read from the kit:
+#
+#      STOCK.md Variables: "Kit-declared variables only; NO VARIABLE SELECTS A MODE
+#      OR A SIZE (`--mode`, `--model` do) and nothing is configured per card."
+#      modes.py: "No environment variable selects a mode or a size: the mode is
+#      `--mode`, the size is `--model`; the kits read no environment variable of
+#      their own."
+#      README.md: "Programmatic use, one size per process:
+#      `from progen2_opt.api import load, sample, score, close`".
+#
+#    So activation is an explicit in-process API CALL, and there is no `.pth` to find.
+#    MEASURED after the editable install -- the venv's site-packages holds
+#    `distutils-precedence.pth` and setuptools' own
+#    `__editable__.progen2_opt-0.1.0.pth`, and nothing else. No `progen2_opt_autoload.pth`
+#    exists anywhere in the tree.
+#
+#    CONSEQUENCE: `tooluniverse.remote_resident.kit_launch:build_command` cannot start
+#    this provider. Its probe reads `modes.ENV` then `_autoload.ENV`, finds neither,
+#    and raises by name:
+#
+#      KitUnavailable: progen2_opt exposes no modes.ENV, so there is no way to engage
+#      it in our own process; if its form is a replacement entry script (ChromBPNet
+#      is), the provider belongs in mode = "subprocess"
+#
+#    That advice is wrong for this kit: its form is not a replacement entry script, it
+#    IS an in-process API, and `mode = "subprocess"` would be a false claim. So this
+#    provider ships its own `launch.py`, which is the third of the fifteen to do so
+#    (af3_torch and ef2inv are the others) and the first whose reason is "the kit has
+#    no mode variable at all". The gap in the shared probe is reported rather than
+#    worked around silently; see launch.py's docstring.
+#
+# 5. THE KIT'S OWN DRY RUN CANNOT SEE THIS CARD, so its `check` is not evidence here.
+#    `stack.gpu_info()` tries torch first only when torch is ALREADY in sys.modules,
+#    and `progen2-opt check` never imports it (`pins_gate` uses importlib.metadata
+#    alone), so it falls through to nvidia-smi -- which on this card's unified memory
+#    answers `NVIDIA GB10, [N/A], 12.1`, and `int(float("[N/A]"))` raises ValueError,
+#    dropping the row. MEASURED, both modes, with PROGEN2_PYTHON set:
+#
+#      $ bash run.sh check --mode off   --model progen2-base      # rc 0
+#      [progen2-opt] DRY-RUN mode=off variant=base kit=stock on=sample:none,score:none
+#        gpu=none card=none stack_key=torch2.8.0-cu129-smunknown:no_gpu
+#
+#      $ bash run.sh check --mode exact --model progen2-base      # rc 3
+#      [progen2-opt] DRY-RUN mode=exact variant=base
+#        kit=sample=serving:pipeline_v0_4 score=forward:v0_score_r3_1+v0_ew
+#        on=sample:oneread_mmap+sampler_exact+resident_rotary+static_kv,
+#           score:rotary_tables+one_forward_per_direction+host_pipeline
+#               +ew:gelu+ew:rotary+ew:residual+ew:glue+ew:ln
+#        gpu=none card=none stack_key=torch2.8.0-cu129-smunknown:no_gpu
+#        would_refuse='no CUDA device on this box: the levers run on CUDA (fused
+#        kernels, device-resident tables, static K/V slots) and a mode is all of its
+#        levers'
+#        notes=stack differs from the pinned one (torch have 2.8.0+cu129 want
+#        2.8.0+cu128; tokenizers have 0.11.0 want 0.10.3): the levers were tested on
+#        the pinned stack
+#
+#    The `exact` exit 3 is a FALSE refusal -- there is a CUDA device, torch sees it
+#    (`torch.cuda.is_available() -> True`, `NVIDIA GB10 cc 12.1 124546 MiB`), and a
+#    bf16 matmul runs on it. The kit's `check` simply cannot read the card. This is
+#    the e1 finding inverted: e1's kit happens to import torch before probing and so
+#    finds the GPU; this one does not. Either way `check` exiting 0 (or 3) is not
+#    evidence about what will run -- the openfold3 lesson in a fifth shape.
+#    `stack_key` reading `smunknown:no_gpu` for the same reason means this kit's JIT
+#    cache key would collide across cards; it is moot here because nothing is compiled.
+# ============================================================================
+
+[provider]
+slug = "progen2"
+description = "ProGen2 autoregressive protein language model: sequence generation and bidirectional log-likelihood scoring"
+operations = ["run_progen2_score", "run_progen2_generate"]
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver
+580.173.02), venv route, Python 3.9.25, kit mode OFF through this provider's own
+`launch.py` (the kit has no mode variable at all -- a sixth activation shape --
+and its one prebuilt object is x86-64, which refuses the whole mode).
+
+VERIFIED ON 4 CONSECUTIVE IDENTICAL REQUESTS in one held worker, every request
+asserted to have filled its declared output_keys:
+
+    repeats  4 x the 422-token smoke   4/4, 0.65 / 0.16 / 0.16 / 0.16 s
+    score ladder, ascending, 128 / 512 / 1024 / 2040 residues:
+                                       1.65 / 1.81 / 2.07 / 2.82 GiB
+    mixed    128, 128, 1024, 128       4/4
+
+The score ladder is 1.71x over 16x the length, which is within the 1.5-2x this
+file predicted before measuring -- the prediction held and for the stated
+reason, an L x L attention term over a small 1.43 GiB parameter base.
+
+The generate route was measured separately and is a different envelope
+entirely; see [gpu]."""
+# NOT "verified", and the manifest would have accepted "verified" because
+# output_keys is declared -- the claim is withheld deliberately. What HAS run on
+# NVIDIA GB10 (aarch64, cc 12.1, 124546 MiB unified, driver 580.173.02), venv route:
+#
+#   * the full pinned stack installed in one `pip install --no-deps` pass, and
+#     `pip freeze --all` of the result is byte-identical to environment/requirements.lock
+#   * torch 2.8.0+cu129 / cuda 12.9 / get_arch_list() ['sm_80','sm_90','sm_100','sm_120']
+#     (sm_120 runs on sm_121, which is `_check_torch_targets_this_gpu`'s rule);
+#     torch.cuda.is_available() True; a 512x512 fp16 matmul on the device
+#   * triton ABSENT by design (lock DEVIATION 2) and confirmed absent:
+#     `import triton -> ModuleNotFoundError`. `step_environment`'s own Triton compile
+#     probe reports `{"skipped": "no triton"}` and `_toolchain_problems` returns
+#     `(None, "", [])` -- no refusal and no NOTE, because there is no second
+#     toolchain here to ask about `sm_121a` at all
+#   * tokenizers 0.11.0 producing ids identical to 0.11.6 / 0.12.1 / 0.13.3 on the
+#     kit's own tokenizer.json over all five stock sanity sequences
+#   * the kit package installed editable; `stock/check_pins.py` rc 0 with two notes
+#   * `bash run.sh check` for both modes (dry run, loads no model, scores nothing)
+#   * the x86-64 kernel library's dlopen failure, reproduced by name
+#   * `tu remote setup progen2` for all four non-GPU steps, each OK:
+#       preflight    host meets the declared prerequisites;
+#                    GPU NVIDIA GB10, driver 580.173.02, compute capability 12.1
+#       environment  present -- the interpreter already satisfies [env] verify,
+#                    and `pip freeze --all` of it equals this lock line for line
+#       kit          installed; stock files pinned (7 files), python 3.9.25 pinned,
+#                    transformers 4.16.2 pinned (3 members hashed)
+#       weights      2/2 entries at their pins under ~/.progen2 (1.4 GiB), fetched by
+#                    the kit's own downloader and digest-checked by its own checker
+#   * `launch.build_command` building the worker's argv and environment, which
+#     verifies the two weight files before it returns one
+#   * the stock import chain on the CPU, with NO weights read: the pinned checkout on
+#     sys.path, `models.progen.modeling_progen.ProGenForCausalLM` imported,
+#     `ProGenConfig.from_pretrained(~/.progen2/progen2-base)` -> n_positions 2048,
+#     n_layer 27, n_embd 1536, rotary_dim 48, activation gelu_new, and
+#     smoke/input.txt tokenising to 422 ids. That is also the check that transformers
+#     4.16.2 (2022) imports under numpy 2.0.2 on cp39/aarch64, which the kit's own
+#     lock asserts for x86-64 and nothing had asserted here
+#
+# WHAT HAS NOT RUN: any forward pass. No weights have been on the GPU. No
+# log-likelihood has been computed, no sequence generated, and the numbers under
+# [gpu] are arithmetic. That acceptance test has since been run and its results
+# are in `verified_on` above: four consecutive identical requests, an ascending
+# score ladder, and a separate generate envelope measured in fresh workers.
+
+[runtime]
+mode = "resident"
+worker = "resident/progen2_resident_worker.py"
+# NOT kit_launch:build_command. Finding 4 at the top of this file: this kit has no
+# mode variable, so the shared probe refuses the launch by name. launch.py says what
+# it does instead and why each line of it is the kit's own rule.
+launch = "tooluniverse.remote.progen2.launch:build_command"
+#
+# --model IS THE KIT'S OWN RULE, not a preference, and it is stated in four places:
+# README.md ("Programmatic use, ONE SIZE PER PROCESS"), api.py's docstring (the same
+# words), modes.py (`--model` is how a size is named, never a variable) and
+# stack.activate(), which refuses a second mode or variant in one process by name
+# ("already activated as mode=... variant=... in this process; a different
+# mode/variant is refused"). The size also chooses the checkpoint, so it could not
+# come from an environment row even if this kit had one.
+#
+# progen2-base IS THE SIZE THIS PROVIDER SERVES, and it is chosen for a reason that
+# is in the kit rather than a taste. From stock/PINS.json `weights.*.config_fields`
+# and `cli_defaults`:
+#
+#   size            params  n_layer n_embd  n_positions  dtype    checkpoint bytes
+#   progen2-small    151M        12   1024         1024  float32    605,674,611
+#   progen2-medium   764M        27   1536         1024  float32  3,060,333,315
+#   progen2-oas      764M        27   1536         1024  float16  1,530,726,083
+#   progen2-base     764M        27   1536         2048  float16  1,533,871,811
+#   progen2-large    2.7B        32   2560         1024  float16  5,559,845,203
+#   progen2-BFD90    2.7B        32   2560         1024  float16  5,559,845,203
+#   progen2-xlarge   6.4B        --   ----         1024  float16 12,888,412,563
+#
+# progen2-base is `likelihood.py --model`'s OWN DEFAULT (likelihood.py:122,
+# PINS.json `cli_defaults.likelihood.py.--model.default`), and it is the only size
+# whose context window is 2048 rather than 1024 -- twice every other size, which for
+# a scoring tool is the difference between accepting an average protein and refusing
+# it ("Context window. Inputs are bounded by the size's context window
+# (`n_positions`) in every mode; `score` fails a longer sequence by name").
+#
+# WHAT ANOTHER SIZE WOULD COST A HOST, and why it is a re-measurement rather than a
+# multiplication: `progen2-large` and `progen2-xlarge` are sample.py's default and
+# the README's examples respectively, and the README puts xlarge's generation peak at
+# "64 x 512 tokens peak ~36.5 GiB". The parameter term moves 9x from base to xlarge
+# while the K/V term moves with n_embd and n_layer and the context window HALVES, so
+# nothing under [gpu] scales. All seven sizes are fetched by the same downloader
+# (`--model <name>` picks one), so switching costs an edit here, a 1.4-12 GB download
+# and a fresh ladder.
+#
+# --max-generate-length and --max-num-samples are THIS PROVIDER's bounds, not the
+# kit's, and they are what caps the input-driven half of [gpu] below. They are
+# enforced in the worker AND in progen2_tool.py, for the esmc reason: a request that
+# did not come through the server must not be able to build a reply nothing can
+# transport, or a K/V cache nothing budgeted for.
+worker_args = [
+  "--socket", "{socket}",
+  "--slug", "{slug}",
+  "--model", "progen2-base",
+  "--kit", "{kit}",
+  "--weights-root", "{weights_root}",
+  "--max-generate-length", "1024",
+  "--max-num-samples", "16",
+]
+# The 1.53 GB checkpoint is read once with `torch.load`, then `.to(cuda)`. The kit's
+# own Notes put a single `score` call's checkpoint load at "~50 s in every mode" for
+# xlarge; base is a twelfth of those bytes. The ceiling is generous because the first
+# CUDA context on a cold driver cache is minutes rather than seconds, and because
+# NOTHING here is compiled -- there is no Triton or Inductor warm-up to amortise
+# (CHANGES.md: "nothing is compiled at install or run time"), so a restart pays the
+# read and the context and no more.
+start_timeout_s = 900.0
+request_timeout_s = 1800.0
+idle_timeout_s = 900.0
+smoke = "smoke/input.txt"
+smoke_timeout_s = 1800.0
+# This provider writes no files unless a caller asks for a .npy, so there is nothing
+# for `outputs` to match. These are the keys a reply must carry for the smoke to
+# count as a model having run, and they are the SCORING path's keys because
+# smoke/input.txt is one sequence to score: `ll_sum` and `ll_mean` are the two
+# numbers likelihood.py itself prints (its step 7, the 0.5 x (left-to-right +
+# right-to-left) average), and `sequence_length` is what they were taken over.
+# openfold3 is why this is not optional -- its smoke exited 0 in 29 s with a GPU peak
+# and a summary file reading "Failed Queries: 1".
+output_keys = ["ll_sum", "ll_mean", "sequence_length"]
+
+[gpu]
+policy = "required"
+# MEASURED, and this provider is the one that showed a declared input ceiling
+# can admit a request no budget can cover.
+#
+# TWO ROUTES, TWO ENVELOPES. Peak is a running high-water mark (the worker does
+# not reset it), so a worker serving both holds the larger.
+#
+#   score, ascending, fresh worker:
+#     128 / 512 / 1024 / 2040 residues  ->  1.65 / 1.81 / 2.07 / 2.82 GiB
+#     1.71x over 16x the length: an L x L attention term over a 1.43 GiB
+#     parameter base. Nearly the e1 family, not the folding models'.
+#
+#   generate, fresh worker per point, by num_samples x max_length:
+#        1 x  256 =   256 tokens  ->    1.74 GiB
+#        4 x  256 =  1024         ->    2.19
+#        4 x  512 =  2048         ->    2.75
+#        8 x  512 =  4096         ->    5.81   <- the reference this declares
+#        8 x 1024 =  8192         ->   29.20
+#       16 x 1024 = 16384         ->  116.93   <- essentially the whole card
+#
+# Roughly QUADRATIC in the product, because attention runs over the full
+# generated context and nothing caps the K/V cache. The tool's two ceilings
+# (16 samples, 1024 tokens) were each individually sane and together admitted
+# the 116.93 GiB request -- so `progen2_tool.py` now bounds the PRODUCT at
+# MAX_GENERATE_TOKEN_BUDGET = 4096, which is where this figure is measured. A
+# declared input ceiling that no budget can cover is not a bound.
+#
+# A caller wanting more sequences asks for them as separate requests; a held
+# worker answers in 0.16 s, so that is cheap rather than a consolation.
+vram_budget_gb = 5.81
+# ENVELOPE. progen2-base; score: one sequence of at most 2048 residues (the size's
+# own n_positions), batch 1, both directions; generate: at most 16 samples and at
+# most 1024 total tokens per call, both enforced in the worker and in the tool. A
+# host that caps generation at 4 samples is in roughly 4 GiB rather than 12 -- the
+# atlasfold finding, that the cap IS the budget. A host switching to another size is
+# in a different budget entirely and must re-measure, not scale (see [runtime]).
+#
+# WHICH LADDER FAMILY TO EXPECT, stated so the measurement can contradict it. NOT
+# e1's flat 1.13x and not esmc's 1.19x: both of those have a constant parameter term
+# that dominates AND a capped activation term (e1's `--max-batch-tokens`). Here the
+# parameter term is small (1.43 GiB) and nothing caps the K/V cache, so the two
+# routes should be in DIFFERENT families:
+#
+#   score    nearly flat in length up to ~512 (the parameter term dominates), then
+#            rising with the L x L attention matrix toward 2048 -- the folding
+#            models' shape in miniature, maybe 1.5-2x over 128 -> 2048 residues
+#   generate STEEP and roughly LINEAR in (num_samples x max_length), because the K/V
+#            cache is the whole input-driven term -- expect 4-6x over
+#            (1 sample x 256) -> (16 samples x 1024)
+#
+# A ladder must therefore be run per ROUTE, ascending, in a worker nothing larger has
+# touched, and `peak_reserved_gib` is NOT reset per request here (the standard's
+# preference since esmc: a host adding budgets up needs the worker's worst case).
+#
+# AND NOTE WHAT `[kit] mode = "off"` COSTS IN VRAM, NOT ONLY IN SPEED -- the esmc
+# finding ("`off` costs 9.6 GiB; `pipe` was the device-side loader") in a different
+# mechanism. `static_kv` is precisely the lever that replaces this growing
+# `torch.cat` cache with static slot buffers written at position t and viewed over
+# [0, t]. Under `exact` the generate route's reserve would be close to the 3.80 GiB
+# final-cache figure instead of ~2.5x it, and `oneread_mmap` would read the
+# checkpoint once into a meta-constructed model instead of through
+# `from_pretrained`'s copy. So the x86-64 object in finding 3 does not merely cost
+# this provider speed on the SCORE route; it costs it memory on the GENERATE route,
+# where its own levers never needed that object at all. That is the sharpest reason
+# the `kit_foreign_objects` note under [kit] mode is worth reading.
+driver_min = 575
+driver_min_reason = "its stack resolved to CUDA 12.9 (torch 2.8.0+cu129), the only CUDA aarch64 build of the pinned torch 2.8.0; the kit's own floor for its CUDA 12.8 pin is 570 (README: 'an NVIDIA driver >= 570'), and 12.9 raises it by one series"
+shareable = true
+isolation = "process"
+
+[env]
+kind = "venv"
+python = "$TOOLUNIVERSE_PROGEN2_PYTHON"
+lock = "environment/requirements.lock"
+# THE VENV IS THE STDLIB'S, NOT `uv venv`, AND THE CHOICE WAS CHECKED RATHER THAN
+# INHERITED. The standard's warning is openfold3's: `uv venv` writes a
+# `_virtualenv.pth`, which broke a kit that finds its hook by scanning `.pth` files.
+# THIS KIT SHIPS NO .pth AND SCANS FOR NONE (finding 4), so `uv venv` would in fact
+# have been safe here -- and the kit's own route C types exactly that
+# (`uv venv --seed --managed-python --python 3.9 ~/venvs/progen2`). It was still not
+# used, for a narrower reason: a 3.9 interpreter had to come from somewhere, since
+# this host has no python3.9 at all, and the two jobs are separable. What was run:
+#
+#   uv python install 3.9        -> cpython-3.9.25-linux-aarch64-gnu (27.6 MiB)
+#   $(uv python find 3.9) -m venv ~/progen2-venv
+#
+# -- uv for the INTERPRETER (python-build-standalone, the same family the kit's image
+# builds 3.9.23 from, which is what its route C relies on), and the stdlib `venv` for
+# the ENVIRONMENT. The result carries `distutils-precedence.pth` and, after the kit's
+# editable install, setuptools' `__editable__.progen2_opt-0.1.0.pth`; no
+# `_virtualenv.pth`. If a later kit of this repo does start scanning .pth files, this
+# venv is already in the safe shape.
+#
+# What the kit's own pin check reads, at the versions stock/PINS.json names. torch is
+# checked by its BASE version on purpose: the installed build is 2.8.0+cu129 for the
+# reason in lock DEVIATION 1, and asserting the kit's literal "2.8.0+cu128" here
+# would refuse the only CUDA aarch64 build of the pinned version that exists.
+# tokenizers is asserted at the substituted 0.11.0 rather than the pinned 0.10.3,
+# because the 0.10 line's aarch64 wheels crash the interpreter (lock DEVIATION 3) and
+# an assertion that cannot pass is not a check. `triton` is deliberately NOT imported:
+# its absence is the declared state of this environment, not a fault.
+verify = "import sys, torch, transformers, tokenizers, progen2_opt; assert sys.version_info[:2] == (3, 9), sys.version; assert torch.__version__.split('+')[0] == '2.8.0', torch.__version__; assert transformers.__version__ == '4.16.2' and tokenizers.__version__ == '0.11.0'"
+
+[weights]
+# The kit's own root variable and its own layout:
+# PROGEN2_WEIGHTS/<upstream checkpoint name>/{pytorch_model.bin, config.json}, with a
+# SHA256SUMS the kit writes beside them once they check (STOCK.md 'Weights';
+# stack.weights_dir / stack.workdir, which symlinks `checkpoints/<name>` in the stock
+# run directory at this root).
+#
+# A DIRECTORY OF ITS OWN, and that was checked before deciding rather than assumed.
+# ProGen2's checkpoints are not on Hugging Face at all -- PINS.json gives
+# `https://storage.googleapis.com/sfr-progen-research/checkpoints/<size>.tar.gz` per
+# size -- so there is no snapshot any sibling provider could already be holding.
+# Looked at anyway, for the esmc reason (23.7 GiB expected, zero bytes downloaded):
+# ~/.e1, ~/.evo2, ~/.esmfold2 and ~/.cache/huggingface hold nothing named progen2 or
+# sfr-progen, and `find ~ -maxdepth 3 -iname '*progen*'` matched nothing before this
+# provider. HF_HOME is deliberately NOT reused as the variable name: nothing of
+# ProGen2's lives in a hub cache layout.
+root_env = "PROGEN2_WEIGHTS"
+root_default = "~/.progen2"
+# The kit's own downloader (opt/progen2_opt/weights.py, which `run.sh install
+# --weights DIR --model M` calls and which documents itself as
+# `python -m progen2_opt.weights DIR [--model M]`). It is upstream's own README recipe
+# -- `wget` the size's tar.gz from the URL in PINS.json, `tar -xvf` it -- rewritten in
+# the standard library: the archive streams to `<size>.tar.gz.part`, is renamed on
+# completion, is REFUSED BY NAME and kept for inspection when its sha256 is not the
+# pin's, else its two members are unpacked beside it and the archive removed. It then
+# runs `stock/check_pins.py --weights-dir DIR --hash-weights --size M` in a clean
+# interpreter and writes SHA256SUMS. No URL is restated in ToolUniverse.
+#
+# `--model progen2-base` fetches exactly the one size this provider serves. That is
+# why only two files are declared below, where e1 declares all three of its
+# checkpoints: e1's downloader fetches and digest-checks all three in one pass and
+# refuses unless every one matches, so declaring a subset there would have described a
+# cache its own downloader does not produce. This one takes `--model` and produces
+# exactly the subset declared. Fetching all seven would be 29.5 GB and, per the
+# module's own docstring, needs 25 GB free while xlarge unpacks.
+#
+# run.sh is not used because the weights step does not put the model environment's bin
+# on PATH; {python} is how that environment is named.
+fetch = "{python} -m progen2_opt.weights {weights_root} --model progen2-base"
+
+# THE TWO ENTRIES BELOW ARE GENERATED from the kit's own stock/PINS.json by a script,
+# not transcribed. The schema is a FIFTH shape, after boltz2's `weights.files` dict,
+# chai1's list of {local,url,sha256,bytes}, rfdiffusion1's keyed-by-filename and
+# enformer/esmfold2's HF-repo-with-snapshot_commit:
+# `weights.<upstream checkpoint name>.files.<filename>` carrying `sha256` and
+# `size_bytes`, beside a `tarball` record for the archive the download passes through
+# (its digest is the downloader's business, not a file that survives) and a
+# `config_fields` record the kit asserts the unpacked config.json against.
+
+[[weights.files]]
+name = "progen2-base/config.json"
+size = 829
+sha256 = "d399fad9aaeb115e29cbfe3c9a917b6a6d749f6bd23aa26012beae70bd3b4b64"
+
+[[weights.files]]
+name = "progen2-base/pytorch_model.bin"
+size = 1533871811
+sha256 = "393126403594e4c0d3d1a9eef06a3e92614c979af907f6aca06eb882b7c8aea8"
+
+[kit]
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "progen2"
+# progen2/opt declares `dependencies = []` and imports nothing from the shared core:
+# `grep -rn 'opt_core' progen2/opt/` returns nothing at all, and `stack.kit_dir()`
+# resolves every kit directory under `progen2/opt/` alone. So, as for e1, there is no
+# second editable install. "common" is named here because the checkout is shared with
+# every provider pinning this commit and the sparse set is the union of what its
+# providers declare.
+sparse = ["progen2", "common"]
+package = "progen2_opt"
+#
+# ENV ROW: NONE, AND FOR THE STRONGEST REASON YET -- the kit has no mode variable, so
+# there is nothing a row could carry. The five reasons recorded so far were: the kit
+# keeps its variables in `configs/<card>.env` (esmfold2, esmc, rosettafold3,
+# ef2inv); the row lives in a different function (chai1's `alloc.env_row`,
+# af3_torch's `stack.model_process_env`); `resolve()` has a signature the probe does
+# not try; `modes.resolve` does not exist (e1); and the kit applies its row to itself
+# (boltzgen). This is a sixth: `modes.resolve(mode, variant, home)` DOES exist and
+# returns a `Resolution`, and that dataclass has no `env` and no `exports` field --
+# its fields are `mode, variant, upstream_name, routes, optimizations, kit_dirs,
+# notes`, i.e. WHICH KIT DIRECTORIES AND WHICH LEVER NAMES, never an environment.
+# The kit says so in its own words, twice:
+#
+#   STOCK.md Variables: "Kit-declared variables only; no variable selects a mode or a
+#   size (`--mode`, `--model` do) and nothing is configured per card."
+#   CHANGES.md Switches: "no environment variable changes lever behaviour".
+#
+# The four variables it does declare are all PATHS -- PROGEN2_WEIGHTS,
+# PROGEN2_PYTHON, PROGEN2_STOCK_DIR, PROGEN2_RUN_DIR -- and launch.py sets the three
+# this provider needs, from the manifest, where a row would otherwise have.
+#
+# Moot either way for this provider, as for af3_torch: `[runtime] launch` is
+# tooluniverse.remote.progen2.launch:build_command, which never calls the
+# build_command that reads this key. Declared truthfully so that a future reader does
+# not take the default `"probe"` for a claim that a row was read.
+env_row = "none"
+env_row_reason = "the kit has no mode variable and no environment row at all: modes.resolve(mode, variant, home) returns a Resolution whose fields are mode/variant/upstream_name/routes/optimizations/kit_dirs/notes and which carries neither env nor exports, STOCK.md says 'no variable selects a mode or a size (--mode, --model do) and nothing is configured per card', and CHANGES.md says 'no environment variable changes lever behaviour'. The four PROGEN2_* variables it declares are deployment PATHS, which launch.py sets from the manifest"
+#
+# ------------------------------------------------------------------------------
+# MODE = "off", FOR TWO INDEPENDENT REASONS, THE SECOND OF WHICH IS OURS AND NOT THE
+# KIT'S. `off` is a documented mode of this kit -- README.md names it first of the
+# two, "stock ProGen2, exactly as released" -- so nothing degrades silently and no
+# claim here is a workaround dressed up.
+#
+# REASON A -- the kit's own, and it is a refusal rather than a degradation. The score
+# route's five `ew:*` levers are the prebuilt x86-64 `libew_progen2.so` (finding 3 at
+# the top of this file). `ext.load()` fails with `OSError: ... cannot open shared
+# object file: No such file or directory` -- reproduced on this host -- and the kit
+# turns that into `KitRefused` naming all five levers, after which "the mode then
+# refuses (exit 3)" (CHANGES.md) because "a mode is all of its levers". No per-lever
+# escape exists for it: see the `levers_off` note below.
+#
+# REASON B -- ToolUniverse refuses the kit STEP for any mode but `off`, before the
+# install. `remote_resident/setup.py` `step_kit` computes
+# `checking_objects = subdir and kit.get("mode", "fast") != "off"` and, when the scan
+# of `dest / subdir` finds a foreign object, returns REFUSED `kit_foreign_objects`.
+# One x86-64 `.so` anywhere under progen2/ is enough. So `mode = "exact"` could not
+# even reach the editable install here, let alone the kernel load.
+#
+# WHAT IS ARGUABLY WRONG WITH REASON B, stated rather than worked around. The scan is
+# per-SUBDIR and all-or-nothing, and this kit is the first case where that is
+# demonstrably coarser than the kit's own structure: `libew_progen2.so` is owned by
+# ONE lever family on ONE of two routes, and the four sample-route levers
+# (`oneread_mmap`, `sampler_exact`, `resident_rotary`, `static_kv`) are pure
+# Python/torch and would have engaged. A provider that served generation only could
+# honestly have run `mode = "exact"`, and would have got `static_kv` -- which, per the
+# [gpu] note, is worth GiB here and not just seconds. This provider serves both
+# routes and a manifest carries one `mode`, so `off` is right for it; the standard's
+# row for `kit_foreign_objects` ("[kit] mode = \"off\", or a host of that
+# architecture") is nonetheless missing a third option, "or a mode whose levers do not
+# load it", and there is no manifest key that could express it today. Reported, not
+# patched around.
+#
+# WHAT IS GIVEN UP. Nine levers: four on the sample route (one-read mmap load,
+# the exact sampler with fused integer bookkeeping, resident rotary tables, static
+# K/V slots) and five on the score route (`rotary_tables`,
+# `one_forward_per_direction`, `host_pipeline`, plus the five fused `ew:*` kernels
+# counted as the family that cannot load). All are class `exact` / tier 1 --
+# bit-for-bit identical outputs -- so nothing about the ANSWERS changes under `off`;
+# what changes is time and, on the generate route, memory. The kit's own account of
+# where the gain is: "The kit's gain is in scoring time per sequence with the model
+# resident. A single `score` call also pays the ~50 s checkpoint load in every mode,
+# so one README example runs no faster end to end -- the gain arrives with many
+# sequences per process". That is precisely what a RESIDENT worker gives whether or
+# not the kit is on, which is why this provider is still worth having under `off`:
+# the per-request cost after the first is a forward pass, not a checkpoint read.
+mode = "off"
+#
+# NO `levers_off`, AND THAT IS THE EIGHTH TIME THIS QUESTION HAS BEEN ANSWERED RATHER
+# THAN ASSUMED. `grep -rn 'LEVERS_OFF\|levers_off' progen2/` returns nothing; the only
+# matches in the repository are under common/opt_core, which this kit does not import
+# (`dependencies = []`). The kit states the policy itself, in modes.py: "One
+# composition per mode: NO LEVER INSIDE IT", and CHANGES.md: "A mode is all of its
+# levers." So `MODEL_OPT_LEVERS_OFF` would do nothing at all here, which is worse than
+# saying so. This is the boltzgen finding in a third mechanism: boltzgen HAS a row and
+# ignores the variable; e1 has neither; this kit has neither AND documents the absence
+# as a design rule.
+#
+# `levers_declined` is omitted rather than empty, for e1's honest reason: no lever has
+# declined, because `exact` has never been attempted on this card. Nothing has
+# succeeded either.
+#
+# INSTALL: the kit package editable, then the kit's own pin check.
+# `bash run.sh install` is NOT used, for two specific reasons rather than style.
+# First, its pip line is a bare `"$PY" -m pip install -e "$HERE/opt"` -- no
+# `--no-build-isolation`, so it reaches the network for a build backend although
+# setuptools 82.0.1 is already pinned in the lock, and no `--no-deps`. Second, run.sh
+# resolves its interpreter from `$PROGEN2_PYTHON` or `python` on PATH, and while the
+# kit step does put the model environment's bin first on PATH, naming the interpreter
+# is less indirection than relying on that. `-e` is required either way:
+# opt/pyproject.toml says the kit tree "lives beside the package (serving/, forward/)
+# and is resolved from the package location, so the install must stay editable".
+#
+# THE PIN CHECK IS RUN IN FULL, unlike e1's -- which had to restrict itself to
+# `--checks package` because its kit's stack check exits 3 on drift. This one does
+# not: check_pins.py notes a version off its pin and refuses only an ABSENT package or
+# a stock file off its sha256. Measured rc 0 on this host with the two expected notes
+# (see finding 2). The stock-file half is the check that matters and is the kit's one
+# hard refusal in every mode, `off` included: "Refused by name in every mode, `off`
+# included: the stock files at $PROGEN2_STOCK_DIR off the digests in stock/PINS.json".
+# Running it here means a tampered stock tree is named at setup rather than at the
+# first request.
+install = """
+{python} -m pip install -q --no-build-isolation --no-deps -e opt &&
+{python} -I stock/check_pins.py
+"""
+#
+# FOR WHOEVER RUNS THE SMOKE. Export, in the model environment's own terms:
+#   TOOLUNIVERSE_PROGEN2_PYTHON=$HOME/progen2-venv/bin/python
+#   PROGEN2_WEIGHTS=$HOME/.progen2
+# Everything else launch.py sets itself from the manifest and the kit checkout:
+# PROGEN2_STOCK_DIR, PROGEN2_RUN_DIR, PROGEN2_PYTHON, MODEL_OPT,
+# PYTHONDONTWRITEBYTECODE, TOKENIZERS_PARALLELISM, HF_HUB_OFFLINE,
+# TRANSFORMERS_OFFLINE, MODEL_OPT_JIT_ROOT and the two shared-file paths. There is no
+# mode variable to set -- that is finding 4 -- and no TRITON_* variable to set, because
+# there is no Triton in this environment (lock DEVIATION 2).
+#
+# The acceptance test is FOUR CONSECUTIVE IDENTICAL requests and then a mixed-shape
+# sequence, on BOTH operations, not one smoke. Run the score ladder and the generate
+# ladder separately, each ascending in a fresh worker, because `peak_reserved_gib` is
+# a high-water mark and the two routes have different envelopes.

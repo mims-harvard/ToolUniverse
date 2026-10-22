@@ -1,0 +1,279 @@
+# Evo 2's model environment -- the stack this provider was built against.
+#
+# THE KIT SHIPS TWO LOCKS AND THIS IS THE SECOND ONE, which is the first thing
+# to know before reading a single pin. `environment/requirements-img_full.lock`
+# is upstream's Full install (Transformer Engine 2.3.0: FP8 input projections,
+# both models) and `environment/requirements-img_a100.lock` is the same list
+# WITHOUT the three transformer* distributions (upstream's Light install: bf16
+# input projections, `evo2_7b` only). Both are named in stock/PINS.json as
+# `stacks.img_full` and `stacks.img_a100`, so img_a100 is an upstream-tested
+# stack of record and not a reduction invented here. Why this one:
+#
+#   * `evo2_7b` -- the model this provider serves -- IS served on img_a100
+#     (stock/PINS.json stacks.img_a100.serves is ["evo2_7b"], and `run.sh
+#     install`'s own pin check prints "stack img_a100 (transformer_engine
+#     absent): serves evo2_7b"). Only `evo2_40b` needs FP8, and it also needs
+#     two visible devices, which this host does not have.
+#   * transformer-engine-torch 2.3.0 is a source archive the kit's own
+#     Dockerfile compiles with nvcc 12.8 against torch 2.7.1+cu128 -- "the one
+#     line of this file that builds". The system toolkit here is CUDA 13.0
+#     (/usr/local/cuda-13.0) and torch's cpp_extension refuses a CUDA major
+#     mismatch outright, so img_full needs a CUDA 12.8 nvcc. DEVIATION 3 below
+#     ends up putting one in $HOME, so img_full is not impossible on this host
+#     any more -- it is simply a second long source build, for FP8 routes that
+#     only the model this provider does not serve requires. A host that wants
+#     them builds from requirements-img_full.lock and re-measures.
+#   * The kit NAMES Transformer Engine's absence and runs: activation.gate()
+#     adds the note "transformer_engine absent: upstream's bf16 input
+#     projections ... the bf16 route" and refuses only for evo2/vtx off their
+#     pins, torch unimportable, or no CUDA device (opt/evo2_opt/activation.py).
+#
+# Python 3.11.5 -- stock/PINS.json stacks.img_a100.pins.python and
+# stacks.img_full.pins.python, and STOCK.md Sec.Stack repeats it. uv already had
+# that exact patch release on this box.
+#
+# Rebuild (an NVIDIA driver >= 570 for CUDA 12.8; a CUDA 12.8 nvcc and gcc for
+# DEVIATION 3's source build, which nothing else needs):
+#
+#   uv venv --seed --managed-python --python 3.11.5 ~/evo2-venv
+#   export TOOLUNIVERSE_EVO2_PYTHON=~/evo2-venv/bin/python
+#   grep -v -E '^flash_attn==' requirements.lock > /tmp/evo2-stack.txt
+#   $TOOLUNIVERSE_EVO2_PYTHON -m pip install --no-deps -r /tmp/evo2-stack.txt
+#   # flash-attn has no aarch64 wheel: build it from the sdist, DEVIATION 3's
+#   # recipe, then install the wheel it produces:
+#   #   $TOOLUNIVERSE_EVO2_PYTHON -m pip install --no-deps dist/flash_attn-*.whl
+#   cd <kit>/evo2 && PATH=$(dirname $TOOLUNIVERSE_EVO2_PYTHON):$PATH bash run.sh install
+#
+# `uv venv`, not the stdlib `python -m venv`, and the check was made rather than
+# assumed: uv writes a `_virtualenv.pth` whose hook broke openfold3, whose kit
+# detects rival import hooks BY CLASS NAME. This kit's guard is
+# `any(isinstance(f, _Finder) for f in sys.meta_path)` in
+# opt/evo2_opt/_autoload.py -- an isinstance against its OWN class. uv's hook
+# IS also called `_Finder` (_virtualenv.py:41, inserted at sys.meta_path[0] on
+# line 121), so a name-based check WOULD have collided; an isinstance one does
+# not, because they are different classes with the same name. Nothing
+# in evo2/opt scans .pth files (the only glob is _build_backend.py's over its
+# own directory). The kit's own STOCK.md Sec.Stack recipe is `uv venv --seed
+# --managed-python --python 3.11 ~/evo2-venv`, which is what this follows.
+#
+# --no-deps is deliberate: the list is complete, and letting a resolver
+# re-derive it is how a stack stops being the one that was measured. The kit
+# (evo2_opt) installs editable on top and is not here.
+#
+# DEVIATIONS from the kit's own environment/requirements-img_a100.lock. That
+# file holds 68 pins; this one holds the same 68 distributions at the same 68
+# versions, plus ONE added distribution (DEVIATION 4) and one pip option line.
+# Two pin lines are rewritten from a URL to a version and NO VERSION OF A KIT
+# PIN IS CHANGED:
+#
+#  1. STACK CHOICE, not a deviation in the pins: this is derived from
+#     requirements-img_a100.lock, so transformer-engine-torch==2.3.0,
+#     transformer_engine==2.3.0 and transformer_engine_cu12==2.3.0 are absent --
+#     exactly as the kit's own img_a100 lock has them absent. See the header
+#     above for why. A host with a CUDA 12.8 nvcc that wants FP8 should build
+#     from requirements-img_full.lock instead and re-measure.
+#
+#  2. torch is `torch==2.7.1+cu128` against
+#     `--extra-index-url https://download.pytorch.org/whl/cu128` rather than the
+#     kit's direct link to
+#     `torch-2.7.1+cu128-cp311-cp311-manylinux_2_28_x86_64.whl`. Same version,
+#     same CUDA build, same index: PyTorch publishes
+#     `torch-2.7.1+cu128-cp311-cp311-manylinux_2_28_aarch64.whl` beside the
+#     x86-64 file. The bare `torch==2.7.1` from PyPI is NOT equivalent on
+#     aarch64 (a different CUDA build), which is why the index line is here.
+#     This wheel carries sm_80/sm_90/sm_100/sm_120 and an sm_120 cubin runs on
+#     this box's sm_121 -- the same rule openfold3's lock records.
+#
+#  3. flash_attn is `flash_attn==2.8.0.post2` rather than the kit's direct link
+#     to
+#     `flash_attn-2.8.0.post2+cu12torch2.7cxx11abiTRUE-cp311-cp311-linux_x86_64.whl`.
+#     THE PUBLISHED WHEEL DOES NOT EXIST FOR AARCH64 AND THIS LINE THEREFORE
+#     BUILDS FROM SOURCE. It cannot simply be dropped either: `import evo2`
+#     fails without the compiled `flash_attn_2_cuda` (see provider.toml's
+#     OBSTACLE 1 for the import chain), so this is a hard upstream requirement
+#     and `[kit] mode = "off"` does not avoid it.
+#     BUILT AND VERIFIED HERE: the recipe below produced
+#     `flash_attn-2.8.0.post2-cp311-cp311-linux_aarch64.whl`, 70.5 MB, 72
+#     translation units, one cubin (sm_120), and after installing it
+#     `import evo2; from evo2 import Evo2` succeeds on this box. (Note for
+#     whoever tests the wheel: `import flash_attn_2_cuda` BEFORE `import torch`
+#     fails with `ImportError: libc10.so: cannot open shared object file` --
+#     that is an ordinary torch-extension link order, not a bad build.)
+#     PyPI publishes exactly one artifact for 2.8.0.post2 and it is the
+#     sdist; Dao-AILab's releases are linux_x86_64 only. It cannot be skipped
+#     either, because it is not optional for Evo 2: evo2_7b's config pins
+#     `use_flash_attn: True` and `attn_layer_idxs: [3,10,17,24,31]`
+#     (stock/src/evo2/configs/evo2-7b-1m.yml), vortex builds those five layers
+#     as `FlashSelfAttention`, and its constructor asserts "FlashAttention is
+#     not installed" when `vortex.ops` could not import `flash_attn_2_cuda`
+#     (stock/src/vortex/model/attention.py:70). So without it Evo2(...) raises
+#     in STOCK as well as under the kit -- this is upstream's requirement, not
+#     the kit's, and `[kit] mode = "off"` does not route around it.
+#     esmfold2-venv's flash_attn 2.8.3.post1 CANNOT be reused: it is
+#     `flash_attn_2_cuda.cpython-312-aarch64-linux-gnu.so`, built for CPython
+#     3.12 against torch 2.13, and this stack is CPython 3.11 on torch 2.7.1.
+#
+#     THE BUILD RECIPE, every part of it verified on this host rather than
+#     recalled:
+#
+#       # 1. a CUDA 12.8 toolkit, WITHOUT root. torch's cpp_extension refuses a
+#       #    CUDA MAJOR mismatch outright, and this host has only 13.0:
+#       #      RuntimeError: The detected CUDA version (13.0) mismatches the
+#       #      version that was used to compile PyTorch (12.8). Please make sure
+#       #      to use the same CUDA versions.
+#       #    The pip route does NOT supply one on this architecture: the
+#       #    aarch64 nvidia-cuda-nvcc-cu12==12.8.93 wheel ships `ptxas` and
+#       #    nothing else -- no nvcc driver, no cicc. NVIDIA's own sbsa runfile
+#       #    extracted into $HOME does, and needs no privilege:
+#       curl -LO https://developer.download.nvidia.com/compute/cuda/12.8.1/local_installers/cuda_12.8.1_570.124.06_linux_sbsa.run
+#       sh cuda_12.8.1_570.124.06_linux_sbsa.run --silent --toolkit \
+#          --toolkitpath=$HOME/cuda-12.8 --no-man-page --override --tmpdir=<scratch>
+#       #    (4.6 GB down, 7.2 GB on disk, gives nvcc 12.8.93 -- the exact
+#       #     version the kit's own img_full lock header names. `--log-file` is
+#       #     NOT an option of this runfile and makes it exit 2.)
+#
+#       # 2. the extension, one architecture, built as a wheel in a directory
+#       #    that survives a restart (72 translation units; pip's own temp dir
+#       #    is thrown away, so a pip-driven build cannot be resumed):
+#       tar xzf flash_attn-2.8.0.post2.tar.gz && cd flash_attn-2.8.0.post2
+#       TMPDIR=<scratch> CUDA_HOME=$HOME/cuda-12.8 \
+#         PATH=<the venv>/bin:$HOME/cuda-12.8/bin:$PATH \
+#         FLASH_ATTN_CUDA_ARCHS=120 FLASH_ATTENTION_FORCE_BUILD=TRUE \
+#         MAX_JOBS=5 NVCC_THREADS=1 python setup.py bdist_wheel
+#       pip install --no-deps dist/flash_attn-*.whl
+#
+#     TWO THINGS ABOUT THAT COMMAND LINE THAT COST A RESTART EACH, measured
+#     here:
+#       * THE VENV'S OWN bin MUST BE ON PATH, before CUDA's. torch's
+#         BuildExtension parallelises only when it finds `ninja` on PATH, and
+#         ninja is the venv's console script (it is in this lock,
+#         ninja==1.13.0). Without it the build is SERIAL -- one nvcc at a time,
+#         ~70 s a unit, 72 units -- and MAX_JOBS is silently ignored.
+#       * MAX_JOBS IS A MEMORY BUDGET, NOT A CORE COUNT. Each `cicc`
+#         instantiating cutlass templates for one of these units peaked at
+#         6-7 GB RSS on this box; MAX_JOBS=14 NVCC_THREADS=2 reached 86 GB of
+#         121 GB with half the units still queued, which on a shared card is a
+#         way to OOM-kill somebody else's resident worker. 5 x 7 GB is the
+#         figure above.
+#
+#     `cuda_archs()` (setup.py:70) defaults to "80;90;100;120" and reads
+#     FLASH_ATTN_CUDA_ARCHS; EACH arch is separately guarded (setup.py:181-191,
+#     `if "80" in cuda_archs()` and so on), so 120 alone emits ONE cubin,
+#     `arch=compute_120,code=sm_120` -- which runs on this box's sm_121 by the
+#     same rule torch's own sm_120 build does. 100 and 120 additionally require
+#     a bare-metal CUDA >= 12.8, which is step 1. FLASH_ATTENTION_FORCE_BUILD
+#     skips setup.py's prebuilt-wheel lookup, whose own 404 on this platform is
+#     the direct evidence that no aarch64 wheel is published:
+#       urllib.error.HTTPError: HTTP Error 404: Not Found
+#
+#  4. ONE DISTRIBUTION THE KIT'S LOCK DOES NOT HAVE:
+#     `nvidia-cuda-nvcc-cu12==12.9.86` (28.9 MB on aarch64, where this wheel
+#     ships `ptxas` and nothing else -- no nvcc driver, no cicc). It is here
+#     for ONE binary: a `ptxas` that knows this card. Triton emits PTX at run
+#     time and shells out to a ptxas from its own wheel, and triton 3.3.1 --
+#     this kit's pin -- bundles two, NEITHER of which reaches sm_121:
+#
+#       triton/backends/nvidia/bin/ptxas            CUDA 12.4.99  tops out sm_90a
+#       triton/backends/nvidia/bin/ptxas-blackwell  CUDA 12.8.61  reaches sm_120a
+#       nvidia/cuda_nvcc/bin/ptxas (this pin)       CUDA 12.9.86  reaches sm_121a
+#
+#     sm_121 first appears in CUDA 12.9. Without this, on a GB10:
+#
+#       ptxas-blackwell fatal : Value 'sm_121a' is not defined for option 'gpu-name'
+#       triton.runtime.errors.PTXASError: PTXAS error: Internal Triton PTX codegen error
+#
+#     and with it the same kernel compiles and returns the right answer -- both
+#     measured here with a 1024-element Triton kernel. The worker points Triton
+#     at it CONDITIONALLY (resident/evo2_resident_worker.py
+#     `_point_triton_at_a_usable_ptxas`): each binary Triton might choose is
+#     asked whether it lists this card's target, and on a host where it does
+#     (an H100 is sm_90a, which CUDA 12.4 already has) nothing is changed. It
+#     must be 12.9 and not /usr/local/cuda-13.0's: triton 3.3.1's
+#     `ptx_get_version` table ends at CUDA 12 and raises "Triton only support
+#     CUDA 10.0 or higher, but got CUDA version: 13.0".
+#     THE VARIABLE IS NOT `TRITON_PTXAS_PATH` ON THIS STACK, which is where
+#     following e1 literally would have silently done nothing: triton builds
+#     the name as f"TRITON_{binary.upper()}_PATH" and picks
+#     "ptxas-blackwell" when arch >= 100, so a cc-121 card reads
+#     `TRITON_PTXAS-BLACKWELL_PATH` -- hyphen included, which bash `export`
+#     cannot spell. The worker sets both names.
+#     This does not clear the second, separate triton wall; provider.toml's
+#     [kit] TRITON block has that one.
+#
+#  5. NOT A DEVIATION, recorded so it is not mistaken for one: the kit's lock
+#     carries `setuptools==68.1.2` and `wheel==0.48.0` and no `pip` line (its
+#     header says the freeze excludes "the interpreter's bundled pip 23.2.1").
+#     Both are reproduced as written, so installing this file downgrades the
+#     setuptools 84.0.0 that `uv venv --seed` puts in a fresh environment. That
+#     is the pinned stack being restored, and 68.1.2 still satisfies evo2/opt's
+#     `requires = ["setuptools>=64"]`.
+--extra-index-url https://download.pytorch.org/whl/cu128
+annotated-types==0.8.0
+anyio==4.14.2
+biopython==1.88
+certifi==2026.7.22
+click==8.4.2
+einops==0.8.1
+et_xmlfile==2.0.0
+evo2==0.6.0
+filelock==3.32.3
+flash_attn==2.8.0.post2
+fsspec==2026.7.0
+h11==0.16.0
+hf-xet==1.6.0
+httpcore==1.0.9
+httpx==0.28.1
+huggingface_hub==1.28.0
+idna==3.19
+importlib_metadata==9.0.0
+Jinja2==3.1.6
+joblib==1.5.3
+markdown-it-py==4.2.0
+MarkupSafe==3.0.3
+mdurl==0.1.2
+mpmath==1.3.0
+narwhals==2.25.0
+networkx==3.6.1
+ninja==1.13.0
+numpy==2.2.6
+nvidia-cublas-cu12==12.8.3.14
+nvidia-cuda-cupti-cu12==12.8.57
+nvidia-cuda-nvcc-cu12==12.9.86
+nvidia-cuda-nvrtc-cu12==12.8.61
+nvidia-cuda-runtime-cu12==12.8.57
+nvidia-cudnn-cu12==9.7.1.26
+nvidia-cufft-cu12==11.3.3.41
+nvidia-cufile-cu12==1.13.0.11
+nvidia-curand-cu12==10.3.9.55
+nvidia-cusolver-cu12==11.7.2.55
+nvidia-cusparse-cu12==12.5.7.53
+nvidia-cusparselt-cu12==0.6.3
+nvidia-nccl-cu12==2.26.2
+nvidia-nvjitlink-cu12==12.8.61
+nvidia-nvtx-cu12==12.8.55
+openpyxl==3.1.5
+packaging==26.3
+pandas==3.0.5
+psutil==7.2.2
+pyarrow==25.0.1
+pydantic==2.13.4
+pydantic_core==2.46.4
+Pygments==2.21.0
+python-dateutil==2.9.0.post0
+PyYAML==6.0.3
+rich==15.0.0
+scikit-learn==1.9.0
+scipy==1.17.1
+setuptools==68.1.2
+six==1.17.0
+sympy==1.14.0
+threadpoolctl==3.6.0
+torch==2.7.1+cu128
+tqdm==4.70.0
+triton==3.3.1
+typing-inspection==0.4.4
+typing_extensions==4.16.0
+vtx==1.1.0
+wheel==0.48.0
+zipp==4.1.0
+zstandard==0.25.0

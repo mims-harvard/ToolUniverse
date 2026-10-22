@@ -55,7 +55,80 @@ REMOTE_DEPLOYMENTS = (
         module="tooluniverse.remote.boltz.boltz_mcp_server",
         port=8080,
         operations=("boltz2_docking",),
+        # The manifest's `[env] python` names this, and leaving it out of
+        # required_env meant `tu remote check boltz` probed the SERVER's
+        # interpreter and reported a GPU verdict about the wrong process.
+        required_env=("TOOLUNIVERSE_BOLTZ_PYTHON",),
+        path_env=("BOLTZ_CACHE",),
         required_commands=("boltz",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
+        "evo2",
+        "tooluniverse.remote.evo2.evo2_tool",
+        8041,
+        ("run_evo2_score", "run_evo2_embed"),
+        ("EVO2_OPT_WEIGHTS", "TOOLUNIVERSE_EVO2_PYTHON"),
+        ("EVO2_OPT_WEIGHTS",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
+        "apnovo",
+        "tooluniverse.remote.apnovo.apnovo_tool",
+        8059,
+        (
+            "apnovo_validate_motif",
+            "apnovo_generate_designs",
+            "apnovo_resequence_designs",
+            "apnovo_evaluate_designs",
+        ),
+        ("APNOVO_WEIGHTS_ROOT", "TOOLUNIVERSE_APNOVO_PYTHON"),
+        ("APNOVO_WEIGHTS_ROOT",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
+        "atlasfold",
+        "tooluniverse.remote.atlasfold.atlasfold_tool",
+        8043,
+        ("atlasfold_predict",),
+        ("TOOLUNIVERSE_ATLASFOLD_PYTHON",),
+        (),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
+        "af2ig",
+        "tooluniverse.remote.af2ig.af2ig_tool",
+        8053,
+        ("af2ig_predict",),
+        ("TOOLUNIVERSE_AF2IG_PYTHON",),
+        ("AF2_PARAMS", "AF2IG_DIR"),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
+        "af3_jax",
+        "tooluniverse.remote.af3_jax.af3_jax_tool",
+        8045,
+        ("af3_jax_predict",),
+        ("TOOLUNIVERSE_AF3_JAX_PYTHON", "AF3_JAX_REPO"),
+        ("AF3_JAX_PARAMS_ROOT", "AF3_JAX_REPO"),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
+        "af3_torch",
+        "tooluniverse.remote.af3_torch.af3_torch_tool",
+        8036,
+        ("af3_torch_predict",),
+        ("TOOLUNIVERSE_AF3_TORCH_PYTHON", "AF3_TORCH_JAX_PY", "AF3_TORCH_JAX_REPO"),
+        ("AF3_TORCH_PARAMS_DIR", "AF3_TORCH_JAX_REPO"),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
+        "boltzgen",
+        "tooluniverse.remote.boltzgen.boltzgen_tool",
+        8035,
+        ("boltzgen_design",),
+        ("BOLTZGEN_CACHE", "TOOLUNIVERSE_BOLTZGEN_PYTHON"),
+        ("BOLTZGEN_CACHE",),
         gpu_policy="required",
     ),
     RemoteDeployment(
@@ -64,6 +137,23 @@ REMOTE_DEPLOYMENTS = (
         8012,
         ("run_borzoi_predict", "run_borzoi_variant_effect"),
         gpu_policy="recommended",
+    ),
+    RemoteDeployment(
+        "borzoi_calico",
+        "tooluniverse.remote.borzoi_calico.borzoi_calico_tool",
+        8061,
+        ("run_borzoi_calico_sad",),
+        (
+            "TOOLUNIVERSE_BORZOI_CALICO_PYTHON",
+            "BORZOI_DIR",
+            "BASKERVILLE_DIR",
+        ),
+        ("BORZOI_CALICO_WEIGHTS",),
+        # `policy = "none"`: TensorFlow publishes no GPU-capable aarch64 wheel at
+        # any version, so this reserves no VRAM and is admitted while the card is
+        # full. Not a replacement for `borzoi` above -- a different operation
+        # (upstream's SAD statistics from coordinates, against pinned hg38).
+        gpu_policy="none",
     ),
     RemoteDeployment(
         "cell2location",
@@ -91,6 +181,15 @@ REMOTE_DEPLOYMENTS = (
         ("TOOLUNIVERSE_REMOTE_DATA_ROOT", "CELLTYPIST_SAFE_MODEL_DIR"),
     ),
     RemoteDeployment(
+        "chai1",
+        "tooluniverse.remote.chai1.chai1_tool",
+        8033,
+        ("chai1_fold",),
+        ("CHAI_DOWNLOADS_DIR", "TOOLUNIVERSE_CHAI1_PYTHON"),
+        ("CHAI_DOWNLOADS_DIR",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
         "chrombpnet",
         "tooluniverse.remote.chrombpnet.chrombpnet_tool",
         8032,
@@ -98,6 +197,33 @@ REMOTE_DEPLOYMENTS = (
         ("CHROMBPNET_MODEL_PATH",),
         ("CHROMBPNET_MODEL_PATH",),
         gpu_policy="recommended",
+    ),
+    RemoteDeployment(
+        "colabdesign",
+        "tooluniverse.remote.colabdesign.colabdesign_tool",
+        8054,
+        ("colabdesign_design",),
+        ("TOOLUNIVERSE_COLABDESIGN_PYTHON",),
+        ("COLABDESIGN_PARAMS_DIR",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
+        "colabfold",
+        "tooluniverse.remote.colabfold.colabfold_tool",
+        8051,
+        ("colabfold_predict",),
+        ("TOOLUNIVERSE_COLABFOLD_PYTHON",),
+        ("COLABFOLD_OPT_DATA_DIR",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
+        "complexa",
+        "tooluniverse.remote.complexa.complexa_tool",
+        8056,
+        ("complexa_design_binder",),
+        ("TOOLUNIVERSE_COMPLEXA_PYTHON",),
+        (),
+        gpu_policy="required",
     ),
     RemoteDeployment(
         "depmap-24q2",
@@ -108,11 +234,36 @@ REMOTE_DEPLOYMENTS = (
         ("DEPMAP_DATA_PATH",),
     ),
     RemoteDeployment(
+        "ef2inv",
+        "tooluniverse.remote.ef2inv.ef2inv_tool",
+        8042,
+        ("ef2inv_design",),
+        ("HF_HOME", "TOOLUNIVERSE_EF2INV_PYTHON"),
+        ("HF_HOME",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
         "enformer",
         "tooluniverse.remote.enformer.enformer_tool",
         8011,
         ("run_enformer_predict", "run_enformer_variant_effect"),
+        ("TOOLUNIVERSE_ENFORMER_PYTHON",),
+        ("HF_HOME",),
         gpu_policy="recommended",
+    ),
+    RemoteDeployment(
+        "enformer_deepmind",
+        "tooluniverse.remote.enformer_deepmind.enformer_deepmind_tool",
+        8060,
+        ("run_enformer_deepmind_predict",),
+        ("TOOLUNIVERSE_ENFORMER_DEEPMIND_PYTHON",),
+        ("TFHUB_CACHE_DIR",),
+        # `policy = "none"`: the official release is TensorFlow, and TensorFlow
+        # publishes no GPU-capable aarch64 wheel at any version, so this one
+        # reserves no VRAM and is admitted while the card is full. It is the
+        # complement of `enformer` above (the torch port, on the card), not its
+        # replacement.
+        gpu_policy="none",
     ),
     RemoteDeployment(
         "esm",
@@ -120,6 +271,42 @@ REMOTE_DEPLOYMENTS = (
         8008,
         ("esm_embed_sequence",),
         gpu_policy="recommended",
+    ),
+    RemoteDeployment(
+        "e1",
+        "tooluniverse.remote.e1.e1_tool",
+        8044,
+        ("run_e1_score_variants", "run_e1_embed"),
+        ("HF_HOME", "TOOLUNIVERSE_E1_PYTHON"),
+        ("HF_HOME",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
+        "esm_if1",
+        "tooluniverse.remote.esm_if1.esm_if1_tool",
+        8050,
+        ("esm_if1_design",),
+        ("TOOLUNIVERSE_ESM_IF1_PYTHON",),
+        (),
+        gpu_policy="none",
+    ),
+    RemoteDeployment(
+        "esmc",
+        "tooluniverse.remote.esmc.esmc_tool",
+        8037,
+        ("run_esmc_embed", "run_esmc_logits"),
+        ("HF_HOME", "TOOLUNIVERSE_ESMC_PYTHON"),
+        ("HF_HOME",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
+        "esmfold2",
+        "tooluniverse.remote.esmfold2.esmfold2_tool",
+        8038,
+        ("esmfold2_fold",),
+        ("HF_HOME", "TOOLUNIVERSE_ESMFOLD2_PYTHON"),
+        ("HF_HOME",),
+        gpu_policy="required",
     ),
     RemoteDeployment(
         "expert-feedback",
@@ -134,6 +321,24 @@ REMOTE_DEPLOYMENTS = (
         ),
         module_args=("--start-server",),
         relay_workers=2,
+    ),
+    RemoteDeployment(
+        "genie3",
+        "tooluniverse.remote.genie3.genie3_tool",
+        8048,
+        ("genie3_design",),
+        ("GENIE3_WEIGHTS", "TOOLUNIVERSE_GENIE3_PYTHON"),
+        ("GENIE3_WEIGHTS",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
+        "gpnstar",
+        "tooluniverse.remote.gpnstar.gpnstar_tool",
+        8057,
+        ("run_gpnstar_vep",),
+        ("HF_HOME", "TOOLUNIVERSE_GPNSTAR_PYTHON"),
+        ("HF_HOME",),
+        gpu_policy="required",
     ),
     RemoteDeployment(
         "harmony",
@@ -200,6 +405,42 @@ REMOTE_DEPLOYMENTS = (
         ("Rscript",),
     ),
     RemoteDeployment(
+        "mosaic",
+        "tooluniverse.remote.mosaic.mosaic_tool",
+        8055,
+        ("mosaic_design_binder",),
+        ("TOOLUNIVERSE_MOSAIC_PYTHON",),
+        ("MOSAIC_CACHE_DIR",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
+        "opendde",
+        "tooluniverse.remote.opendde.opendde_tool",
+        8058,
+        ("opendde_fold",),
+        ("TOOLUNIVERSE_OPENDDE_PYTHON",),
+        ("OPENDDE_ROOT_DIR",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
+        "openfold3",
+        "tooluniverse.remote.openfold3.openfold3_tool",
+        8039,
+        ("openfold3_fold",),
+        ("TOOLUNIVERSE_OPENFOLD3_PYTHON",),
+        (),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
+        "openfold3_ob0",
+        "tooluniverse.remote.openfold3_ob0.openfold3_ob0_tool",
+        8052,
+        ("openfold3_ob0_fold",),
+        ("TOOLUNIVERSE_OPENFOLD3_OB0_PYTHON",),
+        (),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
         "paga",
         "tooluniverse.remote.paga.paga_tool",
         8022,
@@ -214,6 +455,53 @@ REMOTE_DEPLOYMENTS = (
         ("run_pinnacle_ppi_retrieval",),
         ("PINNACLE_DATA_PATH",),
         ("PINNACLE_DATA_PATH",),
+    ),
+    RemoteDeployment(
+        "progen2",
+        "tooluniverse.remote.progen2.progen2_tool",
+        8047,
+        ("run_progen2_score", "run_progen2_generate"),
+        ("PROGEN2_WEIGHTS", "TOOLUNIVERSE_PROGEN2_PYTHON"),
+        ("PROGEN2_WEIGHTS",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
+        "proteinmpnn",
+        "tooluniverse.remote.proteinmpnn.proteinmpnn_tool",
+        8049,
+        ("proteinmpnn_design",),
+        ("TOOLUNIVERSE_PROTEINMPNN_PYTHON",),
+        ("TOOLUNIVERSE_PROTEINMPNN_WEIGHTS",),
+        # `policy = "none"`: no card is required and none is used, which is why
+        # this one can be resident while every other provider is.
+        gpu_policy="none",
+    ),
+    RemoteDeployment(
+        "protenix_v1",
+        "tooluniverse.remote.protenix_v1.protenix_v1_tool",
+        8046,
+        ("protenix_v1_fold",),
+        ("TOOLUNIVERSE_PROTENIX_V1_PYTHON",),
+        (),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
+        "rfdiffusion3",
+        "tooluniverse.remote.rfdiffusion3.rfdiffusion3_tool",
+        8040,
+        ("rfdiffusion3_design",),
+        ("FOUNDRY_CHECKPOINT_DIRS", "TOOLUNIVERSE_RFDIFFUSION3_PYTHON"),
+        ("FOUNDRY_CHECKPOINT_DIRS",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
+        "rosettafold3",
+        "tooluniverse.remote.rosettafold3.rosettafold3_tool",
+        8034,
+        ("rosettafold3_predict",),
+        ("TOOLUNIVERSE_ROSETTAFOLD3_PYTHON",),
+        (),
+        gpu_policy="required",
     ),
     RemoteDeployment(
         "scanvi",
@@ -625,6 +913,34 @@ if {check_gpu}:
             gpu["tensor_sum"] = float(torch.arange(8, device="cuda").sum().item())
     except Exception as exc:
         gpu["error"] = f"{{type(exc).__name__}}: {{exc}}"
+    if not gpu["cuda_available"]:
+        # ASK EVERY FRAMEWORK, NOT TORCH. A provider may hold the card with JAX
+        # and carry a CPU-only torch on purpose -- af3_jax's lock does, for its
+        # weights converter -- and a check that reads torch alone then reports a
+        # working provider as broken. `_arch_problem` in remote_resident.setup
+        # had this same defect and refused af3_jax outright; this one only made
+        # `tu remote check` print a red line, which is the quieter and therefore
+        # longer-lived version of the same mistake.
+        try:
+            import jax
+            import jax.numpy as jnp
+            gpu["jax_version"] = str(jax.__version__)
+            gpu["jax_backend"] = str(jax.default_backend())
+            devs = (
+                jax.local_devices(backend="gpu")
+                if gpu["jax_backend"] == "gpu"
+                else []
+            )
+            if devs:
+                gpu["device"] = str(devs[0].device_kind)
+                gpu["capability"] = str(getattr(devs[0], "compute_capability", ""))
+                # The same 28.0 the torch branch produces, and real device work
+                # rather than a capability read: a CUDA context that reports
+                # itself healthy can still fail on the first kernel.
+                gpu["tensor_sum"] = float(jnp.arange(8).sum())
+                gpu["cuda_available"] = True
+        except Exception as exc:
+            gpu["jax_error"] = f"{{type(exc).__name__}}: {{exc}}"
     result["gpu"] = gpu
 print(json.dumps(result, sort_keys=True))
 """
@@ -702,6 +1018,144 @@ def _check_provider_credentials(
             else "USPTO credential readiness returned an unexpected status"
         ),
     }
+
+
+def provider_manifest(deployment: RemoteDeployment):
+    """The provider's ``provider.toml``, or None when it declares none yet.
+
+    Providers are being moved onto that manifest one at a time; one without it
+    is checked exactly as before, so this returns None rather than raising.
+    """
+    try:
+        from tooluniverse.remote_resident import manifest as _m
+    except Exception:  # noqa: BLE001 - a missing TOML parser must not fail a check
+        return None
+    package = ".".join(deployment.module.split(".")[:-1])
+    spec = importlib.util.find_spec(package)
+    if spec is None or not spec.submodule_search_locations:
+        return None
+    path = Path(list(spec.submodule_search_locations)[0]) / _m.MANIFEST_NAME
+    if not path.is_file():
+        return None
+    try:
+        return _m.load(path)
+    except Exception:  # noqa: BLE001 - reported by the caller as a named problem
+        return None
+
+
+_MODEL_ENV_PROBE = """
+import json, shutil, sys
+result = {"python_version": list(sys.version_info[:3]),
+          "commands": {name: shutil.which(name) is not None for name in COMMANDS}}
+gpu = {"torch_available": False, "cuda_available": False}
+try:
+    import torch
+    gpu["torch_available"] = True
+    gpu["torch_version"] = str(torch.__version__)
+    gpu["cuda_available"] = bool(torch.cuda.is_available())
+    if gpu["cuda_available"]:
+        gpu["device"] = str(torch.cuda.get_device_name(0))
+        gpu["capability"] = "%d.%d" % torch.cuda.get_device_capability(0)
+        gpu["tensor_sum"] = float(torch.arange(8, device="cuda").sum().item())
+except Exception as exc:
+    gpu["error"] = "%s: %s" % (type(exc).__name__, exc)
+if not gpu["cuda_available"]:
+    # See the note in _provider_probe_code: a provider may drive the card with
+    # JAX while its torch is CPU-only by design.
+    try:
+        import jax
+        import jax.numpy as jnp
+        gpu["jax_version"] = str(jax.__version__)
+        gpu["jax_backend"] = str(jax.default_backend())
+        devs = jax.local_devices(backend="gpu") if gpu["jax_backend"] == "gpu" else []
+        if devs:
+            gpu["device"] = str(devs[0].device_kind)
+            gpu["capability"] = str(getattr(devs[0], "compute_capability", ""))
+            gpu["tensor_sum"] = float(jnp.arange(8).sum())
+            gpu["cuda_available"] = True
+    except Exception as exc:
+        gpu["jax_error"] = "%s: %s" % (type(exc).__name__, exc)
+result["gpu"] = gpu
+for name in LAUNCH_MODULES:
+    try:
+        __import__(name)
+        result.setdefault("modules", {})[name] = True
+    except Exception as exc:
+        result.setdefault("modules", {})[name] = "%s: %s" % (type(exc).__name__, exc)
+print(json.dumps(result, sort_keys=True))
+"""
+
+
+def check_model_environment(
+    manifest, *, launch_modules: tuple[str, ...] = (), timeout: float = 60
+) -> dict[str, Any]:
+    """Probe the interpreter the model itself runs in.
+
+    A resident provider splits in two: a light MCP server in ToolUniverse's
+    environment and the model in its own, because their pinned stacks do not
+    coexist. `boltz` on PATH and a working CUDA tensor are properties of the
+    second, and checking them in the first reports a broken deployment that is
+    in fact correctly separated.
+    """
+    out: dict[str, Any] = {"declared_python": manifest.env_python}
+    try:
+        python = manifest.python_executable()
+    except Exception as exc:  # noqa: BLE001 - the reason is the answer
+        return {**out, "ok": False, "error": str(exc)}
+    out["python"] = python
+    if not Path(python).is_file():
+        return {**out, "ok": False, "error": f"{python}: not a file"}
+    code = _MODEL_ENV_PROBE.replace(
+        "COMMANDS", json.dumps(list(_model_commands(manifest)))
+    ).replace("LAUNCH_MODULES", json.dumps(list(launch_modules)))
+    # The model environment's console scripts sit beside its interpreter; a
+    # probe inheriting only this process's PATH would not see them and would
+    # report a correctly installed model as missing its command.
+    env = dict(os.environ)
+    # NOT resolve(): a venv's bin/python is a symlink to the interpreter it was
+    # created from, and following it lands in that interpreter's bin directory
+    # instead of the venv's -- where the console scripts actually are.
+    bin_dir = str(Path(python).expanduser().absolute().parent)
+    env["PATH"] = bin_dir + (os.pathsep + env["PATH"] if env.get("PATH") else "")
+    try:
+        completed = subprocess.run(
+            [python, "-c", code],
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        return {**out, "ok": False, "error": f"{type(exc).__name__}"}
+    lines = completed.stdout.strip().splitlines()
+    try:
+        probe = json.loads(lines[-1] if lines else "")
+    except (json.JSONDecodeError, TypeError):
+        return {
+            **out,
+            "ok": False,
+            "error": "the model environment's probe returned invalid output",
+            "exit_code": completed.returncode,
+        }
+    gpu = probe.get("gpu") or {}
+    gpu_ok = manifest.gpu_policy != "required" or (
+        gpu.get("cuda_available") is True and gpu.get("tensor_sum") == 28.0
+    )
+    modules_ok = all(v is True for v in (probe.get("modules") or {}).values())
+    return {
+        **out,
+        "ok": bool(
+            gpu_ok and modules_ok and all((probe.get("commands") or {}).values())
+        ),
+        **probe,
+    }
+
+
+def _model_commands(manifest) -> tuple[str, ...]:
+    """Commands the model environment must carry, from its slug's deployment."""
+    deployment = REMOTE_BY_SLUG.get(manifest.slug)
+    return tuple(deployment.required_commands) if deployment else ()
 
 
 def check_environment(
@@ -786,6 +1240,33 @@ def check_environment(
         gpu.get("cuda_available") is True and gpu.get("tensor_sum") == 28.0
     )
 
+    # A provider that declares `mode = "resident"` runs the model in its own
+    # environment, so `boltz` on PATH and a working CUDA tensor are properties
+    # of THAT interpreter, not of the one serving MCP. Checking them here would
+    # fail a deployment that is separated exactly as the manifest asks.
+    manifest = provider_manifest(deployment)
+    model_env: dict[str, Any] | None = None
+    weights: dict[str, Any] | None = None
+    if manifest is not None:
+        problems = manifest.verify_weights()
+        weights = {
+            "root": str(manifest.weights_root() or ""),
+            "declared": [w.name for w in manifest.weights],
+            "problems": problems,
+            "ok": not problems,
+        }
+        if manifest.mode == "resident":
+            launch_modules = ()
+            if manifest.launch:
+                # The kit (or whatever the launcher imports) has to be present
+                # in the model environment, not in this one.
+                launch_modules = ("boltz2_opt",) if manifest.slug == "boltz" else ()
+            model_env = check_model_environment(
+                manifest, launch_modules=launch_modules, timeout=timeout
+            )
+            commands_ok = True  # asked of the model environment instead
+            gpu_ok = True if not gpu_required else bool(model_env.get("ok"))
+
     sdk_available = importlib.util.find_spec("tuplatform_connect") is not None
     key_set = (
         bool(os.getenv("TOOLUNIVERSE_SERVICE_KEY", "").strip())
@@ -802,10 +1283,24 @@ def check_environment(
         and credentials_ok
         and gpu_ok
         and share_ok
+        and (weights is None or weights["ok"])
+        and (model_env is None or model_env.get("ok") is True)
     )
     return {
         "ok": ok,
         "implementation": deployment.slug,
+        "manifest": (
+            None
+            if manifest is None
+            else {
+                "mode": manifest.mode,
+                "vram_budget_gb": manifest.vram_budget_gb,
+                "isolation": manifest.isolation,
+                "path": str(manifest.path),
+            }
+        ),
+        "weights": weights,
+        "model_environment": model_env,
         "python": provider_python,
         "python_supported_3_12": python_supported,
         "provider": provider,

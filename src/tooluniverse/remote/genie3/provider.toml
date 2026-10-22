@@ -1,0 +1,557 @@
+# Genie 3 -- de novo protein backbone design by reverse diffusion, held resident.
+#
+# The third generative provider on this standard, after RFdiffusion3 and
+# BoltzGen, and the one whose kit is furthest from the shape the others taught.
+# Five facts decide everything below. The first four were measured on this host
+# before a line of the worker was written; the fifth was found by the thing that
+# found it in every other provider too -- running the model more than once.
+#
+#   1. The kit's `.pth` hook is NOT how its levers attach, and with the mode
+#      variable set it KILLS any in-process importer of upstream. Measured:
+#
+#        $ GENIE3_OPT=exact python -c 'import genie3'
+#        [genie3-opt] NOT ACTIVE: env-route: GENIE3_OPT='exact' is set at
+#        `python -c …` — a kit mode serves upstream's `genie3 generate …` …
+#        refused (exit 3), nothing of upstream ran                      # rc 3
+#
+#      For `exact` and `fast` the mode table's `attach` is "driver": the mode
+#      IS the script opt/genie3_opt/g3batch.py, which imports the kit's three
+#      carried library modules and applies every lever itself. The autoload is
+#      a CLI shim that re-execs `genie3 generate` into the verb that launches
+#      that script. So this provider's worker takes the SCRIPT's position --
+#      boltz2's worker_launch shape reached through a different door -- and
+#      [kit.env] disarms the shim, which costs no lever. That is a FIFTH
+#      activation shape for STANDARD.md section 10's taxonomy.
+#
+#   2. Mode `fast` cannot run on this card, for three independent reasons, two
+#      of them process aborts. See [kit] mode below. `exact` is tier 1 (outputs
+#      byte-identical to stock at the same batch size and seed) and compiles
+#      nothing at all, which on this Triton band is not a small thing.
+#
+#   3. The kit's own CLI cannot run on this host at all, and the provider can.
+#      stack.gpu_probe() reads name/memory/capability from one nvidia-smi line
+#      and parses the three together; on this box `memory.total` is `[N/A]`
+#      (unified memory), the float() raises, a bare `except Exception: pass`
+#      swallows it and every field comes back None. stack._gate() then adds
+#      "no CUDA device visible (nvidia-smi found none)" and `run.sh check` /
+#      `run.sh design` exit 3 in EVERY mode. Measured:
+#
+#        $ bash run.sh check --mode exact
+#        [genie3-opt] NOT ACTIVE: no CUDA device visible (nvidia-smi found
+#        none) (mode=exact)                                             # rc 3
+#
+#      g3batch.py -- the one line all three modes run -- never calls
+#      stack.activate() and reads the card through torch, so the resident
+#      worker is unaffected. This is STANDARD.md section 9's third
+#      nvidia-smi/unified-memory finding arriving in a fourth kit, and it is
+#      the first time it has made a kit's own dry run unusable.
+#
+#   4. The stack substitution is accepted by the kit, not merely tolerated by
+#      us. See environment/requirements.lock DEVIATION 1.
+#
+#   5. UPSTREAM CAN BUILD EXACTLY ONE SAMPLING CONFIG PER PROCESS, which is why
+#      the kit's determinism contract says "one process per request" (det.py,
+#      point 4) and which no resident worker before this one had to care about.
+#      `genie3.generation.config.default.default_config` is a module-level
+#      mutable ConfigDict that `registry.get_config()` mutates, and the second
+#      `build_sample_config_from_dict` of any process raises
+#      `TypeError: Cannot update a FieldReference from another FieldReference:
+#      'batch_size'` -- for the IDENTICAL document, independent of length, batch
+#      size and seed. The worker therefore restores upstream's own
+#      interpreter-start state from a deep copy taken before the first build
+#      (`_reset_upstream_config`); nothing of upstream or of the kit is
+#      modified, and what each build sees is what the first build in a fresh
+#      process sees. Without it this provider answers its first request and then
+#      fails on the first request that changes the engine key, which is a shape
+#      of failure STANDARD.md section 13 already names once (openfold3 passed
+#      its smoke and died on request two) arriving through a completely
+#      different door -- upstream's module state rather than a kit lever's.
+#
+# All of the above was established before the first design was generated. What
+# running then added is in [provider] verified_on and the [gpu] ladder: the kit
+# mode engages, the budget is 4.84 GiB at 670 tokens and two designs, and four
+# consecutive identical requests on a held engine produce byte-identical PDB
+# files -- which is the one thing the design of this worker rests on and the one
+# thing no amount of reading could have settled.
+
+[provider]
+slug = "genie3"
+description = "Genie 3 de novo protein backbone design from an experiment request"
+operations = ["genie3_design"]
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 121.6 GB unified, driver 580.173.02),
+venv route, Python 3.10.13, torch 2.7.1+cu128, triton 3.3.1, kit mode `exact`
+(tier 1, all nine of its levers engaged: L1 L2 L4 L8 L9 L11 L17 L18 L19).
+
+Smoke: one unconditional 50-mer request, two designs at batch 1, 20 DDIM steps
+-- 11.7 s wall, model_setup_s 6.4, s_per_design_steady 0.288, peak reserved
+0.25 GiB. Three files written, the two PDB files matched by [runtime] outputs
+and the composed request.yaml correctly not matched.
+
+FOUR CONSECUTIVE IDENTICAL REQUESTS in one held worker, which is the acceptance
+test STANDARD.md section 13 requires, run with a sha256 over every PDB produced:
+
+    req 0:  9.8s  peak 0.25  2 pdb  digest 9b7b7267e10832f1  rebuilt=True   rng_restored=False
+    req 1:  0.8s  peak 0.31  2 pdb  digest 9b7b7267e10832f1  rebuilt=False  rng_restored=True
+    req 2:  0.8s  peak 0.35  2 pdb  digest 9b7b7267e10832f1  rebuilt=False  rng_restored=True
+    req 3:  0.8s  peak 0.39  2 pdb  digest 9b7b7267e10832f1  rebuilt=False  rng_restored=True
+
+    BYTE-IDENTICAL ACROSS FOUR REQUESTS: True
+
+That last line is this provider's distinguishing claim and the reason the worker
+reconstructs four generator states instead of trusting residency: 12x on the
+warm path (9.8 s -> 0.8 s) WITHOUT the outputs moving. Of the fifteen providers
+on this standard it is the only one where residency has been shown not to change
+what the model produces, and the claim is falsifiable by re-running exactly the
+comparison above. The kit's own byte-identity contract is scoped to "one process
+per request" (det.py, point 4), so this is a stronger result than the kit itself
+asserts, and it is measured rather than argued.
+
+VRAM ladder: six rungs, ascending, in one further held worker nothing larger had
+touched -- the table is under [gpu]. Every rung rebuilt the engine, which also
+exercises the upstream one-config-per-process reset (preamble fact 5) six times.
+
+Wall times above are from a quiet card. The ladder shared the card with a
+sibling provider that preallocates 93.6 GiB in cycles, so its wall times are not
+quoted and its peaks are (STANDARD.md section 13: peaks reproduce under
+contention, wall times do not).
+
+ACCEPTANCE 2026-10-17: 12/12 answered, every one produced=yes, and THIS RUN
+IS THE REGRESSION TEST FOR _reset_upstream_config. Upstream's FieldReference
+defect is still present at the pinned commit -- the first
+build_sample_config_from_dict in a process succeeds and every later one
+raises -- and nothing had ever driven a SECOND build through the suite. Every
+shape change here rebuilt the engine (model_setup_s 17-25 s each) and none
+raised. The mixed phase's first rung, a 100-residue request immediately after
+the 670 one, is precisely the shot that used to fail.
+
+Rungs 100/200/400/670 residues: peak 0.31 / 0.61 / 1.36 / 3.27 GiB, below the
+declared 4.84, which stands.
+
+The single-engine hold is visible too: mixed 0 builds (24.3 s), mixed 1
+reuses (4.7 s), mixed 2 at 400 rebuilds (78.7 s), mixed 3 back at 100
+rebuilds again (22.6 s).
+
+Found here: the footprint grew ~0.040 GiB per request on identical input and
+did not plateau in 20. FOUND AND FIXED 2026-10-17 -- see below.
+
+THE 0.040 GiB A REQUEST, AND WHAT IT WAS. torch allocates a cuBLAS workspace
+the first time a GEMM runs on a (handle, stream) pair and keeps it in a C++
+static map that nothing clears. The kit warms up each CUDA-graph capture on a
+fresh side stream (`g3fast.py`, a `torch.cuda.Stream()` beside the
+`CUDAGraph()`), so every request abandoned a stream and stranded its
+workspace: exactly `torch.backends.cuda.blas_workspace_size()`, 33554432
+bytes, every request, forever.
+
+It hid from every ordinary check, which is why it took twenty repeats and a
+purpose-built census to find. The bytes are in `memory_allocated` but
+reachable from no Python object, so a census of every reachable CUDA tensor
+stayed frozen (0.087 GiB in 563 storages, unchanged across eight requests)
+while `memory_allocated` climbed by 0.031 each time; `gc.collect()` returned
+nothing and `empty_cache()` returned nothing, because the blocks are live
+rather than cached. From outside, the signature is one new fully-allocated
+allocator segment per request on a stream id that was not there before:
+streams 3, 4, 5, 6, 7 ... each carrying one 32 MiB block.
+
+Proved causally rather than inferred from the size:
+`CUBLAS_WORKSPACE_CONFIG=:4096:2` shrinks the workspace to 8 MiB and the
+per-request increment became exactly 8 MiB.
+
+The fix is `release_cublas_workspaces()`, which `WB.serve` now calls after
+every request for every provider. This worker made the call itself for a
+day, and skipped it under `GENIE3_RESIDENT_KEEP_GRAPHS=1`; that guard is
+gone. The reason given for it -- a held graph replaying against a freed
+workspace -- was measured on this provider's own torch (2.7.1+cu128, where
+the workspace is 8.12 MiB rather than 32) and does not hold: the workspace a
+capture allocates lives in that graph's private memory pool, which no
+ordinary allocation is handed, and the bytes are write-before-read scratch a
+replay cannot read stale. So `KEEP_GRAPHS` now releases too. See
+`release_cublas_workspaces` for what was checked and how, including why a
+test of this without a positive control proves nothing.
+
+Re-run 2026-10-18 with the release in `serve` rather than here, both ways:
+
+    default        8/8, peak 0.25 -> 0.28 flat, 2.0-2.2 s a request
+    KEEP_GRAPHS=1  8/8, peak 0.25 -> 0.21 flat, 1.5-1.7 s a request
+
+KEEP_GRAPHS is now the cheaper of the two on both axes, which it was not
+while it was the one mode that declined to give the workspaces back: it
+saves the re-capture AND no longer pays for a stranded workspace a
+request.
+
+ACCEPTANCE AFTER THE FIX, 2026-10-17: 12/12 answered, every one
+produced=yes. Twelve consecutive identical requests, peak reserved:
+
+    0.25 0.28 0.28 0.28 0.28 0.28 0.28 0.28 0.28 0.28 0.28 0.28
+
+Flat to the hundredth after the first, against 0.45 -> 1.21 over twenty
+before. It is also FASTER: wall time had been climbing with the leak
+(4.1 s -> 6.7 s by the eighth request) and is now 1.5-1.7 s throughout.
+
+One more thing this run changed, and it is why the ladder numbers above are
+not the ladder numbers below. This worker reported
+`torch.cuda.max_memory_reserved()` with NO reset, so every figure it had ever
+published was the most the process had ever reserved -- a high-water mark,
+which can only rise, and which reads as per-request growth whether or not any
+is happening. It now resets per request like every other provider on this
+standard (`on_reset=_reset`). The same four rungs, re-measured as true
+per-request peaks:
+
+    100 aa -> 0.31    200 aa -> 0.57    400 aa -> 1.27    670 aa -> 3.11
+
+Lower than the high-water figures, as they must be, and still well under the
+declared 4.84. The budget stands and was never in the dangerous direction:
+a high-water mark overstates, so the figure derived from it was conservative.
+"""
+
+[runtime]
+mode = "resident"
+worker = "resident/genie3_resident_worker.py"
+launch = "tooluniverse.remote_resident.kit_launch:build_command"
+worker_args = ["--socket", "{socket}", "--slug", "{slug}"]
+# Imports only. No engine is built at start-up, and that is a property of the
+# kit rather than a shortcut: g3fast.build_everything takes the REQUEST as its
+# first argument and constructs the sampler and the dataset out of it, so there
+# is nothing to build before a request arrives. torch + lightning + upstream +
+# the kit import in well under a minute; the margin is for a cold page cache.
+start_timeout_s = 900.0
+# A request is n_sample designs x n_sample_step denoiser calls, batched. The
+# first request of a key also pays the checkpoint read and the network
+# construction (the kit's `model_setup_s`), and the first batch of each feature
+# shape pays a CUDA-graph capture (0.7-2.6 s, the kit's own figure).
+request_timeout_s = 7200.0
+idle_timeout_s = 900.0
+# What a run that actually designed something leaves behind. Upstream's writer
+# puts one PDB per design at <out>/pdbs/<name>.pdb (unconditional) or
+# <out>/<problem>/pdbs/<name>.pdb (target, motif), and every design name it
+# builds ends in `_<index>`: `f"{length}_{j}"` for unconditional
+# (sample_dataset/unconditional.py:62-65) and `f"{problem}_{i}"` for target
+# (target.py:98-101).
+#
+# The digit suffix is not decoration. BoltzGen's `configure` writes a
+# `design_spec.cif` whether or not anything is designed, so its obvious `*.cif`
+# would have passed a design-less run; the glob here is chosen the same way.
+# This provider writes exactly one file into the output directory regardless of
+# success -- `request.yaml`, the kit's own composed copy of the request, by
+# design.write_request -- and `*_[0-9]*.pdb` cannot match it. The worker ALSO
+# counts outputs with the kit's own reader (outputs.list_outputs, filtered by
+# the design names design.request_record expects and by this request's start
+# time), so a file an earlier pass left behind is not counted either.
+outputs = ["*_[0-9]*.pdb"]
+smoke = "smoke/input.yaml"
+smoke_timeout_s = 3600.0
+
+[gpu]
+policy = "required"
+# MEASURED, ascending, in ONE held worker nothing larger had touched, on the
+# hardware named in [provider] verified_on. Each rung is a separate request
+# (so each one rebuilt the engine), one batch of `batch` designs, 20 DDIM
+# steps; peak is step-count independent because the sampler reuses the same
+# tensors every step.
+#
+#   tokens  batch   peak reserved   per-design probe   kit's projected need
+#      100      1       0.31 GiB        0.083 GB          11.09 GB
+#      200      1       0.61 GiB        0.189 GB          12.14 GB
+#      400      1       1.28 GiB        0.720 GB          13.08 GB
+#      400      2       1.94 GiB        0.720 GB          19.05 GB
+#      670      1       2.82 GiB        1.983 GB          20.07 GB
+#      670      2       4.84 GiB        1.983 GB          24.90 GB   <- declared
+#
+# Two columns, because they answer different questions. `peak reserved` is
+# torch.cuda.max_memory_reserved and is a RUNNING HIGH-WATER MARK -- this
+# worker does not reset it (STANDARD.md section 6: a new provider should not,
+# because a host adding budgets up needs the worker's worst case). `probe` is
+# the kit's own per-design activation measurement for that feature shape
+# (g3batch.probe_forward_gb), measured fresh per shape, so it is the clean
+# per-rung cost.
+#
+# The SHAPE of the ladder, which STANDARD.md section 6 says is as useful as
+# the number:
+#
+#  * Peak tracks TOKEN COUNT, not far off linearly in the high-water mark:
+#    0.31 -> 0.61 -> 1.28 -> 2.82 GiB at batch 1. The per-design probe tracks it roughly
+#    QUADRATICALLY -- 0.083 -> 0.189 -> 0.720 -> 1.983 GB -- which is the pair
+#    tensor, and is the term a host should extrapolate on.
+#  * Count costs much less than length. At 400 tokens, doubling the batch
+#    takes the peak from 1.28 to 1.94 GiB (+52 percent), while doubling the
+#    length from 200 to 400 takes it from 0.61 to 1.28 (+110 percent). Same
+#    ordering RFdiffusion3 found, and the opposite of what the arithmetic
+#    suggests, because one design's pair tensor dominates a batch's copies
+#    of the smaller terms.
+#  * The whole provider fits in under 5 GiB at 670 tokens, which makes it the
+#    cheapest generative provider on the standard by an order of magnitude
+#    (RFdiffusion3 declares 12.49 GiB, ESMFold2 25.28). A host can hold it
+#    resident beside almost anything.
+#
+# CROSS-CHECK worth recording: the kit's own CAPACITY_MULT comment reports a
+# batch-1 probe of 2.02 GB at 670 padded tokens on an H100. This stack
+# measures 1.983 GB for the same shape -- 1.8 percent apart, on different
+# hardware, a different CUDA build and a different architecture. That is
+# evidence the substituted cu128 stack is running the same model the kit
+# measured, which is the check STANDARD.md section 5 makes of its three
+# container routes.
+#
+# The DERIVED estimate this replaces was 6.0 GiB, built from the kit's own
+# probe constant plus a 1.5 GiB weights-and-context term. The measurement is
+# 4.84, so the estimate was 1.2x high -- a third data point for
+# section 6's "derived estimates err both ways", in openfold3's direction
+# rather than esmfold2's. The weights-and-context term was the wrong part:
+# 331 MiB of weights and this card's context do not come to 1.5 GiB.
+#
+# A NOTE ON CO-TENANCY, which this ladder had to work around rather than
+# merely observe. The kit's capacity guard projects
+# `need = resident + 2.0 x B x probe` and refuses a batch BY NAME before it
+# runs when that exceeds 0.90 x the device total, where `resident` is
+# `total - free` from cudaMemGetInfo. On this unified-memory card that figure
+# is SYSTEM-WIDE: with one co-tenant preallocating 93.6 GiB, `resident` reads
+# 113-120 of 121.6 GiB and every rung of this ladder -- including the
+# 100-token one, which needs 0.31 GiB -- is refused by name. The guard is
+# behaving correctly and the refusal is the right thing for a host to see;
+# what is host-specific is that `free` on unified memory counts the whole
+# machine's memory, so a co-tenant's HOST allocations suppress this provider
+# too. This is the second place unified memory breaks this kit's memory
+# arithmetic -- the first is stack.gpu_probe, see the preamble -- and the
+# first that reaches the resident path. A deployment that co-schedules
+# genie3 with a framework that preallocates should expect refusals rather
+# than slowdowns.
+vram_budget_gb = 4.84
+driver_min = 570
+driver_min_reason = "its stack is CUDA 12.8 (torch 2.7.1+cu128, substituted for the kit's cu126, which publishes no aarch64 wheel); the kit's own README asks only for >= 525.60, which is the cu126 figure"
+# Cheap enough to co-schedule, with the caveat above: a co-tenant that
+# preallocates the card makes this provider's own guard refuse rather than
+# queue.
+shareable = true
+isolation = "process"
+
+[env]
+kind = "venv"
+python = "$TOOLUNIVERSE_GENIE3_PYTHON"
+lock = "environment/requirements.lock"
+# Python 3.10 -- the oldest interpreter on this standard, and the kit's own pin.
+# `genie3` is upstream, installed editable from the archive the kit ships;
+# `genie3_opt` is the kit; `opt_core` is the shared core. torch's version is
+# checked WITH its local tag because that is the one deviation this provider
+# makes and the lock's header explains it.
+verify = "import torch, genie3, genie3_opt, opt_core; assert torch.__version__ == '2.7.1+cu128'; import sys; assert sys.version_info[:2] == (3, 10)"
+
+[weights]
+# The kit's own name for the directory, and the layout its own installer
+# produces: `run.sh install --weights DIR` fetches upstream's `pretrained/`
+# tree into DIR and GENIE3_WEIGHTS is then DIR/pretrained/v1 -- the directory
+# holding `config.yaml` and `checkpoints/`. stack.WEIGHT_FILES is the pair of
+# relative paths below, and compose_request writes them into every request as
+# `generation.base.checkpoint` / `generation.base.config`, which is why a
+# request needs no absolute path of its own.
+root_env = "GENIE3_WEIGHTS"
+root_default = "~/.genie3/pretrained/v1"
+# The kit's own fetcher, which calls UPSTREAM's own downloader (the `hf
+# download` line read out of stock/src/scripts/setup/download.sh) and then
+# checks what arrived against stock/PINS.json. No URL is restated here, and
+# nothing is fetched at request time.
+#
+# It takes the PARENT of the parent of the root, because the root is
+# DIR/pretrained/v1 and the fetcher takes DIR -- upstream's downloader creates
+# the `pretrained/v1` part itself. `{weights_root}` is the only path the setup
+# step substitutes, so the arithmetic is done in the shell rather than invented
+# as a second field.
+fetch = '{python} -m genie3_opt.weights "$(dirname "$(dirname "{weights_root}")")"'
+
+# Generated from the kit's stock/PINS.json, not transcribed -- by a script that
+# reads its `weights` object. That object is a FIFTH schema shape: a mapping
+# whose `checkpoint` key NAMES a file and whose other keys ARE file names, each
+# carrying `sha256` and `size_bytes`; the two relative paths are the kit's own
+# stack.WEIGHT_FILES.
+[[weights.files]]
+name = "checkpoints/step=600000.ckpt"
+size = 346849270
+sha256 = "57039afcd4e5a66e58c52ba1ece256bc311a4294a31c37fca7301dd3a4c4479e"
+
+[[weights.files]]
+name = "config.yaml"
+size = 772
+sha256 = "a01d7ad8b908e4380f45a11c8d691ccf27af3f50a9dfb209823ee99989a343e5"
+
+# BLOCKED, ON ONE LINE OF THE SHARED LAUNCHER, AND NOT ON ANYTHING IN THIS
+# DIRECTORY. `kit_launch.build_command` reads the kit's mode-variable NAME from
+# `<pkg>.modes.ENV`, else `<pkg>._autoload.ENV`, and refuses the whole launch
+# when neither exists. This kit spells that attribute `ENV_MODE`, in both
+# places it keeps it:
+#
+#   opt/genie3_opt/_autoload.py:  ENV_MODE, ENV_DISARM = "GENIE3_OPT", "GENIE3_OPT_AUTOLOAD"
+#   opt/genie3_opt/stack.py:      ENV_MODE, ENV_HOME   = "GENIE3_OPT", "GENIE3_OPT_HOME"
+#
+# so the probe finds no `ENV`, `mode_env` comes back absent, and build_command
+# raises before it reads anything in this file:
+#
+#   KitUnavailable: genie3_opt exposes no modes.ENV, so there is no way to
+#   engage it in our own process; if its form is a replacement entry script
+#   (ChromBPNet is), the provider belongs in mode = "subprocess"
+#
+# The diagnosis that refusal offers is the wrong one here -- this kit's form is
+# an in-process driver, not a replacement entry script -- and there is no
+# manifest key that can supply the name, because the raise happens before
+# [kit.env] is applied. The fix is in the shared file: have the probe try
+# ("ENV", "ENV_MODE") in that order. Nothing in this provider works around it,
+# because a provider that silently ran without the mode variable would run
+# upstream unpatched and call it `exact`.
+#
+# The same probe records a second, harmless gap on this kit:
+# `modes.jit_cache_key` does not exist (it is `stack.jit_cache_key`), so
+# MODEL_OPT_STACK_KEY is never set and the kit's JIT caches are unkeyed. On
+# this provider that costs nothing -- mode `exact` compiles nothing at all --
+# but a kit that compiles would silently share one cache directory across
+# stacks. The kit's own run.sh reads it from `genie3_opt.stack`.
+
+[kit]
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "genie3"
+sparse = ["genie3", "common"]
+package = "genie3_opt"
+
+# `exact`, not the kit's own default `fast`, and not because `exact` is safer
+# in general. Mode `fast` CANNOT RUN on this card, for three independent
+# reasons, and two of them abort the process rather than degrade:
+#
+#   a. Lever L7 (`--trimul fpf`) is served only from a row of
+#      opt/genie3_opt/fpf_cells.json, and that file has exactly two rows:
+#      "9.0|*" (H100/H200) and "8.0|*" (A100). Measured:
+#      `trimul.cell_row("12.1")` -> None. Every call would then be a counted
+#      `no_cell:` fallback, which is not in L7's EXPECTED_FALLBACKS, so the
+#      lever's fail-closed gate refuses, the lever leaves no evidence, and the
+#      kit refuses mode fast BY NAME -- after the whole pass has run
+#      (design.run: exit 3, `levers_missing`; a mode is all of its levers).
+#
+#   b. If the shared core's safe settings DID serve this capability, the kernel
+#      would then be compiled, and opt_core/kernels/fpf_trimul_v4/kernels.py is
+#      dense with `tl.sum` (lines 46, 48, 96, 98, 106, 108, 174, 176, ...) --
+#      LayerNorm statistics. On triton 3.3.1, which torch 2.7.1 pins, this card
+#      cannot lower a cross-lane reduction at all. Measured in this provider's
+#      own interpreter, a `tl.sum` kernel written to a file and run as a child:
+#
+#        LLVM ERROR: Cannot select: intrinsic %llvm.nvvm.shfl.sync.bfly.i32
+#        rc 134
+#
+#      An abort() is not catchable, so it would take the worker down with it.
+#      (A newer ptxas does not help: the failure is upstream of ptxas. `tl.dot`
+#      alone fails differently and more gently -- `ptxas-blackwell fatal:
+#      Value 'sm_121a' is not defined for option 'gpu-name'`, a catchable
+#      PTXASError -- which refines STANDARD.md section 12's 3.3.x row: the
+#      REDUCTION aborts, the dot does not.)
+#
+#   c. Lever L16 (`--compile`) hands the denoiser core to inductor, which emits
+#      its own Triton for the elementwise/LayerNorm chains between the GEMMs.
+#      Measured here on a bare `torch.compile(nn.LayerNorm(128))`: the same
+#      LLVM ERROR, rc 134. So `fast` aborts even if L7 were ablated.
+#
+# This is a FOURTH kind of stack-versus-card failure, after STANDARD.md section
+# 12's three: not "the kit's own levers cannot run" but "the kit's own levers
+# cannot even be REACHED, and the compiler lever kills the process on the way
+# past".
+#
+# The ORDER of (a) and (b) is the part worth keeping. They are not two readings
+# of one fact and they are not redundant: (a) is a table lookup that makes the
+# kernel never compile, and (b) is what happens if it does. So (a) MASKS (b) --
+# anyone who "fixed" the cell table by transcribing the cc 9.0 row for cc 12.1,
+# which is the obvious next move and which the shared core's safe-settings path
+# would do for them, would turn a clean refusal after the pass into an
+# uncatchable abort during it. That is the first case on this standard where the
+# second blocker would have bitten only after the first was removed, and it is
+# the reason this manifest states both rather than stopping at the one that
+# fires.
+#
+# The worker refuses (a) and (c) by name BEFORE the pass rather than after it
+# (see _mode_preflight), which is the one place it departs from the kit's "name
+# it and proceed" policy and it saves a pass rather than changing an outcome.
+#
+# What `exact` costs and what it keeps: it gives up L7, L12, L13 and L16 -- the
+# four class-2/3 levers -- and keeps all nine class-1/none levers: L1 persistent
+# process, L2 the sync-free DDIM step and the five value-identical forward
+# patches, L4 CUDA-graph replay of the denoiser core, L8 the pair featuriser's
+# step-invariant hoist, L9 in-request graph reuse, L11 upstream's batch
+# semantics at B, L17 the lean pair stack, L18 wide capture, L19 expandable
+# allocator segments. Its claim is byte-identical PDB files against eager
+# deterministic stock at the same batch size and seed, and -- the part that
+# matters on this card -- "off and exact compile nothing" (the kit's README).
+# Audited and confirmed: `torch.compile` appears on this kit's path only inside
+# g3fast.GraphedDenoiser._compiled_core, gated on the `--compile` flag, and
+# `opt_core.kernels` is imported only from genie3_opt/trimul.py, gated on
+# `--trimul fpf`. Neither is on the exact line, so the exact path touches no
+# Triton at all.
+mode = "exact"
+
+# The kit returns no environment row, and that is a fact about the kit rather
+# than a failure to read one. modes.resolve(mode) returns a Resolution carrying
+# (mode, tier, levers, attach, driver, flags, note) and no `env` / `exports`
+# field of any kind; there is no modes.ENV either (the mode variable's name
+# lives in _autoload.ENV_MODE / stack.ENV_MODE, which is where kit_launch's
+# probe finds it), and there is no `alloc` module. The kit's deployment
+# variables live in configs/<card>.env, shipped for h100, a100 and h200 and for
+# no other card -- the same shape as esmfold2, esmc and rosettafold3.
+env_row = "none"
+env_row_reason = "modes.resolve returns a Resolution with no env/exports field; the kit's deployment variables live in configs/<card>.env and it ships h100/a100/h200 only"
+
+# Nothing is declined and nothing is switched off. Recorded because "we did not
+# need it" and "it would not have worked" are different answers and the second
+# is the one here for `levers_off`: this kit's modes.py never reads
+# MODEL_OPT_LEVERS_OFF (the only readers of that variable in the whole tree are
+# shared-core modules this kit's exact line does not import -- opt_core/attn/
+# pair_fused.py and opt_core/kernels/pallas/), so that door does not open for
+# genie3 any more than it does for boltzgen. The mode table is the only source
+# of a switch, and `exact` is selected by name.
+levers_declined = []
+levers_off = []
+
+# Three lines, and the middle one is the one that is not boilerplate.
+#
+# `run.sh install` is the usual one: the shared core and the kit installed
+# editable, then the kit's pin check (stock/check_pins.py).
+#
+# But that pin check REFUSES a checkout that is not the pin byte for byte, and
+# upstream ships no wheel -- so a checkout has to exist before it runs. The
+# kit's own lock installs one as a VCS editable, which needs the network and
+# pip's `--src`, and a requirements file cannot carry `--src`. The archive the
+# kit SHIPS is the same bytes and is already here: stock/genie3-d77ae5ac.tar.gz
+# is literally what check_pins.py compares the checkout against. So the
+# checkout is extracted from it and installed editable, which needs no network
+# and is byte-equal to the pin by construction. pip then records
+# {"dir_info": {"editable": true}, "url": "file://<dir>"} and the kit resolves
+# GENIE3_ROOT from that record, so no path variable has to be kept in step.
+#
+# Measured: `188 files == genie3-d77ae5ac.tar.gz`, and the stack line beside it
+# reads `torch 2.7.1+cu128: pinned`.
+#
+# Idempotent: a second run finds the checkout and the editable install in place
+# and re-extracts over identical bytes.
+install = """
+set -e
+G3ROOT="$HOME/.cache/tooluniverse/genie3-stock"
+mkdir -p "$G3ROOT"
+tar -xzf stock/genie3-d77ae5ac.tar.gz -C "$G3ROOT"
+{python} -m pip install -q --no-deps --no-build-isolation -e "$G3ROOT/genie3-d77ae5ac"
+bash run.sh install
+"""
+
+[kit.env]
+# NOT OPTIONAL, and the only reason this provider can be resident at all. With
+# the mode variable set -- which kit_launch does unconditionally for every
+# autoload kit -- this kit's .pth finder ends any process that imports `genie3`
+# for any reason other than being upstream's `genie3 generate` console script,
+# with exit 3 and before anything of upstream runs. A resident worker is
+# exactly the "tool that imports genie3 on purpose" that the kit's own refusal
+# names, and `GENIE3_OPT_AUTOLOAD=0` is the route it names for one. It costs no
+# lever: the levers are applied by the driver script this worker stands in for,
+# not by the hook. The worker refuses to start without it rather than die three
+# frames into its first import.
+GENIE3_OPT_AUTOLOAD = "0"
+# The BoltzGen guarantee, applied here as insurance rather than as a fix.
+# BoltzGen stalled forever because a library forked while an OpenMP pool was
+# up; this provider cannot reach that state by two independent routes -- the
+# kit's featurize_batches goes straight to `dm.dataset` and never builds a
+# DataLoader at all, and upstream's own test_dataloader takes the default
+# num_workers=0 (data_module.py:140-151). The capacity probe and the featuriser
+# still do host-tensor work, this provider never uses a DataLoader so the cost
+# is bounded to single-threaded featurisation of one batch, and making the pool
+# not exist is the cheapest way to guarantee the state cannot arise. Worth
+# re-measuring against featurisation wall time once there is a measurement.
+OMP_NUM_THREADS = "1"
