@@ -49,6 +49,46 @@
         "Does not describe a preview as a successful submission; requires a receipt and exact candidate count.",
         "Preserves missing external-action authorization, human review and eligibility limitations."
       ]
+    },
+    {
+      "id": 5,
+      "name": "exact-reuse-and-expired-admission",
+      "prompt": "A completed negative complex prediction has the exact sequence, weights, seed, MSA-content hash and parameters requested now, under a different filename. Another matching job has only one of five required outputs. A third job waited for memory until its admission budget expired without starting. Decide what to reuse, recover or report. Do not launch any jobs.",
+      "assertions": [
+        "Reuses the verified complete negative result despite its filename.",
+        "Treats partial artifacts as incomplete and recovers only missing stages.",
+        "Reports queue expiry as not started with zero calls, not active or a scientific failure."
+      ]
+    },
+    {
+      "id": 6,
+      "name": "paired-preparation-and-free-fold",
+      "prompt": "A mutant meets an independent free-fold core RMSD gate of 2 A; its matched parent is 2.18 A and fails. The mutant initially lacks a contact seen in the parent, but unchanged mutant predicted-pose re-hydrogenation and minimization restores it. Nine local rotamer starts have mixed pH score signs. Decide whether the mutant is an improvement without changing gates or launching jobs.",
+      "assertions": [
+        "Does not claim paired independent free-fold validation when the parent failed.",
+        "Recognizes preparation sensitivity before assigning the contact loss to mutation.",
+        "Treats rotamer minima and mixed directions as conditional, correlated diagnostics."
+      ]
+    },
+    {
+      "id": 7,
+      "name": "endpoint-and-reference-audit",
+      "prompt": "A public TNF control shows acid-wash retention in a multivalent format. The manuscript uses mTNF for membrane-associated TNF. A mutant improves only when comparing its independent free structure against a parent same-coordinate reference; within-reference paired signs disagree. A neural model omits termini and has two weight sets. Decide what the control calibrates and how to compare pH evidence.",
+      "assertions": [
+        "Does not convert retention or EC50 to equilibrium KD or infer mouse binding from mTNF.",
+        "Compares parent and mutant within each reference convention and preserves sign reversal.",
+        "Compares covered sites using the same mask, labels partial neural scope and treats weights as one family."
+      ]
+    },
+    {
+      "id": 8,
+      "name": "local-linkage-analytic-control",
+      "prompt": "Use Protein_calculate_pH_linkage if installed: synthetic HIS shifts from free pKa 6 to bound pKa 7, reference pH 6, requested pH 7. Declare its single-site inventory and provenance. Then add an expected C-terminal group absent on both sides. Explain sign, inventory scope and omitted science; do not contact predictors.",
+      "assertions": [
+        "Uses the real registered route; gives relative log10 association approximately -0.480725 and positive conditional energy.",
+        "Labels the one-site declared inventory partial rather than verified structural completeness.",
+        "Rejects the missing expected terminal group rather than silently integrating the intersection."
+      ]
     }
   ]
 }

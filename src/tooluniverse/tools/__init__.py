@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2884 scientific tools.
+Type-safe Python interface to 2887 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -2097,6 +2097,8 @@ from .PANTHER_ortholog import PANTHER_ortholog
 from .PDBTM_get_topology import PDBTM_get_topology
 from .PDB_REDO_get_structure_quality import PDB_REDO_get_structure_quality
 from .PDB_REDO_get_version_info import PDB_REDO_get_version_info
+from .PDB_check_alpha_stereochemistry import PDB_check_alpha_stereochemistry
+from .PDB_check_beta_stereochemistry import PDB_check_beta_stereochemistry
 from .PDB_compare_declared_links import PDB_compare_declared_links
 from .PDB_inspect_structure import PDB_inspect_structure
 from .PDB_search_similar_structures import PDB_search_similar_structures
@@ -2242,6 +2244,7 @@ from .ProteinSimilarity_search_structure_local import (
     ProteinSimilarity_search_structure_local,
 )
 from .Protein_MSA_inspect import Protein_MSA_inspect
+from .Protein_calculate_pH_linkage import Protein_calculate_pH_linkage
 from .ProteinsPlus_analyze_binding_site_similarity import (
     ProteinsPlus_analyze_binding_site_similarity,
 )
@@ -5123,6 +5126,8 @@ __all__ = [
     "PDBTM_get_topology",
     "PDB_REDO_get_structure_quality",
     "PDB_REDO_get_version_info",
+    "PDB_check_alpha_stereochemistry",
+    "PDB_check_beta_stereochemistry",
     "PDB_compare_declared_links",
     "PDB_inspect_structure",
     "PDB_search_similar_structures",
@@ -5260,6 +5265,7 @@ __all__ = [
     "ProteinSimilarity_search_sequence_local",
     "ProteinSimilarity_search_structure_local",
     "Protein_MSA_inspect",
+    "Protein_calculate_pH_linkage",
     "ProteinsPlus_analyze_binding_site_similarity",
     "ProteinsPlus_generate_interaction_diagram",
     "ProteinsPlus_predict_binding_sites",

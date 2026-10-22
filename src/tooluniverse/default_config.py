@@ -234,6 +234,9 @@ default_tool_files = {
     "dtu_protein": os.path.join(current_dir, "data", "dtu_protein_tools.json"),
     "protein_pka": os.path.join(current_dir, "data", "protein_pka_tools.json"),
     "protein_pkai": os.path.join(current_dir, "data", "protein_pkai_tools.json"),
+    "protein_ph_linkage": os.path.join(
+        current_dir, "data", "protein_ph_linkage_tools.json"
+    ),
     "protein_similarity_local": os.path.join(
         current_dir, "data", "protein_similarity_local_tools.json"
     ),
@@ -609,6 +612,9 @@ default_tool_files = {
     # ProteinsPlus - Protein-ligand docking and binding site analysis
     "proteinsplus": os.path.join(current_dir, "data", "proteinsplus_tools.json"),
     "pdb_inventory": os.path.join(current_dir, "data", "pdb_inventory_tools.json"),
+    "pdb_stereochemistry": os.path.join(
+        current_dir, "data", "pdb_stereochemistry_tools.json"
+    ),
     "pdb_link_audit": os.path.join(current_dir, "data", "pdb_link_audit_tools.json"),
     # SwissDock - Molecular docking with AutoDock Vina and Attracting Cavities
     "swissdock": os.path.join(current_dir, "data", "swissdock_tools.json"),
