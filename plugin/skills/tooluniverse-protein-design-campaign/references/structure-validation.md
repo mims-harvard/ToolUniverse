@@ -30,6 +30,12 @@ If a known binder fails, retain the failure and mark the criterion unvalidated a
 
 Record force field, solvent, restraints, movable components, steps/time, termination reason and force/displacement diagnostics. Completion is not force convergence. Strong restraints can preserve an imposed pose. Use per-residue displacement as well as chain-average RMSD when movement matters.
 
+## Attribute changes to sequence or preparation
+
+For a parent/mutant or local sidechain search, re-hydrogenate and minimize each unchanged predicted starting pose before interpreting mutant-only rotamer starts. Keep the same receptor, movable atoms, force field, solvent, restraint and termination criteria. If an unchanged sequence recovers a lost contact, that loss was preparation-sensitive; it is not evidence that the mutation destroyed the interaction. Distinct rotamer starts can converge to the same minimum and are not independent thermodynamic states.
+
+An independent free-fold comparison is paired evidence only if **both** parent and mutant pass the same predeclared construct, core and geometry gates. A passing mutant with a failed parent does not demonstrate preserved folding relative to that parent. Retain both results; use the validated subset for its stated purpose and label the paired comparison unavailable. Do not relax the parent gate to create a pair.
+
 ## Name glycan coverage
 
 Distinguish observed roots, modeled sugars, conformers, site occupancy, complete glycoforms and receptor conformations. Many configurations from a few poses remain correlated conditional contexts.

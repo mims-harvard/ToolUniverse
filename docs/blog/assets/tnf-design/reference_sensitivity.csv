@@ -1,0 +1,13 @@
+model,free_reference,preparation,n_matched_reference_combinations,min_kcal_mol,max_kcal_mol
+Protenix,Independent,original,10,-0.2188075922579774,-0.10039199123482523
+Protenix,Independent,reprepared,10,0.18975292112202202,0.30816852214517415
+Protenix,Same-coordinate,original,1,-0.35574905344594615,-0.35574905344594615
+Protenix,Same-coordinate,reprepared,1,-0.13392854880248017,-0.13392854880248017
+Boltz,Independent,original,10,-0.14161784419157186,-0.02320224316841979
+Boltz,Independent,reprepared,10,-0.1768227302780198,-0.058407129254867574
+Boltz,Same-coordinate,original,1,0.03489472235910718,0.03489472235910718
+Boltz,Same-coordinate,reprepared,1,0.02151880755862745,0.02151880755862745
+RoseTTAFold3,Independent,original,10,-0.1810491445366439,-0.0626335435134916
+RoseTTAFold3,Independent,reprepared,10,-0.030284769311954562,0.08813083171119773
+RoseTTAFold3,Same-coordinate,original,1,0.0032078601031118037,0.0032078601031118037
+RoseTTAFold3,Same-coordinate,reprepared,1,0.12766139379737296,0.12766139379737296

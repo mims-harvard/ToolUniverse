@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2885 scientific tools.
+Type-safe Python interface to 2886 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -2243,6 +2243,7 @@ from .ProteinSimilarity_search_structure_local import (
     ProteinSimilarity_search_structure_local,
 )
 from .Protein_MSA_inspect import Protein_MSA_inspect
+from .Protein_calculate_pH_linkage import Protein_calculate_pH_linkage
 from .ProteinsPlus_analyze_binding_site_similarity import (
     ProteinsPlus_analyze_binding_site_similarity,
 )
@@ -5262,6 +5263,7 @@ __all__ = [
     "ProteinSimilarity_search_sequence_local",
     "ProteinSimilarity_search_structure_local",
     "Protein_MSA_inspect",
+    "Protein_calculate_pH_linkage",
     "ProteinsPlus_analyze_binding_site_similarity",
     "ProteinsPlus_generate_interaction_diagram",
     "ProteinsPlus_predict_binding_sites",

@@ -46,6 +46,6 @@ A file can remain parsed after an ambiguous/rejected action. Re-read visible sta
 
 Wait through the advertised check interval with bounded polling. Diagnose timeout/failure rather than refreshing unsaved work. Filter ineligible entries transparently, retaining a revised reviewed package.
 
-Submit once, then inspect the outcome. If ambiguous, check receipts/existing submissions before retrying. Save screenshot, URL/ID, count, novelty results, file hashes and visible methods. No success receipt means pending/failed, not submitted.
+Submit once, then inspect the outcome. If ambiguous, check receipts/existing submissions before retrying. Save screenshot, URL/ID, count, novelty results, file hashes and visible methods. When the portal supports it, download the saved collection and compare names, exact sequences and order with the reviewed source. Re-open persisted methodology and verify it too. A success banner with a count alone cannot establish exact payload retention. No success receipt means pending/failed, not submitted.
 
 Report success, submitted batch, review link and pending experimental selection. For preflight-only requests, provide reviewed files/manual steps without uploading.
