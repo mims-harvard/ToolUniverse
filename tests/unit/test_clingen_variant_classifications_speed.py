@@ -1,15 +1,8 @@
-"""Regression guard for Fix-R29-1 in clingen_tool.py:
-ClinGen_get_variant_classifications fetched the entire ~22MB, ~10k-row
-Evidence Repository TSV (classifications/all) with no server-side gene/
-variant filter and filtered client-side. Confirmed live this routinely
-took 2-5+ minutes and sometimes hung past a 300s client timeout, even for
-a gene with zero curated variants -- reproduced independently by 5
-separate persona sessions across rounds 28 and 29 (PAH, BRCA1, DMD,
-CACNA1C, PTPN22, PKD1). The classifications endpoint (no /all) supports
-real server-side gene=/variant= filtering and responds in ~1-2s. The
-upstream variant= param resolves to the variant's whole gene rather than
-that one variant (confirmed live: variant=CA114360 returned 25 PAH rows),
-so a client-side exact-match narrows it back down.
+"""Regression tests for the current ClinGen ERepo Summary API.
+
+The legacy classifications endpoint silently returned a fixed first 25
+records and ignored common pagination parameters. The official UI uses the
+Summary API's count plus pg/pgSize endpoints, which expose all matches.
 """
 
 from unittest.mock import MagicMock, patch
@@ -20,33 +13,27 @@ from tooluniverse.clingen_tool import ClinGenTool
 
 pytestmark = pytest.mark.unit
 
-_PAH_ITEM = {
-    "caid": "CAR:CA114360",
-    "variationId": "586",
-    "gene": {"label": "PAH"},
-    "condition": {"label": "phenylketonuria", "@id": "MONDO:0009861"},
-    "hgvs": ["NM_000277.2:c.1A>G", "NM_000277.2(PAH):c.1A>G (p.Met1Val)"],
-    "guidelines": [
-        {
-            "outcome": {"label": "Pathogenic"},
-            "agents": [{"affiliation": "Phenylketonuria VCEP"}],
-        }
-    ],
-}
 
-_OTHER_PAH_ITEM = {
-    "caid": "CAR:CA229778",
-    "variationId": "102844",
-    "gene": {"label": "PAH"},
-    "condition": {"label": "phenylketonuria", "@id": "MONDO:0009861"},
-    "hgvs": ["NM_000277.2:c.806delT", "NM_000277.2(PAH):c.806delT (p.Ile269Thrfs)"],
-    "guidelines": [
-        {
-            "outcome": {"label": "Pathogenic"},
-            "agents": [{"affiliation": "Phenylketonuria VCEP"}],
-        }
-    ],
-}
+def _item(index=0, gene="BRCA1"):
+    return {
+        "caId": f"CA{index:06d}",
+        "cvId": str(1000 + index),
+        "gene": gene,
+        "condition": "hereditary breast ovarian cancer syndrome",
+        "mondoId": "MONDO:0011450",
+        "classification": "Pathogenic",
+        "ep": "ENIGMA BRCA1/2 VCEP",
+        "moi": "Autosomal dominant inheritance",
+        "metCodes": ["PS3", "PM2"],
+        "unMetCodes": ["BS1"],
+        "summaryDesc": "Expert evidence summary",
+        "approvedDate": "2024-01-01",
+        "publishedDate": "2024-02-01",
+        "docVersion": "1.0",
+        "uuid": f"uuid-{index}",
+        "preferredVarTitle": f"NM_007294.4(BRCA1):c.{index + 1}A>G",
+        "hgvs": [f"NM_007294.4:c.{index + 1}A>G"],
+    }
 
 
 def _tool():
@@ -56,99 +43,141 @@ def _tool():
 
 
 def _resp(payload):
-    r = MagicMock()
-    r.raise_for_status = MagicMock()
-    r.json.return_value = payload
-    return r
+    response = MagicMock()
+    response.raise_for_status = MagicMock()
+    response.json.return_value = payload
+    return response
 
 
-class TestQueriesFilteredEndpoint:
-    def test_gene_query_hits_classifications_not_all(self):
+def _count(total):
+    return _resp({"data": {"total": total}})
+
+
+def _records(items):
+    return _resp({"data": items})
+
+
+class TestSummaryApiFiltering:
+    def test_gene_query_uses_count_and_paginated_summary_endpoints(self):
         tool = _tool()
         with patch(
             "tooluniverse.clingen_tool.requests.get",
-            return_value=_resp({"variantInterpretations": [_PAH_ITEM]}),
+            side_effect=[_count(81), _records([_item()])],
         ) as mock_get:
-            result = tool.run({"gene": "PAH"})
+            result = tool.run({"gene": "BRCA1", "limit": 1})
 
-        called_url = mock_get.call_args.args[0]
-        assert called_url == "https://erepo.clinicalgenome.org/evrepo/api/classifications"
-        assert "/all" not in called_url
-        assert mock_get.call_args.kwargs["params"] == {"gene": "PAH"}
-        assert result["status"] == "success"
-        assert result["total"] == 1
-        assert result["data"][0]["HGNC Gene Symbol"] == "PAH"
-        assert result["data"][0]["Variation"] == "NM_000277.2(PAH):c.1A>G (p.Met1Val)"
+        count_call, records_call = mock_get.call_args_list
+        assert count_call.args[0].endswith("/api/summary/classifications/count")
+        assert records_call.args[0].endswith("/api/summary/classifications")
+        assert count_call.kwargs["params"] == {
+            "columns": "gene",
+            "values": "BRCA1",
+            "matchTypes": "exact",
+            "matchMode": "and",
+        }
+        assert records_call.kwargs["params"] == {
+            **count_call.kwargs["params"],
+            "pgSize": 500,
+            "pg": 1,
+        }
+        assert result["total"] == 81
+        assert result["returned"] == 1
+        assert result["next_offset"] == 1
+        assert result["data"][0]["HGNC Gene Symbol"] == "BRCA1"
+        assert result["data"][0]["Met Criteria"] == ["PS3", "PM2"]
+        assert result["data"][0]["Summary"] == "Expert evidence summary"
 
-    def test_empty_result_for_uncurated_gene(self):
+    def test_uncurated_gene_uses_count_only(self):
         tool = _tool()
         with patch(
-            "tooluniverse.clingen_tool.requests.get",
-            return_value=_resp({"variantInterpretations": []}),
-        ):
-            result = tool.run({"gene": "PTPN22"})
+            "tooluniverse.clingen_tool.requests.get", return_value=_count(0)
+        ) as mock_get:
+            result = tool.run({"gene": "UNCURATED1"})
 
-        assert result["status"] == "success"
+        assert mock_get.call_count == 1
         assert result["data"] == []
         assert result["total"] == 0
-        assert "PTPN22" in result["note"]
+        assert "UNCURATED1" in result["note"]
 
-
-class TestRequiresGeneOrVariant:
-    def test_no_gene_or_variant_returns_error_without_calling_api(self):
-        # Consolidation-time finding: calling classifications with neither
-        # gene nor variant is just as unbounded as classifications/all --
-        # confirmed live (30s timeout, no response) -- so this must be
-        # rejected before any request is made, not just classifications/all.
+    def test_variant_caid_uses_exact_caid_filter(self):
         tool = _tool()
-        with patch("tooluniverse.clingen_tool.requests.get") as mock_get:
-            result = tool.run({})
-
-        assert result["status"] == "error"
-        assert "gene" in result["error"]
-        mock_get.assert_not_called()
-
-    def test_variant_only_is_accepted(self):
-        tool = _tool()
+        variant = _item(gene="PAH")
+        variant["caId"] = "CA114360"
         with patch(
             "tooluniverse.clingen_tool.requests.get",
-            return_value=_resp({"variantInterpretations": [_PAH_ITEM]}),
-        ):
-            result = tool.run({"variant": "CA114360"})
+            side_effect=[_count(1), _records([variant])],
+        ) as mock_get:
+            result = tool.run({"variant": "CAR:CA114360"})
 
-        assert result["status"] == "success"
+        params = mock_get.call_args_list[0].kwargs["params"]
+        assert params["columns"] == "caId"
+        assert params["values"] == "CA114360"
+        assert params["matchTypes"] == "exact"
+        assert result["data"][0]["CAID"] == "CA114360"
 
-    def test_empty_result_for_uncurated_variant_does_not_say_none(self):
-        """Fix (PR #339 review): the empty-result guard was widened from
-        `if not data and gene:` to `if not data:` to also cover variant-only
-        queries, but the note text still hardcoded `for {gene}` -- a
-        variant-only query with zero results printed "...for None." since
-        `gene` is unset in that branch."""
+    def test_uncurated_variant_note_does_not_say_none(self):
         tool = _tool()
-        with patch(
-            "tooluniverse.clingen_tool.requests.get",
-            return_value=_resp({"variantInterpretations": []}),
-        ):
+        with patch("tooluniverse.clingen_tool.requests.get", return_value=_count(0)):
             result = tool.run({"variant": "CA9999999999"})
 
-        assert result["status"] == "success"
-        assert result["data"] == []
         assert "None" not in result["note"]
         assert "CA9999999999" in result["note"]
 
 
-class TestVariantFilterPrecision:
-    def test_variant_query_narrowed_to_exact_match(self):
-        # The upstream API resolves variant= to the whole gene (confirmed
-        # live) -- the tool must narrow back down to the exact variant.
+class TestSummaryApiPagination:
+    def test_arbitrary_offset_is_applied_within_server_page(self):
         tool = _tool()
+        items = [_item(i) for i in range(81)]
         with patch(
             "tooluniverse.clingen_tool.requests.get",
-            return_value=_resp(
-                {"variantInterpretations": [_PAH_ITEM, _OTHER_PAH_ITEM]}
-            ),
+            side_effect=[_count(81), _records(items)],
         ):
-            result = tool.run({"variant": "CA114360"})
+            result = tool.run({"gene": "BRCA1", "limit": 2, "offset": 5})
 
-        assert result["total"] == 1
-        assert result["data"][0]["ClinVar Variation Id"] == "586"
+        assert [row["CAID"] for row in result["data"]] == ["CA000005", "CA000006"]
+        assert result["offset"] == 5
+        assert result["next_offset"] == 7
+        assert result["has_more"] is True
+
+    def test_offset_crossing_server_page_fetches_both_pages(self):
+        tool = _tool()
+        page_one = [_item(i) for i in range(500)]
+        page_two = [_item(i) for i in range(500, 502)]
+        with patch(
+            "tooluniverse.clingen_tool.requests.get",
+            side_effect=[_count(502), _records(page_one), _records(page_two)],
+        ) as mock_get:
+            result = tool.run({"gene": "BRCA1", "limit": 3, "offset": 499})
+
+        assert [row["CAID"] for row in result["data"]] == [
+            "CA000499",
+            "CA000500",
+            "CA000501",
+        ]
+        assert [
+            call.kwargs["params"]["pg"] for call in mock_get.call_args_list[1:]
+        ] == [
+            1,
+            2,
+        ]
+        assert result["has_more"] is False
+        assert result["next_offset"] is None
+
+    def test_offset_beyond_total_is_distinguished_from_no_matches(self):
+        tool = _tool()
+        with patch("tooluniverse.clingen_tool.requests.get", return_value=_count(10)):
+            result = tool.run({"gene": "BRCA1", "offset": 10})
+
+        assert result["data"] == []
+        assert "beyond" in result["note"]
+        assert "No variant classifications" not in result["note"]
+
+
+def test_requires_gene_or_variant_without_calling_api():
+    tool = _tool()
+    with patch("tooluniverse.clingen_tool.requests.get") as mock_get:
+        result = tool.run({})
+
+    assert result["status"] == "error"
+    assert "gene" in result["error"]
+    mock_get.assert_not_called()

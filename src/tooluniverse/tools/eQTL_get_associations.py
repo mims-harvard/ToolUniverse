@@ -1,7 +1,7 @@
 """
 eQTL_get_associations
 
-Get eQTL associations (variant-gene expression correlations) from a specific dataset in the EBI e...
+Get eQTL associations from a specific EBI eQTL Catalogue dataset. Results use native start/size p...
 """
 
 from typing import Any, Optional, Callable
@@ -11,28 +11,31 @@ from ._shared_client import get_shared_client
 def eQTL_get_associations(
     dataset_id: str,
     size: Optional[int] = 20,
-    gene_id: Optional[str | Any] = None,
-    variant: Optional[str | Any] = None,
-    molecular_trait_id: Optional[str | Any] = None,
+    start: Optional[int] = 0,
+    gene_id: Optional[str] = None,
+    variant: Optional[str] = None,
+    molecular_trait_id: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get eQTL associations (variant-gene expression correlations) from a specific dataset in the EBI e...
+    Get eQTL associations from a specific EBI eQTL Catalogue dataset. Results use native start/size p...
 
     Parameters
     ----------
     dataset_id : str
         Dataset identifier from eQTL_list_datasets (e.g., 'QTD000001', 'QTD000584')
     size : int
-        Number of associations to return (default 20)
-    gene_id : str | Any
+        Page size from 1 to 999 (default 20; one upstream slot is reserved for lookah...
+    start : int
+        Zero-based association offset. Continue with metadata.next_start while metada...
+    gene_id : str
         Filter by Ensembl gene ID (e.g., 'ENSG00000141510' for TP53). Returns all eQT...
-    variant : str | Any
+    variant : str
         Filter by variant in chr_pos_ref_alt format (e.g., 'chr1_791100_G_GGGA'). Ret...
-    molecular_trait_id : str | Any
+    molecular_trait_id : str
         Filter by molecular trait ID (usually same as gene_id for 'ge' datasets)
     stream_callback : Callable, optional
         Callback for streaming output
@@ -53,6 +56,7 @@ def eQTL_get_associations(
         for k, v in {
             "dataset_id": dataset_id,
             "size": size,
+            "start": start,
             "gene_id": gene_id,
             "variant": variant,
             "molecular_trait_id": molecular_trait_id,

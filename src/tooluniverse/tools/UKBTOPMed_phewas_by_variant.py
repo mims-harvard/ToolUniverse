@@ -1,7 +1,7 @@
 """
 UKBTOPMed_phewas_by_variant
 
-Phenome-wide association study (PheWAS) lookup for a single variant in the UKB-TOPMed PheWeb (UK ...
+Page through all UKB-TOPMed variant PheWAS associations after stable ascending p-value sorting. R...
 """
 
 from typing import Any, Optional, Callable
@@ -12,6 +12,7 @@ def UKBTOPMed_phewas_by_variant(
     rsid: Optional[str] = None,
     variant: Optional[str] = None,
     limit: Optional[int] = 20,
+    offset: Optional[int] = 0,
     max_pval: Optional[float] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -19,7 +20,7 @@ def UKBTOPMed_phewas_by_variant(
     validate: bool = True,
 ) -> Any:
     """
-    Phenome-wide association study (PheWAS) lookup for a single variant in the UKB-TOPMed PheWeb (UK ...
+    Page through all UKB-TOPMed variant PheWAS associations after stable ascending p-value sorting. R...
 
     Parameters
     ----------
@@ -29,6 +30,8 @@ def UKBTOPMed_phewas_by_variant(
         Variant in chr:pos:ref:alt or chr-pos-ref-alt format, in GRCh38, e.g. '10:112...
     limit : int
         Maximum number of phenotype associations to return (sorted by ascending p-val...
+    offset : int
+        Zero-based offset into filtered, p-value-sorted associations.
     max_pval : float
         Optional: only return associations with p-value <= this threshold (e.g. 5e-8 ...
     stream_callback : Callable, optional
@@ -51,6 +54,7 @@ def UKBTOPMed_phewas_by_variant(
             "rsid": rsid,
             "variant": variant,
             "limit": limit,
+            "offset": offset,
             "max_pval": max_pval,
         }.items()
         if v is not None

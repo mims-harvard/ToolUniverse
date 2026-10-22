@@ -16,6 +16,8 @@ APIs used:
 No authentication required. Free public access.
 """
 
+import re
+
 import requests
 from typing import Dict, Any
 from .base_tool import BaseTool
@@ -49,6 +51,8 @@ SPECIES_TAXID = {
     "xenopus tropicalis": "8364",
 }
 
+_RNACENTRAL_ID_RE = re.compile(r"^(URS[0-9A-F]{10})(?:_([1-9][0-9]*))?$")
+
 
 class miRNASearchTool(BaseTool):
     """
@@ -66,10 +70,30 @@ class miRNASearchTool(BaseTool):
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         try:
             query = arguments.get("query", "")
+            if not isinstance(query, str) or not query.strip():
+                return {
+                    "status": "error",
+                    "error": "query must be a non-empty string",
+                    "parameter": "query",
+                }
+            query = query.strip()
             # User-supplied rna_type overrides config default
             rna_type_filter = arguments.get("rna_type", "") or self.default_rna_type
             species = arguments.get("species", "")
-            size = int(arguments.get("size", 10))
+            size = arguments.get("size", 10)
+            start = arguments.get("start", 0)
+            if isinstance(size, bool) or not isinstance(size, int) or not 1 <= size <= 100:
+                return {
+                    "status": "error",
+                    "error": "size must be an integer between 1 and 100",
+                    "parameter": "size",
+                }
+            if isinstance(start, bool) or not isinstance(start, int) or start < 0:
+                return {
+                    "status": "error",
+                    "error": "start must be a non-negative integer",
+                    "parameter": "start",
+                }
 
             # Build EBI search query with optional filters
             search_parts = [query]
@@ -88,7 +112,8 @@ class miRNASearchTool(BaseTool):
             params = {
                 "query": search_query,
                 "format": "json",
-                "size": min(size, 100),
+                "size": size,
+                "start": start,
                 "fields": EBI_FIELDS,
             }
 
@@ -131,11 +156,20 @@ class miRNASearchTool(BaseTool):
                     }
                 )
 
+            total_hits = result.get("hitCount", 0)
+            returned = len(entries)
+            has_more = start + returned < total_hits
+            truncated = start > 0 or has_more
             return {
                 "status": "success",
                 "data": {
-                    "total_hits": result.get("hitCount", 0),
-                    "returned": len(entries),
+                    "total_hits": total_hits,
+                    "returned": returned,
+                    "start": start,
+                    "has_more": has_more,
+                    "next_start": start + returned if has_more else None,
+                    "truncated": truncated,
+                    "result_set_complete": not truncated,
                     "entries": entries,
                 },
                 "metadata": {
@@ -203,79 +237,143 @@ class miRNAGetTool(BaseTool):
 
     def _get_rna(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get RNA entry details including sequence."""
-        rnacentral_id = arguments.get("rnacentral_id", "")
-        taxid = arguments.get("taxid")
+        raw_id = arguments.get("rnacentral_id", "")
+        if not isinstance(raw_id, str) or not raw_id.strip():
+            return {
+                "status": "error",
+                "error": "rnacentral_id must be a non-empty RNAcentral URS ID",
+                "parameter": "rnacentral_id",
+            }
+        match = _RNACENTRAL_ID_RE.fullmatch(raw_id.strip().upper())
+        if match is None:
+            return {
+                "status": "error",
+                "error": (
+                    "rnacentral_id must use URSXXXXXXXXXX or "
+                    "URSXXXXXXXXXX_TAXID format"
+                ),
+                "parameter": "rnacentral_id",
+            }
 
-        # The /rna/{URS}/{taxid} path now serves an HTML species view rather
-        # than JSON, so fetch the JSON record (sequence, length, ...) and derive
-        # the species-specific fields (rna_type, species, description) from the
-        # xrefs endpoint, filtered by taxid when provided.
-        url = f"{RNACENTRAL_BASE}/rna/{rnacentral_id}/?format=json"
+        base_id, suffix_taxid_text = match.groups()
+        suffix_taxid = int(suffix_taxid_text) if suffix_taxid_text else None
+        requested_taxid = arguments.get("taxid")
+        if requested_taxid is not None:
+            if (
+                isinstance(requested_taxid, bool)
+                or not isinstance(requested_taxid, int)
+                or requested_taxid <= 0
+            ):
+                return {
+                    "status": "error",
+                    "error": "taxid must be a positive integer",
+                    "parameter": "taxid",
+                }
+        if (
+            suffix_taxid is not None
+            and requested_taxid is not None
+            and suffix_taxid != requested_taxid
+        ):
+            return {
+                "status": "error",
+                "error": (
+                    f"Conflicting taxids: rnacentral_id specifies {suffix_taxid} "
+                    f"but taxid specifies {requested_taxid}"
+                ),
+                "parameter": "taxid",
+            }
+
+        resolved_taxid = requested_taxid or suffix_taxid
+        canonical_id = (
+            f"{base_id}_{resolved_taxid}" if resolved_taxid is not None else base_id
+        )
+
+        # RNAcentral exposes a canonical species-specific JSON record directly
+        # at /rna/{URS}_{taxid}/. Querying the bare URS and then selecting an
+        # xref is unsafe: an absent taxid used to fall back to the first xref,
+        # silently attaching a different organism to the requested taxid.
+        url = f"{RNACENTRAL_BASE}/rna/{canonical_id}/?format=json"
         resp = requests.get(url, timeout=self.timeout)
+        if resp.status_code == 404:
+            qualifier = "species-specific " if resolved_taxid is not None else ""
+            return {
+                "status": "error",
+                "error": (
+                    f"RNAcentral {qualifier}record not found: {canonical_id}"
+                ),
+                "requested_rnacentral_id": canonical_id,
+            }
         resp.raise_for_status()
         result = resp.json()
 
-        rna_type = species = description = ""
-        try:
-            xr = requests.get(
-                f"{RNACENTRAL_BASE}/rna/{rnacentral_id}/xrefs/?format=json&page_size=100",
-                timeout=self.timeout,
-            )
-            if xr.ok:
-                xrefs = xr.json().get("results", [])
-                match = None
-                if taxid:
-                    match = next(
-                        (x for x in xrefs if str(x.get("taxid")) == str(taxid)), None
-                    )
-                match = match or (xrefs[0] if xrefs else None)
-                # Species-specific annotation lives under the xref's accession.
-                acc = (match or {}).get("accession") or {}
-                rna_type = acc.get("rna_type") or ""
-                species = acc.get("species") or ""
-                description = acc.get("description") or ""
-        except (requests.RequestException, ValueError):
-            pass
+        returned_id = str(result.get("rnacentral_id") or "").upper()
+        if returned_id != canonical_id:
+            return {
+                "status": "error",
+                "error": (
+                    "RNAcentral returned a record whose identity does not match "
+                    f"the request: requested {canonical_id}, returned "
+                    f"{returned_id or '<missing>'}"
+                ),
+            }
+
+        returned_taxid = result.get("taxid")
+        if resolved_taxid is not None and returned_taxid != resolved_taxid:
+            return {
+                "status": "error",
+                "error": (
+                    "RNAcentral returned a record whose taxid does not match "
+                    f"the request: requested {resolved_taxid}, returned "
+                    f"{returned_taxid!r}"
+                ),
+            }
+
+        publications = result.get("publications")
 
         return {
             "status": "success",
             "data": {
-                "rnacentral_id": result.get("rnacentral_id", rnacentral_id),
-                "description": description,
-                "short_description": result.get("short_description", ""),
+                "rnacentral_id": returned_id,
+                "description": result.get("description") or "",
+                "short_description": result.get("short_description") or "",
                 "sequence": result.get("sequence", ""),
                 "length": result.get("length", 0),
-                "rna_type": rna_type,
-                "species": species,
-                "taxid": taxid,
-                "genes": result.get("genes", []),
-                # The record's "publications" field is a URL, not a count; only
-                # keep it when the API returns an integer count.
-                "publications_count": (
-                    result.get("publications")
-                    if isinstance(result.get("publications"), int)
-                    else 0
-                ),
+                "rna_type": result.get("rna_type") or "",
+                "species": result.get("species") or "",
+                "taxid": returned_taxid,
+                "genes": result.get("genes") or [],
+                # Bare-URS records expose a publications URL rather than a
+                # count. None distinguishes "not supplied" from a true zero.
+                "publications_count": publications
+                if isinstance(publications, int)
+                else None,
                 "is_active": result.get("is_active", True),
                 "distinct_databases": result.get("distinct_databases", ""),
             },
             "metadata": {
                 "source": "RNAcentral",
-                "url": f"https://rnacentral.org/rna/{rnacentral_id}",
+                "requested_rnacentral_id": raw_id,
+                "canonical_rnacentral_id": canonical_id,
+                "species_specific": resolved_taxid is not None,
+                "identity_verified": True,
+                "url": f"https://rnacentral.org/rna/{canonical_id}",
             },
         }
 
     def _get_publications(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get publications associated with an RNA entry."""
         rnacentral_id = arguments.get("rnacentral_id", "")
-        page_size = int(arguments.get("page_size", 10))
+        controls = self._page_controls(arguments, rnacentral_id)
+        if isinstance(controls, dict):
+            return controls
+        page_size, page = controls
 
-        url = (
-            f"{RNACENTRAL_BASE}/rna/{rnacentral_id}/publications"
-            f"?format=json&page_size={min(page_size, 50)}"
+        url = f"{RNACENTRAL_BASE}/rna/{rnacentral_id.strip()}/publications/"
+        resp = requests.get(
+            url,
+            params={"format": "json", "page_size": page_size, "page": page},
+            timeout=self.timeout,
         )
-
-        resp = requests.get(url, timeout=self.timeout)
         resp.raise_for_status()
         result = resp.json()
 
@@ -292,30 +390,51 @@ class miRNAGetTool(BaseTool):
                 }
             )
 
+        total = result.get("count", 0)
+        returned = len(publications)
+        has_more = bool(result.get("next"))
+        truncated = page > 1 or has_more
         return {
             "status": "success",
             "data": {
-                "total_publications": result.get("count", 0),
-                "returned": len(publications),
+                "total_publications": total,
+                "returned": returned,
+                "page": page,
+                "page_size": page_size,
+                "has_more": has_more,
+                "next_page": page + 1 if has_more else None,
+                "previous_page": page - 1 if result.get("previous") else None,
+                "truncated": truncated,
+                "result_set_complete": not truncated,
                 "publications": publications,
             },
             "metadata": {
                 "source": "RNAcentral",
                 "rnacentral_id": rnacentral_id,
+                "upstream_total_is_record_count": True,
+                "unique_pmids_not_guaranteed": True,
+                "warning": (
+                    "RNAcentral can expose multiple source records for the same "
+                    "PMID with different citation metadata; total_publications is "
+                    "an upstream record count, not a guaranteed unique PMID count."
+                ),
             },
         }
 
     def _get_xrefs(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get cross-references for an RNA entry."""
         rnacentral_id = arguments.get("rnacentral_id", "")
-        page_size = int(arguments.get("page_size", 10))
+        controls = self._page_controls(arguments, rnacentral_id)
+        if isinstance(controls, dict):
+            return controls
+        page_size, page = controls
 
-        url = (
-            f"{RNACENTRAL_BASE}/rna/{rnacentral_id}/xrefs"
-            f"?format=json&page_size={min(page_size, 50)}"
+        url = f"{RNACENTRAL_BASE}/rna/{rnacentral_id.strip()}/xrefs/"
+        resp = requests.get(
+            url,
+            params={"format": "json", "page_size": page_size, "page": page},
+            timeout=self.timeout,
         )
-
-        resp = requests.get(url, timeout=self.timeout)
         resp.raise_for_status()
         result = resp.json()
 
@@ -339,11 +458,22 @@ class miRNAGetTool(BaseTool):
                 }
             )
 
+        total = result.get("count", 0)
+        returned = len(xrefs)
+        has_more = bool(result.get("next"))
+        truncated = page > 1 or has_more
         return {
             "status": "success",
             "data": {
-                "total_xrefs": result.get("count", 0),
-                "returned": len(xrefs),
+                "total_xrefs": total,
+                "returned": returned,
+                "page": page,
+                "page_size": page_size,
+                "has_more": has_more,
+                "next_page": page + 1 if has_more else None,
+                "previous_page": page - 1 if result.get("previous") else None,
+                "truncated": truncated,
+                "result_set_complete": not truncated,
                 "cross_references": xrefs,
             },
             "metadata": {
@@ -351,3 +481,31 @@ class miRNAGetTool(BaseTool):
                 "rnacentral_id": rnacentral_id,
             },
         }
+
+    @staticmethod
+    def _page_controls(arguments: Dict[str, Any], rnacentral_id: Any):
+        if not isinstance(rnacentral_id, str) or not rnacentral_id.strip():
+            return {
+                "status": "error",
+                "error": "rnacentral_id must be a non-empty string",
+                "parameter": "rnacentral_id",
+            }
+        page_size = arguments.get("page_size", 10)
+        if (
+            isinstance(page_size, bool)
+            or not isinstance(page_size, int)
+            or not 1 <= page_size <= 50
+        ):
+            return {
+                "status": "error",
+                "error": "page_size must be an integer between 1 and 50",
+                "parameter": "page_size",
+            }
+        page = arguments.get("page", 1)
+        if isinstance(page, bool) or not isinstance(page, int) or page < 1:
+            return {
+                "status": "error",
+                "error": "page must be a positive integer",
+                "parameter": "page",
+            }
+        return page_size, page

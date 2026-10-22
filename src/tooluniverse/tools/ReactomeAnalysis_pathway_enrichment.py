@@ -1,7 +1,7 @@
 """
 ReactomeAnalysis_pathway_enrichment
 
-Perform pathway overrepresentation (enrichment) analysis using the Reactome Analysis Service. Sub...
+Perform pathway overrepresentation analysis using Reactome. Submit gene symbols, UniProt IDs, or ...
 """
 
 from typing import Any, Optional, Callable
@@ -10,26 +10,29 @@ from ._shared_client import get_shared_client
 
 def ReactomeAnalysis_pathway_enrichment(
     identifiers: str,
-    page_size: Optional[int | Any] = None,
-    include_disease: Optional[bool | Any] = None,
-    projection: Optional[bool | Any] = None,
+    page_size: Optional[int] = 20,
+    page: Optional[int] = 1,
+    include_disease: Optional[bool] = None,
+    projection: Optional[bool] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Perform pathway overrepresentation (enrichment) analysis using the Reactome Analysis Service. Sub...
+    Perform pathway overrepresentation analysis using Reactome. Submit gene symbols, UniProt IDs, or ...
 
     Parameters
     ----------
     identifiers : str
         Newline-separated list of gene/protein identifiers. Supports gene symbols (TP...
-    page_size : int | Any
+    page_size : int
         Number of pathways to return (default 20, max 50).
-    include_disease : bool | Any
+    page : int
+        One-based pathway result page. Continue with data.next_page while data.has_mo...
+    include_disease : bool
         Include disease pathways in results (default true).
-    projection : bool | Any
+    projection : bool
         Project identifiers to human Reactome pathways for cross-species analysis (de...
     stream_callback : Callable, optional
         Callback for streaming output
@@ -50,6 +53,7 @@ def ReactomeAnalysis_pathway_enrichment(
         for k, v in {
             "identifiers": identifiers,
             "page_size": page_size,
+            "page": page,
             "include_disease": include_disease,
             "projection": projection,
         }.items()

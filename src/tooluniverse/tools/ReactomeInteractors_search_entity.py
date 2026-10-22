@@ -1,7 +1,7 @@
 """
 ReactomeInteractors_search_entity
 
-Search Reactome for biological entities (proteins, complexes, reactions, pathways) by name or ide...
+Search and page through Reactome biological entities by name or identifier. Reactome groups resul...
 """
 
 from typing import Any, Optional, Callable
@@ -10,24 +10,30 @@ from ._shared_client import get_shared_client
 
 def ReactomeInteractors_search_entity(
     query: str,
-    species: Optional[str | Any] = None,
-    types: Optional[str | Any] = None,
+    species: Optional[str] = None,
+    types: Optional[str] = None,
+    limit: Optional[int] = 50,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search Reactome for biological entities (proteins, complexes, reactions, pathways) by name or ide...
+    Search and page through Reactome biological entities by name or identifier. Reactome groups resul...
 
     Parameters
     ----------
     query : str
         Search query - gene name, protein name, pathway name, or Reactome ID. Example...
-    species : str | Any
+    species : str
         Species name filter (default: 'Homo sapiens'). Examples: 'Homo sapiens', 'Mus...
-    types : str | Any
+    types : str
         Entity type filter. Options: 'Protein', 'Complex', 'Reaction', 'Pathway', 'Sm...
+    limit : int
+        Rows to request per Reactome result-type group, not a global response maximum.
+    offset : int
+        Zero-based start row applied independently within every result-type group. Co...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +50,13 @@ def ReactomeInteractors_search_entity(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"query": query, "species": species, "types": types}.items()
+        for k, v in {
+            "query": query,
+            "species": species,
+            "types": types,
+            "limit": limit,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

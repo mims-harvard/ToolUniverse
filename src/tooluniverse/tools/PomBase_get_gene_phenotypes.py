@@ -1,7 +1,7 @@
 """
 PomBase_get_gene_phenotypes
 
-Get phenotype annotations for a fission yeast (S. pombe) gene from PomBase. Returns deletion viab...
+Get all phenotype annotations for a fission yeast (S. pombe) gene from PomBase. Returns deletion ...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def PomBase_get_gene_phenotypes(
     validate: bool = True,
 ) -> Any:
     """
-    Get phenotype annotations for a fission yeast (S. pombe) gene from PomBase. Returns deletion viab...
+    Get all phenotype annotations for a fission yeast (S. pombe) gene from PomBase. Returns deletion ...
 
     Parameters
     ----------

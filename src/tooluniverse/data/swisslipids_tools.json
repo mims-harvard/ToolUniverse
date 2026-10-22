@@ -2,7 +2,7 @@
   {
     "type": "SwissLipidsTool",
     "name": "SwissLipids_search",
-    "description": "Search SwissLipids (swisslipids.org, SIB Swiss Institute of Bioinformatics) for lipids by name or shorthand abbreviation (e.g. 'PC(16:0/18:1)', 'cholesterol', 'ceramide'). Returns matching entries each with its SwissLipids id (SLM:...), name, type, and position in the lipid structural hierarchy (class / species / structural subspecies / isomeric subspecies). Complementary to the LIPID MAPS tools — an independently curated lipid database from a different organisation. Use SwissLipids_get_lipid with an SLM id for full details. No API key required.",
+    "description": "Search SwissLipids (swisslipids.org, SIB Swiss Institute of Bioinformatics) for lipids by name or shorthand abbreviation (e.g. 'PC(16:0/18:1)', 'cholesterol', 'ceramide'). Returns matching entries each with its SwissLipids id (SLM:...), name, type, and position in the lipid structural hierarchy (class / species / structural subspecies / isomeric subspecies). Metadata reports the exact total and next_offset so all matches remain reachable. Complementary to the LIPID MAPS tools — an independently curated lipid database from a different organisation. Use SwissLipids_get_lipid with an SLM id for full details. No API key required.",
     "fields": {"operation": "search"},
     "parameter": {
       "type": "object",
@@ -17,6 +17,12 @@
           "minimum": 1,
           "maximum": 100,
           "default": 10
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based result offset. Continue with metadata.next_offset while has_more is true.",
+          "minimum": 0,
+          "default": 0
         }
       },
       "required": ["query"]

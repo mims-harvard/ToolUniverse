@@ -17,7 +17,7 @@ def ToolGraphGenerationPipeline(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Optional[dict[str, Any]]:
+) -> dict[str, Any]:
     """
     Generates a directed tool relationship graph among provided tool configs using ToolRelationshipDe...
 
@@ -40,7 +40,7 @@ def ToolGraphGenerationPipeline(
 
     Returns
     -------
-    Optional[dict[str, Any]]
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

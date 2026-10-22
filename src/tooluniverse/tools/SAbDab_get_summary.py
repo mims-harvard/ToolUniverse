@@ -1,7 +1,7 @@
 """
 SAbDab_get_summary
 
-Get SAbDab database summary and statistics. Returns information about database content, features,...
+Get live SAbDab2 database statistics, including antibody instances, PDB entries, canonical SAbDab...
 """
 
 from typing import Any, Optional, Callable
@@ -9,14 +9,14 @@ from ._shared_client import get_shared_client
 
 
 def SAbDab_get_summary(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_summary",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
-    Get SAbDab database summary and statistics. Returns information about database content, features,...
+    Get live SAbDab2 database statistics, including antibody instances, PDB entries, canonical SAbDab...
 
     Parameters
     ----------
@@ -31,7 +31,7 @@ def SAbDab_get_summary(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

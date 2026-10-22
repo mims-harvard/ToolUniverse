@@ -1,7 +1,7 @@
 """
 AllenBrain_get_expression_datasets
 
-Get gene expression experiment datasets from the Allen Mouse Brain Atlas for a given gene. Return...
+Get Allen Mouse Brain ISH expression datasets for a gene with exact RMA row pagination. Failed ex...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,14 @@ def AllenBrain_get_expression_datasets(
     gene_acronym: str,
     product_id: Optional[int] = 1,
     num_rows: Optional[int] = 50,
+    start_row: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> list[Any]:
     """
-    Get gene expression experiment datasets from the Allen Mouse Brain Atlas for a given gene. Return...
+    Get Allen Mouse Brain ISH expression datasets for a gene with exact RMA row pagination. Failed ex...
 
     Parameters
     ----------
@@ -27,7 +28,9 @@ def AllenBrain_get_expression_datasets(
     product_id : int
         Product ID for the dataset type. 1=Mouse Brain ISH, 2=Mouse Brain microarray....
     num_rows : int
-        Max results to return. Default: 50.
+        Results per page (1-2000).
+    start_row : int
+        Zero-based RMA row offset. Continue with metadata.next_start_row.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +51,7 @@ def AllenBrain_get_expression_datasets(
             "gene_acronym": gene_acronym,
             "product_id": product_id,
             "num_rows": num_rows,
+            "start_row": start_row,
         }.items()
         if v is not None
     }

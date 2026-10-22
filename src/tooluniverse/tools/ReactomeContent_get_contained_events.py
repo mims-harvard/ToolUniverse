@@ -1,7 +1,7 @@
 """
 ReactomeContent_get_contained_events
 
-Get all events (sub-pathways and reactions) contained within a Reactome pathway. Decomposes a top...
+Get events contained within a Reactome pathway. Returns every resolved sub-pathway plus an explic...
 """
 
 from typing import Any, Optional, Callable
@@ -10,18 +10,24 @@ from ._shared_client import get_shared_client
 
 def ReactomeContent_get_contained_events(
     identifier: str,
+    reaction_limit: Optional[int] = 50,
+    reaction_offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get all events (sub-pathways and reactions) contained within a Reactome pathway. Decomposes a top...
+    Get events contained within a Reactome pathway. Returns every resolved sub-pathway plus an explic...
 
     Parameters
     ----------
     identifier : str
         Reactome pathway stable identifier. Examples: 'R-HSA-109581' (Apoptosis, 177 ...
+    reaction_limit : int
+        Maximum contained reactions to return on this page.
+    reaction_offset : int
+        Zero-based offset into contained reactions.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +42,15 @@ def ReactomeContent_get_contained_events(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"identifier": identifier}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {
+            "identifier": identifier,
+            "reaction_limit": reaction_limit,
+            "reaction_offset": reaction_offset,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "ReactomeContent_get_contained_events",

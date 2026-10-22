@@ -1,7 +1,7 @@
 """
 civic_get_variants_by_gene
 
-Get all variants associated with a specific gene in CIViC database. Returns variant information i...
+Get variants associated with a specific gene in CIViC. Returns variant IDs, names, the exact tota...
 """
 
 from typing import Any, Optional, Callable
@@ -14,13 +14,14 @@ def civic_get_variants_by_gene(
     gene_symbol: Optional[str] = None,
     gene: Optional[str] = None,
     limit: Optional[int] = 500,
+    after: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get all variants associated with a specific gene in CIViC database. Returns variant information i...
+    Get variants associated with a specific gene in CIViC. Returns variant IDs, names, the exact tota...
 
     Parameters
     ----------
@@ -34,6 +35,8 @@ def civic_get_variants_by_gene(
         Alias for gene_name. Gene symbol (e.g., 'EGFR', 'KRAS').
     limit : int
         Maximum number of variants to return (default: 500, uses cursor pagination to...
+    after : str
+        Opaque CIViC continuation cursor. Pass metadata.next_cursor from the precedin...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def civic_get_variants_by_gene(
             "gene_symbol": gene_symbol,
             "gene": gene,
             "limit": limit,
+            "after": after,
         }.items()
         if v is not None
     }

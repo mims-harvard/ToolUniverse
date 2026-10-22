@@ -1,7 +1,7 @@
 """
 ELIXIRTeSS_search_events
 
-Search ELIXIR TeSS for upcoming and past bioinformatics training events, workshops, and courses. ...
+Search ELIXIR TeSS for bioinformatics training events. Results use one-based page pagination: sta...
 """
 
 from typing import Any, Optional, Callable
@@ -9,31 +9,34 @@ from ._shared_client import get_shared_client
 
 
 def ELIXIRTeSS_search_events(
-    q: Optional[str | Any] = None,
-    country: Optional[str | Any] = None,
-    event_type: Optional[str | Any] = None,
-    online: Optional[bool | Any] = None,
-    page_size: Optional[int | Any] = None,
+    q: Optional[str] = None,
+    country: Optional[str] = None,
+    event_type: Optional[str] = None,
+    online: Optional[bool] = None,
+    page_size: Optional[int] = 10,
+    page: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search ELIXIR TeSS for upcoming and past bioinformatics training events, workshops, and courses. ...
+    Search ELIXIR TeSS for bioinformatics training events. Results use one-based page pagination: sta...
 
     Parameters
     ----------
-    q : str | Any
+    q : str
         Search query for events. Examples: 'metagenomics workshop', 'NGS training', '...
-    country : str | Any
+    country : str
         Filter by country. Examples: 'United Kingdom', 'Germany', 'Netherlands', 'Onl...
-    event_type : str | Any
+    event_type : str
         Filter by event type. Values: 'workshops_and_courses', 'conferences', 'webinars'
-    online : bool | Any
+    online : bool
         Filter to online events only (true/false)
-    page_size : int | Any
-        Number of results to return (default 10)
+    page_size : int
+        Results per page (default 10, max 100)
+    page : int
+        One-based page number. Continue with metadata.next_page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def ELIXIRTeSS_search_events(
             "event_type": event_type,
             "online": online,
             "page_size": page_size,
+            "page": page,
         }.items()
         if v is not None
     }

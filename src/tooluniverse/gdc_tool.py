@@ -696,6 +696,12 @@ class GDCMutationFrequencyTool:
                     "maximum": 200,
                     "description": "Maximum number of projects to return (default 100)",
                 },
+                "offset": {
+                    "type": "integer",
+                    "default": 0,
+                    "minimum": 0,
+                    "description": "Zero-based project offset for retrieving later ranked projects",
+                },
             },
             "required": [],
         },
@@ -743,6 +749,11 @@ class GDCMutationFreqByProjectTool:
             size = max(1, min(int(size), 200))
         except (TypeError, ValueError):
             size = 100
+        offset = arguments.get("offset", 0)
+        try:
+            offset = max(0, int(offset))
+        except (TypeError, ValueError):
+            offset = 0
 
         occ_filters = json.dumps(
             {
@@ -856,6 +867,8 @@ class GDCMutationFreqByProjectTool:
         total_mutated = sum(p["mutated_case_count"] for p in projects)
         total_cases = sum(p["total_case_count"] for p in projects)
 
+        returned_projects = projects[offset : offset + size]
+        next_offset = offset + len(returned_projects)
         result = {
             "status": "success",
             "source": "GDC",
@@ -865,7 +878,12 @@ class GDCMutationFreqByProjectTool:
                 "project_count": len(projects),
                 "total_mutated_cases": total_mutated,
                 "total_cases": total_cases,
-                "projects": projects[:size],
+                "projects": returned_projects,
+                "returned_project_count": len(returned_projects),
+                "offset": offset,
+                "limit": size,
+                "has_more": next_offset < len(projects),
+                "next_offset": next_offset if next_offset < len(projects) else None,
             },
         }
         if truncated:
@@ -1085,6 +1103,19 @@ class GDCClinicalDataTool:
                     "type": "string",
                     "description": "Optional: gene symbol to filter cases with mutations in this gene (e.g., 'TP53', 'KRAS')",
                 },
+                "limit": {
+                    "type": "integer",
+                    "default": 50,
+                    "minimum": 1,
+                    "maximum": 1000,
+                    "description": "Maximum donors to return from the requested page (default 50)",
+                },
+                "offset": {
+                    "type": "integer",
+                    "default": 0,
+                    "minimum": 0,
+                    "description": "Zero-based donor offset for retrieving later pages",
+                },
             },
             "required": ["project_id"],
         },
@@ -1119,6 +1150,14 @@ class GDCSurvivalTool:
         ]
 
         gene_symbol = arguments.get("gene_symbol")
+        try:
+            limit = max(1, min(int(arguments.get("limit", 50)), 1000))
+        except (TypeError, ValueError):
+            limit = 50
+        try:
+            offset = max(0, int(arguments.get("offset", 0)))
+        except (TypeError, ValueError):
+            offset = 0
         if gene_symbol:
             conditions.append(
                 {
@@ -1161,6 +1200,8 @@ class GDCSurvivalTool:
             times = [d.get("time", 0) for d in donors]
             max_time = max(times) if times else 0
             median_time = sorted(times)[len(times) // 2] if times else 0
+            returned_donors = donors[offset : offset + limit]
+            next_offset = offset + len(returned_donors)
 
             return {
                 "status": "success",
@@ -1172,13 +1213,12 @@ class GDCSurvivalTool:
                     "deceased": dead_count,
                     "max_follow_up_days": max_time,
                     "median_follow_up_days": median_time,
-                    "donors": donors[:50],
-                    "note": (
-                        f"Showing first 50 of {len(donors)} donors. "
-                        "Each donor has: time (days), censored (true=alive), survivalEstimate (KM estimate)."
-                        if len(donors) > 50
-                        else None
-                    ),
+                    "donors": returned_donors,
+                    "returned_donors": len(returned_donors),
+                    "offset": offset,
+                    "limit": limit,
+                    "has_more": next_offset < len(donors),
+                    "next_offset": next_offset if next_offset < len(donors) else None,
                 },
             }
         except Exception as e:

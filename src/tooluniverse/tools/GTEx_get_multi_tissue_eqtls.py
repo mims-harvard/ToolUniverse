@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def GTEx_get_multi_tissue_eqtls(
     gencode_id: str,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_multi_tissue_eqtls",
     variant_id: Optional[str] = None,
     dataset_id: Optional[str] = "gtex_v8",
     page: Optional[int] = 0,
@@ -19,7 +19,7 @@ def GTEx_get_multi_tissue_eqtls(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
     Get multi-tissue eQTL meta-analysis results (Metasoft). Returns m-values (posterior probability o...
 
@@ -46,7 +46,7 @@ def GTEx_get_multi_tissue_eqtls(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

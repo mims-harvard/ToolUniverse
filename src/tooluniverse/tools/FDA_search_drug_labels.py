@@ -1,7 +1,7 @@
 """
 FDA_search_drug_labels
 
-Search FDA-approved drug labels (prescribing information) by drug name or medical indication. Dru...
+Search FDA-approved drug labels by drug name or indication. Results use native openFDA pagination...
 """
 
 from typing import Any, Optional, Callable
@@ -9,25 +9,28 @@ from ._shared_client import get_shared_client
 
 
 def FDA_search_drug_labels(
-    limit: int,
-    drug_name: Optional[str | Any] = None,
-    indication: Optional[str | Any] = None,
+    drug_name: Optional[str] = None,
+    indication: Optional[str] = None,
+    limit: Optional[int] = 5,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search FDA-approved drug labels (prescribing information) by drug name or medical indication. Dru...
+    Search FDA-approved drug labels by drug name or indication. Results use native openFDA pagination...
 
     Parameters
     ----------
-    drug_name : str | Any
+    drug_name : str
         Brand or generic drug name to search (e.g., 'metformin', 'atorvastatin', 'lis...
-    indication : str | Any
+    indication : str
         Medical condition to search in indications sections (e.g., 'hypertension', 't...
     limit : int
         Maximum number of results to return (default: 5, max: 20)
+    offset : int
+        Zero-based label offset. Continue with metadata.next_offset while metadata.ha...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +51,7 @@ def FDA_search_drug_labels(
             "drug_name": drug_name,
             "indication": indication,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

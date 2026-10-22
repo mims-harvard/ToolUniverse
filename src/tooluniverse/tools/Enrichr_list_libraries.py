@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def Enrichr_list_libraries(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "list_libraries",
     category: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,

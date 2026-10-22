@@ -1,7 +1,7 @@
 """
 BioImageArchive_search_studies
 
-Search the BioImage Archive (EBI BioStudies) for biological imaging datasets. The BioImage Archiv...
+Search the BioImage Archive (EBI BioStudies) for biological imaging datasets with explicit page n...
 """
 
 from typing import Any, Optional, Callable
@@ -10,24 +10,24 @@ from ._shared_client import get_shared_client
 
 def BioImageArchive_search_studies(
     query: str,
-    page_size: Optional[int | Any] = None,
-    page: Optional[int | Any] = None,
+    page_size: Optional[int] = None,
+    page: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search the BioImage Archive (EBI BioStudies) for biological imaging datasets. The BioImage Archiv...
+    Search the BioImage Archive (EBI BioStudies) for biological imaging datasets with explicit page n...
 
     Parameters
     ----------
     query : str
         Search query - imaging modality, organism, technique, or topic. Examples: 'cr...
-    page_size : int | Any
+    page_size : int
         Number of results per page. Default: 10. Max: 100.
-    page : int | Any
-        Page number (1-indexed). Default: 1.
+    page : int
+        Page number (1-indexed). Default: 1. Continue with metadata.next_page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

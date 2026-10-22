@@ -1,7 +1,7 @@
 """
 ORCID_get_works
 
-Get list of publications and works for an ORCID researcher. Returns titles, publication types, da...
+Get every public work-summary assertion for an ORCID researcher. ORCID groups equivalent works fr...
 """
 
 from typing import Any, Optional, Callable
@@ -9,15 +9,15 @@ from ._shared_client import get_shared_client
 
 
 def ORCID_get_works(
-    operation: str,
     orcid: str,
+    operation: Optional[str] = "get_works",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> list[Any]:
     """
-    Get list of publications and works for an ORCID researcher. Returns titles, publication types, da...
+    Get every public work-summary assertion for an ORCID researcher. ORCID groups equivalent works fr...
 
     Parameters
     ----------

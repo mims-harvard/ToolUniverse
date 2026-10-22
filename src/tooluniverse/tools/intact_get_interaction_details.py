@@ -15,7 +15,7 @@ def intact_get_interaction_details(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> dict[str, Any]:
     """
     Get detailed information about a specific interaction by its IntAct interaction ID. Requires an I...
 
@@ -34,7 +34,7 @@ def intact_get_interaction_details(
 
     Returns
     -------
-    list[Any]
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -1,7 +1,7 @@
 [
   {
     "name": "EnsemblLD_get_ld_variants",
-    "description": "Get linkage disequilibrium (LD) data for a variant from the Ensembl REST API. Returns variants in LD with the query variant in a specified 1000 Genomes population, with r-squared and D' statistics. LD measures the non-random association of alleles at different loci, critical for GWAS interpretation and fine-mapping. Results are sorted by r2 (strongest first) and capped at `limit` (default 200); `total_ld_count` always reports how many partners passed the thresholds and `truncated` flags whether any were withheld -- raise `limit` to retrieve them all. Example: rs1042779 in KHV population returns 708 LD partners with r2 and D' values.",
+    "description": "Get linkage disequilibrium (LD) data for a variant from the Ensembl REST API. Returns variants in LD with the query variant in a specified 1000 Genomes population, with r-squared and D' statistics. Results are sorted by r2 (strongest first) and paged with limit/offset; total_ld_count and next_offset make every partner reachable. Example: rs1042779 in KHV population returns hundreds of LD partners.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -33,7 +33,13 @@
             "null"
           ],
           "minimum": 1,
-          "description": "Maximum number of LD partners to return, strongest r2 first. Default: 200. Increase to retrieve every partner when `truncated` is true."
+          "description": "Maximum number of LD partners to return, strongest r2 first. Default: 200."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based LD-partner offset. Continue with data.next_offset while has_more is true."
         }
       },
       "required": [
@@ -77,8 +83,12 @@
             },
             "truncated": {
               "type": "boolean",
-              "description": "True when total_ld_count exceeds ld_count; raise `limit` to retrieve the rest"
+              "description": "True when more LD partners remain after this page"
             },
+            "offset": {"type": "integer"},
+            "limit": {"type": "integer"},
+            "has_more": {"type": "boolean"},
+            "next_offset": {"type": ["integer", "null"]},
             "ld_variants": {
               "type": "array",
               "items": {

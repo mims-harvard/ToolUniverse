@@ -5,7 +5,7 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 # Defaults applied to GOlr URL templates when the caller omits the parameter.
-_GOLR_TEMPLATE_DEFAULTS = {"rows": 100}
+_GOLR_TEMPLATE_DEFAULTS = {"rows": 100, "start": 0}
 
 
 def _drop_unfilled_query_segments(url: str) -> str:
@@ -154,6 +154,24 @@ class GeneOntologyTool(BaseTool):
                 "error": "Invalid arguments type; expected a mapping/dict.",
             }
 
+        pagination_mode = self.tool_config.get("fields", {}).get("pagination")
+        if pagination_mode == "golr_start":
+            rows = arguments.get("rows", _GOLR_TEMPLATE_DEFAULTS["rows"])
+            start = arguments.get("start", _GOLR_TEMPLATE_DEFAULTS["start"])
+            if not isinstance(rows, int) or isinstance(rows, bool) or not 1 <= rows <= 1000:
+                return {
+                    "status": "error",
+                    "error": "rows must be an integer between 1 and 1000.",
+                }
+            if not isinstance(start, int) or isinstance(start, bool) or start < 0:
+                return {
+                    "status": "error",
+                    "error": "start must be a non-negative integer.",
+                }
+            arguments = dict(arguments)
+            arguments["rows"] = rows
+            arguments["start"] = start
+
         # Handle different endpoint formats
         if "?" in self.endpoint:
             # This is a complete URL with query parameters (GOlr format)
@@ -218,6 +236,55 @@ class GeneOntologyTool(BaseTool):
         if self.extract_path:
             result = self._extract_data(data, self.extract_path)
 
+            if pagination_mode == "golr_start":
+                response = data.get("response", {})
+                docs = response.get("docs", [])
+                total_rows = response.get("numFound")
+                response_start = response.get("start", arguments["start"])
+                returned_rows = len(docs) if isinstance(docs, list) else 0
+                has_more = (
+                    isinstance(total_rows, int)
+                    and response_start + returned_rows < total_rows
+                )
+                result_unit = self.tool_config["fields"].get(
+                    "pagination_result_unit", "annotations"
+                )
+                returned = len(result) if isinstance(result, list) else 1
+                rows_are_results = result_unit != "distinct_genes"
+                metadata = {
+                    "returned": returned,
+                    "returned_rows": returned_rows,
+                    "total_rows": total_rows,
+                    "rows_total_is_exact": isinstance(total_rows, int),
+                    "total_results": total_rows if rows_are_results else None,
+                    "total_results_is_exact": (
+                        isinstance(total_rows, int) if rows_are_results else False
+                    ),
+                    "result_unit": result_unit,
+                    "start": response_start,
+                    "rows": arguments["rows"],
+                    "has_more": has_more,
+                    "next_start": (
+                        response_start + returned_rows if has_more else None
+                    ),
+                    "truncated": has_more,
+                    "result_set_complete": not has_more and response_start == 0,
+                    "pagination_scope": self.tool_config["fields"].get(
+                        "pagination_scope", "GOlr result rows"
+                    ),
+                }
+                if result_unit in {"annotations", "distinct_genes"}:
+                    metadata.update(
+                        {
+                            "returned_annotation_rows": returned_rows,
+                            "total_annotation_rows": total_rows,
+                            "annotation_rows_total_is_exact": isinstance(
+                                total_rows, int
+                            ),
+                        }
+                    )
+                return {"status": "success", "data": result, "metadata": metadata}
+
             # Handle empty results
             if isinstance(result, list) and len(result) == 0:
                 return {
@@ -239,13 +306,19 @@ class GeneOntologyTool(BaseTool):
         return self.run({"id": id})
 
     def get_genes_for_term(
-        self, id: str, taxon: Optional[str] = None, rows: Optional[int] = None
+        self,
+        id: str,
+        taxon: Optional[str] = None,
+        rows: Optional[int] = None,
+        start: Optional[int] = None,
     ) -> Any:
         args = {"id": id}
         if taxon:
             args["taxon"] = taxon
         if rows:
             args["rows"] = rows
+        if start is not None:
+            args["start"] = start
         return self.run(args)
 
     def get_terms_for_gene(self, id: str) -> Any:

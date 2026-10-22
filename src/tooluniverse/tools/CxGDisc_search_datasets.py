@@ -14,6 +14,7 @@ def CxGDisc_search_datasets(
     organism: Optional[str] = None,
     cell_type: Optional[str] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -34,6 +35,8 @@ def CxGDisc_search_datasets(
         Filter by cell type (e.g., 'T cell', 'neuron', 'macrophage', 'epithelial'). C...
     limit : int
         Maximum datasets to return (1-100). Default: 20.
+    offset : int
+        Zero-based result offset. Default: 0. Use the returned next_offset to retriev...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def CxGDisc_search_datasets(
             "organism": organism,
             "cell_type": cell_type,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

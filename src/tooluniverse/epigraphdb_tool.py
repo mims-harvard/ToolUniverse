@@ -123,7 +123,15 @@ class EpiGraphDBTool(BaseRESTTool):
             }
 
         pval_threshold = float(arguments.get("pval_threshold", 1e-8))
-        params = {"trait": trait, "pval_threshold": pval_threshold}
+        limit = max(1, min(int(arguments.get("limit", 100)), 1000))
+        offset = max(0, int(arguments.get("offset", 0)))
+        params = {
+            "trait": trait,
+            "pval_threshold": pval_threshold,
+            "limit": limit,
+            # The upstream API calls its zero-based offset parameter ``skip``.
+            "skip": offset,
+        }
         resp = requests.get(
             f"{EPIGRAPHDB_BASE}/literature/gwas",
             params=params,
@@ -134,7 +142,7 @@ class EpiGraphDBTool(BaseRESTTool):
         results = resp.json().get("results", [])
 
         rows = []
-        for r in results[:100]:
+        for r in results:
             triple = r.get("triple", {})
             gwas = r.get("gwas", {})
             lit = r.get("lit", {})
@@ -170,11 +178,24 @@ class EpiGraphDBTool(BaseRESTTool):
                 "broader trait name or a less stringent pval_threshold."
             )
 
+        # This endpoint does not return an exact match count.  A full page may
+        # have a following page (including an empty sentinel page when the
+        # total is an exact multiple of the limit), so preserve that
+        # uncertainty instead of presenting the page length as a total.
+        has_more = len(results) == limit
+        total_count = None if has_more else offset + len(results)
+
         return {
             "status": "success",
             "data": {
                 "literature_triples": rows,
-                "total_count": len(results),
+                "returned_count": len(rows),
+                "total_count": total_count,
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "next_offset": offset + len(results) if has_more else None,
+                "result_set_complete": offset == 0 and not has_more,
             },
             "metadata": metadata,
         }
@@ -196,12 +217,11 @@ class EpiGraphDBTool(BaseRESTTool):
 
     def _query_mr(self, exposure: str, outcome: str, pval_threshold: float) -> list:
         """Call the EpiGraphDB /mr endpoint for one exposure/outcome label pair."""
-        params = {
-            "exposure_trait": exposure,
-            "outcome_trait": outcome,
-            "pval_threshold": pval_threshold,
-            "mode": "table",
-        }
+        params = {"pval_threshold": pval_threshold}
+        if exposure:
+            params["exposure_trait"] = exposure
+        if outcome:
+            params["outcome_trait"] = outcome
         resp = requests.get(
             f"{EPIGRAPHDB_BASE}/mr", params=params, timeout=self.timeout
         )
@@ -210,12 +230,12 @@ class EpiGraphDBTool(BaseRESTTool):
 
     def _get_mr(self, arguments: dict) -> dict:
         """Get Mendelian Randomization results between exposure and outcome traits."""
-        exposure_trait = arguments.get("exposure_trait", "").strip()
-        outcome_trait = arguments.get("outcome_trait", "").strip()
-        if not exposure_trait or not outcome_trait:
+        exposure_trait = (arguments.get("exposure_trait") or "").strip()
+        outcome_trait = (arguments.get("outcome_trait") or "").strip()
+        if not exposure_trait and not outcome_trait:
             return {
                 "status": "error",
-                "error": "Both exposure_trait and outcome_trait are required",
+                "error": "At least one of exposure_trait or outcome_trait is required",
             }
 
         pval_threshold = float(arguments.get("pval_threshold", 1e-5))
@@ -226,8 +246,14 @@ class EpiGraphDBTool(BaseRESTTool):
         # Fallback: EpiGraphDB trait labels are case-sensitive, so retry with
         # sentence-case variants when the exact labels return nothing.
         if not results:
-            for ex in self._casing_variants(exposure_trait):
-                for out in self._casing_variants(outcome_trait):
+            exposure_variants = (
+                self._casing_variants(exposure_trait) if exposure_trait else [""]
+            )
+            outcome_variants = (
+                self._casing_variants(outcome_trait) if outcome_trait else [""]
+            )
+            for ex in exposure_variants:
+                for out in outcome_variants:
                     if (ex, out) == (exposure_trait, outcome_trait):
                         continue  # already tried the exact labels above
                     retry = self._query_mr(ex, out, pval_threshold)
@@ -237,8 +263,11 @@ class EpiGraphDBTool(BaseRESTTool):
                 if results:
                     break
 
+        limit = max(1, min(int(arguments.get("limit", 50)), 1000))
+        offset = max(0, int(arguments.get("offset", 0)))
+        page_results = results[offset : offset + limit]
         mr_results = []
-        for r in results[:50]:
+        for r in page_results:
             exposure = r.get("exposure", {})
             outcome = r.get("outcome", {})
             mr = r.get("mr", {})
@@ -270,8 +299,8 @@ class EpiGraphDBTool(BaseRESTTool):
         if not results:
             # Don't let an exact-label miss read as 'no causal evidence'.
             metadata["note"] = (
-                f"No MR results for exposure '{exposure_trait}' -> outcome "
-                f"'{outcome_trait}'. EpiGraphDB matches exact, case-sensitive GWAS "
+                f"No MR results for exposure '{exposure_trait or '(any)'}' -> outcome "
+                f"'{outcome_trait or '(any)'}'. EpiGraphDB matches exact, case-sensitive GWAS "
                 "trait labels. Use EpiGraphDB_search_opengwas to find the exact "
                 "trait label, then retry with that label."
             )
@@ -281,11 +310,18 @@ class EpiGraphDBTool(BaseRESTTool):
                 f" -> '{used_outcome}' after case normalization."
             )
 
+        has_more = offset + len(page_results) < len(results)
         return {
             "status": "success",
             "data": {
                 "mr_results": mr_results,
                 "total_count": len(results),
+                "returned_count": len(mr_results),
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "next_offset": offset + len(page_results) if has_more else None,
+                "result_set_complete": offset == 0 and not has_more,
             },
             "metadata": metadata,
         }
@@ -314,11 +350,17 @@ class EpiGraphDBTool(BaseRESTTool):
                     results, used_trait = retry, variant
                     break
 
+        limit = max(1, min(int(arguments.get("limit", 50)), 500))
+        offset = max(0, int(arguments.get("offset", 0)))
+        page_results = results[offset : offset + limit]
         cor_results = []
-        for r in results[:50]:
-            trait1 = r.get("trait1", {})
-            trait2 = r.get("trait2", {})
-            cor = r.get("cor", {})
+        for r in page_results:
+            # Current API fields are trait / assoc_trait / gc. Retain the
+            # former trait1 / trait2 / cor names as fallbacks for older
+            # EpiGraphDB deployments.
+            trait1 = r.get("trait") or r.get("trait1", {})
+            trait2 = r.get("assoc_trait") or r.get("trait2", {})
+            cor = r.get("gc") or r.get("cor", {})
             cor_results.append(
                 {
                     "trait1_id": trait1.get("id"),
@@ -326,8 +368,8 @@ class EpiGraphDBTool(BaseRESTTool):
                     "trait2_id": trait2.get("id"),
                     "trait2_trait": trait2.get("trait"),
                     "rg": cor.get("rg"),
-                    "rg_se": cor.get("rg_se"),
-                    "rg_pval": cor.get("rg_pval"),
+                    "rg_se": cor.get("rg_SE", cor.get("rg_se")),
+                    "rg_pval": cor.get("p", cor.get("rg_pval")),
                     "h2": cor.get("h2"),
                     "h2_intercept": cor.get("h2_intercept"),
                 }
@@ -358,11 +400,17 @@ class EpiGraphDBTool(BaseRESTTool):
                 f"Matched on '{used_trait}' after case normalization of '{trait}'."
             )
 
+        has_more = offset + len(page_results) < len(results)
         return {
             "status": "success",
             "data": {
                 "correlations": cor_results,
                 "total_count": len(results),
+                "offset": offset,
+                "limit": limit,
+                "returned": len(cor_results),
+                "has_more": has_more,
+                "next_offset": offset + len(page_results) if has_more else None,
             },
             "metadata": metadata,
         }
@@ -417,7 +465,13 @@ class EpiGraphDBTool(BaseRESTTool):
             else:
                 seen_drugs[drug_label]["evidence_count"] += 1
 
-        drug_list = sorted(seen_drugs.values(), key=lambda x: -x["evidence_count"])[:30]
+        all_drugs = sorted(
+            seen_drugs.values(), key=lambda x: -x["evidence_count"]
+        )
+        limit = max(1, min(int(arguments.get("limit", 30)), 500))
+        offset = max(0, int(arguments.get("offset", 0)))
+        drug_list = all_drugs[offset : offset + limit]
+        has_more = offset + len(drug_list) < len(all_drugs)
 
         return {
             "status": "success",
@@ -425,6 +479,11 @@ class EpiGraphDBTool(BaseRESTTool):
                 "drugs": drug_list,
                 "total_evidence_count": len(results),
                 "unique_drug_count": len(seen_drugs),
+                "offset": offset,
+                "limit": limit,
+                "returned": len(drug_list),
+                "has_more": has_more,
+                "next_offset": offset + len(drug_list) if has_more else None,
             },
             "metadata": {
                 "trait": trait,
@@ -546,7 +605,8 @@ class EpiGraphDBTool(BaseRESTTool):
                 "error": "Either gene_name or gene_id (Ensembl ID) is required",
             }
 
-        params: dict[str, Any] = {"limit": min(int(arguments.get("limit", 10)), 50)}
+        limit = max(1, min(int(arguments.get("limit", 10)), 200))
+        params: dict[str, Any] = {"limit": limit}
         if gene_name:
             params["name"] = gene_name
         elif gene_id:
@@ -576,17 +636,37 @@ class EpiGraphDBTool(BaseRESTTool):
                 }
             )
 
+        # The fuzzy-search endpoint exposes a limit (maximum 200) but no
+        # offset or exact count.  A full name-search page is therefore known
+        # to be potentially incomplete and must not be labelled as a total.
+        truncated = bool(gene_name and len(genes) == limit)
         return {
             "status": "success",
             "data": {
                 "genes": genes,
-                "total_found": len(genes),
+                "returned_count": len(genes),
+                "total_found": None if truncated else len(genes),
+                "limit": limit,
+                "truncated": truncated,
+                "result_set_complete": not truncated,
             },
             "metadata": {
                 "query_name": gene_name,
                 "query_id": gene_id,
                 "source": "EpiGraphDB",
                 "description": "Gene info including druggability tiers from EpiGraphDB",
+                **(
+                    {
+                        "note": (
+                            "The EpiGraphDB fuzzy gene-search endpoint returned its "
+                            f"maximum page of {limit} rows but provides no offset. "
+                            "Additional matches may exist; narrow gene_name or query "
+                            "an exact Ensembl gene_id."
+                        )
+                    }
+                    if truncated
+                    else {}
+                ),
             },
         }
 

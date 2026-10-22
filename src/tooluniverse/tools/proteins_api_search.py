@@ -16,6 +16,8 @@ def proteins_api_search(
     gene_symbol: Optional[str] = None,
     gene: Optional[str] = None,
     reviewed: Optional[bool] = None,
+    organism: Optional[str] = None,
+    taxid: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -40,6 +42,10 @@ def proteins_api_search(
         Alias for query. Gene name to search.
     reviewed : bool
         If true, return only reviewed Swiss-Prot entries. If false or omitted, includ...
+    organism : str
+        Restrict the search to an organism by name (e.g. 'Klebsiella pneumoniae', 'Es...
+    taxid : str
+        Restrict the search to an NCBI taxonomy id (e.g. '573' for Klebsiella pneumon...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -64,6 +70,8 @@ def proteins_api_search(
             "gene_symbol": gene_symbol,
             "gene": gene,
             "reviewed": reviewed,
+            "organism": organism,
+            "taxid": taxid,
         }.items()
         if v is not None
     }

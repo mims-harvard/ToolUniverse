@@ -2,7 +2,7 @@
   {
     "name": "RNAcentral_search",
     "type": "RNAcentralSearchTool",
-    "description": "Search aggregated ncRNA records (miRNA, rRNA, lncRNA, etc.) across sources via RNAcentral. Use to find accessions, types, species, and descriptions for ncRNA analysis.",
+    "description": "Search aggregated ncRNA records with explicit page pagination. Preserves RNAcentral's next URL and reports returned, truncation, and next_page metadata.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -16,6 +16,12 @@
           "minimum": 1,
           "maximum": 100,
           "description": "Number of records per page (1\u2013100)."
+        },
+        "page": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 1,
+          "description": "One-based page number. Continue with metadata.next_page."
         }
       },
       "required": [
@@ -28,51 +34,43 @@
     },
     "return_schema": {
       "type": "object",
-      "description": "RNAcentral rna list response",
+      "description": "Raw RNAcentral paginated RNA list payload",
+      "additionalProperties": true,
       "properties": {
-        "status": {
-          "type": "string"
+        "next": {
+          "type": [
+            "string",
+            "null"
+          ]
         },
-        "data": {
-          "type": "object",
-          "properties": {
-            "count": {
-              "type": "integer"
-            },
-            "results": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "rnacentral_id": {
-                    "type": "string"
-                  },
-                  "description": {
-                    "type": "string"
-                  },
-                  "rna_type": {
-                    "type": "string"
-                  },
-                  "taxon": {
-                    "type": "object",
-                    "properties": {
-                      "scientific_name": {
-                        "type": "string"
-                      },
-                      "taxid": {
-                        "type": "integer"
-                      }
-                    }
-                  }
-                }
+        "previous": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "rnacentral_id": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "rna_type": {
+                "type": "string"
               }
             }
           }
-        },
-        "url": {
-          "type": "string"
         }
-      }
+      },
+      "required": [
+        "results"
+      ]
     },
     "test_examples": [
       {
@@ -156,13 +154,33 @@
   {
     "name": "RNAcentral_get_xrefs_and_pubs",
     "type": "RNAcentralGetTool",
-    "description": "Get the resolved per-source cross-references AND literature for an RNAcentral entry in one call. Returns the full xref list (with database name, taxid, accession id, NCBI gene id, miRBase mature/precursor products, Ensembl/GENCODE transcript ids, RefSeq, etc.) under data.xrefs, and the publications list (title, authors, PMID, DOI) under data.publications. Use after RNAcentral_search or RNAcentral_get_by_accession to map an URS id to external databases and supporting papers. Example: URS000063A371 returns 8 xrefs (database=Rfam, taxid=7955, accession id 'CR381647.10:84955..85035:rfam') and 8 publications (e.g. PMID 12844358, DOI 10.1186/gb-2003-4-7-r42).",
+    "description": "Get paginated cross-references and literature for an RNAcentral entry in one call. xrefs_page and publications_page advance independently; follow each resource's next_page while has_more is true. Counts are upstream record counts, and publication PMIDs are not guaranteed unique because RNAcentral may retain citation variants.",
     "parameter": {
       "type": "object",
       "properties": {
         "accession": {
           "type": "string",
+          "minLength": 1,
           "description": "RNAcentral URS identifier (e.g., 'URS000063A371', 'URS000075C808')."
+        },
+        "page_size": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50,
+          "default": 10,
+          "description": "Records per sub-resource page (1-50)."
+        },
+        "xrefs_page": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "One-based xref page; continue with data.xrefs.next_page."
+        },
+        "publications_page": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "One-based publication page; continue with data.publications.next_page."
         }
       },
       "required": [
@@ -193,8 +211,17 @@
                   "items": {
                     "type": "object"
                   }
-                }
-              }
+                },
+                "returned": {"type": "integer"},
+                "page": {"type": "integer"},
+                "page_size": {"type": "integer"},
+                "has_more": {"type": "boolean"},
+                "next_page": {"type": ["integer", "null"]},
+                "previous_page": {"type": ["integer", "null"]},
+                "truncated": {"type": "boolean"},
+                "result_set_complete": {"type": "boolean"}
+              },
+              "required": ["count", "results", "returned", "page", "page_size", "has_more", "next_page", "previous_page", "truncated", "result_set_complete"]
             },
             "publications": {
               "type": "object",
@@ -207,10 +234,20 @@
                   "items": {
                     "type": "object"
                   }
-                }
-              }
+                },
+                "returned": {"type": "integer"},
+                "page": {"type": "integer"},
+                "page_size": {"type": "integer"},
+                "has_more": {"type": "boolean"},
+                "next_page": {"type": ["integer", "null"]},
+                "previous_page": {"type": ["integer", "null"]},
+                "truncated": {"type": "boolean"},
+                "result_set_complete": {"type": "boolean"}
+              },
+              "required": ["count", "results", "returned", "page", "page_size", "has_more", "next_page", "previous_page", "truncated", "result_set_complete"]
             }
-          }
+          },
+          "required": ["xrefs", "publications"]
         },
         {
           "type": "object",

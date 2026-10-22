@@ -1,7 +1,7 @@
 """
 MassBank_search_by_formula
 
-Search MassBank Europe spectral library by molecular formula. Returns all mass spectra records fo...
+Search MassBank Europe spectra by molecular formula. MassBank returns the full matching array and...
 """
 
 from typing import Any, Optional, Callable
@@ -10,21 +10,24 @@ from ._shared_client import get_shared_client
 
 def MassBank_search_by_formula(
     formula: str,
-    limit: Optional[int | Any] = None,
+    limit: Optional[int] = 10,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search MassBank Europe spectral library by molecular formula. Returns all mass spectra records fo...
+    Search MassBank Europe spectra by molecular formula. MassBank returns the full matching array and...
 
     Parameters
     ----------
     formula : str
         Molecular formula (e.g., 'C9H8O4' for aspirin, 'C8H10N4O2' for caffeine, 'C6H...
-    limit : int | Any
-        Maximum number of spectra to return (default 10)
+    limit : int
+        Number of spectra in this client-side page (default 10)
+    offset : int
+        Zero-based spectrum offset. Continue with metadata.next_offset while metadata...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,7 +43,9 @@ def MassBank_search_by_formula(
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
-        k: v for k, v in {"formula": formula, "limit": limit}.items() if v is not None
+        k: v
+        for k, v in {"formula": formula, "limit": limit, "offset": offset}.items()
+        if v is not None
     }
     return get_shared_client().run_one_function(
         {

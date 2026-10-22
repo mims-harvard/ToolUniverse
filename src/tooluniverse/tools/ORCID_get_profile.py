@@ -1,7 +1,7 @@
 """
 ORCID_get_profile
 
-Get a researcher's full ORCID profile by ORCID iD. Returns name, biography, email, keywords, rese...
+Get the complete public ORCID record after format and ISO 7064 checksum validation. Returns the r...
 """
 
 from typing import Any, Optional, Callable
@@ -9,15 +9,15 @@ from ._shared_client import get_shared_client
 
 
 def ORCID_get_profile(
-    operation: str,
     orcid: str,
+    operation: Optional[str] = "get_profile",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get a researcher's full ORCID profile by ORCID iD. Returns name, biography, email, keywords, rese...
+    Get the complete public ORCID record after format and ISO 7064 checksum validation. Returns the r...
 
     Parameters
     ----------

@@ -1,7 +1,7 @@
 """
 Enamine_get_compound
 
-Get compound details by Enamine ID. Returns structure, availability, pricing, and ordering inform...
+Get compound details by Enamine ID when the Enamine Store API is available. If upstream retrieval...
 """
 
 from typing import Any, Optional, Callable
@@ -10,14 +10,14 @@ from ._shared_client import get_shared_client
 
 def Enamine_get_compound(
     enamine_id: str,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_compound",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get compound details by Enamine ID. Returns structure, availability, pricing, and ordering inform...
+    Get compound details by Enamine ID when the Enamine Store API is available. If upstream retrieval...
 
     Parameters
     ----------

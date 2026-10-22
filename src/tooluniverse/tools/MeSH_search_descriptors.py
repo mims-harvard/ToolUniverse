@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def MeSH_search_descriptors(
     query: str,
-    match_: Optional[str | Any] = None,
-    limit: Optional[int | Any] = None,
+    match_: Optional[str] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,9 +24,9 @@ def MeSH_search_descriptors(
     ----------
     query : str
         Descriptor label to search for. Examples: 'Neoplasms', 'Diabetes Mellitus', '...
-    match_ : str | Any
+    match_ : str
         Match type: 'exact' for exact match, 'contains' for partial match (default), ...
-    limit : int | Any
+    limit : int
         Maximum number of results (default: 20, max: 50).
     stream_callback : Callable, optional
         Callback for streaming output

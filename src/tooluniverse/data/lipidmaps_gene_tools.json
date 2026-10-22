@@ -1,12 +1,13 @@
 [
   {
     "name": "LipidMaps_get_gene",
-    "description": "Look up a lipid-metabolism gene in the LIPID MAPS Proteome Database (LMPD). Resolves a gene to its LMPD record (gene name, synonyms, alternative names, chromosome, cytogenetic map location, NCBI summary, and species). Set input_item to the namespace of input_value: 'gene_symbol' (e.g. 'FASN'), 'gene_id' (NCBI Gene ID, e.g. '2194'), 'gene_name' (exact gene-name substring), or 'lmp_id' (LIPID MAPS protein id, e.g. 'LMP002507'). A gene_symbol may match multiple species (e.g. 'FASN' returns mouse LMP001577 and human LMP002507); all matches are returned as a list. Use this for lipid-related enzymes such as fatty acid synthase (FASN) or stearoyl-CoA desaturase (SCD). Complements the LipidMaps_get_compound_* structure tools, which cover lipids, not the genes/enzymes that make them.",
+    "description": "Look up a lipid-metabolism gene in the LIPID MAPS Proteome Database (LMPD). A gene symbol can match multiple species; the REST endpoint returns the full unpaginated set and metadata marks result_set_complete. For example, live FASN lookup returns mouse, human, rat, and cow records. Input and output namespaces are strictly validated, URL path values are encoded, and malformed rows are errors rather than silently dropped. Use output_item='all' for complete records; metadata.field_scope_complete is false for an intentionally selected single-field response.",
     "parameter": {
       "type": "object",
       "properties": {
         "input_value": {
           "type": "string",
+          "minLength": 1,
           "description": "The gene identifier value to resolve, e.g. 'FASN' (gene symbol), '2194' (NCBI Gene ID), or 'LMP002507' (LIPID MAPS protein id)."
         },
         "input_item": {
@@ -23,6 +24,21 @@
         "output_item": {
           "type": "string",
           "description": "Which fields to return. 'all' (default) returns the complete record; a single field name (e.g. 'gene_name', 'summary', 'chromosome') returns just that field.",
+          "enum": [
+            "all",
+            "lmp_id",
+            "gene_id",
+            "gene_name",
+            "gene_symbol",
+            "gene_synonyms",
+            "alt_names",
+            "chromosome",
+            "map_location",
+            "summary",
+            "taxid",
+            "species",
+            "species_long"
+          ],
           "default": "all"
         }
       },
@@ -155,12 +171,13 @@
   },
   {
     "name": "LipidMaps_get_protein",
-    "description": "Look up a lipid-metabolism protein/enzyme in the LIPID MAPS Proteome Database (LMPD). Resolves a protein to its LMPD record including gene symbol/name, species, and cross-references (UniProt accession, RefSeq protein id, mRNA RefSeq id, protein GI, UniProt entry name) plus the amino-acid sequence. Set input_item to the namespace of input_value: 'uniprot_id' (e.g. 'P49327'), 'gene_symbol' (e.g. 'SCD'), 'gene_id' (NCBI Gene ID), 'refseq_id' (RefSeq protein id, e.g. 'NP_004095'), 'mrna_id' (RefSeq mRNA id), 'protein_entry' (UniProt entry name, e.g. 'FAS_HUMAN'), or 'lmp_id' (LIPID MAPS protein id). A gene_symbol may match multiple species; all matches are returned as a list. Use this to map a lipid-related enzyme (e.g. fatty acid synthase, stearoyl-CoA desaturase) to its sequence and database cross-references.",
+    "description": "Look up a lipid-metabolism protein/enzyme in LIPID MAPS LMPD, including gene/species identifiers, UniProt and RefSeq cross-references, protein name, sequence length, and sequence. Gene-symbol queries may match multiple species; all rows are returned in numeric Row order with explicit unpaginated completeness metadata. Input/output namespaces are strictly validated and malformed rows cannot become a silent partial success. Use output_item='all' for the complete record.",
     "parameter": {
       "type": "object",
       "properties": {
         "input_value": {
           "type": "string",
+          "minLength": 1,
           "description": "The protein identifier value to resolve, e.g. 'P49327' (UniProt), 'NP_004095' (RefSeq protein), 'SCD' (gene symbol), or 'LMP002507' (LIPID MAPS protein id)."
         },
         "input_item": {
@@ -181,6 +198,24 @@
         "output_item": {
           "type": "string",
           "description": "Which fields to return. 'all' (default) returns the complete record; a single field name (e.g. 'uniprot_id', 'protein_name', 'seq') returns just that field.",
+          "enum": [
+            "all",
+            "lmp_id",
+            "gene_id",
+            "gene_name",
+            "gene_symbol",
+            "taxid",
+            "species",
+            "species_long",
+            "mrna_id",
+            "refseq_id",
+            "protein_gi",
+            "uniprot_id",
+            "protein_entry",
+            "protein_name",
+            "seqlength",
+            "seq"
+          ],
           "default": "all"
         }
       },

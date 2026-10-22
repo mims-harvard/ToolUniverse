@@ -11,21 +11,86 @@ class HumanBaseTool(BaseTool):
     Tool to retrieve protein-protein interactions and biological processes from HumanBase.
     """
 
+    EVIDENCE_DATASET_REQUEST_LIMIT = 1000
+
     def __init__(self, tool_config):
         super().__init__(tool_config)
+        self._last_retrieval_metadata = {}
 
     def run(self, arguments):
         """Main entry point for the tool."""
         # Feature-111A-007: 'genes' as alias for 'gene_list'
         gene_list = arguments.get("gene_list") or arguments.get("genes")
         tissue = arguments.get("tissue", "brain")
-        max_node = arguments.get("max_node") or arguments.get("top_n") or 10
+        max_node = arguments.get("neighbor_count")
+        if max_node is None:
+            max_node = arguments.get("max_node")
+        if max_node is None:
+            max_node = arguments.get("top_n")
+        if max_node is None:
+            max_node = 10
         interaction = arguments.get("interaction", None)
         string_mode = arguments.get("string_mode", True)
 
-        graph, bp_collection = self.humanbase_ppi_retrieve(
-            gene_list, tissue, max_node, interaction
-        )
+        if (
+            not isinstance(gene_list, list)
+            or not gene_list
+            or any(not isinstance(gene, str) or not gene.strip() for gene in gene_list)
+        ):
+            return {
+                "status": "error",
+                "error": "gene_list or genes must be a non-empty list of gene symbols",
+            }
+        gene_list = [gene.strip() for gene in gene_list]
+        if not isinstance(tissue, str) or not tissue.strip():
+            return {"status": "error", "error": "tissue must be a non-empty string"}
+        if (
+            isinstance(max_node, bool)
+            or not isinstance(max_node, int)
+            or not 1 <= max_node <= 100
+        ):
+            return {
+                "status": "error",
+                "error": (
+                    "neighbor_count (or legacy max_node/top_n) must be an integer "
+                    "from 1 to 100"
+                ),
+            }
+        allowed_interactions = {
+            "co-expression",
+            "protein-domain",
+            "sequence-similarity",
+            "interaction",
+            "tf-binding",
+            "gsea-microrna-targets",
+            "gsea-perturbations",
+        }
+        if interaction is not None and interaction not in allowed_interactions:
+            return {
+                "status": "error",
+                "error": "interaction must be one of: {}".format(
+                    ", ".join(sorted(allowed_interactions))
+                ),
+            }
+        if not isinstance(string_mode, bool):
+            return {"status": "error", "error": "string_mode must be a boolean"}
+
+        try:
+            graph, bp_collection = self.humanbase_ppi_retrieve(
+                gene_list, tissue, max_node, interaction
+            )
+        except (requests.exceptions.RequestException, ValueError, TypeError) as exc:
+            self._last_retrieval_metadata = {
+                "requested_genes": gene_list,
+                "complete": False,
+                "retrieval_error": str(exc),
+            }
+            return {
+                "status": "error",
+                "error": f"HumanBase retrieval failed: {exc}",
+                "query": {"genes": gene_list, "tissue": tissue},
+                "metadata": self._last_retrieval_metadata,
+            }
 
         if graph.number_of_nodes() == 0:
             return {
@@ -38,16 +103,22 @@ class HumanBaseTool(BaseTool):
                 ),
                 "query": {"genes": gene_list, "tissue": tissue},
                 "biological_processes": bp_collection,
+                "metadata": self._last_retrieval_metadata,
             }
 
         if string_mode:
             result = self._convert_to_string(graph, bp_collection, gene_list, tissue)
-            return {"status": "success", "data": result}
+            return {
+                "status": "success",
+                "data": result,
+                "metadata": self._last_retrieval_metadata,
+            }
         else:
             # For non-string mode, return structured data
             return {
                 "status": "success",
                 "data": {"graph": graph, "biological_processes": bp_collection},
+                "metadata": self._last_retrieval_metadata,
             }
 
     def get_official_gene_name(self, gene_name):
@@ -63,7 +134,7 @@ class HumanBaseTool(BaseTool):
         encoded_gene_name = urllib.parse.quote(gene_name)
         url = f"https://mygene.info/v3/query?q={encoded_gene_name}&fields=symbol,alias&species=human"
 
-        response = requests.get(url)
+        response = requests.get(url, timeout=15)
         if response.status_code != 200:
             return f"Error querying MyGene.info API: {response.status_code}"
 
@@ -81,6 +152,8 @@ class HumanBaseTool(BaseTool):
                 )
                 return symbol
             aliases = hit.get("alias", [])
+            if isinstance(aliases, str):
+                aliases = [aliases]
             if any(gene_name.upper() == alias.upper() for alias in aliases):
                 print(
                     f"[humanbase_tool] Using the official gene name: '{symbol}' instead of {gene_name}",
@@ -121,7 +194,7 @@ class HumanBaseTool(BaseTool):
                 "retmax": "1",
             }
 
-            response = requests.get(url, params=params)
+            response = requests.get(url, params=params, timeout=15)
 
             if response.status_code == 200:
                 xml_data = response.text
@@ -144,20 +217,43 @@ class HumanBaseTool(BaseTool):
         Parameters
             genes (list): List of gene names to analyze.
             tissue (str): Tissue type for tissue-specific interactions.
-            max_node (int): Maximum number of nodes to retrieve.
+            max_node (int): Number of additional neighboring genes to retrieve.
             interaction (str): Specific interaction type to filter by.
 
         Returns
             tuple: (NetworkX Graph of interactions, list of biological processes)
         """
-        entrez_result = self.get_entrez_ids(genes)
+        self._last_retrieval_metadata = {
+            "requested_genes": list(genes) if isinstance(genes, list) else genes,
+            "network_complete": False,
+            "edge_evidence_requested": 0,
+            "edge_evidence_completed": 0,
+            "edge_evidence_failures": [],
+            "go_processes_complete": False,
+            "evidence_dataset_request_limit": self.EVIDENCE_DATASET_REQUEST_LIMIT,
+            "network_neighbor_count_requested": max_node,
+            "complete": False,
+        }
+        try:
+            entrez_result = self.get_entrez_ids(genes)
+        except (requests.exceptions.RequestException, ValueError, TypeError) as exc:
+            self._last_retrieval_metadata["gene_resolution_error"] = str(exc)
+            return nx.Graph(), None
 
         # get_entrez_ids may return a string error message instead of a list
         if isinstance(entrez_result, str):
+            self._last_retrieval_metadata["gene_resolution_error"] = entrez_result
+            return nx.Graph(), None
+
+        if not isinstance(entrez_result, list):
+            self._last_retrieval_metadata["gene_resolution_error"] = (
+                "Gene resolution returned an unexpected response type"
+            )
             return nx.Graph(), None
 
         # Filter out None values (genes that could not be resolved)
         genes = [g for g in entrez_result if g is not None]
+        self._last_retrieval_metadata["resolved_entrez_ids"] = genes
         if not genes:
             return nx.Graph(), None
 
@@ -184,6 +280,8 @@ class HumanBaseTool(BaseTool):
         interaction_types = [
             "co-expression",
             "interaction",
+            "protein-domain",
+            "sequence-similarity",
             "tf-binding",
             "gsea-microrna-targets",
             "gsea-perturbations",
@@ -193,70 +291,192 @@ class HumanBaseTool(BaseTool):
             interaction = "&datatypes=".join(interaction_types)
 
         gene_id = "&entrez=".join(genes)
+        expected_max_nodes = len(set(genes)) + max_node
+        self._last_retrieval_metadata[
+            "network_expected_max_nodes"
+        ] = expected_max_nodes
         G = nx.Graph()
         bp_collection = None
 
         network_url = f"https://hb.flatironinstitute.org/api/integrations/{tissue}/network/?giant_version={giant_version}&datatypes={interaction}&entrez={gene_id}&node_size={max_node}"
-        edge_type_url = "https://hb.flatironinstitute.org/api/integrations/{tissue}/evidence/?giant_version={giant_version}&limit=20&source={source}&target={target}"
+        edge_type_url = "https://hb.flatironinstitute.org/api/integrations/{tissue}/evidence/?giant_version={giant_version}&limit={limit}&source={source}&target={target}"
 
         try:
             response = requests.get(network_url, timeout=15)
             if response.status_code == 404:
+                self._last_retrieval_metadata["network_error"] = (
+                    f"HumanBase returned 404 for tissue '{tissue}'"
+                )
                 return nx.Graph(), None
             response.raise_for_status()
             data = response.json()
+            if not isinstance(data, dict):
+                raise ValueError("HumanBase network response was not a JSON object")
+            self._last_retrieval_metadata["network_complete"] = True
 
-            if "genes" in data:
+            response_genes = data.get("genes", [])
+            response_edges = data.get("edges", [])
+            if not isinstance(response_genes, list) or not isinstance(
+                response_edges, list
+            ):
+                raise ValueError("HumanBase network genes/edges were not lists")
+
+            if response_genes:
                 G.add_nodes_from(
                     [
                         (
                             g["standard_name"],
                             {"entrez": g["entrez"], "description": g["description"]},
                         )
-                        for g in data["genes"]
+                        for g in response_genes
                     ]
                 )
+            self._last_retrieval_metadata["network_nodes_returned"] = len(
+                response_genes
+            )
+            self._last_retrieval_metadata["network_edges_returned"] = len(
+                response_edges
+            )
+            self._last_retrieval_metadata[
+                "network_neighbor_count_reached"
+            ] = bool(len(response_genes) >= expected_max_nodes)
+            self._last_retrieval_metadata["network_has_more"] = (
+                None if len(response_genes) >= expected_max_nodes else False
+            )
 
-            if "edges" in data:
-                for e in data["edges"]:
-                    source = data["genes"][e["source"]]["standard_name"]
-                    target = data["genes"][e["target"]]["standard_name"]
-                    weight = e["weight"]
-
-                    edge_response = requests.get(
-                        edge_type_url.format(
-                            tissue=tissue,
-                            giant_version=giant_version,
-                            source=G.nodes[source]["entrez"],
-                            target=G.nodes[target]["entrez"],
+            if response_edges:
+                self._last_retrieval_metadata["edge_evidence_requested"] = len(
+                    response_edges
+                )
+                for edge_index, e in enumerate(response_edges):
+                    try:
+                        source = response_genes[e["source"]]["standard_name"]
+                        target = response_genes[e["target"]]["standard_name"]
+                        weight = e["weight"]
+                    except (KeyError, IndexError, TypeError) as exc:
+                        self._last_retrieval_metadata[
+                            "edge_evidence_failures"
+                        ].append(
+                            {
+                                "edge_index": edge_index,
+                                "error": f"Malformed network edge: {exc}",
+                            }
                         )
+                        continue
+
+                    edge_info = {}
+                    evidence_datasets = []
+                    evidence_dataset_count = None
+                    evidence_datasets_complete = False
+                    evidence_error = None
+                    try:
+                        edge_response = requests.get(
+                            edge_type_url.format(
+                                tissue=tissue,
+                                giant_version=giant_version,
+                                limit=self.EVIDENCE_DATASET_REQUEST_LIMIT,
+                                source=G.nodes[source]["entrez"],
+                                target=G.nodes[target]["entrez"],
+                            ),
+                            timeout=15,
+                        )
+                        edge_response.raise_for_status()
+                        edge_data = edge_response.json()
+                        if not isinstance(edge_data, dict):
+                            raise ValueError(
+                                "HumanBase evidence response was not a JSON object"
+                            )
+                        datatypes = edge_data.get("datatypes", [])
+                        datasets = edge_data.get("datasets", [])
+                        if not isinstance(datatypes, list) or not isinstance(
+                            datasets, list
+                        ):
+                            raise ValueError(
+                                "HumanBase evidence datatypes/datasets were not lists"
+                            )
+                        edge_info = {
+                            t.get("title", "unknown"): t.get("weight")
+                            for t in datatypes
+                            if isinstance(t, dict)
+                        }
+                        evidence_datasets = datasets
+                        evidence_dataset_count = len(datasets)
+                        evidence_datasets_complete = bool(
+                            evidence_dataset_count
+                            < self.EVIDENCE_DATASET_REQUEST_LIMIT
+                        )
+                        self._last_retrieval_metadata[
+                            "edge_evidence_completed"
+                        ] += 1
+                    except (requests.exceptions.RequestException, ValueError) as exc:
+                        evidence_error = str(exc)
+                        self._last_retrieval_metadata["edge_evidence_failures"].append(
+                            {"source": source, "target": target, "error": str(exc)}
+                        )
+
+                    G.add_edge(
+                        source,
+                        target,
+                        weight=weight,
+                        interaction=edge_info,
+                        evidence_datasets=evidence_datasets,
+                        evidence_dataset_count=evidence_dataset_count,
+                        evidence_datasets_complete=evidence_datasets_complete,
+                        evidence_error=evidence_error,
                     )
-                    edge_response.raise_for_status()
-                    edge_data = edge_response.json()
-                    edge_info = {
-                        t["title"]: t["weight"] for t in edge_data["datatypes"]
-                    }
 
-                    G.add_edge(source, target, weight=weight, interaction=edge_info)
-
-        except requests.exceptions.RequestException as exc:
-            print(f"Error retrieving PPI data: {exc}")
+        except (
+            requests.exceptions.RequestException,
+            ValueError,
+            KeyError,
+            IndexError,
+            TypeError,
+        ) as exc:
+            self._last_retrieval_metadata["network_error"] = str(exc)
 
         bp_url = f"https://hb.flatironinstitute.org/api/terms/annotated/?database=gene-ontology-bp&entrez={gene_id}&max_term_size=20"
 
         try:
-            response = requests.get(bp_url)
+            response = requests.get(bp_url, timeout=15)
             response.raise_for_status()
             data = response.json()
+            if not isinstance(data, list):
+                raise ValueError("HumanBase GO response was not a JSON list")
+            self._last_retrieval_metadata["go_processes_complete"] = True
+            self._last_retrieval_metadata["go_process_count"] = len(data)
 
             if data:
-                # Grab the top 20 common pathways
-                bp_collection = [bp_entity["title"] for bp_entity in data]
-            else:
-                print(f"[{genes}] No Gene Ontology Process recorded.")
+                bp_collection = [
+                    bp_entity.get("title", "")
+                    for bp_entity in data
+                    if isinstance(bp_entity, dict) and bp_entity.get("title")
+                ]
 
-        except requests.exceptions.RequestException as exc:
-            print(f"Error retrieving biological process data: {exc}")
+        except (requests.exceptions.RequestException, ValueError, TypeError) as exc:
+            self._last_retrieval_metadata["go_processes_error"] = str(exc)
+
+        incomplete_edges = [
+            {"source": source, "target": target}
+            for source, target, edge_data in G.edges(data=True)
+            if not edge_data.get("evidence_datasets_complete", False)
+        ]
+        self._last_retrieval_metadata[
+            "edge_evidence_incomplete"
+        ] = incomplete_edges
+
+        self._last_retrieval_metadata["requested_scope_complete"] = bool(
+            self._last_retrieval_metadata.get("network_complete")
+            and self._last_retrieval_metadata.get("go_processes_complete")
+            and not self._last_retrieval_metadata.get("edge_evidence_failures")
+            and all(
+                data.get("evidence_datasets_complete", False)
+                for _, _, data in G.edges(data=True)
+            )
+        )
+        self._last_retrieval_metadata["complete"] = bool(
+            self._last_retrieval_metadata["requested_scope_complete"]
+            and self._last_retrieval_metadata.get("network_has_more") is False
+        )
 
         return G, bp_collection
 
@@ -318,6 +538,9 @@ class HumanBaseTool(BaseTool):
             for i, (source, target, data) in enumerate(graph.edges(data=True), 1):
                 weight = data.get("weight", "N/A")
                 interaction_info = data.get("interaction", {})
+                dataset_count = data.get("evidence_dataset_count")
+                datasets_complete = data.get("evidence_datasets_complete", False)
+                evidence_error = data.get("evidence_error")
 
                 output.append(f"{i:2d}. {source} ↔ {target}")
                 output.append(f"    Weight: {weight}")
@@ -330,6 +553,13 @@ class HumanBaseTool(BaseTool):
                     output.append(
                         "    Evidence Types: No detailed information available"
                     )
+                if dataset_count is not None:
+                    completeness = "complete" if datasets_complete else "at least"
+                    output.append(
+                        f"    Evidence Datasets: {completeness} {dataset_count}"
+                    )
+                if evidence_error:
+                    output.append(f"    Evidence Retrieval Error: {evidence_error}")
                 output.append("")
 
         # Biological processes
@@ -394,6 +624,10 @@ class HumanBaseTool(BaseTool):
             "• Interaction weights represent confidence scores from HumanBase"
         )
         output.append("• Evidence types indicate the source of interaction data")
+        if self._last_retrieval_metadata.get("edge_evidence_incomplete"):
+            output.append(
+                "• One or more evidence dataset lists are incomplete; inspect response metadata"
+            )
         output.append(
             "• Biological processes are derived from Gene Ontology annotations"
         )

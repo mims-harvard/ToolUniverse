@@ -1,7 +1,7 @@
 """
 COSMIC_get_mutations_by_gene
 
-Get all somatic mutations for a specific gene from COSMIC database. Returns comprehensive mutatio...
+Retrieve COSMIC mutation records constrained to one gene symbol. Repeated source records are aggr...
 """
 
 from typing import Any, Optional, Callable
@@ -9,9 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def COSMIC_get_mutations_by_gene(
-    operation: Optional[str] = None,
-    gene: Optional[str] = None,
-    gene_name: Optional[str] = None,
+    gene: str,
+    operation: Optional[str] = "get_by_gene",
     max_results: Optional[int] = 100,
     genome_build: Optional[int] = 37,
     *,
@@ -20,18 +19,16 @@ def COSMIC_get_mutations_by_gene(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get all somatic mutations for a specific gene from COSMIC database. Returns comprehensive mutatio...
+    Retrieve COSMIC mutation records constrained to one gene symbol. Repeated source records are aggr...
 
     Parameters
     ----------
     operation : str
         Operation type (fixed: get_by_gene)
     gene : str
-        Gene symbol (e.g., BRAF, TP53, EGFR, KRAS, PIK3CA). Alias: gene_name also acc...
-    gene_name : str
-        Alias for gene parameter. Gene symbol (e.g., FLT3, BRAF, TP53).
+        HGNC-style gene symbol, e.g. BRAF, TP53, HLA-DRA.
     max_results : int
-        Maximum number of mutations to return (default: 100, max: 500)
+        Maximum unique mutations to return from the accessible 500-source-record wind...
     genome_build : int
         Genome build version: 37 (GRCh37/hg19) or 38 (GRCh38/hg38). Default: 37
     stream_callback : Callable, optional
@@ -53,7 +50,6 @@ def COSMIC_get_mutations_by_gene(
         for k, v in {
             "operation": operation,
             "gene": gene,
-            "gene_name": gene_name,
             "max_results": max_results,
             "genome_build": genome_build,
         }.items()

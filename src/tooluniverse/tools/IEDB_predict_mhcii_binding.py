@@ -12,6 +12,7 @@ def IEDB_predict_mhcii_binding(
     sequence: str,
     allele: Optional[str] = "HLA-DRB1*01:01",
     method: Optional[str] = "netmhciipan_el",
+    length: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,6 +29,8 @@ def IEDB_predict_mhcii_binding(
         MHC-II allele. Examples: 'HLA-DRB1*01:01', 'HLA-DRB1*15:01'. Default: HLA-DRB...
     method : str
         Prediction method: 'netmhciipan_el' (recommended), 'netmhciipan_ba', 'nn_align'
+    length : int
+        Sliding-window peptide length IEDB scores within 'sequence'. IEDB defaults th...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,12 @@ def IEDB_predict_mhcii_binding(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"sequence": sequence, "allele": allele, "method": method}.items()
+        for k, v in {
+            "sequence": sequence,
+            "allele": allele,
+            "method": method,
+            "length": length,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

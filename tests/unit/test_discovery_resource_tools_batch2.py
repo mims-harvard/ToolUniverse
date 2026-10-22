@@ -182,6 +182,29 @@ def test_ctis_get_404_is_empty_success():
     assert out["data"] == {}
 
 
+def test_ctis_get_preserves_public_documents_and_status_fields():
+    body = {
+        "ctNumber": "2022-503001-38-01",
+        "ctPublicStatusCode": 5,
+        "ctStatus": "Authorised",
+        "trialRegion": "Both",
+        "trialRegionCode": 3,
+        "documents": [{"uuid": "doc-1", "documentTypeLabel": "Protocol"}],
+        "correctiveMeasures": [{"reason": "example"}],
+        "authorizedApplication": {},
+        "events": {},
+        "results": {},
+    }
+    with patch("tooluniverse.ctis_tool.requests.get", return_value=_resp(200, body)):
+        out = CTISGetTrialTool(_cfg("CTIS_get_trial", "CTISGetTrialTool")).run(
+            {"ct_number": "2022-503001-38-01"}
+        )
+    assert out["data"]["status"] == "Authorised"
+    assert out["data"]["trial_region_code"] == 3
+    assert out["data"]["documents"][0]["uuid"] == "doc-1"
+    assert out["data"]["corrective_measures"] == [{"reason": "example"}]
+
+
 # --------------------------- ClassyFire --------------------------- #
 from tooluniverse.classyfire_tool import ClassyFireTool  # noqa: E402
 

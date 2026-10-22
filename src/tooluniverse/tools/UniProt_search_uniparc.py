@@ -1,7 +1,7 @@
 """
 UniProt_search_uniparc
 
-Search UniParc entries. Returns UniParc entries matching the query. Use this to find UniParc entr...
+Search UniParc entries with explicit cursor pagination. data.next_cursor comes from the official ...
 """
 
 from typing import Any, Optional, Callable
@@ -11,13 +11,14 @@ from ._shared_client import get_shared_client
 def UniProt_search_uniparc(
     query: str,
     limit: Optional[int] = 25,
+    cursor: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
-    Search UniParc entries. Returns UniParc entries matching the query. Use this to find UniParc entr...
+    Search UniParc entries with explicit cursor pagination. data.next_cursor comes from the official ...
 
     Parameters
     ----------
@@ -25,6 +26,8 @@ def UniProt_search_uniparc(
         Search query. Examples: 'P04637' (protein accession), 'name:TP53', 'organism_...
     limit : int
         Maximum number of results to return (default: 25, max: 500)
+    cursor : str
+        Opaque cursor from data.next_cursor. Omit for the first page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,12 +37,16 @@ def UniProt_search_uniparc(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"query": query, "limit": limit}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {"query": query, "limit": limit, "cursor": cursor}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "UniProt_search_uniparc",

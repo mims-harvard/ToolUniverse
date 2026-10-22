@@ -1,7 +1,7 @@
 """
 LOINC_search_tests
 
-Search LOINC (Logical Observation Identifiers Names and Codes) lab tests and clinical observation...
+Search LOINC lab tests and clinical observations with the NLM Clinical Tables count+offset pagina...
 """
 
 from typing import Any, Optional, Callable
@@ -11,6 +11,7 @@ from ._shared_client import get_shared_client
 def LOINC_search_tests(
     terms: str,
     max_results: Optional[int] = 20,
+    offset: Optional[int] = 0,
     exclude_copyrighted: Optional[bool] = True,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -18,14 +19,16 @@ def LOINC_search_tests(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search LOINC (Logical Observation Identifiers Names and Codes) lab tests and clinical observation...
+    Search LOINC lab tests and clinical observations with the NLM Clinical Tables count+offset pagina...
 
     Parameters
     ----------
     terms : str
         Search terms for lab tests or observations (e.g., 'cholesterol', 'blood gluco...
     max_results : int
-        Maximum number of results to return (default: 20, max: 500)
+        Page size (default 20, range 1-500). Sent as count; maxList does not support ...
+    offset : int
+        Zero-based first result. Continue with metadata.next_offset; offset + max_res...
     exclude_copyrighted : bool
         Exclude items with external copyright notices (default: true)
     stream_callback : Callable, optional
@@ -47,6 +50,7 @@ def LOINC_search_tests(
         for k, v in {
             "terms": terms,
             "max_results": max_results,
+            "offset": offset,
             "exclude_copyrighted": exclude_copyrighted,
         }.items()
         if v is not None

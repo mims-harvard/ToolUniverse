@@ -30,6 +30,10 @@ DATASET_GENCODE_VERSION = {
 DEFAULT_GENCODE_VERSION = "v26"
 
 
+class GTExGeneResolutionError(ValueError):
+    """Raised when a gene cannot be mapped to the requested GTEx dataset."""
+
+
 def _resolve_gencode_id(
     gene_input: str, dataset_id: str = "gtex_v8", timeout: int = 30
 ) -> str:
@@ -43,8 +47,9 @@ def _resolve_gencode_id(
     suffix on the input is therefore stripped and re-resolved against the
     target dataset's GENCODE release.
     """
-    if not gene_input:
-        return gene_input
+    if not isinstance(gene_input, str) or not gene_input.strip():
+        raise GTExGeneResolutionError("gene identifier must be a non-empty string")
+    gene_input = gene_input.strip()
     gencode_version = DATASET_GENCODE_VERSION.get(dataset_id, DEFAULT_GENCODE_VERSION)
     base_id = gene_input.split(".")[0] if "." in gene_input else gene_input
     url = f"{GTEX_BASE_URL}/reference/gene"
@@ -54,13 +59,40 @@ def _resolve_gencode_id(
             params={"geneId": base_id, "gencodeVersion": gencode_version},
             timeout=timeout,
         )
-        if resp.status_code == 200:
-            genes = resp.json().get("data", [])
-            if isinstance(genes, list) and genes:
-                return genes[0].get("gencodeId", gene_input)
-    except Exception:
-        pass
-    return gene_input
+    except requests.RequestException as exc:
+        raise GTExGeneResolutionError(
+            f"GTEx gene resolution request failed for '{gene_input}': {exc}"
+        ) from exc
+    if resp.status_code != 200:
+        raise GTExGeneResolutionError(
+            f"GTEx gene resolution failed for '{gene_input}' in {dataset_id} "
+            f"(GENCODE {gencode_version}): HTTP {resp.status_code}"
+        )
+    try:
+        payload = resp.json()
+    except ValueError as exc:
+        raise GTExGeneResolutionError(
+            f"GTEx gene resolution returned invalid JSON for '{gene_input}'"
+        ) from exc
+    genes = payload.get("data", []) if isinstance(payload, dict) else []
+    if not isinstance(genes, list) or not genes:
+        raise GTExGeneResolutionError(
+            f"GTEx could not resolve gene '{gene_input}' in {dataset_id} "
+            f"(GENCODE {gencode_version})"
+        )
+    resolved = genes[0].get("gencodeId") if isinstance(genes[0], dict) else None
+    if not isinstance(resolved, str) or not resolved:
+        raise GTExGeneResolutionError(
+            f"GTEx gene resolution omitted gencodeId for '{gene_input}'"
+        )
+    if base_id.upper().startswith("ENSG") and (
+        resolved.split(".")[0].upper() != base_id.upper()
+    ):
+        raise GTExGeneResolutionError(
+            "GTEx returned a different gene identity during resolution: "
+            f"requested {base_id}, returned {resolved}"
+        )
+    return resolved
 
 
 @register_tool("GTExV2Tool")

@@ -1,7 +1,7 @@
 """
 Nextstrain_get_dataset
 
-Get metadata and phylogenetic summary for a Nextstrain pathogen dataset. Returns title, last upda...
+Get metadata and phylogenetic summary for a Nextstrain pathogen dataset. Returns title, update da...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def Nextstrain_get_dataset(
     validate: bool = True,
 ) -> Any:
     """
-    Get metadata and phylogenetic summary for a Nextstrain pathogen dataset. Returns title, last upda...
+    Get metadata and phylogenetic summary for a Nextstrain pathogen dataset. Returns title, update da...
 
     Parameters
     ----------

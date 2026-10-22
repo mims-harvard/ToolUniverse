@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def ENCODE_get_chromatin_state(
-    biosample_term_name: Optional[str | Any] = None,
+    biosample_term_name: Optional[str] = None,
     organism: Optional[str] = "Homo sapiens",
     limit: Optional[int] = 25,
     *,
@@ -22,7 +22,7 @@ def ENCODE_get_chromatin_state(
 
     Parameters
     ----------
-    biosample_term_name : str | Any
+    biosample_term_name : str
         Biosample name (e.g., 'K562', 'HepG2', 'GM12878', 'liver'). Leave empty for all.
     organism : str
         Organism scientific name.

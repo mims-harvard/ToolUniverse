@@ -1,7 +1,7 @@
 """
 SGD_get_gene
 
-Get yeast gene/locus overview from SGD (Saccharomyces Genome Database) by SGD identifier. Returns...
+Get a yeast gene/locus overview from SGD. Returns gene identifiers, descriptions, qualities, and ...
 """
 
 from typing import Any, Optional, Callable
@@ -10,18 +10,24 @@ from ._shared_client import get_shared_client
 
 def SGD_get_gene(
     sgd_id: str,
+    alias_limit: Optional[int] = 10,
+    alias_offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get yeast gene/locus overview from SGD (Saccharomyces Genome Database) by SGD identifier. Returns...
+    Get a yeast gene/locus overview from SGD. Returns gene identifiers, descriptions, qualities, and ...
 
     Parameters
     ----------
     sgd_id : str
         SGD locus identifier. Examples: 'S000000259' (GAL4), 'S000003219' (RMR1), 'S0...
+    alias_limit : int
+        Maximum aliases to return on this page.
+    alias_offset : int
+        Zero-based offset into all locus aliases.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +42,15 @@ def SGD_get_gene(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"sgd_id": sgd_id}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {
+            "sgd_id": sgd_id,
+            "alias_limit": alias_limit,
+            "alias_offset": alias_offset,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "SGD_get_gene",

@@ -102,11 +102,27 @@ class dbSNPSearchByGene(dbSNPRESTTool):
         if not gene_symbol:
             return {"status": "error", "error": "gene_symbol is required"}
 
+        limit = arguments.get("limit", 20)
+        offset = arguments.get("offset", 0)
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 100:
+            return {
+                "status": "error",
+                "error": "limit must be an integer between 1 and 100",
+                "parameter": "limit",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+                "parameter": "offset",
+            }
+
         params = {
             "db": "snp",
             "term": f"{gene_symbol}[gene]",
             "retmode": "json",
-            "retmax": arguments.get("limit", 20),
+            "retmax": limit,
+            "retstart": offset,
         }
 
         result = self._make_request(self.endpoint, params)
@@ -132,6 +148,15 @@ class dbSNPSearchByGene(dbSNPRESTTool):
                     "variants": variants,
                     "total_count": count,
                     "returned_count": len(variants),
+                    "offset": offset,
+                    "limit": limit,
+                    "has_more": offset + len(variants) < count,
+                    "next_offset": (
+                        offset + len(variants)
+                        if variants and offset + len(variants) < count
+                        else None
+                    ),
+                    "truncated": offset + len(variants) < count,
                 }
 
                 result["data"] = parsed_data

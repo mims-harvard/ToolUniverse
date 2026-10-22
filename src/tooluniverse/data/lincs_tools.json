@@ -1,7 +1,7 @@
 [
   {
     "name": "LINCS_search_signatures",
-    "description": "Search LINCS (Library of Integrated Network-Based Cellular Signatures) for drug perturbation gene expression signatures. Find L1000 and other assay signatures by drug/compound name, optionally filtered by cell line. Returns signature IDs, doses, time points, tissue, disease context, and PubChem IDs. LINCS contains 1.5M+ signatures from 431+ libraries covering thousands of drugs across hundreds of cell lines. Example: searching 'vorinostat' returns HDAC inhibitor signatures across multiple cell lines and doses.",
+    "description": "Search LINCS SigCom drug perturbation signatures with offset pagination and pages up to 1000 records. The service has no count endpoint, so this tool uses a one-record lookahead to report reliable has_more and next_offset without presenting the current page length as a total. Returns signature IDs, doses, time points, cell lines, tissues, and disease context.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -15,7 +15,14 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum number of signatures to return (1-100). Default: 20."
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Signatures per page (1-1000, default 20)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Zero-based signature offset (default 0). Continue with metadata.next_offset."
         }
       },
       "required": [
@@ -45,7 +52,7 @@
   },
   {
     "name": "LINCS_list_libraries",
-    "description": "List available LINCS signature libraries with metadata. LINCS SigCom contains 431+ libraries covering L1000 gene expression, kinase profiling, cell growth inhibition, proteomics, and other assay types. Optionally filter by keyword (e.g., 'L1000', 'kinase', 'proteomics'). Returns library IDs, dataset identifiers, assay types, organisms, and descriptions.",
+    "description": "List and optionally keyword-filter the complete LINCS SigCom library catalog. Filtering is applied to the full catalog before exact local offset pagination; metadata reports total_libraries, exact total_matches, has_more, and next_offset.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -55,7 +62,14 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum number of libraries to return (1-100). Default: 50."
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Libraries per page (1-1000, default 50)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Zero-based offset into the filtered library list. Continue with metadata.next_offset."
         }
       },
       "required": []

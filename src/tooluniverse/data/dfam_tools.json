@@ -1,7 +1,7 @@
 [
   {
     "name": "Dfam_search_families",
-    "description": "Search Dfam for transposable element (TE) / repeat element families by name prefix, taxonomic clade, or repeat type. Dfam is the authoritative database of repetitive DNA, including SINEs (Alu), LINEs (L1), DNA transposons, LTR retrotransposons, and satellites. Returns family accession, name, length, classification, and repeat type. Useful for identifying repeat families in a genome or studying transposon evolution. Example: searching name_prefix='AluS' returns Alu SINE subfamilies (AluSc, AluSx, etc.) found in primates; clade=9606 with repeat_type='SINE' returns human-specific SINEs.",
+    "description": "Search Dfam repeat families with explicit offset pagination and pages up to 1000 records. Returns family accession, classification, length, and repeat type; metadata reports the exact total, truncation, and next_offset.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -19,7 +19,15 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum number of results (default 20, max 50)."
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Maximum number of results (default 20, max 1000). Values above 1000 are rejected explicitly."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based result offset, mapped to Dfam's official start parameter. Continue with metadata.next_offset."
         }
       },
       "required": []

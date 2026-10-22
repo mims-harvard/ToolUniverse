@@ -9,10 +9,12 @@ from ._shared_client import get_shared_client
 
 
 def CellMarker_search_by_gene(
-    operation: str,
     gene_symbol: str,
+    operation: Optional[str] = "search_by_gene",
     species: Optional[str] = None,
     tissue_type: Optional[str] = None,
+    limit: Optional[int] = 500,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -31,6 +33,10 @@ def CellMarker_search_by_gene(
         Species filter: 'Human' or 'Mouse'. If omitted, searches both species.
     tissue_type : str
         Filter results by tissue type (e.g., 'Blood', 'Lung', 'Brain'). Case-insensit...
+    limit : int
+        Maximum number of curated records to return in this page.
+    offset : int
+        Zero-based record offset. Use data.next_offset for the next page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +58,8 @@ def CellMarker_search_by_gene(
             "gene_symbol": gene_symbol,
             "species": species,
             "tissue_type": tissue_type,
+            "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

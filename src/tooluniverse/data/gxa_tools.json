@@ -1,7 +1,7 @@
 [
   {
     "name": "GxA_list_experiments",
-    "description": "List gene expression experiments from EBI Gene Expression Atlas. Can filter by species (e.g., 'Homo sapiens') and experiment type ('baseline' for tissue expression, 'differential' for condition comparisons). The Atlas contains 4,500+ experiments across hundreds of species. Example: filtering by 'Homo sapiens' and 'baseline' returns 123 human tissue-level expression experiments including E-MTAB-2836 (122 human tissues), E-MTAB-2706 (675 cancer cell lines), and E-GEOD-46817 (melanoma).",
+    "description": "List a resumable page of gene expression experiments from EBI Gene Expression Atlas. Filter by species and experiment type; data.total_experiments is the exact post-filter count and data.next_offset continues beyond the current page.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -15,7 +15,14 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum number of experiments to return (1-100). Default: 20."
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Page size (1-100). Default: 20."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Zero-based experiment offset. Continue with data.next_offset."
         }
       },
       "required": []
@@ -101,6 +108,19 @@
         "gene_id": {
           "type": "string",
           "description": "Optional Ensembl gene ID to filter expression data for a specific gene (e.g., 'ENSG00000141510' for TP53). Leave empty for all genes in the experiment."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 50,
+          "description": "Maximum number of gene profiles to scan and return per page (1-500; default 50). Use offset to retrieve subsequent profiles."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset into the filtered gene profiles (default 0). Continue with next_offset while has_more is true."
         }
       },
       "required": [
@@ -160,6 +180,33 @@
             "total_gene_profiles": {
               "type": "integer",
               "description": "Total genes with expression data"
+            },
+            "offset": {
+              "type": "integer",
+              "description": "Zero-based offset used for this page"
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Requested page size"
+            },
+            "returned": {
+              "type": "integer",
+              "description": "Number of non-empty gene profiles returned on this page"
+            },
+            "rows_scanned": {
+              "type": "integer",
+              "description": "Number of source profile rows examined on this page"
+            },
+            "has_more": {
+              "type": "boolean",
+              "description": "Whether more filtered profile rows remain"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Offset for the next page, or null when complete"
             },
             "gene_profiles": {
               "type": "array",

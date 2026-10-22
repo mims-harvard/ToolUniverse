@@ -158,7 +158,7 @@ class CIViCTool(BaseTool):
         return None
 
     def _get_variants_for_gene_id(
-        self, gene_id: int, limit: int = 500
+        self, gene_id: int, limit: int = 500, after: Optional[str] = None
     ) -> Dict[str, Any]:
         """Fetch variants for a given CIViC gene_id via GraphQL.
 
@@ -171,12 +171,14 @@ class CIViCTool(BaseTool):
             "query GetVariantsByGene($gene_id: Int!, $page_size: Int, $after: String) { "
             "gene(id: $gene_id) { id name variants(first: $page_size, after: $after) { "
             "nodes { id name ... on GeneVariant { feature { id name } } } "
-            "pageInfo { hasNextPage endCursor } } } }"
+            "totalCount pageInfo { hasNextPage endCursor } } } }"
         )
         PAGE_SIZE = 100  # CIViC server max per page
         all_nodes: list = []
-        cursor = None
+        cursor = after
         gene_meta: Dict[str, Any] = {}
+        total_count: Optional[int] = None
+        page_info: Dict[str, Any] = {"hasNextPage": False, "endCursor": None}
         try:
             while len(all_nodes) < limit:
                 fetch = min(PAGE_SIZE, limit - len(all_nodes))
@@ -207,6 +209,8 @@ class CIViCTool(BaseTool):
                         "name": gene_data.get("name"),
                     }
                 variants_block = gene_data.get("variants", {})
+                if total_count is None:
+                    total_count = variants_block.get("totalCount")
                 nodes = variants_block.get("nodes", [])
                 all_nodes.extend(nodes)
                 page_info = variants_block.get("pageInfo", {})
@@ -236,10 +240,27 @@ class CIViCTool(BaseTool):
             data = {
                 "gene": {
                     **gene_meta,
-                    "variants": {"nodes": all_nodes[:limit]},
+                    "variants": {
+                        "nodes": all_nodes[:limit],
+                        "totalCount": total_count,
+                        "pageInfo": page_info,
+                    },
                 }
             }
-            metadata: Dict[str, Any] = {"source": "CIViC", "format": "GraphQL"}
+            returned = len(all_nodes[:limit])
+            has_more = bool(page_info.get("hasNextPage"))
+            metadata: Dict[str, Any] = {
+                "source": "CIViC",
+                "format": "GraphQL",
+                "returned": returned,
+                "total_results": total_count,
+                "limit": limit,
+                "has_more": has_more,
+                "next_cursor": page_info.get("endCursor") if has_more else None,
+                "result_set_complete": after is None
+                and total_count is not None
+                and returned == total_count,
+            }
             if duplicate_names:
                 metadata["note"] = (
                     f"Multiple distinct CIViC variant records share the same name(s): "
@@ -254,6 +275,68 @@ class CIViCTool(BaseTool):
             }
         except Exception as e:
             return {"status": "error", "error": f"CIViC API request failed: {str(e)}"}
+
+    def _execute_paginated_search(
+        self, arguments: Dict[str, Any], root_field: str
+    ) -> Dict[str, Any]:
+        """Fetch a CIViC GraphQL connection without treating its page cap as a total."""
+        requested_limit = arguments.get("limit", 20)
+        if (
+            not isinstance(requested_limit, int)
+            or isinstance(requested_limit, bool)
+            or requested_limit < 1
+        ):
+            raise ValueError("limit must be a positive integer")
+        requested_limit = min(requested_limit, 1000)
+
+        all_nodes = []
+        cursor = arguments.get("after")
+        total_count = None
+        page_info: Dict[str, Any] = {"hasNextPage": False, "endCursor": None}
+        while len(all_nodes) < requested_limit:
+            page_args = dict(arguments)
+            page_args["limit"] = min(100, requested_limit - len(all_nodes))
+            if cursor:
+                page_args["after"] = cursor
+            else:
+                page_args.pop("after", None)
+
+            response = requests.post(
+                CIVIC_GRAPHQL_URL,
+                json=self._build_graphql_query(page_args),
+                timeout=self.timeout,
+                headers={
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    "User-Agent": "ToolUniverse/CIViC",
+                },
+            )
+            response.raise_for_status()
+            payload = response.json()
+            if payload.get("errors"):
+                return payload
+
+            connection = payload.get("data", {}).get(root_field, {})
+            if total_count is None:
+                total_count = connection.get("totalCount")
+            nodes = connection.get("nodes", [])
+            all_nodes.extend(nodes)
+            page_info = connection.get("pageInfo", {})
+            if not page_info.get("hasNextPage") or not nodes:
+                break
+            cursor = page_info.get("endCursor")
+            if not cursor:
+                break
+
+        return {
+            "data": {
+                root_field: {
+                    "nodes": all_nodes[:requested_limit],
+                    "totalCount": total_count,
+                    "pageInfo": page_info,
+                }
+            }
+        }
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the CIViC GraphQL API call."""
@@ -282,7 +365,9 @@ class CIViCTool(BaseTool):
                 arguments = dict(arguments)
                 arguments["gene_id"] = gene_id
             return self._get_variants_for_gene_id(
-                arguments["gene_id"], arguments.get("limit", 500)
+                arguments["gene_id"],
+                arguments.get("limit", 500),
+                arguments.get("after"),
             )
 
         # Feature-40B-01: civic_search_evidence_items — warn on unsupported gene/variant params.
@@ -609,23 +694,24 @@ class CIViCTool(BaseTool):
                     arguments["molecular_profile"] = normalized_mp
 
         try:
-            # Build GraphQL query
-            payload = self._build_graphql_query(arguments)
-
-            # Make GraphQL request
-            response = requests.post(
-                CIVIC_GRAPHQL_URL,
-                json=payload,
-                timeout=self.timeout,
-                headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                    "User-Agent": "ToolUniverse/CIViC",
-                },
-            )
-
-            response.raise_for_status()
-            data = response.json()
+            if tool_name == "civic_search_variants":
+                data = self._execute_paginated_search(arguments, "variants")
+            elif tool_name == "civic_search_evidence_items":
+                data = self._execute_paginated_search(arguments, "evidenceItems")
+            else:
+                payload = self._build_graphql_query(arguments)
+                response = requests.post(
+                    CIVIC_GRAPHQL_URL,
+                    json=payload,
+                    timeout=self.timeout,
+                    headers={
+                        "Content-Type": "application/json",
+                        "Accept": "application/json",
+                        "User-Agent": "ToolUniverse/CIViC",
+                    },
+                )
+                response.raise_for_status()
+                data = response.json()
 
             # Check for GraphQL errors
             if "errors" in data:
@@ -645,6 +731,71 @@ class CIViCTool(BaseTool):
                     "endpoint": CIVIC_GRAPHQL_URL,
                 },
             }
+
+            if tool_name in (
+                "civic_search_genes",
+                "civic_search_variants",
+                "civic_search_evidence_items",
+                "civic_search_assertions",
+                "civic_search_molecular_profiles",
+                "civic_search_diseases",
+                "civic_search_therapies",
+            ):
+                root_field = {
+                    "civic_search_genes": "genes",
+                    "civic_search_variants": "variants",
+                    "civic_search_evidence_items": "evidenceItems",
+                    "civic_search_assertions": "assertions",
+                    "civic_search_molecular_profiles": "molecularProfiles",
+                    "civic_search_diseases": "browseDiseases",
+                    "civic_search_therapies": "browseTherapies",
+                }[tool_name]
+                connection = result["data"].get(root_field, {})
+                page_info = connection.get("pageInfo", {})
+                result["metadata"].update(
+                    {
+                        "returned": len(connection.get("nodes", [])),
+                        "total_results": connection.get("totalCount"),
+                        "total_results_is_exact": connection.get("totalCount") is not None,
+                        "has_more": bool(page_info.get("hasNextPage")),
+                        "next_cursor": page_info.get("endCursor")
+                        if page_info.get("hasNextPage")
+                        else None,
+                    }
+                )
+
+            if tool_name == "civic_get_molecular_profile":
+                profile = result["data"].get("molecularProfile") or {}
+                connection = profile.get("evidenceItems") or {}
+                page_info = connection.get("pageInfo") or {}
+                has_more = bool(page_info.get("hasNextPage"))
+                result["metadata"].update(
+                    {
+                        "evidence_returned": len(connection.get("nodes", [])),
+                        "evidence_total_results": connection.get("totalCount"),
+                        "evidence_total_results_is_exact": connection.get("totalCount") is not None,
+                        "evidence_has_more": has_more,
+                        "next_evidence_cursor": page_info.get("endCursor") if has_more else None,
+                    }
+                )
+
+            if tool_name == "civic_get_variant":
+                variant = result["data"].get("variant") or {}
+                connection = variant.get("molecularProfiles") or {}
+                page_info = connection.get("pageInfo") or {}
+                has_more = bool(page_info.get("hasNextPage"))
+                result["metadata"].update(
+                    {
+                        "molecular_profiles_returned": len(connection.get("nodes", [])),
+                        "molecular_profiles_total_results": connection.get("totalCount"),
+                        "molecular_profiles_total_results_is_exact": connection.get("totalCount")
+                        is not None,
+                        "molecular_profiles_has_more": has_more,
+                        "next_molecular_profile_cursor": page_info.get("endCursor")
+                        if has_more
+                        else None,
+                    }
+                )
 
             # Feature-55A-008 / Feature-55B-005: disclose any input normalizations applied.
             _norm_parts = []

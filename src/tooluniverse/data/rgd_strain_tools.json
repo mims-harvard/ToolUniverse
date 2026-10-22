@@ -2,7 +2,7 @@
   {
     "type": "RGDStrainTool",
     "name": "RGD_search_strains",
-    "description": "Search the Rat Genome Database (RGD) rat strain catalog by keyword and/or strain type. Rat inbred/congenic/transgenic strains are RGD's flagship rat-specific resource (not in Alliance of Genome Resources or MGI). Provide 'query' (a keyword matched against symbol, name, full strain name, genetics, and description) and/or 'strain_type' (one of: inbred, congenic, mutant, transgenic, recombinant_inbred, outbred, consomic, coisogenic, segregating_inbred, hybrid, wild, conplastic, advanced_intercross_line, transchromosomal). At least one of the two must be supplied. Returns matching strains with their RGD ID, symbol, name, type, genetics, and origin.",
+    "description": "Search the Rat Genome Database (RGD) rat strain catalog by keyword and/or strain type. Results are recoverably paginated: start with offset=0 and continue with metadata.next_offset while metadata.has_more is true. Provide query and/or strain_type. Returns matching strains with their RGD ID, symbol, name, type, genetics, and origin.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -26,6 +26,15 @@
             "null"
           ],
           "description": "Maximum number of strains to return (default 25, max 200)."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based matching-strain offset. Continue with metadata.next_offset while metadata.has_more is true."
         }
       },
       "required": []

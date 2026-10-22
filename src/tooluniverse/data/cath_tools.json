@@ -230,7 +230,7 @@
   },
   {
     "name": "CATH_list_funfams",
-    "description": "List functional families (FunFams) within a CATH superfamily. FunFams group protein domains that share the same function, identified by conserved specificity-determining residues. Returns FunFam numbers, names, member counts, and representative domain IDs. Example: superfamily 1.10.510.10 (Globin-like) has 4,524 FunFams including CaM kinase (2,698 members) and Myosin light chain kinase (1,234 members). Use CATH_get_superfamily to find superfamily IDs first.",
+    "description": "List functional families (FunFams) within a CATH superfamily. FunFams group protein domains that share the same function, identified by conserved specificity-determining residues. Returns FunFam numbers, names, member counts, and representative domain IDs, with next_offset pagination across the complete upstream list. Example: superfamily 1.10.510.10 (Globin-like) has 4,524 FunFams including CaM kinase (2,698 members) and Myosin light chain kinase (1,234 members). Use CATH_get_superfamily to find superfamily IDs first.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -244,6 +244,12 @@
           "minimum": 1,
           "maximum": 100,
           "description": "Maximum number of FunFams to return (default: 25)."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based FunFam offset. Continue with data.next_offset while has_more is true."
         }
       },
       "required": [
@@ -273,6 +279,12 @@
         "total_funfams": {
           "type": "integer"
         },
+        "returned": {"type": "integer"},
+        "offset": {"type": "integer"},
+        "max_results": {"type": "integer"},
+        "has_more": {"type": "boolean"},
+        "truncated": {"type": "boolean"},
+        "next_offset": {"type": ["integer", "null"]},
         "funfams": {
           "type": "array",
           "items": {

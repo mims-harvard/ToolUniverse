@@ -78,7 +78,12 @@ class GxATool(BaseTool):
         """List/search gene expression experiments."""
         species = arguments.get("species", "")
         experiment_type = arguments.get("experiment_type", "")
-        limit = min(arguments.get("limit", 20), 100)
+        limit = arguments.get("limit", 20)
+        offset = arguments.get("offset", 0)
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 100:
+            return {"status": "error", "error": "limit must be an integer from 1 to 100"}
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {"status": "error", "error": "offset must be a non-negative integer"}
 
         url = f"{GXA_BASE_URL}/experiments"
         params = {}
@@ -111,7 +116,7 @@ class GxATool(BaseTool):
 
         # Limit results
         total = len(experiments)
-        experiments = experiments[:limit]
+        experiments = experiments[offset : offset + limit]
 
         results = []
         for exp in experiments:
@@ -134,6 +139,14 @@ class GxATool(BaseTool):
             "data": {
                 "total_experiments": total,
                 "returned": len(results),
+                "offset": offset,
+                "limit": limit,
+                "has_more": offset + len(results) < total,
+                "next_offset": (
+                    offset + len(results)
+                    if offset + len(results) < total
+                    else None
+                ),
                 "experiments": results,
             },
             "metadata": {
@@ -153,6 +166,8 @@ class GxATool(BaseTool):
             }
 
         gene_id = arguments.get("gene_id", "")
+        limit = max(1, min(int(arguments.get("limit", 50)), 500))
+        offset = max(0, int(arguments.get("offset", 0)))
 
         url = f"{GXA_BASE_URL}/experiments/{accession}"
         # Feature-69A-003: the GxA /experiments/{accession} endpoint does NOT support
@@ -192,8 +207,10 @@ class GxATool(BaseTool):
             gene_id_upper = gene_id.upper()
             rows = [r for r in rows if self._gene_id_matches(r, gene_id_upper)]
 
+        total_gene_profiles = len(rows)
+        page_rows = rows[offset : offset + limit]
         gene_profiles = []
-        for row in rows[:50]:  # Limit to first 50 genes
+        for row in page_rows:
             expressions = []
             row_exprs = row.get("expressions", [])
             for i, expr in enumerate(row_exprs):
@@ -223,7 +240,17 @@ class GxATool(BaseTool):
                 "experiment_accession": accession,
                 "experiment_description": exp_info.get("description", ""),
                 "columns": columns,
-                "total_gene_profiles": len(rows),
+                "total_gene_profiles": total_gene_profiles,
+                "offset": offset,
+                "limit": limit,
+                "returned": len(gene_profiles),
+                "rows_scanned": len(page_rows),
+                "has_more": offset + len(page_rows) < total_gene_profiles,
+                "next_offset": (
+                    offset + len(page_rows)
+                    if offset + len(page_rows) < total_gene_profiles
+                    else None
+                ),
                 "gene_profiles": gene_profiles,
             },
             "metadata": {

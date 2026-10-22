@@ -40,6 +40,18 @@ class RegulomeDBRESTTool(BaseTool):
                 "error": f"No RegulomeDB results for rsID '{arguments.get('rsid', '')}'",
             }
 
+        nearby_snps = raw.get("nearby_snps", []) or []
+        nearby_snp_offset = max(int(arguments.get("nearby_snp_offset") or 0), 0)
+        nearby_snp_limit = max(
+            1, min(int(arguments.get("nearby_snp_limit") or 10), 500)
+        )
+        nearby_snp_page = nearby_snps[
+            nearby_snp_offset : nearby_snp_offset + nearby_snp_limit
+        ]
+        next_nearby_snp_offset = nearby_snp_offset + len(nearby_snp_page)
+        if next_nearby_snp_offset >= len(nearby_snps):
+            next_nearby_snp_offset = None
+
         result = {
             "rsid": arguments.get("rsid", ""),
             "assembly": raw.get("assembly"),
@@ -47,7 +59,11 @@ class RegulomeDBRESTTool(BaseTool):
             "regulome_score": raw.get("regulome_score"),
             "variants": variants,
             "features": raw.get("features"),
-            "nearby_snps": raw.get("nearby_snps", [])[:10],
+            "nearby_snps": nearby_snp_page,
+            "nearby_snps_total": len(nearby_snps),
+            "nearby_snps_returned": len(nearby_snp_page),
+            "nearby_snps_truncated": next_nearby_snp_offset is not None,
+            "next_nearby_snp_offset": next_nearby_snp_offset,
             "notifications": raw.get("notifications"),
             "total_supporting_datasets": len(raw.get("@graph", [])),
         }

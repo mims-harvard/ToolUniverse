@@ -1,7 +1,7 @@
 """
 ArXiv_search_papers
 
-Search arXiv for papers by keyword using the public arXiv API. Returns papers with title, abstrac...
+Search arXiv using the public Atom API with exact OpenSearch totals and recoverable start paginat...
 """
 
 from typing import Any, Optional, Callable
@@ -11,6 +11,7 @@ from ._shared_client import get_shared_client
 def ArXiv_search_papers(
     query: str,
     limit: Optional[int] = 10,
+    start: Optional[int] = 0,
     sort_by: Optional[str] = "relevance",
     sort_order: Optional[str] = "descending",
     date_from: Optional[str] = None,
@@ -21,14 +22,16 @@ def ArXiv_search_papers(
     validate: bool = True,
 ) -> Any:
     """
-    Search arXiv for papers by keyword using the public arXiv API. Returns papers with title, abstrac...
+    Search arXiv using the public Atom API with exact OpenSearch totals and recoverable start paginat...
 
     Parameters
     ----------
     query : str
         Search query for arXiv papers. Unquoted, unprefixed space-separated keywords ...
     limit : int
-        Number of papers to return. This sets the maximum number of papers retrieved ...
+        Number of papers to return (1-200). This sets the maximum number of papers re...
+    start : int
+        Zero-based result offset. For the next page, add the number of papers returne...
     sort_by : str
         Sort order for results. Options: 'relevance', 'lastUpdatedDate', 'submittedDate'
     sort_order : str
@@ -56,6 +59,7 @@ def ArXiv_search_papers(
         for k, v in {
             "query": query,
             "limit": limit,
+            "start": start,
             "sort_by": sort_by,
             "sort_order": sort_order,
             "date_from": date_from,

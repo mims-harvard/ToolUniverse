@@ -1,7 +1,7 @@
 """
 WikiPathways_get_pathway
 
-Fetch pathway content by WPID (JSON/GPML). Use to programmatically access pathway nodes/edges/met...
+Fetch a WikiPathways pathway by WPID. format=json returns SPARQL pathway metadata plus a recovera...
 """
 
 from typing import Any, Optional, Callable
@@ -11,13 +11,15 @@ from ._shared_client import get_shared_client
 def WikiPathways_get_pathway(
     wpid: str,
     format: Optional[str] = "json",
+    gene_limit: Optional[int] = 200,
+    gene_offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
-    Fetch pathway content by WPID (JSON/GPML). Use to programmatically access pathway nodes/edges/met...
+    Fetch a WikiPathways pathway by WPID. format=json returns SPARQL pathway metadata plus a recovera...
 
     Parameters
     ----------
@@ -25,6 +27,10 @@ def WikiPathways_get_pathway(
         WikiPathways identifier (e.g., 'WP254').
     format : str
         Response format: 'json' for structured, 'gpml' for GPML XML.
+    gene_limit : int
+        Gene-participant rows per page when format=json.
+    gene_offset : int
+        Zero-based gene-participant row offset; continue with metadata.next_gene_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,12 +40,21 @@ def WikiPathways_get_pathway(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"wpid": wpid, "format": format}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {
+            "wpid": wpid,
+            "format": format,
+            "gene_limit": gene_limit,
+            "gene_offset": gene_offset,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "WikiPathways_get_pathway",

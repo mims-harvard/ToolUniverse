@@ -132,11 +132,56 @@ class iDigBioSearchTool(BaseTool):
         self.timeout = tool_config.get("fields", {}).get("timeout", 30)
         self.mode = tool_config.get("fields", {}).get("mode", "records")
 
-    def _limit(self, arguments: Dict[str, Any], default: int = 10) -> int:
-        try:
-            return max(1, min(int(arguments.get("limit") or default), 100))
-        except (TypeError, ValueError):
-            return default
+    @staticmethod
+    def _pagination(arguments: Dict[str, Any]):
+        limit = arguments.get("limit", 10)
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 100:
+            return None, None, {
+                "status": "error",
+                "error": "limit must be an integer between 1 and 100",
+                "parameter": "limit",
+            }
+        offset = arguments.get("offset", 0)
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return None, None, {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+                "parameter": "offset",
+            }
+        return limit, offset, None
+
+    @staticmethod
+    def _search_result(payload: Any, rq: Dict[str, Any], limit: int, offset: int, summarizer):
+        if not isinstance(payload, dict) or not isinstance(payload.get("items", []), list):
+            return {
+                "status": "error",
+                "error": "iDigBio returned an unexpected search payload",
+            }
+        items = payload.get("items", []) or []
+        data = [summarizer(it) for it in items if isinstance(it, dict)]
+        total = payload.get("itemCount")
+        total_is_exact = isinstance(total, int) and not isinstance(total, bool) and total >= 0
+        if not total_is_exact:
+            total = None
+        has_more = offset + len(items) < total if total_is_exact else None
+        truncated = offset > 0 or has_more is True or not total_is_exact
+        return {
+            "status": "success",
+            "data": data,
+            "metadata": {
+                "total_available": total,
+                "total_available_is_exact": total_is_exact,
+                "returned": len(data),
+                "limit": limit,
+                "offset": offset,
+                "has_more": has_more,
+                "next_offset": offset + len(items) if has_more else None,
+                "truncated": truncated,
+                "result_set_complete": not truncated,
+                "query": rq,
+                "source": "iDigBio",
+            },
+        }
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         if self.mode == "summary":
@@ -153,23 +198,16 @@ class iDigBioSearchTool(BaseTool):
                 "error": "Provide at least one query field: "
                 + ", ".join(_QUERY_FIELDS),
             }
-        params = {"rq": json.dumps(rq), "limit": self._limit(arguments)}
+        limit, offset, pagination_error = self._pagination(arguments)
+        if pagination_error is not None:
+            return pagination_error
+        params = {"rq": json.dumps(rq), "limit": limit, "offset": offset}
         payload, err = _idigbio_get(
             f"{IDIGBIO_BASE}/search/records/", params, self.timeout
         )
         if err is not None:
             return err
-        items = payload.get("items", []) or []
-        return {
-            "status": "success",
-            "data": [_summarize(it) for it in items if isinstance(it, dict)],
-            "metadata": {
-                "total_available": payload.get("itemCount"),
-                "returned": len(items),
-                "query": rq,
-                "source": "iDigBio",
-            },
-        }
+        return self._search_result(payload, rq, limit, offset, _summarize)
 
     def _run_media(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         rq = _build_rq(arguments)
@@ -179,23 +217,16 @@ class iDigBioSearchTool(BaseTool):
                 "error": "Provide at least one query field (e.g. scientificname, "
                 "genus, family) or an rq query.",
             }
-        params = {"rq": json.dumps(rq), "limit": self._limit(arguments, 10)}
+        limit, offset, pagination_error = self._pagination(arguments)
+        if pagination_error is not None:
+            return pagination_error
+        params = {"rq": json.dumps(rq), "limit": limit, "offset": offset}
         payload, err = _idigbio_get(
             f"{IDIGBIO_BASE}/search/media/", params, self.timeout
         )
         if err is not None:
             return err
-        items = payload.get("items", []) or []
-        return {
-            "status": "success",
-            "data": [_media_summary(it) for it in items if isinstance(it, dict)],
-            "metadata": {
-                "total_available": payload.get("itemCount"),
-                "returned": len(items),
-                "query": rq,
-                "source": "iDigBio",
-            },
-        }
+        return self._search_result(payload, rq, limit, offset, _media_summary)
 
     def _run_summary(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         rq = _build_rq(arguments)

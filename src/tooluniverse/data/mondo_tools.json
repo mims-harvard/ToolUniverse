@@ -1,7 +1,7 @@
 [
   {
     "name": "Mondo_search_disease",
-    "description": "Search the Mondo Disease Ontology for diseases by name or keyword. Mondo unifies disease identifiers across OMIM, Orphanet, DOID, MeSH, ICD-10, NCIT, and other ontologies into a single MONDO ID. Returns matching disease entries with their Mondo IDs, descriptions, and cross-references. Use this to find the Mondo ID for a disease before querying Mondo_get_disease or Mondo_get_disease_phenotypes. Examples: 'Alzheimer' returns MONDO:0004975, 'breast cancer' returns MONDO:0007254, 'diabetes' returns MONDO:0005015.",
+    "description": "Search Mondo diseases by name or keyword with exact offset pagination. Metadata reports total_results, has_more and next_offset; continue until has_more is false.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -11,12 +11,22 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum number of results to return (default: 10, max: 50)."
+          "minimum": 1,
+          "maximum": 50,
+          "default": 10,
+          "description": "Disease results per page (1-50)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset. Continue with metadata.next_offset."
         }
       },
       "required": [
         "query"
-      ]
+      ],
+      "additionalProperties": false
     },
     "fields": {
       "endpoint": "mondo_search"
@@ -281,7 +291,7 @@
   },
   {
     "name": "Mondo_get_disease_phenotypes",
-    "description": "Get HPO (Human Phenotype Ontology) phenotypes associated with a Mondo disease. Returns the phenotype IDs (HP:xxxxxxx), names, and the specific disease subtype contributing each phenotype. Data comes from OMIM, Orphanet, and clinical annotations. Use this to understand clinical presentations and symptoms of a disease. First find the Mondo ID using Mondo_search_disease, then query phenotypes here.",
+    "description": "Get HPO phenotypes associated with a Mondo disease using exact offset pagination. Metadata reports total_phenotypes, has_more and next_offset.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -291,12 +301,22 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum number of phenotypes to return (default: 20, max: 200)."
+          "minimum": 1,
+          "maximum": 200,
+          "default": 20,
+          "description": "Phenotypes per page (1-200)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset. Continue with metadata.next_offset."
         }
       },
       "required": [
         "disease_id"
-      ]
+      ],
+      "additionalProperties": false
     },
     "fields": {
       "endpoint": "mondo_phenotypes"

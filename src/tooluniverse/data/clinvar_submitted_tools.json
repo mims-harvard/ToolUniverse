@@ -157,7 +157,7 @@
   },
   {
     "name": "ClinVar_search_by_region",
-    "description": "Find ClinVar variants that OVERLAP a genomic region, including large copy-number variants that begin far outside it. Use this for 'which variant is located at chr:start-end' questions: Entrez's chrpos search matches a variant's START position, so a narrow window misses a pathogenic CNV that spans the region but starts megabases upstream (an 11 bp search at chr7:155593770-155593780 returns nothing, though a 1.5 Mb pathogenic loss covers it). Results are sorted smallest span first, so the most specific overlapping variant comes first.",
+    "description": "Find ClinVar variants that overlap a genomic region, including large copy-number variants that begin upstream. Uses two-dimensional pagination: exhaust next_result_offset within the current NCBI candidate page, then advance next_candidate_offset. candidate_total is the exact Entrez count. Results are span-sorted within each candidate page; aggregate every candidate page before making global completeness or smallest-span claims.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -197,8 +197,29 @@
         },
         "max_results": {
           "type": "integer",
-          "description": "Maximum overlapping variants to return. Default 50.",
+          "minimum": 1,
+          "maximum": 500,
+          "description": "Maximum overlapping variants to return from this candidate page. Default 50.",
           "default": 50
+        },
+        "result_offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Offset within overlaps found in the current candidate page. Follow next_result_offset first."
+        },
+        "candidate_limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 500,
+          "description": "Number of Entrez candidates to inspect in this page."
+        },
+        "candidate_offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Entrez candidate offset. Advance to next_candidate_offset after exhausting result pages."
         }
       },
       "required": []

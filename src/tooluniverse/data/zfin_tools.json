@@ -513,10 +513,16 @@
           "type": "string",
           "description": "ZFIN gene ID, with or without the 'ZFIN:' prefix. Examples: 'ZFIN:ZDB-GENE-990415-8' (pax2a), 'ZFIN:ZDB-GENE-980526-166' (shha), 'ZFIN:ZDB-GENE-990415-72' (tp53)."
         },
-        "limit": {
-          "type": "integer",
-          "description": "Max annotations to return (default 50, max 100).",
-          "default": 50
+      "limit": {
+        "type": "integer",
+        "description": "Max annotations to return (default 50, max 100).",
+        "default": 50
+      },
+      "page": {
+        "type": "integer",
+        "minimum": 1,
+        "default": 1,
+        "description": "One-based annotation page. Continue with next_page while has_more is true."
         }
       },
       "required": [
@@ -541,9 +547,15 @@
             "total_annotations": {
               "type": "integer"
             },
-            "returned": {
-              "type": "integer"
-            },
+          "returned": {
+            "type": "integer"
+          },
+          "limit": {"type": "integer"},
+          "page": {"type": "integer"},
+          "total_pages": {"type": "integer"},
+          "has_more": {"type": "boolean"},
+          "next_page": {"type": ["integer", "null"]},
+          "result_set_complete": {"type": "boolean"},
             "annotations": {
               "type": "array",
               "items": {
@@ -687,7 +699,7 @@
   },
   {
     "name": "ZFIN_search",
-    "description": "Search for zebrafish (Danio rerio) genes in ZFIN by keyword (gene symbol or name). Returns matching genes with their ZFIN IDs, symbols, and names. Use the returned gene_id with ZFIN_get_gene for full details. Example: query='tp53' returns zebrafish tumor protein p53.",
+    "description": "Search zebrafish (Danio rerio) genes in Alliance/ZFIN by symbol, synonym, name, or keyword. Returns exact total_results and recoverable offset pagination; continue with metadata.next_offset while has_more is true. Use each returned gene_id with ZFIN_get_gene for details.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -697,8 +709,16 @@
         },
         "limit": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 50,
           "description": "Maximum number of results (default: 10)",
           "default": 10
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Zero-based offset in the complete zebrafish gene result list. Continue with metadata.next_offset.",
+          "default": 0
         }
       },
       "required": [

@@ -18,6 +18,31 @@ from .tool_registry import register_tool
 
 EUROPEPMC_ANNOTATIONS_URL = "https://www.ebi.ac.uk/europepmc/annotations_api"
 
+# Europe PMC's UI/documentation uses the human-facing label while the API
+# requires this historical underscore token.  Preserve both at the interface
+# and report the actual token in response metadata.
+_ANNOTATION_TYPE_ALIASES = {"Genes & Proteins": "Gene_Proteins"}
+
+
+def _api_annotation_type(value):
+    return _ANNOTATION_TYPE_ALIASES.get(value, value)
+
+
+def _paginate(items, arguments: Dict[str, Any], default_limit: int):
+    limit = int(arguments.get("limit", default_limit))
+    offset = int(arguments.get("offset", 0))
+    page = items[offset : offset + limit]
+    next_offset = offset + len(page)
+    has_more = next_offset < len(items)
+    return page, {
+        "returned": len(page),
+        "limit": limit,
+        "offset": offset,
+        "has_more": has_more,
+        "truncated": has_more,
+        "next_offset": next_offset if has_more else None,
+    }
+
 
 @register_tool("EuroPMCAnnotationsTool")
 class EuroPMCAnnotationsTool(BaseTool):
@@ -117,6 +142,7 @@ class EuroPMCAnnotationsTool(BaseTool):
         annotation_type = arguments.get("annotation_type") or arguments.get(
             "entity_type"
         )
+        api_type = _api_annotation_type(annotation_type)
 
         if not article_id:
             return {
@@ -124,7 +150,7 @@ class EuroPMCAnnotationsTool(BaseTool):
                 "error": "article_id is required. Accepts: 'PMC:PMC4353746', bare 'PMC4353746', or PMID '25780448'.",
             }
 
-        raw = self._fetch_annotations(article_id, annotation_type)
+        raw = self._fetch_annotations(article_id, api_type)
 
         if not isinstance(raw, list) or len(raw) == 0:
             return {
@@ -145,8 +171,9 @@ class EuroPMCAnnotationsTool(BaseTool):
         article = raw[0]
         annotations_raw = article.get("annotations", [])
 
+        page, paging = _paginate(annotations_raw, arguments, 200)
         annotations = []
-        for ann in annotations_raw:
+        for ann in page:
             tags = []
             for tag in ann.get("tags", []):
                 tags.append(
@@ -173,12 +200,16 @@ class EuroPMCAnnotationsTool(BaseTool):
                 "article_id": article_id,
                 "pmcid": article.get("pmcid"),
                 "source": article.get("source"),
-                "annotation_count": len(annotations),
-                "annotations": annotations[:200],
+                "annotation_count": len(annotations_raw),
+                "annotations": annotations,
+                "total_annotations": len(annotations_raw),
+                **paging,
             },
             "metadata": {
                 "source": "Europe PMC Annotations API",
                 "endpoint": "annotationsByArticleIds",
+                "annotation_type_requested": annotation_type,
+                "annotation_type_api": api_type,
             },
         }
 
@@ -186,7 +217,14 @@ class EuroPMCAnnotationsTool(BaseTool):
         """Get annotations of a specific type from multiple articles."""
         article_ids = arguments.get("article_ids", "")
         annotation_type = arguments.get("annotation_type", "")
-        page_size = arguments.get("page_size")
+        api_type = _api_annotation_type(annotation_type)
+        # The upstream default can return only a subset of a long ID list.
+        # Request at least every supplied article unless the caller explicitly
+        # selects a larger page size.
+        article_count_requested = len(
+            [item for item in article_ids.split(",") if item.strip()]
+        )
+        page_size = arguments.get("page_size") or article_count_requested
 
         if not article_ids:
             return {
@@ -199,7 +237,7 @@ class EuroPMCAnnotationsTool(BaseTool):
                 "error": "annotation_type is required (e.g., 'Chemicals')",
             }
 
-        raw = self._fetch_annotations(article_ids, annotation_type, page_size)
+        raw = self._fetch_annotations(article_ids, api_type, page_size)
 
         if not isinstance(raw, list):
             raw = []
@@ -210,8 +248,9 @@ class EuroPMCAnnotationsTool(BaseTool):
             annotations_raw = article.get("annotations", [])
             total_annotations += len(annotations_raw)
 
+            page, paging = _paginate(annotations_raw, arguments, 100)
             annotations = []
-            for ann in annotations_raw:
+            for ann in page:
                 annotations.append(
                     {
                         "exact": ann.get("exact", ""),
@@ -224,8 +263,10 @@ class EuroPMCAnnotationsTool(BaseTool):
                 {
                     "article_id": f"{article.get('source', '')}:{article.get('extId', '')}",
                     "pmcid": article.get("pmcid"),
-                    "annotation_count": len(annotations),
-                    "annotations": annotations[:100],
+                    "annotation_count": len(annotations_raw),
+                    "total_annotations": len(annotations_raw),
+                    "annotations": annotations,
+                    **paging,
                 }
             )
 
@@ -233,13 +274,16 @@ class EuroPMCAnnotationsTool(BaseTool):
             "status": "success",
             "data": {
                 "article_count": len(articles),
+                "articles_requested": article_count_requested,
                 "annotation_type": annotation_type,
+                "annotation_type_api": api_type,
                 "total_annotations": total_annotations,
                 "articles": articles,
             },
             "metadata": {
                 "source": "Europe PMC Annotations API",
                 "endpoint": "annotationsByArticleIds",
+                "page_size_requested": page_size,
             },
         }
 
@@ -278,8 +322,9 @@ class EuroPMCAnnotationsTool(BaseTool):
         article = raw[0]
         annotations_raw = article.get("annotations", [])
 
+        page, paging = _paginate(annotations_raw, arguments, 200)
         chemicals = []
-        for ann in annotations_raw:
+        for ann in page:
             tags = ann.get("tags", [])
             chebi_uri = None
             chebi_name = None
@@ -307,8 +352,10 @@ class EuroPMCAnnotationsTool(BaseTool):
             "status": "success",
             "data": {
                 "article_id": article_id,
-                "chemical_count": len(chemicals),
-                "chemicals": chemicals[:200],
+                "chemical_count": len(annotations_raw),
+                "total_chemicals": len(annotations_raw),
+                "chemicals": chemicals,
+                **paging,
             },
             "metadata": {
                 "source": "Europe PMC Annotations API",

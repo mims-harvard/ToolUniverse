@@ -1,7 +1,7 @@
 """
 GTDB_search_genomes
 
-Search for prokaryotic genomes in GTDB by organism name. Returns genome accessions with both NCBI...
+Search prokaryotic genomes in GTDB using strict one-based page pagination and pages up to 1000 re...
 """
 
 from typing import Any, Optional, Callable
@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def GTDB_search_genomes(
-    operation: str,
     query: str,
+    operation: Optional[str] = "search_genomes",
     page: Optional[int] = None,
     items_per_page: Optional[int] = None,
     *,
@@ -19,7 +19,7 @@ def GTDB_search_genomes(
     validate: bool = True,
 ) -> Any:
     """
-    Search for prokaryotic genomes in GTDB by organism name. Returns genome accessions with both NCBI...
+    Search prokaryotic genomes in GTDB using strict one-based page pagination and pages up to 1000 re...
 
     Parameters
     ----------
@@ -28,9 +28,9 @@ def GTDB_search_genomes(
     query : str
         Search query for organism name (e.g., 'Escherichia', 'Staphylococcus aureus',...
     page : int
-        Page number for pagination (default: 1)
+        One-based page number (default 1). Never use 0; continue with metadata.next_p...
     items_per_page : int
-        Number of results per page (default: 10, max: 50)
+        Number of results per page (default 10, max 1000).
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

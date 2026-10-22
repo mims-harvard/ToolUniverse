@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def Enrichr_enrich(
     gene_list: list[str],
-    operation: Optional[str] = None,
+    operation: Optional[str] = "enrich",
     library: Optional[str] = "GO_Biological_Process_2023",
     top_n: Optional[int] = 10,
     *,

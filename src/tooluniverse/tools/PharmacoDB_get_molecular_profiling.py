@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def PharmacoDB_get_molecular_profiling(
-    operation: str,
+    operation: Optional[str] = "get_molecular_profiling",
     cell_line_name: Optional[str] = None,
     cell_line_id: Optional[int] = None,
     *,

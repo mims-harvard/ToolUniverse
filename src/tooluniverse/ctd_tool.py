@@ -38,6 +38,8 @@ DATA_SOURCE = "mydisease.info (BioThings) cache of CTD chemical-disease curation
 _MESH_ID_RE = re.compile(r"^[CD]\d{6,9}$")  # C=supplementary concept, D=descriptor
 _CAS_RN_RE = re.compile(r"^\d{1,7}-\d{2}-\d$")
 _MONDO_RE = re.compile(r"^MONDO:\d+$", re.IGNORECASE)
+_OLS_BASE = "https://www.ebi.ac.uk/ols4/api"
+_MESH_LOOKUP = "https://id.nlm.nih.gov/mesh/lookup/details"
 
 _GENE_CHEMICAL_UNAVAILABLE = (
     "CTD's gene<->chemical data is not available: CTD's native API is CAPTCHA-"
@@ -78,6 +80,21 @@ def _chemical_match_field(term: str) -> tuple:
     return "chemical_name", term
 
 
+def _first_nested_value(value: Any, *keys: str) -> Any:
+    """Return the first scalar at a path through BioThings dict/list merges."""
+    values = [value]
+    for key in keys:
+        next_values = []
+        for item in values:
+            if isinstance(item, dict):
+                child = item.get(key)
+                next_values.extend(child if isinstance(child, list) else [child])
+            elif isinstance(item, list):
+                next_values.extend(item)
+        values = [item for item in next_values if item is not None]
+    return next((item for item in values if not isinstance(item, (dict, list))), None)
+
+
 @register_tool("CTDTool")
 class CTDTool(BaseTool):
     """Query CTD curated chemical-disease relationships via mydisease.info."""
@@ -88,6 +105,7 @@ class CTDTool(BaseTool):
         self.input_type = fields.get("input_type", "chem")
         self.report_type = fields.get("report_type", "genes_curated")
         self.timeout = int(fields.get("timeout", 30))
+        self._disease_label_cache: Dict[str, tuple[Optional[str], str]] = {}
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         try:
@@ -167,9 +185,9 @@ class CTDTool(BaseTool):
             }
 
         if input_type == "chem" and report_type == "diseases_curated":
-            return self._chemical_to_diseases(input_terms, metadata)
+            return self._chemical_to_diseases(input_terms, metadata, arguments)
         if input_type == "disease" and report_type == "chems_curated":
-            return self._disease_to_chemicals(input_terms, metadata)
+            return self._disease_to_chemicals(input_terms, metadata, arguments)
 
         return {
             "status": "error",
@@ -177,29 +195,124 @@ class CTDTool(BaseTool):
             "metadata": metadata,
         }
 
-    def _chemical_to_diseases(self, term: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
+    def _chemical_to_diseases(
+        self, term: str, metadata: Dict[str, Any], arguments: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        page_args = _page_arguments(arguments)
+        if isinstance(page_args, dict):
+            return page_args
+        limit, offset = page_args
         field, value = _chemical_match_field(term)
         metadata["matched_field"] = f"ctd.chemical_related_to_disease.{field}"
         query = f'ctd.chemical_related_to_disease.{field}:"{_escape(value)}"'
-        hits = self._search(query, "mondo.label,ctd.chemical_related_to_disease")
+        hits = self._search(
+            query,
+            "mondo.label,umls.mesh.preferred,ctd.chemical_related_to_disease",
+            fetch_all=True,
+        )
         if hits is None:
             return {
                 "status": "error",
                 "error": f"'{term}' was not found among CTD's curated chemical-disease associations.",
                 "metadata": metadata,
             }
-        edges = []
+        candidates = []
         for hit in hits:
             disease_id = hit.get("_id")
-            disease_name = (hit.get("mondo") or {}).get("label")
+            disease_name = _first_nested_value(hit, "mondo", "label")
+            name_source = "mydisease.mondo.label" if disease_name else "unresolved"
+            mesh_fallback = _first_nested_value(hit, "umls", "mesh", "preferred")
             for entry in _ctd_disease_entries(hit):
                 if not _entry_matches(entry, field, value):
                     continue
-                edges.append(_format_chem_disease_edge(entry, disease_id, disease_name))
-        metadata["total_results"] = len(edges)
+                candidates.append(
+                    (entry, disease_id, disease_name, name_source, mesh_fallback)
+                )
+        total_results = len(candidates)
+        page = candidates[offset : offset + limit]
+        edges = []
+        unresolved_names = 0
+        for entry, disease_id, disease_name, name_source, mesh_fallback in page:
+            if not disease_name and disease_id:
+                disease_name, name_source = self._resolve_ontology_label(
+                    disease_id, mesh_fallback=mesh_fallback
+                )
+            if not disease_name:
+                unresolved_names += 1
+            edges.append(
+                _format_chem_disease_edge(
+                    entry, disease_id, disease_name, name_source
+                )
+            )
+        _add_page_metadata(metadata, total_results, len(edges), limit, offset)
+        metadata["unresolved_disease_name_count"] = unresolved_names
         return {"status": "success", "data": edges, "metadata": metadata}
 
-    def _disease_to_chemicals(self, term: str, metadata: Dict[str, Any]) -> Dict[str, Any]:
+    def _resolve_ontology_label(
+        self, disease_id: str, *, mesh_fallback: Optional[str] = None
+    ) -> tuple[Optional[str], str]:
+        """Resolve a missing disease label through an exact OLS CURIE lookup.
+
+        mydisease.info occasionally indexes a CTD disease document without a
+        ``mondo.label`` (confirmed live for EFO:0009426).  Returning a null
+        name makes an otherwise valid association look complete while hiding
+        its biological meaning.  OLS is consulted only for those exceptional
+        records; failure is non-fatal and is exposed as ``unresolved``.
+        """
+        cached = self._disease_label_cache.get(disease_id)
+        if cached is not None:
+            return cached
+        prefix, separator, local_id = disease_id.partition(":")
+        prefix = prefix.lower()
+
+        def resolve_mesh(descriptor: str) -> tuple[Optional[str], str]:
+            try:
+                response = requests.get(
+                    _MESH_LOOKUP,
+                    params={"descriptor": descriptor},
+                    headers=HEADERS,
+                    timeout=self.timeout,
+                )
+                response.raise_for_status()
+                terms = response.json().get("terms") or []
+                preferred = next((term for term in terms if term.get("preferred")), None)
+                label = (preferred or (terms[0] if terms else {})).get("label")
+                return label, "NLM MeSH" if label else "unresolved"
+            except (requests.RequestException, ValueError, TypeError, AttributeError):
+                return None, "unresolved"
+
+        if not prefix or not separator:
+            result = (None, "unresolved")
+        elif prefix == "mesh":
+            result = resolve_mesh(local_id)
+        elif prefix == "umls" and mesh_fallback:
+            result = resolve_mesh(mesh_fallback)
+        else:
+            try:
+                response = requests.get(
+                    f"{_OLS_BASE}/ontologies/{prefix}/terms",
+                    params={"obo_id": disease_id},
+                    headers=HEADERS,
+                    timeout=self.timeout,
+                )
+                response.raise_for_status()
+                terms = ((response.json().get("_embedded") or {}).get("terms") or [])
+                label = terms[0].get("label") if terms else None
+                result = (label, f"EBI OLS ({prefix})" if label else "unresolved")
+            except (requests.RequestException, ValueError, TypeError, AttributeError):
+                result = (None, "unresolved")
+            if not result[0] and mesh_fallback:
+                result = resolve_mesh(mesh_fallback)
+        self._disease_label_cache[disease_id] = result
+        return result
+
+    def _disease_to_chemicals(
+        self, term: str, metadata: Dict[str, Any], arguments: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        page_args = _page_arguments(arguments)
+        if isinstance(page_args, dict):
+            return page_args
+        limit, offset = page_args
         mondo_id, disease_label = self._resolve_disease(term)
         if not mondo_id:
             return {
@@ -217,8 +330,10 @@ class CTDTool(BaseTool):
         resp.raise_for_status()
         doc = resp.json()
         entries = _ctd_disease_entries(doc)
-        edges = [_format_disease_chem_edge(e, mondo_id, disease_label) for e in entries]
-        metadata["total_results"] = len(edges)
+        total_results = len(entries)
+        page = entries[offset : offset + limit]
+        edges = [_format_disease_chem_edge(e, mondo_id, disease_label) for e in page]
+        _add_page_metadata(metadata, total_results, len(edges), limit, offset)
         return {"status": "success", "data": edges, "metadata": metadata}
 
     def _resolve_disease(self, term: str) -> tuple:
@@ -257,23 +372,78 @@ class CTDTool(BaseTool):
         doc = resp.json()
         return mondo_id, (doc.get("mondo") or {}).get("label")
 
-    def _search(self, query: str, fields: str, size: int = 200) -> Optional[List[Dict[str, Any]]]:
-        resp = requests.get(
-            f"{MYDISEASE_BASE}/query",
-            params={"q": query, "fields": fields, "size": size},
-            headers=HEADERS,
-            timeout=self.timeout,
-        )
-        resp.raise_for_status()
-        data = resp.json()
-        hits = data.get("hits")
-        if not hits:
-            return None
-        return hits
+    def _search(
+        self,
+        query: str,
+        fields: str,
+        size: int = 200,
+        *,
+        fetch_all: bool = False,
+    ) -> Optional[List[Dict[str, Any]]]:
+        hits: List[Dict[str, Any]] = []
+        page_offset = 0
+        while True:
+            resp = requests.get(
+                f"{MYDISEASE_BASE}/query",
+                params={
+                    "q": query,
+                    "fields": fields,
+                    "size": size,
+                    "from": page_offset,
+                },
+                headers=HEADERS,
+                timeout=self.timeout,
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            page_hits = data.get("hits") or []
+            hits.extend(page_hits)
+            total = int(data.get("total", len(hits)))
+            page_offset += len(page_hits)
+            if not fetch_all or not page_hits or page_offset >= total:
+                break
+        return hits or None
 
 
 def _escape(value: str) -> str:
     return value.replace('"', "").replace("\\", "")
+
+
+def _page_arguments(arguments: Dict[str, Any]) -> tuple[int, int] | Dict[str, Any]:
+    limit = arguments.get("limit", 100)
+    offset = arguments.get("offset", 0)
+    if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 1000:
+        return {
+            "status": "error",
+            "error": "limit must be an integer between 1 and 1000",
+        }
+    if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+        return {
+            "status": "error",
+            "error": "offset must be a non-negative integer",
+        }
+    return limit, offset
+
+
+def _add_page_metadata(
+    metadata: Dict[str, Any],
+    total_results: int,
+    returned: int,
+    limit: int,
+    offset: int,
+) -> None:
+    has_more = offset + returned < total_results
+    metadata.update(
+        {
+            "total_results": total_results,
+            "returned": returned,
+            "limit": limit,
+            "offset": offset,
+            "has_more": has_more,
+            "next_offset": offset + returned if has_more else None,
+            "result_set_complete": offset == 0 and not has_more,
+        }
+    )
 
 
 def _ctd_disease_entries(doc: Dict[str, Any]) -> List[Dict[str, Any]]:
@@ -317,7 +487,10 @@ _EVIDENCE_TO_PREDICATE = {
 
 
 def _format_chem_disease_edge(
-    entry: Dict[str, Any], disease_id: Optional[str], disease_name: Optional[str]
+    entry: Dict[str, Any],
+    disease_id: Optional[str],
+    disease_name: Optional[str],
+    disease_name_source: str = "mydisease.mondo.label",
 ) -> Dict[str, Any]:
     mesh_chem = entry.get("mesh_chemical_id")
     cas = entry.get("cas_registry_number")
@@ -328,6 +501,7 @@ def _format_chem_disease_edge(
         "source_name": entry.get("chemical_name"),
         "target_id": disease_id,
         "target_name": disease_name,
+        "target_name_source": disease_name_source,
         "predicate": None,
         "qualified_predicate": _EVIDENCE_TO_PREDICATE.get(direct_evidence),
         "object_direction_qualifier": None,

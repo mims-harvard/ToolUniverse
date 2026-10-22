@@ -13,9 +13,9 @@ def OpenMeteo_get_historical_weather(
     longitude: float,
     start_date: str,
     end_date: str,
-    daily: Optional[str | Any] = None,
-    hourly: Optional[str | Any] = None,
-    timezone: Optional[str | Any] = None,
+    daily: Optional[str] = None,
+    hourly: Optional[str] = None,
+    timezone: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -34,11 +34,11 @@ def OpenMeteo_get_historical_weather(
         Start date in YYYY-MM-DD format (e.g., '2023-01-01'). Data available from 194...
     end_date : str
         End date in YYYY-MM-DD format (e.g., '2023-12-31'). Maximum range: a few mont...
-    daily : str | Any
+    daily : str
         Comma-separated daily variables (e.g., 'temperature_2m_max,temperature_2m_min...
-    hourly : str | Any
+    hourly : str
         Comma-separated hourly variables (e.g., 'temperature_2m,precipitation,wind_sp...
-    timezone : str | Any
+    timezone : str
         Timezone (e.g., 'Europe/London', 'America/New_York', 'auto')
     stream_callback : Callable, optional
         Callback for streaming output

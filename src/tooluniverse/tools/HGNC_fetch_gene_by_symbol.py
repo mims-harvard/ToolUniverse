@@ -1,7 +1,7 @@
 """
 HGNC_fetch_gene_by_symbol
 
-Fetch detailed gene information from HGNC (HUGO Gene Nomenclature Committee) by official gene sym...
+Fetch the complete authoritative HGNC gene record by official symbol. The wrapper requires one un...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def HGNC_fetch_gene_by_symbol(
     validate: bool = True,
 ) -> Any:
     """
-    Fetch detailed gene information from HGNC (HUGO Gene Nomenclature Committee) by official gene sym...
+    Fetch the complete authoritative HGNC gene record by official symbol. The wrapper requires one un...
 
     Parameters
     ----------

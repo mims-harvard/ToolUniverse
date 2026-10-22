@@ -348,7 +348,12 @@ class TestArXivReturnSchema(unittest.TestCase):
 # Feature-82A-001: ArXiv limit=0 returns empty list
 # ---------------------------------------------------------------------------
 class TestArXivLimitZero(unittest.TestCase):
-    """Feature-82A-001: ArXiv limit=0 should return [] immediately."""
+    """An out-of-range limit must fail loudly, not look like "no papers".
+
+    Supersedes Feature-82A-001, which returned [] for limit<=0.  The schema
+    declares limit 1-200, and an empty list is indistinguishable from a
+    genuine no-results search -- exactly the silent failure this rejects.
+    """
 
     def _make_tool(self):
         from tooluniverse.arxiv_tool import ArXivTool
@@ -360,17 +365,17 @@ class TestArXivLimitZero(unittest.TestCase):
         }
         return ArXivTool(config)
 
+    def _assert_rejected(self, limit):
+        result = self._make_tool().run({"query": "cancer", "limit": limit})
+        self.assertIsInstance(result, dict)
+        self.assertEqual(result["status"], "error")
+        self.assertIn("limit", result["error"])
+
     def test_limit_zero(self):
-        tool = self._make_tool()
-        result = tool.run({"query": "cancer", "limit": 0})
-        self.assertIsInstance(result, list)
-        self.assertEqual(len(result), 0)
+        self._assert_rejected(0)
 
     def test_limit_negative(self):
-        tool = self._make_tool()
-        result = tool.run({"query": "cancer", "limit": -5})
-        self.assertIsInstance(result, list)
-        self.assertEqual(len(result), 0)
+        self._assert_rejected(-5)
 
 
 # ---------------------------------------------------------------------------
@@ -1420,13 +1425,13 @@ class TestGTExGeneSymbolResolution(unittest.TestCase):
             )
             self.assertEqual(result, "ENSG00000141510.16")
 
-    def test_resolution_failure_returns_input(self):
-        from tooluniverse.gtex_tool import _resolve_gene_id
+    def test_resolution_failure_raises_instead_of_returning_input(self):
+        from tooluniverse.gtex_tool import GTExGeneResolutionError, _resolve_gene_id
 
         with patch("tooluniverse.gtex_tool._http_get") as mock_get:
             mock_get.side_effect = Exception("network error")
-            result = _resolve_gene_id("FBN1", "https://gtexportal.org/api/v2", 30)
-            self.assertEqual(result, "FBN1")
+            with self.assertRaises(GTExGeneResolutionError):
+                _resolve_gene_id("FBN1", "https://gtexportal.org/api/v2", 30)
 
     def test_expression_tool_uses_gene_symbol(self):
         from tooluniverse.gtex_tool import GTExExpressionTool
@@ -1468,7 +1473,7 @@ class TestGTExGeneSymbolResolution(unittest.TestCase):
             mock_get.return_value = {"data": [{"variantId": "chr17_1234_A_G", "pValue": 0.001}]}
             result = tool.run({"gene_symbol": "TP53"})
             mock_resolve.assert_called_once_with(
-                "TP53", "https://gtexportal.org/api/v2", 30
+                "TP53", "https://gtexportal.org/api/v2", 30, "gtex_v8"
             )
             self.assertEqual(result["status"], "success")
 

@@ -218,6 +218,42 @@ class TestWormBaseOrthologs:
         """Covers missing id."""
         assert self._make().run({})["status"] == "error"
 
+    def test_ortholog_categories_have_recoverable_offsets(self):
+        def entry(i):
+            return {
+                "ortholog": {"id": f"WB{i}", "label": f"gene-{i}"},
+                "species": {"genus": "C", "species": str(i)},
+                "method": [],
+            }
+
+        payload = {
+            "fields": {
+                "other_orthologs": {"data": [entry(i) for i in range(7)]},
+                "nematode_orthologs": {"data": [entry(i) for i in range(7)]},
+                "paralogs": {"data": [entry(i) for i in range(7)]},
+            }
+        }
+        with patch(
+            "tooluniverse.wormbase_tool.requests.get", return_value=_resp(payload)
+        ):
+            first = self._make().run(
+                {"gene_id": "daf-2", "ortholog_limit": 3, "paralog_limit": 3}
+            )
+            tail = self._make().run(
+                {
+                    "gene_id": "daf-2",
+                    "ortholog_limit": 3,
+                    "paralog_limit": 3,
+                    "offset": 6,
+                }
+            )
+        assert [x["ortholog_id"] for x in first["data"]["paralogs"]] == [
+            "WB0", "WB1", "WB2"
+        ]
+        assert [x["ortholog_id"] for x in tail["data"]["paralogs"]] == ["WB6"]
+        assert first["data"]["has_more"] is True
+        assert tail["data"]["has_more"] is False
+
     def test_error_path(self):
         """Covers error path."""
         with patch(
@@ -262,8 +298,39 @@ class TestWormBaseInteractions:
         assert out["status"] == "success"
         assert out["data"]["physical_count"] == 1
         assert out["data"]["genetic_count"] == 1
+        assert out["data"]["physical_returned"] == 1
+        assert out["data"]["genetic_returned"] == 1
         gen = out["data"]["genetic_interactions"][0]
         assert gen["interactor_2_id"] == "WBGene00006654"
+
+    def test_categories_have_recoverable_offsets(self):
+        edges = []
+        for i in range(7):
+            for prefix in ("physical", "genetic"):
+                edges.append(
+                    {
+                        "effector": {"label": f"{prefix}-{i}", "id": f"WB{i}"},
+                        "affected": {"label": "daf-2", "id": "WBGene00000898"},
+                        "type": f"{prefix}:other",
+                        "citations": [],
+                    }
+                )
+        payload = {"fields": {"interactions": {"data": {"edges": edges}}}}
+        with patch(
+            "tooluniverse.wormbase_tool.requests.get", return_value=_resp(payload)
+        ):
+            first = self._make().run({"gene_id": "daf-2", "limit": 3, "offset": 0})
+            second = self._make().run({"gene_id": "daf-2", "limit": 3, "offset": 3})
+            tail = self._make().run({"gene_id": "daf-2", "limit": 3, "offset": 6})
+        assert [x["interactor_1"] for x in first["data"]["physical_interactions"]] == [
+            "physical-0", "physical-1", "physical-2"
+        ]
+        assert [x["interactor_1"] for x in second["data"]["genetic_interactions"]] == [
+            "genetic-3", "genetic-4", "genetic-5"
+        ]
+        assert tail["data"]["physical_returned"] == 1
+        assert tail["data"]["genetic_returned"] == 1
+        assert tail["data"]["has_more"] is False
 
     def test_error_path(self):
         """Covers error path."""

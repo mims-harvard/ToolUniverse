@@ -158,6 +158,15 @@ class PDBeSIFTSTool(BaseTool):
                 "total_structures": len(entries),
                 "returned_structures": len(structures),
                 "offset": window["offset"],
+                "limit": window["limit"],
+                "has_more": window["offset"] + len(structures) < len(entries),
+                "next_offset": (
+                    window["offset"] + len(structures)
+                    if window["offset"] + len(structures) < len(entries)
+                    else None
+                ),
+                "result_set_complete": window["offset"] == 0
+                and len(structures) == len(entries),
             },
             "metadata": {
                 "source": "PDBe SIFTS - Best Structures",
@@ -186,12 +195,19 @@ class PDBeSIFTSTool(BaseTool):
 
         entry_data = data.get(pdb_id, {})
         uniprot_data = entry_data.get("UniProt", {})
+        mapping_offset = max(int(arguments.get("mapping_offset") or 0), 0)
+        mapping_limit = min(
+            max(int(arguments.get("mapping_limit") or 20), 1), MAX_PAGE_SIZE
+        )
 
         proteins = []
         for acc, info in uniprot_data.items():
             all_mappings = info.get("mappings", [])
             chain_mappings = []
-            for m in all_mappings[:20]:
+            mapping_page = all_mappings[
+                mapping_offset : mapping_offset + mapping_limit
+            ]
+            for m in mapping_page:
                 chain_mappings.append(
                     {
                         "chain_id": m.get("chain_id"),
@@ -202,17 +218,23 @@ class PDBeSIFTSTool(BaseTool):
                     }
                 )
 
-            # Fix-R4B-3: this 20-mapping truncation was entirely silent --
-            # `total_proteins` counts proteins, not mappings, so a viral or
-            # ribosomal entry with dozens of chains per accession looked
-            # complete at 20. Report the real count alongside the slice.
+            mappings_truncated = (
+                mapping_offset + len(mapping_page) < len(all_mappings)
+            )
             proteins.append(
                 {
                     "uniprot_accession": acc,
                     "name": info.get("identifier"),
                     "chain_mappings": chain_mappings,
                     "total_chain_mappings": len(all_mappings),
-                    "chain_mappings_truncated": len(all_mappings) > len(chain_mappings),
+                    "mapping_offset": mapping_offset,
+                    "chain_mappings_returned": len(mapping_page),
+                    "chain_mappings_truncated": mappings_truncated,
+                    "next_mapping_offset": (
+                        mapping_offset + len(mapping_page)
+                        if mappings_truncated
+                        else None
+                    ),
                 }
             )
 
@@ -356,6 +378,15 @@ class PDBeSIFTSTool(BaseTool):
                 "total_pdb_entries": len(pdb_entries),
                 "returned_pdb_entries": len(page),
                 "offset": window["offset"],
+                "limit": window["limit"],
+                "has_more": window["offset"] + len(page) < len(pdb_entries),
+                "next_offset": (
+                    window["offset"] + len(page)
+                    if window["offset"] + len(page) < len(pdb_entries)
+                    else None
+                ),
+                "result_set_complete": window["offset"] == 0
+                and len(page) == len(pdb_entries),
                 "total_chain_mappings": len(entries),
             },
             "metadata": {

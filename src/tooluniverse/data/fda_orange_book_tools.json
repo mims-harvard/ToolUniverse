@@ -2,7 +2,7 @@
   {
     "type": "FDAOrangeBookTool",
     "name": "FDA_OrangeBook_search_drug",
-    "description": "Search FDA Drugs@FDA database by brand name, generic name, or application number. Returns approval status, products, and basic regulatory info. Example: brand_name='ADVIL' finds all Advil products with NDA numbers.",
+    "description": "Search FDA Drugs@FDA by brand name, generic name, or application number. Results use native openFDA pagination: start with offset=0 and continue with next_offset while has_more is true. Returns approval status, products, application numbers, and regulatory metadata.",
     "parameter": {
       "type": "object",
       "required": [],
@@ -30,6 +30,13 @@
           "minimum": 1,
           "maximum": 100,
           "default": 10
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based Drugs@FDA result offset. Continue with next_offset while has_more is true.",
+          "minimum": 0,
+          "maximum": 25000,
+          "default": 0
         }
       }
     },
@@ -42,8 +49,23 @@
         "count": {
           "type": "integer"
         },
+        "returned": {
+          "type": "integer"
+        },
+        "offset": {
+          "type": "integer"
+        },
         "total": {
           "type": "integer"
+        },
+        "has_more": {
+          "type": "boolean"
+        },
+        "next_offset": {
+          "type": [
+            "integer",
+            "null"
+          ]
         }
       }
     },
@@ -211,7 +233,7 @@
   {
     "type": "FDAOrangeBookTool",
     "name": "FDA_OrangeBook_check_generic_availability",
-    "description": "Check if generic versions are FDA-approved for a brand-name drug. Returns reference drug info, approved generics count, and TE codes. Example: Query 'LIPITOR' to find atorvastatin generics. Use for competitive landscape analysis.",
+    "description": "Check whether FDA-approved generic applications exist for a brand or ingredient. Scans every matching Drugs@FDA page. Generic means application_number starts with ANDA; reference means at least one product has reference_drug='Yes'. Returns these defining criteria, applications_scanned, and counts_complete so the classification is auditable.",
     "parameter": {
       "type": "object",
       "required": [],
@@ -248,6 +270,15 @@
         },
         "generics_available": {
           "type": "boolean"
+        },
+        "applications_scanned": {
+          "type": "integer"
+        },
+        "counts_complete": {
+          "type": "boolean"
+        },
+        "classification_criteria": {
+          "type": "object"
         }
       }
     },

@@ -1,7 +1,7 @@
 """
 MyDisease_search_diseases
 
-Search for diseases by keyword in MyDisease.info, a BioThings aggregator combining data from MOND...
+Search diseases in MyDisease.info. Use the zero-based start offset and next_start while has_more ...
 """
 
 from typing import Any, Optional, Callable
@@ -11,6 +11,7 @@ from ._shared_client import get_shared_client
 def MyDisease_search_diseases(
     query: str,
     size: Optional[int] = 10,
+    start: Optional[int] = 0,
     fields: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -18,7 +19,7 @@ def MyDisease_search_diseases(
     validate: bool = True,
 ) -> Any:
     """
-    Search for diseases by keyword in MyDisease.info, a BioThings aggregator combining data from MOND...
+    Search diseases in MyDisease.info. Use the zero-based start offset and next_start while has_more ...
 
     Parameters
     ----------
@@ -26,6 +27,8 @@ def MyDisease_search_diseases(
         Search query. Can be disease name (e.g., 'breast cancer', 'melanoma', 'diabet...
     size : int
         Maximum number of results to return (default 10, max 100).
+    start : int
+        Zero-based search offset, forwarded to BioThings as from.
     fields : str
         Comma-separated list of fields to include in results. Default: 'mondo.label,d...
     stream_callback : Callable, optional
@@ -44,7 +47,12 @@ def MyDisease_search_diseases(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"query": query, "size": size, "fields": fields}.items()
+        for k, v in {
+            "query": query,
+            "size": size,
+            "start": start,
+            "fields": fields,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

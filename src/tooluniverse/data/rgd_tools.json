@@ -47,7 +47,7 @@
   },
   {
     "name": "RGD_search_genes",
-    "description": "Search for rat genes by symbol or keyword in the Rat Genome Database. Returns matching genes with RGD IDs, symbols, names, types, and descriptions. Supports rat, human, and mouse species. Use for finding rat orthologs, toxicology studies, or rat disease model genes.",
+    "description": "Search rat, human, or mouse genes through RGD/Alliance by symbol or keyword. Returns IDs, symbols, names, species, and every synonym with synonym_count; aliases are not limited to the former first five. Use for gene resolution, ortholog work, toxicology, and disease models.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -99,7 +99,7 @@
   },
   {
     "name": "RGD_get_annotations",
-    "description": "Get disease, phenotype, pathway, and GO annotations for a rat gene from RGD. Returns curated annotations with ontology terms, evidence codes, and qualifiers. Filter by aspect: D=Disease, P=Pathway, W=Phenotype, F=Molecular Function, C=Cellular Component, E=Expression. Essential for rat disease model research and toxicogenomics.",
+    "description": "Get disease, phenotype, pathway, GO, and expression annotations for an RGD gene with limit/offset pagination and explicit total/has_more metadata. Returns ontology terms, evidence codes, qualifiers, data sources, and complete annotation notes; notes are not shortened. Filter by aspect: D=Disease, P=Pathway, W=Phenotype, F=Molecular Function, C=Cellular Component, E=Expression.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -111,6 +111,19 @@
           "type": "string",
           "description": "Filter by annotation type: 'D' (Disease), 'P' (Pathway), 'W' (Phenotype), 'F' (Function), 'C' (Component), 'E' (Expression). Leave empty for all.",
           "default": ""
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 50,
+          "description": "Maximum number of filtered annotations to return in this page."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset after aspect filtering. Use metadata.next_offset for the next page."
         }
       },
       "required": [
@@ -194,7 +207,7 @@
   },
   {
     "name": "RGD_get_qtls_in_region",
-    "description": "Get QTLs (Quantitative Trait Loci) overlapping a genomic region from the Rat Genome Database (RGD's flagship data type). Returns QTL symbol, name, RGD ID, LOD score, p-value, and inheritance type. Requires a chromosome, start/stop coordinates, and a map_key identifying the assembly (e.g., 360 for rat rn7/GRCr8, 38 for human GRCh38, 35 for mouse GRCm39). Example: chromosome='10', start=1, stop=50000000, map_key=360 returns QTL Uae41 'Urinary albumin excretion QTL 41' lod=5.26 rgdId=7387235.",
+    "description": "Get QTLs (Quantitative Trait Loci) overlapping a genomic region from RGD with limit/offset pagination and explicit total/has_more metadata. Returns QTL symbol, name, RGD ID, LOD score, p-value, variance, and inheritance type. Requires chromosome, coordinates, and an assembly map_key such as 360 for rat rn7/GRCr8.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -213,6 +226,19 @@
         "map_key": {
           "type": "integer",
           "description": "Assembly map key. 360=rat rn7/GRCr8, 372=rat mRatBN7.2, 38=human GRCh38, 17=human GRCh37, 35=mouse GRCm39, 18=mouse GRCm38."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 100,
+          "description": "Maximum number of overlapping QTLs to return in this page."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based QTL offset. Use metadata.next_offset for the next page."
         }
       },
       "required": [
@@ -309,7 +335,7 @@
   },
   {
     "name": "RGD_resolve_symbol_or_region",
-    "description": "Resolve a rat gene symbol to its native RGD record/ID, or list genes overlapping a genomic region. Symbol mode: provide 'symbol' (and optional species_type_key, default 3=rat) -> returns RGD key, rgd_id, name, type. Region mode: provide chromosome + start + stop + map_key -> returns genes in that interval. Example: symbol='Tp53' returns key=1887 rgd_id=3889 name='tumor protein p53'; region chromosome='10', start=1, stop=5000000, map_key=360 returns Mir484 rgdId=2325341.",
+    "description": "Resolve a gene symbol to its native RGD record, or list genes overlapping a genomic region. Symbol mode returns one record. Region mode supports limit/offset pagination and reports total_genes, has_more, and next_offset so large chromosome intervals are fully reachable.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -354,6 +380,19 @@
             "null"
           ],
           "description": "Assembly map key for region mode (e.g. 360 for rat rn7)."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 100,
+          "description": "Region mode only: maximum number of overlapping genes to return in this page."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Region mode only: zero-based gene offset. Use metadata.next_offset for the next page."
         }
       },
       "required": []

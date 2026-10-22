@@ -214,7 +214,7 @@
   },
   {
     "name": "EnsemblCompara_get_gene_tree",
-    "description": "Get the phylogenetic gene tree showing evolutionary relationships of a gene family across species from Ensembl Compara. Gene trees trace the history of speciation and duplication events for a gene family. Returns tree members (genes across species), tree structure, and optionally Newick format. Useful for evolutionary analysis and understanding gene family expansion. Example: TP53 gene tree shows conservation across vertebrates.",
+    "description": "Get an Ensembl Compara phylogenetic gene tree and its complete member count. Members are recoverably paginated with limit/offset; continue with data.next_offset while data.has_more is true. The collector itself has no hidden cap.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -225,6 +225,19 @@
         "species": {
           "type": "string",
           "description": "Species (default: 'human'). Used when providing a gene symbol. Examples: 'human', 'mouse'."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum tree members per page (default 50).",
+          "default": 50,
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based member offset. Continue with data.next_offset.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": [
@@ -237,7 +250,7 @@
     "type": "EnsemblComparaTool",
     "test_examples": [
       {
-        "gene": "BRCA1",
+        "gene": "OR7D4",
         "species": "human"
       }
     ],
@@ -273,12 +286,16 @@
               "items": {
                 "type": "object"
               },
-              "description": "Gene tree members (gene_id, species) - max 50 shown"
+              "description": "Paged gene tree members (gene_id, species)"
             },
             "total_members": {
               "type": "integer",
               "description": "Total members in the gene tree"
-            }
+            },
+            "returned": {"type": "integer"},
+            "offset": {"type": "integer"},
+            "has_more": {"type": "boolean"},
+            "next_offset": {"type": ["integer", "null"]}
           }
         },
         {
@@ -297,7 +314,7 @@
   },
   {
     "name": "EnsemblCompara_get_cafe_tree",
-    "description": "Retrieve the Ensembl Compara CAFE tree for a gene family: the gene gain/loss (expansion/contraction) analysis that infers ancestral gene-copy counts (n_members) at every node of the species tree, with the birth-death rate (lambda) and per-node p-values. Unlike EnsemblCompara_get_gene_tree (which returns the phylogenetic gene tree topology + members), this returns the CAFE family-size dynamics used to detect lineage-specific gene-family expansions/contractions. Provide either gene_tree_id (e.g. 'ENSGT00390000003602') or gene (symbol e.g. 'BRCA2', or Ensembl gene ID). Example: gene_tree_id='ENSGT00390000003602' returns type 'cafe tree', rooted, pvalue_avg, lambda ~5.08e-08, and per-node n_members / pvalue along the species tree.",
+    "description": "Retrieve an Ensembl Compara CAFE gene-family gain/loss tree. Nodes are recoverably paginated with limit/offset and a complete total_nodes count; continue with data.next_offset while data.has_more is true. The recursive collector has no hidden cap.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -321,6 +338,19 @@
             "null"
           ],
           "description": "Species for symbol lookup when 'gene' is a symbol (default: 'human'). Examples: 'human', 'mouse', 'homo_sapiens'."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum CAFE nodes per page (default 200).",
+          "default": 200,
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based node offset. Continue with data.next_offset.",
+          "default": 0,
+          "minimum": 0
         }
       }
     },
@@ -331,10 +361,6 @@
     "test_examples": [
       {
         "gene_tree_id": "ENSGT00390000003602"
-      },
-      {
-        "gene": "BRCA2",
-        "species": "homo_sapiens"
       }
     ],
     "return_schema": {
@@ -431,7 +457,11 @@
                 "integer",
                 "number"
               ]
-            }
+            },
+            "returned": {"type": "integer"},
+            "offset": {"type": "integer"},
+            "has_more": {"type": "boolean"},
+            "next_offset": {"type": ["integer", "null"]}
           },
           "required": [
             "type"

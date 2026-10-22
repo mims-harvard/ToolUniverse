@@ -1,14 +1,22 @@
 [
   {
     "name": "eQTL_list_datasets",
-    "description": "List available eQTL (expression Quantitative Trait Loci) datasets from the EBI eQTL Catalogue. Each dataset represents a study-tissue-quantification combination with measured genetic associations to gene expression. Returns dataset IDs, study labels, tissue types, sample sizes, and quantification methods (ge=gene expression, exon, tx=transcript, txrev=transcript ratio, leafcutter=splicing). Use dataset IDs with eQTL_get_associations for specific variant-gene associations.",
+    "description": "List available eQTL (expression Quantitative Trait Loci) datasets from the EBI eQTL Catalogue. Results use the catalogue's native start/size pagination: begin with start=0 and continue with metadata.next_start while metadata.has_more is true. Because EBI returns no total count, ToolUniverse uses a one-record lookahead and reports an exact total only on a non-empty final page (or when the first page is final). Each dataset represents a study-tissue-quantification combination. Use dataset IDs with eQTL_get_associations.",
     "parameter": {
       "type": "object",
       "properties": {
         "size": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 999,
           "default": 20,
-          "description": "Number of datasets to return (default 20)"
+          "description": "Page size from 1 to 999 (default 20; one upstream slot is reserved for lookahead)"
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based dataset offset. Continue with metadata.next_start while metadata.has_more is true."
         },
         "quant_method": {
           "type": [
@@ -25,10 +33,12 @@
           "description": "Filter by tissue ontology ID (e.g., 'CL_0000235' for macrophage, 'UBERON_0002107' for liver)"
         }
       },
-      "required": []
+      "required": [],
+      "additionalProperties": false
     },
     "fields": {
-      "endpoint": "https://www.ebi.ac.uk/eqtl/api/v2/datasets"
+      "endpoint": "https://www.ebi.ac.uk/eqtl/api/v2/datasets",
+      "pagination": "ebi_start_lookahead"
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -103,7 +113,7 @@
   },
   {
     "name": "eQTL_get_associations",
-    "description": "Get eQTL associations (variant-gene expression correlations) from a specific dataset in the EBI eQTL Catalogue. Returns statistical associations between genetic variants and molecular traits (gene/exon/transcript expression or splicing). Each result includes beta effect size, p-value, allele frequency, and variant coordinates. Use eQTL_list_datasets first to find available dataset IDs. Can filter by gene_id (Ensembl gene ID) or variant (chr_pos_ref_alt format).",
+    "description": "Get eQTL associations from a specific EBI eQTL Catalogue dataset. Results use native start/size pagination: begin with start=0 and continue with metadata.next_start while metadata.has_more is true. Because EBI returns no total count, ToolUniverse uses a one-record lookahead and reports an exact total only on a non-empty final page (or when the first page is final). Each result includes effect size, p-value, allele frequency, and variant coordinates.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -113,8 +123,16 @@
         },
         "size": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 999,
           "default": 20,
-          "description": "Number of associations to return (default 20)"
+          "description": "Page size from 1 to 999 (default 20; one upstream slot is reserved for lookahead)"
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based association offset. Continue with metadata.next_start while metadata.has_more is true."
         },
         "gene_id": {
           "type": [
@@ -140,10 +158,12 @@
       },
       "required": [
         "dataset_id"
-      ]
+      ],
+      "additionalProperties": false
     },
     "fields": {
-      "endpoint": "https://www.ebi.ac.uk/eqtl/api/v2/datasets/{dataset_id}/associations"
+      "endpoint": "https://www.ebi.ac.uk/eqtl/api/v2/datasets/{dataset_id}/associations",
+      "pagination": "ebi_start_lookahead"
     },
     "type": "BaseRESTTool",
     "test_examples": [

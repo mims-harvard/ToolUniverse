@@ -1,12 +1,13 @@
 [
   {
     "name": "DiseaseOntology_get_term",
-    "description": "Get detailed information about a disease from the Disease Ontology (DO) by its DOID identifier. Returns the disease name, definition, synonyms, parent diseases in the ontology hierarchy, cross-references to ICD-10, ICD-9, MeSH, NCI Thesaurus, SNOMED-CT, UMLS, and OMIM, and which DO classification subsets it belongs to (cancer slim, AGR slim, FlyBase slim, etc.). The Disease Ontology is a standardized ontology for human disease terms used widely in bioinformatics. Example: DOID:162 returns 'cancer' with 4 synonyms, 7 cross-references (ICD10CM, MeSH, NCI, SNOMED, UMLS), and membership in 6 subsets including cancer_slim.",
+    "description": "Get a complete semantic Disease Ontology term by DOID. The returned ID is verified and the wrapper preserves name, definition, synonyms, parent relationship/source, external references, subsets, alternate IDs, and broad/exact/narrow SKOS mappings. Only the internal neo4jid is intentionally omitted and named in metadata. Live DOID:162 currently has 3 synonyms, 7 external references, and 7 subsets.",
     "parameter": {
       "type": "object",
       "properties": {
         "doid": {
           "type": "string",
+          "pattern": "^(?:[Dd][Oo][Ii][Dd]:)?[0-9]+$",
           "description": "Disease Ontology identifier in format 'DOID:XXXX'. Examples: 'DOID:162' (cancer), 'DOID:9352' (type 2 diabetes mellitus), 'DOID:10283' (prostate cancer), 'DOID:2531' (hematologic cancer), 'DOID:684' (hepatocellular carcinoma), 'DOID:4' (disease - root term)."
         }
       },
@@ -70,6 +71,9 @@
                   },
                   "id": {
                     "type": "string"
+                  },
+                  "source": {
+                    "type": ["string", "null"]
                   }
                 }
               },
@@ -88,6 +92,22 @@
                 "type": "string"
               },
               "description": "DO subsets this disease belongs to (e.g. DO_cancer_slim, DO_AGR_slim)"
+            },
+            "alternate_ids": {
+              "type": "array",
+              "items": {"type": "string"}
+            },
+            "skos_broad_matches": {
+              "type": "array",
+              "items": {"type": "string"}
+            },
+            "skos_exact_matches": {
+              "type": "array",
+              "items": {"type": "string"}
+            },
+            "skos_narrow_matches": {
+              "type": "array",
+              "items": {"type": "string"}
             }
           }
         },
@@ -107,12 +127,13 @@
   },
   {
     "name": "DiseaseOntology_get_parents",
-    "description": "Get the parent disease terms for a Disease Ontology term, enabling navigation of the disease hierarchy. Returns the direct parent(s) via 'is_a' relationships, their definitions, and their own parents, allowing you to trace the full path from a specific disease to the root. Example: DOID:10283 (prostate cancer) has parent DOID:2998 (testicular cancer -> male reproductive gland cancer -> reproductive organ cancer -> urogenital system cancer).",
+    "description": "Get direct parents for a Disease Ontology term and expand each parent by one additional level. This is a depth-2 view, not a complete path to the root. Every relation includes type and source; each parent has fetch_complete, while metadata reports failed_parent_fetches, parent_expansion_complete, hierarchy_depth_returned=2, and full_ancestry_complete so a failed or deliberately shallow traversal cannot appear complete. Live DOID:10283 has two direct parents: prostate disease and male reproductive organ cancer.",
     "parameter": {
       "type": "object",
       "properties": {
         "doid": {
           "type": "string",
+          "pattern": "^(?:[Dd][Oo][Ii][Dd]:)?[0-9]+$",
           "description": "Disease Ontology identifier in format 'DOID:XXXX'. Examples: 'DOID:10283' (prostate cancer), 'DOID:162' (cancer), 'DOID:9352' (type 2 diabetes)."
         }
       },
@@ -171,6 +192,15 @@
                     ],
                     "description": "Parent disease definition"
                   },
+                  "relationship": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": ["string", "null"]
+                  },
+                  "fetch_complete": {
+                    "type": "boolean"
+                  },
                   "grandparents": {
                     "type": "array",
                     "items": {
@@ -184,6 +214,12 @@
                             "string",
                             "null"
                           ]
+                        },
+                        "relationship": {
+                          "type": "string"
+                        },
+                        "source": {
+                          "type": ["string", "null"]
                         }
                       }
                     },

@@ -1,7 +1,7 @@
 """
 Crossref_search_works
 
-Search Crossref Works API for scholarly articles, publications, and research outputs by keyword. ...
+Search Crossref Works API by keyword with exact totals and deep cursor pagination. Start with the...
 """
 
 from typing import Any, Optional, Callable
@@ -11,6 +11,7 @@ from ._shared_client import get_shared_client
 def Crossref_search_works(
     query: str,
     limit: Optional[int] = 10,
+    cursor: Optional[str] = "*",
     filter: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -18,7 +19,7 @@ def Crossref_search_works(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Search Crossref Works API for scholarly articles, publications, and research outputs by keyword. ...
+    Search Crossref Works API by keyword with exact totals and deep cursor pagination. Start with the...
 
     Parameters
     ----------
@@ -26,6 +27,8 @@ def Crossref_search_works(
         Search query for Crossref works. Use keywords separated by spaces to refine y...
     limit : int
         Number of articles to return. This sets the maximum number of articles retrie...
+    cursor : str
+        Crossref deep-pagination cursor. Use '*' for the first page, then metadata.ne...
     filter : str
         Optional filter string for Crossref API. Examples: 'type:journal-article' (on...
     stream_callback : Callable, optional
@@ -44,7 +47,12 @@ def Crossref_search_works(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"query": query, "limit": limit, "filter": filter}.items()
+        for k, v in {
+            "query": query,
+            "limit": limit,
+            "cursor": cursor,
+            "filter": filter,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

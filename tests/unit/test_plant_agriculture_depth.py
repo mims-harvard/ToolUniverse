@@ -97,6 +97,22 @@ class TestUSDASearchByName(unittest.TestCase):
         self.assertEqual(len(out["data"]), 1)
         self.assertEqual(out["metadata"]["total_results"], 2)
         self.assertEqual(out["metadata"]["returned_results"], 1)
+        self.assertTrue(out["metadata"]["has_more"])
+        self.assertEqual(out["metadata"]["next_offset"], 1)
+
+    def test_offset_exposes_later_match_and_tail_terminates(self):
+        tool = _make_usda_search()
+        with patch("tooluniverse.usda_plants_tool.requests.get") as get:
+            resp = MagicMock()
+            resp.json.return_value = self.USDA_PAYLOAD
+            resp.raise_for_status.return_value = None
+            get.return_value = resp
+            out = tool.run({"searchText": "white oak", "limit": 1, "offset": 1})
+
+        self.assertEqual([row["symbol"] for row in out["data"]], ["QUAL"])
+        self.assertEqual(out["metadata"]["total_results"], 2)
+        self.assertFalse(out["metadata"]["has_more"])
+        self.assertIsNone(out["metadata"]["next_offset"])
 
     def test_missing_search_text(self):
         """Missing searchText returns an error envelope, not a raise."""

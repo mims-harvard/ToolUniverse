@@ -116,10 +116,35 @@ class RfamTool(BaseTool):
 
         if response.status_code == 200:
             if format_type == "json":
+                payload = response.json()
+                record = payload.get("rfam") if isinstance(payload, dict) else None
+                if not isinstance(record, dict):
+                    return {
+                        "status": "error",
+                        "error": "Rfam returned malformed family metadata",
+                    }
+                requested = str(family_id).casefold()
+                if requested not in {
+                    str(record.get("acc", "")).casefold(),
+                    str(record.get("id", "")).casefold(),
+                }:
+                    return {
+                        "status": "error",
+                        "error": "Rfam returned a different family than requested",
+                        "requested_family_id": family_id,
+                        "returned_accession": record.get("acc"),
+                        "returned_family_id": record.get("id"),
+                    }
                 return {
                     "status": "success",
-                    "data": response.json(),
+                    "data": payload,
                     "family_id": family_id,
+                    "metadata": {
+                        "returned_identity_verified": True,
+                        "source_record_complete": True,
+                        "accession": record.get("acc"),
+                        "canonical_family_id": record.get("id"),
+                    },
                 }
             else:
                 return {

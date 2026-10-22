@@ -297,13 +297,19 @@ class TestExecuteQuery:
     def test_execute_query_not_found(self, mock_post):
         """Test query execution when object not found."""
         mock_response = MagicMock()
-        mock_response.text = "error: Object not found"
+        # SIMBAD's script protocol marks failures with a "::error" line; a bare
+        # "error" substring used to false-positive on legitimate result text.
+        mock_response.text = (
+            "::error:::::\n[3] Identifier not found in the database : InvalidObject"
+        )
         mock_response.raise_for_status = MagicMock()
         mock_post.return_value = mock_response
 
         result = self.tool._execute_query("test script", "InvalidObject")
         assert result.get("status") == "error"
-        assert "not found" in result["data"]["error"]
+        assert result["data"]["error"] == "SIMBAD script error"
+        # The upstream reason is preserved rather than being flattened away.
+        assert "not found" in result["data"]["upstream_error"].lower()
 
     @patch('requests.post')
     def test_execute_query_empty_result(self, mock_post):
@@ -463,8 +469,10 @@ class TestSIMBADAdvancedToolRun:
             "max_results": 50
         })
 
+        # MAXREC is deliberately max_results+1: the extra row is an overflow
+        # probe so a full page can be distinguished from a complete result set.
         call_args = mock_post.call_args
-        assert call_args[1]["data"]["MAXREC"] == 50
+        assert call_args[1]["data"]["MAXREC"] == 51
 
     @patch('requests.post')
     def test_run_timeout(self, mock_post):
@@ -499,8 +507,10 @@ class TestSIMBADAdvancedToolRun:
             "adql_query": "SELECT * FROM basic",
             "format": "json"
         })
-        assert result["status"] == "success"
-        assert result["data"]["results"] == "Invalid JSON response"
+        # An unparseable body must surface as an error rather than being
+        # reported as a successful empty result.
+        assert result["status"] == "error"
+        assert result["data"]["error"] == "SIMBAD TAP returned invalid JSON"
 
 
 @pytest.mark.unit

@@ -2,7 +2,7 @@
   {
     "type": "DataGovTool",
     "name": "DataGov_search_datasets",
-    "description": "Search the US federal open data catalog (Data.gov) for datasets from agencies like EPA, CDC, Census Bureau, NIH, USDA, NOAA, and more. Data.gov uses the CKAN API and indexes over 300,000 federal datasets. Returns dataset titles, descriptions, organizations, download resource URLs, tags, and last-modified dates. Use organization filter (e.g. 'epa-gov', 'cdc-gov', 'usda-gov', 'nih-gov', 'census-gov', 'noaa-gov') to narrow results to a specific agency.",
+    "description": "Search the US federal open data catalog using its current cursor-based JSON API. Each response contains the service's fixed 20-result page and all distributions for each dataset. Continue with next_after as the after parameter while has_more is true. The current API does not expose a total-hit count, so total_count is null.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -17,10 +17,15 @@
         },
         "rows": {
           "type": "integer",
-          "description": "Number of results to return. Default 10, maximum 100.",
-          "default": 10,
+          "description": "Deprecated compatibility parameter; the current Data.gov API ignores page-size parameters and always returns up to 20 datasets. Use after for lossless pagination.",
+          "default": 20,
           "minimum": 1,
           "maximum": 100
+        },
+        "after": {
+          "type": ["string", "null"],
+          "description": "Opaque cursor returned as next_after by the previous response. Omit for the first page.",
+          "default": null
         }
       },
       "required": ["query"],
@@ -39,12 +44,27 @@
           "description": "Organization filter applied, or null"
         },
         "total_count": {
-          "type": "integer",
-          "description": "Total number of matching datasets in Data.gov"
+          "type": ["integer", "null"],
+          "description": "Total matches when supplied by Data.gov; currently null because the cursor API omits totals"
         },
         "returned": {
           "type": "integer",
           "description": "Number of datasets returned in this response"
+        },
+        "page_size": {
+          "type": "integer",
+          "description": "Fixed page size used by the current Data.gov API"
+        },
+        "after": {
+          "type": ["string", "null"],
+          "description": "Cursor used for this request"
+        },
+        "has_more": {
+          "type": "boolean"
+        },
+        "next_after": {
+          "type": ["string", "null"],
+          "description": "Opaque cursor for the next page"
         },
         "datasets": {
           "type": "array",
@@ -90,6 +110,10 @@
                   }
                 }
               },
+              "resource_count": {
+                "type": "integer",
+                "description": "Number of distributions returned for this dataset"
+              },
               "url": {
                 "type": ["string", "null"],
                 "description": "Dataset page URL on Data.gov"
@@ -98,7 +122,7 @@
           }
         }
       },
-      "required": ["query", "total_count", "returned", "datasets"]
+      "required": ["query", "total_count", "returned", "page_size", "has_more", "next_after", "datasets"]
     },
     "test_examples": [
       {

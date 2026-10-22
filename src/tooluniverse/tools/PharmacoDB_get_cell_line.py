@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def PharmacoDB_get_cell_line(
-    operation: str,
-    cell_name: Optional[str | Any] = None,
-    cell_id: Optional[int | Any] = None,
+    operation: Optional[str] = "get_cell_line",
+    cell_name: Optional[str] = None,
+    cell_id: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,9 +24,9 @@ def PharmacoDB_get_cell_line(
     ----------
     operation : str
         Operation type
-    cell_name : str | Any
+    cell_name : str
         Cell line name (e.g., 'MCF-7', 'A549', 'HeLa'). Mutually exclusive with cell_id.
-    cell_id : int | Any
+    cell_id : int
         PharmacoDB cell line database ID (e.g., 273 for MCF-7). Mutually exclusive wi...
     stream_callback : Callable, optional
         Callback for streaming output

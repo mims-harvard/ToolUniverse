@@ -1,7 +1,7 @@
 """
 UniProtIDMap_convert_ids
 
-Convert protein/gene identifiers between databases using the UniProt ID Mapping service. Submits ...
+Convert identifiers with UniProt ID Mapping. All upstream result pages are fetched, then exposed ...
 """
 
 from typing import Any, Optional, Callable
@@ -12,14 +12,16 @@ def UniProtIDMap_convert_ids(
     ids: str,
     from_db: str,
     to_db: Optional[str] = "UniProtKB",
-    tax_id: Optional[int | Any] = None,
+    tax_id: Optional[int] = None,
+    limit: Optional[int] = 500,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Convert protein/gene identifiers between databases using the UniProt ID Mapping service. Submits ...
+    Convert identifiers with UniProt ID Mapping. All upstream result pages are fetched, then exposed ...
 
     Parameters
     ----------
@@ -29,8 +31,12 @@ def UniProtIDMap_convert_ids(
         Source database. Common values: 'Gene_Name', 'UniProtKB_AC-ID', 'Ensembl', 'E...
     to_db : str
         Target database. Common values: 'UniProtKB', 'UniProtKB-Swiss-Prot', 'Gene_Na...
-    tax_id : int | Any
+    tax_id : int
         NCBI Taxonomy ID to restrict results. Examples: 9606 (human), 10090 (mouse), ...
+    limit : int
+        Maximum mappings to return in this local page.
+    offset : int
+        Zero-based mapping offset; continue with next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +58,8 @@ def UniProtIDMap_convert_ids(
             "from_db": from_db,
             "to_db": to_db,
             "tax_id": tax_id,
+            "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

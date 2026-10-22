@@ -110,6 +110,40 @@ class IDRSearchEngineTool(BaseTool):
         return []
 
     @staticmethod
+    def _search_page(payload: Dict[str, Any]):
+        """Return one searchengine page plus its global count and cursor.
+
+        IDR nests image search rows under ``results.results`` and exposes an
+        Elasticsearch ``bookmark`` for the next 1000-row server page.  Older
+        responses can still contain a plain list, so keep that form working.
+        """
+        result_block = payload.get("results") if isinstance(payload, dict) else None
+        if isinstance(result_block, dict):
+            rows = result_block.get("results", [])
+            rows = rows if isinstance(rows, list) else []
+            total = result_block.get("size")
+            if not isinstance(total, int) or total < 0:
+                total = len(rows)
+            bookmark = result_block.get("bookmark")
+            if isinstance(bookmark, list) and len(bookmark) == 1:
+                bookmark = bookmark[0]
+            return rows, total, bookmark
+        rows = result_block if isinstance(result_block, list) else []
+        return rows, len(rows), None
+
+    @staticmethod
+    def _pagination_args(args: Dict[str, Any], default_limit: int | None):
+        offset = args.get("offset", 0)
+        limit = args.get("max_results", default_limit)
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return None, None, "Parameter 'offset' must be a non-negative integer."
+        if limit is not None and (
+            isinstance(limit, bool) or not isinstance(limit, int) or limit <= 0
+        ):
+            return None, None, "Parameter 'max_results' must be a positive integer."
+        return offset, limit, None
+
+    @staticmethod
     def _kv_pairs(row: Dict[str, Any]) -> List[Dict[str, str]]:
         """Flatten an image/container key_values list to simple name/value dicts."""
         out = []
@@ -148,11 +182,40 @@ class IDRSearchEngineTool(BaseTool):
         if return_containers:
             params["return_containers"] = "true"
 
-        payload, err = self._get(f"{resource}/search/", params)
-        if err is not None:
-            return {"status": "error", "error": err}
+        # The API server page is fixed at 1000 rows.  Its response includes a
+        # global ``size`` and a bookmark cursor, both of which used to be
+        # discarded by this wrapper.  Walk only as many server pages as needed
+        # to satisfy a global client-side offset/limit.
+        offset, limit, pagination_error = self._pagination_args(args, 1000)
+        if pagination_error:
+            return {"status": "error", "error": pagination_error}
 
-        rows = self._unwrap_results(payload)
+        rows: List[Dict[str, Any]] = []
+        total = 0
+        remaining_skip = offset
+        bookmark = None
+        seen_bookmarks = set()
+        while len(rows) < limit:
+            page_params = dict(params)
+            if bookmark is not None:
+                page_params["bookmark"] = bookmark
+            payload, err = self._get(f"{resource}/search/", page_params)
+            if err is not None:
+                return {"status": "error", "error": err}
+            page_rows, total, next_bookmark = self._search_page(payload)
+            if remaining_skip >= len(page_rows):
+                remaining_skip -= len(page_rows)
+                page_rows = []
+            else:
+                page_rows = page_rows[remaining_skip:]
+                remaining_skip = 0
+            rows.extend(page_rows[: limit - len(rows)])
+            if len(rows) >= limit or offset + len(rows) >= total:
+                break
+            if next_bookmark is None or next_bookmark in seen_bookmarks:
+                break
+            seen_bookmarks.add(next_bookmark)
+            bookmark = next_bookmark
 
         query = {
             "key": args.get("key"),
@@ -174,12 +237,10 @@ class IDRSearchEngineTool(BaseTool):
             data = {
                 "query": query,
                 "container_count": len(containers),
+                "total_container_count": total,
                 "containers": containers,
             }
         else:
-            limit = args.get("max_results")
-            if isinstance(limit, int) and limit > 0:
-                rows = rows[:limit]
             images = [
                 {
                     "image_id": r.get("id"),
@@ -195,8 +256,21 @@ class IDRSearchEngineTool(BaseTool):
             data = {
                 "query": query,
                 "image_count": len(images),
+                "total_image_count": total,
                 "images": images,
             }
+        returned = len(rows)
+        has_more = offset + returned < total
+        data.update(
+            {
+                "offset": offset,
+                "limit": limit,
+                "returned": returned,
+                "has_more": has_more,
+                "next_offset": offset + returned if has_more else None,
+                "result_set_complete": offset == 0 and returned == total,
+            }
+        )
         return {"status": "success", "data": data}
 
     def _list_keys(self, args: Dict[str, Any]) -> Dict[str, Any]:
@@ -228,7 +302,7 @@ class IDRSearchEngineTool(BaseTool):
         if err is not None:
             return {"status": "error", "error": err}
         rows = payload.get("data", []) if isinstance(payload, dict) else []
-        values = [
+        all_values = [
             {
                 "value": r.get("Value"),
                 "image_count": r.get("Number of images"),
@@ -236,15 +310,26 @@ class IDRSearchEngineTool(BaseTool):
             for r in rows
             if isinstance(r, dict)
         ]
-        limit = args.get("max_results")
-        if isinstance(limit, int) and limit > 0:
-            values = values[:limit]
+        offset, limit, pagination_error = self._pagination_args(args, None)
+        if pagination_error:
+            return {"status": "error", "error": pagination_error}
+        total = len(all_values)
+        end = None if limit is None else offset + limit
+        values = all_values[offset:end]
+        has_more = offset + len(values) < total
         return {
             "status": "success",
             "data": {
                 "resource": resource,
                 "key": key,
                 "value_count": len(values),
+                "total_value_count": total,
                 "values": values,
+                "offset": offset,
+                "limit": limit,
+                "returned": len(values),
+                "has_more": has_more,
+                "next_offset": offset + len(values) if has_more else None,
+                "result_set_complete": offset == 0 and len(values) == total,
             },
         }

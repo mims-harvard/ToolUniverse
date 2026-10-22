@@ -17,7 +17,7 @@ def gnomad_get_sv_by_region(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Get structural variants (SVs) from gnomAD v4 overlapping a genomic region. Returns DEL/DUP/INV/BN...
 
@@ -40,7 +40,7 @@ def gnomad_get_sv_by_region(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

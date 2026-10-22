@@ -1,12 +1,13 @@
 [
   {
     "name": "HGNC_fetch_gene_by_symbol",
-    "description": "Fetch detailed gene information from HGNC (HUGO Gene Nomenclature Committee) by official gene symbol. Returns comprehensive gene data including HGNC ID, full name, chromosomal location, cross-references to Ensembl, NCBI Entrez, UniProt, OMIM, and RefSeq. HGNC is the authoritative source for human gene nomenclature. Example: 'TP53' returns tumor protein p53 with all its identifiers.",
+    "description": "Fetch the complete authoritative HGNC gene record by official symbol. The wrapper requires one unique upstream document and verifies its returned symbol case-insensitively before success. Returns all source fields, including HGNC ID, approved name/status, chromosome, prior and alias names, gene groups, and Ensembl/Entrez/UniProt/OMIM/RefSeq cross-references.",
     "parameter": {
       "type": "object",
       "properties": {
         "symbol": {
           "type": "string",
+          "minLength": 1,
           "description": "Official HGNC gene symbol. Examples: 'TP53', 'BRCA1', 'EGFR', 'INS', 'ACE2'."
         }
       },
@@ -151,12 +152,14 @@
   },
   {
     "name": "HGNC_fetch_gene_by_id",
-    "description": "Fetch gene information from HGNC by HGNC ID. Useful when you have a specific HGNC identifier and want the full gene record. Returns official symbol, name, location, and cross-references to other databases. Example: 'HGNC:11998' returns TP53.",
+    "description": "Fetch the complete HGNC gene record by numeric HGNC ID, with or without an HGNC: prefix. Prefix case is normalized, the ID must be numeric, and the returned identifier is verified before success. Example: HGNC:11998 returns TP53.",
     "parameter": {
       "type": "object",
       "properties": {
         "hgnc_id": {
           "type": "string",
+          "minLength": 1,
+          "pattern": "^(?:[Hh][Gg][Nn][Cc]:)?[0-9]+$",
           "description": "HGNC identifier, with or without 'HGNC:' prefix. Examples: 'HGNC:11998' (TP53), 'HGNC:1100' (BRCA1), '1101' (BRCA2)."
         }
       },
@@ -245,18 +248,30 @@
   },
   {
     "name": "HGNC_search_genes",
-    "description": "Search for human genes in HGNC by symbol, name, or alias. Supports wildcards (e.g., 'BRCA*' finds BRCA1, BRCA2). Searches across approved symbols and names. Returns a list of matching genes with basic info. Example: 'kinase' searches gene names containing kinase.",
+    "description": "Search HGNC by symbol, name, alias, previous symbol, external ID, or location. Wildcards are supported. The HGNC REST search endpoint returns its entire result set and ignores Solr-style rows/start controls (verified live: name=kinase returned 812/812); ToolUniverse therefore exposes no fake pagination and verifies len(docs)==numFound before reporting result_set_complete=true.",
     "parameter": {
       "type": "object",
       "properties": {
         "query": {
           "type": "string",
+          "minLength": 1,
           "description": "Search query - gene symbol, partial name, or keyword. Supports wildcards (*). Examples: 'BRCA*', 'tumor protein', 'insulin receptor'."
         },
         "search_field": {
           "type": [
             "string",
             "null"
+          ],
+          "enum": [
+            "symbol",
+            "name",
+            "alias_symbol",
+            "prev_symbol",
+            "entrez_id",
+            "ensembl_gene_id",
+            "uniprot_ids",
+            "location",
+            null
           ],
           "description": "Field to search in. Options: 'symbol', 'name', 'alias_symbol', 'prev_symbol', 'entrez_id', 'ensembl_gene_id', 'uniprot_ids', 'location'. Default searches across symbol and name."
         }
@@ -326,12 +341,13 @@
   },
   {
     "name": "HGNC_search_by_location",
-    "description": "Search HGNC for genes at a specific chromosomal location. Returns all genes mapped to that cytogenetic band. Useful for identifying genes in a chromosomal region of interest. Example: '17p13.1' returns genes including TP53.",
+    "description": "Search HGNC for every gene mapped to a cytogenetic band. The upstream endpoint is unpaginated; the wrapper verifies returned count against numFound before marking the result set complete. Example: 17p13.1 includes TP53.",
     "parameter": {
       "type": "object",
       "properties": {
         "location": {
           "type": "string",
+          "minLength": 1,
           "description": "Cytogenetic band location. Examples: '17p13.1' (TP53 region), '17q21.31' (BRCA1 region), '7p11.2' (EGFR region), '13q14.2' (RB1 region)."
         }
       },
@@ -410,7 +426,10 @@
       "type": "object",
       "properties": {
         "gene_group_id": {
-          "type": "string",
+          "oneOf": [
+            {"type": "string", "pattern": "^[1-9][0-9]*$"},
+            {"type": "integer", "minimum": 1}
+          ],
           "description": "Numeric HGNC gene group/family ID. Examples: '366' (Ubiquitin specific peptidases), '588' (BCL2 family), '475' (Solute carrier family). Accepts a string or integer."
         }
       },

@@ -1,7 +1,7 @@
 """
 OMA_get_orthologs
 
-Get pairwise orthologs for a protein from the OMA (Orthologous MAtrix) Browser. Returns orthologo...
+Get pairwise orthologs for one protein from OMA. The upstream protein-ortholog endpoint returns i...
 """
 
 from typing import Any, Optional, Callable
@@ -10,24 +10,27 @@ from ._shared_client import get_shared_client
 
 def OMA_get_orthologs(
     protein_id: str,
-    rel_type: Optional[str | Any] = None,
-    per_page: Optional[int | Any] = None,
+    rel_type: Optional[str] = None,
+    per_page: Optional[int] = None,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get pairwise orthologs for a protein from the OMA (Orthologous MAtrix) Browser. Returns orthologo...
+    Get pairwise orthologs for one protein from OMA. The upstream protein-ortholog endpoint returns i...
 
     Parameters
     ----------
     protein_id : str
         UniProt accession (e.g., 'P04637' for human p53) or OMA ID.
-    rel_type : str | Any
+    rel_type : str
         Filter by orthology relationship type. Options: '1:1' (one-to-one), '1:n' (on...
-    per_page : int | Any
-        Number of orthologs to return (default: 20, max: 100).
+    per_page : int
+        Maximum orthologs in the local page (default 20, max 1000). The upstream endp...
+    offset : int
+        Zero-based offset into the complete filtered ortholog list. Continue with met...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +51,7 @@ def OMA_get_orthologs(
             "protein_id": protein_id,
             "rel_type": rel_type,
             "per_page": per_page,
+            "offset": offset,
         }.items()
         if v is not None
     }

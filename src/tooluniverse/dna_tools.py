@@ -1028,6 +1028,24 @@ class DNATool(BaseTool):
             }
         strand = arguments.get("strand", "both")  # "forward", "reverse", "both"
 
+        orf_limit = arguments.get("limit", 50)
+        orf_offset = arguments.get("offset", 0)
+        if (
+            isinstance(orf_limit, bool)
+            or not isinstance(orf_limit, int)
+            or orf_limit < 1
+        ):
+            return {"status": "error", "error": "limit must be a positive integer"}
+        if (
+            isinstance(orf_offset, bool)
+            or not isinstance(orf_offset, int)
+            or orf_offset < 0
+        ):
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+            }
+
         # Validate strand parameter: case-sensitive match required.
         # An invalid value (e.g., "BOTH", "Forward") silently returns 0 ORFs.
         _valid_strands = ("forward", "reverse", "both")
@@ -1175,21 +1193,27 @@ class DNATool(BaseTool):
         all_orfs.sort(key=lambda x: x["length_nt"], reverse=True)
 
         total_found = len(all_orfs)
-        displayed = all_orfs[:50]
+        displayed = all_orfs[orf_offset : orf_offset + orf_limit]
+        has_more = orf_offset + len(displayed) < total_found
 
         data = {
             "sequence_length": len(sequence),
             "min_length_nt": min_length,
             "num_orfs_found": total_found,
+            "orfs_returned": len(displayed),
+            "offset": orf_offset,
+            "limit": orf_limit,
+            "has_more": has_more,
+            "next_offset": orf_offset + len(displayed) if has_more else None,
+            "result_set_complete": orf_offset == 0 and len(displayed) == total_found,
             "orfs": displayed,
         }
-        # Warn when the result list is truncated: num_orfs_found > 50 but only
-        # 50 entries are returned, which would appear as missing results.
-        if total_found > 50:
+        if orf_offset > 0 or has_more:
             data["results_truncated"] = True
             data["results_truncated_note"] = (
-                f"Only the 50 longest ORFs are shown out of {total_found} found. "
-                "num_orfs_found reflects the full count."
+                f"This page returns {len(displayed)} of {total_found} ORFs, "
+                f"starting at sorted offset {orf_offset}. Continue with "
+                "next_offset while has_more is true."
             )
         # Warn about open ORFs (no in-frame stop codon before end of sequence).
         # These are common in partial transcripts, incomplete assemblies, or
@@ -1265,6 +1289,21 @@ class DNATool(BaseTool):
                 "sequence_length": total,
                 "effective_length": effective_total,
                 "interpretation": interpretation,
+                "interpretation_criteria": {
+                    "derived": True,
+                    "derived_by": "ToolUniverse",
+                    "metric": "gc_content_percent",
+                    "metric_value": gc_pct,
+                    "denominator": "A+T+G+C bases; N bases excluded",
+                    "low_gc_rule": "GC < 40%",
+                    "normal_gc_rule": "40% <= GC <= 60%",
+                    "high_gc_rule": "GC > 60%",
+                    "undefined_rule": "no A/T/G/C bases",
+                    "scope_note": (
+                        "These are sequence-composition heuristic categories, "
+                        "not a retrieved experimental PCR-performance result."
+                    ),
+                },
             },
         }
 

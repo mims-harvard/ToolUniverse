@@ -1,7 +1,7 @@
 """
 MassIVE_search_datasets
 
-Search the MassIVE proteomics repository for mass spectrometry datasets. MassIVE hosts thousands ...
+Search the MassIVE proteomics repository for mass spectrometry datasets through ProXI. Page numbe...
 """
 
 from typing import Any, Optional, Callable
@@ -10,20 +10,23 @@ from ._shared_client import get_shared_client
 
 def MassIVE_search_datasets(
     page_size: Optional[int] = 10,
-    species: Optional[str | Any] = None,
+    page_number: Optional[int] = 1,
+    species: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> list[Any]:
     """
-    Search the MassIVE proteomics repository for mass spectrometry datasets. MassIVE hosts thousands ...
+    Search the MassIVE proteomics repository for mass spectrometry datasets through ProXI. Page numbe...
 
     Parameters
     ----------
     page_size : int
-        Number of results to return (max 100)
-    species : str | Any
+        Number of results to return (strictly 1-100; out-of-range values are rejected...
+    page_number : int
+        One-based ProXI result page to return. Continue with metadata.next_page while...
+    species : str
         NCBI taxonomy ID to filter by species (e.g., '9606' for human, '10090' for mo...
     stream_callback : Callable, optional
         Callback for streaming output
@@ -41,7 +44,11 @@ def MassIVE_search_datasets(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"page_size": page_size, "species": species}.items()
+        for k, v in {
+            "page_size": page_size,
+            "page_number": page_number,
+            "species": species,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

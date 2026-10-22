@@ -1,7 +1,7 @@
 """
 EBIProteins_get_proteomics_peptides
 
-Get mass spectrometry proteomics peptide evidence for a protein from the EBI Proteins API. Return...
+Get mass-spectrometry peptide evidence from the EBI Proteins API with limit/offset pagination and...
 """
 
 from typing import Any, Optional, Callable
@@ -10,18 +10,24 @@ from ._shared_client import get_shared_client
 
 def EBIProteins_get_proteomics_peptides(
     accession: str,
+    limit: Optional[int] = 100,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get mass spectrometry proteomics peptide evidence for a protein from the EBI Proteins API. Return...
+    Get mass-spectrometry peptide evidence from the EBI Proteins API with limit/offset pagination and...
 
     Parameters
     ----------
     accession : str
         UniProt accession. Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P38398' (BRCA1).
+    limit : int
+        Maximum number of proteomics peptides to return in this page.
+    offset : int
+        Zero-based peptide offset. Use data.next_offset for the next page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +42,11 @@ def EBIProteins_get_proteomics_peptides(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"accession": accession}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {"accession": accession, "limit": limit, "offset": offset}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "EBIProteins_get_proteomics_peptides",

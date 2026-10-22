@@ -78,6 +78,9 @@ class EBIProteinsFeaturesTool(BaseTool):
         response.raise_for_status()
         data = response.json()
 
+        limit = min(max(int(arguments.get("limit", 100)), 1), 1000)
+        offset = max(int(arguments.get("offset", 0)), 0)
+
         features = []
         for f in data.get("features", []):
             feature = {
@@ -92,7 +95,7 @@ class EBIProteinsFeaturesTool(BaseTool):
             if isinstance(raw_evidences, dict):
                 raw_evidences = [raw_evidences]
             evidences = []
-            for ev in raw_evidences[:3]:
+            for ev in raw_evidences:
                 src = ev.get("source", {}) if isinstance(ev, dict) else {}
                 evidences.append(
                     {
@@ -103,6 +106,7 @@ class EBIProteinsFeaturesTool(BaseTool):
                 )
             if evidences:
                 feature["evidences"] = evidences
+                feature["raw_evidences"] = raw_evidences
 
             features.append(feature)
 
@@ -119,14 +123,22 @@ class EBIProteinsFeaturesTool(BaseTool):
             "STRUCTURAL": "Secondary Structure",
         }
 
+        feature_page = features[offset : offset + limit]
+        has_more = offset + len(feature_page) < len(features)
         return {
             "status": "success",
             "data": {
                 "accession": data.get("accession"),
                 "entry_name": data.get("entryName"),
                 "sequence_length": len(data.get("sequence", "")),
-                "features": features[:100],
+                "features": feature_page,
                 "total_features": len(data.get("features", [])),
+                "returned": len(feature_page),
+                "limit": limit,
+                "offset": offset,
+                "has_more": has_more,
+                "truncated": len(feature_page) < len(features),
+                "next_offset": offset + len(feature_page) if has_more else None,
                 "feature_type_counts": type_counts,
             },
             "metadata": {

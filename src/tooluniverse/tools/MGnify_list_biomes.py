@@ -1,7 +1,7 @@
 """
 MGnify_list_biomes
 
-Browse the MGnify biome hierarchy. Returns biome identifiers, names, and sample counts. Biomes ra...
+Browse the MGnify biome hierarchy with explicit page pagination. Returns biome identifiers, names...
 """
 
 from typing import Any, Optional, Callable
@@ -10,24 +10,24 @@ from ._shared_client import get_shared_client
 
 def MGnify_list_biomes(
     depth: Optional[int] = None,
-    page: Optional[int] = None,
-    page_size: Optional[int] = None,
+    page: Optional[int] = 1,
+    page_size: Optional[int] = 25,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Browse the MGnify biome hierarchy. Returns biome identifiers, names, and sample counts. Biomes ra...
+    Browse the MGnify biome hierarchy with explicit page pagination. Returns biome identifiers, names...
 
     Parameters
     ----------
     depth : int
         Hierarchy depth to filter by (1=root, 2=second level, etc.).
     page : int
-        Page number (default 1).
+        One-based result page. Continue with metadata.next_page.
     page_size : int
-        Results per page (default 25, max 100).
+        Results per page (default 25, range 1-100).
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

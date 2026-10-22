@@ -1,7 +1,7 @@
 """
 ChIPAtlas_get_target_genes
 
-ChIP-Atlas Target Genes: for a transcription factor, return its ranked list of potential target g...
+ChIP-Atlas transcription-factor target genes ranked by average TSS-proximal binding score. Result...
 """
 
 from typing import Any, Optional, Callable
@@ -14,13 +14,14 @@ def ChIPAtlas_get_target_genes(
     genome: Optional[str] = "hg38",
     distance: Optional[str] = "5",
     limit: Optional[int] = 100,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    ChIP-Atlas Target Genes: for a transcription factor, return its ranked list of potential target g...
+    ChIP-Atlas transcription-factor target genes ranked by average TSS-proximal binding score. Result...
 
     Parameters
     ----------
@@ -34,6 +35,8 @@ def ChIPAtlas_get_target_genes(
         TSS-distance window in kb defining 'bound near a gene'. '1' (±1kb, strict pro...
     limit : int
         Maximum number of top-scoring target genes to return.
+    offset : int
+        Zero-based ranked-gene offset. Continue with data.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def ChIPAtlas_get_target_genes(
             "genome": genome,
             "distance": distance,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

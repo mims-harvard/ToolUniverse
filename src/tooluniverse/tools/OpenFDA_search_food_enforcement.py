@@ -1,7 +1,7 @@
 """
 OpenFDA_search_food_enforcement
 
-Search the FDA food enforcement (recall) database via openFDA. Contains food recalls, market with...
+Search FDA food recalls via openFDA. Record mode exposes exact totals and skip pagination; contin...
 """
 
 from typing import Any, Optional, Callable
@@ -9,25 +9,28 @@ from ._shared_client import get_shared_client
 
 
 def OpenFDA_search_food_enforcement(
-    search: Optional[str | Any] = None,
-    limit: Optional[int | Any] = None,
-    count: Optional[str | Any] = None,
+    search: Optional[str] = None,
+    limit: Optional[int] = 5,
+    skip: Optional[int] = None,
+    count: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search the FDA food enforcement (recall) database via openFDA. Contains food recalls, market with...
+    Search FDA food recalls via openFDA. Record mode exposes exact totals and skip pagination; contin...
 
     Parameters
     ----------
-    search : str | Any
+    search : str
         Lucene query for food recalls (e.g., 'classification:"Class I"', 'reason_for_...
-    limit : int | Any
-        Maximum number of results (default 5, max 100)
-    count : str | Any
-        Field to count by (e.g., 'classification', 'state', 'recalling_firm.exact')
+    limit : int
+        Record mode: max 100. Count mode: max 1000 terms.
+    skip : int
+        Record mode only. Number of recalls to skip; continue with metadata.next_skip...
+    count : str
+        Field to count by. Must use the '.exact' keyword sub-field for text columns o...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,12 @@ def OpenFDA_search_food_enforcement(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"search": search, "limit": limit, "count": count}.items()
+        for k, v in {
+            "search": search,
+            "limit": limit,
+            "skip": skip,
+            "count": count,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

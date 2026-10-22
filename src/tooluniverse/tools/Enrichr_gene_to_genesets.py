@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def Enrichr_gene_to_genesets(
     gene: str,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "gene_to_genesets",
     include_metadata: Optional[bool] = False,
     max_terms_per_library: Optional[int] = 0,
     *,

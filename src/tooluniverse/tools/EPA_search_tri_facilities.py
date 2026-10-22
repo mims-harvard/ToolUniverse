@@ -1,7 +1,7 @@
 """
 EPA_search_tri_facilities
 
-Search EPA Toxics Release Inventory (TRI) facilities by US state (and optional city) via the EPA ...
+Search EPA TRI facilities by US state and optional city. Results use native Envirofacts paginatio...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,14 @@ def EPA_search_tri_facilities(
     state: str,
     city: Optional[str] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search EPA Toxics Release Inventory (TRI) facilities by US state (and optional city) via the EPA ...
+    Search EPA TRI facilities by US state and optional city. Results use native Envirofacts paginatio...
 
     Parameters
     ----------
@@ -27,7 +28,9 @@ def EPA_search_tri_facilities(
     city : str
         Optional city name filter, e.g. 'Los Angeles'.
     limit : int
-        Max facilities (default 10, max 100).
+        Max facilities per page (default 10, max 100).
+    offset : int
+        Zero-based row offset; continue with metadata.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,12 @@ def EPA_search_tri_facilities(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"state": state, "city": city, "limit": limit}.items()
+        for k, v in {
+            "state": state,
+            "city": city,
+            "limit": limit,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

@@ -152,13 +152,45 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
         # Build cross-reference table
         associations = self._build_concordance(results_by_source)
 
+        limit = max(1, min(int(arguments.get("limit", 50)), 500))
+        offset = max(0, int(arguments.get("offset", 0)))
+        association_page = associations[offset : offset + limit]
+        association_has_more = offset + len(association_page) < len(associations)
+
+        source_limit = max(1, min(int(arguments.get("source_limit", 10)), 500))
+        source_offset = max(0, int(arguments.get("source_offset", 0)))
+        per_source_results = {}
+        per_source_counts = {}
+        per_source_pagination = {}
+        for source, source_rows in results_by_source.items():
+            page = source_rows[source_offset : source_offset + source_limit]
+            has_more = source_offset + len(page) < len(source_rows)
+            per_source_results[source] = page
+            per_source_counts[source] = len(source_rows)
+            per_source_pagination[source] = {
+                "offset": source_offset,
+                "limit": source_limit,
+                "returned": len(page),
+                "has_more": has_more,
+                "next_offset": source_offset + len(page) if has_more else None,
+            }
+
         result: Dict[str, Any] = {
             "query": {"gene": gene, "disease": disease},
             "sources_queried": list(results_by_source.keys()),
             "sources_failed": sources_failed,
             "num_associations": len(associations),
-            "associations": associations[:50],
-            "per_source_results": {k: v[:10] for k, v in results_by_source.items()},
+            "association_offset": offset,
+            "association_limit": limit,
+            "associations_returned": len(association_page),
+            "associations_has_more": association_has_more,
+            "next_association_offset": (
+                offset + len(association_page) if association_has_more else None
+            ),
+            "associations": association_page,
+            "per_source_results": per_source_results,
+            "per_source_counts": per_source_counts,
+            "per_source_pagination": per_source_pagination,
         }
         if notes:
             result["notes"] = notes
@@ -272,7 +304,7 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
         # GenCC "submissions" carry BOTH disease_title and gene_symbol; pick the
         # one the caller is asking for.
         if isinstance(data, dict) and "submissions" in data:
-            for sub in data["submissions"][:30]:
+            for sub in data["submissions"]:
                 if isinstance(sub, dict):
                     if query_by_disease:
                         name = sub.get("gene_symbol") or sub.get("disease_title") or ""
@@ -293,7 +325,7 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
             rows = (
                 (data.get("target") or {}).get("associatedDiseases", {}).get("rows", [])
             )
-            for row in rows[:30]:
+            for row in rows:
                 disease = (row or {}).get("disease") or {}
                 name = disease.get("name", "")
                 if name:
@@ -307,7 +339,7 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
             rows = (
                 (data.get("disease") or {}).get("associatedTargets", {}).get("rows", [])
             )
-            for row in rows[:30]:
+            for row in rows:
                 target = (row or {}).get("target") or {}
                 name = target.get("approvedSymbol", "")
                 if name:
@@ -319,7 +351,7 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
         # OpenTargets bare disease-name search fallback: "search.hits" (names).
         if isinstance(data, dict) and "search" in data:
             hits = data["search"].get("hits", [])
-            for hit in hits[:30]:
+            for hit in hits:
                 if isinstance(hit, dict):
                     name = hit.get("name", "")
                     items.append({"name": str(name), "score": None, "source": source})
@@ -335,7 +367,7 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
         # CFTR), so extract it.
         if isinstance(data, dict) and "variants" in data:
             if query_by_disease:
-                for v in (data.get("variants") or [])[:30]:
+                for v in data.get("variants") or []:
                     if isinstance(v, dict):
                         for g in v.get("genes", []) or []:
                             if g:
@@ -355,7 +387,7 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
         # for both query directions, same as ClinVar's disease->gene branch
         # falls back to what the source actually gives us.
         if isinstance(data, dict) and "entries" in data:
-            for row in (data.get("entries") or [])[:30]:
+            for row in data.get("entries") or []:
                 entry = (row or {}).get("entry") or {}
                 title = (entry.get("titles") or {}).get("preferredTitle", "")
                 if title:
@@ -376,7 +408,7 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
                 if query_by_disease
                 else disease_fields + gene_fields
             )
-            for item in data[:30]:
+            for item in data:
                 if isinstance(item, dict):
                     name = next((item[f] for f in order if item.get(f)), "")
                     score = item.get(

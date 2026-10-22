@@ -280,11 +280,15 @@ class ConoServerSearchConopeptidesTool(BaseTool):
             )
 
         limit = arguments.get("limit", 25)
+        offset = arguments.get("offset", 0)
         try:
             limit = int(limit)
+            offset = int(offset)
         except (TypeError, ValueError):
             limit = 25
+            offset = 0
         limit = max(1, min(200, limit))
+        offset = max(0, offset)
 
         try:
             entries = _load_entries()
@@ -300,12 +304,18 @@ class ConoServerSearchConopeptidesTool(BaseTool):
             )
         ]
 
+        page = matched[offset : offset + limit]
+        has_more = offset + len(page) < len(matched)
         return {
             "status": "success",
             "data": {
                 "count": len(matched),
-                "returned": min(len(matched), limit),
-                "results": matched[:limit],
+                "returned": len(page),
+                "offset": offset,
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_offset": offset + len(page) if has_more else None,
+                "results": page,
             },
             "metadata": {
                 "source": "ConoServer",
@@ -315,5 +325,9 @@ class ConoServerSearchConopeptidesTool(BaseTool):
                 },
                 "total_matched": len(matched),
                 "limit": limit,
+                "offset": offset,
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_offset": offset + len(page) if has_more else None,
             },
         }

@@ -1,7 +1,7 @@
 """
 humanbase_ppi_analysis
 
-Retrieve tissue-specific protein-protein interactions and biological processes from HumanBase. Re...
+Retrieve a tissue-specific HumanBase gene interaction network and associated Gene Ontology biolog...
 """
 
 from typing import Any, Optional, Callable
@@ -11,18 +11,19 @@ from ._shared_client import get_shared_client
 def humanbase_ppi_analysis(
     gene_list: Optional[list[str]] = None,
     tissue: Optional[str] = "brain",
-    max_node: Optional[int] = 10,
+    max_node: Optional[int] = None,
     interaction: Optional[str] = None,
     string_mode: Optional[bool] = True,
     genes: Optional[list[str]] = None,
     top_n: Optional[int] = None,
+    neighbor_count: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> str:
+) -> Any:
     """
-    Retrieve tissue-specific protein-protein interactions and biological processes from HumanBase. Re...
+    Retrieve a tissue-specific HumanBase gene interaction network and associated Gene Ontology biolog...
 
     Parameters
     ----------
@@ -31,15 +32,17 @@ def humanbase_ppi_analysis(
     tissue : str
         Tissue type for tissue-specific interactions. Use simple names like 'brain', ...
     max_node : int
-        Maximum number of nodes to retrieve in the interaction network. Warning: the ...
+        Legacy alias for neighbor_count. Despite its historical name, HumanBase node_...
     interaction : str
-        Specific interaction type to filter by. Available types: 'co-expression', 'in...
+        Specific HumanBase datatype to use for network ranking/weights. If omitted, a...
     string_mode : bool
-        Whether to return the result in string mode. If True, the result will be a st...
+        If true, return a formatted network summary with evidence dataset counts; ful...
     genes : list[str]
         Alias for gene_list. List of gene symbols to analyze.
     top_n : int
-        Alias for max_node. Maximum number of network nodes to retrieve.
+        Legacy alias for neighbor_count. It requests this many additional neighboring...
+    neighbor_count : int
+        Number of additional neighboring genes requested from HumanBase. Total return...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -49,7 +52,7 @@ def humanbase_ppi_analysis(
 
     Returns
     -------
-    str
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
@@ -64,6 +67,7 @@ def humanbase_ppi_analysis(
             "string_mode": string_mode,
             "genes": genes,
             "top_n": top_n,
+            "neighbor_count": neighbor_count,
         }.items()
         if v is not None
     }

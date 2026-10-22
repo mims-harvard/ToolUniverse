@@ -1,7 +1,7 @@
 """
 NeuroMorpho_get_field_values
 
-Get available values for a neuron metadata field in NeuroMorpho.Org. Useful for discovering what ...
+Get available values for a NeuroMorpho neuron metadata field with explicit zero-based page pagina...
 """
 
 from typing import Any, Optional, Callable
@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def NeuroMorpho_get_field_values(
-    field_name: str,
+    field_name: Optional[str] = "species",
     page: Optional[int] = 0,
     size: Optional[int] = 500,
     *,
@@ -18,7 +18,7 @@ def NeuroMorpho_get_field_values(
     validate: bool = True,
 ) -> Any:
     """
-    Get available values for a neuron metadata field in NeuroMorpho.Org. Useful for discovering what ...
+    Get available values for a NeuroMorpho neuron metadata field with explicit zero-based page pagina...
 
     Parameters
     ----------

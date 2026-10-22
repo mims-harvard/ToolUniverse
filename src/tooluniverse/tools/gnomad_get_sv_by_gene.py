@@ -15,7 +15,7 @@ def gnomad_get_sv_by_gene(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Get structural variants (SVs) from gnomAD v4 for a gene. Returns deletions, duplications, inversi...
 
@@ -34,7 +34,7 @@ def gnomad_get_sv_by_gene(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -1,7 +1,7 @@
 """
 EuroPMCAnnot_get_article_annotations
 
-Get text-mined annotations from a scientific article using the Europe PMC Annotations API. Return...
+Get text-mined annotations from one scientific article using Europe PMC, with limit/offset pagina...
 """
 
 from typing import Any, Optional, Callable
@@ -10,21 +10,27 @@ from ._shared_client import get_shared_client
 
 def EuroPMCAnnot_get_article_annotations(
     article_id: str,
-    annotation_type: Optional[str | Any] = None,
+    annotation_type: Optional[str] = None,
+    limit: Optional[int] = 200,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get text-mined annotations from a scientific article using the Europe PMC Annotations API. Return...
+    Get text-mined annotations from one scientific article using Europe PMC, with limit/offset pagina...
 
     Parameters
     ----------
     article_id : str
         Article identifier in format 'PMC:PMCXXXXXXX' or 'MED:PMID'. Examples: 'PMC:P...
-    annotation_type : str | Any
-        Filter by annotation type: 'Chemicals', 'Organisms', 'Gene Ontology', 'Diseas...
+    annotation_type : str
+        Optional annotation type. Common values: 'Chemicals', 'Organisms', 'Gene Onto...
+    limit : int
+        Maximum number of annotations to return in this page.
+    offset : int
+        Zero-based annotation offset. Use data.next_offset for the next page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,6 +50,8 @@ def EuroPMCAnnot_get_article_annotations(
         for k, v in {
             "article_id": article_id,
             "annotation_type": annotation_type,
+            "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

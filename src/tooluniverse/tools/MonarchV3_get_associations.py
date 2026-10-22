@@ -1,7 +1,7 @@
 """
 MonarchV3_get_associations
 
-Query cross-species associations between biomedical entities in the Monarch Initiative knowledge ...
+Query cross-species associations in the Monarch knowledge graph with exact offset pagination. Met...
 """
 
 from typing import Any, Optional, Callable
@@ -11,14 +11,15 @@ from ._shared_client import get_shared_client
 def MonarchV3_get_associations(
     subject: str,
     category: str,
-    limit: Optional[int] = None,
+    limit: Optional[int] = 20,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> list[Any]:
     """
-    Query cross-species associations between biomedical entities in the Monarch Initiative knowledge ...
+    Query cross-species associations in the Monarch knowledge graph with exact offset pagination. Met...
 
     Parameters
     ----------
@@ -27,7 +28,9 @@ def MonarchV3_get_associations(
     category : str
         Biolink association category. Options: 'biolink:GeneToPhenotypicFeatureAssoci...
     limit : int
-        Maximum number of associations to return (default: 20, max: 200).
+        Associations per page (1-200).
+    offset : int
+        Zero-based offset. Continue with metadata.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,12 @@ def MonarchV3_get_associations(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"subject": subject, "category": category, "limit": limit}.items()
+        for k, v in {
+            "subject": subject,
+            "category": category,
+            "limit": limit,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

@@ -11,6 +11,7 @@ from ._shared_client import get_shared_client
 def CATH_list_funfams(
     superfamily_id: str,
     max_results: Optional[int] = 25,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,6 +26,8 @@ def CATH_list_funfams(
         CATH superfamily ID in C.A.T.H format. Examples: '1.10.510.10' (Globin-like),...
     max_results : int
         Maximum number of FunFams to return (default: 25).
+    offset : int
+        Zero-based FunFam offset. Continue with data.next_offset while has_more is true.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,6 +47,7 @@ def CATH_list_funfams(
         for k, v in {
             "superfamily_id": superfamily_id,
             "max_results": max_results,
+            "offset": offset,
         }.items()
         if v is not None
     }

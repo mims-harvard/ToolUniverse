@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def DrugSafetyAnalyzer(
     drug_name: str,
     patient_sex: str,
-    serious_events_only: bool,
+    serious_events_only: Optional[bool] = False,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

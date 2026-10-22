@@ -1,7 +1,7 @@
 """
 Orphanet_search_by_name
 
-Search for rare diseases by exact or partial name match in Orphanet. More precise than keyword se...
+Search rare diseases by exact or partial name match in Orphanet. Partial matches are recoverably ...
 """
 
 from typing import Any, Optional, Callable
@@ -9,11 +9,12 @@ from ._shared_client import get_shared_client
 
 
 def Orphanet_search_by_name(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "search_by_name",
     name: Optional[str] = None,
     exact: Optional[bool] = False,
     lang: Optional[str] = "en",
-    limit: Optional[int] = None,
+    limit: Optional[int] = 20,
+    offset: Optional[int] = 0,
     query: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -21,7 +22,7 @@ def Orphanet_search_by_name(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search for rare diseases by exact or partial name match in Orphanet. More precise than keyword se...
+    Search rare diseases by exact or partial name match in Orphanet. Partial matches are recoverably ...
 
     Parameters
     ----------
@@ -35,6 +36,8 @@ def Orphanet_search_by_name(
         Language code (default: en)
     limit : int
         Maximum number of results to return (default: 20, max: 200)
+    offset : int
+        Zero-based name-match offset. Continue with data.next_offset.
     query : str
         Alias for name. Disease name to search for in Orphanet.
     stream_callback : Callable, optional
@@ -59,6 +62,7 @@ def Orphanet_search_by_name(
             "exact": exact,
             "lang": lang,
             "limit": limit,
+            "offset": offset,
             "query": query,
         }.items()
         if v is not None

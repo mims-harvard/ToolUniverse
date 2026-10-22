@@ -1,7 +1,7 @@
 [
   {
     "name": "ReactomeAnalysis_pathway_enrichment",
-    "description": "Perform pathway overrepresentation (enrichment) analysis using the Reactome Analysis Service. Submit a list of gene symbols, UniProt IDs, or Ensembl IDs and identify which Reactome pathways are statistically enriched. Returns pathways ranked by p-value with FDR correction, entity counts, and reaction coverage. Supports projection to human pathways for cross-species analysis. Example: submitting TP53, BRCA1, CDH1, EGFR, KRAS returns 394 enriched pathways including 'Developmental Lineage of Mammary Gland Myoepithelial Cells' (p=3.94e-08) and 'Signaling by ERBB2 KD Mutants'.",
+    "description": "Perform pathway overrepresentation analysis using Reactome. Submit gene symbols, UniProt IDs, or Ensembl IDs and retrieve enriched pathways with p-values, FDR, entity counts, and reaction coverage. Results are pageable; when data.has_more is true pass data.next_page as page with the same inputs.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -14,7 +14,16 @@
             "integer",
             "null"
           ],
+          "minimum": 1,
+          "maximum": 50,
+          "default": 20,
           "description": "Number of pathways to return (default 20, max 50)."
+        },
+        "page": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 1,
+          "description": "One-based pathway result page. Continue with data.next_page while data.has_more is true."
         },
         "include_disease": {
           "type": [
@@ -180,7 +189,7 @@
   },
   {
     "name": "ReactomeAnalysis_species_comparison",
-    "description": "Perform Reactome pathway analysis with cross-species projection. Submit protein/gene identifiers from any supported species and Reactome will project them to human pathways, enabling comparison of pathway enrichment across species. This uses the same overrepresentation analysis but ensures identifiers are mapped via orthology to human pathways. Example: submitting mouse protein IDs returns enriched human Reactome pathways with mapping statistics.",
+    "description": "Perform Reactome identifier projection: submit protein/gene identifiers and Reactome automatically maps them to human pathways. The endpoint does not accept a source-species filter; use ReactomeAnalysis_species_comparison_v2 for an explicit species-to-species pathway comparison. Results are pageable; continue with data.next_page while data.has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -193,14 +202,23 @@
             "integer",
             "null"
           ],
-          "description": "NCBI taxonomy ID of the source species (default 9606 for human). Examples: 10090 (mouse), 7955 (zebrafish), 7227 (fly)."
+          "description": "Unsupported by this Reactome endpoint. Supplying it returns an explicit error because it was previously ignored. Use ReactomeAnalysis_species_comparison_v2 for explicit species comparison."
         },
         "page_size": {
           "type": [
             "integer",
             "null"
           ],
+          "minimum": 1,
+          "maximum": 50,
+          "default": 20,
           "description": "Number of pathways to return (default 20, max 50)."
+        },
+        "page": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 1,
+          "description": "One-based pathway result page."
         }
       },
       "required": [
@@ -335,7 +353,7 @@
   },
   {
     "name": "ReactomeAnalysis_expression_analysis",
-    "description": "Quantitative EXPRESSION analysis: map fold-change or numeric expression values onto Reactome pathways (analysis type=EXPRESSION). Unlike ReactomeAnalysis_pathway_enrichment (which only accepts a plain newline-separated identifier list and runs overrepresentation), this tool submits TAB-DELIMITED 'GENE\\tVALUE' rows so Reactome treats the input as an expression matrix and overlays each value per pathway. Each returned pathway carries 'entities_exp' (the matched expression values for that pathway) and the result reports the expression column names plus the min/max of the submitted values. Example: submitting 'PTEN\\t2.5\\nTP53\\t-1.8\\nEGFR\\t3.1' returns analysis_type=EXPRESSION with pathways such as 'Regulation of TP53 Expression' carrying entities_exp=[-1.8].",
+    "description": "Quantitative EXPRESSION analysis: map tab-delimited GENE/value rows onto Reactome pathways. Each pathway carries matched expression values and the result reports column names and value range. Results are pageable; continue with data.next_page while data.has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -348,7 +366,16 @@
             "integer",
             "null"
           ],
+          "minimum": 1,
+          "maximum": 50,
+          "default": 20,
           "description": "Number of pathways to return (default 20, max 50)."
+        },
+        "page": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 1,
+          "description": "One-based pathway result page."
         },
         "include_disease": {
           "type": [
@@ -492,7 +519,7 @@
   },
   {
     "name": "ReactomeAnalysis_species_comparison_v2",
-    "description": "True cross-species pathway comparison (analysis type=SPECIES_COMPARISON). Compares one species' pathways against another species by orthology projection using Reactome's genuine /species/{source}/{target} endpoint. This differs from ReactomeAnalysis_species_comparison (which actually runs overrepresentation on a submitted identifier list and ignores its species argument): this tool takes NO identifier list - it compares the ENTIRE pathway set of the source species against the target species given by its Reactome species dbId. Returns analysis_type=SPECIES_COMPARISON, total pathways found, and the count of identifiers not found (orthology gaps). Example: species=48892 (Mus musculus dbId), source_species=homoSapiens compares human vs mouse and returns pathwaysFound=2709 with identifiers_not_found=510.",
+    "description": "True cross-species pathway comparison using Reactome's /species/{source}/{target} endpoint. It compares the entire source pathway set against a target species by orthology. Results are pageable; continue with data.next_page while data.has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -512,7 +539,16 @@
             "integer",
             "null"
           ],
+          "minimum": 1,
+          "maximum": 50,
+          "default": 20,
           "description": "Number of pathways to return (default 20, max 50)."
+        },
+        "page": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 1,
+          "description": "One-based pathway result page."
         }
       },
       "required": [
@@ -778,7 +814,7 @@
   },
   {
     "name": "ReactomeAnalysis_token_result",
-    "description": "Retrieve previously computed Reactome pathway analysis results using an analysis token. Tokens are returned from pathway_enrichment or species_comparison analyses and can be used to access results without rerunning the analysis. Useful for paginating through large result sets or sharing analysis results. The token contains the full analysis result and is valid for a limited time.",
+    "description": "Retrieve a previously computed Reactome analysis by token. The result is pageable: when data.has_more is true pass data.next_page as page with the same token and page_size. Tokens remain valid for a limited time.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -791,7 +827,16 @@
             "integer",
             "null"
           ],
+          "minimum": 1,
+          "maximum": 50,
+          "default": 20,
           "description": "Number of pathways per page (default 20, max 50)."
+        },
+        "page": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 1,
+          "description": "One-based pathway result page."
         }
       },
       "required": [

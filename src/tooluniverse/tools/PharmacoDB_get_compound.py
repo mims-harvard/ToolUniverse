@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def PharmacoDB_get_compound(
-    operation: str,
-    compound_name: Optional[str | Any] = None,
-    compound_id: Optional[int | Any] = None,
+    operation: Optional[str] = "get_compound",
+    compound_name: Optional[str] = None,
+    compound_id: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,9 +24,9 @@ def PharmacoDB_get_compound(
     ----------
     operation : str
         Operation type
-    compound_name : str | Any
+    compound_name : str
         Compound name (e.g., 'Paclitaxel', 'Erlotinib'). Mutually exclusive with comp...
-    compound_id : int | Any
+    compound_id : int
         PharmacoDB compound database ID (e.g., 49658 for Paclitaxel). Mutually exclus...
     stream_callback : Callable, optional
         Callback for streaming output

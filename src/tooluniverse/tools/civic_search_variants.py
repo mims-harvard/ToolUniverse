@@ -1,7 +1,7 @@
 """
 civic_search_variants
 
-Search for variants in CIViC database. Returns a list of variants with their IDs and names. Use '...
+Search for variants in CIViC database. The tool follows CIViC's 100-record GraphQL pages up to li...
 """
 
 from typing import Any, Optional, Callable
@@ -10,6 +10,7 @@ from ._shared_client import get_shared_client
 
 def civic_search_variants(
     limit: Optional[int] = 20,
+    after: Optional[str] = None,
     query: Optional[str] = None,
     gene: Optional[str] = None,
     gene_name: Optional[str] = None,
@@ -20,12 +21,14 @@ def civic_search_variants(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search for variants in CIViC database. Returns a list of variants with their IDs and names. Use '...
+    Search for variants in CIViC database. The tool follows CIViC's 100-record GraphQL pages up to li...
 
     Parameters
     ----------
     limit : int
-        Maximum number of variants to return (default: 20, recommended max: 100)
+        Maximum number of variants to return across server pages (default: 20, max: 1...
+    after : str
+        Opaque CIViC continuation cursor from a previous pageInfo.endCursor.
     query : str
         Variant name to search for (e.g., "T790M", "V600E", "exon 19 deletion"). Retu...
     gene : str
@@ -52,6 +55,7 @@ def civic_search_variants(
         k: v
         for k, v in {
             "limit": limit,
+            "after": after,
             "query": query,
             "gene": gene,
             "gene_name": gene_name,

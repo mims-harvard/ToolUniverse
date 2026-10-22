@@ -112,13 +112,9 @@ class PubChemBioAssayTool(BaseTool):
                     target_entry["gi"] = mol_id.get("gi")
                 result["targets"].append(target_entry)
 
-        # Truncate long descriptions
-        if result["description"] and len(result["description"]) > 5:
-            result["description"] = result["description"][:5]
-        if result["protocol"] and len(result["protocol"]) > 3:
-            result["protocol"] = result["protocol"][:3]
-        if result["comment"] and len(result["comment"]) > 3:
-            result["comment"] = result["comment"][:3]
+        result["description_count"] = len(result["description"])
+        result["protocol_count"] = len(result["protocol"])
+        result["comment_count"] = len(result["comment"])
 
         return {
             "status": "success",
@@ -138,6 +134,9 @@ class PubChemBioAssayTool(BaseTool):
                 "error": "gene_symbol parameter is required (e.g., 'TP53', 'EGFR')",
             }
 
+        limit = max(1, min(int(arguments.get("limit", 20)), 100))
+        offset = max(0, int(arguments.get("offset", 0)))
+
         url = f"{PUBCHEM_BASE_URL}/assay/target/genesymbol/{gene_symbol}/aids/JSON"
         response = requests.get(url, timeout=self.timeout)
         response.raise_for_status()
@@ -145,22 +144,27 @@ class PubChemBioAssayTool(BaseTool):
 
         aids_list = data.get("IdentifierList", {}).get("AID", [])
 
-        # Limit to first 20 AIDs
-        aids_truncated = aids_list[:20]
+        page_aids = aids_list[offset : offset + limit]
 
         # Get summaries for these AIDs
         results = []
-        if aids_truncated:
-            aids_str = ",".join(str(a) for a in aids_truncated[:5])
+        if page_aids:
+            aids_str = ",".join(str(a) for a in page_aids)
             try:
                 summary_url = f"{PUBCHEM_BASE_URL}/assay/aid/{aids_str}/summary/JSON"
                 sum_resp = requests.get(summary_url, timeout=self.timeout)
                 sum_resp.raise_for_status()
                 sum_data = sum_resp.json()
 
-                for summary in sum_data.get("AssaySummaries", {}).get(
+                summaries = sum_data.get("AssaySummaries", {}).get(
                     "AssaySummary", []
-                ):
+                )
+                by_aid = {summary.get("AID"): summary for summary in summaries}
+                for aid in page_aids:
+                    summary = by_aid.get(aid)
+                    if summary is None:
+                        results.append({"aid": aid})
+                        continue
                     targets = summary.get("Target", [])
                     target_names = (
                         [t.get("Name", "") for t in targets] if targets else []
@@ -177,12 +181,19 @@ class PubChemBioAssayTool(BaseTool):
                     )
             except Exception:
                 # Fallback: just return the AID list
-                results = [{"aid": a} for a in aids_truncated]
+                results = [{"aid": a} for a in page_aids]
+
+        has_more = offset + len(page_aids) < len(aids_list)
 
         return {
             "status": "success",
             "data": {
                 "total_assays": len(aids_list),
+                "offset": offset,
+                "limit": limit,
+                "returned": len(results),
+                "has_more": has_more,
+                "next_offset": offset + len(page_aids) if has_more else None,
                 "assays": results,
             },
             "metadata": {
@@ -190,6 +201,10 @@ class PubChemBioAssayTool(BaseTool):
                 "gene_symbol": gene_symbol,
                 "total_assays": len(aids_list),
                 "returned": len(results),
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "next_offset": offset + len(page_aids) if has_more else None,
             },
         }
 
@@ -207,6 +222,7 @@ class PubChemBioAssayTool(BaseTool):
             return {"status": "error", "error": "aid (Assay ID) parameter is required"}
 
         max_rows = arguments.get("max_rows", 1000)
+        row_offset = arguments.get("row_offset", 0)
         try:
             max_rows = int(max_rows)
         except (TypeError, ValueError):
@@ -215,6 +231,15 @@ class PubChemBioAssayTool(BaseTool):
             max_rows = 1
         if max_rows > 100000:
             max_rows = 100000
+        if (
+            isinstance(row_offset, bool)
+            or not isinstance(row_offset, int)
+            or row_offset < 0
+        ):
+            return {
+                "status": "error",
+                "error": "row_offset must be a non-negative integer",
+            }
 
         url = f"{PUBCHEM_BASE_URL}/assay/aid/{aid}/concise/JSON"
         response = requests.get(url, timeout=self.timeout)
@@ -232,9 +257,12 @@ class PubChemBioAssayTool(BaseTool):
 
         total_rows = len(all_rows)
         rows = []
-        for row in all_rows[:max_rows]:
+        for row in all_rows[row_offset : row_offset + max_rows]:
             cells = row.get("Cell", [])
             rows.append(dict(zip(columns, cells)))
+
+        next_row_offset = row_offset + len(rows)
+        has_more = next_row_offset < total_rows
 
         return {
             "status": "success",
@@ -243,6 +271,11 @@ class PubChemBioAssayTool(BaseTool):
                 "columns": columns,
                 "total_rows": total_rows,
                 "returned_rows": len(rows),
+                "row_offset": row_offset,
+                "max_rows": max_rows,
+                "has_more": has_more,
+                "next_row_offset": next_row_offset if has_more else None,
+                "result_set_complete": row_offset == 0 and len(rows) == total_rows,
                 "rows": rows,
             },
             "metadata": {
@@ -250,7 +283,11 @@ class PubChemBioAssayTool(BaseTool):
                 "aid": str(aid),
                 "total_rows": total_rows,
                 "returned_rows": len(rows),
-                "truncated": total_rows > len(rows),
+                "row_offset": row_offset,
+                "max_rows": max_rows,
+                "has_more": has_more,
+                "next_row_offset": next_row_offset if has_more else None,
+                "truncated": row_offset > 0 or has_more,
             },
         }
 

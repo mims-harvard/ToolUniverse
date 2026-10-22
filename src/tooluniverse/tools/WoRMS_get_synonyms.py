@@ -1,7 +1,7 @@
 """
 WoRMS_get_synonyms
 
-Get the taxonomic synonyms (unaccepted names) for a marine taxon from the World Register of Marin...
+Get taxonomic synonyms for a WoRMS AphiaID with complete access to the official 50-record pages. ...
 """
 
 from typing import Any, Optional, Callable
@@ -10,18 +10,24 @@ from ._shared_client import get_shared_client
 
 def WoRMS_get_synonyms(
     AphiaID: int,
+    limit: Optional[int] = 50,
+    offset: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get the taxonomic synonyms (unaccepted names) for a marine taxon from the World Register of Marin...
+    Get taxonomic synonyms for a WoRMS AphiaID with complete access to the official 50-record pages. ...
 
     Parameters
     ----------
     AphiaID : int
         WoRMS AphiaID of the accepted taxon, e.g. 127160 (Solea solea). Obtain from W...
+    limit : int
+        Maximum synonym records to return (default 50, range 1-1000). Larger pages ar...
+    offset : int
+        1-based starting synonym record. Continue with next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +42,11 @@ def WoRMS_get_synonyms(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"AphiaID": AphiaID}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {"AphiaID": AphiaID, "limit": limit, "offset": offset}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "WoRMS_get_synonyms",

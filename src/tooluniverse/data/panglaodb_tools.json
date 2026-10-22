@@ -36,7 +36,16 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of marker genes to return. Default 50."
+          "minimum": 1,
+          "description": "Page size for marker genes. Default 50. If metadata.has_more is true, continue with metadata.next_offset."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "description": "Zero-based result offset. Default 0. Use metadata.next_offset to retrieve the next page."
         }
       },
       "required": [
@@ -188,7 +197,16 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of cell-type records to return. Default 50."
+          "minimum": 1,
+          "description": "Page size for cell-type records. Default 50. If metadata.has_more is true, continue with metadata.next_offset."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "description": "Zero-based result offset. Default 0. Use metadata.next_offset to retrieve the next page."
         }
       },
       "required": [

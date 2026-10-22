@@ -1,7 +1,7 @@
 """
 SIDER_search_side_effect
 
-Search for a side effect by name in SIDER. Returns matching side effects with their MedDRA codes ...
+Search for a side effect by name in SIDER and return matching MedDRA/UMLS codes. drug_count is on...
 """
 
 from typing import Any, Optional, Callable
@@ -9,15 +9,15 @@ from ._shared_client import get_shared_client
 
 
 def SIDER_search_side_effect(
-    operation: str,
     side_effect_name: str,
+    operation: Optional[str] = "search_side_effect",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search for a side effect by name in SIDER. Returns matching side effects with their MedDRA codes ...
+    Search for a side effect by name in SIDER and return matching MedDRA/UMLS codes. drug_count is on...
 
     Parameters
     ----------

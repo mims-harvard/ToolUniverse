@@ -1,7 +1,7 @@
 [
     {
         "name": "iDigBio_search_records",
-        "description": "Search iDigBio (130M+ digitized biodiversity specimen records from museums, herbaria, and paleo collections) by taxon and/or locality. Filter by scientificname, genus, family, phylum, class, order, country, stateprovince, recordedby, catalognumber, or collectioncode. Returns specimen records with taxon, collector, locality, and catalog identifiers. Use for occurrence/specimen lookup, collection research, and biodiversity/biogeography studies. No API key required.",
+        "description": "Search iDigBio digitized biodiversity specimen records by taxon and/or locality with exact offset pagination. Metadata reports the exact total, current offset, has_more and next_offset; continue until has_more is false. Returns taxon, collector, locality and catalog identifiers. No API key required.",
         "parameter": {"type": "object", "properties": {
             "scientificname": {"type": ["string", "null"], "description": "Full scientific name, e.g. 'Puma concolor'."},
             "genus": {"type": ["string", "null"], "description": "Genus, e.g. 'Quercus'."},
@@ -14,8 +14,9 @@
             "phylum": {"type": ["string", "null"], "description": "Phylum."},
             "class": {"type": ["string", "null"], "description": "Class."},
             "order": {"type": ["string", "null"], "description": "Order."},
-            "limit": {"type": ["integer", "null"], "description": "Max records (default 10, max 100)."}
-        }, "required": []},
+            "limit": {"type": "integer", "minimum": 1, "maximum": 100, "default": 10, "description": "Records per page (1-100)."},
+            "offset": {"type": "integer", "minimum": 0, "default": 0, "description": "Zero-based record offset. Continue with metadata.next_offset."}
+        }, "required": [], "additionalProperties": false},
         "fields": {"timeout": 30},
         "type": "iDigBioSearchTool",
         "test_examples": [{"genus": "Quercus", "limit": 5}, {"scientificname": "Puma concolor", "limit": 3}, {"family": "Fabaceae", "country": "Mexico", "limit": 3}],
@@ -123,7 +124,7 @@
     },
     {
         "name": "iDigBio_search_media",
-        "description": "Search the iDigBio specimen MEDIA index (specimen photographs and scans) for a Darwin Core query. Distinct from iDigBio_search_records (occurrence records): returns image/media records with media type (StillImage), provider-managed ID, creator, rights owner, usage/licensing terms (e.g. CC BY-NC-SA), and access URIs. Filter with scientificname, genus, family, country, etc. No API key required.",
+        "description": "Search the iDigBio specimen MEDIA index (photographs and scans) with exact offset pagination. Metadata reports the exact total, current offset, has_more and next_offset; continue until has_more is false. Returns media type, identifiers, creator, rights and access URIs. No API key required.",
         "parameter": {"type": "object", "properties": {
             "scientificname": {"type": ["string", "null"], "description": "Full scientific name, e.g. 'Puma concolor'."},
             "genus": {"type": ["string", "null"], "description": "Genus, e.g. 'Puma'."},
@@ -136,8 +137,9 @@
             "phylum": {"type": ["string", "null"], "description": "Phylum."},
             "class": {"type": ["string", "null"], "description": "Class."},
             "order": {"type": ["string", "null"], "description": "Order."},
-            "limit": {"type": ["integer", "null"], "description": "Max media records (default 10, max 100)."}
-        }, "required": []},
+            "limit": {"type": "integer", "minimum": 1, "maximum": 100, "default": 10, "description": "Media records per page (1-100)."},
+            "offset": {"type": "integer", "minimum": 0, "default": 0, "description": "Zero-based media offset. Continue with metadata.next_offset."}
+        }, "required": [], "additionalProperties": false},
         "fields": {"timeout": 30, "mode": "media"},
         "type": "iDigBioSearchTool",
         "test_examples": [{"scientificname": "puma concolor", "limit": 2}, {"genus": "Quercus", "limit": 2}, {"family": "Felidae", "limit": 2}],

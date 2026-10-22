@@ -81,11 +81,18 @@ class FourDNTool(BaseTool):
         try:
             query = arguments.get("query", "*")
             item_type = arguments.get("item_type", "File")
-            limit = arguments.get("limit", 25)
+            limit = int(arguments.get("limit", 25))
+            offset = int(arguments.get("offset", 0))
 
             # Build search URL
             url = f"{FOURDN_BASE_URL}/search/"
-            params = {"type": item_type, "q": query, "limit": limit, "format": "json"}
+            params = {
+                "type": item_type,
+                "q": query,
+                "limit": limit,
+                "from": offset,
+                "format": "json",
+            }
 
             # Add filters
             if "file_type" in arguments:
@@ -101,13 +108,54 @@ class FourDNTool(BaseTool):
             api_data = response.json()
             results = api_data.get("@graph", [])
 
+            # The portal uses Elasticsearch's 10,000-hit sentinel on later
+            # pages: for a large query the first page reports the exact total,
+            # while otherwise-identical requests with ``from > 0`` report
+            # exactly 10,000.  A cheap first-page count probe (limit=0) gives
+            # the exact value without downloading duplicate records.  If that
+            # auxiliary probe fails, preserve the requested page and mark the
+            # upstream count as inexact rather than presenting 10,000 as fact.
+            upstream_page_total = int(api_data.get("total", 0))
+            total = upstream_page_total
+            total_is_exact = True
+            total_warning = None
+            if offset > 0 and upstream_page_total == 10000:
+                count_params = dict(params)
+                count_params.update({"limit": 0, "from": 0})
+                try:
+                    count_response = requests.get(url, params=count_params, timeout=30)
+                    count_response.raise_for_status()
+                    total = int(count_response.json().get("total", upstream_page_total))
+                except Exception:
+                    total_is_exact = False
+                    total_warning = (
+                        "4DN returned its 10,000-hit sentinel for this later page, "
+                        "and the exact-count probe failed; total is a lower bound."
+                    )
+
+            returned = len(results)
+            candidate_next_offset = offset + returned
+            has_more = (
+                candidate_next_offset < total
+                if total_is_exact
+                else returned == limit and returned > 0
+            )
+
             result = {
                 "status": "success",
-                "num_results": len(results),
-                "total": api_data.get("total", 0),
-                "results": results[:limit],
+                "num_results": returned,
+                "returned": returned,
+                "offset": offset,
+                "total": total,
+                "total_is_exact": total_is_exact,
+                "upstream_page_total": upstream_page_total,
+                "has_more": has_more,
+                "next_offset": candidate_next_offset if has_more else None,
+                "results": results,
                 "search_url": response.url,
             }
+            if total_warning:
+                result["warning"] = total_warning
 
             return {"status": "success", "data": result}
 

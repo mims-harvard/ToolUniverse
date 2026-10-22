@@ -2,7 +2,7 @@
   {
     "name": "iPTMnet_search",
     "type": "iPTMnetTool",
-    "description": "Search the iPTMnet database for proteins with post-translational modification (PTM) data. Find proteins by gene name, protein name, or keyword. Filter by role (Substrate = modified protein, Enzyme = modifier) and PTM type (Phosphorylation, Acetylation, Ubiquitination, Methylation, etc.). iPTMnet integrates data from PhosphoSitePlus, UniProt, PRO ontology, and text mining. Returns UniProt IDs, PTM site counts, enzyme/substrate roles, and isoform counts.",
+    "description": "Search iPTMnet proteins with exact total and recoverable local offset pagination. Continue with metadata.next_offset while metadata.has_more is true. Filters are applied before pagination.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -53,6 +53,12 @@
           "maximum": 100,
           "default": 25,
           "description": "Maximum results to return (default: 25)"
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset in the complete filtered search response."
         },
         "query": {
           "type": "string",

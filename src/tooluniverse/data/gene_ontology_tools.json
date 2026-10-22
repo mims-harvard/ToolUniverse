@@ -1,14 +1,28 @@
 [
   {
     "name": "GO_search_terms",
-    "description": "Searches for Gene Ontology (GO) terms by a keyword using the GOlr search engine. Returns GO terms and related biological entities.",
+    "description": "Searches non-obsolete Gene Ontology terms by a keyword or phrase in term labels and synonyms using GOlr. Results are relevance-ranked and support exact-count start/rows pagination.",
     "type": "GeneOntologyTool",
     "parameter": {
       "type": "object",
       "properties": {
         "query": {
           "type": "string",
+          "minLength": 1,
           "description": "The keyword to search for, e.g., 'apoptosis' or 'kinase activity'."
+        },
+        "rows": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 10,
+          "description": "Maximum number of matching GO terms to return."
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based result offset. Use metadata.next_start to continue."
         }
       },
       "required": [
@@ -16,63 +30,33 @@
       ]
     },
     "fields": {
-      "endpoint": "http://golr-aux.geneontology.io/solr/select?fq=document_category:\"ontology_class\"&q=*:*&fq=annotation_class_label:\"{query}\"&wt=json&rows=10",
+      "endpoint": "https://golr-aux.geneontology.io/solr/select?fq=document_category:\"ontology_class\"&fq=idspace:\"GO\"&fq=is_obsolete:false&q=(annotation_class_label_searchable:\"{query}\" OR synonym_searchable:\"{query}\")&wt=json&rows={rows}&start={start}&sort=score desc,id asc&fl=id,annotation_class_label,description,source,idspace,is_obsolete,synonym_searchable",
+      "extract_path": "response.docs",
+      "pagination": "golr_start",
+      "pagination_result_unit": "ontology_terms",
       "input_description": "Input search keyword, e.g., 'cell cycle'.",
       "output_description": "Returns GO terms matching the search keyword with their details."
     },
     "test_examples": [
       {
-        "query": "gene:TP53"
+        "query": "apoptosis",
+        "rows": 10
       }
     ],
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "responseHeader": {
-          "type": "object",
-          "properties": {
-            "status": {
-              "type": "integer"
-            },
-            "QTime": {
-              "type": "integer"
-            },
-            "params": {
-              "type": "object",
-              "properties": {
-                "q": {
-                  "type": "string"
-                },
-                "fq": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "rows": {
-                  "type": "string"
-                },
-                "wt": {
-                  "type": "string"
-                }
-              }
-            }
-          }
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string"},
+          "annotation_class_label": {"type": "string"},
+          "description": {"type": "string"},
+          "source": {"type": "string"},
+          "idspace": {"type": "string"},
+          "is_obsolete": {"type": "boolean"},
+          "synonym_searchable": {"type": "array", "items": {"type": "string"}}
         },
-        "response": {
-          "type": "object",
-          "properties": {
-            "numFound": {
-              "type": "integer"
-            },
-            "start": {
-              "type": "integer"
-            },
-            "docs": {
-              "type": "array"
-            }
-          }
-        }
+        "required": ["id", "annotation_class_label"]
       }
     }
   },
@@ -329,7 +313,7 @@
   },
   {
     "name": "GO_get_genes_for_term",
-    "description": "Finds genes/proteins annotated to a Gene Ontology term, including annotations to its descendant terms (is_a/part_of closure), via the GO Solr index. Rows are collapsed to distinct genes, each carrying its evidence codes and annotation count. Supply `taxon` to restrict to one species -- omit it and genes from all species are returned together. Example: id='GO:0006915' with taxon='NCBITaxon:9606' returns human apoptosis genes.",
+    "description": "Finds genes/proteins annotated to a Gene Ontology term, including annotations to its descendant terms (is_a/part_of closure), via the GO Solr index. Pagination uses GOlr annotation rows, which are then collapsed to distinct genes on each page; therefore adjacent pages can contain the same gene and the exact total is an annotation-row total, not a distinct-gene total. Supply `taxon` to restrict to one species -- omit it and genes from all species are returned together.",
     "type": "GeneOntologyTool",
     "parameter": {
       "type": "object",
@@ -345,8 +329,15 @@
         "rows": {
           "type": "integer",
           "minimum": 1,
+          "maximum": 1000,
           "default": 100,
           "description": "Maximum number of annotation rows to scan. Distinct genes returned may be fewer, since one gene can carry several annotations. Default is 100."
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset into GOlr annotation rows. Use metadata.next_start to continue."
         }
       },
       "required": [
@@ -354,8 +345,11 @@
       ]
     },
     "fields": {
-      "endpoint": "https://golr-aux.geneontology.io/solr/select?wt=json&q=*:*&fq=document_category:\"annotation\"&fq=isa_partof_closure:\"{id}\"&fq=taxon:\"{taxon}\"&rows={rows}&fl=bioentity,bioentity_label,bioentity_name,taxon,taxon_label,evidence_type",
+      "endpoint": "https://golr-aux.geneontology.io/solr/select?wt=json&q=*:*&fq=document_category:\"annotation\"&fq=isa_partof_closure:\"{id}\"&fq=taxon:\"{taxon}\"&rows={rows}&start={start}&fl=bioentity,bioentity_label,bioentity_name,taxon,taxon_label,evidence_type",
       "extract_path": "response.docs.genes",
+      "pagination": "golr_start",
+      "pagination_result_unit": "distinct_genes",
+      "pagination_scope": "GOlr annotation rows",
       "input_description": "Input GO term ID, e.g., 'GO:0006915'.",
       "output_description": "Returns distinct genes/proteins annotated to the GO term or its descendants."
     },
@@ -429,7 +423,7 @@
   },
   {
     "name": "GO_get_annotations_for_gene",
-    "description": "Finds all GO annotations for a specific gene/protein using GOlr search.",
+    "description": "Finds GO annotation rows for a gene/protein using GOlr search. Supports exact row-count metadata and start/rows pagination. Supply `taxon` to avoid mixing same-symbol genes from different organisms; omitting it searches all taxa.",
     "type": "GeneOntologyTool",
     "parameter": {
       "type": "object",
@@ -438,10 +432,22 @@
           "type": "string",
           "description": "A gene identifier such as gene symbol (e.g., 'TP53') or database ID."
         },
+        "taxon": {
+          "type": "string",
+          "description": "Optional NCBI taxon filter, e.g. 'NCBITaxon:9606' for human. Omit to search all organisms."
+        },
         "rows": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
           "description": "Maximum number of annotations to return. Default: 100. Use a lower value (e.g., 25) for genes with many annotations like TP53.",
           "default": 100
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based annotation-row offset. Use metadata.next_start to retrieve the next page."
         }
       },
       "required": [
@@ -449,8 +455,11 @@
       ]
     },
     "fields": {
-      "endpoint": "http://golr-aux.geneontology.io/solr/select?fq=document_category:\"annotation\"&q=*:*&fq=bioentity_label:\"{gene_id}\"&wt=json&rows=50",
+      "endpoint": "https://golr-aux.geneontology.io/solr/select?fq=document_category:\"annotation\"&q=*:*&fq=bioentity_label:\"{gene_id}\"&fq=taxon:\"{taxon}\"&wt=json&rows={rows}&start={start}",
       "extract_path": "response.docs",
+      "pagination": "golr_start",
+      "pagination_result_unit": "annotations",
+      "pagination_scope": "GOlr annotation rows",
       "input_description": "Input gene identifier, e.g., 'TP53'.",
       "output_description": "Returns a list of GO annotations for the gene."
     },

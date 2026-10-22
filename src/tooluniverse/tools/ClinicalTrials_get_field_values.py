@@ -1,7 +1,7 @@
 """
 ClinicalTrials_get_field_values
 
-Get value distribution for a specific field across ClinicalTrials.gov studies. Returns all unique...
+Get ClinicalTrials.gov's most frequent values for one field with study counts. Low-cardinality fi...
 """
 
 from typing import Any, Optional, Callable
@@ -10,24 +10,27 @@ from ._shared_client import get_shared_client
 
 def ClinicalTrials_get_field_values(
     field: str,
-    query_cond: Optional[str | Any] = None,
+    query_cond: Optional[str] = None,
     page_size: Optional[int] = 50,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get value distribution for a specific field across ClinicalTrials.gov studies. Returns all unique...
+    Get ClinicalTrials.gov's most frequent values for one field with study counts. Low-cardinality fi...
 
     Parameters
     ----------
     field : str
         Field name to get value counts for. Common fields: 'OverallStatus' (trial sta...
-    query_cond : str | Any
+    query_cond : str
         Optional condition filter to restrict value counts to a specific disease area.
     page_size : int
-        Number of field values to return (default 50).
+        Number of values to return from the official top-values window (default 50, m...
+    offset : int
+        Zero-based local offset within the fixed accessible top-values window.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +51,7 @@ def ClinicalTrials_get_field_values(
             "field": field,
             "query_cond": query_cond,
             "page_size": page_size,
+            "offset": offset,
         }.items()
         if v is not None
     }

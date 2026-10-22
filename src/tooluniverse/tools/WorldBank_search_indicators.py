@@ -1,7 +1,7 @@
 """
 WorldBank_search_indicators
 
-Search World Bank for development indicators by keyword. Returns indicator codes, names, descript...
+Search the World Bank indicator catalog by keyword. The upstream API ignores query, so ToolUniver...
 """
 
 from typing import Any, Optional, Callable
@@ -10,21 +10,24 @@ from ._shared_client import get_shared_client
 
 def WorldBank_search_indicators(
     query: str,
-    per_page: Optional[int | Any] = None,
+    per_page: Optional[int] = 10,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search World Bank for development indicators by keyword. Returns indicator codes, names, descript...
+    Search the World Bank indicator catalog by keyword. The upstream API ignores query, so ToolUniver...
 
     Parameters
     ----------
     query : str
         Search keyword for indicators (e.g., 'GDP', 'mortality', 'literacy', 'CO2', '...
-    per_page : int | Any
-        Number of results to return (default 10, max 1000)
+    per_page : int
+        Matching indicators per local page (default 10, max 1000)
+    offset : int
+        Zero-based offset within locally filtered matches. Continue with metadata.nex...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,7 +43,9 @@ def WorldBank_search_indicators(
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
-        k: v for k, v in {"query": query, "per_page": per_page}.items() if v is not None
+        k: v
+        for k, v in {"query": query, "per_page": per_page, "offset": offset}.items()
+        if v is not None
     }
     return get_shared_client().run_one_function(
         {

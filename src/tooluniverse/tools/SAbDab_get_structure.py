@@ -1,7 +1,7 @@
 """
 SAbDab_get_structure
 
-Get antibody structure details from SAbDab by PDB ID. Returns CDR annotations, chain information,...
+Get complete current SAbDab2 structure metadata by four-character PDB ID. Returns the full source...
 """
 
 from typing import Any, Optional, Callable
@@ -9,16 +9,16 @@ from ._shared_client import get_shared_client
 
 
 def SAbDab_get_structure(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_structure",
     pdb_id: Optional[str] = None,
     pdb_code: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
-    Get antibody structure details from SAbDab by PDB ID. Returns CDR annotations, chain information,...
+    Get complete current SAbDab2 structure metadata by four-character PDB ID. Returns the full source...
 
     Parameters
     ----------
@@ -37,7 +37,7 @@ def SAbDab_get_structure(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

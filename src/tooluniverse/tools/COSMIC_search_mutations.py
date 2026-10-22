@@ -1,7 +1,7 @@
 """
 COSMIC_search_mutations
 
-Search COSMIC database for somatic mutations in cancer. COSMIC is the world's largest expert-cura...
+Search COSMIC mutation records by gene, mutation ID, or mutation description through NLM Clinical...
 """
 
 from typing import Any, Optional, Callable
@@ -9,9 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def COSMIC_search_mutations(
-    operation: Optional[str] = None,
-    terms: Optional[str] = None,
-    query: Optional[str] = None,
+    terms: str,
+    operation: Optional[str] = "search",
     max_results: Optional[int] = 20,
     genome_build: Optional[int] = 37,
     *,
@@ -20,18 +19,16 @@ def COSMIC_search_mutations(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search COSMIC database for somatic mutations in cancer. COSMIC is the world's largest expert-cura...
+    Search COSMIC mutation records by gene, mutation ID, or mutation description through NLM Clinical...
 
     Parameters
     ----------
     operation : str
         Operation type (fixed: search)
     terms : str
-        Search query - gene name (e.g., BRAF), mutation (e.g., V600E), or mutation ID...
-    query : str
-        Alias for terms. Search query - gene name, mutation, or COSMIC ID.
+        Search query: gene name (e.g. BRAF), mutation (e.g. V600E), or mutation ID.
     max_results : int
-        Maximum number of results to return (default: 20, max: 500)
+        Maximum unique mutations to return from the accessible 500-source-record wind...
     genome_build : int
         Genome build version: 37 (GRCh37/hg19) or 38 (GRCh38/hg38). Default: 37
     stream_callback : Callable, optional
@@ -53,7 +50,6 @@ def COSMIC_search_mutations(
         for k, v in {
             "operation": operation,
             "terms": terms,
-            "query": query,
             "max_results": max_results,
             "genome_build": genome_build,
         }.items()

@@ -1,7 +1,7 @@
 """
 DataCite_search_dois
 
-Search DataCite for research datasets, software, and other research outputs by keyword, subject, ...
+Search DataCite DOI records by keyword and resource type. Returns exact total matches plus page c...
 """
 
 from typing import Any, Optional, Callable
@@ -10,27 +10,27 @@ from ._shared_client import get_shared_client
 
 def DataCite_search_dois(
     query: str,
-    resource_type_general: Optional[str | Any] = None,
-    page_size: Optional[int | Any] = None,
-    page_number: Optional[int | Any] = None,
+    resource_type_general: Optional[str] = None,
+    page_size: Optional[int] = 10,
+    page_number: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search DataCite for research datasets, software, and other research outputs by keyword, subject, ...
+    Search DataCite DOI records by keyword and resource type. Returns exact total matches plus page c...
 
     Parameters
     ----------
     query : str
         Search query (e.g., 'RNA-seq transcriptomics', 'CRISPR knockout mouse', 'clim...
-    resource_type_general : str | Any
+    resource_type_general : str
         Filter by resource type: 'Dataset', 'Software', 'Text', 'Image', 'Workflow', ...
-    page_size : int | Any
-        Number of results per page (default 10, max 100)
-    page_number : int | Any
-        Page number for pagination (default 1)
+    page_size : int
+        Number of results per page (1-1000; default 10). DataCite silently clamps lar...
+    page_number : int
+        One-based page number (default 1). Continue with metadata.next_page; DataCite...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

@@ -1,7 +1,7 @@
 [
     {
         "name": "Pfam_search_families",
-        "description": "Search for Pfam protein family entries by keyword using the InterPro API. Pfam is the authoritative database of protein families, domains, and functional sites. Returns matching Pfam family accessions, names, types (domain, family, repeat, etc.), and integrated InterPro entries. There are over 20,000 Pfam families covering protein domains like kinases (PF00069), zinc fingers (PF00096), immunoglobulin (PF07654), and many more. Use this to find Pfam families related to a biological function or structural motif.",
+        "description": "Search for Pfam protein family entries by keyword using the InterPro API. Pfam is the authoritative database of protein families, domains, and functional sites. Returns matching Pfam family accessions, names, types (domain, family, repeat, etc.), and integrated InterPro entries. Results are cursor-paginated: when has_more is true, pass next_cursor as cursor to retrieve the next page.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -13,6 +13,10 @@
                     "type": "integer",
                     "description": "Maximum number of results to return (default 20, max 100).",
                     "default": 20
+                },
+                "cursor": {
+                    "type": ["string", "null"],
+                    "description": "Opaque InterPro cursor returned as next_cursor by a previous call. Omit for the first page."
                 }
             },
             "required": [
@@ -48,6 +52,12 @@
                         "returned": {
                             "type": "integer",
                             "description": "Number of results returned"
+                        },
+                        "has_more": {
+                            "type": "boolean"
+                        },
+                        "next_cursor": {
+                            "type": ["string", "null"]
                         },
                         "families": {
                             "type": "array",
@@ -233,7 +243,7 @@
     },
     {
         "name": "Pfam_get_family_proteins",
-        "description": "Get proteins containing a specific Pfam domain, optionally filtered by species. Returns protein accessions, names, gene names, lengths, organisms, and exact domain positions (start/end residues). Can filter to SwissProt-reviewed proteins only and/or specific species by NCBI taxonomy ID. For example, PF00001 (7tm_1 GPCR domain) has 289 human reviewed proteins including GPCRs like chemokine receptors, olfactory receptors, and serotonin receptors. PF00076 (RRM_1) has 199 human reviewed proteins. Use this to find which proteins in a species contain a specific domain.",
+        "description": "Get proteins containing a specific Pfam domain, optionally filtered by species. Returns protein accessions, names, gene names, lengths, organisms, and exact domain positions. Results are cursor-paginated: when has_more is true, pass next_cursor as cursor with the same filters to retrieve the next page.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -245,6 +255,10 @@
                     "type": "integer",
                     "description": "Maximum number of proteins to return (default 20, max 100).",
                     "default": 20
+                },
+                "cursor": {
+                    "type": ["string", "null"],
+                    "description": "Opaque InterPro cursor returned as next_cursor by a previous call. Omit for the first page."
                 },
                 "reviewed_only": {
                     "type": "boolean",
@@ -293,6 +307,12 @@
                         },
                         "returned": {
                             "type": "integer"
+                        },
+                        "has_more": {
+                            "type": "boolean"
+                        },
+                        "next_cursor": {
+                            "type": ["string", "null"]
                         },
                         "reviewed_only": {
                             "type": "boolean"
@@ -479,7 +499,7 @@
     },
     {
         "name": "Pfam_search_clans",
-        "description": "Search and list Pfam clans (superfamilies) by keyword. Pfam clans group together related Pfam families that share a common evolutionary origin but may have diverged beyond simple sequence similarity. There are 812 Pfam clans covering major protein superfamilies. For example, CL0016 (PKinase) groups 30+ kinase domain families, CL0001 (EGF) groups EGF-like domain families, CL0221 (RRM) groups RNA recognition motif families. Use this to explore protein superfamily relationships. If no query is given, returns a general listing of clans.",
+        "description": "Search and list Pfam clans (superfamilies) by keyword. Pfam clans group related families with a common evolutionary origin. If no query is given, lists all clans. Results are cursor-paginated: when has_more is true, pass next_cursor as cursor to retrieve the next page.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -491,6 +511,10 @@
                     "type": "integer",
                     "description": "Maximum number of clans to return (default 20, max 100).",
                     "default": 20
+                },
+                "cursor": {
+                    "type": ["string", "null"],
+                    "description": "Opaque InterPro cursor returned as next_cursor by a previous call. Omit for the first page."
                 }
             },
             "required": []
@@ -523,6 +547,12 @@
                         },
                         "returned": {
                             "type": "integer"
+                        },
+                        "has_more": {
+                            "type": "boolean"
+                        },
+                        "next_cursor": {
+                            "type": ["string", "null"]
                         },
                         "clans": {
                             "type": "array",
@@ -561,7 +591,7 @@
     },
     {
         "name": "Pfam_get_family_proteomes",
-        "description": "Get the proteome (organism) distribution for a Pfam protein family. Returns the list of reference proteomes that contain proteins with this Pfam domain, including organism names, taxonomy IDs, and whether the proteome is a reference proteome. This reveals the taxonomic distribution of a domain across the tree of life. For example, PF00001 (7tm_1 GPCR) is found in 1,890 proteomes spanning from early-diverging animals to humans, while PF00076 (RRM_1 RNA recognition motif) is in 6,831 proteomes. Use this to understand the evolutionary spread of a protein domain.",
+        "description": "Get the proteome (organism) distribution for a Pfam protein family, including organism names, taxonomy IDs, and reference status. Results are cursor-paginated: when has_more is true, pass next_cursor as cursor to retrieve the next page.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -573,6 +603,10 @@
                     "type": "integer",
                     "description": "Maximum number of proteomes to return (default 20, max 100).",
                     "default": 20
+                },
+                "cursor": {
+                    "type": ["string", "null"],
+                    "description": "Opaque InterPro cursor returned as next_cursor by a previous call. Omit for the first page."
                 }
             },
             "required": [
@@ -607,6 +641,12 @@
                         },
                         "returned": {
                             "type": "integer"
+                        },
+                        "has_more": {
+                            "type": "boolean"
+                        },
+                        "next_cursor": {
+                            "type": ["string", "null"]
                         },
                         "proteomes": {
                             "type": "array",

@@ -1,7 +1,7 @@
 """
 FAERS_count_additive_adverse_reactions
 
-Aggregate adverse reaction counts across specified medicinal products. Only medicinalproducts is ...
+Aggregate adverse reaction counts across specified medicinal products. Note: 'medicinalproducts' ...
 """
 
 from typing import Any, Optional, Callable
@@ -15,13 +15,15 @@ def FAERS_count_additive_adverse_reactions(
     occurcountry: Optional[str] = None,
     serious: Optional[str] = None,
     seriousnessdeath: Optional[str] = None,
+    manufacturer_name: Optional[str] = None,
+    receivedate: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Aggregate adverse reaction counts across specified medicinal products. Only medicinalproducts is ...
+    Aggregate adverse reaction counts across specified medicinal products. Note: 'medicinalproducts' ...
 
     Parameters
     ----------
@@ -37,6 +39,10 @@ def FAERS_count_additive_adverse_reactions(
         Optional: Filter by event seriousness. Omit this parameter if you don't want ...
     seriousnessdeath : str
         Optional: Pass 'Yes' to filter for reports where death was an outcome. Omit t...
+    manufacturer_name : str
+        Filter to reports where a drug's labeller/manufacturer matches, e.g. 'Pfizer'...
+    receivedate : str
+        Filter by the date FDA received the report. Accepts a single date 'YYYYMMDD' ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -60,6 +66,8 @@ def FAERS_count_additive_adverse_reactions(
             "occurcountry": occurcountry,
             "serious": serious,
             "seriousnessdeath": seriousnessdeath,
+            "manufacturer_name": manufacturer_name,
+            "receivedate": receivedate,
         }.items()
         if v is not None
     }

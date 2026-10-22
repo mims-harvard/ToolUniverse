@@ -117,7 +117,7 @@
   },
   {
     "name": "NeuroMorpho_search_neurons",
-    "description": "Search for neurons in NeuroMorpho.Org by species, brain region, cell type, or other attributes. Supports filtering by multiple criteria. Returns paginated list of matching neurons. Example: searching species 'human' returns thousands of human neuron reconstructions.",
+    "description": "Search NeuroMorpho neurons by species, brain region, cell type or other attributes. Results use zero-based page pagination; metadata reports has_more and next_page. filter_field and filter_value must be supplied together so filters cannot be silently ignored.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -128,6 +128,7 @@
         },
         "query_value": {
           "type": "string",
+          "minLength": 1,
           "description": "Value to search for. Examples: 'human', 'rat', 'mouse', 'hippocampus', 'pyramidal', 'interneuron'. Comma-separated for multiple values."
         },
         "filter_field": {
@@ -146,11 +147,14 @@
         },
         "page": {
           "type": "integer",
+          "minimum": 0,
           "description": "Page number (0-indexed). Default: 0.",
           "default": 0
         },
         "size": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
           "description": "Results per page (max 500). Default: 20.",
           "default": 20
         }
@@ -358,22 +362,26 @@
   },
   {
     "name": "NeuroMorpho_get_field_values",
-    "description": "Get available values for a neuron metadata field in NeuroMorpho.Org. Useful for discovering what species, brain regions, cell types, or other attributes are available for searching. Example: field_name='species' returns all species represented in the database.",
+    "description": "Get available values for a NeuroMorpho neuron metadata field with explicit zero-based page pagination. Metadata reports the exact total, has_more and next_page.",
     "parameter": {
       "type": "object",
       "properties": {
         "field_name": {
           "type": "string",
+          "minLength": 1,
           "description": "Metadata field name. Common fields: 'species', 'brain_region', 'cell_type', 'archive', 'stain', 'protocol', 'gender', 'age_classification', 'experiment_condition'.",
           "default": "species"
         },
         "page": {
           "type": "integer",
+          "minimum": 0,
           "description": "Page number (0-indexed). Default: 0.",
           "default": 0
         },
         "size": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
           "description": "Results per page (max 500). Default: 500.",
           "default": 500
         }
@@ -418,7 +426,7 @@
   },
   {
     "name": "NeuroMorpho_search_literature",
-    "description": "Search source-publication (literature) records linked to NeuroMorpho neuron reconstructions, searchable by neuroscience-specific fields. Each record gives DOI, PMID, journal, title, authors, plus the species, brainRegion, cellType, and tracingSystem of the reconstructions described. Use this to find the publications behind morphologies for a given brain region or cell type. Example: query_field='brainRegion', query_value='hippocampus' returns 128 articles (e.g. DOI 10.1084/jem.20151776).",
+    "description": "Search source publications linked to NeuroMorpho reconstructions with explicit zero-based page pagination. Metadata reports the exact total, has_more and next_page; records include DOI, PMID, journal, authors, species, brain region and cell type.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -429,21 +437,21 @@
         },
         "query_value": {
           "type": "string",
+          "minLength": 1,
           "description": "Value to match for the chosen field. Examples: 'hippocampus' (brainRegion), 'pyramidal' (cellType), 'mouse' (species), 'Neurolucida' (tracingSystem)."
         },
         "page": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "description": "Page number for pagination (0-indexed). Default: 0."
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Page number for pagination (0-indexed)."
         },
         "size": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "description": "Number of articles per page (max 500). Default: 20."
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 20,
+          "description": "Number of articles per page (max 500)."
         }
       },
       "required": [

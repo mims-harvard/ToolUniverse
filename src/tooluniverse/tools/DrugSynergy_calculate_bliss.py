@@ -1,7 +1,7 @@
 """
 DrugSynergy_calculate_bliss
 
-Calculate Bliss Independence synergy score for a drug combination. Model: E_expected = E_a + E_b ...
+Calculate Bliss Independence synergy for a drug combination. Model: E_expected = E_a + E_b - E_a*...
 """
 
 from typing import Any, Optional, Callable
@@ -9,17 +9,17 @@ from ._shared_client import get_shared_client
 
 
 def DrugSynergy_calculate_bliss(
-    operation: str,
     effect_a: float,
     effect_b: float,
     effect_combination: float,
+    operation: Optional[str] = "calculate_bliss",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Calculate Bliss Independence synergy score for a drug combination. Model: E_expected = E_a + E_b ...
+    Calculate Bliss Independence synergy for a drug combination. Model: E_expected = E_a + E_b - E_a*...
 
     Parameters
     ----------

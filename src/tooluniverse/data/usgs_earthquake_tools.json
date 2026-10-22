@@ -183,7 +183,7 @@
   },
   {
     "name": "USGS_query_earthquakes",
-    "description": "Query the USGS FDSN earthquake database with custom parameters to search historical and recent seismic events. Filter by magnitude, time range, location (bounding box or radial search), and depth. Returns detailed GeoJSON for all matching earthquakes. Useful for historical seismicity analysis, regional earthquake studies, and risk assessment.",
+    "description": "Query the USGS FDSN earthquake database with explicit one-based offset pagination and an exact total from the official count endpoint. Continue with metadata.next_offset while metadata.has_more is true. The GeoJSON response itself contains only the current page and does not include a total count. Use a fixed endtime for reproducible pagination of live data.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -248,16 +248,38 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of events (default 20000, max 20000)"
+          "minimum": 1,
+          "maximum": 20000,
+          "default": 20000,
+          "description": "Events per page (default 20000, max 20000)"
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "One-based event offset. Continue with metadata.next_offset."
+        },
+        "orderby": {
+          "type": "string",
+          "enum": [
+            "time",
+            "time-asc",
+            "magnitude",
+            "magnitude-asc"
+          ],
+          "default": "time",
+          "description": "Stable result ordering. Default 'time' (newest first)."
         }
       },
       "required": []
     },
     "fields": {
       "endpoint": "https://earthquake.usgs.gov/fdsnws/event/1/query",
+      "count_endpoint": "https://earthquake.usgs.gov/fdsnws/event/1/count",
       "params": {
         "format": "geojson"
-      }
+      },
+      "pagination": "usgs_offset_count"
     },
     "type": "BaseRESTTool",
     "test_examples": [

@@ -93,12 +93,14 @@ class ClinGenAlleleTool(BaseTool):
         # Extract external records
         ext = data.get("externalRecords", {})
         external_ids = {}
+        external_details = {}
         for db_name, records in ext.items():
             if isinstance(records, list):
                 external_ids[db_name] = [
                     r.get("id") or r.get("preferredName") or r.get("@id", "")
-                    for r in records[:5]
+                    for r in records
                 ]
+                external_details[db_name] = records
 
         # Extract genomic coordinates
         genomic = []
@@ -111,21 +113,28 @@ class ClinGenAlleleTool(BaseTool):
                         "end": coord.get("end"),
                         "allele": coord.get("allele"),
                         "reference_allele": coord.get("referenceAllele"),
-                        "reference_genome": coord.get("referenceGenome"),
+                        "reference_genome": ga.get("referenceGenome"),
+                        "hgvs": ga.get("hgvs") or [],
+                        "reference_sequence": ga.get("referenceSequence"),
                     }
                 )
 
         # Extract transcript alleles
         transcripts = []
-        for ta in (data.get("transcriptAlleles") or [])[:10]:
+        for ta in data.get("transcriptAlleles") or []:
             hgvs_list = ta.get("hgvs") or []
             transcripts.append(
                 {
-                    "hgvs": hgvs_list[:3] if hgvs_list else [],
+                    "hgvs": hgvs_list,
                     "gene_symbol": ta.get("geneSymbol"),
                     "protein_effect": ta.get("proteinEffect", {}).get("hgvs")
                     if ta.get("proteinEffect")
                     else None,
+                    "protein_effect_details": ta.get("proteinEffect"),
+                    "coordinates": ta.get("coordinates") or [],
+                    "gene": ta.get("gene"),
+                    "gene_ncbi_id": ta.get("geneNCBI_id"),
+                    "reference_sequence": ta.get("referenceSequence"),
                 }
             )
 
@@ -133,8 +142,14 @@ class ClinGenAlleleTool(BaseTool):
             "ca_id": ca_id,
             "community_standard_title": data.get("communityStandardTitle", []),
             "external_records": external_ids,
-            "genomic_alleles": genomic[:5],
+            "external_record_details": external_details,
+            "external_record_count": sum(
+                len(records) for records in external_details.values()
+            ),
+            "genomic_alleles": genomic,
+            "genomic_allele_count": len(genomic),
             "transcript_alleles": transcripts,
+            "transcript_allele_count": len(transcripts),
         }
         return {
             "status": "success",

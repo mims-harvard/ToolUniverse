@@ -1,7 +1,7 @@
 """
 iPTMnet_search
 
-Search the iPTMnet database for proteins with post-translational modification (PTM) data. Find pr...
+Search iPTMnet proteins with exact total and recoverable local offset pagination. Continue with m...
 """
 
 from typing import Any, Optional, Callable
@@ -9,12 +9,13 @@ from ._shared_client import get_shared_client
 
 
 def iPTMnet_search(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "search",
     search_term: Optional[str] = None,
     role: Optional[str] = "Substrate",
-    ptm_type: Optional[str | Any] = None,
+    ptm_type: Optional[str] = None,
     term_type: Optional[str] = "All",
     max_results: Optional[int] = 25,
+    offset: Optional[int] = 0,
     query: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -22,7 +23,7 @@ def iPTMnet_search(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Search the iPTMnet database for proteins with post-translational modification (PTM) data. Find pr...
+    Search iPTMnet proteins with exact total and recoverable local offset pagination. Continue with m...
 
     Parameters
     ----------
@@ -32,12 +33,14 @@ def iPTMnet_search(
         Search query: gene name (TP53, EGFR, AKT1), protein name (p53, insulin recept...
     role : str
         Filter by protein role. Substrate = proteins that are modified; Enzyme = prot...
-    ptm_type : str | Any
+    ptm_type : str
         Filter by PTM type: Phosphorylation, Acetylation, Ubiquitination, Methylation...
     term_type : str
         Type of search term. Default: All (searches across all fields)
     max_results : int
         Maximum results to return (default: 25)
+    offset : int
+        Zero-based offset in the complete filtered search response.
     query : str
         Gene name, protein name, or keyword to search (alias for search_term)
     stream_callback : Callable, optional
@@ -63,6 +66,7 @@ def iPTMnet_search(
             "ptm_type": ptm_type,
             "term_type": term_type,
             "max_results": max_results,
+            "offset": offset,
             "query": query,
         }.items()
         if v is not None

@@ -130,7 +130,7 @@
   {
     "name": "ELM_list_classes",
     "type": "ELMTool",
-    "description": "List short linear motif (SLiM) classes from the ELM database. Each class represents a distinct type of functional motif with a regex pattern, description, and statistics on known instances. Filter by functional type (CLV/DEG/DOC/LIG/MOD/TRG) or search by keyword (e.g., 'caspase', 'phosphorylation', 'nuclear', 'ubiquitin'). The regex patterns can be used to scan protein sequences for potential motif matches. ELM contains 353 motif classes covering cleavage, degradation, docking, ligand binding, modification, and targeting functions.",
+    "description": "List ELM short linear motif classes with exact total and recoverable offset pagination. Continue with metadata.next_offset while metadata.has_more is true. Filters are applied before pagination.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -171,6 +171,12 @@
           "maximum": 400,
           "default": 50,
           "description": "Maximum results to return (default: 50, max: 400 covers all classes)"
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset in the filtered motif-class list."
         }
       },
       "required": []
@@ -234,7 +240,7 @@
   {
     "name": "ELM_get_interaction_domains",
     "type": "ELMTool",
-    "description": "Get the ELM motif-to-interaction-domain mapping: for each Short Linear Motif (SLiM) class, the protein domain (with Pfam accession) that recognizes/binds the motif. SLiMs (3-11 residue motifs) are bound by globular domains on partner proteins; this mapping links each ELM class to the Pfam domain family of its binding partner, enabling reconstruction of the domain-motif interaction network. Returns ~409 motif-to-domain mapping records across all ELM classes. Filter by a specific elm_identifier or a free-text query (Pfam accession, domain name/description). Example: CLV_NRD_NRD_1 -> PF00675 'Peptidase_M16' (Insulinase); CLV_PCSK_FUR_1 -> PF00082 'Peptidase_S8' (Subtilase family); DEG_APCC_DBOX_1 -> PF00400 'WD40'.",
+    "description": "Get ELM motif-to-interaction-domain mappings with exact total and recoverable offset pagination. Continue with metadata.next_offset while metadata.has_more is true. Filters are applied before pagination.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -266,6 +272,12 @@
           "maximum": 500,
           "default": 100,
           "description": "Maximum mappings to return (default: 100, max: 500 covers all 427 mappings)"
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset in the filtered mapping list."
         }
       },
       "required": []

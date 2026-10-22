@@ -1,7 +1,7 @@
 """
 civic_search_assertions
 
-Search for assertions in CIViC database. Assertions are higher-level clinical interpretations tha...
+Search CIViC assertions with exact totalCount and cursor pagination. When metadata.has_more is tr...
 """
 
 from typing import Any, Optional, Callable
@@ -10,6 +10,7 @@ from ._shared_client import get_shared_client
 
 def civic_search_assertions(
     limit: Optional[int] = 20,
+    after: Optional[str] = None,
     therapy: Optional[str] = None,
     therapy_name: Optional[str] = None,
     disease: Optional[str] = None,
@@ -21,12 +22,14 @@ def civic_search_assertions(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search for assertions in CIViC database. Assertions are higher-level clinical interpretations tha...
+    Search CIViC assertions with exact totalCount and cursor pagination. When metadata.has_more is tr...
 
     Parameters
     ----------
     limit : int
         Maximum number of assertions to return (default: 20, recommended max: 100)
+    after : str
+        Opaque continuation cursor from metadata.next_cursor.
     therapy : str
         Filter by therapy/drug name (e.g., 'imatinib', 'ponatinib'). Alias: therapy_n...
     therapy_name : str
@@ -55,6 +58,7 @@ def civic_search_assertions(
         k: v
         for k, v in {
             "limit": limit,
+            "after": after,
             "therapy": therapy,
             "therapy_name": therapy_name,
             "disease": disease,

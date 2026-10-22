@@ -209,11 +209,14 @@
         },
         "page": {
           "type": "integer",
+          "minimum": 0,
           "default": 0,
           "description": "Page number (0-based). Default: 0."
         },
         "size": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
           "default": 10,
           "description": "Results per page. Default: 10."
         }
@@ -224,7 +227,9 @@
     },
     "fields": {
       "endpoint": "https://registry.api.identifiers.org/restApi/namespaces/search/findByPrefixContaining",
-      "return_format": "JSON"
+      "return_format": "JSON",
+      "pagination": "spring_page",
+      "collection_key": "namespaces"
     },
     "return_schema": {
       "oneOf": [
@@ -314,11 +319,14 @@
       "properties": {
         "page": {
           "type": "integer",
+          "minimum": 0,
           "default": 0,
           "description": "Page number (0-based). Default: 0."
         },
         "size": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
           "default": 20,
           "description": "Results per page. Default: 20."
         }
@@ -326,7 +334,9 @@
     },
     "fields": {
       "endpoint": "https://registry.api.identifiers.org/restApi/namespaces",
-      "return_format": "JSON"
+      "return_format": "JSON",
+      "pagination": "spring_page",
+      "collection_key": "namespaces"
     },
     "return_schema": {
       "oneOf": [

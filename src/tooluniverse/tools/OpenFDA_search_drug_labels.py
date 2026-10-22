@@ -1,7 +1,7 @@
 """
 OpenFDA_search_drug_labels
 
-Search the FDA drug label (SPL - Structured Product Labeling) database via openFDA. Contains appr...
+Search FDA drug labels via openFDA with exact totals and skip pagination. Continue with metadata....
 """
 
 from typing import Any, Optional, Callable
@@ -10,21 +10,24 @@ from ._shared_client import get_shared_client
 
 def OpenFDA_search_drug_labels(
     search: str,
-    limit: Optional[int | Any] = None,
+    limit: Optional[int] = 1,
+    skip: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search the FDA drug label (SPL - Structured Product Labeling) database via openFDA. Contains appr...
+    Search FDA drug labels via openFDA with exact totals and skip pagination. Continue with metadata....
 
     Parameters
     ----------
     search : str
         Lucene query to search drug labels (e.g., 'openfda.brand_name:aspirin', 'open...
-    limit : int | Any
+    limit : int
         Maximum number of results (default 1, max 100)
+    skip : int
+        Number of matching records to skip. Continue with metadata.next_skip.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,7 +43,9 @@ def OpenFDA_search_drug_labels(
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
-        k: v for k, v in {"search": search, "limit": limit}.items() if v is not None
+        k: v
+        for k, v in {"search": search, "limit": limit, "skip": skip}.items()
+        if v is not None
     }
     return get_shared_client().run_one_function(
         {

@@ -33,11 +33,14 @@
         },
         "limit": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
           "description": "Maximum number of datasets to return (default: 10, max recommended: 50).",
           "default": 10
         },
         "offset": {
           "type": "integer",
+          "minimum": 0,
           "description": "Number of datasets to skip for pagination (default: 0).",
           "default": 0
         }
@@ -137,7 +140,8 @@
       }
     ],
     "fields": {
-      "operation": "list_datasets"
+      "operation": "list_datasets",
+      "pagination": "cryoet_limit_offset_lookahead"
     }
   },
   {
@@ -304,11 +308,14 @@
         },
         "limit": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
           "description": "Maximum number of runs to return (default: 20).",
           "default": 20
         },
         "offset": {
           "type": "integer",
+          "minimum": 0,
           "description": "Number of runs to skip for pagination (default: 0).",
           "default": 0
         }
@@ -389,7 +396,8 @@
       }
     ],
     "fields": {
-      "operation": "list_runs"
+      "operation": "list_runs",
+      "pagination": "cryoet_limit_offset_lookahead"
     }
   },
   {
@@ -416,11 +424,14 @@
         },
         "limit": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
           "description": "Maximum number of tomograms to return (default: 10).",
           "default": 10
         },
         "offset": {
           "type": "integer",
+          "minimum": 0,
           "description": "Number of tomograms to skip for pagination (default: 0).",
           "default": 0
         }
@@ -554,7 +565,8 @@
       }
     ],
     "fields": {
-      "operation": "list_tomograms"
+      "operation": "list_tomograms",
+      "pagination": "cryoet_limit_offset_lookahead"
     }
   },
   {
@@ -586,11 +598,14 @@
         },
         "limit": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
           "description": "Maximum number of annotations to return (default: 20).",
           "default": 20
         },
         "offset": {
           "type": "integer",
+          "minimum": 0,
           "description": "Number of annotations to skip for pagination (default: 0).",
           "default": 0
         }
@@ -706,7 +721,8 @@
       }
     ],
     "fields": {
-      "operation": "list_annotations"
+      "operation": "list_annotations",
+      "pagination": "cryoet_limit_offset_lookahead"
     }
   },
   {
@@ -736,11 +752,14 @@
         },
         "limit": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
           "description": "Maximum number of tilt-series to return (default: 10).",
           "default": 10
         },
         "offset": {
           "type": "integer",
+          "minimum": 0,
           "description": "Number of tilt-series to skip for pagination (default: 0).",
           "default": 0
         }
@@ -924,7 +943,8 @@
       }
     ],
     "fields": {
-      "operation": "list_tiltseries"
+      "operation": "list_tiltseries",
+      "pagination": "cryoet_limit_offset_lookahead"
     }
   },
   {
@@ -954,11 +974,14 @@
         },
         "limit": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
           "description": "Maximum number of depositions to return (default: 10).",
           "default": 10
         },
         "offset": {
           "type": "integer",
+          "minimum": 0,
           "description": "Number of depositions to skip for pagination (default: 0).",
           "default": 0
         }
@@ -1067,7 +1090,8 @@
       }
     ],
     "fields": {
-      "operation": "list_depositions"
+      "operation": "list_depositions",
+      "pagination": "cryoet_limit_offset_lookahead"
     }
   }
 ]

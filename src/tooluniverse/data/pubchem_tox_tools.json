@@ -106,6 +106,16 @@
             "null"
           ],
           "description": "Compound name (used if cid is not provided). Examples: 'aspirin', 'methanol', 'caffeine', 'lead'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "description": "Page size for toxicity values. Default 30. Continue with metadata.next_offset when metadata.has_more is true."
+        },
+        "offset": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "description": "Zero-based toxicity-value offset. Default 0."
         }
       },
       "required": []
@@ -179,6 +189,16 @@
             "null"
           ],
           "description": "Compound name (used if cid is not provided). Examples: 'benzene', 'toluene', 'atrazine', 'chlorpyrifos'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "description": "Page size for ecotoxicity values. Default 30. Continue with metadata.next_offset when metadata.has_more is true."
+        },
+        "offset": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "description": "Zero-based ecotoxicity-value offset. Default 0."
         }
       },
       "required": []
@@ -252,6 +272,16 @@
             "null"
           ],
           "description": "Compound name (used if cid is not provided). Examples: 'benzene', 'methanol', 'carbon monoxide', 'hydrogen sulfide'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "description": "Page size for human toxicity values. Default 30. Continue with metadata.next_offset when metadata.has_more is true."
+        },
+        "offset": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "description": "Zero-based human-toxicity-value offset. Default 0."
         }
       },
       "required": []
@@ -483,6 +513,16 @@
             "null"
           ],
           "description": "Compound name (used if cid is not provided). Examples: 'arsenic', 'methanol', 'cyanide', 'chlorine'."
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "description": "Page size for acute effects. Default 20. Continue with metadata.next_offset when metadata.has_more is true."
+        },
+        "offset": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "description": "Zero-based acute-effect offset. Default 0."
         }
       },
       "required": []

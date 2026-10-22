@@ -21,6 +21,7 @@ Reference: Hu et al., Nucleic Acids Research, 2023 (PMID: 36300619)
 """
 
 import os
+import re
 import tempfile
 import threading
 from typing import Dict, Any, List, Optional
@@ -107,10 +108,10 @@ def _load_dataframe(timeout: int = 180):
         return _DF
 
 
-def _records(df, limit: int = 200) -> List[Dict[str, Any]]:
+def _records(df, limit: int = 500, offset: int = 0) -> List[Dict[str, Any]]:
     """Convert a filtered DataFrame to the tool's record dict list."""
     out = []
-    for _, row in df.head(limit).iterrows():
+    for _, row in df.iloc[offset : offset + limit].iterrows():
         out.append(
             {
                 "species": row["species"],
@@ -124,6 +125,31 @@ def _records(df, limit: int = 200) -> List[Dict[str, Any]]:
             }
         )
     return out
+
+
+def _contains_phrase(series, query: str):
+    """Match a cell-type phrase without matching inside another word.
+
+    Plain substring matching made ``T cell`` match ``Fat cell`` and
+    ``Mast cell``.  Alphanumeric boundaries preserve intended qualified cell
+    names such as ``CD8+ T cell`` while excluding those false positives.
+    """
+    phrase = query.strip()
+    pattern = rf"(?<![A-Za-z0-9]){re.escape(phrase)}(?![A-Za-z0-9])"
+    return series.str.contains(pattern, case=False, regex=True)
+
+
+def _paging(total: int, returned: int, limit: int, offset: int) -> Dict[str, Any]:
+    next_offset = offset + returned
+    has_more = next_offset < total
+    return {
+        "returned": returned,
+        "limit": limit,
+        "offset": offset,
+        "has_more": has_more,
+        "truncated": has_more,
+        "next_offset": next_offset if has_more else None,
+    }
 
 
 def _apply_species(df, species: Optional[str]):
@@ -194,18 +220,22 @@ class CellMarkerTool(BaseTool):
             }
         species = arguments.get("species")
         tissue_type = arguments.get("tissue_type")
+        limit = int(arguments.get("limit", 500))
+        offset = int(arguments.get("offset", 0))
 
         sub = df[df["cell_marker"].str.lower() == gene_symbol.strip().lower()]
         sub = _apply_species(sub, species)
         sub = _apply_tissue(sub, tissue_type)
 
+        records = _records(sub, limit, offset)
         return {
             "status": "success",
             "data": {
                 "gene_symbol": gene_symbol,
                 "species": species if species else "all",
                 "total_records": int(len(sub)),
-                "records": _records(sub),
+                "records": records,
+                **_paging(len(sub), len(records), limit, offset),
             },
         }
 
@@ -215,12 +245,10 @@ class CellMarkerTool(BaseTool):
             return {"status": "error", "error": "Missing required parameter: cell_name"}
         species = arguments.get("species")
         tissue_type = arguments.get("tissue_type")
+        limit = int(arguments.get("limit", 500))
+        offset = int(arguments.get("offset", 0))
 
-        sub = df[
-            df["cell_name"]
-            .str.lower()
-            .str.contains(cell_name.strip().lower(), regex=False)
-        ]
+        sub = df[_contains_phrase(df["cell_name"], cell_name)]
         sub = _apply_species(sub, species)
         sub = _apply_tissue(sub, tissue_type)
 
@@ -235,13 +263,28 @@ class CellMarkerTool(BaseTool):
         marker_genes = sorted(
             s for s in sub["Symbol"].dropna().astype(str).str.strip().unique() if s
         )
+        marker_page = marker_genes[offset : offset + limit]
+        records = _records(sub, limit, offset)
+        records_more = offset + len(records) < len(sub)
+        markers_more = offset + len(marker_page) < len(marker_genes)
+        has_more = records_more or markers_more
+        next_offset = offset + max(len(records), len(marker_page))
         data = {
             "cell_name": cell_name,
             "species": species if species else "all",
             "total_records": int(len(sub)),
             "unique_markers": len(marker_genes),
-            "marker_genes": marker_genes[:500],
-            "records": _records(sub),
+            "marker_genes": marker_page,
+            "records": records,
+            "returned_records": len(records),
+            "returned_markers": len(marker_page),
+            "limit": limit,
+            "offset": offset,
+            "records_has_more": records_more,
+            "markers_has_more": markers_more,
+            "has_more": has_more,
+            "truncated": has_more,
+            "next_offset": next_offset if has_more else None,
         }
         if len(sub) == 0:
             # Distinguish "no data for this cell type" from "likely a typo":
@@ -287,6 +330,8 @@ class CellMarkerTool(BaseTool):
         cancer_type = arguments.get("cancer_type")
         gene_symbol = arguments.get("gene_symbol")
         cell_type = arguments.get("cell_type")
+        limit = int(arguments.get("limit", 500))
+        offset = int(arguments.get("offset", 0))
 
         if not any([cancer_type, gene_symbol, cell_type]):
             return {
@@ -300,11 +345,7 @@ class CellMarkerTool(BaseTool):
         if cancer_type:
             sub = _apply_tissue(sub, cancer_type)
         if cell_type:
-            sub = sub[
-                sub["cell_name"]
-                .str.lower()
-                .str.contains(cell_type.strip().lower(), regex=False)
-            ]
+            sub = sub[_contains_phrase(sub["cell_name"], cell_type)]
 
         query = {}
         if cancer_type:
@@ -314,11 +355,13 @@ class CellMarkerTool(BaseTool):
         if cell_type:
             query["cell_type"] = cell_type
 
+        records = _records(sub, limit, offset)
         return {
             "status": "success",
             "data": {
                 "query": query,
                 "total_records": int(len(sub)),
-                "records": _records(sub),
+                "records": records,
+                **_paging(len(sub), len(records), limit, offset),
             },
         }

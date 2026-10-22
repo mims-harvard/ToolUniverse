@@ -1,7 +1,7 @@
 """
 RGD_resolve_symbol_or_region
 
-Resolve a rat gene symbol to its native RGD record/ID, or list genes overlapping a genomic region...
+Resolve a gene symbol to its native RGD record, or list genes overlapping a genomic region. Symbo...
 """
 
 from typing import Any, Optional, Callable
@@ -15,13 +15,15 @@ def RGD_resolve_symbol_or_region(
     start: Optional[int] = None,
     stop: Optional[int] = None,
     map_key: Optional[int] = None,
+    limit: Optional[int] = 100,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Resolve a rat gene symbol to its native RGD record/ID, or list genes overlapping a genomic region...
+    Resolve a gene symbol to its native RGD record, or list genes overlapping a genomic region. Symbo...
 
     Parameters
     ----------
@@ -37,6 +39,10 @@ def RGD_resolve_symbol_or_region(
         Region stop (region mode).
     map_key : int
         Assembly map key for region mode (e.g. 360 for rat rn7).
+    limit : int
+        Region mode only: maximum number of overlapping genes to return in this page.
+    offset : int
+        Region mode only: zero-based gene offset. Use metadata.next_offset for the ne...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -60,6 +66,8 @@ def RGD_resolve_symbol_or_region(
             "start": start,
             "stop": stop,
             "map_key": map_key,
+            "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

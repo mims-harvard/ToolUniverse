@@ -14,6 +14,7 @@ import requests
 from typing import Dict, Any
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+from .uniprot_pagination import pagination_metadata
 
 UNIREF_BASE_URL = "https://rest.uniprot.org/uniref"
 
@@ -136,25 +137,47 @@ class UniRefTool(BaseTool):
             }
 
         cluster_type = arguments.get("cluster_type") or "UniRef90"
-        size = min(arguments.get("size") or 10, 25)
-
-        # Build the search query with identity filter
-        # UniRef API uses decimal identity: 1.0 (UniRef100), 0.9 (UniRef90), 0.5 (UniRef50)
         identity_map = {
             "UniRef100": "1.0",
             "UniRef90": "0.9",
             "UniRef50": "0.5",
         }
-        search_query = query
-        identity_val = identity_map.get(cluster_type)
-        if identity_val:
-            search_query = f"{query} AND identity:{identity_val}"
+        if cluster_type not in identity_map:
+            return {
+                "status": "error",
+                "error": (
+                    "cluster_type must be one of UniRef100, UniRef90, or UniRef50; "
+                    "invalid values are not sent as an unfiltered search"
+                ),
+            }
+        raw_size = arguments.get("size")
+        raw_size = 10 if raw_size is None else raw_size
+        try:
+            if isinstance(raw_size, bool):
+                raise ValueError
+            size = int(raw_size)
+            if isinstance(raw_size, float) and not raw_size.is_integer():
+                raise ValueError
+            if not 1 <= size <= 500:
+                raise ValueError
+        except (TypeError, ValueError):
+            return {
+                "status": "error",
+                "error": "size must be an integer from 1 to 500",
+            }
+
+        # Build the search query with identity filter
+        # UniRef API uses decimal identity: 1.0 (UniRef100), 0.9 (UniRef90), 0.5 (UniRef50)
+        identity_val = identity_map[cluster_type]
+        search_query = f"{query} AND identity:{identity_val}"
 
         url = f"{UNIREF_BASE_URL}/search"
         params = {
             "query": search_query,
             "size": size,
         }
+        if arguments.get("cursor"):
+            params["cursor"] = arguments["cursor"]
 
         response = requests.get(
             url,
@@ -193,6 +216,6 @@ class UniRefTool(BaseTool):
                 "source": "UniProt UniRef",
                 "query": query,
                 "cluster_type": cluster_type,
-                "returned": len(results),
+                **pagination_metadata(response, len(results)),
             },
         }

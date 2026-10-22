@@ -1,7 +1,7 @@
 """
 EPMC_get_citations
 
-Get articles that cite a specific paper from Europe PMC. Given a PubMed ID (PMID), returns a list...
+Get one page of articles that cite a specific paper from Europe PMC. Given a PubMed ID (PMID), re...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def EPMC_get_citations(
     validate: bool = True,
 ) -> Any:
     """
-    Get articles that cite a specific paper from Europe PMC. Given a PubMed ID (PMID), returns a list...
+    Get one page of articles that cite a specific paper from Europe PMC. Given a PubMed ID (PMID), re...
 
     Parameters
     ----------

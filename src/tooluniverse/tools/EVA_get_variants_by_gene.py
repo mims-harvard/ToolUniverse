@@ -1,7 +1,7 @@
 """
 EVA_get_variants_by_gene
 
-Get genetic variants from the European Variation Archive (EVA) for a specific gene. EVA is hosted...
+Get genetic variants from the European Variation Archive (EVA) for a specific gene. Results use e...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,14 @@ def EVA_get_variants_by_gene(
     gene: str,
     species: Optional[str] = "hsapiens_grch38",
     limit: Optional[int] = 20,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get genetic variants from the European Variation Archive (EVA) for a specific gene. EVA is hosted...
+    Get genetic variants from the European Variation Archive (EVA) for a specific gene. Results use e...
 
     Parameters
     ----------
@@ -27,7 +28,9 @@ def EVA_get_variants_by_gene(
     species : str
         Species and assembly (e.g., 'hsapiens_grch38', 'hsapiens_grch37', 'mmusculus_...
     limit : int
-        Maximum number of variants to return (default 20, max ~1000)
+        Variants per page (default 20, maximum 1000)
+    offset : int
+        Zero-based variant offset. It must be a multiple of limit; continue with meta...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,12 @@ def EVA_get_variants_by_gene(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"gene": gene, "species": species, "limit": limit}.items()
+        for k, v in {
+            "gene": gene,
+            "species": species,
+            "limit": limit,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

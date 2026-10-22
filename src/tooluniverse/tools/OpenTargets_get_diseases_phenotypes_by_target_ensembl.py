@@ -1,7 +1,7 @@
 """
 OpenTargets_get_diseases_phenotypes_by_target_ensembl
 
-Find diseases or phenotypes associated with a specific target using ensemblId.
+Find diseases or phenotypes associated with a specific target using ensemblId. `associatedDisease...
 """
 
 from typing import Any, Optional, Callable
@@ -10,18 +10,21 @@ from ._shared_client import get_shared_client
 
 def OpenTargets_get_diseases_phenotypes_by_target_ensembl(
     ensemblId: str,
+    page: Optional[dict[str, Any]] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Find diseases or phenotypes associated with a specific target using ensemblId.
+    Find diseases or phenotypes associated with a specific target using ensemblId. `associatedDisease...
 
     Parameters
     ----------
     ensemblId : str
         The ensemblId of a target.
+    page : dict[str, Any]
+        Pagination parameters. `count` in the response is the total across all pages;...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +39,9 @@ def OpenTargets_get_diseases_phenotypes_by_target_ensembl(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"ensemblId": ensemblId}.items() if v is not None}
+    _args = {
+        k: v for k, v in {"ensemblId": ensemblId, "page": page}.items() if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "OpenTargets_get_diseases_phenotypes_by_target_ensembl",

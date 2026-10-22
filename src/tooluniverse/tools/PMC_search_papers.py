@@ -1,7 +1,7 @@
 """
 PMC_search_papers
 
-Search for full-text biomedical literature using the PMC (PubMed Central) API. PMC is the free fu...
+Search full-text biomedical literature in PMC by relevance. Uses limit (default 10; retmax is an ...
 """
 
 from typing import Any, Optional, Callable
@@ -12,6 +12,7 @@ def PMC_search_papers(
     query: str,
     limit: Optional[int] = 10,
     retmax: Optional[int] = None,
+    offset: Optional[int] = 0,
     date_from: Optional[str] = None,
     date_to: Optional[str] = None,
     article_type: Optional[str] = None,
@@ -22,7 +23,7 @@ def PMC_search_papers(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Search for full-text biomedical literature using the PMC (PubMed Central) API. PMC is the free fu...
+    Search full-text biomedical literature in PMC by relevance. Uses limit (default 10; retmax is an ...
 
     Parameters
     ----------
@@ -32,6 +33,8 @@ def PMC_search_papers(
         Maximum number of papers to return. This sets the maximum number of papers re...
     retmax : int
         Alias for limit (NCBI eutils naming). If both retmax and limit are provided, ...
+    offset : int
+        Zero-based PMC relevance offset within NCBI's 9,999-record retrieval window (...
     date_from : str
         Start date for publication date filter (YYYY/MM/DD format). Optional paramete...
     date_to : str
@@ -60,6 +63,7 @@ def PMC_search_papers(
             "query": query,
             "limit": limit,
             "retmax": retmax,
+            "offset": offset,
             "date_from": date_from,
             "date_to": date_to,
             "article_type": article_type,

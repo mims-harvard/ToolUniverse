@@ -12,10 +12,59 @@ No authentication required.
 
 import requests
 from typing import Dict, Any, List
+from urllib.parse import parse_qs, urlparse
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 GWAS_SS_BASE_URL = "https://www.ebi.ac.uk/gwas/summary-statistics/api"
+
+
+def _validate_page(arguments: Dict[str, Any], default_size: int) -> tuple[int, int, str | None]:
+    size = arguments.get("size", default_size)
+    start = arguments.get("start", 0)
+    if size is None:
+        size = default_size
+    if start is None:
+        start = 0
+    if isinstance(size, bool) or not isinstance(size, int) or not 1 <= size <= 1000:
+        return 0, 0, "size must be an integer between 1 and 1000"
+    if isinstance(start, bool) or not isinstance(start, int) or start < 0:
+        return 0, 0, "start must be a non-negative integer"
+    return size, start, None
+
+
+def _page_metadata(data: Dict[str, Any], *, start: int, size: int, returned: int) -> Dict[str, Any]:
+    """Translate HAL navigation into explicit, honest completeness metadata."""
+
+    next_link = (data.get("_links") or {}).get("next") or {}
+    next_href = next_link.get("href") if isinstance(next_link, dict) else None
+    has_more = bool(next_href)
+    upstream_next_start = None
+    if next_href:
+        try:
+            values = parse_qs(urlparse(next_href).query).get("start") or []
+            upstream_next_start = int(values[0]) if values else None
+        except (TypeError, ValueError):
+            upstream_next_start = None
+    # The live service generates the same HAL next href (start=size) for
+    # every page, even though the requested start is honored. Trust the
+    # presence/absence of the next relation, but calculate a monotonic offset.
+    next_start = start + returned if has_more else None
+    navigation_repaired = has_more and upstream_next_start != next_start
+    total_results = None if has_more else start + returned
+    return {
+        "total_results": total_results,
+        "total_is_exact": not has_more,
+        "matches_lower_bound": start + returned + (1 if has_more else 0),
+        "returned": returned,
+        "start": start,
+        "size": size,
+        "has_more": has_more,
+        "truncated": has_more,
+        "next_start": next_start,
+        "upstream_next_start": upstream_next_start,
+        "navigation_repaired": navigation_repaired,
+    }
 
 
 @register_tool("GWASSumStatsTool")
@@ -74,10 +123,12 @@ class GWASSumStatsTool(BaseTool):
 
     def _list_studies(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """List GWAS studies with deposited summary statistics."""
-        size = arguments.get("size") or arguments.get("limit") or 20
+        size, start, page_error = _validate_page(arguments, 20)
+        if page_error:
+            return {"status": "error", "error": page_error}
 
         url = f"{GWAS_SS_BASE_URL}/studies"
-        params = {"size": min(size, 100)}
+        params = {"size": size, "start": start}
         resp = requests.get(url, params=params, timeout=self.timeout)
         resp.raise_for_status()
         data = resp.json()
@@ -97,7 +148,7 @@ class GWASSumStatsTool(BaseTool):
             "data": studies,
             "metadata": {
                 "source": "EBI GWAS Summary Statistics",
-                "returned": len(studies),
+                **_page_metadata(data, start=start, size=size, returned=len(studies)),
             },
         }
 
@@ -110,8 +161,16 @@ class GWASSumStatsTool(BaseTool):
                 "error": "trait_id is required (e.g., 'EFO_0000249' for Alzheimer's)",
             }
 
+        size, start, page_error = _validate_page(arguments, 20)
+        if page_error:
+            return {"status": "error", "error": page_error}
+
         url = f"{GWAS_SS_BASE_URL}/traits/{trait_id}/studies"
-        resp = requests.get(url, timeout=self.timeout)
+        resp = requests.get(
+            url,
+            params={"size": size, "start": start},
+            timeout=self.timeout,
+        )
         if resp.status_code == 404:
             error = f"No summary statistics found for trait '{trait_id}'"
             # This API only recognizes EFO ids. A disease looked up in a
@@ -147,6 +206,7 @@ class GWASSumStatsTool(BaseTool):
                 "source": "EBI GWAS Summary Statistics",
                 "trait_id": trait_id,
                 "num_studies": len(studies),
+                **_page_metadata(data, start=start, size=size, returned=len(studies)),
             },
         }
 
@@ -157,7 +217,7 @@ class GWASSumStatsTool(BaseTool):
         bp_upper = arguments.get("bp_upper")
         p_upper = arguments.get("p_upper", 5e-8)
         study_accession = arguments.get("study_accession")
-        size = arguments.get("size", 50)
+        size, start, page_error = _validate_page(arguments, 50)
 
         if not chromosome:
             return {
@@ -169,12 +229,15 @@ class GWASSumStatsTool(BaseTool):
                 "status": "error",
                 "error": "bp_lower and bp_upper are required",
             }
+        if page_error:
+            return {"status": "error", "error": page_error}
 
         url = f"{GWAS_SS_BASE_URL}/chromosomes/{chromosome}/associations"
         params = {
             "bp_lower": bp_lower,
             "bp_upper": bp_upper,
-            "size": min(size, 1000),
+            "size": size,
+            "start": start,
         }
         if p_upper is not None:
             params["p_upper"] = p_upper
@@ -211,8 +274,6 @@ class GWASSumStatsTool(BaseTool):
                 }
             )
 
-        associations.sort(key=lambda x: x.get("p_value") or 1.0)
-
         return {
             "status": "success",
             "data": associations,
@@ -221,5 +282,11 @@ class GWASSumStatsTool(BaseTool):
                 "region": f"chr{chromosome}:{bp_lower}-{bp_upper}",
                 "p_upper_filter": p_upper,
                 "num_associations": len(associations),
+                **_page_metadata(
+                    data,
+                    start=start,
+                    size=size,
+                    returned=len(associations),
+                ),
             },
         }

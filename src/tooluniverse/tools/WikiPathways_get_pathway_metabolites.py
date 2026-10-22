@@ -9,7 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def WikiPathways_get_pathway_metabolites(
-    pathway_id: str,
+    pathway_id: Optional[str] = None,
+    wpid: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -22,6 +23,8 @@ def WikiPathways_get_pathway_metabolites(
     ----------
     pathway_id : str
         WikiPathways pathway identifier. Examples: 'WP534' (Glycolysis & Gluconeogene...
+    wpid : str
+        Alias for `pathway_id`, matching the parameter name used by the sibling WikiP...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +39,11 @@ def WikiPathways_get_pathway_metabolites(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"pathway_id": pathway_id}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {"pathway_id": pathway_id, "wpid": wpid}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "WikiPathways_get_pathway_metabolites",

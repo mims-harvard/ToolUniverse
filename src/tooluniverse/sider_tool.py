@@ -22,7 +22,7 @@ from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 
-SIDER_BASE_URL = "http://sideeffects.embl.de"
+SIDER_BASE_URL = "https://sideeffects.embl.de"
 
 
 @register_tool("SiderTool")
@@ -54,7 +54,9 @@ class SiderTool(BaseTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the SIDER tool with given arguments."""
-        operation = arguments.get("operation")
+        operation = arguments.get("operation") or (
+            self.tool_config.get("fields") or {}
+        ).get("operation")
         if not operation:
             return {"status": "error", "error": "Missing required parameter: operation"}
 
@@ -86,13 +88,75 @@ class SiderTool(BaseTool):
                 "error": "SIDER operation failed: {}".format(str(e)),
             }
 
-    def _fetch_page(self, path: str) -> Optional[str]:
+    def _fetch_page(self, path: str) -> Dict[str, Any]:
         """Fetch an HTML page from SIDER."""
         url = "{}/{}".format(SIDER_BASE_URL, path.lstrip("/"))
         response = self.session.get(url, timeout=self.timeout)
-        if response.status_code == 200:
-            return response.text
-        return None
+        if response.status_code != 200:
+            return {
+                "status": "error",
+                "error": "SIDER returned HTTP {} for {}".format(
+                    response.status_code, url
+                ),
+            }
+        if not response.text.strip():
+            return {
+                "status": "error",
+                "error": "SIDER returned an empty page for {}".format(url),
+            }
+        return {"status": "success", "text": response.text, "url": url}
+
+    @staticmethod
+    def _parse_paging(
+        arguments: Dict[str, Any], maximum: int
+    ) -> tuple[Optional[int], Optional[int], Optional[Dict[str, Any]]]:
+        limit = arguments.get("limit", 50)
+        offset = arguments.get("offset", 0)
+        if limit is None:
+            limit = 50
+        if offset is None:
+            offset = 0
+        if (
+            isinstance(limit, bool)
+            or not isinstance(limit, int)
+            or not 1 <= limit <= maximum
+        ):
+            return (
+                None,
+                None,
+                {
+                    "status": "error",
+                    "error": "limit must be an integer from 1 to {}".format(maximum),
+                },
+            )
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return (
+                None,
+                None,
+                {
+                    "status": "error",
+                    "error": "offset must be a non-negative integer",
+                },
+            )
+        return limit, offset, None
+
+    @staticmethod
+    def _pagination(
+        total: int, offset: int, limit: int, returned: int
+    ) -> Dict[str, Any]:
+        next_offset = offset + returned
+        has_more = next_offset < total
+        return {
+            "total_matches": total,
+            "total_matches_is_exact": True,
+            "returned": returned,
+            "limit": limit,
+            "offset": offset,
+            "has_more": has_more,
+            "next_offset": next_offset if has_more else None,
+            "truncated": offset > 0 or has_more,
+            "result_set_complete": offset == 0 and returned == total,
+        }
 
     def _search_drug(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search for a drug by name using SIDER's search endpoint."""
@@ -100,9 +164,12 @@ class SiderTool(BaseTool):
         if not query:
             return {"status": "error", "error": "drug_name parameter is required"}
 
-        html = self._fetch_page("/searchBox/?q={}".format(requests.utils.quote(query)))
-        if not html:
-            return {"status": "error", "error": "SIDER search endpoint unavailable"}
+        fetched = self._fetch_page(
+            "/searchBox/?q={}".format(requests.utils.quote(query))
+        )
+        if fetched["status"] == "error":
+            return fetched
+        html = fetched["text"]
 
         # Extract drug results
         drug_matches = re.findall(r'href="/drugs/(\d+)/"[^>]*>([^<]+)</a>', html)
@@ -152,12 +219,19 @@ class SiderTool(BaseTool):
         """Get side effects for a drug by SIDER drug ID or drug name."""
         drug_id = arguments.get("sider_drug_id")
         drug_name = arguments.get("drug_name")
-        limit = arguments.get("limit", 50)
+        limit, offset, paging_error = self._parse_paging(arguments, 500)
+        if paging_error:
+            return paging_error
 
         if not drug_id and not drug_name:
             return {
                 "status": "error",
                 "error": "Either sider_drug_id or drug_name is required",
+            }
+        if drug_id and drug_name:
+            return {
+                "status": "error",
+                "error": "Provide either sider_drug_id or drug_name, not both",
             }
 
         # If drug_name given, search first
@@ -173,12 +247,10 @@ class SiderTool(BaseTool):
                 }
             drug_id = drugs[0]["sider_drug_id"]
 
-        html = self._fetch_page("/drugs/{}/".format(drug_id))
-        if not html:
-            return {
-                "status": "error",
-                "error": "Drug page not found for ID {}".format(drug_id),
-            }
+        fetched = self._fetch_page("/drugs/{}/".format(drug_id))
+        if fetched["status"] == "error":
+            return fetched
+        html = fetched["text"]
 
         # Extract drug name from <h1>
         name_match = re.search(r"<h1[^>]*>([^<]+)</h1>", html)
@@ -191,7 +263,7 @@ class SiderTool(BaseTool):
         # Extract side effect rows
         se_rows = re.findall(r'<tr\s+class="bg\d">(.*?)</tr>', se_section, re.DOTALL)
 
-        side_effects = []
+        all_side_effects = []
         for row in se_rows:
             # Extract MedDRA code and name
             se_match = re.search(
@@ -223,19 +295,33 @@ class SiderTool(BaseTool):
             if description:
                 entry["description"] = description
 
-            side_effects.append(entry)
+            all_side_effects.append(entry)
 
-            if len(side_effects) >= limit:
-                break
+        side_effects = all_side_effects[offset : offset + limit]
+        pagination = self._pagination(
+            len(all_side_effects), offset, limit, len(side_effects)
+        )
+        parse_failures = len(se_rows) - len(all_side_effects)
+        pagination.update(
+            {
+                "source_rows": len(se_rows),
+                "parse_failures": parse_failures,
+                "source_parse_complete": parse_failures == 0,
+                "requested_scope_complete": parse_failures == 0,
+            }
+        )
+        if parse_failures:
+            pagination["total_matches_is_exact"] = False
 
         return {
             "status": "success",
             "data": {
                 "drug_name": resolved_name,
                 "sider_drug_id": str(drug_id),
-                "total_side_effects": len(se_rows),
+                "total_side_effects": len(all_side_effects),
                 "side_effects": side_effects,
             },
+            "metadata": pagination,
         }
 
     def _get_indications(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -247,6 +333,11 @@ class SiderTool(BaseTool):
             return {
                 "status": "error",
                 "error": "Either sider_drug_id or drug_name is required",
+            }
+        if drug_id and drug_name:
+            return {
+                "status": "error",
+                "error": "Provide either sider_drug_id or drug_name, not both",
             }
 
         # If drug_name given, search first
@@ -262,12 +353,10 @@ class SiderTool(BaseTool):
                 }
             drug_id = drugs[0]["sider_drug_id"]
 
-        html = self._fetch_page("/drugs/{}/".format(drug_id))
-        if not html:
-            return {
-                "status": "error",
-                "error": "Drug page not found for ID {}".format(drug_id),
-            }
+        fetched = self._fetch_page("/drugs/{}/".format(drug_id))
+        if fetched["status"] == "error":
+            return fetched
+        html = fetched["text"]
 
         # Extract drug name from <h1>
         name_match = re.search(r"<h1[^>]*>([^<]+)</h1>", html)
@@ -327,9 +416,12 @@ class SiderTool(BaseTool):
                 "error": "side_effect_name parameter is required",
             }
 
-        html = self._fetch_page("/searchBox/?q={}".format(requests.utils.quote(query)))
-        if not html:
-            return {"status": "error", "error": "SIDER search endpoint unavailable"}
+        fetched = self._fetch_page(
+            "/searchBox/?q={}".format(requests.utils.quote(query))
+        )
+        if fetched["status"] == "error":
+            return fetched
+        html = fetched["text"]
 
         # Extract side effect results
         se_matches = re.findall(
@@ -355,6 +447,8 @@ class SiderTool(BaseTool):
                         "meddra_code": code,
                         "side_effect_name": name.strip(),
                         "drug_count": int(drug_count),
+                        "drug_count_is_upstream_reported": True,
+                        "drug_count_is_exact": False,
                     }
                 )
 
@@ -380,12 +474,19 @@ class SiderTool(BaseTool):
         """Find drugs associated with a specific side effect by MedDRA code."""
         meddra_code = arguments.get("meddra_code")
         side_effect_name = arguments.get("side_effect_name")
-        limit = arguments.get("limit", 50)
+        limit, offset, paging_error = self._parse_paging(arguments, 2000)
+        if paging_error:
+            return paging_error
 
         if not meddra_code and not side_effect_name:
             return {
                 "status": "error",
                 "error": "Either meddra_code or side_effect_name is required",
+            }
+        if meddra_code and side_effect_name:
+            return {
+                "status": "error",
+                "error": "Provide either meddra_code or side_effect_name, not both",
             }
 
         # If side_effect_name given, search first
@@ -403,12 +504,10 @@ class SiderTool(BaseTool):
                 }
             meddra_code = se_list[0]["meddra_code"]
 
-        html = self._fetch_page("/se/{}/".format(meddra_code))
-        if not html:
-            return {
-                "status": "error",
-                "error": "Side effect page not found for {}".format(meddra_code),
-            }
+        fetched = self._fetch_page("/se/{}/".format(meddra_code))
+        if fetched["status"] == "error":
+            return fetched
+        html = fetched["text"]
 
         # Extract SE name from <h1>
         name_match = re.search(r"<h1[^>]*>([^<]+)</h1>", html)
@@ -422,25 +521,44 @@ class SiderTool(BaseTool):
             re.DOTALL,
         )
 
-        drugs = []
+        drugs_by_id: Dict[str, Dict[str, Any]] = {}
         for drug_id, drug_name, freq_info in drug_entries:
             freq_info = freq_info.strip() if freq_info else None
-            entry = {
-                "sider_drug_id": drug_id,
-                "drug_name": drug_name.strip(),
-                "frequency_info": freq_info if freq_info else None,
-            }
-            drugs.append(entry)
+            existing = drugs_by_id.get(drug_id)
+            if existing is None:
+                drugs_by_id[drug_id] = {
+                    "sider_drug_id": drug_id,
+                    "drug_name": drug_name.strip(),
+                    "frequency_info": freq_info,
+                    "frequency_values": [freq_info] if freq_info else [],
+                    "source_row_count": 1,
+                }
+                continue
+            existing["source_row_count"] += 1
+            if freq_info and freq_info not in existing["frequency_values"]:
+                existing["frequency_values"].append(freq_info)
+            if existing["frequency_info"] is None and freq_info:
+                existing["frequency_info"] = freq_info
 
-            if len(drugs) >= limit:
-                break
+        all_drugs = list(drugs_by_id.values())
+
+        drugs = all_drugs[offset : offset + limit]
+        pagination = self._pagination(len(all_drugs), offset, limit, len(drugs))
+        pagination.update(
+            {
+                "source_association_rows": len(drug_entries),
+                "unique_drugs": len(all_drugs),
+                "duplicate_source_rows": len(drug_entries) - len(all_drugs),
+            }
+        )
 
         return {
             "status": "success",
             "data": {
                 "meddra_code": meddra_code,
                 "side_effect_name": se_name,
-                "total_drugs": len(drug_entries),
+                "total_drugs": len(all_drugs),
                 "drugs": drugs,
             },
+            "metadata": pagination,
         }

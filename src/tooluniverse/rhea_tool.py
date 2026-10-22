@@ -21,9 +21,13 @@ from .tool_registry import register_tool
 
 RHEA_BASE_URL = "https://www.rhea-db.org/rhea"
 
-# Rhea's REST API honours `limit` but ignores `offset`, so paging is done
-# client-side by fetching offset+limit rows and slicing.
-MAX_ROWS_PER_REQUEST = 1000
+# Rhea's REST API honours ``limit`` but ignores ``offset``, so paging is done
+# client-side by fetching through offset+limit and slicing.  The API supports
+# at least 7,000 rows in one request (validated against CHEBI:15377), and the
+# complete Rhea database is under this 20,000-row guard.  The old 1,000-row
+# guard made the tail of common queries permanently unreachable.
+MAX_ROWS_PER_REQUEST = 20000
+MAX_PAGE_SIZE = 1000
 
 
 @register_tool("RheaTool")
@@ -132,6 +136,7 @@ class RheaTool(BaseTool):
             }
         if limit < 1:
             return {"status": "error", "error": f"limit must be >= 1, got {limit}"}
+        limit = min(limit, MAX_PAGE_SIZE)
         offset = max(offset, 0)
 
         total = self._total_for_query(query)
@@ -152,6 +157,16 @@ class RheaTool(BaseTool):
 
         page = self._parse_tsv(response.text)[offset : offset + limit]
 
+        retrievable_results = (
+            min(total, MAX_ROWS_PER_REQUEST)
+            if isinstance(total, int)
+            else MAX_ROWS_PER_REQUEST
+        )
+        has_more = (
+            offset + len(page) < retrievable_results
+            if isinstance(total, int)
+            else len(page) == limit and offset + len(page) < MAX_ROWS_PER_REQUEST
+        )
         metadata = {
             "source": "Rhea (SIB)",
             # Size of the whole matching result set, not of this page.
@@ -159,9 +174,17 @@ class RheaTool(BaseTool):
             "returned": len(page),
             "offset": offset,
             "limit": limit,
-            "has_more": (
-                offset + len(page) < total if isinstance(total, int) else None
-            ),
+            "has_more": has_more,
+            "next_offset": offset + len(page) if has_more else None,
+            "result_set_complete": offset == 0
+            and isinstance(total, int)
+            and len(page) == total,
+            "retrievable_results": retrievable_results,
+            "database_result_complete": isinstance(total, int)
+            and total <= MAX_ROWS_PER_REQUEST,
+            "retrieval_limit_reached": isinstance(total, int)
+            and total > MAX_ROWS_PER_REQUEST
+            and not has_more,
             "max_rows_per_request": MAX_ROWS_PER_REQUEST,
         }
         metadata.update(extra_metadata)

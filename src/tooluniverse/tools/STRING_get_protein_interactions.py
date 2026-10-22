@@ -13,6 +13,7 @@ def STRING_get_protein_interactions(
     species: Optional[int] = 9606,
     confidence_score: Optional[float] = 0.4,
     limit: Optional[int] = 50,
+    interaction_offset: Optional[int] = 0,
     network_type: Optional[str] = "full",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -31,7 +32,9 @@ def STRING_get_protein_interactions(
     confidence_score : float
         Minimum confidence score (0-1, default: 0.4)
     limit : int
-        Maximum number of interactions to return (default: 50)
+        Maximum interactions in this returned page. STRING also uses this value for u...
+    interaction_offset : int
+        Zero-based number of score-sorted interaction edges to skip. Start at 0 and c...
     network_type : str
         Type of network ('full', 'physical', 'functional')
     stream_callback : Callable, optional
@@ -55,6 +58,7 @@ def STRING_get_protein_interactions(
             "species": species,
             "confidence_score": confidence_score,
             "limit": limit,
+            "interaction_offset": interaction_offset,
             "network_type": network_type,
         }.items()
         if v is not None

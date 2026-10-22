@@ -2,7 +2,7 @@
   {
     "name": "OpenFDA_search_drug_approvals",
     "type": "OpenFDAApprovalTool",
-    "description": "Search the FDA Drugs@FDA database for drug approval records by drug name, sponsor/manufacturer, or application number. Returns FDA application details including NDA/ANDA/BLA numbers, sponsor names, approved dosage forms and strengths, active ingredients, original approval dates, and submission counts. Use this to find FDA-approved drugs, check approval status, or look up generic vs brand drug registrations.",
+    "description": "Search FDA Drugs@FDA applications with exact total metadata and recoverable offset pagination. Continue with metadata.next_offset while has_more is true; broad queries beyond openFDA's 26,000-record window are explicitly marked upstream_window_exhausted. Summary arrays retain every brand name, generic name, and strength instead of silently shortening them.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -38,9 +38,16 @@
         "limit": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 20,
+          "maximum": 100,
           "default": 5,
-          "description": "Maximum number of results (default: 5, max: 20)"
+          "description": "Maximum applications on this page (default: 5, max: 100)"
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 26000,
+          "default": 0,
+          "description": "openFDA skip offset; continue with metadata.next_offset"
         }
       },
       "required": []
@@ -88,6 +95,16 @@
                   "null"
                 ],
                 "description": "Generic name(s)"
+              },
+              "brand_names": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "Complete brand-name array from openFDA"
+              },
+              "generic_names": {
+                "type": "array",
+                "items": {"type": "string"},
+                "description": "Complete generic-name array from openFDA"
               },
               "active_ingredients": {
                 "type": [
@@ -148,7 +165,8 @@
       {
         "operation": "search_approvals",
         "drug_name": "metformin",
-        "limit": 3
+        "limit": 3,
+        "offset": 0
       },
       {
         "operation": "search_approvals",
@@ -175,7 +193,7 @@
   {
     "name": "OpenFDA_get_approval_history",
     "type": "OpenFDAApprovalTool",
-    "description": "Get the complete FDA submission and approval history for a specific drug. Returns chronological list of all submissions (original, supplements, labeling changes) with dates, review priority (STANDARD/PRIORITY), submission types (ORIG/SUPPL), and linked FDA review documents. Useful for tracking a drug's regulatory history from initial approval through all subsequent changes.",
+    "description": "Get the complete FDA submission history for exactly one Drugs@FDA application, including every linked application document and all brand/generic names. Provide application_number whenever a drug name maps to multiple applications; ambiguous drug_name queries return candidate application numbers instead of silently selecting the first record.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -192,7 +210,7 @@
             "string",
             "null"
           ],
-          "description": "Drug name (brand or generic, e.g., 'warfarin', 'Eliquis', 'pembrolizumab')"
+          "description": "Drug name (brand or generic). Must resolve to exactly one application; otherwise use a candidate application_number from OpenFDA_search_drug_approvals."
         },
         "application_number": {
           "type": [
@@ -234,6 +252,16 @@
             "null"
           ],
           "description": "Generic name(s)"
+        },
+        "brand_names": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Complete brand-name array from openFDA"
+        },
+        "generic_names": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Complete generic-name array from openFDA"
         },
         "total_submissions": {
           "type": "integer",
@@ -354,7 +382,7 @@
   {
     "name": "OpenFDA_get_approved_products",
     "type": "OpenFDAApprovalTool",
-    "description": "Get FDA-approved product details for a drug including all marketed formulations, active ingredients with strengths, dosage forms, administration routes, therapeutic equivalence (TE) codes, and marketing status. Returns the full list of products under an FDA application. Useful for comparing available formulations, checking generic equivalence, or identifying all strengths of a drug.",
+    "description": "Get every product under exactly one Drugs@FDA application, with complete brand/generic name arrays, active ingredients, strengths, dosage forms, routes, TE codes, and marketing status. Ambiguous drug_name queries return candidate application numbers rather than silently selecting one application.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -371,7 +399,7 @@
             "string",
             "null"
           ],
-          "description": "Drug name (brand or generic, e.g., 'atorvastatin', 'Lipitor')"
+          "description": "Drug name (brand or generic). Must resolve to exactly one application; otherwise provide application_number."
         },
         "application_number": {
           "type": [
@@ -413,6 +441,16 @@
             "null"
           ],
           "description": "Generic name(s)"
+        },
+        "brand_names": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Complete brand-name array from openFDA"
+        },
+        "generic_names": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Complete generic-name array from openFDA"
         },
         "total_products": {
           "type": "integer",

@@ -276,10 +276,13 @@ class ISRCTNSearchTool(_ISRCTNBase):
         if not query:
             return {"status": "error", "error": empty_msg}
 
-        try:
-            size = max(1, min(int(arguments.get("limit") or 10), 100))
-        except (TypeError, ValueError):
-            size = 10
+        size = arguments.get("limit", 10)
+        if isinstance(size, bool) or not isinstance(size, int) or not 1 <= size <= 100:
+            return {
+                "status": "error",
+                "error": "limit must be an integer between 1 and 100",
+                "parameter": "limit",
+            }
         try:
             xml = self._query({"q": query, "limit": size})
             root = ET.fromstring(xml)
@@ -297,12 +300,45 @@ class ISRCTNSearchTool(_ISRCTNBase):
             _parse_trial(ft, detailed=fielded)
             for ft in root.findall("i:fullTrial", _NS)
         ]
+        raw_total = root.get("totalCount")
+        try:
+            total = int(raw_total) if raw_total is not None else None
+        except (TypeError, ValueError):
+            total = None
+        total_is_exact = total is not None and total >= 0
+        accessible = min(total, 100) if total_is_exact else 100
+        returned = len(trials)
+        result_set_complete = total_is_exact and returned >= total
+        upstream_truncated = total_is_exact and total > 100
+        more_accessible_with_larger_limit = returned < accessible
         return {
             "status": "success",
             "data": trials,
             "metadata": {
-                "total_available": root.get("totalCount"),
-                "returned": len(trials),
+                "total_available": raw_total,
+                "total_available_count": total,
+                "total_available_is_exact": total_is_exact,
+                "returned": returned,
+                "limit": size,
+                "accessible_results": accessible,
+                "more_accessible_with_larger_limit": more_accessible_with_larger_limit,
+                "recommended_limit": (
+                    accessible if more_accessible_with_larger_limit else None
+                ),
+                "has_more": False,
+                "next_offset": None,
+                "upstream_truncated": upstream_truncated,
+                "unreachable_results": max(total - 100, 0) if total_is_exact else None,
+                "all_results_reachable": total_is_exact and total <= 100,
+                "truncated": not result_set_complete,
+                "result_set_complete": result_set_complete,
+                "pagination_supported": False,
+                "pagination_note": (
+                    "The official ISRCTN XML API accepts limit (maximum 100) but "
+                    "does not expose an offset/page parameter. Increase limit up to "
+                    "recommended_limit when available; matches beyond 100 cannot be "
+                    "retrieved through this endpoint."
+                ),
                 "query": query,
                 "source": "ISRCTN registry",
             },

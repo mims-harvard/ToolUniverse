@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def CellMarker_list_cell_types(
-    operation: str,
+    operation: Optional[str] = "list_cell_types",
     tissue_type: Optional[str] = None,
     species: Optional[str] = None,
     cell_class: Optional[str] = None,

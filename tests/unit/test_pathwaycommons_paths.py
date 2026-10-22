@@ -102,6 +102,17 @@ class TestPathsBetweenParsing(unittest.TestCase):
         self.assertEqual(len(result["data"]["edges"]), 2)
         self.assertEqual(result["metadata"]["total_edges"], 5)
         self.assertEqual(result["metadata"]["returned"], 2)
+        self.assertTrue(result["metadata"]["has_more"])
+        self.assertEqual(result["metadata"]["next_offset"], 2)
+
+        second = tool.run(
+            {"genes": ["BRCA1", "BRCA2", "TP53"], "max_results": 2, "offset": 2}
+        )
+        self.assertEqual(second["data"]["edges"], result["data"]["edges"][:0] + [
+            {"source": "BRCA2", "relation": "in-complex-with", "target": "RAD51"},
+            {"source": "ATM", "relation": "controls-phosphorylation-of", "target": "TP53"},
+        ])
+        self.assertEqual(second["metadata"]["next_offset"], 4)
 
     def test_comma_separated_string_accepted(self):
         """A comma-separated genes string is split into a list."""
@@ -148,8 +159,54 @@ class TestPathsBetweenParsing(unittest.TestCase):
 
         self.assertEqual(captured["params"]["source"], ["BRCA1", "TP53"])
 
+    def test_official_graph_qualifiers_are_forwarded(self):
+        tool = _make_tool()
+        tool.session.get = MagicMock(return_value=_mock_response(200, SAMPLE_SIF))
+
+        result = tool.run(
+            {
+                "genes": ["BRCA1", "TP53"],
+                "datasource": "reactome",
+                "organism": "9606",
+                "pattern": ["CONTROLS_EXPRESSION_OF"],
+                "subpw": True,
+            }
+        )
+
+        params = tool.session.get.call_args.kwargs["params"]
+        self.assertEqual(params["organism"], "9606")
+        self.assertEqual(params["pattern"], ["controls-expression-of"])
+        self.assertIs(params["subpw"], True)
+        self.assertEqual(
+            result["metadata"]["source_resolution"],
+            ["exploratory_id_mapping", "exploratory_id_mapping"],
+        )
+
 
 class TestPathsBetweenEdgeCases(unittest.TestCase):
+    def test_invalid_pagination_and_depth_is_rejected(self):
+        cases = [
+            ({"genes": ["BRCA1", "TP53"], "offset": "0"}, "offset"),
+            ({"genes": ["BRCA1", "TP53"], "offset": -1}, "offset"),
+            ({"genes": ["BRCA1", "TP53"], "max_results": 0}, "max_results"),
+            ({"genes": ["BRCA1", "TP53"], "max_results": 2001}, "max_results"),
+            ({"genes": ["BRCA1", "TP53"], "limit": True}, "limit"),
+            ({"genes": ["BRCA1", "TP53"], "limit": 4}, "limit"),
+            ({"genes": ["BRCA1", 42, "TP53"]}, "genes"),
+            ({"genes": ["BRCA1", "TP53"], "pattern": []}, "pattern"),
+            ({"genes": ["BRCA1", "TP53"], "subpw": 1}, "subpw"),
+        ]
+        for arguments, field in cases:
+            with self.subTest(arguments=arguments):
+                tool = _make_tool()
+                tool.session.get = MagicMock()
+
+                result = tool.run(arguments)
+
+                self.assertEqual(result["status"], "error")
+                self.assertIn(field, result["error"])
+                tool.session.get.assert_not_called()
+
     def test_empty_body_returns_success_with_note(self):
         """HTTP 200 with empty body (no paths) -> success with explanatory note."""
         tool = _make_tool()

@@ -17,6 +17,7 @@ No authentication required. Free public access.
 import re
 import requests
 from typing import Dict, Any, Optional
+from urllib.parse import parse_qs, urlparse
 from .base_tool import BaseTool
 
 
@@ -93,6 +94,22 @@ class PfamTool(BaseTool):
             return ""
         return re.sub(r"<[^>]+>", "", text).strip()
 
+    @staticmethod
+    def _next_cursor(data: Dict[str, Any]) -> Optional[str]:
+        """Extract InterPro's opaque cursor from its next-page URL."""
+        next_url = data.get("next")
+        if not next_url:
+            return None
+        values = parse_qs(urlparse(next_url).query).get("cursor", [])
+        return values[0] if values else None
+
+    @staticmethod
+    def _add_cursor(params: Dict[str, Any], arguments: Dict[str, Any]) -> None:
+        """Forward a caller-provided InterPro cursor without interpreting it."""
+        cursor = arguments.get("cursor")
+        if cursor:
+            params["cursor"] = cursor
+
     def _search_families(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search Pfam families by keyword."""
         query = arguments.get("query", "")
@@ -102,16 +119,18 @@ class PfamTool(BaseTool):
                 "error": "query parameter is required (e.g., 'kinase', 'zinc finger')",
             }
 
-        max_results = min(arguments.get("max_results", 20), 100)
+        max_results = max(1, min(int(arguments.get("max_results") or 20), 100))
 
         url = f"{INTERPRO_BASE_URL}/entry/pfam/"
         params = {"search": query, "page_size": max_results}
+        self._add_cursor(params, arguments)
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
         data = response.json()
 
         total = data.get("count", 0)
         results = data.get("results", [])
+        next_cursor = self._next_cursor(data)
 
         families = []
         for r in results:
@@ -131,6 +150,8 @@ class PfamTool(BaseTool):
                 "query": query,
                 "total_results": total,
                 "returned": len(families),
+                "has_more": next_cursor is not None,
+                "next_cursor": next_cursor,
                 "families": families,
             },
             "metadata": {
@@ -235,7 +256,7 @@ class PfamTool(BaseTool):
                 "error": "pfam_accession parameter is required (e.g., 'PF00001')",
             }
 
-        max_results = min(arguments.get("max_results", 20), 100)
+        max_results = max(1, min(int(arguments.get("max_results") or 20), 100))
         reviewed_only = arguments.get("reviewed_only", True)
         tax_id = arguments.get("tax_id", None)
 
@@ -247,12 +268,14 @@ class PfamTool(BaseTool):
             url = f"{INTERPRO_BASE_URL}/protein/{db}/entry/pfam/{pfam_acc}/"
 
         params = {"page_size": max_results}
+        self._add_cursor(params, arguments)
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
         data = response.json()
 
         total = data.get("count", 0)
         results = data.get("results", [])
+        next_cursor = self._next_cursor(data)
 
         proteins = []
         for r in results:
@@ -292,6 +315,8 @@ class PfamTool(BaseTool):
                 "pfam_accession": pfam_acc,
                 "total_proteins": total,
                 "returned": len(proteins),
+                "has_more": next_cursor is not None,
+                "next_cursor": next_cursor,
                 "reviewed_only": reviewed_only,
                 "tax_id_filter": tax_id,
                 "proteins": proteins,
@@ -371,10 +396,11 @@ class PfamTool(BaseTool):
     def _search_clans(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search Pfam clans (superfamilies)."""
         query = arguments.get("query", "")
-        max_results = min(arguments.get("max_results", 20), 100)
+        max_results = max(1, min(int(arguments.get("max_results") or 20), 100))
 
         url = f"{INTERPRO_BASE_URL}/set/pfam/"
         params = {"page_size": max_results}
+        self._add_cursor(params, arguments)
         if query:
             params["search"] = query
 
@@ -384,6 +410,7 @@ class PfamTool(BaseTool):
 
         total = data.get("count", 0)
         results = data.get("results", [])
+        next_cursor = self._next_cursor(data)
 
         clans = []
         for r in results:
@@ -402,6 +429,8 @@ class PfamTool(BaseTool):
                 "query": query if query else "(all clans)",
                 "total_results": total,
                 "returned": len(clans),
+                "has_more": next_cursor is not None,
+                "next_cursor": next_cursor,
                 "clans": clans,
             },
             "metadata": {
@@ -419,16 +448,18 @@ class PfamTool(BaseTool):
                 "error": "pfam_accession parameter is required (e.g., 'PF00001')",
             }
 
-        max_results = min(arguments.get("max_results", 20), 100)
+        max_results = max(1, min(int(arguments.get("max_results") or 20), 100))
 
         url = f"{INTERPRO_BASE_URL}/proteome/uniprot/entry/pfam/{pfam_acc}/"
         params = {"page_size": max_results}
+        self._add_cursor(params, arguments)
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
         data = response.json()
 
         total = data.get("count", 0)
         results = data.get("results", [])
+        next_cursor = self._next_cursor(data)
 
         proteomes = []
         for r in results:
@@ -448,6 +479,8 @@ class PfamTool(BaseTool):
                 "pfam_accession": pfam_acc,
                 "total_proteomes": total,
                 "returned": len(proteomes),
+                "has_more": next_cursor is not None,
+                "next_cursor": next_cursor,
                 "proteomes": proteomes,
             },
             "metadata": {

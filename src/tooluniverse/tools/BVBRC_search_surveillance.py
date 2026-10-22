@@ -1,7 +1,7 @@
 """
 BVBRC_search_surveillance
 
-Search influenza and pathogen surveillance data in BV-BRC. Returns surveillance samples with host...
+Search influenza and pathogen surveillance data in BV-BRC with explicit pagination and true Conte...
 """
 
 from typing import Any, Optional, Callable
@@ -9,31 +9,34 @@ from ._shared_client import get_shared_client
 
 
 def BVBRC_search_surveillance(
-    subtype: Optional[str | Any] = None,
-    geographic_group: Optional[str | Any] = None,
-    host_group: Optional[str | Any] = None,
-    collection_country: Optional[str | Any] = None,
-    limit: Optional[int | Any] = None,
+    subtype: Optional[str] = None,
+    geographic_group: Optional[str] = None,
+    host_group: Optional[str] = None,
+    collection_country: Optional[str] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search influenza and pathogen surveillance data in BV-BRC. Returns surveillance samples with host...
+    Search influenza and pathogen surveillance data in BV-BRC with explicit pagination and true Conte...
 
     Parameters
     ----------
-    subtype : str | Any
+    subtype : str
         Influenza subtype to search for. Examples: 'H5N1', 'H1N1', 'H3N2', 'H7N9'. Co...
-    geographic_group : str | Any
+    geographic_group : str
         Geographic region filter. Options: 'North America', 'Europe', 'Asia', 'Africa...
-    host_group : str | Any
+    host_group : str
         Host organism group. Options: 'Human', 'Animal', 'Avian', 'Swine', 'Environme...
-    collection_country : str | Any
+    collection_country : str
         Country of sample collection. Examples: 'USA', 'China', 'Egypt', 'Vietnam'.
-    limit : int | Any
+    limit : int
         Maximum number of results. Default: 25. Max: 100.
+    offset : int
+        Zero-based result offset. Use metadata.next_offset to continue.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def BVBRC_search_surveillance(
             "host_group": host_group,
             "collection_country": collection_country,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

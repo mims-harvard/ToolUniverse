@@ -1,13 +1,20 @@
 [
   {
     "name": "GWASSumStats_list_studies",
-    "description": "List GWAS studies that have deposited full summary statistics with the EBI GWAS Catalog. Unlike the main GWAS Catalog (which stores curated top hits), studies listed here have complete variant-level summary statistics available for download and query. Returns study accession IDs that can be used as filters in GWASSumStats_get_region_associations.",
+    "description": "List GWAS studies that have deposited full summary statistics with the EBI GWAS Catalog. The API uses start/size pagination and does not expose a total count: continue with metadata.next_start while metadata.has_more is true; the exact total is known only on the last page.",
     "parameter": {
       "type": "object",
       "properties": {
         "size": {
           "type": ["integer", "null"],
-          "description": "Number of studies to return (default 20, max 100)."
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Studies per page (default 20, max 1000)."
+        },
+        "start": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "description": "Zero-based start offset (default 0). Continue with metadata.next_start."
         }
       },
       "required": []
@@ -33,13 +40,24 @@
   },
   {
     "name": "GWASSumStats_get_trait_studies",
-    "description": "Get GWAS studies with deposited summary statistics for a specific EFO trait. Returns study accession IDs for studies that have full variant-level summary statistics. Use EFO trait IDs like 'EFO_0000249' (Alzheimer disease), 'EFO_0001645' (coronary heart disease), 'EFO_0000253' (asthma), 'EFO_0001359' (type 2 diabetes). Get EFO IDs from ols_search_efo_terms or gwas_search_studies.",
+    "description": "Get GWAS studies with deposited summary statistics for a specific EFO trait. Use start/size pagination and continue with metadata.next_start while has_more is true; this API gives an exact total only once the last page is reached. Use EFO IDs such as EFO_0000249 or EFO_0001359.",
     "parameter": {
       "type": "object",
       "properties": {
         "trait_id": {
           "type": "string",
           "description": "EFO trait ontology ID (e.g., 'EFO_0000249' for Alzheimer disease, 'EFO_0001645' for coronary heart disease, 'EFO_0001359' for type 2 diabetes)."
+        },
+        "size": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Studies per page (default 20, max 1000)."
+        },
+        "start": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "description": "Zero-based start offset (default 0). Continue with metadata.next_start."
         }
       },
       "required": ["trait_id"]
@@ -68,7 +86,7 @@
   },
   {
     "name": "GWASSumStats_get_region_associations",
-    "description": "Query full GWAS summary statistics for variants in a chromosomal region. Returns variant-level association data including p-values, effect sizes (beta/OR), allele frequencies, and study/trait information. Unlike gwas_search_associations (which returns curated top hits), this endpoint provides complete summary statistics from deposited studies. Filter by chromosome region, p-value threshold, and optionally by specific study.",
+    "description": "Query full GWAS summary statistics for variants in a chromosomal region. Returns variant-level association data in the upstream stable order. Use start/size pagination and continue with metadata.next_start while has_more is true. The API does not expose a total count before the last page, so metadata reports an exact total only when pagination is exhausted.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -94,7 +112,14 @@
         },
         "size": {
           "type": ["integer", "null"],
-          "description": "Maximum number of variants to return (default 50, max 1000)."
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Variants per page (default 50, max 1000)."
+        },
+        "start": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "description": "Zero-based start offset (default 0). Continue with metadata.next_start."
         }
       },
       "required": ["chromosome", "bp_lower", "bp_upper"]

@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def Wikidata_get_entity(
     ids: str,
-    languages: Optional[str | Any] = None,
-    props: Optional[str | Any] = None,
+    languages: Optional[str] = None,
+    props: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,9 +24,9 @@ def Wikidata_get_entity(
     ----------
     ids : str
         Wikidata entity ID(s) to retrieve. Use pipe | separator for multiple. Example...
-    languages : str | Any
+    languages : str
         Language code(s) for labels and descriptions. Default: 'en'. Pipe-separated f...
-    props : str | Any
+    props : str
         Which properties to return (pipe-separated). Options: 'labels', 'descriptions...
     stream_callback : Callable, optional
         Callback for streaming output

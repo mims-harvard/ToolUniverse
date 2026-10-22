@@ -1,7 +1,7 @@
 """
 CellPainting_get_well_data
 
-Get well-level metadata and image links for a specific plate in a Cell Painting experiment from t...
+Get a paginated slice of well-level metadata and image links for a specific Cell Painting plate f...
 """
 
 from typing import Any, Optional, Callable
@@ -9,16 +9,17 @@ from ._shared_client import get_shared_client
 
 
 def CellPainting_get_well_data(
-    operation: str,
     plate_id: int,
+    operation: Optional[str] = "get_well_data",
     limit: Optional[int] = 20,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> list[Any]:
     """
-    Get well-level metadata and image links for a specific plate in a Cell Painting experiment from t...
+    Get a paginated slice of well-level metadata and image links for a specific Cell Painting plate f...
 
     Parameters
     ----------
@@ -28,6 +29,8 @@ def CellPainting_get_well_data(
         IDR plate identifier (e.g., 5104 for a plate in idr0016 screenA)
     limit : int
         Maximum number of wells to return (default 20)
+    offset : int
+        Zero-based well offset. Continue with pagination.next_offset while pagination...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +51,7 @@ def CellPainting_get_well_data(
             "operation": operation,
             "plate_id": plate_id,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

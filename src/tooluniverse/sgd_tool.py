@@ -85,6 +85,24 @@ class SGDTool(BaseTool):
                 "error": f"Unknown endpoint_type/query_mode: {self.endpoint_type}/{self.query_mode}",
             }
 
+    @staticmethod
+    def _paginate(
+        items: list, arguments: Dict[str, Any], default_limit: int
+    ) -> tuple[list, Dict[str, Any]]:
+        limit = min(max(int(arguments.get("limit", default_limit)), 1), 1000)
+        offset = max(int(arguments.get("offset", 0)), 0)
+        page = items[offset : offset + limit]
+        has_more = offset + len(page) < len(items)
+        return page, {
+            "total_results": len(items),
+            "returned": len(page),
+            "limit": limit,
+            "offset": offset,
+            "has_more": has_more,
+            "truncated": len(page) < len(items),
+            "next_offset": offset + len(page) if has_more else None,
+        }
+
     def _locus_overview(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get gene/locus overview from SGD by SGD ID."""
         sgd_id = arguments.get("sgd_id", "")
@@ -101,6 +119,11 @@ class SGDTool(BaseTool):
         response.raise_for_status()
         raw = response.json()
 
+        aliases = [a.get("display_name") for a in raw.get("aliases", [])]
+        alias_limit = min(max(int(arguments.get("alias_limit", 10)), 1), 1000)
+        alias_offset = max(int(arguments.get("alias_offset", 0)), 0)
+        alias_page = aliases[alias_offset : alias_offset + alias_limit]
+        has_more_aliases = alias_offset + len(alias_page) < len(aliases)
         result = {
             "sgd_id": raw.get("sgdid"),
             "display_name": raw.get("display_name"),
@@ -111,7 +134,7 @@ class SGDTool(BaseTool):
             "description": raw.get("description"),
             "name_description": raw.get("name_description"),
             "uniprot_id": raw.get("uniprot_id"),
-            "aliases": [a.get("display_name") for a in raw.get("aliases", [])[:10]],
+            "aliases": alias_page,
             "qualities": raw.get("qualities", []),
         }
 
@@ -122,6 +145,15 @@ class SGDTool(BaseTool):
                 "source": "SGD",
                 "query": sgd_id,
                 "endpoint": "locus/overview",
+                "total_aliases": len(aliases),
+                "aliases_returned": len(alias_page),
+                "alias_limit": alias_limit,
+                "alias_offset": alias_offset,
+                "aliases_truncated": len(alias_page) < len(aliases),
+                "has_more_aliases": has_more_aliases,
+                "next_alias_offset": (
+                    alias_offset + len(alias_page) if has_more_aliases else None
+                ),
             },
         }
 
@@ -138,8 +170,9 @@ class SGDTool(BaseTool):
         response.raise_for_status()
         raw = response.json()
 
+        raw_page, paging = self._paginate(raw, arguments, 50)
         results = []
-        for p in raw[:50]:  # Limit to 50 results
+        for p in raw_page:
             phenotype = p.get("phenotype", {})
             results.append(
                 {
@@ -169,8 +202,7 @@ class SGDTool(BaseTool):
             "data": results,
             "metadata": {
                 "source": "SGD",
-                "total_results": len(raw),
-                "returned": len(results),
+                **paging,
                 "query": sgd_id,
                 "endpoint": "locus/phenotype_details",
             },
@@ -189,8 +221,9 @@ class SGDTool(BaseTool):
         response.raise_for_status()
         raw = response.json()
 
+        raw_page, paging = self._paginate(raw, arguments, 50)
         results = []
-        for g in raw[:50]:
+        for g in raw_page:
             go = g.get("go", {})
             results.append(
                 {
@@ -214,8 +247,7 @@ class SGDTool(BaseTool):
             "data": results,
             "metadata": {
                 "source": "SGD",
-                "total_results": len(raw),
-                "returned": len(results),
+                **paging,
                 "query": sgd_id,
                 "endpoint": "locus/go_details",
             },
@@ -234,8 +266,9 @@ class SGDTool(BaseTool):
         response.raise_for_status()
         raw = response.json()
 
+        raw_page, paging = self._paginate(raw, arguments, 50)
         results = []
-        for i in raw[:50]:
+        for i in raw_page:
             locus1 = i.get("locus1", {})
             locus2 = i.get("locus2", {})
             results.append(
@@ -265,8 +298,7 @@ class SGDTool(BaseTool):
             "data": results,
             "metadata": {
                 "source": "SGD",
-                "total_results": len(raw),
-                "returned": len(results),
+                **paging,
                 "query": sgd_id,
                 "endpoint": "locus/interaction_details",
             },
@@ -293,8 +325,9 @@ class SGDTool(BaseTool):
         response.raise_for_status()
         raw = response.json() or []
 
+        raw_page, paging = self._paginate(raw, arguments, 100)
         results = []
-        for r in raw[:100]:
+        for r in raw_page:
             locus1 = r.get("locus1") or {}
             locus2 = r.get("locus2") or {}
             evidence = r.get("evidence") or {}
@@ -320,8 +353,7 @@ class SGDTool(BaseTool):
             "data": results,
             "metadata": {
                 "source": "SGD",
-                "total_results": len(raw),
-                "returned": len(results),
+                **paging,
                 "query": sgd_id,
                 "endpoint": "locus/regulation_details",
             },
@@ -402,8 +434,9 @@ class SGDTool(BaseTool):
         response.raise_for_status()
         raw = response.json() or []
 
+        raw_page, paging = self._paginate(raw, arguments, 50)
         results = []
-        for r in raw[:50]:
+        for r in raw_page:
             disease = r.get("disease") or {}
             locus = r.get("locus") or {}
             reference = r.get("reference") or {}
@@ -427,8 +460,7 @@ class SGDTool(BaseTool):
             "data": results,
             "metadata": {
                 "source": "SGD",
-                "total_results": len(raw),
-                "returned": len(results),
+                **paging,
                 "query": sgd_id,
                 "endpoint": "locus/disease_details",
             },
@@ -445,7 +477,7 @@ class SGDTool(BaseTool):
         category = arguments.get("category", "")
 
         params = {
-            "query": query,
+            "q": query,
             "limit": limit,
             "offset": offset,
         }
@@ -471,11 +503,13 @@ class SGDTool(BaseTool):
 
         results = []
         for r in raw.get("results", []):
+            description = r.get("description") or ""
             results.append(
                 {
                     "name": r.get("name"),
                     "category": r.get("category"),
-                    "description": (r.get("description") or "")[:200],
+                    "description": description,
+                    "description_length": len(description),
                     "href": r.get("href"),
                     "aliases": r.get("aliases"),
                 }
@@ -489,16 +523,25 @@ class SGDTool(BaseTool):
                     categories[v["key"]] = v["total"]
 
         total = raw.get("total", {})
+        total_results = (
+            total.get("value", len(results))
+            if isinstance(total, dict)
+            else int(total or len(results))
+        )
+        has_more = offset + len(results) < total_results
 
         return {
             "status": "success",
             "data": results,
             "metadata": {
-                "total_results": total.get("value", len(results)),
+                "total_results": total_results,
                 "categories": categories,
                 "query": query,
                 "offset": offset,
                 "limit": limit,
+                "returned": len(results),
+                "has_more": has_more,
+                "next_offset": offset + len(results) if has_more else None,
                 "source": "SGD",
                 "endpoint": "search",
             },

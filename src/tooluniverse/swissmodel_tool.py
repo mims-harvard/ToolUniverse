@@ -112,7 +112,7 @@ class SwissModelTool(BaseTool):
                                 }
                             )
             if partners:
-                model["complex_partners"] = partners[:10]
+                model["complex_partners"] = partners
         return model
 
     def _get_models(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -139,6 +139,14 @@ class SwissModelTool(BaseTool):
         template = arguments.get("template")
         if template:
             params["template"] = template
+        try:
+            limit = max(1, min(int(arguments.get("limit", 30)), 500))
+            offset = max(0, int(arguments.get("offset", 0)))
+        except (TypeError, ValueError):
+            return {
+                "status": "error",
+                "error": "Parameters 'limit' and 'offset' must be integers.",
+            }
 
         url = f"{SWISSMODEL_BASE_URL}/uniprot/{uniprot_id}.json"
         response = requests.get(url, params=params or None, timeout=self.timeout)
@@ -149,12 +157,20 @@ class SwissModelTool(BaseTool):
 
         models = [self._flatten_structure(s) for s in result_data.get("structures", [])]
 
+        total_models = len(models)
+        returned_models = models[offset : offset + limit]
+        has_more = offset + len(returned_models) < total_models
         result = {
             "uniprot_id": uniprot_id,
             "sequence_length": result_data.get("sequence_length"),
             "crc64": result_data.get("crc64"),
-            "model_count": len(models),
-            "models": models[:30],
+            "model_count": total_models,
+            "returned": len(returned_models),
+            "limit": limit,
+            "offset": offset,
+            "has_more": has_more,
+            "next_offset": offset + len(returned_models) if has_more else None,
+            "models": returned_models,
         }
         # Echo applied filters so the agent knows the result is scoped
         if params:
@@ -262,6 +278,8 @@ class SwissModelTool(BaseTool):
             }
 
         identifiers = ",".join(ids)
+        model_limit = max(1, min(int(arguments.get("model_limit", 30)), 500))
+        model_offset = max(0, int(arguments.get("model_offset", 0)))
         url = f"{SWISSMODEL_BASE_URL}/uniprot/{identifiers}.json"
         response = requests.get(url, timeout=self.timeout)
         response.raise_for_status()
@@ -272,13 +290,24 @@ class SwissModelTool(BaseTool):
             uniprot_entries = entry.get("uniprot_entries", []) or []
             acs = [e.get("ac") for e in uniprot_entries if e.get("ac")]
             structures = entry.get("structures", [])
+            page_structures = structures[
+                model_offset : model_offset + model_limit
+            ]
+            has_more = model_offset + len(page_structures) < len(structures)
             results.append(
                 {
                     "uniprot_ids": acs,
                     "sequence_length": entry.get("sequence_length"),
                     "crc64": entry.get("crc64"),
                     "model_count": len(structures),
-                    "models": [self._flatten_structure(s) for s in structures[:30]],
+                    "model_offset": model_offset,
+                    "model_limit": model_limit,
+                    "models_returned": len(page_structures),
+                    "has_more": has_more,
+                    "next_model_offset": (
+                        model_offset + len(page_structures) if has_more else None
+                    ),
+                    "models": [self._flatten_structure(s) for s in page_structures],
                 }
             )
 

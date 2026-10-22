@@ -129,6 +129,25 @@ class TestBioAssayConciseTable(unittest.TestCase):
         self.assertEqual(out["status"], "error")
         self.assertIn("aid", out["error"].lower())
 
+    def test_row_offset_recovers_tail(self):
+        with patch(
+            "tooluniverse.pubchem_bioassay_tool.requests.get",
+            return_value=_json_resp(200, self._BODY),
+        ):
+            out = self._tool().run({"aid": 504832, "max_rows": 2, "row_offset": 2})
+        data = out["data"]
+        self.assertEqual([row["SID"] for row in data["rows"]], ["842133"])
+        self.assertEqual(data["total_rows"], 3)
+        self.assertFalse(data["has_more"])
+        self.assertIsNone(data["next_row_offset"])
+
+    def test_negative_row_offset_rejected_before_request(self):
+        with patch("tooluniverse.pubchem_bioassay_tool.requests.get") as request:
+            out = self._tool().run({"aid": 504832, "row_offset": -1})
+        self.assertEqual(out["status"], "error")
+        self.assertIn("non-negative", out["error"])
+        request.assert_not_called()
+
     def test_empty_table_error(self):
         """An empty concise table yields a structured error."""
         with patch(
@@ -174,7 +193,7 @@ class TestUniChemConnectivitySearch(unittest.TestCase):
             "uci": 161671,
         },
         "totalCompounds": 15,
-        "totalSources": 1044,
+        "totalSources": 2,
         "sources": [
             {
                 "id": 1,
@@ -226,7 +245,7 @@ class TestUniChemConnectivitySearch(unittest.TestCase):
         data = out["data"]
         self.assertEqual(data["response"], "Success")
         self.assertEqual(data["total_compounds"], 15)
-        self.assertEqual(data["total_sources"], 1044)
+        self.assertEqual(data["total_sources"], 2)
         self.assertEqual(data["match_count"], 2)
         self.assertEqual(
             data["searched_compound"]["inchikey"], "BSYNRYMUTXBXSQ-UHFFFAOYSA-N"

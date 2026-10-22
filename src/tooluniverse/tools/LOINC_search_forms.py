@@ -1,7 +1,7 @@
 """
 LOINC_search_forms
 
-Search LOINC clinical forms and survey instruments such as standardized questionnaires and assess...
+Search official available LOINC forms using NLM's type=form endpoint, including PHQ-9, GAD-7, and...
 """
 
 from typing import Any, Optional, Callable
@@ -11,20 +11,23 @@ from ._shared_client import get_shared_client
 def LOINC_search_forms(
     terms: str,
     max_results: Optional[int] = 20,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search LOINC clinical forms and survey instruments such as standardized questionnaires and assess...
+    Search official available LOINC forms using NLM's type=form endpoint, including PHQ-9, GAD-7, and...
 
     Parameters
     ----------
     terms : str
         Search terms for clinical forms or survey instruments (e.g., 'PHQ-9', 'depres...
     max_results : int
-        Maximum number of results to return (default: 20, max: 200)
+        Page size (default 20, range 1-500).
+    offset : int
+        Zero-based first form. Continue with metadata.next_offset; offset + max_resul...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +44,11 @@ def LOINC_search_forms(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"terms": terms, "max_results": max_results}.items()
+        for k, v in {
+            "terms": terms,
+            "max_results": max_results,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

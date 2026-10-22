@@ -10,7 +10,7 @@ API: https://euclinicaltrials.eu/ctis-public-api  (public, no authentication, JS
   - GET  /retrieve/{ctNumber}
 """
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional, Tuple
 
 import requests
 
@@ -47,17 +47,21 @@ _CTIS_SCALAR_FILTERS = {
 }
 
 
-def _pagination(arguments: Dict[str, Any]) -> Dict[str, int]:
-    """Build a CTIS pagination block from limit/page arguments (1<=size<=100)."""
-    try:
-        size = int(arguments.get("limit") or 10)
-    except (TypeError, ValueError):
+def _pagination(
+    arguments: Dict[str, Any],
+) -> Tuple[Optional[Dict[str, int]], Optional[str]]:
+    """Strictly validate CTIS's one-based page and page-size controls."""
+    size = arguments.get("limit", 10)
+    page = arguments.get("page", 1)
+    if size is None:
         size = 10
-    try:
-        page = int(arguments.get("page") or 1)
-    except (TypeError, ValueError):
+    if page is None:
         page = 1
-    return {"page": max(1, page), "size": max(1, min(size, 100))}
+    if isinstance(size, bool) or not isinstance(size, int) or not 1 <= size <= 100:
+        return None, "limit must be an integer between 1 and 100"
+    if isinstance(page, bool) or not isinstance(page, int) or page < 1:
+        return None, "page must be a positive integer (CTIS pages are one-based)"
+    return {"page": page, "size": size}, None
 
 
 def _coerce_list(value: Any) -> list:
@@ -154,14 +158,17 @@ class CTISSearchTrialsTool(BaseTool):
         extra_meta: Dict[str, Any],
     ) -> Dict[str, Any]:
         """Run a CTIS search with the given criteria and format the results."""
+        pagination, pagination_error = _pagination(arguments)
+        if pagination_error:
+            return {"status": "error", "error": pagination_error}
         body = {
-            "pagination": _pagination(arguments),
+            "pagination": pagination,
             "searchCriteria": criteria,
         }
         result = self._post_search(body)
         if isinstance(result, dict) and result.get("status") == "error":
             return result
-        return self._format_results(result, extra_meta)
+        return self._format_results(result, extra_meta, pagination)
 
     def _post_search(self, body: Dict[str, Any]) -> Any:
         """POST to the CTIS search endpoint. Returns parsed JSON or an error dict."""
@@ -183,36 +190,97 @@ class CTISSearchTrialsTool(BaseTool):
         return payload
 
     @staticmethod
-    def _format_results(payload: Any, extra_meta: Dict[str, Any]) -> Dict[str, Any]:
-        items = payload.get("data", []) if isinstance(payload, dict) else []
-        pag = payload.get("pagination", {}) if isinstance(payload, dict) else {}
+    def _format_results(
+        payload: Any,
+        extra_meta: Dict[str, Any],
+        requested_pagination: Dict[str, int],
+    ) -> Dict[str, Any]:
+        if not isinstance(payload, dict):
+            return {"status": "error", "error": "CTIS response was not a JSON object"}
+        items = payload.get("data")
+        pag = payload.get("pagination")
+        if not isinstance(items, list) or not isinstance(pag, dict):
+            return {
+                "status": "error",
+                "error": "CTIS response did not contain data and pagination objects",
+            }
+        requested_page = requested_pagination["page"]
+        requested_limit = requested_pagination["size"]
+        current_page = pag.get("currentPage")
+        if isinstance(current_page, int) and current_page != requested_page:
+            return {
+                "status": "error",
+                "error": (
+                    f"CTIS ignored requested page {requested_page} and returned "
+                    f"page {current_page}"
+                ),
+            }
         trials = [
             {
                 "ct_number": it.get("ctNumber"),
                 "title": it.get("ctTitle") or it.get("shortTitle"),
+                "short_title": it.get("shortTitle"),
                 "status": it.get("ctStatus"),
                 "conditions": it.get("conditions"),
+                "products": it.get("product"),
                 "therapeutic_areas": it.get("therapeuticAreas"),
                 "phase": it.get("trialPhase"),
                 "sponsor": it.get("sponsor"),
                 "sponsor_type": it.get("sponsorType"),
                 "countries": it.get("trialCountries"),
                 "age_group": it.get("ageGroup"),
+                "age_range_secondary": it.get("ageRangeSecondary"),
                 "gender": it.get("gender"),
                 "trial_region": it.get("trialRegion"),
                 "total_enrolled": it.get("totalNumberEnrolled"),
+                "primary_endpoint": it.get("primaryEndPoint"),
+                "endpoints": it.get("endPoint"),
                 "results_first_received": it.get("resultsFirstReceived"),
                 "start_date_eu": it.get("startDateEU"),
+                "decision_date": it.get("decisionDate"),
+                "decision_date_overall": it.get("decisionDateOverall"),
+                "last_publication_update": it.get("lastPublicationUpdate"),
                 "last_updated": it.get("lastUpdated"),
             }
             for it in items
             if isinstance(it, dict)
         ]
+        total_records = pag.get("totalRecords")
+        total_pages = pag.get("totalPages")
+        returned = len(trials)
+        upstream_next = pag.get("nextPage")
+        upstream_previous = pag.get("prevPage")
+        if isinstance(upstream_next, bool):
+            has_more = upstream_next
+        elif isinstance(current_page, int) and isinstance(total_pages, int):
+            has_more = current_page < total_pages
+        elif isinstance(total_records, int):
+            has_more = (requested_page - 1) * requested_limit + returned < total_records
+        else:
+            has_more = returned == requested_limit
+        stalled = bool(has_more and returned == 0)
         metadata = {
-            "total_records": pag.get("totalRecords"),
-            "page": pag.get("currentPage"),
-            "total_pages": pag.get("totalPages"),
-            "returned": len(trials),
+            "total_records": total_records if isinstance(total_records, int) else None,
+            "total_records_is_exact": isinstance(total_records, int),
+            "page": current_page if isinstance(current_page, int) else requested_page,
+            "requested_page": requested_page,
+            "limit": requested_limit,
+            "total_pages": total_pages if isinstance(total_pages, int) else None,
+            "returned": returned,
+            "has_more": has_more,
+            "next_page": requested_page + 1 if has_more and not stalled else None,
+            "previous_page": (
+                requested_page - 1
+                if requested_page > 1 and upstream_previous is not False
+                else None
+            ),
+            "stalled": stalled,
+            "result_set_complete": bool(
+                requested_page == 1
+                and isinstance(total_records, int)
+                and returned == total_records
+            ),
+            "upstream_warning": payload.get("showWarning"),
             "source": "EU CTIS",
         }
         metadata.update(extra_meta)
@@ -273,13 +341,17 @@ class CTISGetTrialTool(BaseTool):
             "data": {
                 "ct_number": rec.get("ctNumber"),
                 "status_code": rec.get("ctPublicStatusCode"),
+                "status": rec.get("ctStatus"),
                 "start_date_eu": rec.get("startDateEU"),
                 "decision_date": rec.get("decisionDate"),
                 "publish_date": rec.get("publishDate"),
                 "trial_region": rec.get("trialRegion"),
+                "trial_region_code": rec.get("trialRegionCode"),
                 "authorized_application": rec.get("authorizedApplication"),
                 "events": rec.get("events"),
                 "results": rec.get("results"),
+                "documents": rec.get("documents"),
+                "corrective_measures": rec.get("correctiveMeasures"),
             },
             "metadata": {"query_ct_number": ct_number, "source": "EU CTIS"},
         }

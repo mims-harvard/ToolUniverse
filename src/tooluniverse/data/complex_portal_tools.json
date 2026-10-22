@@ -1,7 +1,7 @@
 [
   {
     "name": "ComplexPortal_search_complexes",
-    "description": "Search for curated protein complexes by gene/protein name from the EBI Complex Portal (includes CORUM mammalian complexes). Returns complex names, subunit compositions, and cross-references. Use to find which protein complexes a target participates in.",
+    "description": "Search for curated protein complexes by gene/protein name from the EBI Complex Portal (includes CORUM mammalian complexes). Returns complete complex descriptions, description_length, subunit compositions, and explicit offset pagination. When has_more is true, pass next_first as first in the next call to retrieve the following page.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -16,10 +16,16 @@
         },
         "number": {
           "type": "integer",
-          "description": "Maximum complexes to return (default: 25)",
+          "description": "Complexes requested for this page (default 25, reliable upstream maximum 500). Values above 500 trigger anomalous upstream over-returning and are rejected rather than silently changed.",
           "default": 25,
           "minimum": 1,
-          "maximum": 100
+          "maximum": 500
+        },
+        "first": {
+          "type": "integer",
+          "description": "Zero-based result offset. Omit for the first page; use next_first from the preceding response for later pages.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": [
@@ -67,7 +73,15 @@
                     "type": "string"
                   },
                   "description": {
-                    "type": "string"
+                    "type": [
+                      "null",
+                      "string"
+                    ],
+                    "description": "Complete upstream complex description without wrapper-side truncation"
+                  },
+                  "description_length": {
+                    "type": "integer",
+                    "description": "Exact character count of description"
                   },
                   "predicted": {
                     "type": "boolean"
@@ -114,6 +128,21 @@
               "type": [
                 "integer",
                 "number"
+              ]
+            },
+            "first": {
+              "type": "integer"
+            },
+            "number": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_first": {
+              "type": [
+                "integer",
+                "null"
               ]
             }
           },

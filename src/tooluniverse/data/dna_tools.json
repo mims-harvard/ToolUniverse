@@ -69,7 +69,7 @@
   {
     "name": "DNA_find_orfs",
     "type": "DNATool",
-    "description": "Find open reading frames (ORFs) in a DNA sequence by scanning for ATG start codons followed by stop codons (TAA, TAG, TGA). Returns ORFs sorted by length with positions, strand, and reading frame. Supports forward strand, reverse strand, or both. Use for: gene prediction, identifying protein-coding regions, analyzing synthetic sequences.",
+    "description": "Find open reading frames (ORFs) in a DNA sequence by scanning for ATG start codons followed by stop codons (TAA, TAG, TGA). Returns length-sorted ORFs with positions, strand, reading frame, and recoverable limit/offset pagination. Continue with next_offset while has_more is true. Supports forward, reverse, or both strands.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -104,6 +104,18 @@
           ],
           "default": "both",
           "description": "Which strand to search: 'forward', 'reverse', or 'both' (default)"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 50,
+          "description": "Maximum ORFs in this length-sorted page."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset in the length-sorted ORF list. Continue with next_offset."
         }
       },
       "required": [
@@ -122,6 +134,12 @@
         "num_orfs_found": {
           "type": "integer"
         },
+        "orfs_returned": {"type": "integer"},
+        "offset": {"type": "integer"},
+        "limit": {"type": "integer"},
+        "has_more": {"type": "boolean"},
+        "next_offset": {"type": ["integer", "null"]},
+        "result_set_complete": {"type": "boolean"},
         "orfs": {
           "type": "array",
           "items": {
@@ -153,7 +171,7 @@
   {
     "name": "DNA_calculate_gc_content",
     "type": "DNATool",
-    "description": "Calculate GC content percentage and full nucleotide composition of a DNA sequence. Returns GC%, AT%, individual base counts (A, T, G, C, N), and interpretation (low/normal/high GC). Useful for primer design quality checks, cloning efficiency prediction, and sequence characterization. High GC (>60%) sequences may require special PCR conditions.",
+    "description": "Calculate GC content percentage and full nucleotide composition of a DNA sequence. N bases are excluded from the percentage denominator. The low/normal/high interpretation is a ToolUniverse-derived composition heuristic (<40%, 40-60% inclusive, >60%), not a retrieved experimental PCR-performance result; interpretation_criteria exposes the exact rule and provenance. For sequences containing only N, GC/AT percentages are null and interpretation is undefined.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -178,10 +196,10 @@
       "type": "object",
       "properties": {
         "gc_content_percent": {
-          "type": "number"
+          "type": ["number", "null"]
         },
         "at_content_percent": {
-          "type": "number"
+          "type": ["number", "null"]
         },
         "nucleotide_counts": {
           "type": "object"
@@ -194,6 +212,10 @@
         },
         "interpretation": {
           "type": "string"
+        },
+        "interpretation_criteria": {
+          "type": "object",
+          "description": "Machine-readable ToolUniverse derivation provenance, denominator, exact GC thresholds, and scope limitation."
         }
       }
     },

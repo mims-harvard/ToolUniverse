@@ -1,7 +1,7 @@
 """
 ArtIC_search_artworks
 
-Search the Art Institute of Chicago's collection of over 100,000 artworks using its public API. R...
+Search the Art Institute of Chicago collection with explicit page pagination. Continue with metad...
 """
 
 from typing import Any, Optional, Callable
@@ -10,23 +10,26 @@ from ._shared_client import get_shared_client
 
 def ArtIC_search_artworks(
     q: str,
-    limit: Optional[int | Any] = None,
-    fields: Optional[str | Any] = None,
+    limit: Optional[int] = 10,
+    page: Optional[int] = 1,
+    fields: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search the Art Institute of Chicago's collection of over 100,000 artworks using its public API. R...
+    Search the Art Institute of Chicago collection with explicit page pagination. Continue with metad...
 
     Parameters
     ----------
     q : str
         Search query. Examples: 'monet water lilies', 'picasso cubism', 'ancient egyp...
-    limit : int | Any
-        Number of results (1-100). Default: 10
-    fields : str | Any
+    limit : int
+        Ranked records per page (1-100, default 10)
+    page : int
+        One-based result page. Continue with metadata.next_page.
+    fields : str
         Comma-separated fields to return. Default: 'id,title,artist_display,date_disp...
     stream_callback : Callable, optional
         Callback for streaming output
@@ -44,7 +47,7 @@ def ArtIC_search_artworks(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"q": q, "limit": limit, "fields": fields}.items()
+        for k, v in {"q": q, "limit": limit, "page": page, "fields": fields}.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

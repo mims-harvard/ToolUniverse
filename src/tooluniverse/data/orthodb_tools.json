@@ -1,7 +1,7 @@
 [
   {
     "name": "OrthoDB_search_groups",
-    "description": "Search for orthologous groups by gene/protein name in OrthoDB v12. OrthoDB catalogs orthologous groups at different taxonomic levels (vertebrates, metazoa, eukaryotes, etc.), enabling evolutionary analysis of gene conservation. Returns group IDs that can be queried for details. Complements OMA and Ensembl Compara with group-level orthology at deep evolutionary scales. Example: searching 'BRCA1' with species=9606 returns orthologous groups containing BRCA1 at various taxonomic levels.",
+    "description": "Search for orthologous groups by gene/protein name in OrthoDB v12 with server-backed offset pagination. OrthoDB catalogs orthologous groups at different taxonomic levels. metadata/data total_groups uses OrthoDB's authoritative count (not the API's fixed 100-record window); continue with next_offset while has_more is true. Every bare search ID is enriched through /tab; each record exposes enrichment_status, and metadata.group_enrichment reports any per-group failure instead of silently presenting a bare ID as complete.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -25,7 +25,14 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum number of groups to return (1-50). Default: 10."
+          "minimum": 1,
+          "maximum": 50,
+          "description": "Page size (1-50). Default: 10."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Zero-based result offset. Default 0; continue with data.next_offset."
         }
       },
       "required": [
@@ -71,7 +78,7 @@
                       "string",
                       "null"
                     ],
-                    "description": "Group name (for first result)"
+                    "description": "Group name, when the per-group /tab enrichment completed"
                   },
                   "level_taxid": {
                     "type": [
@@ -79,6 +86,15 @@
                       "null"
                     ],
                     "description": "Taxonomic level ID"
+                  },
+                  "enrichment_status": {
+                    "type": "string",
+                    "enum": ["complete", "unavailable"],
+                    "description": "Whether name and level metadata were successfully retrieved from OrthoDB /tab"
+                  },
+                  "enrichment_error": {
+                    "type": ["string", "null"],
+                    "description": "Explicit reason enrichment was unavailable; absent on complete records"
                   }
                 }
               },
@@ -106,7 +122,7 @@
   },
   {
     "name": "OrthoDB_get_group_details",
-    "description": "Get detailed information about an OrthoDB orthologous group including functional annotations. Returns KEGG pathway associations, GO terms, and InterPro domain annotations for the group. Useful for understanding the evolutionary conservation and function of gene families. Example: group '727649at7742' shows olfactory receptor group at Vertebrata level with associated KEGG pathways for signal transduction.",
+    "description": "Get detailed information about an OrthoDB v12 orthologous group using the current group schema. Returns all GO annotations across biological-process, cellular-component, molecular-function, and unclassified buckets; all InterPro domains and legacy KEGG annotations; plus EC numbers, functional categories, phyletic profile, evolutionary rate, and gene architecture. metadata.annotation_counts makes completeness explicit.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -128,7 +144,9 @@
         "group_id": "727649at7742"
       },
       {
-        "group_id": "59506at9443"
+        "group_id": "59506at9443",
+        "species": "9606",
+        "limit": 5
       }
     ],
     "return_schema": {
@@ -278,7 +296,7 @@
   },
   {
     "name": "OrthoDB_get_orthologs",
-    "description": "Get orthologous genes from an OrthoDB group, optionally filtered by species. Returns gene IDs, organism names, and descriptions for all members of an orthologous group. Useful for finding orthologs across species, evolutionary conservation analysis, and functional annotation transfer. Example: group '727649at7742' with species=9606 returns human genes in that orthologous group.",
+    "description": "Get orthologous genes from an OrthoDB group, optionally filtered by species, with local offset pagination over the API's first 5,000 records. Continue with next_offset while has_more is true. metadata.total_is_lower_bound explicitly warns when the upstream 5,000-record window is exhausted.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -292,6 +310,19 @@
             "null"
           ],
           "description": "Comma-separated NCBI taxonomy IDs to filter. Examples: '9606' (human only), '9606,10090' (human+mouse). Null for all species."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 100,
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Maximum ortholog records per page (default 100, max 1000)."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based offset in the fetched ortholog list. Continue with next_offset while has_more is true."
         }
       },
       "required": [
@@ -376,11 +407,29 @@
                   }
                 }
               },
-              "description": "Orthologous genes (max 100)"
+              "description": "Orthologous genes in the requested page"
             },
             "total_orthologs": {
               "type": "integer",
-              "description": "Total orthologs returned"
+              "description": "Total orthologs in the fetched upstream window"
+            },
+            "returned": {
+              "type": "integer"
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
             },
             "organisms_summary": {
               "type": "object",
@@ -404,7 +453,7 @@
   },
   {
     "name": "OrthoDB_get_group_fasta",
-    "description": "Retrieve member protein sequences (FASTA) for an OrthoDB orthologous group, optionally restricted to a species. Other OrthoDB tools return group metadata, GO/KEGG/InterPro annotations, and a gene-ID/organism list, but never the actual amino-acid sequences. This returns one record per member protein, parsing the rich JSON metadata OrthoDB embeds in each FASTA header (pub_gene_id, og_name, organism_name, organism_taxid, description) plus the full sequence -- the input needed to run MSA / phylogenetics on an orthogroup. Restrict to a species with the 'species' NCBI taxon ID. Example: group_id='794361at2759' (BRCA2 orthogroup), species='9606' returns the human BRCA2 protein records (pub_gene_id 'BRCA2', organism 'Homo sapiens') with their sequences.",
+    "description": "Retrieve a resumable structured page of member protein sequences for an OrthoDB orthologous group, optionally restricted to a species. data.total_sequences is the exact number parsed from the downloaded FASTA; continue with next_offset while has_more is true. The legacy data.fasta field remains the complete raw FASTA and metadata.fasta_contains_all_sequences makes that scope explicit.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -424,7 +473,17 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of FASTA records to parse into structured form (default: 50, max: 500). The full raw FASTA is always returned in the 'fasta' field."
+          "minimum": 1,
+          "maximum": 500,
+          "description": "Structured page size (default: 50, max: 500). The full raw FASTA is always returned in the 'fasta' field."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "description": "Zero-based structured sequence offset. Continue with data.next_offset."
         }
       },
       "required": [

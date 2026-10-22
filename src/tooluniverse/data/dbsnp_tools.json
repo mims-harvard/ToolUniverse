@@ -14,7 +14,7 @@
       "required": ["rsid"]
     },
     "fields": {
-      "endpoint": "/beta/refsnp",
+      "endpoint": "/esearch.fcgi",
       "return_format": "JSON"
     },
     "return_schema": {
@@ -94,7 +94,7 @@
   {
     "type": "dbSNPSearchByGene",
     "name": "dbsnp_search_by_gene",
-    "description": "Search for variants in a specific gene. Returns variants associated with the gene symbol.",
+    "description": "Search dbSNP variants by gene symbol with complete offset pagination. The response reports dbSNP's exact total_count plus returned_count, has_more, and next_offset; continue with offset=next_offset until has_more is false instead of treating the first page as the full variant set.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -104,10 +104,16 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum number of results to return",
+          "description": "Number of variants requested for this page (1-100).",
           "default": 20,
           "minimum": 1,
           "maximum": 100
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based result offset, mapped to NCBI ESearch retstart. Use data.next_offset to fetch the following page.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": ["gene_symbol"]
@@ -138,16 +144,40 @@
                     "type": "string",
                     "description": "dbSNP reference ID"
                   },
-                  "gene": {
-                    "type": "string",
-                    "description": "Gene symbol"
-                  },
-                  "position": {
+                  "snp_id": {
                     "type": "integer",
-                    "description": "Genomic position"
+                    "description": "Numeric dbSNP reference ID without the rs prefix."
                   }
                 }
               }
+            },
+            "total_count": {
+              "type": "integer",
+              "description": "Exact number of dbSNP variants matching the gene query."
+            },
+            "returned_count": {
+              "type": "integer",
+              "description": "Number of variants returned on this page."
+            },
+            "offset": {
+              "type": "integer",
+              "description": "Zero-based offset used for this page."
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Requested page size."
+            },
+            "has_more": {
+              "type": "boolean",
+              "description": "Whether more matching variants remain after this page."
+            },
+            "next_offset": {
+              "type": ["integer", "null"],
+              "description": "Offset for the next page, or null when this page completes the result set."
+            },
+            "truncated": {
+              "type": "boolean",
+              "description": "True when this page is not the complete matching result set."
             }
           }
         },
@@ -164,11 +194,13 @@
     "test_examples": [
       {
         "gene_symbol": "BRCA1",
-        "limit": 10
+        "limit": 10,
+        "offset": 0
       },
       {
         "gene_symbol": "TP53",
-        "limit": 5
+        "limit": 5,
+        "offset": 5
       }
     ],
     "label": [

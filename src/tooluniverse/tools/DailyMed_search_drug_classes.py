@@ -1,7 +1,7 @@
 """
 DailyMed_search_drug_classes
 
-Search the DailyMed database for FDA Established Pharmacologic Classes (EPC). Returns drug class ...
+Search the DailyMed database for FDA Established Pharmacologic Classes (EPC). Returns one page of...
 """
 
 from typing import Any, Optional, Callable
@@ -18,16 +18,16 @@ def DailyMed_search_drug_classes(
     validate: bool = True,
 ) -> Any:
     """
-    Search the DailyMed database for FDA Established Pharmacologic Classes (EPC). Returns drug class ...
+    Search the DailyMed database for FDA Established Pharmacologic Classes (EPC). Returns one page of...
 
     Parameters
     ----------
     drug_class_name : str
         Search term for drug class name (e.g., 'anti', 'kinase inhibitor', 'antibacte...
     pagesize : int
-        Number of results per page (default: 100)
+        Number of results per page (1-100; default: 100). DailyMed silently clamps la...
     page : int
-        Page number for pagination (default: 1)
+        One-based page number (default: 1). DailyMed returns an empty pseudo-page for...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

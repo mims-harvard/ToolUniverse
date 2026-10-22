@@ -1,18 +1,37 @@
 [
   {
     "name": "BVBRC_get_genome",
-    "description": "Get detailed genome information from BV-BRC (Bacterial and Viral Bioinformatics Resource Center, formerly PATRIC). Returns genome metadata including organism name, taxonomy, genome size, GC content, assembly status, host, disease, and isolation information. BV-BRC is the primary NIAID-funded resource for bacterial and viral pathogen genomics. Example: '83332.12' returns Mycobacterium tuberculosis H37Rv.",
+    "description": "Get the complete genome record exposed by BV-BRC, including all assembly, quality, CheckM, accession, sequencing, host, disease, and isolation fields. Set include_related=true to additionally retrieve the first explicitly paginated page of AMR phenotypes and specialty genes for the exact genome under related_records; metadata then reports independent totals and next offsets. Example: '83332.12' returns Mycobacterium tuberculosis H37Rv.",
     "parameter": {
       "type": "object",
       "properties": {
         "genome_id": {
           "type": "string",
           "description": "BV-BRC genome identifier (taxon_id.version format). Examples: '83332.12' (M. tuberculosis H37Rv), '511145.12' (E. coli K-12 MG1655), '93061.5' (S. aureus NCTC 8325)."
+        },
+        "include_related": {
+          "type": "boolean",
+          "default": false,
+          "description": "Also retrieve paginated AMR phenotype and specialty-gene records for this exact genome. Default: false, because each related collection costs an extra request; metadata.related_data names the dedicated tools to call instead."
+        },
+        "related_limit": {
+          "type": "integer",
+          "default": 25,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Maximum AMR and specialty-gene records returned per related collection."
+        },
+        "related_offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based offset for both related collections. Their independent next offsets are reported in metadata.related_pagination."
         }
       },
       "required": [
         "genome_id"
-      ]
+      ],
+      "additionalProperties": false
     },
     "fields": {
       "data_type": "genome",
@@ -116,7 +135,7 @@
   },
   {
     "name": "BVBRC_search_genomes",
-    "description": "Search for pathogen genomes in BV-BRC by organism name or keyword. Returns a list of matching genomes with metadata. Useful for finding bacterial or viral genome assemblies. Example: 'Staphylococcus aureus' returns all S. aureus genome assemblies.",
+    "description": "Search for pathogen genomes in BV-BRC by organism name or keyword, with explicit pagination and optional genome status, quality, CheckM, and collection-date filters. The response metadata reports the true total from BV-BRC's Content-Range header, whether the page is truncated, and the next offset. Example: 'Staphylococcus aureus' returns S. aureus genome assemblies.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -129,12 +148,66 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of results to return. Default: 10. Max: 100."
+          "description": "Maximum number of results to return per page. Default: 10. Max: 100."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "description": "Zero-based result offset. Use metadata.next_offset to retrieve the next page. Default: 0."
+        },
+        "genome_status": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Exact BV-BRC genome status filter, such as 'Complete' or 'WGS'."
+        },
+        "genome_quality": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Exact BV-BRC genome quality classification filter, such as 'Good'."
+        },
+        "min_checkm_completeness": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Minimum CheckM completeness percentage."
+        },
+        "max_checkm_contamination": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0,
+          "description": "Maximum CheckM contamination percentage."
+        },
+        "collection_date_start": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Inclusive lower bound for collection_date, in the date format accepted by BV-BRC."
+        },
+        "collection_date_end": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Inclusive upper bound for collection_date, in the date format accepted by BV-BRC."
         }
       },
       "required": [
         "keyword"
-      ]
+      ],
+      "additionalProperties": false
     },
     "fields": {
       "data_type": "genome",
@@ -182,6 +255,42 @@
                   "null"
                 ]
               },
+              "genome_quality": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "checkm_completeness": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "checkm_contamination": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "reference_genome": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "assembly_accession": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "collection_date": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
               "host_name": {
                 "type": [
                   "string",
@@ -213,7 +322,7 @@
   },
   {
     "name": "BVBRC_search_amr",
-    "description": "Search for ANTIBACTERIAL resistance (AMR) phenotype data in BV-BRC -- bacteria tested against antibiotics (e.g. 'methicillin', 'ciprofloxacin'), NOT antiviral drug-resistance mutations (for influenza/viral antiviral resistance, use Pathoplexus_get_mutations or literature search instead). Returns resistance/susceptibility data for pathogens against specific antibiotics, including MIC values, testing methods, and evidence. Essential for bacterial AMR surveillance research. Filter by 'antibiotic' (e.g. 'methicillin'), 'resistant_phenotype', and/or a specific BV-BRC 'genome_id'. There is no organism/species parameter: to scope results to one organism, first obtain its genome_id(s) (e.g. via BVBRC_search_genome_features / BVBRC_search_specialty_genes with taxon_id) and pass genome_id here.",
+    "description": "Search for ANTIBACTERIAL resistance (AMR) phenotype data in BV-BRC -- bacteria tested against antibiotics (e.g. 'methicillin', 'ciprofloxacin'), NOT antiviral drug-resistance mutations (for influenza/viral antiviral resistance, use Pathoplexus_get_mutations or literature search instead). Returns resistance/susceptibility data for pathogens against specific antibiotics, including MIC values, testing methods, and evidence. Results are explicitly paginated; metadata reports the true total, truncation state, and next offset. Filter by 'antibiotic', 'resistant_phenotype', and/or a specific BV-BRC 'genome_id'. There is no organism/species parameter: to scope results to one organism, first obtain its genome_id(s) and pass genome_id here.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -243,7 +352,15 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of results. Default: 25. Max: 100."
+          "description": "Maximum number of results per page. Default: 25. Max: 100."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "description": "Zero-based result offset. Use metadata.next_offset to retrieve the next page. Default: 0."
         }
       },
       "required": [],
@@ -346,7 +463,7 @@
   },
   {
     "name": "BVBRC_search_genome_features",
-    "description": "Search for genome features (genes, proteins, CDS) in BV-BRC pathogen genomes. Find specific genes like antimicrobial resistance genes (mecA, blaTEM), virulence factors, or any annotated feature across thousands of pathogen genomes. Example: search for 'mecA' gene (methicillin resistance) across all genomes.",
+    "description": "Search for genome features (genes, proteins, CDS) in BV-BRC pathogen genomes with explicit pagination. Metadata reports the true Content-Range total, truncation state, and next offset.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -384,6 +501,11 @@
             "null"
           ],
           "description": "Alias for product: gene product keyword to search (e.g., 'spike protein', 'beta-lactamase')."
+        },
+        "offset": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "description": "Zero-based result offset. Use metadata.next_offset to continue."
         }
       },
       "required": []
@@ -487,7 +609,7 @@
   },
   {
     "name": "BVBRC_search_epitopes",
-    "description": "Search for pathogen epitopes (B-cell and T-cell) in BV-BRC. Returns epitope sequences, types, protein associations, and assay results for vaccine and immunology research. Covers epitopes from IEDB for bacteria and viruses including SARS-CoV-2, influenza, tuberculosis, and other pathogens. Example: search taxon_id 2697049 for SARS-CoV-2 spike glycoprotein epitopes.",
+    "description": "Search for pathogen epitopes (B-cell and T-cell) in BV-BRC with explicit pagination. Metadata reports the true total and next offset.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -525,6 +647,11 @@
             "null"
           ],
           "description": "Maximum number of results. Default: 25. Max: 100."
+        },
+        "offset": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "description": "Zero-based result offset. Use metadata.next_offset to continue."
         }
       },
       "required": []
@@ -622,7 +749,7 @@
   },
   {
     "name": "BVBRC_search_surveillance",
-    "description": "Search influenza and pathogen surveillance data in BV-BRC. Returns surveillance samples with host species, geographic location, subtype, and collection metadata. Essential for epidemiological tracking of influenza subtypes (H5N1, H1N1, H3N2) and other monitored pathogens across global regions. Example: search for H5N1 cases in North America.",
+    "description": "Search influenza and pathogen surveillance data in BV-BRC with explicit pagination and true Content-Range totals.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -660,6 +787,11 @@
             "null"
           ],
           "description": "Maximum number of results. Default: 25. Max: 100."
+        },
+        "offset": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "description": "Zero-based result offset. Use metadata.next_offset to continue."
         }
       },
       "required": []
@@ -770,7 +902,7 @@
   },
   {
     "name": "BVBRC_search_specialty_genes",
-    "description": "Search for specialty genes in BV-BRC including virulence factors, antibiotic resistance genes, drug targets, and human homologs across pathogen genomes. Data sourced from CARD, NDARO, VFDB, PATRIC_VF, and other curated databases. Essential for identifying key pathogenicity and resistance determinants. Example: search for 'mecA' (methicillin resistance gene in Staphylococcus).",
+    "description": "Search for specialty genes in BV-BRC including virulence factors, antibiotic resistance genes, drug targets, and human homologs. Filter by exact genome_id, taxon, gene, property, or source. Results are explicitly paginated and metadata reports the true total and next offset.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -802,15 +934,31 @@
           ],
           "description": "NCBI Taxonomy ID. Examples: '1280' (S. aureus), '1773' (M. tuberculosis), '562' (E. coli)."
         },
+        "genome_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Exact BV-BRC genome ID, such as '83332.12'. Use this to retrieve specialty genes for one assembly rather than every genome in a taxon."
+        },
         "limit": {
           "type": [
             "integer",
             "null"
           ],
-          "description": "Maximum number of results. Default: 25. Max: 100."
+          "description": "Maximum number of results per page. Default: 25. Max: 100."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "description": "Zero-based result offset. Use metadata.next_offset to continue."
         }
       },
-      "required": []
+      "required": [],
+      "additionalProperties": false
     },
     "fields": {
       "data_type": "sp_gene",
@@ -1026,7 +1174,7 @@
   },
   {
     "name": "BVBRC_search_protein_structures",
-    "description": "Search for pathogen protein structures in BV-BRC by organism (taxon_id), gene name, or experimental method. Returns PDB entries with titles, resolution, methods, and references. Covers viral and bacterial protein structures linked to BV-BRC genome annotations. Example: search for all SARS-CoV-2 protein structures with taxon_id 2697049.",
+    "description": "Search for pathogen protein structures in BV-BRC by organism, gene, or method, with explicit pagination and true totals.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1057,6 +1205,11 @@
             "null"
           ],
           "description": "Maximum number of results. Default: 10. Max: 100."
+        },
+        "offset": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "description": "Zero-based result offset. Use metadata.next_offset to continue."
         }
       },
       "required": []
@@ -1236,7 +1389,7 @@
   },
   {
     "name": "BVBRC_search_taxonomy",
-    "description": "Search for pathogen taxonomy entries in BV-BRC by keyword. Returns matching taxa with names, ranks, genome counts, and lineage information. Useful for discovering pathogen taxon IDs for use with other BV-BRC tools. Example: 'Mycobacterium' returns the Mycobacterium genus and all its species.",
+    "description": "Search for pathogen taxonomy entries in BV-BRC by keyword, with explicit pagination and true Content-Range totals.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1250,6 +1403,11 @@
             "null"
           ],
           "description": "Maximum number of results. Default: 10. Max: 100."
+        },
+        "offset": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "description": "Zero-based result offset. Use metadata.next_offset to continue."
         }
       },
       "required": [
@@ -1330,7 +1488,7 @@
   },
   {
     "name": "BVBRC_search_pathways",
-    "description": "Search for metabolic pathways in pathogen genomes from BV-BRC. Returns KEGG pathway assignments with EC numbers, enzyme descriptions, and genome associations. Useful for understanding pathogen metabolism and identifying potential drug targets. Example: search for pathways in M. tuberculosis (taxon_id 1773).",
+    "description": "Search for metabolic pathways in BV-BRC with explicit pagination. Metadata reports the true row total and next offset; distinct gene/annotation rows remain distinguishable.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1368,6 +1526,11 @@
             "null"
           ],
           "description": "Maximum number of results. Default: 25. Max: 100."
+        },
+        "offset": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "description": "Zero-based result offset. Use metadata.next_offset to continue."
         }
       },
       "required": []
@@ -1490,7 +1653,7 @@
   },
   {
     "name": "BVBRC_search_subsystems",
-    "description": "Search for functional subsystems (curated groups of functionally related proteins) in BV-BRC pathogen genomes. Returns subsystem classifications including superclass, class, subclass, and specific functional roles. Useful for understanding pathogen functional organization and comparing metabolic capabilities. Example: search for virulence-related subsystems in M. tuberculosis.",
+    "description": "Search for functional subsystems in BV-BRC with explicit pagination and true Content-Range totals.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1535,6 +1698,11 @@
             "null"
           ],
           "description": "Maximum number of results. Default: 25. Max: 100."
+        },
+        "offset": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "description": "Zero-based result offset. Use metadata.next_offset to continue."
         }
       },
       "required": []

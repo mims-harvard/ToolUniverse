@@ -580,7 +580,7 @@ class TestFormatTermCollection:
     def test_format_term_collection_empty(self):
         """Test formatting empty term collection."""
         result = self.tool._format_term_collection({}, 10)
-        assert result == {}
+        assert result == {"terms": [], "total_items": 0, "showing": 0}
 
     def test_format_term_collection_with_elements(self):
         """Test formatting term collection with elements."""

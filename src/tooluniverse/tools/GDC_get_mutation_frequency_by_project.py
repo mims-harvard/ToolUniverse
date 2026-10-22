@@ -12,6 +12,7 @@ def GDC_get_mutation_frequency_by_project(
     gene_symbol: Optional[str] = None,
     gene: Optional[str] = None,
     size: Optional[int] = 100,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,6 +29,8 @@ def GDC_get_mutation_frequency_by_project(
         Gene symbol alias — alternative to gene_symbol
     size : int
         Maximum number of projects to return (default 100)
+    offset : int
+        Zero-based project offset for retrieving later ranked projects
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,12 @@ def GDC_get_mutation_frequency_by_project(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"gene_symbol": gene_symbol, "gene": gene, "size": size}.items()
+        for k, v in {
+            "gene_symbol": gene_symbol,
+            "gene": gene,
+            "size": size,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

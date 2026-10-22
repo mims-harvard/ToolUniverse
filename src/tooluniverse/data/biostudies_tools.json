@@ -51,14 +51,37 @@
               "type": "array",
               "description": "List of matching studies"
             },
-            "totalHits": {
-              "type": "integer"
-            },
+          "totalHits": {
+            "type": "integer",
+            "description": "Exact total only when totalHitsExact is true; otherwise a lower bound."
+          },
+          "totalHitsExact": {
+            "type": "boolean"
+          },
+          "totalHitsRelation": {
+            "type": "string",
+            "enum": ["exact", "lower_bound"]
+          },
+          "totalHitsWarning": {
+            "type": "string"
+          },
             "page": {
               "type": "integer"
             },
-            "pageSize": {
-              "type": "integer"
+          "pageSize": {
+            "type": "integer"
+          },
+          "returned": {
+            "type": "integer"
+          },
+          "has_more": {
+            "type": "boolean"
+          },
+          "next_page": {
+            "type": ["integer", "null"]
+          },
+          "result_set_complete": {
+            "type": "boolean"
             }
           }
         },
@@ -128,9 +151,38 @@
             "hits": {
               "type": "array"
             },
-            "totalHits": {
-              "type": "integer"
-            }
+          "totalHits": {
+            "type": "integer",
+            "description": "Exact total only when totalHitsExact is true; otherwise a lower bound."
+          },
+          "totalHitsExact": {
+            "type": "boolean"
+          },
+          "totalHitsRelation": {
+            "type": "string",
+            "enum": ["exact", "lower_bound"]
+          },
+          "totalHitsWarning": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer"
+          },
+          "pageSize": {
+            "type": "integer"
+          },
+          "returned": {
+            "type": "integer"
+          },
+          "has_more": {
+            "type": "boolean"
+          },
+          "next_page": {
+            "type": ["integer", "null"]
+          },
+          "result_set_complete": {
+            "type": "boolean"
+          }
           }
         },
         "count": {

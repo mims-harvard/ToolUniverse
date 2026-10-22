@@ -434,10 +434,16 @@
           "type": "string",
           "description": "FlyBase gene ID, with or without the 'FB:' prefix. Examples: 'FB:FBgn0000490' (dpp), 'FB:FBgn0003996' (white/w), 'FB:FBgn0004647' (Notch/N)."
         },
-        "limit": {
-          "type": "integer",
-          "description": "Max annotations to return (default 50, max 100).",
-          "default": 50
+      "limit": {
+        "type": "integer",
+        "description": "Max annotations to return (default 50, max 100).",
+        "default": 50
+      },
+      "page": {
+        "type": "integer",
+        "minimum": 1,
+        "default": 1,
+        "description": "One-based annotation page. Continue with next_page while has_more is true."
         }
       },
       "required": [
@@ -462,9 +468,15 @@
             "total_annotations": {
               "type": "integer"
             },
-            "returned": {
-              "type": "integer"
-            },
+          "returned": {
+            "type": "integer"
+          },
+          "limit": {"type": "integer"},
+          "page": {"type": "integer"},
+          "total_pages": {"type": "integer"},
+          "has_more": {"type": "boolean"},
+          "next_page": {"type": ["integer", "null"]},
+          "result_set_complete": {"type": "boolean"},
             "annotations": {
               "type": "array",
               "items": {

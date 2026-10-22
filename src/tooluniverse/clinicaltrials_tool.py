@@ -85,8 +85,9 @@ class CTGovAPITool(BaseRESTTool):
             params["query.cond"] = arguments["query_cond"]
         if arguments.get("query_intr"):
             params["query.intr"] = arguments["query_intr"]
-        if arguments.get("query_term"):
-            params["query.term"] = arguments["query_term"]
+        query_term = arguments.get("query_term") or arguments.get("query")
+        if query_term:
+            params["query.term"] = query_term
         if arguments.get("intervention"):
             params["query.intr"] = arguments["intervention"]
         if arguments.get("sponsor"):
@@ -114,7 +115,7 @@ class CTGovAPITool(BaseRESTTool):
         if arguments.get("filter_study_type"):
             params["filter.studyType"] = arguments["filter_study_type"]
 
-        page_size = arguments.get("page_size", 10)
+        page_size = arguments.get("max_results") or arguments.get("page_size", 10)
         params["pageSize"] = min(int(page_size), 1000)
 
         if arguments.get("next_page_token"):
@@ -160,7 +161,8 @@ class CTGovAPITool(BaseRESTTool):
                     "phases": design_mod.get("phases", []),
                     "enrollment": design_mod.get("enrollmentInfo", {}).get("count"),
                     "conditions": cond_mod.get("conditions", []),
-                    "interventions": interventions[:5],
+                    "interventions": interventions,
+                    "intervention_count": len(interventions),
                     "sponsor": sponsor_mod.get("leadSponsor", {}).get("name"),
                 }
             )
@@ -208,7 +210,7 @@ class CTGovAPITool(BaseRESTTool):
 
         # Extract arms/interventions
         arms = []
-        for arm in interv_mod.get("armGroups", [])[:10]:
+        for arm in interv_mod.get("armGroups", []):
             arms.append(
                 {
                     "label": arm.get("label"),
@@ -219,7 +221,7 @@ class CTGovAPITool(BaseRESTTool):
             )
 
         interventions = []
-        for iv in interv_mod.get("interventions", [])[:10]:
+        for iv in interv_mod.get("interventions", []):
             interventions.append(
                 {
                     "name": iv.get("name"),
@@ -230,7 +232,7 @@ class CTGovAPITool(BaseRESTTool):
 
         # Extract primary outcomes
         primary_outcomes = []
-        for o in outcomes_mod.get("primaryOutcomes", [])[:5]:
+        for o in outcomes_mod.get("primaryOutcomes", []):
             primary_outcomes.append(
                 {
                     "measure": o.get("measure"),
@@ -239,9 +241,9 @@ class CTGovAPITool(BaseRESTTool):
                 }
             )
 
-        # Extract locations (first 5)
+        # Preserve all locations supplied by the single-study endpoint.
         locations = []
-        for loc in contacts_mod.get("locations", [])[:5]:
+        for loc in contacts_mod.get("locations", []):
             locations.append(
                 {
                     "facility": loc.get("facility"),
@@ -253,7 +255,7 @@ class CTGovAPITool(BaseRESTTool):
 
         # Extract references
         refs = []
-        for ref in refs_mod.get("references", [])[:5]:
+        for ref in refs_mod.get("references", []):
             refs.append(
                 {
                     "pmid": ref.get("pmid"),
@@ -294,10 +296,15 @@ class CTGovAPITool(BaseRESTTool):
                 "sex": elig_mod.get("sex"),
                 "healthy_volunteers": elig_mod.get("healthyVolunteers"),
                 "arms": arms,
+                "arm_count": len(arms),
                 "interventions": interventions,
+                "intervention_count": len(interventions),
                 "primary_outcomes": primary_outcomes,
+                "primary_outcome_count": len(primary_outcomes),
                 "locations": locations,
+                "location_count": len(locations),
                 "references": refs,
+                "reference_count": len(refs),
             },
             "metadata": {
                 "nct_id": nct_id,

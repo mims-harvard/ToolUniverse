@@ -1,7 +1,7 @@
 """
 Ensembl_get_gene_overlapping_features
 
-Get features overlapping an Ensembl gene by gene ID. Returns all genomic features co-located with...
+Get features overlapping an Ensembl gene ID with limit/offset pagination and explicit total/has_m...
 """
 
 from typing import Any, Optional, Callable
@@ -11,20 +11,26 @@ from ._shared_client import get_shared_client
 def Ensembl_get_gene_overlapping_features(
     gene_id: str,
     feature_types: Optional[str] = None,
+    limit: Optional[int] = 100,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get features overlapping an Ensembl gene by gene ID. Returns all genomic features co-located with...
+    Get features overlapping an Ensembl gene ID with limit/offset pagination and explicit total/has_m...
 
     Parameters
     ----------
     gene_id : str
         Ensembl gene ID. Examples: 'ENSG00000141510' (TP53), 'ENSG00000012048' (BRCA1...
     feature_types : str
-        Comma-separated feature types. Options: 'gene', 'transcript', 'regulatory', '...
+        Comma-separated feature types. Options include 'gene', 'transcript', 'exon', ...
+    limit : int
+        Maximum number of overlapping features to return in this page.
+    offset : int
+        Zero-based feature offset. Use data.next_offset or metadata.next_offset for t...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +47,12 @@ def Ensembl_get_gene_overlapping_features(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"gene_id": gene_id, "feature_types": feature_types}.items()
+        for k, v in {
+            "gene_id": gene_id,
+            "feature_types": feature_types,
+            "limit": limit,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

@@ -9,11 +9,11 @@ from ._shared_client import get_shared_client
 
 
 def PopGen_fst(
-    operation: str,
     p1: float,
     p2: float,
     n1: int,
     n2: int,
+    operation: Optional[str] = "fst",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

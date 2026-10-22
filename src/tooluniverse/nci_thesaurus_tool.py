@@ -81,17 +81,54 @@ class NCIThesaurusTool(BaseTool):
     def _search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search NCI Thesaurus by term."""
         term = arguments.get("term", "")
-        if not term:
+        if not isinstance(term, str) or not term.strip():
             return {"status": "error", "error": "term parameter is required"}
 
-        page_size = arguments.get("page_size") or 10
+        page_size = arguments.get("page_size", 10)
+        offset = arguments.get("offset", 0)
+        match_type = arguments.get("match_type", "match")
+        if (
+            isinstance(page_size, bool)
+            or not isinstance(page_size, int)
+            or not 1 <= page_size <= 100
+        ):
+            return {
+                "status": "error",
+                "error": "page_size must be an integer between 1 and 100",
+                "parameter": "page_size",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+                "parameter": "offset",
+            }
+        allowed_match_types = {
+            "contains",
+            "match",
+            "startsWith",
+            "phrase",
+            "AND",
+            "OR",
+            "fuzzy",
+        }
+        if match_type not in allowed_match_types:
+            return {
+                "status": "error",
+                "error": (
+                    "match_type must be one of: contains, match, startsWith, "
+                    "phrase, AND, OR, fuzzy"
+                ),
+                "parameter": "match_type",
+            }
 
         url = f"{NCI_BASE_URL}/concept/ncit/search"
         params = {
-            "term": term,
-            "type": "match",
+            "term": term.strip(),
+            "type": match_type,
             "include": "minimal",
-            "pageSize": min(page_size, 100),
+            "fromRecord": offset,
+            "pageSize": page_size,
         }
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
@@ -110,13 +147,31 @@ class NCIThesaurusTool(BaseTool):
                 }
             )
 
+        total = data.get("total", len(results))
+        try:
+            total = int(total)
+        except (TypeError, ValueError):
+            total = len(results)
+        returned_count = len(results)
+        has_more = offset + returned_count < total
+
         return {
             "status": "success",
             "data": results,
             "metadata": {
                 "source": "NCI Thesaurus (NCIt)",
-                "total_results": data.get("total", len(results)),
-                "query": term,
+                "total_results": total,
+                "returned_count": returned_count,
+                "query": term.strip(),
+                "match_type": match_type,
+                "offset": offset,
+                "page_size": page_size,
+                "has_more": has_more,
+                "next_offset": (
+                    offset + returned_count if returned_count and has_more else None
+                ),
+                "truncated": has_more,
+                "result_set_complete": not has_more,
             },
         }
 

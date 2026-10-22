@@ -1,7 +1,7 @@
 """
 BVBRC_search_epitopes
 
-Search for pathogen epitopes (B-cell and T-cell) in BV-BRC. Returns epitope sequences, types, pro...
+Search for pathogen epitopes (B-cell and T-cell) in BV-BRC with explicit pagination. Metadata rep...
 """
 
 from typing import Any, Optional, Callable
@@ -9,31 +9,34 @@ from ._shared_client import get_shared_client
 
 
 def BVBRC_search_epitopes(
-    taxon_id: Optional[str | Any] = None,
-    protein_name: Optional[str | Any] = None,
-    epitope_type: Optional[str | Any] = None,
-    organism: Optional[str | Any] = None,
-    limit: Optional[int | Any] = None,
+    taxon_id: Optional[str] = None,
+    protein_name: Optional[str] = None,
+    epitope_type: Optional[str] = None,
+    organism: Optional[str] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search for pathogen epitopes (B-cell and T-cell) in BV-BRC. Returns epitope sequences, types, pro...
+    Search for pathogen epitopes (B-cell and T-cell) in BV-BRC with explicit pagination. Metadata rep...
 
     Parameters
     ----------
-    taxon_id : str | Any
+    taxon_id : str
         NCBI Taxonomy ID for the pathogen organism. Examples: '2697049' (SARS-CoV-2),...
-    protein_name : str | Any
+    protein_name : str
         Target protein name to filter epitopes. Examples: 'Spike glycoprotein', 'Nucl...
-    epitope_type : str | Any
+    epitope_type : str
         Type of epitope. Options: 'Linear peptide', 'Discontinuous peptide'. Most epi...
-    organism : str | Any
+    organism : str
         Organism name keyword to search across epitope records. Example: 'coronavirus...
-    limit : int | Any
+    limit : int
         Maximum number of results. Default: 25. Max: 100.
+    offset : int
+        Zero-based result offset. Use metadata.next_offset to continue.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def BVBRC_search_epitopes(
             "epitope_type": epitope_type,
             "organism": organism,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

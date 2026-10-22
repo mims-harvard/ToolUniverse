@@ -339,6 +339,7 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             "db": "clinvar",
             "retmode": "json",
             "retmax": arguments.get("max_results") or arguments.get("limit", 20),
+            "retstart": max(arguments.get("offset") or 0, 0),
         }
 
         # Build search query
@@ -523,6 +524,7 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             "significance",
             "max_results",
             "limit",
+            "offset",
         }
         unrecognized = sorted(set(arguments) - recognized)
 
@@ -661,6 +663,18 @@ class ClinVarSearchVariants(ClinVarRESTTool):
             "query_translation": esearch.get("querytranslation", ""),
             "search_params": search_params,
         }
+        offset = params["retstart"]
+        returned = len(ids)
+        has_more = offset + returned < count
+        response_data.update(
+            {
+                "returned": returned,
+                "offset": offset,
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_offset": offset + returned if has_more else None,
+            }
+        )
         if unrecognized:
             response_data["ignored_parameters"] = unrecognized
         if count == 0 and "gene" in arguments:
@@ -904,6 +918,9 @@ def clinvar_variants_overlapping(
     margin=2_000_000,
     significance=None,
     max_results=50,
+    result_offset=0,
+    candidate_limit=500,
+    candidate_offset=0,
     timeout=60,
 ):
     """ClinVar variants whose span OVERLAPS a region.
@@ -940,14 +957,43 @@ def clinvar_variants_overlapping(
         if clause:
             term += f" AND {clause}"
 
+    candidate_limit = max(1, min(int(candidate_limit), 500))
+    candidate_offset = max(0, int(candidate_offset))
+    result_offset = max(0, int(result_offset))
+    max_results = max(1, min(int(max_results), 500))
     es = session.get(
         "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
-        params={"db": "clinvar", "term": term, "retmax": 500, "retmode": "json"},
+        params={
+            "db": "clinvar",
+            "term": term,
+            "retmax": candidate_limit,
+            "retstart": candidate_offset,
+            "retmode": "json",
+        },
         timeout=timeout,
     ).json()
-    ids = (es.get("esearchresult") or {}).get("idlist") or []
+    esearch = es.get("esearchresult") or {}
+    ids = esearch.get("idlist") or []
+    try:
+        candidate_total = int(esearch.get("count", len(ids)))
+    except (TypeError, ValueError):
+        candidate_total = len(ids)
     if not ids:
-        return {"term": term, "n_candidates": 0, "variants": []}
+        return {
+            "term": term,
+            "n_candidates": candidate_total,
+            "candidate_total": candidate_total,
+            "candidate_offset": candidate_offset,
+            "candidate_returned": 0,
+            "candidate_has_more": False,
+            "next_candidate_offset": None,
+            "matched_in_candidate_page": 0,
+            "result_offset": result_offset,
+            "returned": 0,
+            "result_has_more": False,
+            "next_result_offset": None,
+            "variants": [],
+        }
 
     out = []
     for chunk_start in range(0, len(ids), 200):
@@ -992,7 +1038,28 @@ def clinvar_variants_overlapping(
                     break
     # Smallest span first: the most specific variant covering the region.
     out.sort(key=lambda v: v["span"])
-    return {"term": term, "n_candidates": len(ids), "variants": out[:max_results]}
+    result_page = out[result_offset : result_offset + max_results]
+    result_has_more = result_offset + len(result_page) < len(out)
+    candidate_has_more = candidate_offset + len(ids) < candidate_total
+    return {
+        "term": term,
+        "n_candidates": candidate_total,
+        "candidate_total": candidate_total,
+        "candidate_offset": candidate_offset,
+        "candidate_returned": len(ids),
+        "candidate_has_more": candidate_has_more,
+        "next_candidate_offset": candidate_offset + len(ids)
+        if candidate_has_more
+        else None,
+        "matched_in_candidate_page": len(out),
+        "result_offset": result_offset,
+        "returned": len(result_page),
+        "result_has_more": result_has_more,
+        "next_result_offset": result_offset + len(result_page)
+        if result_has_more
+        else None,
+        "variants": result_page,
+    }
 
 
 @register_tool("ClinVarSearchByRegion")
@@ -1051,6 +1118,9 @@ class ClinVarSearchByRegion(ClinVarRESTTool):
                 margin=int(arguments.get("margin", 2_000_000)),
                 significance=clnsig_components or None,
                 max_results=int(arguments.get("max_results", 50)),
+                result_offset=int(arguments.get("result_offset", 0)),
+                candidate_limit=int(arguments.get("candidate_limit", 500)),
+                candidate_offset=int(arguments.get("candidate_offset", 0)),
                 timeout=self.timeout,
             )
         except Exception as e:
@@ -1061,7 +1131,9 @@ class ClinVarSearchByRegion(ClinVarRESTTool):
         result["note"] = (
             "Entrez matches a variant's START position, so this searches a widened "
             "window and keeps only variants whose span actually overlaps the region. "
-            "Sorted smallest span first; a large CNV can overlap while starting "
-            "megabases away. Raise `margin` to catch larger spanning variants."
+            "Variants are sorted by smallest span within the current candidate page. "
+            "Exhaust next_result_offset before advancing next_candidate_offset; aggregate "
+            "all candidate pages for globally complete results. Raise `margin` to catch "
+            "larger spanning variants."
         )
         return {"status": "success", "data": result}

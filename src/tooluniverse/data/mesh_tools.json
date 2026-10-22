@@ -1,32 +1,35 @@
 [
   {
     "name": "MeSH_search_descriptors",
-    "description": "Search MeSH (Medical Subject Headings) descriptors by label. MeSH is NLM's controlled vocabulary for indexing biomedical literature in PubMed. Descriptors are the main headings in MeSH that represent biomedical concepts including diseases, drugs, anatomy, organisms, and procedures. Supports exact and contains matching. Example: searching 'Neoplasms' with exact match returns descriptor D009369.",
+    "description": "Search MeSH (Medical Subject Headings) descriptors by label. MeSH is NLM's controlled vocabulary for indexing biomedical literature in PubMed. Descriptors are the main headings in MeSH that represent biomedical concepts including diseases, drugs, anatomy, organisms, and procedures. Supports exact, contains, and prefix matching. The public lookup endpoint has a hard 50-result limit and exposes neither a total count nor an offset; when the requested limit is reached, metadata marks the result as possibly truncated and callers should refine the query. Example: searching 'Neoplasms' with exact match returns descriptor D009369.",
     "parameter": {
       "type": "object",
       "properties": {
         "query": {
           "type": "string",
+          "minLength": 1,
           "description": "Descriptor label to search for. Examples: 'Neoplasms', 'Diabetes Mellitus', 'Aspirin', 'Brain', 'Escherichia coli'."
         },
         "match": {
-          "type": [
-            "string",
-            "null"
+          "type": "string",
+          "enum": [
+            "exact",
+            "contains",
+            "startsWith"
           ],
-          "description": "Match type: 'exact' for exact match, 'contains' for partial match (default), 'startswith' for prefix match."
+          "description": "Match type: 'exact' for exact match, 'contains' for partial match (default), 'startsWith' for prefix match."
         },
         "limit": {
-          "type": [
-            "integer",
-            "null"
-          ],
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50,
           "description": "Maximum number of results (default: 20, max: 50)."
         }
       },
       "required": [
         "query"
-      ]
+      ],
+      "additionalProperties": false
     },
     "fields": {
       "endpoint": "search_descriptors"
@@ -90,18 +93,20 @@
   },
   {
     "name": "MeSH_get_descriptor",
-    "description": "Get detailed information for a MeSH descriptor by its ID. Returns the descriptor's label, type, annotation, tree numbers (for hierarchical browsing), date of introduction, and related terms. MeSH tree numbers encode the hierarchical position in the 16 MeSH categories (A=Anatomy, B=Organisms, C=Diseases, D=Chemicals, E=Analytical, etc.). Example: D009369 returns 'Neoplasms' with tree number C04, annotation about cancer terminology, and 'considerAlso' cross-references.",
+    "description": "Get the complete source record for a MeSH descriptor by its ID. Returns convenient parsed fields plus the unprojected JSON-LD record, including concepts, preferred terms, allowable qualifiers, history/public notes, tree numbers, dates, and active status. The returned identifier is checked against the requested ID. Example: D009369 returns 'Neoplasms' with tree number C04.",
     "parameter": {
       "type": "object",
       "properties": {
         "descriptor_id": {
           "type": "string",
+          "pattern": "^[Dd](?:[0-9]{6}|[0-9]{9})$",
           "description": "MeSH descriptor ID. Examples: 'D009369' (Neoplasms), 'D003920' (Diabetes Mellitus), 'D001241' (Aspirin), 'D001921' (Brain), 'D000998' (Antiviral Agents)."
         }
       },
       "required": [
         "descriptor_id"
-      ]
+      ],
+      "additionalProperties": false
     },
     "fields": {
       "endpoint": "get_descriptor"
@@ -182,6 +187,25 @@
                 "null"
               ],
               "description": "Whether descriptor is active"
+            },
+            "history_note": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "public_mesh_note": {},
+            "allowable_qualifiers": {
+              "type": "array"
+            },
+            "concepts": {
+              "type": "array"
+            },
+            "preferred_concept": {},
+            "preferred_term": {},
+            "record": {
+              "type": "object",
+              "description": "Complete unprojected JSON-LD descriptor record returned by NLM MeSH."
             }
           }
         },
@@ -201,32 +225,35 @@
   },
   {
     "name": "MeSH_search_terms",
-    "description": "Search MeSH terms (entry terms/synonyms) by label. MeSH terms include the preferred descriptor names as well as alternative entry terms, synonyms, and common names. This is broader than descriptor search and can find terms like 'heart attack' that map to the descriptor 'Myocardial Infarction'. Supports exact, contains, and startswith matching. Example: searching 'tumor' returns terms like 'Tumors', 'Tumor Growth', 'Tumors, Neoplastic'.",
+    "description": "Search MeSH terms (entry terms/synonyms) by label. MeSH terms include preferred descriptor names, alternative entry terms, synonyms, and common names. Supports exact, contains, and prefix matching. The public lookup endpoint has a hard 50-result limit and exposes neither a total count nor an offset; when the requested limit is reached, metadata marks the result as possibly truncated and callers should refine the query.",
     "parameter": {
       "type": "object",
       "properties": {
         "query": {
           "type": "string",
+          "minLength": 1,
           "description": "Term label to search for. Examples: 'tumor', 'heart attack', 'aspirin', 'blood pressure', 'DNA repair'."
         },
         "match": {
-          "type": [
-            "string",
-            "null"
+          "type": "string",
+          "enum": [
+            "exact",
+            "contains",
+            "startsWith"
           ],
-          "description": "Match type: 'exact' for exact match, 'contains' for partial match (default), 'startswith' for prefix match."
+          "description": "Match type: 'exact' for exact match, 'contains' for partial match (default), 'startsWith' for prefix match."
         },
         "limit": {
-          "type": [
-            "integer",
-            "null"
-          ],
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50,
           "description": "Maximum number of results (default: 20, max: 50)."
         }
       },
       "required": [
         "query"
-      ]
+      ],
+      "additionalProperties": false
     },
     "fields": {
       "endpoint": "search_terms"

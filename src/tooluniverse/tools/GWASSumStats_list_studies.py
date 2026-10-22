@@ -1,7 +1,7 @@
 """
 GWASSumStats_list_studies
 
-List GWAS studies that have deposited full summary statistics with the EBI GWAS Catalog. Unlike t...
+List GWAS studies that have deposited full summary statistics with the EBI GWAS Catalog. The API ...
 """
 
 from typing import Any, Optional, Callable
@@ -9,19 +9,22 @@ from ._shared_client import get_shared_client
 
 
 def GWASSumStats_list_studies(
-    size: Optional[int | Any] = None,
+    size: Optional[int] = None,
+    start: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> list[Any]:
     """
-    List GWAS studies that have deposited full summary statistics with the EBI GWAS Catalog. Unlike t...
+    List GWAS studies that have deposited full summary statistics with the EBI GWAS Catalog. The API ...
 
     Parameters
     ----------
-    size : int | Any
-        Number of studies to return (default 20, max 100).
+    size : int
+        Studies per page (default 20, max 1000).
+    start : int
+        Zero-based start offset (default 0). Continue with metadata.next_start.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +39,7 @@ def GWASSumStats_list_studies(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"size": size}.items() if v is not None}
+    _args = {k: v for k, v in {"size": size, "start": start}.items() if v is not None}
     return get_shared_client().run_one_function(
         {
             "name": "GWASSumStats_list_studies",

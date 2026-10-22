@@ -1,7 +1,7 @@
 """
 LipidMaps_get_protein
 
-Look up a lipid-metabolism protein/enzyme in the LIPID MAPS Proteome Database (LMPD). Resolves a ...
+Look up a lipid-metabolism protein/enzyme in LIPID MAPS LMPD, including gene/species identifiers,...
 """
 
 from typing import Any, Optional, Callable
@@ -16,9 +16,9 @@ def LipidMaps_get_protein(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
-    Look up a lipid-metabolism protein/enzyme in the LIPID MAPS Proteome Database (LMPD). Resolves a ...
+    Look up a lipid-metabolism protein/enzyme in LIPID MAPS LMPD, including gene/species identifiers,...
 
     Parameters
     ----------
@@ -37,7 +37,7 @@ def LipidMaps_get_protein(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

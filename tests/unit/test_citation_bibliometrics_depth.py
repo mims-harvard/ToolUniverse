@@ -111,6 +111,9 @@ def test_s2_paper_citations_parse(monkeypatch):
     assert rows[0]["intents"] == ["methodology"]
     assert rows[0]["contexts"][0].startswith("We build on")
     assert rows[0]["citingPaper"]["title"] == "A citing paper"
+    assert out["metadata"]["has_more"] is True
+    assert out["metadata"]["next_offset"] == 2
+    assert out["metadata"]["total_results_is_exact"] is False
 
 
 @pytest.mark.unit
@@ -177,6 +180,8 @@ def test_s2_paper_references_parse(monkeypatch):
     assert rows[0]["intents"] == ["background"]
     assert rows[0]["isInfluential"] is False
     assert "Literature Graph" in rows[0]["citedPaper"]["title"]
+    assert out["metadata"]["has_more"] is True
+    assert out["metadata"]["next_offset"] == 2
 
 
 @pytest.mark.unit

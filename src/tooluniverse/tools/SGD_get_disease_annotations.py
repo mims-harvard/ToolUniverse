@@ -1,7 +1,7 @@
 """
 SGD_get_disease_annotations
 
-Get curated gene-disease (Disease Ontology / DOID) associations for a yeast gene from SGD, inferr...
+Get and page through curated gene-disease (Disease Ontology / DOID) associations for a yeast gene...
 """
 
 from typing import Any, Optional, Callable
@@ -10,18 +10,24 @@ from ._shared_client import get_shared_client
 
 def SGD_get_disease_annotations(
     sgd_id: str,
+    limit: Optional[int] = 50,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get curated gene-disease (Disease Ontology / DOID) associations for a yeast gene from SGD, inferr...
+    Get and page through curated gene-disease (Disease Ontology / DOID) associations for a yeast gene...
 
     Parameters
     ----------
     sgd_id : str
         SGD locus identifier. Examples: 'S000000364' (CDC28), 'S000000259' (GAL4).
+    limit : int
+        Maximum disease annotations to return.
+    offset : int
+        Zero-based disease annotation offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +42,11 @@ def SGD_get_disease_annotations(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"sgd_id": sgd_id}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {"sgd_id": sgd_id, "limit": limit, "offset": offset}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "SGD_get_disease_annotations",

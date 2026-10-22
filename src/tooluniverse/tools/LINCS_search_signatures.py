@@ -1,7 +1,7 @@
 """
 LINCS_search_signatures
 
-Search LINCS (Library of Integrated Network-Based Cellular Signatures) for drug perturbation gene...
+Search LINCS SigCom drug perturbation signatures with offset pagination and pages up to 1000 reco...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,14 @@ def LINCS_search_signatures(
     drug_name: str,
     cell_line: Optional[str] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> list[Any]:
     """
-    Search LINCS (Library of Integrated Network-Based Cellular Signatures) for drug perturbation gene...
+    Search LINCS SigCom drug perturbation signatures with offset pagination and pages up to 1000 reco...
 
     Parameters
     ----------
@@ -27,7 +28,9 @@ def LINCS_search_signatures(
     cell_line : str
         Optional cell line filter. Examples: 'MCF7', 'A549', 'HepG2', 'PC3'. Leave em...
     limit : int
-        Maximum number of signatures to return (1-100). Default: 20.
+        Signatures per page (1-1000, default 20).
+    offset : int
+        Zero-based signature offset (default 0). Continue with metadata.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +51,7 @@ def LINCS_search_signatures(
             "drug_name": drug_name,
             "cell_line": cell_line,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

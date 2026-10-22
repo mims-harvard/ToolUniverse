@@ -104,3 +104,29 @@ def test_search_genes_no_match_returns_empty_not_stale_page(monkeypatch):
     assert result["status"] == "success"
     assert result["data"]["genes"] == []
     assert result["data"]["count"] == 0
+
+
+def test_prefix_search_collects_subsequent_catalog_pages_and_paginates():
+    tool = _tool("search_genes")
+    pages = {
+        1: [_gene_item("BAA"), _gene_item("C01"), _gene_item("C02")],
+        2: [_gene_item("C03"), _gene_item("C04"), _gene_item("C05")],
+        3: [_gene_item("C06"), _gene_item("DAA"), _gene_item("DBB")],
+    }
+
+    def fake_get(url, params=None, **kwargs):
+        page_num = params["page[number]"]
+        body = {"data": pages[page_num]}
+        if page_num == 1:
+            body["meta"] = {"count": 3000}
+        return _resp(body)
+
+    with patch("tooluniverse.depmap_tool.requests.get", side_effect=fake_get):
+        result = tool.run({"query": "C", "limit": 2, "offset": 2})
+
+    data = result["data"]
+    assert data["count"] == 6
+    assert data["returned"] == 2
+    assert data["has_more"] is True
+    assert data["next_offset"] == 4
+    assert [gene["symbol"] for gene in data["genes"]] == ["C03", "C04"]

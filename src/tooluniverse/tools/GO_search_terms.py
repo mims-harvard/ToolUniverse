@@ -1,7 +1,7 @@
 """
 GO_search_terms
 
-Searches for Gene Ontology (GO) terms by a keyword using the GOlr search engine. Returns GO terms...
+Searches non-obsolete Gene Ontology terms by a keyword or phrase in term labels and synonyms usin...
 """
 
 from typing import Any, Optional, Callable
@@ -10,18 +10,24 @@ from ._shared_client import get_shared_client
 
 def GO_search_terms(
     query: str,
+    rows: Optional[int] = 10,
+    start: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> list[Any]:
     """
-    Searches for Gene Ontology (GO) terms by a keyword using the GOlr search engine. Returns GO terms...
+    Searches non-obsolete Gene Ontology terms by a keyword or phrase in term labels and synonyms usin...
 
     Parameters
     ----------
     query : str
         The keyword to search for, e.g., 'apoptosis' or 'kinase activity'.
+    rows : int
+        Maximum number of matching GO terms to return.
+    start : int
+        Zero-based result offset. Use metadata.next_start to continue.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -31,12 +37,16 @@ def GO_search_terms(
 
     Returns
     -------
-    dict[str, Any]
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"query": query}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {"query": query, "rows": rows, "start": start}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "GO_search_terms",

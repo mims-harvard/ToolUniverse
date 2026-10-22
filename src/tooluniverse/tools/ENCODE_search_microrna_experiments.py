@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def ENCODE_search_microrna_experiments(
-    biosample_term_name: Optional[str | Any] = None,
+    biosample_term_name: Optional[str] = None,
     organism: Optional[str] = "Homo sapiens",
     limit: Optional[int] = 25,
     *,
@@ -22,7 +22,7 @@ def ENCODE_search_microrna_experiments(
 
     Parameters
     ----------
-    biosample_term_name : str | Any
+    biosample_term_name : str
         Biosample name filter (e.g., 'K562', 'GM12878', 'liver', 'heart'). Leave empt...
     organism : str
         Organism scientific name (e.g., 'Homo sapiens', 'Mus musculus').

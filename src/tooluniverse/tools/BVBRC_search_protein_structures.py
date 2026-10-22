@@ -1,7 +1,7 @@
 """
 BVBRC_search_protein_structures
 
-Search for pathogen protein structures in BV-BRC by organism (taxon_id), gene name, or experiment...
+Search for pathogen protein structures in BV-BRC by organism, gene, or method, with explicit pagi...
 """
 
 from typing import Any, Optional, Callable
@@ -9,28 +9,31 @@ from ._shared_client import get_shared_client
 
 
 def BVBRC_search_protein_structures(
-    taxon_id: Optional[str | Any] = None,
-    gene: Optional[str | Any] = None,
-    method: Optional[str | Any] = None,
-    limit: Optional[int | Any] = None,
+    taxon_id: Optional[str] = None,
+    gene: Optional[str] = None,
+    method: Optional[str] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search for pathogen protein structures in BV-BRC by organism (taxon_id), gene name, or experiment...
+    Search for pathogen protein structures in BV-BRC by organism, gene, or method, with explicit pagi...
 
     Parameters
     ----------
-    taxon_id : str | Any
+    taxon_id : str
         NCBI Taxonomy ID. Examples: '2697049' (SARS-CoV-2), '1773' (M. tuberculosis),...
-    gene : str | Any
+    gene : str
         Gene name filter. Examples: 'S' (spike), 'rep' (replicase), 'N' (nucleocapsid).
-    method : str | Any
+    method : str
         Experimental method. Examples: 'X-ray diffraction', 'Electron microscopy', 'S...
-    limit : int | Any
+    limit : int
         Maximum number of results. Default: 10. Max: 100.
+    offset : int
+        Zero-based result offset. Use metadata.next_offset to continue.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def BVBRC_search_protein_structures(
             "gene": gene,
             "method": method,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

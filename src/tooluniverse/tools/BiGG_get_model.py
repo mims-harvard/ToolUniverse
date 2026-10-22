@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def BiGG_get_model(
-    operation: str,
     model_id: str,
+    operation: Optional[str] = "get_model",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

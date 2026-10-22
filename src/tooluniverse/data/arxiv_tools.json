@@ -2,7 +2,7 @@
   {
     "type": "ArXivTool",
     "name": "ArXiv_search_papers",
-    "description": "Search arXiv for papers by keyword using the public arXiv API. Returns papers with title, abstract, authors, publication date, category, and URL.",
+    "description": "Search arXiv using the public Atom API with exact OpenSearch totals and recoverable start pagination. Begin with start=0 and continue with metadata.next_start while metadata.has_more is true. Date filters constrain submittedDate without replacing the numeric pagination offset.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -12,8 +12,16 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Number of papers to return. This sets the maximum number of papers retrieved from arXiv.",
-          "default": 10
+          "description": "Number of papers to return (1-200). This sets the maximum number of papers retrieved from arXiv.",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 200
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Zero-based result offset. For the next page, add the number of papers returned by the current call.",
+          "default": 0
         },
         "sort_by": {
           "type": "string",
@@ -37,6 +45,9 @@
       "required": [
         "query"
       ]
+    },
+    "fields": {
+      "pagination": "arxiv_start"
     },
     "return_schema": {
       "oneOf": [

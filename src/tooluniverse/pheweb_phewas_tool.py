@@ -202,7 +202,8 @@ class PheWebPheWASTool(BaseTool):
         if err:
             return {"status": "error", "error": err}
 
-        limit = arguments.get("limit", 20)
+        limit = min(max(int(arguments.get("limit", 20)), 1), 1000)
+        offset = max(int(arguments.get("offset", 0)), 0)
         max_pval = arguments.get("max_pval")
 
         # Try each candidate variant (multi-allelic rsIDs yield several) and use
@@ -275,7 +276,8 @@ class PheWebPheWASTool(BaseTool):
         ]
         associations = _filter_and_sort_by_pval(associations, max_pval)
         total = len(associations)
-        truncated = total > limit
+        page = associations[offset : offset + limit]
+        has_more = offset + len(page) < total
 
         return {
             "status": "success",
@@ -283,15 +285,19 @@ class PheWebPheWASTool(BaseTool):
                 "variant": canonical,
                 "rsids": data.get("rsids"),
                 "nearest_genes": data.get("nearest_genes"),
-                "associations": associations[:limit],
+                "associations": page,
             },
             "metadata": {
                 "source": self.cfg["label"],
                 "ancestry": self.cfg["ancestry"],
                 "build": self.cfg["build"],
                 "total_associations": total,
-                "returned": min(limit, total),
-                "truncated": truncated,
+                "returned": len(page),
+                "limit": limit,
+                "offset": offset,
+                "has_more": has_more,
+                "truncated": len(page) < total,
+                "next_offset": offset + len(page) if has_more else None,
                 "variant_url": f"{self.cfg['base_url']}/variant/{canonical}",
                 "warnings": warnings,
             },
@@ -454,7 +460,8 @@ class GenebassTool(BaseTool):
         if err:
             return {"status": "error", "error": err}
 
-        limit = arguments.get("limit", 25)
+        limit = min(max(int(arguments.get("limit", 25)), 1), 1000)
+        offset = max(int(arguments.get("offset", 0)), 0)
         max_pval = arguments.get("max_pval")
 
         url = (
@@ -488,12 +495,11 @@ class GenebassTool(BaseTool):
         total = len(associations)
         # Phewas rows carry no human-readable phenotype name; join the top hits
         # against the phenotype catalogue (one cached lookup) for readability.
-        top = associations[:limit]
+        page = associations[offset : offset + limit]
         desc_map = self._phenotype_descriptions()
-        for a in top:
+        for a in page:
             a["description"] = desc_map.get(a.pop("_key"))
-        for a in associations[limit:]:
-            a.pop("_key", None)
+        has_more = offset + len(page) < total
 
         return {
             "status": "success",
@@ -501,14 +507,18 @@ class GenebassTool(BaseTool):
                 "gene_id": gene_meta.get("gene_id", gene_id),
                 "gene_symbol": gene_meta.get("symbol"),
                 "burden_set": burden,
-                "associations": top,
+                "associations": page,
             },
             "metadata": {
                 "source": "Genebass (UK Biobank 394K exomes, SAIGE-GENE+)",
                 "build": "GRCh38",
                 "total_associations": total,
-                "returned": min(limit, total),
-                "truncated": total > limit,
+                "returned": len(page),
+                "limit": limit,
+                "offset": offset,
+                "has_more": has_more,
+                "truncated": len(page) < total,
+                "next_offset": offset + len(page) if has_more else None,
                 "gene_url": f"https://genebass.org/gene/{gene_id}",
                 "warnings": warnings,
             },

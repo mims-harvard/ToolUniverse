@@ -1,7 +1,7 @@
 """
 SGD_get_interactions
 
-Get genetic and physical interactions for a yeast gene from SGD. Returns interaction type (Physic...
+Get and page through genetic and physical interactions for a yeast gene from SGD. Returns true to...
 """
 
 from typing import Any, Optional, Callable
@@ -10,18 +10,24 @@ from ._shared_client import get_shared_client
 
 def SGD_get_interactions(
     sgd_id: str,
+    limit: Optional[int] = 50,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get genetic and physical interactions for a yeast gene from SGD. Returns interaction type (Physic...
+    Get and page through genetic and physical interactions for a yeast gene from SGD. Returns true to...
 
     Parameters
     ----------
     sgd_id : str
         SGD locus identifier. Examples: 'S000003219' (RMR1), 'S000005564' (ACT1), 'S0...
+    limit : int
+        Maximum interactions to return.
+    offset : int
+        Zero-based interaction offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +42,11 @@ def SGD_get_interactions(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"sgd_id": sgd_id}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {"sgd_id": sgd_id, "limit": limit, "offset": offset}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "SGD_get_interactions",

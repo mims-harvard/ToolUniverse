@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def GTEx_get_gene_expression(
     gencode_id: str | list[str],
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_gene_expression",
     tissue_site_detail_id: Optional[list[str]] = None,
     attribute_subset: Optional[str] = None,
     dataset_id: Optional[str] = "gtex_v8",
@@ -20,7 +20,7 @@ def GTEx_get_gene_expression(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
     Get gene expression data at individual sample level (not aggregated). Returns normalized expressi...
 
@@ -49,7 +49,7 @@ def GTEx_get_gene_expression(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

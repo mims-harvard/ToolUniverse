@@ -1,7 +1,7 @@
 """
 Crossref_list_funders
 
-Search and list research funding organizations in the Crossref database. Returns funder details i...
+Search Crossref funding organizations with exact totals and deep cursor pagination. Start with cu...
 """
 
 from typing import Any, Optional, Callable
@@ -11,13 +11,14 @@ from ._shared_client import get_shared_client
 def Crossref_list_funders(
     query: Optional[str] = None,
     limit: Optional[int] = 20,
+    cursor: Optional[str] = "*",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Optional[list[Any]]:
     """
-    Search and list research funding organizations in the Crossref database. Returns funder details i...
+    Search Crossref funding organizations with exact totals and deep cursor pagination. Start with cu...
 
     Parameters
     ----------
@@ -25,6 +26,8 @@ def Crossref_list_funders(
         Search query for funder names (e.g., 'National Science Foundation', 'NIH', 'E...
     limit : int
         Maximum number of funders to return (default: 20, max: 100).
+    cursor : str
+        Crossref deep-pagination cursor. Use '*' initially, then metadata.next_cursor.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -39,7 +42,11 @@ def Crossref_list_funders(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"query": query, "limit": limit}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {"query": query, "limit": limit, "cursor": cursor}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "Crossref_list_funders",

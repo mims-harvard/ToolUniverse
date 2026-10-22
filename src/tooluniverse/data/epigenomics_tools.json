@@ -902,7 +902,7 @@
   {
     "name": "GEO_search_methylation_datasets",
     "type": "EpigenomicsTool",
-    "description": "Search NCBI GEO for DNA methylation array datasets, including Illumina 450K, EPIC (850K), and other methylation profiling platforms. Returns dataset accessions (GSE IDs), titles, summaries, platform information, sample counts, and organisms. DNA methylation arrays measure methylation levels at hundreds of thousands of CpG sites genome-wide. Use this to find published methylation studies for specific conditions, tissues, or diseases. Follow up with GEO_get_dataset_details for full metadata.",
+    "description": "Search NCBI GEO GSE series for DNA methylation datasets with exact offset pagination. Returns GSE accessions and summaries plus the exact series total, candidate/parsed counts, has_more, and next_offset. Continue with offset=next_offset; GSM samples and GPL platforms are excluded upstream so pagination and total describe datasets only.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -920,7 +920,13 @@
           "default": 20,
           "minimum": 1,
           "maximum": 100,
-          "description": "Maximum number of dataset IDs to return."
+          "description": "Page size (1-100)."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based GSE result offset. Continue with data.next_offset."
         }
       },
       "required": [
@@ -938,6 +944,14 @@
             "total": {
               "type": "integer"
             },
+            "returned": {"type": "integer"},
+            "candidate_returned": {"type": "integer"},
+            "omitted_records": {"type": "integer"},
+            "offset": {"type": "integer"},
+            "limit": {"type": "integer"},
+            "has_more": {"type": "boolean"},
+            "next_offset": {"type": ["integer", "null"]},
+            "truncated": {"type": "boolean"},
             "datasets": {
               "type": "array",
               "items": {
@@ -1022,7 +1036,7 @@
   {
     "name": "GEO_search_chipseq_datasets",
     "type": "EpigenomicsTool",
-    "description": "Search NCBI GEO for ChIP-seq (Chromatin Immunoprecipitation followed by sequencing) datasets. ChIP-seq profiles genome-wide binding of proteins (transcription factors, histones) to DNA. Returns dataset accessions, titles, summaries, and sample counts. Use this to find ChIP-seq studies for specific transcription factors, histone marks, or in specific cell types/diseases.",
+    "description": "Search NCBI GEO GSE series for ChIP-seq datasets with exact offset pagination. Returns GSE accessions and summaries plus the exact series total, candidate/parsed counts, has_more, and next_offset. GSM samples and GPL platforms are excluded upstream, keeping returned records and pagination in the same dataset result space.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1040,7 +1054,13 @@
           "default": 20,
           "minimum": 1,
           "maximum": 100,
-          "description": "Maximum number of dataset IDs to return."
+          "description": "Page size (1-100)."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based GSE result offset. Continue with data.next_offset."
         }
       },
       "required": [
@@ -1058,6 +1078,14 @@
             "total": {
               "type": "integer"
             },
+            "returned": {"type": "integer"},
+            "candidate_returned": {"type": "integer"},
+            "omitted_records": {"type": "integer"},
+            "offset": {"type": "integer"},
+            "limit": {"type": "integer"},
+            "has_more": {"type": "boolean"},
+            "next_offset": {"type": ["integer", "null"]},
+            "truncated": {"type": "boolean"},
             "datasets": {
               "type": "array",
               "items": {
@@ -1478,7 +1506,7 @@
   {
     "name": "GEO_search_rnaseq_datasets",
     "type": "EpigenomicsTool",
-    "description": "Search NCBI GEO for RNA-seq gene expression datasets by query keyword, disease, tissue, or gene of interest. Returns dataset accessions (GSE IDs), titles, summaries, organism, and sample counts. Use this to find transcriptomics experiments relevant to a biological question. Covers bulk RNA-seq and total RNA-seq studies across all tissues and diseases.",
+    "description": "Search NCBI GEO GSE series for RNA-seq datasets with exact offset pagination. Returns GSE accessions and summaries plus the exact series total, candidate/parsed counts, has_more, and next_offset. Continue with offset=next_offset; GSM samples and GPL platforms are excluded upstream.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1500,6 +1528,12 @@
           "minimum": 1,
           "maximum": 100,
           "description": "Maximum number of results to return (1-100)."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based GSE result offset. Continue with data.next_offset."
         }
       },
       "additionalProperties": false
@@ -1515,6 +1549,14 @@
             "total": {
               "type": "integer"
             },
+            "returned": {"type": "integer"},
+            "candidate_returned": {"type": "integer"},
+            "omitted_records": {"type": "integer"},
+            "offset": {"type": "integer"},
+            "limit": {"type": "integer"},
+            "has_more": {"type": "boolean"},
+            "next_offset": {"type": ["integer", "null"]},
+            "truncated": {"type": "boolean"},
             "datasets": {
               "type": "array",
               "items": {
@@ -1595,7 +1637,7 @@
   {
     "name": "GEO_search_atacseq_datasets",
     "type": "EpigenomicsTool",
-    "description": "Search NCBI GEO for ATAC-seq chromatin accessibility datasets by query keyword, tissue, or cell type. Returns dataset accessions (GSE IDs), titles, summaries, organism, and sample counts. ATAC-seq measures open chromatin regions and is used to map regulatory elements, enhancers, and TF binding sites genome-wide.",
+    "description": "Search NCBI GEO GSE series for ATAC-seq datasets with exact offset pagination. Returns GSE accessions and summaries plus the exact series total, candidate/parsed counts, has_more, and next_offset. Continue with offset=next_offset; GSM samples and GPL platforms are excluded upstream.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1617,6 +1659,12 @@
           "minimum": 1,
           "maximum": 100,
           "description": "Maximum number of results to return (1-100)."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based GSE result offset. Continue with data.next_offset."
         }
       },
       "additionalProperties": false
@@ -1632,6 +1680,14 @@
             "total": {
               "type": "integer"
             },
+            "returned": {"type": "integer"},
+            "candidate_returned": {"type": "integer"},
+            "omitted_records": {"type": "integer"},
+            "offset": {"type": "integer"},
+            "limit": {"type": "integer"},
+            "has_more": {"type": "boolean"},
+            "next_offset": {"type": ["integer", "null"]},
+            "truncated": {"type": "boolean"},
             "datasets": {
               "type": "array",
               "items": {

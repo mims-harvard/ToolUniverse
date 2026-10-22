@@ -105,14 +105,24 @@ class ReactomeInteractorsTool(BaseTool):
                 "error": "accession parameter is required (UniProt accession, e.g., P04637)",
             }
 
-        page_size = arguments.get("page_size") or 20
+        page_size = arguments.get("page_size", 20)
+        page = arguments.get("page", 1)
+        if page_size is None:
+            page_size = 20
+        if isinstance(page_size, bool) or not isinstance(page_size, int) or page_size < 1:
+            return {
+                "status": "error",
+                "error": "page_size must be a positive integer",
+            }
+        if isinstance(page, bool) or not isinstance(page, int) or page < 1:
+            return {"status": "error", "error": "page must be a positive integer"}
 
         url = f"{REACTOME_BASE_URL}/interactors/static/molecule/{accession}/details"
         # The requested page_size is passed through unclamped: Reactome honours
         # any pageSize on this endpoint (live-verified: pageSize=300 for P04637
         # returns all 249 interactors), so clamping here would silently truncate
         # results the caller explicitly asked for.
-        params = {"page": 1, "pageSize": page_size}
+        params = {"page": page, "pageSize": page_size}
 
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
@@ -122,6 +132,7 @@ class ReactomeInteractorsTool(BaseTool):
 
         entities = data.get("entities", [])
         if not entities:
+            has_more = total is not None and page * page_size < total
             return {
                 "status": "success",
                 "data": {
@@ -130,6 +141,9 @@ class ReactomeInteractorsTool(BaseTool):
                     "total_is_exact": total is not None,
                     "returned_interactors": 0,
                     "truncated": bool(total),
+                    "page": page,
+                    "has_more": has_more,
+                    "next_page": page + 1 if has_more else None,
                     "interactors": [],
                 },
                 "metadata": {"source": "Reactome Interactors (IntAct)"},
@@ -152,19 +166,28 @@ class ReactomeInteractorsTool(BaseTool):
 
         returned = len(interactors)
         truncated = total is not None and returned < total
+        has_more = total is not None and page * page_size < total
         result = {
             "accession": entity.get("acc"),
             "total_interactors": total if total is not None else returned,
             "total_is_exact": total is not None,
             "returned_interactors": returned,
             "truncated": truncated,
+            "page": page,
+            "has_more": has_more,
+            "next_page": page + 1 if has_more else None,
             "interactors": interactors,
         }
         if truncated:
             result["note"] = (
                 f"Showing {returned} of {total} interactors "
-                f"(page_size={page_size}). Re-run with page_size={total} "
-                "to retrieve all of them."
+                f"on page {page} (page_size={page_size}). "
+                + (
+                    f"Continue with page={page + 1}, or re-run with "
+                    f"page_size={total} to retrieve all of them."
+                    if has_more
+                    else "No later page is available."
+                )
             )
         elif total is None:
             result["note"] = (
@@ -233,12 +256,26 @@ class ReactomeInteractorsTool(BaseTool):
 
         species = arguments.get("species") or "Homo sapiens"
         types = arguments.get("types")
+        limit = arguments.get("limit", 50)
+        offset = arguments.get("offset", 0)
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 1000:
+            return {
+                "status": "error",
+                "error": "limit must be an integer from 1 to 1000",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+            }
 
         url = f"{REACTOME_BASE_URL}/search/query"
         params = {
             "query": query,
             "species": species,
             "cluster": "true",
+            "Start row": offset,
+            "rows": limit,
         }
         if types:
             params["types"] = types
@@ -248,9 +285,21 @@ class ReactomeInteractorsTool(BaseTool):
         data = response.json()
 
         results = []
+        result_groups = []
         for group in data.get("results", []):
             type_name = group.get("typeName", "")
-            for entry in group.get("entries", []):
+            entries = group.get("entries", [])
+            group_total = group.get("entriesCount")
+            if not isinstance(group_total, int):
+                group_total = len(entries)
+            result_groups.append(
+                {
+                    "type": type_name,
+                    "total": group_total,
+                    "returned": len(entries),
+                }
+            )
+            for entry in entries:
                 # Strip HTML highlighting
                 name = (
                     (entry.get("name") or "")
@@ -268,13 +317,33 @@ class ReactomeInteractorsTool(BaseTool):
                     }
                 )
 
+        total = data.get("numberOfMatches")
+        if not isinstance(total, int):
+            total = len(results)
+        has_more = any(
+            offset + group["returned"] < group["total"] for group in result_groups
+        )
         return {
             "status": "success",
-            "data": results[:50],
+            "data": results,
             "metadata": {
                 "source": "Reactome Content Service",
                 "query": query,
-                "total_matches": data.get("numberOfMatches", len(results)),
+                "total_matches": total,
+                "returned": len(results),
+                # Reactome applies rows independently to every result type,
+                # not as a global response limit. Keep ``limit`` as an input
+                # compatibility alias, but disclose its real scope.
+                "limit": limit,
+                "limit_scope": "per_result_group",
+                "rows_per_group": limit,
+                "offset": offset,
+                "has_more": has_more,
+                "truncated": len(results) < total,
+                "next_offset": offset + limit if has_more else None,
+                "result_set_complete": offset == 0 and len(results) == total,
+                "pagination_stalled": bool(has_more and not results),
                 "groups": data.get("numberOfGroups", 0),
+                "result_groups": result_groups,
             },
         }

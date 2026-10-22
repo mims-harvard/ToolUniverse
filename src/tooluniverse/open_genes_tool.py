@@ -151,14 +151,24 @@ class OpenGenesSearchTool(BaseTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         params: Dict[str, Any] = {}
-        try:
-            params["pageSize"] = max(1, min(int(arguments.get("limit") or 20), 100))
-        except (TypeError, ValueError):
-            params["pageSize"] = 20
-        try:
-            params["page"] = max(1, int(arguments.get("page") or 1))
-        except (TypeError, ValueError):
-            params["page"] = 1
+        limit = arguments.get("limit", 20)
+        page = arguments.get("page", 1)
+        if limit is None:
+            limit = 20
+        if page is None:
+            page = 1
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 1000:
+            return {
+                "status": "error",
+                "error": "limit must be an integer between 1 and 1000",
+            }
+        if isinstance(page, bool) or not isinstance(page, int) or page < 1:
+            return {
+                "status": "error",
+                "error": "page must be a positive integer",
+            }
+        params["pageSize"] = limit
+        params["page"] = page
 
         payload = _fetch_json("gene/search", self.timeout, params=params)
         if isinstance(payload, dict) and payload.get("status") == "error":
@@ -166,13 +176,28 @@ class OpenGenesSearchTool(BaseTool):
 
         items = payload.get("items", []) if isinstance(payload, dict) else []
         opts = payload.get("options", {}) if isinstance(payload, dict) else {}
+        pagination = opts.get("pagination", {}) if isinstance(opts, dict) else {}
+        total = opts.get("total") if isinstance(opts, dict) else None
+        total_pages = pagination.get("pagesTotal")
+        current_page = pagination.get("page", page)
+        has_more = (
+            isinstance(total_pages, int)
+            and isinstance(current_page, int)
+            and current_page < total_pages
+        )
         return {
             "status": "success",
             "data": [_summarize(g) for g in items if isinstance(g, dict)],
             "metadata": {
-                "total_aging_genes": opts.get("total"),
-                "page": params["page"],
+                "total_aging_genes": total,
+                "total_is_exact": isinstance(total, int),
+                "page": current_page,
+                "page_size": pagination.get("pageSize", limit),
+                "total_pages": total_pages,
                 "returned": len(items),
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_page": current_page + 1 if has_more else None,
                 "source": "Open Genes",
             },
         }

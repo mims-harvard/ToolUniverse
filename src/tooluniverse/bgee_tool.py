@@ -107,18 +107,69 @@ class BgeeTool(BaseTool):
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
+    @staticmethod
+    def _pagination_values(
+        arguments: Dict[str, Any],
+        *,
+        default_limit: int,
+        max_limit: int = 500,
+        max_offset: int | None = None,
+    ) -> tuple[int, int] | Dict[str, str]:
+        """Validate pagination for direct callers as strictly as the JSON schema.
+
+        Tool classes can be invoked without ToolUniverse's schema-validation
+        layer, so coercing strings or booleans with ``int()`` would otherwise
+        turn malformed inputs into plausible but incorrect pages.
+        """
+        limit = arguments.get("limit", default_limit)
+        offset = arguments.get("offset", 0)
+        if isinstance(limit, bool) or not isinstance(limit, int):
+            return {"status": "error", "error": "limit must be an integer"}
+        if not 1 <= limit <= max_limit:
+            return {
+                "status": "error",
+                "error": f"limit must be between 1 and {max_limit}",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int):
+            return {"status": "error", "error": "offset must be an integer"}
+        if offset < 0:
+            return {"status": "error", "error": "offset must be non-negative"}
+        if max_offset is not None and offset > max_offset:
+            return {
+                "status": "error",
+                "error": f"offset must not exceed {max_offset} for this endpoint",
+            }
+        return limit, offset
+
     def _gene_search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search for genes by name or symbol across species."""
         query = arguments.get("query", "")
         if not query:
             return {"status": "error", "error": "query parameter is required"}
 
+        pagination = self._pagination_values(
+            arguments, default_limit=20, max_offset=9_999
+        )
+        if isinstance(pagination, dict):
+            return pagination
+        limit, offset = pagination
+        species_id = arguments.get("species_id")
+
+        # Bgee's official CommandGene endpoint accepts ``limit`` (up to
+        # 10,000), but hard-codes the search-service offset to zero.  Request
+        # enough leading records to satisfy the requested page and then slice
+        # locally.  The 10,000-record upstream ceiling is reported below so a
+        # broad cross-species query never looks complete when it is not.
+        upstream_limit = min(offset + limit, 10_000)
         params = {
             "page": "gene",
             "action": "search",
             "query": query,
+            "limit": upstream_limit,
             "display_type": "json",
         }
+        if species_id is not None:
+            params["species_id"] = str(species_id)
 
         response = requests.get(BGEE_BASE_URL, params=params, timeout=self.timeout)
         response.raise_for_status()
@@ -133,8 +184,9 @@ class BgeeTool(BaseTool):
         result_data = data.get("data", {})
         gene_matches = result_data.get("result", {}).get("geneMatches", [])
 
+        page_matches = gene_matches[offset : offset + limit]
         results = []
-        for match in gene_matches[:20]:  # Limit to 20 results
+        for match in page_matches:
             gene = match.get("gene", {})
             species = gene.get("species", {})
             results.append(
@@ -150,16 +202,42 @@ class BgeeTool(BaseTool):
                 }
             )
 
+        total_matches = int(
+            result_data.get("result", {}).get("totalMatchCount", len(gene_matches))
+        )
+        accessible_matches = min(total_matches, 10_000)
+        next_offset = offset + len(results)
+        has_more = next_offset < accessible_matches
+        pagination_stalled = not results and offset < accessible_matches
+
         return {
             "status": "success",
             "data": results,
             "metadata": {
                 "source": "Bgee",
                 "query": query,
-                "total_matches": result_data.get("result", {}).get(
-                    "totalMatchCount", 0
-                ),
+                "species_id": str(species_id) if species_id is not None else None,
+                "total_matches": total_matches,
+                "accessible_matches": accessible_matches,
                 "returned": len(results),
+                "limit": limit,
+                "offset": offset,
+                "has_more": has_more,
+                "truncated": has_more or total_matches > accessible_matches,
+                "next_offset": next_offset if has_more else None,
+                "result_set_complete": bool(
+                    offset == 0
+                    and len(results) == total_matches
+                    and total_matches <= accessible_matches
+                ),
+                "pagination_stalled": pagination_stalled,
+                "warning": (
+                    "Bgee reported additional accessible matches but returned no records at this offset."
+                    if pagination_stalled
+                    else None
+                ),
+                "upstream_truncated": total_matches > accessible_matches,
+                "upstream_limit": 10_000,
             },
         }
 
@@ -178,6 +256,10 @@ class BgeeTool(BaseTool):
                 "error": "species_id parameter is required (NCBI taxon ID, e.g., 9606 for human)",
             }
 
+        pagination = self._pagination_values(arguments, default_limit=50)
+        if isinstance(pagination, dict):
+            return pagination
+        limit, offset = pagination
         params = {
             "page": "gene",
             "action": "expression",
@@ -200,7 +282,7 @@ class BgeeTool(BaseTool):
         calls = expr_data.get("calls", [])
 
         results = []
-        for call in calls[:50]:  # Limit to 50 expression calls
+        for call in calls[offset : offset + limit]:
             condition = call.get("condition", {})
             anat_entity = condition.get("anatEntity", {})
             cell_type = condition.get("cellType", {})
@@ -221,6 +303,8 @@ class BgeeTool(BaseTool):
 
             results.append(entry)
 
+        next_offset = offset + len(results)
+        has_more = next_offset < len(calls)
         return {
             "status": "success",
             "data": results,
@@ -230,6 +314,13 @@ class BgeeTool(BaseTool):
                 "species_id": str(species_id),
                 "total_calls": len(calls),
                 "returned": len(results),
+                "limit": limit,
+                "offset": offset,
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_offset": next_offset if has_more else None,
+                "result_set_complete": offset == 0 and len(results) == len(calls),
+                "pagination_stalled": False,
                 "data_types": expr_data.get("requestedDataTypes", []),
             },
         }

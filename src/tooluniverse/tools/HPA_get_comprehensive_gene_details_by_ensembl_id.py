@@ -10,9 +10,9 @@ from ._shared_client import get_shared_client
 
 def HPA_get_comprehensive_gene_details_by_ensembl_id(
     ensembl_id: str,
-    include_images: bool,
-    include_antibodies: bool,
-    include_expression: bool,
+    include_images: Optional[bool] = True,
+    include_antibodies: Optional[bool] = True,
+    include_expression: Optional[bool] = True,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def SynBioHub_get_part(
-    display_id: Optional[str | Any] = None,
-    part_uri: Optional[str | Any] = None,
+    display_id: Optional[str] = None,
+    part_uri: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -21,9 +21,9 @@ def SynBioHub_get_part(
 
     Parameters
     ----------
-    display_id : str | Any
+    display_id : str
         BioBrick/part display ID from the iGEM collection. Examples: 'BBa_E0040' (GFP...
-    part_uri : str | Any
+    part_uri : str
         Full SynBioHub URI for the part (from search results). Example: 'https://synb...
     stream_callback : Callable, optional
         Callback for streaming output

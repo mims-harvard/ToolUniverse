@@ -1,7 +1,7 @@
 """
 ReactomeAnalysis_species_comparison
 
-Perform Reactome pathway analysis with cross-species projection. Submit protein/gene identifiers ...
+Perform Reactome identifier projection: submit protein/gene identifiers and Reactome automaticall...
 """
 
 from typing import Any, Optional, Callable
@@ -10,24 +10,27 @@ from ._shared_client import get_shared_client
 
 def ReactomeAnalysis_species_comparison(
     identifiers: str,
-    species: Optional[int | Any] = None,
-    page_size: Optional[int | Any] = None,
+    species: Optional[int] = None,
+    page_size: Optional[int] = 20,
+    page: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Perform Reactome pathway analysis with cross-species projection. Submit protein/gene identifiers ...
+    Perform Reactome identifier projection: submit protein/gene identifiers and Reactome automaticall...
 
     Parameters
     ----------
     identifiers : str
         Newline-separated list of gene/protein identifiers from any species. Supports...
-    species : int | Any
-        NCBI taxonomy ID of the source species (default 9606 for human). Examples: 10...
-    page_size : int | Any
+    species : int
+        Unsupported by this Reactome endpoint. Supplying it returns an explicit error...
+    page_size : int
         Number of pathways to return (default 20, max 50).
+    page : int
+        One-based pathway result page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +51,7 @@ def ReactomeAnalysis_species_comparison(
             "identifiers": identifiers,
             "species": species,
             "page_size": page_size,
+            "page": page,
         }.items()
         if v is not None
     }

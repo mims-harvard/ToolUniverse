@@ -1,7 +1,7 @@
 """
 FDAGSRS_get_substance
 
-Get full FDA substance record by UNII (Unique Ingredient Identifier) code. Returns complete subst...
+Get the full FDA substance record by UNII, including every inlined name and code from GSRS view=f...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def FDAGSRS_get_substance(
     validate: bool = True,
 ) -> Any:
     """
-    Get full FDA substance record by UNII (Unique Ingredient Identifier) code. Returns complete subst...
+    Get the full FDA substance record by UNII, including every inlined name and code from GSRS view=f...
 
     Parameters
     ----------

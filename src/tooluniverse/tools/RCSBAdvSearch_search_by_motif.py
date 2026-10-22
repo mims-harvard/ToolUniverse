@@ -13,6 +13,7 @@ def RCSBAdvSearch_search_by_motif(
     pattern_type: Optional[str] = None,
     sequence_type: Optional[str] = None,
     rows: Optional[int] = None,
+    start: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -30,7 +31,9 @@ def RCSBAdvSearch_search_by_motif(
     sequence_type : str
         Sequence type: 'protein' (default) or 'dna' or 'rna'.
     rows : int
-        Number of results to return (default: 10, max: 50).
+        Number of results to return per page (default: 10, max: 50). Requests above 5...
+    start : int
+        Zero-based index of the first result to return, for paging through a result s...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def RCSBAdvSearch_search_by_motif(
             "pattern_type": pattern_type,
             "sequence_type": sequence_type,
             "rows": rows,
+            "start": start,
         }.items()
         if v is not None
     }

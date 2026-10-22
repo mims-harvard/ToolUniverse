@@ -28,7 +28,7 @@ def BioTools_search_by_topic(
     page : int
         Page number (1-based). Default: 1.
     size : int
-        Results per page (1-50). Default: 10.
+        Results per page (1-100). Mapped to per_page.
     format : str
         Response format. Must be 'json'.
     stream_callback : Callable, optional

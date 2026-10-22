@@ -1,7 +1,7 @@
 [
   {
     "name": "SAbDab_search_structures",
-    "description": "Search SAbDab structural antibody database. Returns a direct browse URL to matching antibody structures \u2014 SAbDab's search endpoint does not expose a JSON API, so use SAbDab_get_structure with a known PDB ID for structured data. Tip: retrieve the full SAbDab summary TSV from https://opig.stats.ox.ac.uk/webapps/sabdab-sabpred/sabdab/summary/?all=true for bulk filtering.",
+    "description": "Search the current SAbDab2 antibody-structure JSON API. Returns full antibody-instance records plus exact total/offset pagination metadata; use next_offset while has_more is true. query/antigen searches bound-antigen names. Optional filters mirror the web interface, including species, resolution, method, antigen/antibody/construct type, and PDB ID.",
     "type": "SAbDabTool",
     "parameter": {
       "type": "object",
@@ -13,7 +13,7 @@
         },
         "query": {
           "type": "string",
-          "description": "Search query - antigen name, species, or keywords (e.g., 'HER2', 'anti-CD20')"
+          "description": "Bound-antigen name search (e.g., 'SARS-CoV-2' or 'receptor-binding domain'). This is not a generic keyword search."
         },
         "antigen": {
           "type": "string",
@@ -21,26 +21,89 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum results (default: 50)",
-          "default": 50
+          "description": "Page size, 1-100 (default: 50).",
+          "default": 50,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based result offset. Use next_offset from the previous response.",
+          "default": 0,
+          "minimum": 0
+        },
+        "pdb_id": {
+          "type": "string",
+          "description": "Restrict to one four-character PDB ID."
+        },
+        "species": {
+          "type": "string",
+          "description": "Antibody organism scientific name, e.g. 'homo sapiens'."
+        },
+        "resolution_max": {
+          "type": "number",
+          "description": "Maximum structure resolution in angstroms.",
+          "exclusiveMinimum": 0
+        },
+        "method": {
+          "type": "string",
+          "description": "Experimental method, e.g. 'X-ray diffraction'."
+        },
+        "antigen_type": {
+          "type": "string",
+          "description": "SAbDab2 antigen type filter."
+        },
+        "antibody_type": {
+          "type": "string",
+          "description": "SAbDab2 antibody type filter, e.g. FAB."
+        },
+        "construct_type": {
+          "type": "string",
+          "description": "SAbDab2 construct type filter."
         }
       },
       "required": []
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "string"
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "structures": {"type": "array"},
+            "count": {"type": "integer"},
+            "returned_count": {"type": "integer"},
+            "total": {"type": "integer"},
+            "limit": {"type": "integer"},
+            "offset": {"type": "integer"},
+            "has_more": {"type": "boolean"},
+            "next_offset": {"type": ["integer", "null"]},
+            "result_set_complete": {"type": "boolean"},
+            "query": {"type": "string"},
+            "filters_applied": {"type": "object"}
+          },
+          "required": [
+            "structures",
+            "returned_count",
+            "total",
+            "limit",
+            "offset",
+            "has_more",
+            "result_set_complete"
+          ]
         },
-        "data": {
-          "type": "object"
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
         }
-      }
+      ]
     },
     "test_examples": [
       {
-        "query": "anti-CD20"
+        "query": "SARS-CoV-2",
+        "limit": 2
       }
     ],
     "fields": {
@@ -49,7 +112,7 @@
   },
   {
     "name": "SAbDab_get_structure",
-    "description": "Get antibody structure details from SAbDab by PDB ID. Returns CDR annotations, chain information, and antigen binding data. Useful for structural analysis of antibody-antigen complexes.",
+    "description": "Get complete current SAbDab2 structure metadata by four-character PDB ID. Returns the full source record, polymer/non-polymer chains, complete antibody instances with CDR and numbering data, and enriched antigen-binding instances. source_record_complete confirms the upstream record was preserved.",
     "type": "SAbDabTool",
     "parameter": {
       "type": "object",
@@ -71,15 +134,32 @@
       "required": []
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "string"
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "pdb_id": {"type": "string"},
+            "sabdab2_pdb_id": {"type": "string"},
+            "name": {"type": ["string", "null"]},
+            "resolution": {"type": ["number", "null"]},
+            "method": {"type": ["string", "null"]},
+            "polymer_instances": {"type": "array"},
+            "non_polymer_instances": {"type": "array"},
+            "antibody_instances": {"type": "array"},
+            "antigen_instances": {"type": "array"},
+            "source_record": {"type": "object"},
+            "source_record_complete": {"type": "boolean"}
+          },
+          "required": ["pdb_id"]
         },
-        "data": {
-          "type": "object"
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -92,7 +172,7 @@
   },
   {
     "name": "SAbDab_get_structure_summary",
-    "description": "Get per-structure curated antibody annotations from SAbDab for a PDB ID. Returns the SAbDab summary TSV row(s): antigen name/type/species, heavy/light chain species and IMGT V-gene subclass, resolution, experimental method, R-free / R-factor, scFv and engineered flags, and (when curated) binding affinity Kd, delta_G, affinity method, temperature and PMID. Use for antibody-antigen complex characterization. Pass a 4-character PDB ID (e.g., 7d6i, 3hfm). No authentication required.",
+    "description": "Get current per-structure SAbDab2 annotations for a PDB ID. Returns summary fields plus full antibody/CDR records, antigen instances and the complete upstream PDB record. Legacy affinity fields absent from SAbDab2 are explicitly null instead of silently omitted. Pass a four-character PDB ID (e.g., 7d6i, 3hfm).",
     "type": "SAbDabTool",
     "parameter": {
       "type": "object",
@@ -125,107 +205,53 @@
             "pdb_id": {
               "type": "string"
             },
+            "sabdab2_pdb_id": {
+              "type": "string"
+            },
+            "name": {
+              "type": ["string", "null"]
+            },
             "antigen_name": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": ["string", "null"]
+            },
+            "antigen_type": {
+              "type": ["string", "null"]
             },
             "antigen_species": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": ["string", "null"]
             },
             "heavy_species": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": ["string", "null"]
             },
             "light_species": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": ["string", "null"]
             },
             "resolution": {
-              "type": [
-                "number",
-                "string",
-                "null"
-              ]
+              "type": ["number", "string", "null"]
             },
             "method": {
-              "type": [
-                "string",
-                "null"
-              ]
+              "type": ["string", "null"]
             },
             "r_free": {
-              "type": [
-                "number",
-                "string",
-                "null"
-              ]
+              "type": ["number", "string", "null"]
             },
             "r_factor": {
-              "type": [
-                "number",
-                "string",
-                "null"
-              ]
-            },
-            "heavy_subclass": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "light_subclass": {
-              "type": [
-                "string",
-                "null"
-              ]
-            },
-            "scfv": {
-              "type": [
-                "boolean",
-                "null"
-              ]
-            },
-            "engineered": {
-              "type": [
-                "boolean",
-                "null"
-              ]
-            },
-            "affinity": {
-              "type": [
-                "number",
-                "string",
-                "null"
-              ]
-            },
-            "delta_g": {
-              "type": [
-                "number",
-                "string",
-                "null"
-              ]
-            },
-            "pmid": {
-              "type": [
-                "integer",
-                "string",
-                "null"
-              ]
+              "type": ["number", "string", "null"]
             },
             "chains": {
               "type": "array"
             },
             "count": {
               "type": "integer"
+            },
+            "antigen_instances": {
+              "type": "array"
+            },
+            "source_record": {
+              "type": "object"
+            },
+            "source_record_complete": {
+              "type": "boolean"
             }
           },
           "required": [
@@ -261,7 +287,7 @@
   },
   {
     "name": "SAbDab_get_summary",
-    "description": "Get SAbDab database summary and statistics. Returns information about database content, features, and access URLs. Good starting point for exploring antibody structural data.",
+    "description": "Get live SAbDab2 database statistics, including antibody instances, PDB entries, canonical SAbDab2 entries, antigen-bound instances, experimental-method counts and last-update time. Never substitutes static prose for unavailable live statistics.",
     "type": "SAbDabTool",
     "parameter": {
       "type": "object",
@@ -275,15 +301,36 @@
       "required": []
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "status": {
-          "type": "string"
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "antibody_instances": {"type": "integer"},
+            "PDB_entries": {"type": "integer"},
+            "SAbDab2_entries": {"type": "integer"},
+            "with_antigen": {"type": "integer"},
+            "last_update": {"type": "string"},
+            "experimental_methods": {
+              "type": "object",
+              "additionalProperties": {"type": "integer"}
+            }
+          },
+          "required": [
+            "antibody_instances",
+            "PDB_entries",
+            "SAbDab2_entries",
+            "with_antigen",
+            "last_update"
+          ]
         },
-        "data": {
-          "type": "object"
+        {
+          "type": "object",
+          "properties": {
+            "error": {"type": "string"}
+          },
+          "required": ["error"]
         }
-      }
+      ]
     },
     "test_examples": [
       {}

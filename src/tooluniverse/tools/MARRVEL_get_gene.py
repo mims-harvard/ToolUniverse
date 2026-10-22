@@ -1,7 +1,7 @@
 """
 MARRVEL_get_gene
 
-Get aggregated identity and annotation for a human gene by symbol from MARRVEL: cross-references ...
+Get a complete normalized MARRVEL human-gene record by symbol: HGNC/Ensembl/Entrez/UniProt cross-...
 """
 
 from typing import Any, Optional, Callable
@@ -9,19 +9,25 @@ from ._shared_client import get_shared_client
 
 
 def MARRVEL_get_gene(
-    symbol: str,
+    symbol: Optional[str] = None,
+    gene_symbol: Optional[str] = None,
+    gene: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get aggregated identity and annotation for a human gene by symbol from MARRVEL: cross-references ...
+    Get a complete normalized MARRVEL human-gene record by symbol: HGNC/Ensembl/Entrez/UniProt cross-...
 
     Parameters
     ----------
     symbol : str
-        HGNC gene symbol, e.g. 'CFTR', 'BRCA1'.
+        HGNC gene symbol, e.g. 'CFTR', 'BRCA1'. Input is normalized to uppercase beca...
+    gene_symbol : str
+        Alias for symbol. If multiple aliases are supplied, all must identify the sam...
+    gene : str
+        Alias for symbol. If multiple aliases are supplied, all must identify the sam...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +42,11 @@ def MARRVEL_get_gene(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"symbol": symbol}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {"symbol": symbol, "gene_symbol": gene_symbol, "gene": gene}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "MARRVEL_get_gene",

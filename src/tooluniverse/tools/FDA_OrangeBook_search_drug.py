@@ -1,7 +1,7 @@
 """
 FDA_OrangeBook_search_drug
 
-Search FDA Drugs@FDA database by brand name, generic name, or application number. Returns approva...
+Search FDA Drugs@FDA by brand name, generic name, or application number. Results use native openF...
 """
 
 from typing import Any, Optional, Callable
@@ -9,18 +9,19 @@ from ._shared_client import get_shared_client
 
 
 def FDA_OrangeBook_search_drug(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "search_drug",
     brand_name: Optional[str] = None,
     generic_name: Optional[str] = None,
     application_number: Optional[str] = None,
     limit: Optional[int] = 10,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search FDA Drugs@FDA database by brand name, generic name, or application number. Returns approva...
+    Search FDA Drugs@FDA by brand name, generic name, or application number. Results use native openF...
 
     Parameters
     ----------
@@ -34,6 +35,8 @@ def FDA_OrangeBook_search_drug(
         FDA application number (e.g., 'NDA020402', 'ANDA078394')
     limit : int
         Maximum number of results (1-100, default 10)
+    offset : int
+        Zero-based Drugs@FDA result offset. Continue with next_offset while has_more ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def FDA_OrangeBook_search_drug(
             "generic_name": generic_name,
             "application_number": application_number,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

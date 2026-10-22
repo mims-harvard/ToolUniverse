@@ -1,7 +1,7 @@
 """
 OpenFDA_search_device_510k
 
-Search the FDA 510(k) premarket notification database via openFDA. Contains clearances for medica...
+Search the FDA 510(k) premarket notification database via openFDA with exact totals and skip pagi...
 """
 
 from typing import Any, Optional, Callable
@@ -10,21 +10,24 @@ from ._shared_client import get_shared_client
 
 def OpenFDA_search_device_510k(
     search: str,
-    limit: Optional[int | Any] = None,
+    limit: Optional[int] = 5,
+    skip: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search the FDA 510(k) premarket notification database via openFDA. Contains clearances for medica...
+    Search the FDA 510(k) premarket notification database via openFDA with exact totals and skip pagi...
 
     Parameters
     ----------
     search : str
         Lucene query for 510(k) devices (e.g., 'device_name:stethoscope', 'applicant:...
-    limit : int | Any
+    limit : int
         Maximum number of results (default 5, max 100)
+    skip : int
+        Number of matching records to skip. Continue with metadata.next_skip.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,7 +43,9 @@ def OpenFDA_search_device_510k(
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
-        k: v for k, v in {"search": search, "limit": limit}.items() if v is not None
+        k: v
+        for k, v in {"search": search, "limit": limit, "skip": skip}.items()
+        if v is not None
     }
     return get_shared_client().run_one_function(
         {

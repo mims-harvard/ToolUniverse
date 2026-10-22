@@ -1,9 +1,11 @@
 [
     {
         "name": "AlphaFill_get_transplants",
-        "description": "Get the ligands, cofactors, and ions that AlphaFill transplants into a protein's AlphaFold model, by UniProt accession. AlphaFold predicts apo (ligand-free) structures; AlphaFill adds small molecules by homology to experimental PDB structures. Returns the distinct transplanted compounds (PDB chemical-component codes), how many homologous hits support each, the best local fit RMSD (lower = better), and the source PDB entries. Use to hypothesize cofactor/metal/ligand/drug binding for a protein whose only structure is an AlphaFold model. No API key required.",
+        "description": "Get ligands, cofactors, and ions transplanted into an AlphaFold model by AlphaFill. Source PDB IDs within every compound are independently paginated. Inspect source_pdb_ids_total, source_pdb_ids_truncated, and next_source_pdb_offset so structural provenance is complete.",
         "parameter": {"type": "object", "properties": {
-            "uniprot": {"type": "string", "description": "UniProt accession, e.g. 'P00520' (ABL1), 'P00533' (EGFR), 'P24941' (CDK2)."}
+            "uniprot": {"type": "string", "description": "UniProt accession, e.g. 'P00520' (ABL1), 'P00533' (EGFR), 'P24941' (CDK2)."},
+            "source_pdb_offset": {"type": "integer", "description": "Zero-based source-PDB offset applied within every compound.", "default": 0, "minimum": 0},
+            "source_pdb_limit": {"type": "integer", "description": "Source PDB IDs returned per compound (default 10, maximum 500).", "default": 10, "minimum": 1, "maximum": 500}
         }, "required": ["uniprot"]},
         "fields": {"timeout": 30},
         "type": "AlphaFillTransplantsTool",

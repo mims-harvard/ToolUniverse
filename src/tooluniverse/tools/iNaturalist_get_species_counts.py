@@ -9,10 +9,11 @@ from ._shared_client import get_shared_client
 
 
 def iNaturalist_get_species_counts(
-    taxon_id: Optional[int | Any] = None,
-    place_id: Optional[int | Any] = None,
-    quality_grade: Optional[str | Any] = None,
-    per_page: Optional[int | Any] = None,
+    taxon_id: Optional[int] = None,
+    place_id: Optional[int] = None,
+    quality_grade: Optional[str] = "research",
+    per_page: Optional[int] = 20,
+    page: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -23,14 +24,16 @@ def iNaturalist_get_species_counts(
 
     Parameters
     ----------
-    taxon_id : int | Any
+    taxon_id : int
         Parent taxon ID to get species counts within. Examples: 41479 (Delphinidae - ...
-    place_id : int | Any
+    place_id : int
         Place ID to filter by location. Example: 10211 (Yellowstone).
-    quality_grade : str | Any
+    quality_grade : str
         Quality filter: 'research', 'needs_id', or 'casual'. Default: 'research'.
-    per_page : int | Any
-        Number of species to return (1-500, default 20).
+    per_page : int
+        Number of species to return per page (1-500, default 20).
+    page : int
+        One-based results page (default 1). iNaturalist exposes at most the first 10,...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def iNaturalist_get_species_counts(
             "place_id": place_id,
             "quality_grade": quality_grade,
             "per_page": per_page,
+            "page": page,
         }.items()
         if v is not None
     }

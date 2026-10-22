@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def TIMER2_survival_association(
-    operation: str,
     cancer: str,
     gene: str,
+    operation: Optional[str] = "survival_association",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

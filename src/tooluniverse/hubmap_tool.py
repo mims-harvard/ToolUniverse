@@ -76,6 +76,7 @@ class HuBMAPTool(BaseTool):
         dataset_type = arguments.get("dataset_type")
         query_text = arguments.get("query")
         limit = min(int(arguments.get("limit", 10)), 50)
+        offset = max(0, int(arguments.get("offset", 0)))
         status_filter = arguments.get("status", "Published")
 
         must_clauses = [{"match": {"entity_type": "Dataset"}}]
@@ -106,6 +107,7 @@ class HuBMAPTool(BaseTool):
             )
 
         body = {
+            "from": offset,
             "size": limit,
             "query": {"bool": {"must": must_clauses}},
             "_source": [
@@ -164,11 +166,16 @@ class HuBMAPTool(BaseTool):
                 }
             )
 
+        has_more = offset + len(results) < total
         return {
             "status": "success",
             "data": {
                 "total": total,
                 "returned": len(results),
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "next_offset": offset + len(results) if has_more else None,
                 "datasets": results,
             },
         }
@@ -223,6 +230,20 @@ class HuBMAPTool(BaseTool):
         contacts = data.get("contacts", [])
         contributors = data.get("contributors", [])
 
+        def format_person(person):
+            return {
+                "name": person.get("display_name") or person.get("name"),
+                "first_name": person.get("first_name"),
+                "middle_name_or_initial": person.get("middle_name_or_initial"),
+                "last_name": person.get("last_name"),
+                "email": person.get("email"),
+                "affiliation": person.get("affiliation"),
+                "orcid": person.get("orcid"),
+                "is_contact": person.get("is_contact"),
+                "is_operator": person.get("is_operator"),
+                "is_principal_investigator": person.get("is_principal_investigator"),
+            }
+
         result = {
             "hubmap_id": data.get("hubmap_id"),
             "entity_type": data.get("entity_type"),
@@ -240,17 +261,12 @@ class HuBMAPTool(BaseTool):
             ),
             "data_access_level": data.get("data_access_level"),
             "created_timestamp": data.get("created_timestamp"),
-            "contacts": [
-                {"name": c.get("name"), "email": c.get("email")} for c in contacts[:5]
-            ]
-            if contacts
-            else [],
+            "contacts": [format_person(contact) for contact in contacts],
+            "contacts_count": len(contacts),
             "contributors": [
-                {"name": c.get("name"), "affiliation": c.get("affiliation")}
-                for c in contributors[:10]
-            ]
-            if contributors
-            else [],
+                format_person(contributor) for contributor in contributors
+            ],
+            "contributors_count": len(contributors),
         }
 
         return {"status": "success", "data": result}

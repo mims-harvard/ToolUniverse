@@ -1,7 +1,7 @@
 """
 COD_get_structure
 
-Get detailed crystal structure information from the Crystallography Open Database (COD) by COD en...
+Get the complete source record for one seven-digit Crystallography Open Database entry ID. Valida...
 """
 
 from typing import Any, Optional, Callable
@@ -17,7 +17,7 @@ def COD_get_structure(
     validate: bool = True,
 ) -> Any:
     """
-    Get detailed crystal structure information from the Crystallography Open Database (COD) by COD en...
+    Get the complete source record for one seven-digit Crystallography Open Database entry ID. Valida...
 
     Parameters
     ----------

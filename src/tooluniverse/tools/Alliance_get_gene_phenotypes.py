@@ -1,7 +1,7 @@
 """
 Alliance_get_gene_phenotypes
 
-Get phenotype annotations for a gene from the Alliance of Genome Resources. Returns phenotypes ob...
+Get phenotype annotations for a gene from the Alliance of Genome Resources. Results are recoverab...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def Alliance_get_gene_phenotypes(
     validate: bool = True,
 ) -> Any:
     """
-    Get phenotype annotations for a gene from the Alliance of Genome Resources. Returns phenotypes ob...
+    Get phenotype annotations for a gene from the Alliance of Genome Resources. Results are recoverab...
 
     Parameters
     ----------

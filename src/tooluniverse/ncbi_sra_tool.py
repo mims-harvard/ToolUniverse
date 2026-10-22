@@ -85,12 +85,32 @@ class NCBISRATool(NCBIEUtilsTool):
                     "error": "No search criteria provided. Use study, organism, strategy, platform, source, or query.",
                 }
 
+            limit = arguments.get("limit", 20)
+            offset = arguments.get("offset", 0)
+            if (
+                isinstance(limit, bool)
+                or not isinstance(limit, int)
+                or not 1 <= limit <= 100
+            ):
+                return {
+                    "status": "error",
+                    "error": "limit must be an integer between 1 and 100",
+                    "parameter": "limit",
+                }
+            if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+                return {
+                    "status": "error",
+                    "error": "offset must be a non-negative integer",
+                    "parameter": "offset",
+                }
+
             # Build esearch parameters
             params = {
                 "db": self.db,
                 "term": search_term,
                 "retmode": "json",
-                "retmax": arguments.get("limit", 20),
+                "retmax": limit,
+                "retstart": offset,
                 "sort": arguments.get("sort", "relevance"),
                 "usehistory": "y",  # Store results on server for large queries
             }
@@ -107,13 +127,20 @@ class NCBISRATool(NCBIEUtilsTool):
                 esearch_result = data.get("esearchresult", {})
                 uids = esearch_result.get("idlist", [])
                 count = int(esearch_result.get("count", 0))
+                returned = len(uids)
+                has_more = offset + returned < count
 
                 return {
                     "status": "success",
                     "data": {
                         "uids": uids,
                         "count": count,
-                        "returned": len(uids),
+                        "returned": returned,
+                        "offset": offset,
+                        "limit": limit,
+                        "has_more": has_more,
+                        "next_offset": offset + returned if returned and has_more else None,
+                        "truncated": has_more,
                         "search_term": search_term,
                     },
                     "total_count": count,

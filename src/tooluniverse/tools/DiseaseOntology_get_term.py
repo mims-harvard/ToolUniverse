@@ -1,7 +1,7 @@
 """
 DiseaseOntology_get_term
 
-Get detailed information about a disease from the Disease Ontology (DO) by its DOID identifier. R...
+Get a complete semantic Disease Ontology term by DOID. The returned ID is verified and the wrappe...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def DiseaseOntology_get_term(
     validate: bool = True,
 ) -> Any:
     """
-    Get detailed information about a disease from the Disease Ontology (DO) by its DOID identifier. R...
+    Get a complete semantic Disease Ontology term by DOID. The returned ID is verified and the wrappe...
 
     Parameters
     ----------

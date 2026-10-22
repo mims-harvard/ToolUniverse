@@ -1,7 +1,7 @@
 """
 OrthoDB_get_group_details
 
-Get detailed information about an OrthoDB orthologous group including functional annotations. Ret...
+Get detailed information about an OrthoDB v12 orthologous group using the current group schema. R...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def OrthoDB_get_group_details(
     validate: bool = True,
 ) -> Any:
     """
-    Get detailed information about an OrthoDB orthologous group including functional annotations. Ret...
+    Get detailed information about an OrthoDB v12 orthologous group using the current group schema. R...
 
     Parameters
     ----------

@@ -375,7 +375,8 @@ class FAERSAnalyticsTool(BaseTool):
 
             # Get top reactions for serious events
             url = self._with_api_key(
-                f"{FDA_BASE_URL}?search={search_query}&count=patient.reaction.reactionmeddrapt.exact"
+                f"{FDA_BASE_URL}?search={search_query}"
+                "&count=patient.reaction.reactionmeddrapt.exact&limit=1000"
             )
 
             response = request_with_retry(requests, "GET", url, timeout=30)
@@ -392,18 +393,32 @@ class FAERSAnalyticsTool(BaseTool):
                 total_data.get("meta", {}).get("results", {}).get("total", 0)
             )
 
-            # Format results
+            # Page the ranked count results locally. openFDA count queries
+            # expose up to the 1,000 most frequent values; the old [:20] made
+            # ranks 21-1,000 unreachable from generated clients.
+            limit = max(1, min(int(arguments.get("limit", 20)), 1000))
+            offset = max(0, int(arguments.get("offset", 0)))
+            page = results[offset : offset + limit]
             serious_reactions = []
-            for result in results[:20]:  # Top 20
+            for result in page:
                 serious_reactions.append(
                     {"reaction": result.get("term"), "count": result.get("count")}
                 )
+            accessible_unique_reactions = len(results)
+            next_offset = offset + len(serious_reactions)
+            has_more = next_offset < accessible_unique_reactions
 
             result: Dict[str, Any] = {
                 "drug_name": drug_name,
                 "seriousness_type": seriousness_type,
                 "total_serious_events": total_serious,
                 "top_serious_reactions": serious_reactions,
+                "accessible_unique_reactions": accessible_unique_reactions,
+                "unique_reactions_is_exact": accessible_unique_reactions < 1000,
+                "returned": len(serious_reactions),
+                "offset": offset,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
                 "note": f"Serious events: {'All' if seriousness_type == 'all' else seriousness_type.replace('_', ' ')}",
             }
             if adverse_event:
@@ -607,7 +622,8 @@ class FAERSAnalyticsTool(BaseTool):
             # Get preferred term (PT) level reactions
             search_query = _drug_clause(drug_name)
             url = self._with_api_key(
-                f"{FDA_BASE_URL}?search={search_query}&count=patient.reaction.reactionmeddrapt.exact"
+                f"{FDA_BASE_URL}?search={search_query}"
+                "&count=patient.reaction.reactionmeddrapt.exact&limit=1000"
             )
 
             response = request_with_retry(requests, "GET", url, timeout=30)
@@ -616,14 +632,21 @@ class FAERSAnalyticsTool(BaseTool):
             data = response.json()
             pt_results = data.get("results", [])
 
-            # Format PT level
+            limit = max(1, min(int(arguments.get("limit", 50)), 1000))
+            offset = max(0, int(arguments.get("offset", 0)))
+            page = pt_results[offset : offset + limit]
+
+            # Format the requested PT page.
             pt_level = [
                 {"preferred_term": r.get("term"), "count": r.get("count")}
-                for r in pt_results[:50]  # Top 50 PTs
+                for r in page
             ]
+            accessible_unique_pts = len(pt_results)
+            next_offset = offset + len(pt_level)
+            has_more = next_offset < accessible_unique_pts
 
             # Note: Full MedDRA hierarchy requires MedDRA license
-            # FAERS API doesn't provide HLT/SOC directly
+            # and openFDA count queries expose at most the top 1,000 values.
 
             return {
                 "status": "success",
@@ -631,9 +654,22 @@ class FAERSAnalyticsTool(BaseTool):
                     "drug_name": drug_name,
                     "meddra_hierarchy": {
                         "PT_level": pt_level,
-                        "total_unique_PTs": len(pt_level),
+                        # Backward-compatible name, now based on the complete
+                        # accessible count response rather than this page size.
+                        "total_unique_PTs": accessible_unique_pts,
+                        "accessible_unique_PTs": accessible_unique_pts,
+                        "total_unique_PTs_is_exact": accessible_unique_pts < 1000,
+                        "returned": len(pt_level),
+                        "offset": offset,
+                        "has_more": has_more,
+                        "next_offset": next_offset if has_more else None,
                     },
-                    "note": "Full MedDRA hierarchy (HLT, SOC) requires MedDRA license. Showing Preferred Term (PT) level only.",
+                    "note": (
+                        "Full MedDRA hierarchy (HLT, SOC) requires a MedDRA "
+                        "license. openFDA exposes at most the 1,000 most "
+                        "frequent Preferred Terms; total_unique_PTs_is_exact "
+                        "is false when that cap is reached."
+                    ),
                     "recommendation": "Use MedDRA dictionary to map PTs to higher-level terms for system organ class analysis",
                 },
             }

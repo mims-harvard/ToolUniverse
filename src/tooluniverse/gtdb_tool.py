@@ -127,21 +127,48 @@ class GTDBTool(BaseTool):
             return {"status": "error", "error": "query parameter is required"}
 
         limit = arguments.get("limit", 20)
+        if limit is None:
+            limit = 20
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 100:
+            return {
+                "status": "error",
+                "error": "limit must be an integer between 1 and 100",
+            }
         result = self._make_request(
             "taxon/search/{}".format(query),
-            params={"limit": min(limit, 100)},
+            params={"limit": limit},
         )
 
         if not result["ok"]:
             return {"status": "error", "error": result["error"]}
 
         matches = result["data"].get("matches", [])
+        rank_counts: Dict[str, int] = {}
+        for match in matches:
+            prefix = str(match).split("__", 1)[0] if "__" in str(match) else "unknown"
+            rank_counts[prefix] = rank_counts.get(prefix, 0) + 1
+        capped_ranks = sorted(rank for rank, count in rank_counts.items() if count >= limit)
+        possible_more = bool(capped_ranks)
         return {
             "status": "success",
             "data": {
                 "query": query,
                 "matches": matches,
                 "count": len(matches),
+                "limit": limit,
+                "limit_scope": "per_rank",
+                "rank_counts": rank_counts,
+                "capped_ranks": capped_ranks,
+                "complete_known": not possible_more,
+                "possible_more": possible_more,
+                "pagination_supported": False,
+                "warning": (
+                    "One or more taxonomic ranks reached GTDB's per-rank match limit, "
+                    "and this endpoint has no offset parameter; narrow the query to rule "
+                    "out additional matches."
+                    if possible_more
+                    else None
+                ),
             },
         }
 
@@ -183,17 +210,22 @@ class GTDBTool(BaseTool):
         # Limit genomes list to avoid huge responses
         genomes = data.get("genomes", [])
         total_genomes = len(genomes)
-        max_genomes = arguments.get("max_genomes", 20)
-        if total_genomes > max_genomes:
-            genomes = genomes[:max_genomes]
+        max_genomes = max(1, min(int(arguments.get("max_genomes") or 20), 1000))
+        offset = max(0, int(arguments.get("offset", 0)))
+        genome_page = genomes[offset : offset + max_genomes]
+        has_more = offset + len(genome_page) < total_genomes
 
         return {
             "status": "success",
             "data": {
                 "species_name": data.get("name", species),
                 "total_genomes": total_genomes,
-                "genomes_shown": len(genomes),
-                "genomes": genomes,
+                "genomes_shown": len(genome_page),
+                "offset": offset,
+                "limit": max_genomes,
+                "has_more": has_more,
+                "next_offset": offset + len(genome_page) if has_more else None,
+                "genomes": genome_page,
             },
         }
 
@@ -246,13 +278,31 @@ class GTDBTool(BaseTool):
 
         page = arguments.get("page", 1)
         items_per_page = arguments.get("items_per_page", 10)
+        if page is None:
+            page = 1
+        if items_per_page is None:
+            items_per_page = 10
+        if isinstance(page, bool) or not isinstance(page, int) or page < 1:
+            return {
+                "status": "error",
+                "error": "page must be a positive integer (GTDB pages are one-based)",
+            }
+        if (
+            isinstance(items_per_page, bool)
+            or not isinstance(items_per_page, int)
+            or not 1 <= items_per_page <= 1000
+        ):
+            return {
+                "status": "error",
+                "error": "items_per_page must be an integer between 1 and 1000",
+            }
 
         result = self._make_request(
             "search/gtdb",
             params={
                 "search": query,
                 "page": page,
-                "itemsPerPage": min(items_per_page, 50),
+                "itemsPerPage": items_per_page,
             },
         )
 
@@ -280,6 +330,12 @@ class GTDBTool(BaseTool):
             return 2
 
         rows = sorted(rows, key=_relevance)
+        total_pages = (
+            (total + items_per_page - 1) // items_per_page
+            if isinstance(total, int)
+            else None
+        )
+        has_more = isinstance(total_pages, int) and page < total_pages
 
         return {
             "status": "success",
@@ -287,8 +343,23 @@ class GTDBTool(BaseTool):
                 "query": query,
                 "total_results": total,
                 "page": page,
+                "items_per_page": items_per_page,
+                "total_pages": total_pages,
                 "results": rows,
                 "count": len(rows),
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_page": page + 1 if has_more else None,
+            },
+            "metadata": {
+                "source": "GTDB",
+                "page": page,
+                "items_per_page": items_per_page,
+                "total_results": total,
+                "total_pages": total_pages,
+                "returned": len(rows),
+                "has_more": has_more,
+                "next_page": page + 1 if has_more else None,
             },
         }
 

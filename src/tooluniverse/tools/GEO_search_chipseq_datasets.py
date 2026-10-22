@@ -1,7 +1,7 @@
 """
 GEO_search_chipseq_datasets
 
-Search NCBI GEO for ChIP-seq (Chromatin Immunoprecipitation followed by sequencing) datasets. ChI...
+Search NCBI GEO GSE series for ChIP-seq datasets with exact offset pagination. Returns GSE access...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,14 @@ def GEO_search_chipseq_datasets(
     query: str,
     organism: Optional[str] = "Homo sapiens",
     limit: Optional[int] = 20,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search NCBI GEO for ChIP-seq (Chromatin Immunoprecipitation followed by sequencing) datasets. ChI...
+    Search NCBI GEO GSE series for ChIP-seq datasets with exact offset pagination. Returns GSE access...
 
     Parameters
     ----------
@@ -27,7 +28,9 @@ def GEO_search_chipseq_datasets(
     organism : str
         Organism filter.
     limit : int
-        Maximum number of dataset IDs to return.
+        Page size (1-100).
+    offset : int
+        Zero-based GSE result offset. Continue with data.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,12 @@ def GEO_search_chipseq_datasets(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"query": query, "organism": organism, "limit": limit}.items()
+        for k, v in {
+            "query": query,
+            "organism": organism,
+            "limit": limit,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

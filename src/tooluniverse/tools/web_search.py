@@ -19,7 +19,7 @@ def web_search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     General web search using DDGS (Dux Distributed Global Search) supporting multiple search engines ...
 
@@ -32,11 +32,11 @@ def web_search(
     search_type : str
         Type of search to perform
     backend : str
-        Search engine backend to use
+        Search engine backend to use. Selecting 'parallel' sends the query to https:/...
     region : str
-        Search region/locale
+        Search region/locale for DDGS backends. Parallel does not support this contro...
     safesearch : str
-        Safe search level
+        Safe search level for DDGS backends. Parallel does not support this control; ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -46,7 +46,7 @@ def web_search(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

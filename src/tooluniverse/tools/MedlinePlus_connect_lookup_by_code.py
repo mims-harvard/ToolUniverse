@@ -1,7 +1,7 @@
 """
 MedlinePlus_connect_lookup_by_code
 
-Look up corresponding MedlinePlus page information through MedlinePlus Connect Web Service using ...
+Look up MedlinePlus pages through MedlinePlus Connect using clinical, drug, or test codes such as...
 """
 
 from typing import Any, Optional, Callable
@@ -20,7 +20,7 @@ def MedlinePlus_connect_lookup_by_code(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Look up corresponding MedlinePlus page information through MedlinePlus Connect Web Service using ...
+    Look up MedlinePlus pages through MedlinePlus Connect using clinical, drug, or test codes such as...
 
     Parameters
     ----------

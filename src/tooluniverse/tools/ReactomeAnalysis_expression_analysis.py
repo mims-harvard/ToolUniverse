@@ -1,7 +1,7 @@
 """
 ReactomeAnalysis_expression_analysis
 
-Quantitative EXPRESSION analysis: map fold-change or numeric expression values onto Reactome path...
+Quantitative EXPRESSION analysis: map tab-delimited GENE/value rows onto Reactome pathways. Each ...
 """
 
 from typing import Any, Optional, Callable
@@ -10,7 +10,8 @@ from ._shared_client import get_shared_client
 
 def ReactomeAnalysis_expression_analysis(
     identifiers: str,
-    page_size: Optional[int] = None,
+    page_size: Optional[int] = 20,
+    page: Optional[int] = 1,
     include_disease: Optional[bool] = None,
     projection: Optional[bool] = None,
     *,
@@ -19,7 +20,7 @@ def ReactomeAnalysis_expression_analysis(
     validate: bool = True,
 ) -> Any:
     """
-    Quantitative EXPRESSION analysis: map fold-change or numeric expression values onto Reactome path...
+    Quantitative EXPRESSION analysis: map tab-delimited GENE/value rows onto Reactome pathways. Each ...
 
     Parameters
     ----------
@@ -27,6 +28,8 @@ def ReactomeAnalysis_expression_analysis(
         Tab-delimited expression rows, one identifier per line as 'GENE<TAB>VALUE'. N...
     page_size : int
         Number of pathways to return (default 20, max 50).
+    page : int
+        One-based pathway result page.
     include_disease : bool
         Include disease pathways in results (default true).
     projection : bool
@@ -50,6 +53,7 @@ def ReactomeAnalysis_expression_analysis(
         for k, v in {
             "identifiers": identifiers,
             "page_size": page_size,
+            "page": page,
             "include_disease": include_disease,
             "projection": projection,
         }.items()

@@ -159,6 +159,38 @@ class ICD10Tool(BaseTool):
 
         return f"{self.base_url}{endpoint}"
 
+    @staticmethod
+    def _validate_pagination(arguments: Dict[str, Any]):
+        """Validate Clinical Tables count/offset controls for ICD-10 search."""
+        limit = arguments.get("limit", 20)
+        offset = arguments.get("offset", 0)
+        if (
+            isinstance(limit, bool)
+            or not isinstance(limit, int)
+            or not 1 <= limit <= 500
+        ):
+            return {
+                "status": "error",
+                "error": "limit must be an integer between 1 and 500",
+                "parameter": "limit",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+                "parameter": "offset",
+            }
+        if offset + limit > 7500:
+            return {
+                "status": "error",
+                "error": (
+                    "offset + limit must not exceed the Clinical Tables "
+                    "retrieval limit of 7500"
+                ),
+                "parameter": "offset",
+            }
+        return offset, limit
+
     def _make_request(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Make request to ICD-10 API (NLM Clinical Tables)."""
         url = self._build_url(arguments)
@@ -166,9 +198,18 @@ class ICD10Tool(BaseTool):
         # Build query parameters for search
         params = {}
         if "query" in arguments:
+            query = arguments.get("query")
+            if not isinstance(query, str) or not query.strip():
+                return {"status": "error", "error": "query is required"}
+            pagination_args = self._validate_pagination(arguments)
+            if isinstance(pagination_args, dict):
+                return pagination_args
+            offset, limit = pagination_args
             params["sf"] = "code,name"  # Search fields
-            params["terms"] = arguments["query"]
-            params["maxList"] = arguments.get("limit", 20)
+            params["df"] = "code,name"
+            params["terms"] = query.strip()
+            params["count"] = limit
+            params["offset"] = offset
 
         try:
             resp = requests.get(url, params=params, timeout=30)
@@ -186,15 +227,53 @@ class ICD10Tool(BaseTool):
                     if len(item) >= 2:
                         formatted_results.append({"code": item[0], "name": item[1]})
 
+                metadata = {
+                    "source": "NLM Clinical Tables - ICD-10-CM",
+                    "endpoint": url,
+                    "version": "2026 ICD-10-CM codes",
+                    "note": "ICD-10-CM is the US clinical modification of ICD-10",
+                }
+                if "query" in arguments:
+                    try:
+                        total = int(total)
+                    except (TypeError, ValueError):
+                        total = len(formatted_results)
+                    accessible = min(total, 7500)
+                    returned_count = len(formatted_results)
+                    has_more = offset + returned_count < accessible
+                    upstream_truncated = total > accessible
+                    metadata.update(
+                        {
+                            "total_results": total,
+                            "accessible_results": accessible,
+                            "upstream_truncated": upstream_truncated,
+                            "returned_count": returned_count,
+                            "offset": offset,
+                            "limit": limit,
+                            "has_more": has_more,
+                            "next_offset": (
+                                offset + returned_count
+                                if returned_count and has_more
+                                else None
+                            ),
+                            "truncated": has_more or upstream_truncated,
+                            "result_set_complete": (
+                                not has_more and not upstream_truncated
+                            ),
+                            "warning": (
+                                "NLM Clinical Tables limits retrieval to the first "
+                                "7500 matches; refine the search to reach records "
+                                "outside that window."
+                                if upstream_truncated
+                                else None
+                            ),
+                        }
+                    )
+
                 return {
                     "status": "success",
                     "data": {"total": total, "results": formatted_results},
-                    "metadata": {
-                        "source": "NLM Clinical Tables - ICD-10-CM",
-                        "endpoint": url,
-                        "version": "2026 ICD-10-CM codes",
-                        "note": "ICD-10-CM is the US clinical modification of ICD-10",
-                    },
+                    "metadata": metadata,
                 }
 
             # Direct code lookup

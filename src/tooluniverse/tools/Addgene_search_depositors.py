@@ -12,6 +12,8 @@ def Addgene_search_depositors(
     operation: str,
     name: Optional[str | Any] = None,
     institution: Optional[str | Any] = None,
+    limit: Optional[int] = 50,
+    page: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -27,7 +29,11 @@ def Addgene_search_depositors(
     name : str | Any
         PI or depositor name to search (e.g., 'Feng Zhang', 'Jennifer Doudna')
     institution : str | Any
-        Institution name to search (e.g., 'MIT', 'Broad Institute')
+        Unsupported by the Addgene Developers API; supplying it returns an error.
+    limit : int
+        Number of matching plasmids to scan on this page.
+    page : int
+        One-based plasmid result page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +54,8 @@ def Addgene_search_depositors(
                 "operation": operation,
                 "name": name,
                 "institution": institution,
+                "limit": limit,
+                "page": page,
             },
         },
         stream_callback=stream_callback,

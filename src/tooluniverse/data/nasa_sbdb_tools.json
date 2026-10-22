@@ -318,7 +318,7 @@
   },
   {
     "name": "NASASBDB_close_approaches",
-    "description": "Query NASA's Close Approach Data (CAD) API for asteroids and comets making close approaches to Earth or other planets. Returns upcoming or historical close approaches with distances, velocities, and object properties. Useful for planetary defense research, monitoring near-Earth objects, and studying asteroid flybys. Distance units: AU (1 AU = 149.6 million km). Minimum distance 0 (impact), typical close approaches < 0.05 AU.",
+    "description": "Query NASA/JPL Close Approach Data with explicit zero-based offset pagination and exact total metadata. Continue with metadata.next_offset while metadata.has_more is true. Results default to date order for stable traversal. Distance units are AU (1 AU = 149.6 million km).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -362,13 +362,31 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of results (default 50, max 10000)"
+          "minimum": 1,
+          "maximum": 10000,
+          "default": 50,
+          "description": "Close approaches per page (default 50, max 10000)"
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based result offset, mapped to JPL's limit-from. Continue with metadata.next_offset."
+        },
+        "sort": {
+          "type": "string",
+          "default": "date",
+          "description": "JPL CAD sort expression. Default 'date' for chronological traversal."
         }
       },
       "required": []
     },
     "fields": {
-      "endpoint": "https://ssd-api.jpl.nasa.gov/cad.api"
+      "endpoint": "https://ssd-api.jpl.nasa.gov/cad.api",
+      "param_mapping": {
+        "offset": "limit-from"
+      },
+      "pagination": "jpl_cad_offset"
     },
     "type": "BaseRESTTool",
     "test_examples": [

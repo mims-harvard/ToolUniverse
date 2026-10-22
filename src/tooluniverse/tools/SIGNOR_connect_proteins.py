@@ -1,7 +1,7 @@
 """
 SIGNOR_connect_proteins
 
-Find the curated causal signaling sub-network that connects a set of proteins in the SIGNOR datab...
+Find the curated causal signaling sub-network connecting a set of proteins. Results are recoverab...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,14 @@ def SIGNOR_connect_proteins(
     proteins: list[str],
     level: Optional[int] = 2,
     limit: Optional[int] = 200,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Find the curated causal signaling sub-network that connects a set of proteins in the SIGNOR datab...
+    Find the curated causal signaling sub-network connecting a set of proteins. Results are recoverab...
 
     Parameters
     ----------
@@ -28,6 +29,8 @@ def SIGNOR_connect_proteins(
         Path depth for connecting the proteins: 1 (direct interactions only), 2 (allo...
     limit : int
         Maximum number of interactions to return.
+    offset : int
+        Zero-based interaction offset. Continue with metadata.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,12 @@ def SIGNOR_connect_proteins(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"proteins": proteins, "level": level, "limit": limit}.items()
+        for k, v in {
+            "proteins": proteins,
+            "level": level,
+            "limit": limit,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

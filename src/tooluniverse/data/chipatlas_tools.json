@@ -301,7 +301,7 @@
   {
     "name": "ChIPAtlas_search_datasets",
     "type": "ChIPAtlasTool",
-    "description": "Search ChIP-Atlas by antigen or cell type to find available datasets. Returns number of experiments and experiment IDs. Use antigenList for finding TF/histone datasets across cell types. Use celltypeList for finding all factors in specific cell type. Use for: dataset discovery, planning comparative analysis, checking data availability.",
+    "description": "Search ChIP-Atlas by exactly one of antigen or cell type. Matching metadata rows and the experiment IDs inside each row are both recoverably paginated: continue outer rows with data.next_offset, and continue IDs with each result's next_experiment_id_offset. Counts are complete, so a short experiment_ids list must not be interpreted as the full dataset.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -336,9 +336,37 @@
             "sacCer3"
           ],
           "default": "hg38"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum number of matching antigen/cell-type rows to return.",
+          "default": 20,
+          "minimum": 1
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based offset into matching antigen/cell-type rows. Continue with data.next_offset.",
+          "default": 0,
+          "minimum": 0
+        },
+        "experiment_id_limit": {
+          "type": "integer",
+          "description": "Maximum experiment IDs returned inside each matching row.",
+          "default": 100,
+          "minimum": 1
+        },
+        "experiment_id_offset": {
+          "type": "integer",
+          "description": "Zero-based experiment-ID offset applied inside each returned row. Repeat the same row page with each result's next_experiment_id_offset until experiment_ids_have_more is false.",
+          "default": 0,
+          "minimum": 0
         }
       },
-      "required": []
+      "required": [],
+      "oneOf": [
+        {"required": ["antigen"]},
+        {"required": ["cell_type"]}
+      ]
     },
     "return_schema": {
       "type": "object",
@@ -357,6 +385,18 @@
         "num_results": {
           "type": "integer"
         },
+        "returned": {
+          "type": "integer"
+        },
+        "offset": {
+          "type": "integer"
+        },
+        "has_more": {
+          "type": "boolean"
+        },
+        "next_offset": {
+          "type": ["integer", "null"]
+        },
         "results": {
           "type": "array",
           "items": {
@@ -372,13 +412,28 @@
                 "type": "string"
               },
               "num_experiments": {
-                "type": "string"
+                "type": "integer"
+              },
+              "declared_num_experiments": {
+                "type": "integer"
               },
               "experiment_ids": {
                 "type": "array",
                 "items": {
                   "type": "string"
                 }
+              },
+              "experiment_ids_returned": {
+                "type": "integer"
+              },
+              "experiment_ids_offset": {
+                "type": "integer"
+              },
+              "experiment_ids_have_more": {
+                "type": "boolean"
+              },
+              "next_experiment_id_offset": {
+                "type": ["integer", "null"]
               }
             }
           }
@@ -393,13 +448,14 @@
       }
     ],
     "fields": {
-      "operation": "search_datasets"
+      "operation": "search_datasets",
+      "pagination": "nested_local_limit_offset"
     }
   },
   {
     "name": "ChIPAtlas_get_colocalization",
     "type": "ChIPAtlasTool",
-    "description": "ChIP-Atlas Colocalization: for a given antigen/transcription factor in a specific tissue class, return the other proteins whose ChIP-seq peaks co-occur (co-bind) genome-wide, ranked by overlap score. Reveals protein complexes and co-regulators (e.g. CTCF in Blood co-binds the cohesin subunits RAD21, SMC1A, SMC3, STAG1 and ZNF143). Requires both an antigen and a cell-type/tissue class because the matrix is precomputed per antigen-per-tissue. To discover which tissue classes exist for an antigen, consult the index at https://chip-atlas.org/data/colo_analysis.json?genome=<genome>. Use for: identifying co-binding partners, inferring TF complexes, finding co-regulators of a factor in a tissue.",
+    "description": "ChIP-Atlas colocalization partners ranked by genome-wide overlap score. Results are recoverably paginated: start with offset=0 and continue with data.next_offset while data.has_more is true; data.partner_count is the complete count.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -441,6 +497,12 @@
           "default": 50,
           "minimum": 1,
           "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based ranked-partner offset. Continue with data.next_offset.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": [
@@ -470,6 +532,10 @@
             "partner_count": {
               "type": "integer"
             },
+            "returned": {"type": "integer"},
+            "offset": {"type": "integer"},
+            "has_more": {"type": "boolean"},
+            "next_offset": {"type": ["integer", "null"]},
             "partners": {
               "type": "array",
               "items": {
@@ -530,7 +596,7 @@
   {
     "name": "ChIPAtlas_get_target_genes",
     "type": "ChIPAtlasTool",
-    "description": "ChIP-Atlas Target Genes: for a transcription factor, return its ranked list of potential target genes - genes whose TSS-proximal region is bound by the TF - scored as the average binding strength across all ChIP-seq experiments for that TF. Choose the TSS-distance window with the 'distance' parameter (1, 5, or 10 kb). Use for: predicting which genes a TF regulates, building TF-target gene sets, prioritizing direct targets. To check which TFs have target-gene data for a genome, see https://chip-atlas.org/data/target_genes_analysis.json. Note: a few antigens (including CTCF on hg38) are served with a header but no scored rows; in that case the tool returns gene_count 0 with an explanatory note - pick another factor (e.g. 'GATA1').",
+    "description": "ChIP-Atlas transcription-factor target genes ranked by average TSS-proximal binding score. Results are recoverably paginated: start with offset=0 and continue with data.next_offset while data.has_more is true; data.gene_count is the complete count.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -578,6 +644,12 @@
           "default": 100,
           "minimum": 1,
           "maximum": 5000
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based ranked-gene offset. Continue with data.next_offset.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": [
@@ -605,6 +677,10 @@
             "gene_count": {
               "type": "integer"
             },
+            "returned": {"type": "integer"},
+            "offset": {"type": "integer"},
+            "has_more": {"type": "boolean"},
+            "next_offset": {"type": ["integer", "null"]},
             "target_genes": {
               "type": "array",
               "items": {

@@ -1,7 +1,7 @@
 """
 OpenTargets_get_approved_indications_by_drug_chemblId
 
-Retrieve detailed information about multiple drugs using a list of ChEMBL IDs.
+Retrieve the approved (APPROVAL-stage) disease indications for a single drug by its ChEMBL ID. Fo...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def OpenTargets_get_approved_indications_by_drug_chemblId(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve detailed information about multiple drugs using a list of ChEMBL IDs.
+    Retrieve the approved (APPROVAL-stage) disease indications for a single drug by its ChEMBL ID. Fo...
 
     Parameters
     ----------

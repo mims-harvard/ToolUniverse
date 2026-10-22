@@ -1,7 +1,7 @@
 """
 Unpaywall_check_oa_status
 
-Query Unpaywall by DOI to check open-access status and OA locations. Requires a contact email for...
+Query a DOI in Unpaywall with DOI normalization and returned-identity verification. Returns the c...
 """
 
 from typing import Any, Optional, Callable
@@ -17,7 +17,7 @@ def Unpaywall_check_oa_status(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Query Unpaywall by DOI to check open-access status and OA locations. Requires a contact email for...
+    Query a DOI in Unpaywall with DOI normalization and returned-identity verification. Returns the c...
 
     Parameters
     ----------

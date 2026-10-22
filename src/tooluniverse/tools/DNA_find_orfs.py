@@ -9,10 +9,12 @@ from ._shared_client import get_shared_client
 
 
 def DNA_find_orfs(
-    operation: str,
     sequence: str,
+    operation: Optional[str] = "find_orfs",
     min_length: Optional[int] = 100,
-    strand: Optional[str | Any] = "both",
+    strand: Optional[str] = "both",
+    limit: Optional[int] = 50,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,13 +26,17 @@ def DNA_find_orfs(
     Parameters
     ----------
     operation : str
-        Operation type
+        Operation (optional; defaults to 'find_orfs' for this tool).
     sequence : str
         DNA sequence (A, T, G, C, N only)
     min_length : int
         Minimum ORF length in nucleotides (default: 100 nt = ~33 amino acids)
-    strand : str | Any
+    strand : str
         Which strand to search: 'forward', 'reverse', or 'both' (default)
+    limit : int
+        Maximum ORFs in this length-sorted page.
+    offset : int
+        Zero-based offset in the length-sorted ORF list. Continue with next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +58,8 @@ def DNA_find_orfs(
             "sequence": sequence,
             "min_length": min_length,
             "strand": strand,
+            "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

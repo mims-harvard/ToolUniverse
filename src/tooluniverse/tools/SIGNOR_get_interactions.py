@@ -1,7 +1,7 @@
 """
 SIGNOR_get_interactions
 
-Get causal signaling interactions for a protein or entity from the SIGNOR database. Returns upstr...
+Get causal signaling interactions for a protein or entity from SIGNOR. Results are recoverably pa...
 """
 
 from typing import Any, Optional, Callable
@@ -12,6 +12,7 @@ def SIGNOR_get_interactions(
     entity_id: Optional[str] = None,
     organism: Optional[int] = 9606,
     limit: Optional[int] = 50,
+    offset: Optional[int] = 0,
     protein: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -19,7 +20,7 @@ def SIGNOR_get_interactions(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Get causal signaling interactions for a protein or entity from the SIGNOR database. Returns upstr...
+    Get causal signaling interactions for a protein or entity from SIGNOR. Results are recoverably pa...
 
     Parameters
     ----------
@@ -29,6 +30,8 @@ def SIGNOR_get_interactions(
         NCBI taxonomy ID. 9606 for human, 10090 for mouse.
     limit : int
         Maximum number of interactions to return.
+    offset : int
+        Zero-based interaction offset. Continue with metadata.next_offset.
     protein : str
         Gene symbol or protein name (alias for entity_id; prefer UniProt accession li...
     stream_callback : Callable, optional
@@ -51,6 +54,7 @@ def SIGNOR_get_interactions(
             "entity_id": entity_id,
             "organism": organism,
             "limit": limit,
+            "offset": offset,
             "protein": protein,
         }.items()
         if v is not None

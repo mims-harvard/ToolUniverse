@@ -1,7 +1,7 @@
 [
   {
     "name": "ReactomeInteractors_get_protein_interactors",
-    "description": "Get protein-protein interaction partners for a specific protein from Reactome's IntAct-derived interaction data. Returns interactor accessions, gene names, confidence scores, and evidence counts, plus the true total number of interactors ('total_interactors') and how many were returned on this page ('returned_interactors'); when 'truncated' is true, re-run with a larger page_size to get them all. Interactions are curated from experimental data with molecular interaction (MI) scores. Example: P04637 (TP53) has 249 interactors including MDM2 (score 0.995, 119 evidences), EP300 (score 0.976), BRCA1 (score 0.944); Q04206 (NF-kB p65/RELA) has 106; P42345 (MTOR) has 22.",
+    "description": "Get protein-protein interaction partners from Reactome's IntAct-derived data. Returns the authoritative total plus a pageable set of interactors; when has_more is true pass next_page as page with the same accession and page_size. Interactions include confidence scores and evidence counts.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -15,6 +15,12 @@
             "null"
           ],
           "description": "Maximum number of interactors to return on this page (default: 20). Not capped - pass a value >= total_interactors (e.g. 300 for P04637) to retrieve every interactor in one call."
+        },
+        "page": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 1,
+          "description": "One-based Reactome interactor page. Continue with next_page while has_more is true."
         }
       },
       "required": [
@@ -65,6 +71,21 @@
             "truncated": {
               "type": "boolean",
               "description": "True when returned_interactors is less than total_interactors, i.e. page_size cut off the result set"
+            },
+            "page": {
+              "type": "integer",
+              "description": "One-based page returned"
+            },
+            "has_more": {
+              "type": "boolean",
+              "description": "Whether a later interactor page is available"
+            },
+            "next_page": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Next one-based page, or null when complete"
             },
             "note": {
               "type": "string",
@@ -211,7 +232,7 @@
   },
   {
     "name": "ReactomeInteractors_search_entity",
-    "description": "Search Reactome for biological entities (proteins, complexes, reactions, pathways) by name or identifier. Returns Reactome stable IDs, entity names, types, and species. Use this to find Reactome IDs for proteins before querying their interactors or pathways. Results are grouped by entity type (Protein, Complex, Reaction, Pathway). Example: search 'TP53' returns TP53 protein entities with stable IDs like R-HSA-69488; search 'apoptosis' returns apoptosis-related reactions and pathways.",
+    "description": "Search and page through Reactome biological entities by name or identifier. Reactome groups results by entity type and applies limit/offset independently inside every group: limit=2 can therefore return up to two Proteins, two Complexes, two Pathways, etc., not two records globally. Metadata reports aggregate numberOfMatches, actual returned count, per-group totals, rows_per_group, and next_offset.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -232,6 +253,19 @@
             "null"
           ],
           "description": "Entity type filter. Options: 'Protein', 'Complex', 'Reaction', 'Pathway', 'SmallMolecule'. If null, returns all types."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 50,
+          "description": "Rows to request per Reactome result-type group, not a global response maximum."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based start row applied independently within every result-type group. Continue with metadata.next_offset."
         }
       },
       "required": [

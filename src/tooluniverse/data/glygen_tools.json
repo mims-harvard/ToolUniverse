@@ -1,7 +1,7 @@
 [
   {
     "name": "GlyGen_get_glycan",
-    "description": "Get detailed glycan structure information from GlyGen by GlyTouCan accession. Returns mass, monosaccharide count, IUPAC/WURCS representations, species, glycoprotein associations, and publications. Essential for glycomics research. Example: G17689DH returns a 12-monosaccharide biantennary N-glycan found in human and hamster.",
+    "description": "Get detailed glycan structure information from GlyGen by GlyTouCan accession. Returns mass, monosaccharide count, IUPAC/WURCS representations, and the complete species and glycoprotein association records with positions, taxonomy, and evidence. Also reports the publication count. Example: G17689DH returns a 12-monosaccharide biantennary N-glycan found in human and hamster.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -67,11 +67,25 @@
             },
             "species": {
               "type": "array",
-              "description": "Species where glycan is found"
+              "items": {"type": "object"},
+              "description": "Complete species records, including annotation category and evidence"
+            },
+            "species_count": {
+              "type": "integer",
+              "description": "Number of returned species records"
             },
             "glycoprotein_count": {
               "type": "integer",
               "description": "Number of associated glycoproteins"
+            },
+            "returned_glycoprotein_count": {
+              "type": "integer",
+              "description": "Number of complete glycoprotein association records returned"
+            },
+            "glycoproteins": {
+              "type": "array",
+              "items": {"type": "object"},
+              "description": "Complete glycoprotein associations with site, taxonomy, and evidence qualifiers"
             },
             "publication_count": {
               "type": "integer",
@@ -95,7 +109,7 @@
   },
   {
     "name": "GlyGen_search_glycans",
-    "description": "Search GlyGen for glycans by mass range, monosaccharide count, organism, or glycan type. Returns matching glycan accessions with mass, protein counts, and relevance scores. Use for finding glycans within specific structural or biological criteria.",
+    "description": "Search GlyGen for glycans by mass range, monosaccharide count, or glycan type with one-based offset pagination. Returns accessions, mass, association counts, and relevance scores. Response metadata exposes total_results, returned_count, has_more, and next_offset; follow next_offset to retrieve the complete search result.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -121,11 +135,16 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum results to return (default 20, max 50)."
+          "description": "Results per request (default 20, range 1-50).",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 50
         },
         "offset": {
           "type": "integer",
-          "description": "Pagination offset (1-indexed, default 1)."
+          "description": "One-based first result (default 1). Continue with metadata.next_offset.",
+          "default": 1,
+          "minimum": 1
         }
       }
     },
@@ -147,7 +166,8 @@
         "mass_max": 3000,
         "monosaccharide_min": 10,
         "monosaccharide_max": 15,
-        "limit": 5
+        "limit": 5,
+        "offset": 6
       }
     ],
     "return_schema": {
@@ -194,7 +214,7 @@
   },
   {
     "name": "GlyGen_get_glycoprotein",
-    "description": "Get detailed glycoprotein information from GlyGen by UniProt accession. Returns protein name, glycosylation sites (N-linked, O-linked), site positions, attached glycan structures, and associated diseases/pathways. Essential for studying protein glycosylation. Example: P14210 (Hepatocyte Growth Factor) has 77 glycosylation annotations.",
+    "description": "Get detailed glycoprotein information from GlyGen by UniProt accession. Returns all gene names with evidence and all glycosylation annotations, preserving subtype, site, attached glycan, and evidence qualifiers; also reports associated disease/pathway/SNV/publication counts. Example: P14210 (Hepatocyte Growth Factor) has 77 glycosylation annotations.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -234,6 +254,14 @@
                 "type": "string"
               }
             },
+            "gene_name_count": {
+              "type": "integer"
+            },
+            "gene_name_details": {
+              "type": "array",
+              "items": {"type": "object"},
+              "description": "Complete gene-name records with type and evidence"
+            },
             "species": {
               "type": "string"
             },
@@ -244,6 +272,10 @@
             "glycosylation_sites": {
               "type": "array",
               "description": "Glycosylation site details with positions, types, and attached glycans"
+            },
+            "returned_glycosylation_count": {
+              "type": "integer",
+              "description": "Number of complete glycosylation annotations returned"
             },
             "disease_count": {
               "type": "integer"
@@ -269,7 +301,7 @@
   },
   {
     "name": "GlyGen_search_glycoproteins",
-    "description": "Search GlyGen for glycoproteins by organism, glycosylation evidence type, protein name, or gene name. Returns matching proteins with glycosylation site counts and relevance scores. Useful for finding glycosylated proteins in specific organisms or pathways.",
+    "description": "Search GlyGen for glycoproteins by organism, glycosylation evidence/type, protein name, or gene name with one-based offset pagination. Returns matching proteins with glycosylation-site counts and relevance scores. Response metadata exposes total_results, returned_count, has_more, and next_offset; follow next_offset for complete retrieval.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -295,11 +327,16 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum results to return (default 20, max 50)."
+          "description": "Results per request (default 20, range 1-50).",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 50
         },
         "offset": {
           "type": "integer",
-          "description": "Pagination offset (1-indexed, default 1)."
+          "description": "One-based first result (default 1). Continue with metadata.next_offset.",
+          "default": 1,
+          "minimum": 1
         }
       }
     },
@@ -316,7 +353,8 @@
       },
       {
         "gene_name": "EGFR",
-        "limit": 5
+        "limit": 5,
+        "offset": 6
       }
     ],
     "return_schema": {

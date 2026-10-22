@@ -12,9 +12,10 @@ def GWASSumStats_get_region_associations(
     chromosome: int,
     bp_lower: int,
     bp_upper: int,
-    p_upper: Optional[float | Any] = None,
-    study_accession: Optional[str | Any] = None,
-    size: Optional[int | Any] = None,
+    p_upper: Optional[float] = None,
+    study_accession: Optional[str] = None,
+    size: Optional[int] = None,
+    start: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -31,12 +32,14 @@ def GWASSumStats_get_region_associations(
         Start position of the region (GRCh38 coordinates).
     bp_upper : int
         End position of the region (GRCh38 coordinates).
-    p_upper : float | Any
+    p_upper : float
         Maximum p-value threshold (default 5e-8 for genome-wide significance). Use la...
-    study_accession : str | Any
+    study_accession : str
         Filter by specific GWAS study accession (e.g., 'GCST002245'). Get study IDs f...
-    size : int | Any
-        Maximum number of variants to return (default 50, max 1000).
+    size : int
+        Variants per page (default 50, max 1000).
+    start : int
+        Zero-based start offset (default 0). Continue with metadata.next_start.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -60,6 +63,7 @@ def GWASSumStats_get_region_associations(
             "p_upper": p_upper,
             "study_accession": study_accession,
             "size": size,
+            "start": start,
         }.items()
         if v is not None
     }

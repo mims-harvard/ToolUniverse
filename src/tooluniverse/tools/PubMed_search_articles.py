@@ -1,7 +1,7 @@
 """
 PubMed_search_articles
 
-Search PubMed biomedical literature database using NCBI E-utilities (esearch + esummary). Returns...
+Search PubMed using NCBI E-utilities (esearch + esummary). Returns PMID, title, the complete esum...
 """
 
 from typing import Any, Optional, Callable
@@ -23,7 +23,7 @@ def PubMed_search_articles(
     validate: bool = True,
 ) -> Any:
     """
-    Search PubMed biomedical literature database using NCBI E-utilities (esearch + esummary). Returns...
+    Search PubMed using NCBI E-utilities (esearch + esummary). Returns PMID, title, the complete esum...
 
     Parameters
     ----------

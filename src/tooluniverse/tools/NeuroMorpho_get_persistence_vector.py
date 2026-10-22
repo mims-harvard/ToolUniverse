@@ -14,7 +14,7 @@ def NeuroMorpho_get_persistence_vector(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the persistence vector (Topological Morphology Descriptor, TMD) for a NeuroMorpho neuron by i...
 
@@ -31,7 +31,7 @@ def NeuroMorpho_get_persistence_vector(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

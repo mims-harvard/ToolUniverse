@@ -15,6 +15,7 @@ def KEGG_find_compound(
     name: Optional[str] = None,
     query: Optional[str] = None,
     max_results: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -36,7 +37,9 @@ def KEGG_find_compound(
     query : str
         Alias for 'name': compound name or keyword to search by.
     max_results : int
-        Optional cap on the number of returned candidate compounds.
+        Optional page size for candidate compounds. The complete upstream total is al...
+    offset : int
+        Zero-based result offset. Use next_offset to continue.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -60,6 +63,7 @@ def KEGG_find_compound(
             "name": name,
             "query": query,
             "max_results": max_results,
+            "offset": offset,
         }.items()
         if v is not None
     }

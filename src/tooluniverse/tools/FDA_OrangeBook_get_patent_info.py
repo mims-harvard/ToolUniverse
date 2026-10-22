@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def FDA_OrangeBook_get_patent_info(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_patent_info",
     application_number: Optional[str] = None,
     brand_name: Optional[str] = None,
     *,

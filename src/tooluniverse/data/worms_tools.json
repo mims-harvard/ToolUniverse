@@ -2,13 +2,16 @@
   {
     "type": "WoRMSRESTTool",
     "name": "WoRMS_search_species",
-    "description": "Search marine species in the World Register of Marine Species (WoRMS) by name. Returns up to `limit` matching taxon records; WoRMS serves 50 records per request, so larger pages are assembled automatically. `has_more` indicates whether further records exist beyond the returned page \u2014 use `offset` to retrieve them.",
+    "description": "Search taxon names in the World Register of Marine Species (WoRMS). Exposes the official prefix matching, marine-only, and extant-only filters. WoRMS serves 50 records per request; larger pages are assembled automatically and exact continuation is available through next_offset.",
     "parameter": {
       "type": "object",
       "properties": {
-        "query": {"type": "string", "description": "Species name or search term"},
-        "limit": {"type": "integer", "default": 20, "description": "Maximum number of taxon records to return (default 20). Pages larger than 50 are assembled from multiple WoRMS requests."},
-        "offset": {"type": "integer", "default": 1, "description": "1-based index of the first record to return (default 1). Use with `limit` and `has_more` to page through large result sets."}
+        "query": {"type": "string", "minLength": 1, "description": "Scientific name or name prefix to search."},
+        "limit": {"type": "integer", "minimum": 1, "maximum": 1000, "default": 20, "description": "Maximum number of taxon records to return (default 20, range 1-1000). Pages larger than 50 are assembled from multiple WoRMS requests."},
+        "offset": {"type": "integer", "minimum": 1, "default": 1, "description": "1-based starting record number (default 1). Continue with the returned next_offset."},
+        "like": {"type": "boolean", "default": true, "description": "When true, perform the official prefix/SQL-LIKE search; false requests an exact scientific name."},
+        "marine_only": {"type": "boolean", "default": true, "description": "Limit results to marine taxa. Set false to include non-marine records."},
+        "extant_only": {"type": "boolean", "default": true, "description": "Limit results to extant taxa. Set false to include extinct records."}
       },
       "required": ["query"]
     },
@@ -75,7 +78,7 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "AphiaID": {"type": "integer", "description": "WoRMS AphiaID of the taxon, e.g. 127160 (Solea solea, common sole). Obtain from WoRMS_search_species."}
+        "AphiaID": {"type": "integer", "minimum": 1, "description": "WoRMS AphiaID of the taxon, e.g. 127160 (Solea solea, common sole). Obtain from WoRMS_search_species."}
       },
       "required": ["AphiaID"]
     },
@@ -135,7 +138,7 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "AphiaID": {"type": "integer", "description": "WoRMS AphiaID of the taxon, e.g. 127160 (Solea solea). Obtain from WoRMS_search_species."}
+        "AphiaID": {"type": "integer", "minimum": 1, "description": "WoRMS AphiaID of the taxon, e.g. 127160 (Solea solea). Obtain from WoRMS_search_species."}
       },
       "required": ["AphiaID"]
     },
@@ -194,7 +197,7 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "AphiaID": {"type": "integer", "description": "WoRMS AphiaID of the taxon, e.g. 127160 (Solea solea). Obtain from WoRMS_search_species."}
+        "AphiaID": {"type": "integer", "minimum": 1, "description": "WoRMS AphiaID of the taxon, e.g. 127160 (Solea solea). Obtain from WoRMS_search_species."}
       },
       "required": ["AphiaID"]
     },
@@ -294,11 +297,13 @@
   {
     "type": "WoRMSRESTTool",
     "name": "WoRMS_get_synonyms",
-    "description": "Get the taxonomic synonyms (unaccepted names) for a marine taxon from the World Register of Marine Species (WoRMS) by its AphiaID. Returns names that resolve to the same valid AphiaID, each with its status (e.g. 'unaccepted'), unaccept reason, authority, and the valid_AphiaID/valid_name they map to. The name search returns only the matched record, not its full synonymy. No API key required.",
+    "description": "Get taxonomic synonyms for a WoRMS AphiaID with complete access to the official 50-record pages. Returns unaccepted names and their accepted-name mapping. Continue with next_offset while has_more is true; metadata fields also distinguish a complete first-page result from a later slice.",
     "parameter": {
       "type": "object",
       "properties": {
-        "AphiaID": {"type": "integer", "description": "WoRMS AphiaID of the accepted taxon, e.g. 127160 (Solea solea). Obtain from WoRMS_search_species."}
+        "AphiaID": {"type": "integer", "minimum": 1, "description": "WoRMS AphiaID of the accepted taxon, e.g. 127160 (Solea solea). Obtain from WoRMS_search_species."},
+        "limit": {"type": "integer", "minimum": 1, "maximum": 1000, "default": 50, "description": "Maximum synonym records to return (default 50, range 1-1000). Larger pages are assembled from multiple WoRMS requests."},
+        "offset": {"type": "integer", "minimum": 1, "default": 1, "description": "1-based starting synonym record. Continue with next_offset."}
       },
       "required": ["AphiaID"]
     },

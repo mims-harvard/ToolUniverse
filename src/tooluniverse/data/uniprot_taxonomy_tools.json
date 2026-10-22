@@ -110,7 +110,7 @@
   },
   {
     "name": "UniProtTaxonomy_search",
-    "description": "Search for taxonomic entries in UniProt by name, scientific name, or common name. Returns matching taxa with their IDs, names, ranks, and protein statistics. Useful for finding the correct NCBI taxonomy ID for a species or exploring taxonomic groups. Example: searching 'arabidopsis' returns Arabidopsis thaliana (3702), Arabidopsis lyrata (81972), and other Arabidopsis species with protein counts.",
+    "description": "Search UniProt taxonomy entries with official cursor pagination. Returns taxa, ranks, and protein statistics; metadata reports the true upstream total and next_cursor.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -121,6 +121,10 @@
         "size": {
           "type": "integer",
           "description": "Maximum number of results. Default 10, max 500."
+        },
+        "cursor": {
+          "type": "string",
+          "description": "Opaque cursor from metadata.next_cursor. Omit for the first page."
         }
       },
       "required": [

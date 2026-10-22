@@ -2,7 +2,7 @@
   {
     "type": "CoreTool",
     "name": "CORE_search_papers",
-    "description": "Search for open access academic papers using CORE API. CORE aggregates OA repository and journal content; queries can match metadata and (for many records) indexed full text, but coverage varies by source. Use CORE_get_fulltext_snippets to search inside a returned PDF URL when exact body-text terms matter.",
+    "description": "Search open-access papers in CORE with recoverable offset pagination. Start with offset=0 and continue with metadata.next_offset while metadata.has_more is true; metadata.upstream_total_results is exact. Year and language filters are applied client-side per upstream page, so filtered pages may be short or empty and must not stop pagination early.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -37,6 +37,12 @@
           "minimum": 1,
           "maximum": 100
         },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based CORE result offset. Continue with metadata.next_offset.",
+          "default": 0,
+          "minimum": 0
+        },
         "year_from": {
           "type": "integer",
           "description": "Start year for publication date filter (e.g., 2020). Optional parameter to limit search to papers published from this year onwards."
@@ -55,6 +61,9 @@
         { "required": ["search"] },
         { "required": ["q"] }
       ]
+    },
+    "fields": {
+      "pagination": "core_offset"
     },
     "return_schema": {
       "type": "array",

@@ -1,7 +1,7 @@
 [
   {
     "name": "NCBIGene_search",
-    "description": "Search the NCBI Gene database using the E-utilities API. Find gene IDs (Entrez Gene IDs) by gene symbol, name, or keyword combined with an organism filter. Returns a list of matching Gene IDs that can be used with NCBIGene_get_summary. Essential for resolving gene names to standardized NCBI Gene IDs. Example: searching 'TP53' in Homo sapiens returns Gene ID 7157; 'BRCA1' returns 672.",
+    "description": "Search NCBI Gene using ESearch with explicit offset pagination and normalized exact metadata. Continue with metadata.next_retstart while metadata.has_more is true. Raw ESearch count/retstart/retmax values remain available as strings in data.esearchresult; metadata exposes their validated integer form.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -11,7 +11,16 @@
         },
         "retmax": {
           "type": "integer",
-          "description": "Maximum number of results to return (default 10, max 100)."
+          "description": "Page size (1-100).",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "retstart": {
+          "type": "integer",
+          "description": "Zero-based result offset. Use esearchresult.retstart plus the number of returned IDs to retrieve the next page while it remains below esearchresult.count.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": [
@@ -23,7 +32,8 @@
       "params": {
         "db": "gene",
         "retmode": "json"
-      }
+      },
+      "pagination": "ncbi_esearch"
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -35,7 +45,8 @@
       },
       {
         "term": "insulin AND Homo sapiens[Organism]",
-        "retmax": 5
+        "retmax": 5,
+        "retstart": 5
       }
     ],
     "return_schema": {

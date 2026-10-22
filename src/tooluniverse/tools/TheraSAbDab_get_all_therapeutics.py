@@ -1,7 +1,7 @@
 """
 TheraSAbDab_get_all_therapeutics
 
-Get summary of all therapeutic antibodies in Thera-SAbDab database. Returns counts by format (IgG...
+Get the complete Thera-SAbDab therapeutic-antibody catalog through limit/offset pages, plus count...
 """
 
 from typing import Any, Optional, Callable
@@ -9,17 +9,22 @@ from ._shared_client import get_shared_client
 
 
 def TheraSAbDab_get_all_therapeutics(
+    limit: Optional[int] = 100,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get summary of all therapeutic antibodies in Thera-SAbDab database. Returns counts by format (IgG...
+    Get the complete Thera-SAbDab therapeutic-antibody catalog through limit/offset pages, plus count...
 
     Parameters
     ----------
-    No parameters
+    limit : int
+        Maximum catalog records to return
+    offset : int
+        Zero-based catalog offset; continue with next_offset
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,7 +39,9 @@ def TheraSAbDab_get_all_therapeutics(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {}.items() if v is not None}
+    _args = {
+        k: v for k, v in {"limit": limit, "offset": offset}.items() if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "TheraSAbDab_get_all_therapeutics",

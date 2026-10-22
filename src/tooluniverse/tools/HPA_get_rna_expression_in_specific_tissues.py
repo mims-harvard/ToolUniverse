@@ -1,7 +1,7 @@
 """
 HPA_get_rna_expression_in_specific_tissues
 
-Query RNA expression levels (nTPM) for a specific gene in one or more user-specified tissues with...
+Query RNA expression levels (nTPM) for a specific gene in one or more user-specified tissues. Rea...
 """
 
 from typing import Any, Optional, Callable
@@ -17,7 +17,7 @@ def HPA_get_rna_expression_in_specific_tissues(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Query RNA expression levels (nTPM) for a specific gene in one or more user-specified tissues with...
+    Query RNA expression levels (nTPM) for a specific gene in one or more user-specified tissues. Rea...
 
     Parameters
     ----------

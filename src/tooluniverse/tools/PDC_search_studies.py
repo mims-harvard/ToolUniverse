@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def PDC_search_studies(
-    operation: str,
     query: str,
+    operation: Optional[str] = "search_studies",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

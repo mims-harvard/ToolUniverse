@@ -1,5 +1,6 @@
 import requests
 from typing import Any, Dict
+from urllib.parse import parse_qs, quote, urlparse
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
@@ -51,6 +52,10 @@ class InterProRESTTool(BaseTool):
         url = ""
         try:
             url = self._build_url(arguments)
+            cursor = arguments.get("cursor")
+            if cursor:
+                separator = "&" if "?" in url else "?"
+                url = f"{url}{separator}cursor={quote(str(cursor), safe='')}"
             response = self.session.get(url, timeout=self.timeout)
             response.raise_for_status()
             data = response.json()
@@ -60,11 +65,33 @@ class InterProRESTTool(BaseTool):
             else:
                 result = data
 
+            page_count = len(result) if isinstance(result, list) else 1
+            total_count = (
+                data.get("count", page_count) if isinstance(data, dict) else page_count
+            )
+            next_url = data.get("next") if isinstance(data, dict) else None
+            previous_url = data.get("previous") if isinstance(data, dict) else None
+
+            def cursor_from_url(page_url: str | None) -> str | None:
+                if not page_url:
+                    return None
+                return parse_qs(urlparse(page_url).query).get("cursor", [None])[0]
+
             return {
                 "status": "success",
                 "data": result,
                 "url": url,
-                "count": len(result) if isinstance(result, list) else 1,
+                "count": page_count,
+                "metadata": {
+                    "total_results": total_count,
+                    "returned": page_count,
+                    "has_more": bool(next_url),
+                    "truncated": bool(next_url),
+                    "next_cursor": cursor_from_url(next_url),
+                    "previous_cursor": cursor_from_url(previous_url),
+                    "next_url": next_url,
+                    "previous_url": previous_url,
+                },
             }
 
         except Exception as e:

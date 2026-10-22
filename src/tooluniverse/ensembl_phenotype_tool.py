@@ -151,19 +151,36 @@ class EnsemblPhenotypeTool(BaseTool):
                 }
             )
 
+        try:
+            limit = max(1, min(int(arguments.get("limit") or 500), 500))
+            offset = max(0, int(arguments.get("offset", 0)))
+        except (TypeError, ValueError):
+            return {
+                "status": "error",
+                "error": "Parameters 'limit' and 'offset' must be integers.",
+            }
+        total = len(associations)
+        associations = associations[offset : offset + limit]
+        has_more = offset + len(associations) < total
         return {
             "status": "success",
             "data": {
                 "query": query,
                 "query_kind": query_kind,
                 "species": species,
-                "association_count": len(associations),
-                "associations": associations[:500],
+                "association_count": total,
+                "returned": len(associations),
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_offset": offset + len(associations) if has_more else None,
+                "associations": associations,
             },
             "metadata": {
                 "source": "Ensembl REST API",
                 "endpoint": endpoint,
-                "total_returned": min(len(associations), 500),
+                "total_returned": len(associations),
             },
         }
 
@@ -221,13 +238,31 @@ class EnsemblPhenotypeTool(BaseTool):
                 seen.add(key)
                 unique_phenos.append(p)
 
+        try:
+            limit = max(1, min(int(arguments.get("limit") or 200), 500))
+            offset = max(0, int(arguments.get("offset", 0)))
+        except (TypeError, ValueError):
+            return {
+                "status": "error",
+                "error": "Parameters 'limit' and 'offset' must be integers.",
+            }
+        total = len(unique_phenos)
+        page = unique_phenos[offset : offset + limit]
+        has_more = offset + len(page) < total
+
         return {
             "status": "success",
             "data": {
                 "gene": gene,
                 "species": species,
-                "phenotype_count": len(unique_phenos),
-                "phenotypes": unique_phenos[:200],
+                "phenotype_count": total,
+                "returned": len(page),
+                "limit": limit,
+                "offset": offset,
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_offset": offset + len(page) if has_more else None,
+                "phenotypes": page,
             },
             "metadata": {
                 "source": "Ensembl REST API",
@@ -283,13 +318,31 @@ class EnsemblPhenotypeTool(BaseTool):
                         }
                     )
 
+        try:
+            limit = max(1, min(int(arguments.get("limit") or 200), 500))
+            offset = max(0, int(arguments.get("offset", 0)))
+        except (TypeError, ValueError):
+            return {
+                "status": "error",
+                "error": "Parameters 'limit' and 'offset' must be integers.",
+            }
+        total = len(phenotypes)
+        page = phenotypes[offset : offset + limit]
+        has_more = offset + len(page) < total
+
         return {
             "status": "success",
             "data": {
                 "region": region,
                 "species": species,
-                "phenotype_count": len(phenotypes),
-                "phenotypes": phenotypes[:200],
+                "phenotype_count": total,
+                "returned": len(page),
+                "limit": limit,
+                "offset": offset,
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_offset": offset + len(page) if has_more else None,
+                "phenotypes": page,
             },
             "metadata": {
                 "source": "Ensembl REST API",
@@ -337,14 +390,30 @@ class EnsemblPhenotypeTool(BaseTool):
                 }
             )
 
-        # Limit to top 200 (can be very large for well-studied variants)
+        try:
+            limit = max(1, min(int(arguments.get("limit") or 200), 500))
+            offset = max(0, int(arguments.get("offset", 0)))
+        except (TypeError, ValueError):
+            return {
+                "status": "error",
+                "error": "Parameters 'limit' and 'offset' must be integers.",
+            }
+        total = len(phenotypes)
+        phenotypes = phenotypes[offset : offset + limit]
+        has_more = offset + len(phenotypes) < total
         return {
             "status": "success",
             "data": {
                 "variant_id": variant_id,
                 "species": species,
-                "phenotype_count": len(phenotypes),
-                "phenotypes": phenotypes[:200],
+                "phenotype_count": total,
+                "returned": len(phenotypes),
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_offset": offset + len(phenotypes) if has_more else None,
+                "phenotypes": phenotypes,
             },
             "metadata": {
                 "source": "Ensembl REST API",

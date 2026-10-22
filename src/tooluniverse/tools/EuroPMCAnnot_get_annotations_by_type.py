@@ -1,7 +1,7 @@
 """
 EuroPMCAnnot_get_annotations_by_type
 
-Get all annotations of a specific type from multiple articles using the Europe PMC Annotations AP...
+Get annotations of one type from multiple Europe PMC articles. All supplied article IDs are reque...
 """
 
 from typing import Any, Optional, Callable
@@ -11,23 +11,29 @@ from ._shared_client import get_shared_client
 def EuroPMCAnnot_get_annotations_by_type(
     article_ids: str,
     annotation_type: str,
-    page_size: Optional[int | Any] = None,
+    page_size: Optional[int] = None,
+    limit: Optional[int] = 100,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get all annotations of a specific type from multiple articles using the Europe PMC Annotations AP...
+    Get annotations of one type from multiple Europe PMC articles. All supplied article IDs are reque...
 
     Parameters
     ----------
     article_ids : str
         Comma-separated article identifiers. Format: 'PMC:PMCXXXXXXX' or 'MED:PMID'. ...
     annotation_type : str
-        Annotation type to retrieve. One of: 'Chemicals', 'Organisms', 'Gene Ontology...
-    page_size : int | Any
-        Number of results per page. Default: 25. Max: 1000.
+        Annotation type to retrieve. Common values: 'Chemicals', 'Organisms', 'Gene O...
+    page_size : int
+        Upstream article page size. If omitted, the wrapper requests at least the num...
+    limit : int
+        Maximum number of annotations returned per article from the shared offset.
+    offset : int
+        Zero-based annotation offset applied independently within each returned article.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +54,8 @@ def EuroPMCAnnot_get_annotations_by_type(
             "article_ids": article_ids,
             "annotation_type": annotation_type,
             "page_size": page_size,
+            "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

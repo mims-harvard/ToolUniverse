@@ -17,6 +17,7 @@ def ENCORI_get_RBP_targets(
     pancancer_min: Optional[int] = None,
     cell_type: Optional[str] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -43,6 +44,8 @@ def ENCORI_get_RBP_targets(
         Restrict to a CLIP cell line/tissue (default 'all').
     limit : int
         Maximum binding rows to return (1-500, default 100).
+    offset : int
+        Zero-based ranked row offset. Continue with metadata.next_offset while metada...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -68,6 +71,7 @@ def ENCORI_get_RBP_targets(
             "pancancer_min": pancancer_min,
             "cell_type": cell_type,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

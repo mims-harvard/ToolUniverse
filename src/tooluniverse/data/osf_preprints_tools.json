@@ -2,7 +2,7 @@
   {
     "type": "OSFPreprintsTool",
     "name": "OSF_search_preprints",
-    "description": "Search OSF (Open Science Framework) Preprints for research preprints and working papers. OSF Preprints aggregates preprints from multiple providers including OSF, PsyArXiv, and others.",
+    "description": "Search one field (title by default, or description) in OSF Preprints across OSF, PsyArXiv, SocArXiv, and other providers. Returns exact total and one-based continuation metadata. Follow metadata.next_page while metadata.has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -17,6 +17,18 @@
           "minimum": 1,
           "maximum": 100
         },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "One-based result page. OSF uses the bare page parameter; continue with metadata.next_page."
+        },
+        "search_field": {
+          "type": "string",
+          "enum": ["title", "description"],
+          "default": "title",
+          "description": "Field to search. OSF exposes separate title and description filters rather than a combined full-text filter."
+        },
         "provider": {
           "type": "string",
           "description": "Optional preprint provider filter (e.g., 'osf', 'psyarxiv', 'socarxiv'). If not specified, searches all providers."
@@ -27,21 +39,28 @@
       ]
     },
     "return_schema": {
-      "type": "array",
-      "description": "List of OSF preprints matching the search query",
-      "items": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": {"type": "string", "enum": ["success", "error"]},
+        "data": {
+          "type": "array",
+          "description": "Current page of OSF preprints",
+          "items": {
         "type": "object",
         "properties": {
+          "id": {"type": ["string", "null"]},
           "title": {
-            "type": "string",
+            "type": ["string", "null"],
             "description": "Title of the preprint"
           },
+          "description": {"type": ["string", "null"]},
           "date_published": {
-            "type": "string",
+            "type": ["string", "null"],
             "description": "Publication date of the preprint"
           },
           "published": {
-            "type": "boolean",
+            "type": ["boolean", "null"],
             "description": "Whether the preprint is published"
           },
           "doi": {
@@ -49,20 +68,25 @@
             "description": "Digital Object Identifier (may be null if not assigned)"
           },
           "url": {
-            "type": "string",
+            "type": ["string", "null"],
             "description": "URL to the preprint on OSF"
           },
+          "provider": {"type": ["string", "null"]},
           "source": {
             "type": "string",
             "description": "Source identifier (always 'OSF Preprints')"
           }
         }
+      }},
+        "metadata": {"type": "object"},
+        "error": {"type": "string"}
       }
     },
     "test_examples": [
       {
         "query": "psychology",
-        "max_results": 2
+        "max_results": 2,
+        "page": 1
       },
       {
         "query": "social science",

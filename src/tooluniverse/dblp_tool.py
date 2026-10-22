@@ -1,3 +1,4 @@
+import html
 import requests
 from .base_tool import BaseTool
 from .tool_registry import register_tool
@@ -9,6 +10,17 @@ class DBLPTool(BaseTool):
     Search DBLP Computer Science Bibliography for publications.
     """
 
+    _TYPE_MAP = {
+        "Conference and Workshop Papers": "conference-paper",
+        "Journal Articles": "journal-article",
+        "Parts in Books or Collections": "book-chapter",
+        "Books and Theses": "book-or-thesis",
+        "Editorship": "editorship",
+        "Reference Works": "reference-work",
+        "Informal and Other Publications": "informal-publication",
+        "Data and Artifacts": "data-or-artifact",
+    }
+
     def __init__(
         self,
         tool_config,
@@ -19,15 +31,33 @@ class DBLPTool(BaseTool):
 
     def run(self, arguments):
         query = arguments.get("query")
-        limit = int(arguments.get("limit", 10))
         if not query:
             return {"status": "error", "error": "`query` parameter is required."}
-        return self._search(query, limit)
+        limit = arguments.get("limit", 10)
+        offset = arguments.get("offset", 0)
+        if (
+            isinstance(limit, bool)
+            or not isinstance(limit, int)
+            or not 1 <= limit <= 1000
+        ):
+            return {
+                "status": "error",
+                "error": "limit must be an integer between 1 and 1000",
+                "parameter": "limit",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+                "parameter": "offset",
+            }
+        return self._search(query, limit, offset)
 
-    def _search(self, query, limit):
+    def _search(self, query, limit, offset):
         params = {
             "q": query,
-            "h": max(1, min(limit, 100)),
+            "h": limit,
+            "f": offset,
             "format": "json",
         }
         try:
@@ -46,18 +76,68 @@ class DBLPTool(BaseTool):
                 "reason": response.reason,
             }
 
-        hits = response.json().get("result", {}).get("hits", {}).get("hit", [])
+        hits_data = response.json().get("result", {}).get("hits", {})
+        hits = hits_data.get("hit", [])
+        if isinstance(hits, dict):
+            hits = [hits]
+        try:
+            total_matches = int(hits_data.get("@total", len(hits)))
+        except (TypeError, ValueError):
+            total_matches = len(hits)
+        try:
+            accessible_results = int(hits_data.get("@computed", total_matches))
+        except (TypeError, ValueError):
+            accessible_results = total_matches
+        try:
+            first = int(hits_data.get("@first", offset))
+        except (TypeError, ValueError):
+            first = offset
+        returned = len(hits)
+        has_more = first + returned < accessible_results
+        pagination = {
+            "total_matches": total_matches,
+            "accessible_results": accessible_results,
+            "upstream_truncated": accessible_results < total_matches,
+            "returned": returned,
+            "offset": first,
+            "requested_offset": offset,
+            "limit": limit,
+            "has_more": has_more,
+            "next_offset": first + returned if returned and has_more else None,
+            "truncated": has_more or accessible_results < total_matches,
+            "warning": (
+                "DBLP matched more records than its search engine computed for "
+                "this query. Pagination can traverse only accessible_results; "
+                "refine the query to retrieve records outside that ranked window."
+                if accessible_results < total_matches
+                else None
+            ),
+        }
         results = []
         for hit in hits:
             info = hit.get("info", {})
 
             # Extract title
             title = info.get("title")
+            if isinstance(title, str):
+                title = html.unescape(title)
 
             # Extract author information
             authors = info.get("authors", {}).get("author", [])
             if isinstance(authors, dict):
                 authors = [authors]
+            elif isinstance(authors, str):
+                authors = [{"text": authors}]
+            normalized_authors = []
+            for author in authors if isinstance(authors, list) else []:
+                if isinstance(author, dict):
+                    author = dict(author)
+                    if isinstance(author.get("text"), str):
+                        author["text"] = html.unescape(author["text"])
+                    normalized_authors.append(author)
+                elif isinstance(author, str):
+                    normalized_authors.append({"text": html.unescape(author)})
+            authors = normalized_authors
 
             # Extract year
             year = info.get("year")
@@ -68,6 +148,8 @@ class DBLPTool(BaseTool):
             venue = info.get("venue")
             if isinstance(venue, list):
                 venue = venue[0] if venue else None
+            if isinstance(venue, str):
+                venue = html.unescape(venue)
 
             # Extract URL
             url = info.get("url")
@@ -77,56 +159,59 @@ class DBLPTool(BaseTool):
 
             # Extract DOI (from ee field)
             doi = None
-            if ee and isinstance(ee, str) and "doi.org" in ee:
-                doi = ee
+            ee_values = ee if isinstance(ee, list) else [ee]
+            for link in ee_values:
+                if isinstance(link, str) and "doi.org/" in link:
+                    doi = link.split("doi.org/", 1)[1]
+                    break
 
-            # Extract citation count (DBLP usually doesn't provide this)
-            citations = 0
-
-            # Open access status (DBLP usually doesn't provide this)
-            open_access = False
-
-            # Extract keywords (DBLP usually doesn't provide this)
+            # DBLP does not supply these facts. None means unknown/unavailable;
+            # zero/False would incorrectly assert zero citations or closed access.
+            citations = None
+            open_access = None
             keywords = []
-
-            # Extract article type
-            article_type = "conference-paper"  # DBLP is mainly conference papers
-
-            # Extract publisher
-            publisher = "Unknown"
-
-            # Handle missing abstract
-            abstract = (
-                "Abstract not available"  # DBLP usually doesn't provide abstracts
-            )
+            publication_type = info.get("type")
+            article_type = self._TYPE_MAP.get(publication_type)
+            if article_type is None and isinstance(publication_type, str):
+                article_type = publication_type.lower().replace(" ", "-")
+            publisher = info.get("publisher") or None
+            abstract = None
 
             results.append(
                 {
-                    "title": title or "Title not available",
+                    "title": title,
                     "abstract": abstract,
-                    "authors": (
-                        authors if authors else "Author information not available"
-                    ),
+                    "authors": authors,
                     "year": year,
-                    "venue": venue or "Journal information not available",
-                    "url": url or "URL not available",
-                    "ee": ee or "Electronic edition not available",
-                    "doi": doi or "DOI not available",
+                    "venue": venue,
+                    "url": url,
+                    "ee": ee,
+                    "doi": doi,
                     "citations": citations,
                     "open_access": open_access,
-                    "keywords": keywords if keywords else "Keywords not available",
+                    "keywords": keywords,
                     "article_type": article_type,
+                    "publication_type": publication_type,
                     "publisher": publisher,
                     "source": "DBLP",
+                    "unavailable_fields": [
+                        "abstract",
+                        "citation_count",
+                        "open_access_status",
+                        "keywords",
+                    ],
+                    "search_pagination": dict(pagination),
                     "data_quality": {
-                        "has_abstract": False,  # DBLP usually doesn't provide abstracts
+                        "has_abstract": False,
                         "has_authors": bool(authors),
                         "has_journal": bool(venue),
                         "has_year": bool(year),
                         "has_doi": bool(doi),
-                        "has_citations": False,  # DBLP usually doesn't provide citation count
-                        "has_keywords": False,  # DBLP usually doesn't provide keywords
+                        "has_citations": False,
+                        "has_open_access_status": False,
+                        "has_keywords": False,
                         "has_url": bool(url),
+                        "has_publication_type": bool(publication_type),
                     },
                 }
             )

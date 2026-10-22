@@ -32,7 +32,7 @@
   },
   {
     "name": "MonarchV3_get_associations",
-    "description": "Query cross-species associations between biomedical entities in the Monarch Initiative knowledge graph. Find gene-phenotype, disease-phenotype, gene-disease, or gene-pathway associations. Uses Biolink model categories to specify association type. Integrates data from OMIM, ClinVar, HPO, MGI, ZFIN, FlyBase, WormBase. Example: HGNC:11998 (TP53) with category GeneToPhenotypicFeatureAssociation returns phenotypes like hepatocellular carcinoma and reticular hyperpigmentation.",
+    "description": "Query cross-species associations in the Monarch knowledge graph with exact offset pagination. Metadata reports total_results, has_more and next_offset; continue until has_more is false.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -46,13 +46,23 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum number of associations to return (default: 20, max: 200)."
+          "minimum": 1,
+          "maximum": 200,
+          "default": 20,
+          "description": "Associations per page (1-200)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset. Continue with metadata.next_offset."
         }
       },
       "required": [
         "subject",
         "category"
-      ]
+      ],
+      "additionalProperties": false
     },
     "fields": {
       "endpoint": "associations"
@@ -74,7 +84,7 @@
   },
   {
     "name": "MonarchV3_search",
-    "description": "Search the Monarch Initiative knowledge graph for biomedical entities by name or keyword. Returns genes, diseases, phenotypes, and other entities matching the query, with their CURIE identifiers and categories. Useful for finding entity IDs to use with MonarchV3_get_entity and MonarchV3_get_associations. Example: searching 'BRCA1' returns HGNC:1100 (gene), 'Alzheimer' returns MONDO disease entries.",
+    "description": "Search the Monarch knowledge graph for biomedical entities with exact offset pagination. Metadata reports total_results, has_more and next_offset; continue until has_more is false.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -84,7 +94,16 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum results to return (default: 10, max: 50)."
+          "minimum": 1,
+          "maximum": 50,
+          "default": 10,
+          "description": "Results per page (1-50)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset. Continue with metadata.next_offset."
         },
         "category": {
           "type": "string",
@@ -95,7 +114,8 @@
           "description": "Alias for query parameter."
         }
       },
-      "required": []
+      "required": [],
+      "additionalProperties": false
     },
     "fields": {
       "endpoint": "search"
@@ -151,7 +171,7 @@
   },
   {
     "name": "MonarchV3_get_mappings",
-    "description": "Get cross-ontology mappings for a biomedical entity from the Monarch Initiative. Returns equivalence mappings between ontology identifiers, such as MONDO to OMIM, ICD10, SNOMED CT, NCIT, MESH, DOID, and Orphanet. Useful for translating disease identifiers across coding systems (e.g., for clinical data integration, ICD-10 billing codes, or linking to OMIM entries). Example: MONDO:0005148 (type 2 diabetes) maps to ICD10CM:E11, DOID:9352, OMIM:125853, MESH:D003924.",
+    "description": "Get cross-ontology mappings for a biomedical entity with exact offset pagination. Metadata reports total_mappings, has_more and next_offset.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -161,12 +181,22 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum number of mappings to return (default: 20, max: 100)."
+          "minimum": 1,
+          "maximum": 100,
+          "default": 20,
+          "description": "Mappings per page (1-100)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset. Continue with metadata.next_offset."
         }
       },
       "required": [
         "entity_id"
-      ]
+      ],
+      "additionalProperties": false
     },
     "fields": {
       "endpoint": "mappings"

@@ -1,7 +1,7 @@
 """
 Metabolite_get_diseases
 
-Get curated disease associations for a metabolite using CTD (Comparative Toxicogenomics Database)...
+Get curated disease associations for a metabolite using mydisease.info's BioThings cache of CTD (...
 """
 
 from typing import Any, Optional, Callable
@@ -9,18 +9,19 @@ from ._shared_client import get_shared_client
 
 
 def Metabolite_get_diseases(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_diseases",
     hmdb_id: Optional[str] = None,
     compound_name: Optional[str] = None,
     pubchem_cid: Optional[int | str] = None,
     limit: Optional[int] = 50,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get curated disease associations for a metabolite using CTD (Comparative Toxicogenomics Database)...
+    Get curated disease associations for a metabolite using mydisease.info's BioThings cache of CTD (...
 
     Parameters
     ----------
@@ -33,7 +34,9 @@ def Metabolite_get_diseases(
     pubchem_cid : int | str
         PubChem CID (e.g., 5793)
     limit : int
-        Maximum number of disease associations to return (default: 50)
+        Page size for disease associations (default: 50)
+    offset : int
+        Zero-based association offset. Continue with metadata.next_offset when metada...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def Metabolite_get_diseases(
             "compound_name": compound_name,
             "pubchem_cid": pubchem_cid,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

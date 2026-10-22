@@ -11,11 +11,13 @@ from ._shared_client import get_shared_client
 def GDC_get_survival(
     project_id: str,
     gene_symbol: Optional[str] = None,
+    limit: Optional[int] = 50,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Get Kaplan-Meier survival data for a GDC/TCGA cancer cohort. Returns time-to-event data with cens...
 
@@ -25,6 +27,10 @@ def GDC_get_survival(
         GDC project identifier (e.g., 'TCGA-BRCA', 'TCGA-LUAD', 'TCGA-GBM')
     gene_symbol : str
         Optional: gene symbol to filter cases with mutations in this gene (e.g., 'TP5...
+    limit : int
+        Maximum donors to return from the requested page (default 50)
+    offset : int
+        Zero-based donor offset for retrieving later pages
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,14 +40,19 @@ def GDC_get_survival(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"project_id": project_id, "gene_symbol": gene_symbol}.items()
+        for k, v in {
+            "project_id": project_id,
+            "gene_symbol": gene_symbol,
+            "limit": limit,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

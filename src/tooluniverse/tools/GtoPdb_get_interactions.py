@@ -9,31 +9,40 @@ from ._shared_client import get_shared_client
 
 
 def GtoPdb_get_interactions(
-    gene_symbol: Optional[str | Any] = None,
-    targetId: Optional[int | Any] = None,
-    target_id: Optional[int | Any] = None,
-    ligandId: Optional[int | Any] = None,
-    species: Optional[str | Any] = None,
+    gene_symbol: Optional[str] = None,
+    targetId: Optional[int] = None,
+    target_id: Optional[int] = None,
+    ligandId: Optional[int] = None,
+    species: Optional[str] = None,
+    approved_only: Optional[bool] = False,
+    limit: Optional[int] = 50,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
     Get pharmacological interactions between targets and ligands from the Guide to Pharmacology datab...
 
     Parameters
     ----------
-    gene_symbol : str | Any
+    gene_symbol : str
         Gene symbol convenience parameter — automatically resolves to GtoPdb targetId...
-    targetId : int | Any
+    targetId : int
         GtoPdb target ID. Get from GtoPdb_search_targets. Examples: 2486 (dopamine be...
-    target_id : int | Any
+    target_id : int
         Alias for targetId. GtoPdb target ID.
-    ligandId : int | Any
+    ligandId : int
         GtoPdb ligand ID. Get from GtoPdb_search_ligands. Examples: 5765 (aspirin), 7...
-    species : str | Any
+    species : str
         Filter by species. Examples: 'Human', 'Mouse', 'Rat'
+    approved_only : bool
+        If true, retain only interactions whose ligandId is marked approved in the Gt...
+    limit : int
+        Maximum interactions to return on this page.
+    offset : int
+        Zero-based interaction offset. Continue with next_offset while has_more is true.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -43,7 +52,7 @@ def GtoPdb_get_interactions(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
@@ -56,6 +65,9 @@ def GtoPdb_get_interactions(
             "target_id": target_id,
             "ligandId": ligandId,
             "species": species,
+            "approved_only": approved_only,
+            "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

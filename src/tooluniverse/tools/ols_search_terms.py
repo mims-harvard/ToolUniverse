@@ -1,7 +1,7 @@
 """
 ols_search_terms
 
-Search for terms in OLS (Ontology Lookup Service)
+Search terms in the EBI Ontology Lookup Service with explicit Solr offset pagination. When has_mo...
 """
 
 from typing import Any, Optional, Callable
@@ -10,20 +10,21 @@ from ._shared_client import get_shared_client
 
 def ols_search_terms(
     query: str,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "search_terms",
     rows: Optional[int] = 10,
     size: Optional[int] = 10,
     ontology: Optional[str] = None,
     exact_match: Optional[bool] = False,
     include_obsolete: Optional[bool] = False,
-    limit: Optional[int | Any] = None,
+    limit: Optional[int] = None,
+    start: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search for terms in OLS (Ontology Lookup Service)
+    Search terms in the EBI Ontology Lookup Service with explicit Solr offset pagination. When has_mo...
 
     Parameters
     ----------
@@ -41,8 +42,10 @@ def ols_search_terms(
         Search for exact matches only (default: false)
     include_obsolete : bool
         Include obsolete terms (default: false)
-    limit : int | Any
+    limit : int
         Alias for rows. Maximum number of results to return (default: 10, max: 100).
+    start : int
+        Zero-based OLS search offset. Continue with next_start while has_more is true.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -68,6 +71,7 @@ def ols_search_terms(
             "exact_match": exact_match,
             "include_obsolete": include_obsolete,
             "limit": limit,
+            "start": start,
         }.items()
         if v is not None
     }

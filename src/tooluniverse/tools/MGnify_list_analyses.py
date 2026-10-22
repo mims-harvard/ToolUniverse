@@ -1,7 +1,7 @@
 """
 MGnify_list_analyses
 
-List analyses associated with a study accession (taxonomic/functional outputs). Use to enumerate ...
+List analyses for a study with explicit page pagination. Preserves upstream JSON:API links, total...
 """
 
 from typing import Any, Optional, Callable
@@ -11,13 +11,14 @@ from ._shared_client import get_shared_client
 def MGnify_list_analyses(
     study_accession: str,
     size: Optional[int] = 10,
+    page: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
-    List analyses associated with a study accession (taxonomic/functional outputs). Use to enumerate ...
+    List analyses for a study with explicit page pagination. Preserves upstream JSON:API links, total...
 
     Parameters
     ----------
@@ -25,6 +26,8 @@ def MGnify_list_analyses(
         MGnify study accession (e.g., 'MGYS00000001').
     size : int
         Number of records per page (1–100).
+    page : int
+        One-based page number. Continue with metadata.next_page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,14 +37,18 @@ def MGnify_list_analyses(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"study_accession": study_accession, "size": size}.items()
+        for k, v in {
+            "study_accession": study_accession,
+            "size": size,
+            "page": page,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

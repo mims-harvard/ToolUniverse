@@ -19,6 +19,10 @@ from .tool_registry import register_tool
 class PMCTool(BaseTool):
     """Tool for searching PMC full-text biomedical literature."""
 
+    # Live NCBI eSearch behavior: offsets 0..9998 are accessible; retstart
+    # 9999+ returns a non-JSON error body even when count is much larger.
+    ESEARCH_RETRIEVAL_WINDOW = 9999
+
     def __init__(self, tool_config=None):
         super().__init__(tool_config)
         self.base_url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
@@ -214,6 +218,7 @@ class PMCTool(BaseTool):
         date_to: Optional[str] = None,
         article_type: Optional[str] = None,
         include_abstract: bool = False,
+        offset: int = 0,
     ) -> List[Dict[str, Any]]:
         """
         Search for papers using PMC API.
@@ -229,11 +234,35 @@ class PMCTool(BaseTool):
             List of paper dictionaries
         """
         try:
+            if offset < 0 or offset >= self.ESEARCH_RETRIEVAL_WINDOW:
+                return [
+                    {
+                        "title": "Error",
+                        "abstract": None,
+                        "authors": [],
+                        "year": None,
+                        "url": None,
+                        "source": "PMC",
+                        "error": (
+                            f"offset must be between 0 and "
+                            f"{self.ESEARCH_RETRIEVAL_WINDOW - 1}. NCBI PMC eSearch "
+                            "does not expose records beyond its 9,999-result retrieval "
+                            "window; narrow the query or use date filters."
+                        ),
+                        "retryable": False,
+                    }
+                ]
             # Step 1: Search PMC for article IDs
+            request_limit = min(
+                limit,
+                100,
+                self.ESEARCH_RETRIEVAL_WINDOW - offset,
+            )
             search_params = {
                 "db": "pmc",
                 "term": query,
-                "retmax": min(limit, 100),  # NCBI API max limit
+                "retmax": request_limit,
+                "retstart": offset,
                 "retmode": "json",
                 "sort": "relevance",
             }
@@ -265,7 +294,12 @@ class PMCTool(BaseTool):
             search_response.raise_for_status()
 
             search_data = search_response.json()
-            pmc_ids = search_data.get("esearchresult", {}).get("idlist", [])
+            search_result = search_data.get("esearchresult", {})
+            pmc_ids = search_result.get("idlist", [])
+            try:
+                total_results = int(search_result["count"])
+            except (KeyError, TypeError, ValueError):
+                total_results = None
 
             if not pmc_ids:
                 return []
@@ -325,7 +359,46 @@ class PMCTool(BaseTool):
                                 "for abstract access."
                             )
 
-            return results[:limit]
+            results = results[:limit]
+            if total_results is not None:
+                retrievable_results = min(
+                    total_results, self.ESEARCH_RETRIEVAL_WINDOW
+                )
+                has_more = offset + len(pmc_ids) < retrievable_results
+            else:
+                retrievable_results = self.ESEARCH_RETRIEVAL_WINDOW
+                has_more = (
+                    len(pmc_ids) == request_limit
+                    and offset + len(pmc_ids) < self.ESEARCH_RETRIEVAL_WINDOW
+                )
+            pagination = {
+                "total_results": total_results,
+                "retrievable_results": retrievable_results,
+                "returned": len(results),
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "next_offset": offset + len(pmc_ids) if has_more else None,
+                "result_set_complete": offset == 0
+                and total_results is not None
+                and len(results) == total_results,
+                "database_result_complete": total_results is not None
+                and total_results <= self.ESEARCH_RETRIEVAL_WINDOW,
+                "retrieval_limit_reached": total_results is not None
+                and total_results > self.ESEARCH_RETRIEVAL_WINDOW
+                and not has_more,
+            }
+            if total_results is not None and total_results > self.ESEARCH_RETRIEVAL_WINDOW:
+                pagination["retrieval_limit_note"] = (
+                    "NCBI PMC eSearch reports more matches than its 9,999-record "
+                    "retrieval window. Narrow the query or apply date filters to "
+                    "retrieve records outside this window."
+                )
+            # Keep the historical list return type while making pagination
+            # visible to agents.  Each paper carries the same page envelope.
+            for result in results:
+                result["search_pagination"] = pagination
+            return results
 
         except requests.exceptions.RequestException as e:
             return [
@@ -412,6 +485,7 @@ class PMCTool(BaseTool):
         date_to = tool_arguments.get("date_to")
         article_type = tool_arguments.get("article_type")
         include_abstract = bool(tool_arguments.get("include_abstract", False))
+        offset = tool_arguments.get("offset", 0)
 
         return self._search(
             query=query,
@@ -420,4 +494,5 @@ class PMCTool(BaseTool):
             date_to=date_to,
             article_type=article_type,
             include_abstract=include_abstract,
+            offset=offset,
         )

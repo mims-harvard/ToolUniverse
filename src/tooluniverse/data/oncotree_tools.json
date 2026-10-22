@@ -2,12 +2,13 @@
   {
     "name": "OncoTree_search",
     "type": "OncoTreeSearchTool",
-    "description": "Search the OncoTree cancer type ontology by name, code, main type, or tissue. OncoTree is a hierarchical cancer classification system developed at Memorial Sloan Kettering with 897+ cancer types. Returns standardized cancer type codes with UMLS and NCI Thesaurus cross-references. Use to identify the correct OncoTree code for a cancer type, find all cancer subtypes under a tissue, or map free-text cancer names to structured identifiers.",
+    "description": "Search the OncoTree cancer type ontology by name, code, main type, or tissue. Returns every upstream field for each matched tumor type, including color, hierarchy children, history, precursors, revocations, and UMLS/NCI references. An upstream HTTP 404 for no matches is normalized to a successful empty result. Exact name/code searches are checked against every returned record; metadata confirms source-record completeness and the requested version.",
     "parameter": {
       "type": "object",
       "properties": {
         "query": {
           "type": "string",
+          "minLength": 1,
           "description": "Search term. Interpreted according to the 'field' parameter. Examples: 'breast cancer', 'BRCA', 'Lung', 'Non-Small Cell Lung Cancer'."
         },
         "field": {
@@ -28,6 +29,7 @@
         },
         "version": {
           "type": "string",
+          "minLength": 1,
           "description": "OncoTree version identifier. Use 'oncotree_latest_stable' (default) for the current production version.",
           "default": "oncotree_latest_stable"
         }
@@ -67,6 +69,12 @@
                   "null"
                 ]
               },
+              "color": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
               "parent": {
                 "type": [
                   "string",
@@ -78,6 +86,21 @@
                   "integer",
                   "null"
                 ]
+              },
+              "history": {
+                "type": "array"
+              },
+              "children": {
+                "type": [
+                  "object",
+                  "array"
+                ]
+              },
+              "precursors": {
+                "type": "array"
+              },
+              "revocations": {
+                "type": "array"
               },
               "external_references": {
                 "type": "object"
@@ -135,16 +158,18 @@
   {
     "name": "OncoTree_get_type",
     "type": "OncoTreeGetTypeTool",
-    "description": "Get detailed information about a specific OncoTree cancer type by its exact code (e.g. 'BRCA', 'LUAD', 'GBM'). Returns the cancer name, main type, tissue, parent node in the hierarchy, hierarchy level, color used in MSK visualizations, revision history, and cross-references to UMLS and NCI Thesaurus. Use after OncoTree_search to get complete details for a known code.",
+    "description": "Get complete information about one OncoTree cancer type by exact code (e.g. 'BRCA', 'LUAD', 'GBM'). The wrapper requires one unique upstream result and verifies its code before success. Returns name, main type, tissue, hierarchy, color, history, children, precursors, revocations, and UMLS/NCI references. A missing code returns an explicit not-found error rather than a generic HTTP error.",
     "parameter": {
       "type": "object",
       "properties": {
         "code": {
           "type": "string",
+          "minLength": 1,
           "description": "OncoTree cancer type code (case-insensitive). Examples: 'BRCA' (Invasive Breast Carcinoma), 'LUAD' (Lung Adenocarcinoma), 'GBM' (Glioblastoma Multiforme), 'PAAD' (Pancreatic Adenocarcinoma)."
         },
         "version": {
           "type": "string",
+          "minLength": 1,
           "description": "OncoTree version. Default: 'oncotree_latest_stable'.",
           "default": "oncotree_latest_stable"
         }
@@ -201,6 +226,18 @@
               ]
             },
             "history": {
+              "type": "array"
+            },
+            "children": {
+              "type": [
+                "object",
+                "array"
+              ]
+            },
+            "precursors": {
+              "type": "array"
+            },
+            "revocations": {
               "type": "array"
             },
             "external_references": {
@@ -260,6 +297,7 @@
       "properties": {
         "version": {
           "type": "string",
+          "minLength": 1,
           "description": "OncoTree version. Default: 'oncotree_latest_stable'.",
           "default": "oncotree_latest_stable"
         }

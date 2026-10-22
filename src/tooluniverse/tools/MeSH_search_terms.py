@@ -1,7 +1,7 @@
 """
 MeSH_search_terms
 
-Search MeSH terms (entry terms/synonyms) by label. MeSH terms include the preferred descriptor na...
+Search MeSH terms (entry terms/synonyms) by label. MeSH terms include preferred descriptor names,...
 """
 
 from typing import Any, Optional, Callable
@@ -10,23 +10,23 @@ from ._shared_client import get_shared_client
 
 def MeSH_search_terms(
     query: str,
-    match_: Optional[str | Any] = None,
-    limit: Optional[int | Any] = None,
+    match_: Optional[str] = None,
+    limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search MeSH terms (entry terms/synonyms) by label. MeSH terms include the preferred descriptor na...
+    Search MeSH terms (entry terms/synonyms) by label. MeSH terms include preferred descriptor names,...
 
     Parameters
     ----------
     query : str
         Term label to search for. Examples: 'tumor', 'heart attack', 'aspirin', 'bloo...
-    match_ : str | Any
+    match_ : str
         Match type: 'exact' for exact match, 'contains' for partial match (default), ...
-    limit : int | Any
+    limit : int
         Maximum number of results (default: 20, max: 50).
     stream_callback : Callable, optional
         Callback for streaming output

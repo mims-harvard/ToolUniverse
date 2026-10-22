@@ -1,7 +1,7 @@
 [
   {
     "name": "Dryad_search_datasets",
-    "description": "Search the Dryad open research data repository for published datasets. Dryad is a curated, general-purpose repository that makes research data discoverable, freely reusable, and citable. It hosts datasets across all scientific disciplines, with strong coverage in ecology, evolutionary biology, genetics, and life sciences. Returns dataset identifiers, titles, authors, abstracts, storage sizes, and related publication ISSNs. Use this to find openly available research datasets by keyword, then use Dryad_get_dataset for full metadata.",
+    "description": "Search the Dryad open research data repository for published datasets using its real `/api/v2/search?q=` endpoint. Returns relevance-ranked dataset metadata with exact total, HAL continuation links, and one-based page metadata. Use Dryad_get_dataset for full metadata.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -10,17 +10,16 @@
           "description": "Search query string for dataset title, abstract, or author (e.g., 'climate change', 'CRISPR gene editing', 'protein structure')"
         },
         "per_page": {
-          "type": [
-            "integer",
-            "null"
-          ],
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 10,
           "description": "Number of results per page (default 10, max 100)"
         },
         "page": {
-          "type": [
-            "integer",
-            "null"
-          ],
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
           "description": "Page number for pagination (starts at 1)"
         }
       },
@@ -29,7 +28,8 @@
       ]
     },
     "fields": {
-      "endpoint": "https://datadryad.org/api/v2/datasets"
+      "endpoint": "https://datadryad.org/api/v2/search",
+      "pagination": "dryad_hal_page"
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -286,13 +286,26 @@
   },
   {
     "name": "Dryad_get_dataset_files",
-    "description": "Get the list of downloadable files for a specific Dryad dataset version. Returns file names, sizes, MIME types, and MD5 checksums for each file in the dataset. The version_id can be found in the Dryad_get_dataset response under _links.stash:version.href (extract the numeric ID from the path, e.g., '/api/v2/versions/124910' means version_id=124910). Use this to discover what data files are available before downloading.",
+    "description": "Get one page of downloadable files for a specific Dryad dataset version. Returns file names, sizes, MIME types, checksums, the exact file total, and HAL continuation metadata. Follow metadata.next_page while metadata.has_more is true; a version may contain more files than the default page. The version_id can be found in Dryad_get_dataset under _links.stash:version.href.",
     "parameter": {
       "type": "object",
       "properties": {
         "version_id": {
           "type": "integer",
           "description": "Version ID from Dryad dataset metadata. Found in _links.stash:version.href of Dryad_get_dataset response (e.g., 124910, 94, 93)."
+        },
+        "per_page": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 20,
+          "description": "Number of files per page (1-100). Defaults to Dryad's native page size of 20."
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "One-based file-list page. Dryad silently treats page 0 as page 1, so the wrapper rejects values below 1."
         }
       },
       "required": [
@@ -300,7 +313,9 @@
       ]
     },
     "fields": {
-      "endpoint": "https://datadryad.org/api/v2/versions/{version_id}/files"
+      "endpoint": "https://datadryad.org/api/v2/versions/{version_id}/files",
+      "pagination": "dryad_hal_page",
+      "hal_embedded_key": "stash:files"
     },
     "type": "BaseRESTTool",
     "test_examples": [

@@ -1,7 +1,7 @@
 """
 ClinGenAllele_lookup_hgvs
 
-Look up a genetic variant by HGVS expression in the ClinGen Allele Registry to get its canonical ...
+Look up a genetic variant by HGVS expression in the ClinGen Allele Registry. Returns the CA ID pl...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def ClinGenAllele_lookup_hgvs(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Look up a genetic variant by HGVS expression in the ClinGen Allele Registry to get its canonical ...
+    Look up a genetic variant by HGVS expression in the ClinGen Allele Registry. Returns the CA ID pl...
 
     Parameters
     ----------

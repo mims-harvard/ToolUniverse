@@ -15,6 +15,7 @@ def ENCORI_get_RBP_disease(
     disease: Optional[str] = None,
     assembly: Optional[str] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -37,6 +38,8 @@ def ENCORI_get_RBP_disease(
         Genome assembly (default 'hg38').
     limit : int
         Maximum association rows to return (1-500, default 100).
+    offset : int
+        Zero-based ranked row offset. Continue with metadata.next_offset while metada...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -60,6 +63,7 @@ def ENCORI_get_RBP_disease(
             "disease": disease,
             "assembly": assembly,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

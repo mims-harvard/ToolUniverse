@@ -22,6 +22,7 @@ No authentication required.
 
 import requests
 from typing import Dict, Any
+from urllib.parse import parse_qs, urlparse
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
@@ -237,7 +238,15 @@ class PROSITETool(BaseTool):
             }
 
         limit = arguments.get("limit", 10)
-        limit = min(max(1, limit), 50)
+        if (
+            isinstance(limit, bool)
+            or not isinstance(limit, int)
+            or not 1 <= limit <= 1000
+        ):
+            return {
+                "status": "error",
+                "error": "limit must be an integer between 1 and 1000",
+            }
 
         # Use InterPro API to search PROSITE entries
         url = f"{self.INTERPRO_BASE_URL}/entry/prosite"
@@ -245,6 +254,9 @@ class PROSITETool(BaseTool):
             "search": query,
             "page_size": limit,
         }
+        cursor = arguments.get("cursor")
+        if cursor:
+            params["cursor"] = cursor
 
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
@@ -273,6 +285,13 @@ class PROSITETool(BaseTool):
                     }
                 )
 
+        next_url = data.get("next")
+        next_cursor = None
+        if next_url:
+            cursor_values = parse_qs(urlparse(next_url).query).get("cursor", [])
+            if cursor_values:
+                next_cursor = cursor_values[0]
+
         return {
             "status": "success",
             "data": results,
@@ -280,6 +299,11 @@ class PROSITETool(BaseTool):
                 "source": "PROSITE via InterPro API (EBI)",
                 "query": query,
                 "total_results": data.get("count", len(results)),
+                "returned": len(results),
+                "page_size": limit,
+                "cursor": cursor or None,
+                "has_more": bool(next_url),
+                "next_cursor": next_cursor,
             },
         }
 
@@ -377,11 +401,16 @@ class PROSITETool(BaseTool):
             db = "sprot"
 
         max_results = arguments.get("max_results", 50)
+        offset = arguments.get("offset", 0)
         try:
             max_results = int(max_results)
         except (TypeError, ValueError):
             max_results = 50
         max_results = min(max(1, max_results), 1000)
+        try:
+            offset = max(0, int(offset))
+        except (TypeError, ValueError):
+            offset = 0
 
         # SKIP-FLAG=TRUE signatures (PS00005, PS00008, ...) are skipped by default
         # by ScanProsite and return no hits unless overridden. skip_frequent=False
@@ -414,9 +443,12 @@ class PROSITETool(BaseTool):
 
         data = response.json()
         matchset = data.get("matchset", []) or []
+        available_matches = len(matchset)
+        match_page = matchset[offset : offset + max_results]
+        has_more = offset + len(match_page) < available_matches
 
         proteins = []
-        for m in matchset[:max_results]:
+        for m in match_page:
             proteins.append(
                 {
                     "sequence_ac": m.get("sequence_ac"),
@@ -437,9 +469,21 @@ class PROSITETool(BaseTool):
                 "signature_ac": sig_upper,
                 "database": db,
                 "total_matches": data.get("n_match", len(matchset)),
+                "available_matches": available_matches,
                 "total_sequences": data.get("n_seq"),
                 "capped": bool(data.get("capped", 0)),
+                "complete_database_result": not bool(data.get("capped", 0)),
                 "returned": len(proteins),
+                "offset": offset,
+                "limit": max_results,
+                "has_more": has_more,
+                "next_offset": offset + len(proteins) if has_more else None,
                 "skip_frequent_patterns": skip_frequent,
+                "capped_note": (
+                    "ScanProsite capped the database search. Pagination recovers every match "
+                    "present in this response, but additional database sequences may be absent."
+                    if data.get("capped", 0)
+                    else None
+                ),
             },
         }

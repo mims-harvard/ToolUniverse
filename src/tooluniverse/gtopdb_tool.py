@@ -153,8 +153,10 @@ class GtoPdbRESTTool(BaseTool):
 
             api_params = {}
             for k, v in query_params.items():
-                # Skip limit as it's handled separately
-                if k == "limit":
+                # Local pagination controls are applied after all upstream and
+                # client-side filters. Do not leak them to endpoints that do
+                # not implement these parameters.
+                if k in ("limit", "max_results", "offset"):
                     continue
                 # Map parameter name
                 api_key = param_mapping.get(k, k)
@@ -386,6 +388,12 @@ class GtoPdbRESTTool(BaseTool):
         # the approved ligands endpoint (/services/ligands?approved=true).
         _approved_only_requested = arguments.get("approved_only")
         if _approved_only_requested is not None:
+            if not isinstance(_approved_only_requested, bool):
+                return {
+                    "status": "error",
+                    "error": "approved_only must be a boolean",
+                    "parameter": "approved_only",
+                }
             arguments = dict(arguments)
             arguments.pop("approved_only", None)
 
@@ -630,24 +638,50 @@ class GtoPdbRESTTool(BaseTool):
                 and isinstance(data, list)
                 and "/interactions" in url
             ):
+                approved_url = f"{self.base_url}/ligands?approved=true"
                 try:
-                    approved_url = f"{self.base_url}/ligands?approved=true"
                     approved_resp = request_with_retry(
                         self.session,
                         "GET",
                         approved_url,
                         timeout=self.timeout,
-                        max_attempts=2,
+                        max_attempts=3,
                     )
-                    if approved_resp.status_code == 200:
-                        approved_ids = {
-                            lig.get("ligandId")
-                            for lig in approved_resp.json()
-                            if isinstance(lig, dict) and lig.get("approved")
+                    if approved_resp.status_code != 200:
+                        return {
+                            "status": "error",
+                            "error": (
+                                "approved_only=True could not be applied because the "
+                                f"GtoPdb approved-ligand lookup returned HTTP {approved_resp.status_code}; "
+                                "unfiltered interactions were not returned"
+                            ),
+                            "filter": "approved_only",
+                            "filter_applied": False,
+                            "url": approved_url,
                         }
-                        data = [x for x in data if x.get("ligandId") in approved_ids]
-                except Exception:
-                    pass  # on API failure, keep all data unfiltered
+                    approved_ligands = approved_resp.json()
+                    if not isinstance(approved_ligands, list):
+                        raise ValueError("approved-ligand response is not a list")
+                    approved_ids = {
+                        lig.get("ligandId")
+                        for lig in approved_ligands
+                        if isinstance(lig, dict)
+                        and lig.get("approved") is True
+                        and lig.get("ligandId") is not None
+                    }
+                except Exception as exc:
+                    return {
+                        "status": "error",
+                        "error": (
+                            "approved_only=True could not be applied because the "
+                            f"GtoPdb approved-ligand lookup failed: {exc}; "
+                            "unfiltered interactions were not returned"
+                        ),
+                        "filter": "approved_only",
+                        "filter_applied": False,
+                        "url": approved_url,
+                    }
+                data = [x for x in data if x.get("ligandId") in approved_ids]
 
             if _ligand_type_requested and isinstance(data, list) and "/ligands" in url:
                 lt_lower = _ligand_type_requested.lower()
@@ -660,13 +694,16 @@ class GtoPdbRESTTool(BaseTool):
                         x for x in data if (x.get("type") or "").lower() == lt_lower
                     ]
 
-            # Apply limit if specified (max_results is an alias for limit)
+            # Apply recoverable local pagination after all filters. Previously
+            # interaction-rich targets were cut to the first 50 records and
+            # generated clients had no offset with which to retrieve the tail.
             # Feature-47A-04: increased default from 20 to 50 — interaction-rich targets
             # like EGFR (90 interactions) would only show 22% of data at limit=20.
-            limit = arguments.get("limit", arguments.get("max_results", 50))
+            limit = int(arguments.get("limit", arguments.get("max_results", 50)))
+            offset = max(0, int(arguments.get("offset", 0)))
             total_available = len(data) if isinstance(data, list) else None
-            if isinstance(data, list) and len(data) > limit:
-                data = data[:limit]
+            if isinstance(data, list):
+                data = data[offset : offset + limit]
 
             result: Dict[str, Any] = {
                 "status": "success",
@@ -674,6 +711,9 @@ class GtoPdbRESTTool(BaseTool):
                 "url": url,
                 "count": len(data) if isinstance(data, list) else 1,
             }
+            if _approved_only_requested and "/interactions" in url:
+                result["approved_only_applied"] = True
+                result["unfiltered_total_available"] = _pre_approved_filter_count
 
             # Feature-62B-003 / Feature-63B-001: for non-interaction endpoints, approved_only is not
             # applicable. For ligand searches, use ligand_type='Approved' instead.
@@ -685,13 +725,22 @@ class GtoPdbRESTTool(BaseTool):
                 )
 
             # Feature-60A-003: disclose truncation so users know data was cut off
-            if total_available is not None and total_available > len(data):
+            if total_available is not None:
+                next_offset = offset + len(data)
+                has_more = next_offset < total_available
                 result["total_available"] = total_available
                 result["returned"] = len(data)
-                result["truncation_note"] = (
-                    f"Returned {len(data)} of {total_available} total interactions."
-                    f" Increase limit (e.g., limit={total_available}) to retrieve all."
-                )
+                result["offset"] = offset
+                result["limit"] = limit
+                result["has_more"] = has_more
+                result["next_offset"] = next_offset if has_more else None
+                result["result_set_complete"] = offset == 0 and not has_more
+                if offset > 0 or total_available > len(data):
+                    result["truncation_note"] = (
+                        f"Returned {len(data)} of {total_available} total records "
+                        f"starting at offset {offset}. Continue with next_offset "
+                        "while has_more is true."
+                    )
 
             # Feature-54B-002: multi-word name search hint when results empty
             name_q = arguments.get("name") or arguments.get("query")
@@ -801,21 +850,17 @@ class GtoPdbRESTTool(BaseTool):
                         "name": first.get("ligandName"),
                     }
                 # Feature-49B-002 / Feature-55A-002 / Feature-55A-003 / Feature-55B-001:
-                # GtoPdb interactions list pharmacological research compounds — approved drugs
-                # may be absent for any target class (kinases, GPCRs, ion channels, etc.).
-                # The previous code checked item.get("approved") which is only present on
-                # /ligands objects, not /interactions objects, so has_approved was always False.
-                # Fix: always emit the note as factual guidance (not conditional on an
-                # always-false check). Use neutral target-class-agnostic wording. Embed the
-                # queried gene_symbol so the ChEMBL suggestion is immediately actionable.
+                # Interaction records do not carry approval status themselves. Avoid claiming
+                # that approved drugs are absent: a live EGFR case has many interactions whose
+                # ligand IDs are marked approved by the ligand registry.
                 if isinstance(data, list) and len(data) > 0:
                     _chembl_target = gene_symbol or (
                         result.get("queried_target", {}).get("name", "the target")
                     )
                     result["coverage_note"] = (
-                        "GtoPdb interactions list pharmacological research compounds — approved "
-                        "drugs for this target are not represented in these results. For approved "
-                        "drugs and clinical compounds, use ChEMBL_get_drug_mechanisms or "
+                        "GtoPdb interaction records are curated pharmacological measurements, "
+                        "not a comprehensive clinical drug-mechanism catalog. For complementary "
+                        "approved-drug and clinical-compound coverage, use ChEMBL_get_drug_mechanisms or "
                         f"ChEMBL_search_compounds with target_name='{_chembl_target}'."
                     )
 

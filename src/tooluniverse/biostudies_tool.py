@@ -123,9 +123,26 @@ class BioStudiesRESTTool(BaseTool):
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the BioStudies API call"""
         try:
+            tool_name = self.tool_config.get("name", "")
+            if tool_name in ["biostudies_search", "biostudies_search_by_collection"]:
+                page_size = arguments.get("pageSize", arguments.get("limit", 10))
+                page = arguments.get("page", 1)
+                if (
+                    isinstance(page_size, bool)
+                    or not isinstance(page_size, int)
+                    or not 1 <= page_size <= 100
+                ):
+                    return {
+                        "status": "error",
+                        "error": "pageSize must be an integer between 1 and 100",
+                    }
+                if isinstance(page, bool) or not isinstance(page, int) or page < 1:
+                    return {
+                        "status": "error",
+                        "error": "page must be a positive 1-based integer",
+                    }
             url = self._build_url(arguments)
             params = self._build_params(arguments)
-            tool_name = self.tool_config.get("name", "")
 
             response = self.session.get(url, params=params, timeout=self.timeout)
             response.raise_for_status()
@@ -142,16 +159,40 @@ class BioStudiesRESTTool(BaseTool):
                     "biostudies_search_by_collection",
                 ]:
                     hits = data.get("hits", [])
+                    page = int(data.get("page", params.get("page", 1)))
+                    page_size = int(data.get("pageSize", params.get("pageSize", len(hits))))
+                    covered_through = (page - 1) * page_size + len(hits)
+                    total_hits = max(int(data.get("totalHits", 0)), covered_through)
+                    total_hits_exact = bool(data.get("isTotalHitsExact", False))
+                    has_more = (
+                        covered_through < total_hits
+                        if total_hits_exact
+                        else len(hits) == page_size or covered_through < total_hits
+                    )
+                    formatted = {
+                        "hits": hits,
+                        "totalHits": total_hits,
+                        "totalHitsExact": total_hits_exact,
+                        "totalHitsRelation": (
+                            "exact" if total_hits_exact else "lower_bound"
+                        ),
+                        "page": page,
+                        "pageSize": page_size,
+                        "returned": len(hits),
+                        "has_more": has_more,
+                        "next_page": page + 1 if has_more else None,
+                        "result_set_complete": page == 1 and not has_more,
+                        "sortBy": data.get("sortBy"),
+                        "sortOrder": data.get("sortOrder"),
+                    }
+                    if not total_hits_exact:
+                        formatted["totalHitsWarning"] = (
+                            "BioStudies reports isTotalHitsExact=false; totalHits "
+                            "is a lower bound that can increase on later pages."
+                        )
                     return {
                         "status": "success",
-                        "data": {
-                            "hits": hits,
-                            "totalHits": data.get("totalHits", 0),
-                            "page": data.get("page", 1),
-                            "pageSize": data.get("pageSize", len(hits)),
-                            "sortBy": data.get("sortBy"),
-                            "sortOrder": data.get("sortOrder"),
-                        },
+                        "data": formatted,
                         "count": len(hits),
                         "url": response.url,
                     }

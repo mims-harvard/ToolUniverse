@@ -361,8 +361,28 @@ class NCBIDatasetsTool(BaseTool):
             return {"status": "error", "error": "gene_id parameter is required"}
 
         page_size = arguments.get("page_size", 20)
+        if page_size is None:
+            page_size = 20
+        if (
+            isinstance(page_size, bool)
+            or not isinstance(page_size, int)
+            or not 1 <= page_size <= 1000
+        ):
+            return {
+                "status": "error",
+                "error": "page_size must be an integer between 1 and 1000",
+            }
+        offset = arguments.get("offset", 0)
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+            }
         url = f"{NCBI_DATASETS_BASE}/gene/id/{self._path_segment(gene_id)}/orthologs"
-        params = {"page_size": max(1, min(int(page_size), 100))}
+        # This endpoint currently ignores page_size and returns its complete
+        # ortholog set. Request the documented maximum, then paginate that
+        # complete response locally so records after the first page are reachable.
+        params = {"page_size": 1000}
 
         response = self._get(
             url,
@@ -376,10 +396,8 @@ class NCBIDatasetsTool(BaseTool):
         total_available = result.get("total_count")
         if total_available is None:
             total_available = len(reports)
-        # The live ortholog endpoint currently ignores page_size and returns the
-        # complete set. Enforce the public ToolUniverse contract locally so a
-        # small request cannot unexpectedly produce hundreds of records.
-        reports = reports[: params["page_size"]]
+        upstream_returned = len(reports)
+        reports = reports[offset : offset + page_size]
         orthologs = []
         for report in reports:
             gene_data = report.get("gene", {})
@@ -400,9 +418,20 @@ class NCBIDatasetsTool(BaseTool):
             "status": "success",
             "data": orthologs,
             "metadata": {
-                "total_results": len(orthologs),
+                "total_results": total_available,
                 "total_available": total_available,
                 "returned": len(orthologs),
+                "page_size": page_size,
+                "offset": offset,
+                "has_more": offset + len(orthologs) < total_available,
+                "truncated": len(orthologs) < total_available,
+                "next_offset": (
+                    offset + len(orthologs)
+                    if offset + len(orthologs) < total_available
+                    else None
+                ),
+                "upstream_returned": upstream_returned,
+                "pagination_mode": "local_complete_response",
                 "query_gene_id": str(gene_id),
                 "source": "NCBI Datasets API v2",
             },
@@ -601,17 +630,35 @@ class NCBIDatasetsTool(BaseTool):
         taxon = str(arguments.get("taxon") or "").strip()
         if not taxon:
             return {"status": "error", "error": "taxon parameter is required"}
-        try:
-            page_size = int(arguments.get("limit") or 20)
-        except (TypeError, ValueError):
+        page_size = arguments.get("limit", 20)
+        if page_size is None:
             page_size = 20
-        page_size = max(1, min(page_size, 100))
+        if (
+            isinstance(page_size, bool)
+            or not isinstance(page_size, int)
+            or not 1 <= page_size <= 1000
+        ):
+            return {
+                "status": "error",
+                "error": "limit must be an integer between 1 and 1000",
+            }
+        page_token = arguments.get("page_token")
+        if page_token is not None and (
+            not isinstance(page_token, str) or not page_token.strip()
+        ):
+            return {
+                "status": "error",
+                "error": "page_token must be a non-empty string when provided",
+            }
+        page_token = page_token.strip() if page_token else ""
 
         url = (
             f"{NCBI_DATASETS_BASE}/genome/taxon/"
             f"{self._path_segment(taxon)}/dataset_report"
         )
         params = {"page_size": page_size}
+        if page_token:
+            params["page_token"] = page_token
         ref_only = arguments.get("reference_only")
         if ref_only:
             params["filters.reference_only"] = "true"
@@ -623,14 +670,21 @@ class NCBIDatasetsTool(BaseTool):
         )
         result = self._response_json(response)
         reports = result.get("reports", []) or []
+        next_page_token = result.get("next_page_token") or None
+        total_available = result.get("total_count")
+        has_more = bool(next_page_token)
         return {
             "status": "success",
             "data": [self._summarize_assembly(r) for r in reports],
             "metadata": {
-                "total_available": result.get("total_count"),
+                "total_available": total_available,
                 "returned": len(reports),
                 "query_taxon": taxon,
                 "page_size": page_size,
+                "page_token_used": page_token or None,
+                "next_page_token": next_page_token,
+                "has_more": has_more,
+                "truncated": has_more,
                 "source": "NCBI Datasets API v2",
             },
         }

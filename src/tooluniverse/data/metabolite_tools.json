@@ -89,7 +89,7 @@
   },
   {
     "name": "Metabolite_search",
-    "description": "Search for metabolites by compound name or molecular formula via PubChem. Returns up to 10 matching compounds with PubChem CID, name, formula, molecular weight, and SMILES. Use search_type='name' for name/keyword search (default) or search_type='formula' for exact molecular formula search (e.g., C6H12O6).",
+    "description": "Search for metabolites by compound name or molecular formula via PubChem. Returns a resumable result page with PubChem CID, name, formula, molecular weight, and SMILES. Use search_type='name' for name/keyword search (default) or search_type='formula' for exact molecular formula search (e.g., C6H12O6). metadata.total_results reports the full count for exact name/formula results; autocomplete fallbacks explicitly set metadata.result_set_complete=false because PubChem autocomplete exposes no authoritative total.",
     "type": "MetaboliteTool",
     "parameter": {
       "type": "object",
@@ -107,6 +107,19 @@
           "type": "string",
           "description": "Search type: 'name' for compound name search, 'formula' for molecular formula search (default: name)",
           "default": "name"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 50,
+          "description": "Page size (default 10, maximum 50).",
+          "default": 10
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Zero-based result offset. Continue with metadata.next_offset when metadata.has_more is true.",
+          "default": 0
         }
       },
       "required": [
@@ -142,7 +155,7 @@
   },
   {
     "name": "Metabolite_get_diseases",
-    "description": "Get curated disease associations for a metabolite using CTD (Comparative Toxicogenomics Database), served via the RENCI Automat CTD mirror since CTD's own batchQuery.go endpoint is CAPTCHA-blocked. Accepts HMDB ID, compound name, or PubChem CID. Resolves the identifier to PubChem to get the canonical compound name, then queries the mirror for chemical-disease associations. Returns disease name, disease ID (MONDO), and supporting PubMed IDs. Note: direct_evidence (CTD's own therapeutic/marker-mechanism classification) and disease_categories are always null -- the mirror's edge data does not carry either field, only the disease link and its citations.",
+    "description": "Get curated disease associations for a metabolite using mydisease.info's BioThings cache of CTD (Comparative Toxicogenomics Database). Accepts HMDB ID, compound name, or PubChem CID. Resolves the identifier through PubChem, fetches every mydisease hit across server pages, and returns a resumable association page with disease ID, direct CTD evidence when present, and supporting PubMed IDs. data.disease_count and metadata.total_results report the full matched association count.",
     "type": "MetaboliteTool",
     "parameter": {
       "type": "object",
@@ -169,8 +182,15 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum number of disease associations to return (default: 50)",
+          "minimum": 1,
+          "description": "Page size for disease associations (default: 50)",
           "default": 50
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Zero-based association offset. Continue with metadata.next_offset when metadata.has_more is true.",
+          "default": 0
         }
       }
     },
@@ -412,7 +432,7 @@
   },
   {
     "name": "HMDB_get_diseases",
-    "description": "Alias for Metabolite_get_diseases. Get disease associations for a metabolite via CTD database.",
+    "description": "Alias for Metabolite_get_diseases. Get CTD disease associations for a metabolite with recoverable offset pagination. Provide an HMDB ID, compound name, or PubChem CID; continue with next_offset while has_more is true.",
     "type": "MetaboliteTool",
     "parameter": {
       "type": "object",
@@ -434,10 +454,16 @@
           "type": "string",
           "description": "PubChem CID as an alternative identifier to hmdb_id or compound_name."
         },
-        "limit": {
-          "type": "integer",
-          "default": 50,
-          "description": "Maximum number of disease associations to return (default 50)."
+      "limit": {
+        "type": "integer",
+        "default": 50,
+        "description": "Maximum number of disease associations to return (default 50)."
+      },
+      "offset": {
+        "type": "integer",
+        "minimum": 0,
+        "default": 0,
+        "description": "Zero-based disease-association offset. Continue with next_offset while has_more is true."
         }
       },
       "required": []
@@ -465,9 +491,19 @@
               "type": "string",
               "description": "The name variant used to query CTD"
             },
-            "disease_count": {
-              "type": "integer"
-            },
+          "disease_count": {
+            "type": "integer"
+          },
+          "returned": {"type": "integer"},
+          "offset": {"type": "integer"},
+          "limit": {"type": "integer"},
+          "has_more": {"type": "boolean"},
+          "next_offset": {"type": ["integer", "null"]},
+          "result_set_complete": {"type": "boolean"},
+          "unresolved_disease_name_count": {
+            "type": "integer",
+            "description": "Number of associations whose disease ID could not be resolved to a human-readable name."
+          },
             "diseases": {
               "type": "array",
               "items": {
@@ -478,6 +514,10 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "disease_name_source": {
+                    "type": "string",
+                    "description": "Provenance of disease_name: mydisease.mondo.label, EBI OLS (<ontology>), NLM MeSH, or unresolved."
                   },
                   "disease_id": {
                     "type": [

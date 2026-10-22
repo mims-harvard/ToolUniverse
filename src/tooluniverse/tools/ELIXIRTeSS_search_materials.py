@@ -1,7 +1,7 @@
 """
 ELIXIRTeSS_search_materials
 
-Search ELIXIR TeSS (Training eSupport System) for bioinformatics and life science training materi...
+Search ELIXIR TeSS for bioinformatics training materials. Results use one-based page pagination: ...
 """
 
 from typing import Any, Optional, Callable
@@ -9,37 +9,37 @@ from ._shared_client import get_shared_client
 
 
 def ELIXIRTeSS_search_materials(
-    q: Optional[str | Any] = None,
-    scientific_topics: Optional[str | Any] = None,
-    target_audience: Optional[str | Any] = None,
-    difficulty_level: Optional[str | Any] = None,
-    licence: Optional[str | Any] = None,
-    page_size: Optional[int | Any] = None,
-    page: Optional[int | Any] = None,
+    q: Optional[str] = None,
+    scientific_topics: Optional[str] = None,
+    target_audience: Optional[str] = None,
+    difficulty_level: Optional[str] = None,
+    licence: Optional[str] = None,
+    page_size: Optional[int] = 10,
+    page: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search ELIXIR TeSS (Training eSupport System) for bioinformatics and life science training materi...
+    Search ELIXIR TeSS for bioinformatics training materials. Results use one-based page pagination: ...
 
     Parameters
     ----------
-    q : str | Any
+    q : str
         Search query for training materials. Examples: 'CRISPR', 'protein structure p...
-    scientific_topics : str | Any
+    scientific_topics : str
         Filter by EDAM scientific topic. Examples: 'Genomics', 'Proteomics', 'Sequenc...
-    target_audience : str | Any
+    target_audience : str
         Filter by target audience. Examples: 'Researchers', 'Graduate students', 'Bio...
-    difficulty_level : str | Any
+    difficulty_level : str
         Filter by difficulty: 'Beginner', 'Intermediate', 'Advanced'
-    licence : str | Any
+    licence : str
         Filter by license type. Example: 'CC-BY'
-    page_size : int | Any
-        Number of results to return (default 10, max 100)
-    page : int | Any
-        Page number for pagination
+    page_size : int
+        Results per page (default 10, max 100)
+    page : int
+        One-based page number. Continue with metadata.next_page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

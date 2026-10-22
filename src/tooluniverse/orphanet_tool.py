@@ -177,6 +177,10 @@ class OrphanetTool(BaseTool):
         except (TypeError, ValueError):
             limit = 20
         limit = max(1, min(limit, 200))
+        try:
+            offset = max(0, int(arguments.get("offset", 0)))
+        except (TypeError, ValueError):
+            offset = 0
 
         try:
             # Use RDcode API for approximate name search
@@ -199,7 +203,9 @@ class OrphanetTool(BaseTool):
                 results = data.get("entities", data.get("results", [data]))
 
             total_count = len(results)
-            results = results[:limit]
+            results = results[offset : offset + limit]
+            next_offset = offset + len(results)
+            has_more = next_offset < total_count
 
             return {
                 "status": "success",
@@ -207,13 +213,16 @@ class OrphanetTool(BaseTool):
                     "results": results,
                     "count": len(results),
                     "total_count": total_count,
+                    "offset": offset,
+                    "has_more": has_more,
+                    "next_offset": next_offset if has_more else None,
                     "query": query,
                     "language": lang,
                 },
                 "metadata": {
                     "source": "Orphanet RDcode API",
                     "query": query,
-                    "truncated": total_count > limit,
+                    "truncated": has_more,
                 },
             }
 
@@ -713,6 +722,10 @@ class OrphanetTool(BaseTool):
         except (TypeError, ValueError):
             limit = 20
         limit = max(1, min(limit, 200))
+        try:
+            offset = max(0, int(arguments.get("offset", 0)))
+        except (TypeError, ValueError):
+            offset = 0
 
         try:
             # URL encode the search name
@@ -745,16 +758,21 @@ class OrphanetTool(BaseTool):
                 results = [data] if data else []
 
             total_count = len(results)
-            results = results[:limit]
+            results = results[offset : offset + limit]
+            next_offset = offset + len(results)
+            has_more = next_offset < total_count
             return {
                 "status": "success",
                 "data": {
                     "results": results,
                     "count": len(results),
                     "total": total_count,
+                    "offset": offset,
+                    "has_more": has_more,
+                    "next_offset": next_offset if has_more else None,
                     "search_name": name,
                     "exact_match": exact,
-                    "truncated": total_count > limit,
+                    "truncated": has_more,
                 },
                 "metadata": {
                     "source": "Orphanet RDcode API",

@@ -1,7 +1,7 @@
 """
 UniBind_list_tfs
 
-List the catalog of transcription factors (TFs) profiled in the UniBind database of direct TF-DNA...
+List the complete catalog of transcription factors profiled in UniBind direct TF-DNA binding data...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,14 @@ def UniBind_list_tfs(
     operation: Optional[str] = "list_tfs",
     search: Optional[str] = None,
     limit: Optional[int] = 200,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
-    List the catalog of transcription factors (TFs) profiled in the UniBind database of direct TF-DNA...
+    List the complete catalog of transcription factors profiled in UniBind direct TF-DNA binding data...
 
     Parameters
     ----------
@@ -28,6 +29,8 @@ def UniBind_list_tfs(
         Case-insensitive substring filter applied client-side to TF gene symbols, e.g...
     limit : int
         Maximum number of TF names to return after filtering.
+    offset : int
+        Zero-based offset after optional TF-symbol filtering. Continue with metadata....
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -37,14 +40,19 @@ def UniBind_list_tfs(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"operation": operation, "search": search, "limit": limit}.items()
+        for k, v in {
+            "operation": operation,
+            "search": search,
+            "limit": limit,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

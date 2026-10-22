@@ -14,7 +14,7 @@ def ebi_list_domains(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     List all available EBI Search domains. Returns metadata about all searchable domains including do...
 
@@ -31,7 +31,7 @@ def ebi_list_domains(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

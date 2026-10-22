@@ -11,6 +11,8 @@ from ._shared_client import get_shared_client
 def EnsemblPheno_get_by_variant(
     variant_id: str,
     species: Optional[str] = "homo_sapiens",
+    limit: Optional[int] = 200,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,6 +27,10 @@ def EnsemblPheno_get_by_variant(
         Species name. Use 'homo_sapiens' for human. Default: 'homo_sapiens'.
     variant_id : str
         Variant rsID. Examples: 'rs429358' (APOE e4), 'rs7903146' (TCF7L2 diabetes), ...
+    limit : int
+        Maximum phenotype associations per page.
+    offset : int
+        Zero-based association offset. Continue with data.next_offset while has_more ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +47,12 @@ def EnsemblPheno_get_by_variant(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"species": species, "variant_id": variant_id}.items()
+        for k, v in {
+            "species": species,
+            "variant_id": variant_id,
+            "limit": limit,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

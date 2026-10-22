@@ -1,7 +1,7 @@
 """
 ClinicalTrials_search_by_sponsor
 
-Search ClinicalTrials.gov for clinical trials by sponsor or lead organization. Returns trials fun...
+Search ClinicalTrials.gov trials by sponsor with opaque-token pagination. Continue by passing met...
 """
 
 from typing import Any, Optional, Callable
@@ -10,30 +10,33 @@ from ._shared_client import get_shared_client
 
 def ClinicalTrials_search_by_sponsor(
     sponsor: str,
-    query_cond: Optional[str | Any] = None,
-    filter_status: Optional[str | Any] = None,
-    filter_phase: Optional[str | Any] = None,
+    query_cond: Optional[str] = None,
+    filter_status: Optional[str] = None,
+    filter_phase: Optional[str] = None,
     page_size: Optional[int] = 10,
+    next_page_token: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search ClinicalTrials.gov for clinical trials by sponsor or lead organization. Returns trials fun...
+    Search ClinicalTrials.gov trials by sponsor with opaque-token pagination. Continue by passing met...
 
     Parameters
     ----------
     sponsor : str
         Sponsor or lead organization name (e.g., 'Pfizer', 'National Cancer Institute...
-    query_cond : str | Any
+    query_cond : str
         Optional disease/condition filter (e.g., 'cancer', 'cardiovascular disease', ...
-    filter_status : str | Any
+    filter_status : str
         Filter by status: 'RECRUITING', 'COMPLETED', 'ACTIVE_NOT_RECRUITING'. Comma-s...
-    filter_phase : str | Any
+    filter_phase : str
         Filter by phase: 'PHASE1', 'PHASE2', 'PHASE3', 'PHASE4'. Comma-separate multi...
     page_size : int
         Number of results per page (default 10, max 1000).
+    next_page_token : str
+        Opaque token from metadata.next_page_token. Omit for the first page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def ClinicalTrials_search_by_sponsor(
             "filter_status": filter_status,
             "filter_phase": filter_phase,
             "page_size": page_size,
+            "next_page_token": next_page_token,
         }.items()
         if v is not None
     }

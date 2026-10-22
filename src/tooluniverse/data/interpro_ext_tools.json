@@ -1,7 +1,7 @@
 [
   {
     "name": "InterPro_get_proteins_by_domain",
-    "description": "Find proteins that contain a specific InterPro domain. Performs a reverse lookup from an InterPro domain/family accession to the list of UniProt proteins annotated with that domain. Supports filtering by reviewed (Swiss-Prot) entries only. Useful for discovering all proteins in a protein family or containing a specific functional domain. Example: IPR011615 (p53 DNA-binding domain) returns 6,251 proteins including P04637 (TP53), P10276 (TP63), P63165 (TP73).",
+    "description": "Find proteins that contain a specific InterPro domain. Results are cursor-paginated: when has_more is true, pass next_cursor as cursor with the same reviewed_only filter.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -18,6 +18,10 @@
           "type": "boolean",
           "description": "If true, only return Swiss-Prot reviewed entries (default false returns all UniProt).",
           "default": false
+        },
+        "cursor": {
+          "type": ["string", "null"],
+          "description": "Opaque InterPro cursor returned as next_cursor by a previous call."
         }
       },
       "required": [
@@ -52,6 +56,9 @@
                 "number"
               ]
             },
+            "returned": {"type": "integer"},
+            "has_more": {"type": "boolean"},
+            "next_cursor": {"type": ["string", "null"]},
             "proteins": {
               "type": "array",
               "items": {

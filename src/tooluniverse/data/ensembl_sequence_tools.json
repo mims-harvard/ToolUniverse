@@ -1,7 +1,7 @@
 [
     {
         "name": "EnsemblSeq_get_region_sequence",
-        "description": "Get the DNA nucleotide sequence for a specific genomic region from Ensembl. Retrieves the reference genome sequence for given chromosome coordinates. Useful for examining regulatory regions, intergenic sequences, or any arbitrary genomic interval. Example: region '17:7668421-7668520' in homo_sapiens returns 100 bp of the TP53 locus. Supports any Ensembl species and coordinate strand.",
+        "description": "Get the DNA nucleotide sequence for a genomic region from Ensembl with recoverable sequence paging. The default page is 10,000 bp; continue with next_sequence_offset while has_more is true. Returns the full sequence_length separately from sequence_returned_length. Supports any Ensembl species and coordinate strand.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -13,6 +13,19 @@
                     "type": "string",
                     "description": "Ensembl species name. Default: 'homo_sapiens'. Examples: 'mus_musculus', 'danio_rerio', 'drosophila_melanogaster'.",
                     "default": "homo_sapiens"
+                },
+                "max_length": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100000,
+                    "default": 10000,
+                    "description": "Maximum sequence characters in this page."
+                },
+                "sequence_offset": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "default": 0,
+                    "description": "Zero-based sequence characters to skip. Continue with next_sequence_offset."
                 }
             },
             "required": [
@@ -55,11 +68,19 @@
                         },
                         "sequence_length": {
                             "type": "integer",
-                            "description": "Length of returned sequence in bp"
+                            "description": "Full upstream sequence length in bp"
                         },
+                        "sequence_returned_length": {
+                            "type": "integer"
+                        },
+                        "sequence_offset": {"type": "integer"},
+                        "max_length": {"type": "integer"},
+                        "has_more": {"type": "boolean"},
+                        "next_sequence_offset": {"type": ["integer", "null"]},
+                        "result_set_complete": {"type": "boolean"},
                         "sequence": {
                             "type": "string",
-                            "description": "DNA sequence (truncated to 10kb if longer)"
+                            "description": "Current DNA sequence page"
                         }
                     }
                 },
@@ -77,7 +98,7 @@
     },
     {
         "name": "EnsemblSeq_get_id_sequence",
-        "description": "Get the amino acid or nucleotide sequence for an Ensembl ID (protein, transcript, or gene). Retrieves protein sequences from ENSP IDs, cDNA/CDS from ENST IDs, or genomic DNA from ENSG IDs. Example: ENSP00000269305 returns the 393 amino acid protein sequence of TP53 canonical isoform. ENST00000269305 with type='cdna' returns the 2512 bp cDNA sequence of TP53-201.",
+        "description": "Get the amino acid or nucleotide sequence for an Ensembl protein, transcript, or gene ID with recoverable paging. Type auto-selects protein for ENSP, cDNA for ENST, and genomic for other IDs when omitted. The default page is 10,000 characters; continue with next_sequence_offset while has_more is true.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -87,8 +108,21 @@
                 },
                 "type": {
                     "type": "string",
-                    "description": "Sequence type to return. Options: 'protein' (amino acid), 'cdna' (spliced cDNA), 'cds' (coding sequence), 'genomic' (unspliced DNA). Default: 'protein' for ENSP IDs, auto-detected for others.",
-                    "default": "protein"
+                    "enum": ["protein", "cdna", "cds", "genomic"],
+                    "description": "Sequence type. If omitted: protein for ENSP, cDNA for ENST, genomic for ENSG/other IDs."
+                },
+                "max_length": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100000,
+                    "default": 10000,
+                    "description": "Maximum sequence characters in this page."
+                },
+                "sequence_offset": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "default": 0,
+                    "description": "Zero-based sequence characters to skip. Continue with next_sequence_offset."
                 }
             },
             "required": [
@@ -129,9 +163,17 @@
                             "type": "integer",
                             "description": "Sequence length (aa for protein, bp for DNA)"
                         },
+                        "sequence_returned_length": {
+                            "type": "integer"
+                        },
+                        "sequence_offset": {"type": "integer"},
+                        "max_length": {"type": "integer"},
+                        "has_more": {"type": "boolean"},
+                        "next_sequence_offset": {"type": ["integer", "null"]},
+                        "result_set_complete": {"type": "boolean"},
                         "sequence": {
                             "type": "string",
-                            "description": "Amino acid or nucleotide sequence (truncated to 10kb)"
+                            "description": "Current amino acid or nucleotide sequence page"
                         }
                     }
                 },

@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def VCF_summary_stats(
-    operation: str,
     vcf_path: str,
+    operation: Optional[str] = None,
     pass_only: Optional[bool] = None,
     regions: Optional[str] = None,
     min_qual: Optional[float] = None,
@@ -19,7 +19,7 @@ def VCF_summary_stats(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Canonical variant statistics for a local VCF/BCF file via bcftools stats. Returns records, SNPs, ...
 
@@ -46,7 +46,7 @@ def VCF_summary_stats(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

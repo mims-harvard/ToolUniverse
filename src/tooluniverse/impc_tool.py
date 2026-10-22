@@ -66,6 +66,7 @@ class IMPCTool(BaseTool):
         core: str,
         query: str,
         rows: int = 50,
+        start: int = 0,
         fields: Optional[str] = None,
         filter_query: Optional[str] = None,
     ) -> Dict[str, Any]:
@@ -73,7 +74,8 @@ class IMPCTool(BaseTool):
         url = f"{IMPC_SOLR_BASE}/{core}/select"
         params = {
             "q": query,
-            "rows": min(rows, 500),
+            "rows": rows,
+            "start": start,
             "wt": "json",
         }
         if fields:
@@ -103,6 +105,47 @@ class IMPCTool(BaseTool):
             return {"status": "error", "error": f"IMPC API request failed: {str(e)}"}
         except Exception as e:
             return {"status": "error", "error": f"Unexpected error: {str(e)}"}
+
+    @staticmethod
+    def _pagination(arguments: Dict[str, Any], default: int, maximum: int):
+        limit = arguments.get("limit", default)
+        if (
+            isinstance(limit, bool)
+            or not isinstance(limit, int)
+            or not 1 <= limit <= maximum
+        ):
+            return None, None, {
+                "status": "error",
+                "error": f"limit must be an integer between 1 and {maximum}",
+                "parameter": "limit",
+            }
+        offset = arguments.get("offset", 0)
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return None, None, {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+                "parameter": "offset",
+            }
+        return limit, offset, None
+
+    @staticmethod
+    def _page_fields(total: Any, returned: int, limit: int, offset: int):
+        total_is_exact = (
+            isinstance(total, int) and not isinstance(total, bool) and total >= 0
+        )
+        if not total_is_exact:
+            total = None
+        has_more = offset + returned < total if total_is_exact else None
+        truncated = offset > 0 or has_more is True or not total_is_exact
+        return {
+            "total_results_is_exact": total_is_exact,
+            "limit": limit,
+            "offset": offset,
+            "has_more": has_more,
+            "next_offset": offset + returned if has_more and returned else None,
+            "truncated": truncated,
+            "result_set_complete": not truncated,
+        }
 
     def _get_gene_summary(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -216,7 +259,9 @@ class IMPCTool(BaseTool):
         """
         gene_symbol = arguments.get("gene_symbol", "")
         mgi_id = arguments.get("mgi_id", "")
-        rows = arguments.get("limit", 100)
+        rows, offset, pagination_error = self._pagination(arguments, 100, 500)
+        if pagination_error is not None:
+            return pagination_error
 
         if not gene_symbol and not mgi_id:
             return {
@@ -241,6 +286,7 @@ class IMPCTool(BaseTool):
             core="genotype-phenotype",
             query=query,
             rows=rows,
+            start=offset,
             fields=fields,
         )
 
@@ -284,6 +330,7 @@ class IMPCTool(BaseTool):
                     top_level_groups[tname] = []
                 top_level_groups[tname].append(p["mp_term_name"])
 
+        page_fields = self._page_fields(num_found, len(docs), rows, offset)
         return {
             "status": "success",
             "data": {
@@ -292,11 +339,14 @@ class IMPCTool(BaseTool):
                 "mgi_id": mgi_id
                 or (docs[0].get("marker_accession_id", "") if docs else ""),
                 "total_phenotype_calls": num_found,
+                "phenotype_calls_returned": len(docs),
                 "unique_phenotypes": len(phenotypes),
+                "unique_phenotypes_scope": "current_page_only",
                 "phenotypes": phenotypes,
                 "phenotype_summary_by_system": {
                     system: terms for system, terms in sorted(top_level_groups.items())
                 },
+                **page_fields,
             },
             "source": "IMPC genotype-phenotype associations",
         }
@@ -308,7 +358,9 @@ class IMPCTool(BaseTool):
         Useful for finding MGI IDs from gene symbols or partial names.
         """
         query_str = arguments.get("query", "")
-        rows = arguments.get("limit", 20)
+        rows, offset, pagination_error = self._pagination(arguments, 20, 100)
+        if pagination_error is not None:
+            return pagination_error
 
         if not query_str:
             return {"status": "error", "error": "query parameter is required"}
@@ -331,7 +383,9 @@ class IMPCTool(BaseTool):
             "latest_production_status"
         )
 
-        result = self._solr_query(core="gene", query=query, rows=rows, fields=fields)
+        result = self._solr_query(
+            core="gene", query=query, rows=rows, start=offset, fields=fields
+        )
 
         if result["status"] != "success":
             return result
@@ -353,6 +407,7 @@ class IMPCTool(BaseTool):
                 }
             )
 
+        page_fields = self._page_fields(num_found, len(docs), rows, offset)
         return {
             "status": "success",
             "data": {
@@ -360,6 +415,7 @@ class IMPCTool(BaseTool):
                 "genes": genes,
                 "count": len(genes),
                 "total_found": num_found,
+                **page_fields,
             },
             "source": "IMPC gene search",
         }
@@ -372,7 +428,9 @@ class IMPCTool(BaseTool):
         """
         gene_symbol = arguments.get("gene_symbol", "")
         mgi_id = arguments.get("mgi_id", "")
-        rows = arguments.get("limit", 100)
+        rows, offset, pagination_error = self._pagination(arguments, 100, 500)
+        if pagination_error is not None:
+            return pagination_error
         significant_only = arguments.get("significant_only", True)
 
         if not gene_symbol and not mgi_id:
@@ -405,6 +463,7 @@ class IMPCTool(BaseTool):
             core="statistical-result",
             query=query,
             rows=rows,
+            start=offset,
             fields=fields,
             filter_query=filter_query,
         )
@@ -439,6 +498,7 @@ class IMPCTool(BaseTool):
                 }
             )
 
+        page_fields = self._page_fields(num_found, len(docs), rows, offset)
         return {
             "status": "success",
             "data": {
@@ -448,6 +508,7 @@ class IMPCTool(BaseTool):
                 "results_returned": len(hits),
                 "significant_only": significant_only,
                 "hits": hits,
+                **page_fields,
             },
             "source": "IMPC statistical results",
         }

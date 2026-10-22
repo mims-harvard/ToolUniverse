@@ -2,7 +2,7 @@
   {
     "type": "CompoundGeneDiseaseAssociationTool",
     "name": "gather_gene_disease_associations",
-    "description": "Query multiple gene-disease databases (DisGeNET, OMIM, OpenTargets, GenCC, ClinVar) in a single call. Returns a cross-referenced comparison table showing which sources agree on each association, with concordance scores. Use when you need to compare gene-disease evidence across databases or find associations unique to one source.",
+    "description": "Query multiple gene-disease databases (DisGeNET, OMIM, OpenTargets, GenCC, ClinVar) in a single call. Both the concordance table and each source-specific list expose independent recoverable pagination: use next_association_offset for associations and per_source_pagination[source].next_offset as source_offset for source rows.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -19,6 +19,32 @@
             "null"
           ],
           "description": "Disease name (e.g., 'breast cancer', 'distal renal tubular acidosis'). At least one of gene or disease required."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 50,
+          "description": "Associations per page (1-500; default 50)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based concordance association offset."
+        },
+        "source_limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 10,
+          "description": "Rows returned per source (1-500; default 10)."
+        },
+        "source_offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset applied independently to every source list."
         }
       },
       "required": []
@@ -95,7 +121,7 @@
         },
         "per_source_results": {
           "type": "object",
-          "description": "Up to 10 raw extracted items per source, keyed by source name (DisGeNET, OMIM, OpenTargets, GenCC, ClinVar).",
+          "description": "Current page of extracted items per source, keyed by source name.",
           "additionalProperties": {
             "type": "array",
             "items": {
@@ -125,6 +151,13 @@
               ]
             }
           }
+        },
+        "per_source_counts": {
+          "type": "object",
+          "additionalProperties": {"type": "integer"}
+        },
+        "per_source_pagination": {
+          "type": "object"
         },
         "notes": {
           "type": "array",

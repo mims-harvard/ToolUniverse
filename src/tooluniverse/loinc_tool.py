@@ -71,13 +71,79 @@ class LOINCTool(BaseTool):
 
         return {"total_count": total_count, "count": len(results), "results": results}
 
+    @staticmethod
+    def _validate_pagination(arguments: Dict[str, Any]):
+        """Validate Clinical Tables count/offset controls and its 7,500 cap."""
+        max_results = arguments.get("max_results", 20)
+        offset = arguments.get("offset", 0)
+        if (
+            isinstance(max_results, bool)
+            or not isinstance(max_results, int)
+            or not 1 <= max_results <= 500
+        ):
+            return {
+                "status": "error",
+                "error": "max_results must be an integer between 1 and 500",
+                "parameter": "max_results",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+                "parameter": "offset",
+            }
+        if offset + max_results > 7500:
+            return {
+                "status": "error",
+                "error": (
+                    "offset + max_results must not exceed the Clinical Tables "
+                    "retrieval limit of 7500"
+                ),
+                "parameter": "offset",
+            }
+        return offset, max_results
+
+    @staticmethod
+    def _pagination_metadata(
+        total_count: int, returned_count: int, offset: int, max_results: int
+    ) -> Dict[str, Any]:
+        """Expose reachable continuation without hiding the upstream 7,500 cap."""
+        try:
+            total_count = int(total_count)
+        except (TypeError, ValueError):
+            total_count = returned_count
+        accessible_results = min(total_count, 7500)
+        has_more = offset + returned_count < accessible_results
+        upstream_truncated = total_count > accessible_results
+        return {
+            "total_results": total_count,
+            "accessible_results": accessible_results,
+            "upstream_truncated": upstream_truncated,
+            "returned_count": returned_count,
+            "offset": offset,
+            "max_results": max_results,
+            "has_more": has_more,
+            "next_offset": offset + returned_count if returned_count and has_more else None,
+            "truncated": has_more or upstream_truncated,
+            "result_set_complete": not has_more and not upstream_truncated,
+            "warning": (
+                "NLM Clinical Tables limits retrieval to the first 7500 matches; "
+                "refine the search to reach records outside that window."
+                if upstream_truncated
+                else None
+            ),
+        }
+
     def _search_loinc_items(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search LOINC lab tests and observations by name or keywords."""
         terms = arguments.get("terms", "").strip()
         if not terms:
             return {"status": "error", "error": "terms parameter is required"}
 
-        max_results = min(arguments.get("max_results", 20), 500)
+        pagination_args = self._validate_pagination(arguments)
+        if isinstance(pagination_args, dict):
+            return pagination_args
+        offset, max_results = pagination_args
         exclude_copyrighted = arguments.get("exclude_copyrighted", True)
 
         # Define fields to retrieve
@@ -94,7 +160,8 @@ class LOINCTool(BaseTool):
         params = {
             "terms": terms,
             "df": ",".join(fields),  # Display fields
-            "maxList": max_results,
+            "count": max_results,
+            "offset": offset,
         }
 
         if exclude_copyrighted:
@@ -106,9 +173,17 @@ class LOINCTool(BaseTool):
             return api_response
 
         parsed = self._parse_search_results(api_response, fields)
+        if parsed.get("status") == "error":
+            return parsed
         parsed["search_terms"] = terms
 
-        return parsed
+        return {
+            "status": "success",
+            "data": parsed,
+            "metadata": self._pagination_metadata(
+                parsed["total_count"], parsed["count"], offset, max_results
+            ),
+        }
 
     def _get_code_details(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get detailed information for a specific LOINC code."""
@@ -195,7 +270,10 @@ class LOINCTool(BaseTool):
         if not terms:
             return {"status": "error", "error": "terms parameter is required"}
 
-        max_results = min(arguments.get("max_results", 20), 200)
+        pagination_args = self._validate_pagination(arguments)
+        if isinstance(pagination_args, dict):
+            return pagination_args
+        offset, max_results = pagination_args
 
         # Search in LOINC forms/panels
         fields = ["LOINC_NUM", "LONG_COMMON_NAME", "CLASS", "STATUS"]
@@ -203,8 +281,10 @@ class LOINCTool(BaseTool):
         params = {
             "terms": terms,
             "df": ",".join(fields),
-            "maxList": max_results,
-            "sf": "CLASS",  # Search in CLASS field
+            "count": max_results,
+            "offset": offset,
+            "type": "form",
+            "available": "true",
         }
 
         api_response = self._make_request("loinc_items/v3/search", params)
@@ -213,25 +293,17 @@ class LOINCTool(BaseTool):
             return api_response
 
         parsed = self._parse_search_results(api_response, fields)
-
-        # Filter for forms/panels (CLASS typically contains "Survey" or "Panel")
-        if "results" in parsed:
-            forms = []
-            for item in parsed["results"]:
-                class_field = item.get("CLASS", "").lower()
-                if (
-                    "survey" in class_field
-                    or "panel" in class_field
-                    or "form" in class_field
-                ):
-                    forms.append(item)
-
-            parsed["results"] = forms
-            parsed["count"] = len(forms)
-
+        if parsed.get("status") == "error":
+            return parsed
         parsed["search_terms"] = terms
 
-        return parsed
+        return {
+            "status": "success",
+            "data": parsed,
+            "metadata": self._pagination_metadata(
+                parsed["total_count"], parsed["count"], offset, max_results
+            ),
+        }
 
     _OPERATION_MAP = {
         "search_tests": "_search_loinc_items",

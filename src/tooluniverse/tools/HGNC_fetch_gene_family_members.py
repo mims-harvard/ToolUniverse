@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def HGNC_fetch_gene_family_members(
-    gene_group_id: str,
+    gene_group_id: str | int,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -20,7 +20,7 @@ def HGNC_fetch_gene_family_members(
 
     Parameters
     ----------
-    gene_group_id : str
+    gene_group_id : str | int
         Numeric HGNC gene group/family ID. Examples: '366' (Ubiquitin specific peptid...
     stream_callback : Callable, optional
         Callback for streaming output

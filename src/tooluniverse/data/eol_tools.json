@@ -1,7 +1,7 @@
 [
   {
     "name": "EOL_search_species",
-    "description": "Search the Encyclopedia of Life (EOL) for species and taxa by name. Returns matching EOL page IDs, scientific names, and name variants. Use this to find EOL page IDs for detailed lookups with EOL_get_page. Supports exact matching. EOL aggregates data from hundreds of biodiversity databases. Example: searching 'Homo sapiens' returns page ID 327955.",
+    "description": "Search the Encyclopedia of Life (EOL) for species and taxa by name using verified TLS. Returns matching page IDs, scientific names, and name variants. Pagination metadata exposes the authoritative total, current start index, has_more, next_page, requested-page completeness, and stalled states; continue with next_page while available. exact must be a real boolean and page must be a positive integer. Use EOL_get_page for details.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -18,7 +18,7 @@
         "exact": {
           "type": "boolean",
           "default": false,
-          "description": "If true, only return exact name matches."
+          "description": "Pass EOL's upstream exact=true search flag. This is not strict string equality: the live API may still return capitalization variants, infraspecific taxa, and related names, so callers must compare returned titles if strict equality is required."
         }
       },
       "required": [
@@ -101,12 +101,13 @@
   },
   {
     "name": "EOL_get_page",
-    "description": "Get detailed species/taxon information from an Encyclopedia of Life (EOL) page. Returns scientific name, common names in multiple languages, synonyms, images with URLs, text descriptions, and available taxonomy classifications from multiple sources (NCBI, GBIF, ITIS, Catalogue of Life). Use EOL_search_species first to get page_id. Example: page_id 327955 for Homo sapiens, 583954 for Arabidopsis thaliana, 328672 for Panthera leo.",
+    "description": "Get detailed species/taxon information from an Encyclopedia of Life (EOL) page. Common names, synonyms, and source classifications are independently pageable with true totals and next offsets; requested image/text descriptions are preserved in full. Use EOL_search_species first to get page_id.",
     "parameter": {
       "type": "object",
       "properties": {
         "page_id": {
           "type": "integer",
+          "minimum": 1,
           "description": "EOL page identifier. Get this from EOL_search_species. Examples: 327955 (Homo sapiens), 583954 (Arabidopsis thaliana), 328672 (Panthera leo), 1045608 (Apis mellifera)."
         },
         "images_per_page": {
@@ -133,11 +134,50 @@
           "default": true,
           "description": "Include taxonomic synonyms."
         },
-        "details": {
-          "type": "boolean",
-          "default": true,
-          "description": "Include detailed data object information (media, descriptions)."
-        }
+      "details": {
+        "type": "boolean",
+        "default": true,
+        "description": "Include detailed data object information (media, descriptions)."
+      },
+      "common_name_limit": {
+        "type": "integer",
+        "default": 20,
+        "minimum": 1,
+        "maximum": 1000,
+        "description": "Maximum common names to return on this page."
+      },
+      "common_name_offset": {
+        "type": "integer",
+        "default": 0,
+        "minimum": 0,
+        "description": "Zero-based offset into all common names."
+      },
+      "synonym_limit": {
+        "type": "integer",
+        "default": 20,
+        "minimum": 1,
+        "maximum": 1000,
+        "description": "Maximum taxonomic synonyms to return on this page."
+      },
+      "synonym_offset": {
+        "type": "integer",
+        "default": 0,
+        "minimum": 0,
+        "description": "Zero-based offset into all taxonomic synonyms."
+      },
+      "classification_limit": {
+        "type": "integer",
+        "default": 15,
+        "minimum": 1,
+        "maximum": 1000,
+        "description": "Maximum source classifications to return on this page."
+      },
+      "classification_offset": {
+        "type": "integer",
+        "default": 0,
+        "minimum": 0,
+        "description": "Zero-based offset into all source classifications."
+      }
       },
       "required": [
         "page_id"
@@ -332,13 +372,27 @@
   },
   {
     "name": "EOL_get_hierarchy_entry",
-    "description": "Get taxonomy hierarchy (classification tree) for a species from a specific classification system in the Encyclopedia of Life. Returns ancestors (full lineage from root to species), children taxa, synonyms, and source classification (NCBI, GBIF, ITIS, Catalogue of Life). Use EOL_get_page first to find hierarchy_entry_id values from the classifications list. Example: 70872770 is the NCBI hierarchy entry for Homo sapiens, showing the complete lineage from root through Primates to species level.",
+    "description": "Get a taxonomy hierarchy entry from a specific Encyclopedia of Life classification. Returns the full ancestor lineage, pageable direct children, synonyms, and source classification (NCBI, GBIF, ITIS, Catalogue of Life). Metadata reports the true child total, truncation state, and next child offset so high-branching taxa are not silently cut off. Use EOL_get_page first to find hierarchy_entry_id values.",
     "parameter": {
       "type": "object",
       "properties": {
         "hierarchy_entry_id": {
           "type": "integer",
+          "minimum": 1,
           "description": "EOL hierarchy entry ID from a specific classification system. Get this from EOL_get_page 'classifications' field. Examples: 70872770 (Homo sapiens in NCBI), 86685972 (Homo sapiens in GBIF), 147191154 (Homo sapiens in ITIS)."
+        },
+        "child_limit": {
+          "type": "integer",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Maximum number of direct child taxa to return on this page."
+        },
+        "child_offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based offset into all direct child taxa. Continue with metadata.next_child_offset while metadata.children_truncated is true."
         }
       },
       "required": [
@@ -355,6 +409,11 @@
       },
       {
         "hierarchy_entry_id": 86685972
+      },
+      {
+        "hierarchy_entry_id": 136838168,
+        "child_limit": 3,
+        "child_offset": 20
       }
     ],
     "return_schema": {
@@ -531,6 +590,7 @@
       "properties": {
         "collection_id": {
           "type": "integer",
+          "minimum": 1,
           "description": "EOL collection ID. Example: 176 (Fingertip Fauna), 6 (a sample collection)."
         },
         "page": {
@@ -548,6 +608,7 @@
         },
         "filter": {
           "type": "string",
+          "enum": ["", "taxa", "text", "image", "sound", "video", "collection", "community", "user"],
           "description": "Filter items by type: 'taxa', 'text', 'image', 'sound', 'video', 'collection', 'community', 'user'. Leave empty for all types.",
           "default": ""
         }

@@ -1,7 +1,7 @@
 """
 ImmPort_search_studies
 
-Search the ImmPort immunology database for studies by keyword, disease condition, assay method, o...
+Search ImmPort studies by keyword with optional species and client-side substring filters. Result...
 """
 
 from typing import Any, Optional, Callable
@@ -15,13 +15,14 @@ def ImmPort_search_studies(
     research_focus: Optional[str] = None,
     species: Optional[str] = None,
     limit: Optional[int] = 10,
+    from_record: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> list[Any]:
     """
-    Search the ImmPort immunology database for studies by keyword, disease condition, assay method, o...
+    Search ImmPort studies by keyword with optional species and client-side substring filters. Result...
 
     Parameters
     ----------
@@ -37,6 +38,8 @@ def ImmPort_search_studies(
         Filter by species (e.g., 'Homo sapiens', 'Mus musculus'). Applied server-side.
     limit : int
         Maximum number of studies to return (1-100, default 10)
+    from_record : int
+        Zero-based ImmPort raw search-hit offset (official fromRecord parameter).
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -60,6 +63,7 @@ def ImmPort_search_studies(
             "research_focus": research_focus,
             "species": species,
             "limit": limit,
+            "from_record": from_record,
         }.items()
         if v is not None
     }

@@ -1,7 +1,7 @@
 """
 openalex_search_works
 
-Search OpenAlex works (papers) via the /works endpoint. Supports both general search and optional...
+Search OpenAlex works. Basic page mode exposes only the first 10,000 matches and reports that win...
 """
 
 from typing import Any, Optional, Callable
@@ -17,6 +17,7 @@ def openalex_search_works(
     per_page: Optional[int] = 10,
     limit: Optional[int] = None,
     page: Optional[int] = 1,
+    cursor: Optional[str] = None,
     sort: Optional[str] = None,
     mailto: Optional[str] = None,
     *,
@@ -25,7 +26,7 @@ def openalex_search_works(
     validate: bool = True,
 ) -> Optional[dict[str, Any]]:
     """
-    Search OpenAlex works (papers) via the /works endpoint. Supports both general search and optional...
+    Search OpenAlex works. Basic page mode exposes only the first 10,000 matches and reports that win...
 
     Parameters
     ----------
@@ -45,6 +46,8 @@ def openalex_search_works(
         Alias for `per_page` (OpenAlex max 200).
     page : int
         Page number (1-indexed).
+    cursor : str
+        Official deep-pagination cursor. Start with '*' and continue with metadata.ne...
     sort : str
         Sort order string, e.g. "cited_by_count:desc".
     mailto : str
@@ -74,6 +77,7 @@ def openalex_search_works(
             "per_page": per_page,
             "limit": limit,
             "page": page,
+            "cursor": cursor,
             "sort": sort,
             "mailto": mailto,
         }.items()

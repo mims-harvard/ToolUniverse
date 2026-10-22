@@ -1,7 +1,7 @@
 [
   {
     "name": "Ensembl_get_region_features",
-    "description": "Get all genomic features overlapping a specified chromosomal region. Returns genes, transcripts, regulatory elements, constrained elements, and other features within the coordinates. Essential for understanding the functional landscape of a genomic region, finding genes near a variant, or identifying regulatory elements in a locus. Supports multiple feature types in one query. Example: region '7:140424943-140524564' (BRAF locus) returns 5 genes, 20 regulatory elements, and 82 constrained elements; region '17:7661779-7687546' (TP53 locus) returns genes, enhancers, CTCF binding sites, and promoters.",
+    "description": "Get genomic features overlapping a specified chromosomal region, including genes, transcripts, regulatory elements, and constrained elements. Results are paged with limit/offset; total_features and next_offset make every upstream feature reachable.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -16,6 +16,18 @@
         "feature_types": {
           "type": "string",
           "description": "Comma-separated feature types to retrieve. Options: 'gene', 'transcript', 'regulatory', 'constrained', 'variation', 'repeat', 'motif'. Default: 'gene'. Example: 'gene,regulatory,constrained'."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 100,
+          "description": "Maximum overlapping features per page."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based feature offset. Continue with data.next_offset while has_more is true."
         }
       },
       "required": [
@@ -49,6 +61,13 @@
             "species": {
               "type": "string"
             },
+            "total_features": {"type": "integer"},
+            "returned": {"type": "integer"},
+            "offset": {"type": "integer"},
+            "limit": {"type": "integer"},
+            "has_more": {"type": "boolean"},
+            "truncated": {"type": "boolean"},
+            "next_offset": {"type": ["integer", "null"]},
             "features": {
               "type": "array",
               "items": {
@@ -115,7 +134,7 @@
   },
   {
     "name": "Ensembl_get_gene_overlapping_features",
-    "description": "Get features overlapping an Ensembl gene by gene ID. Returns all genomic features co-located with the gene, including neighboring genes, overlapping transcripts, regulatory elements, and antisense transcripts. Useful for finding overlapping genes, identifying all transcript isoforms in a locus, or discovering regulatory features at a gene. Example: 'ENSG00000141510' (TP53) returns 2 overlapping genes (TP53 and WRAP53), 42 transcripts across 4 biotypes (protein_coding, nonsense_mediated_decay, retained_intron, protein_coding_CDS_not_defined), and 9 regulatory features.",
+    "description": "Get features overlapping an Ensembl gene ID with limit/offset pagination and explicit total/has_more metadata. Returns neighboring genes, transcripts, exons, regulatory elements, constrained elements, variants, and repeats selected by feature_types. Complex loci can contain thousands of records; follow next_offset until has_more is false.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -125,7 +144,20 @@
         },
         "feature_types": {
           "type": "string",
-          "description": "Comma-separated feature types. Options: 'gene', 'transcript', 'regulatory', 'constrained', 'variation', 'repeat'. Default: 'gene'."
+          "description": "Comma-separated feature types. Options include 'gene', 'transcript', 'exon', 'cds', 'regulatory', 'constrained', 'variation', and 'repeat'. Default: 'gene'."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 100,
+          "description": "Maximum number of overlapping features to return in this page."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based feature offset. Use data.next_offset or metadata.next_offset for the next page."
         }
       },
       "required": [

@@ -1,7 +1,7 @@
 """
 ORCID_get_peer_reviews
 
-Get the peer-review activity attached to an ORCID researcher's profile. Peer review is a recogniz...
+Get every public peer-review-summary assertion across all ORCID groups and subgroups. Returns gro...
 """
 
 from typing import Any, Optional, Callable
@@ -9,15 +9,15 @@ from ._shared_client import get_shared_client
 
 
 def ORCID_get_peer_reviews(
-    operation: str,
     orcid: str,
+    operation: Optional[str] = "get_peer_reviews",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get the peer-review activity attached to an ORCID researcher's profile. Peer review is a recogniz...
+    Get every public peer-review-summary assertion across all ORCID groups and subgroups. Returns gro...
 
     Parameters
     ----------

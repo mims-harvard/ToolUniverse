@@ -1,7 +1,7 @@
 """
 LNCipedia_search_ncrna_by_type
 
-Search for any type of non-coding RNA by RNA type classification. Supports all RNA types in RNAce...
+Search any RNAcentral non-coding RNA type with exact offset pagination. Supports miRNA, lncRNA, r...
 """
 
 from typing import Any, Optional, Callable
@@ -12,14 +12,15 @@ def LNCipedia_search_ncrna_by_type(
     query: str,
     rna_type: Optional[str] = None,
     species: Optional[str] = None,
-    size: Optional[int] = None,
+    size: Optional[int] = 10,
+    start: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search for any type of non-coding RNA by RNA type classification. Supports all RNA types in RNAce...
+    Search any RNAcentral non-coding RNA type with exact offset pagination. Supports miRNA, lncRNA, r...
 
     Parameters
     ----------
@@ -30,7 +31,9 @@ def LNCipedia_search_ncrna_by_type(
     species : str
         Species name filter (e.g., 'Homo sapiens'). Leave empty for all species.
     size : int
-        Number of results to return (1-100). Default: 10.
+        Number of results per page (1-100).
+    start : int
+        Zero-based EBI Search result offset. Continue with next_start.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def LNCipedia_search_ncrna_by_type(
             "rna_type": rna_type,
             "species": species,
             "size": size,
+            "start": start,
         }.items()
         if v is not None
     }

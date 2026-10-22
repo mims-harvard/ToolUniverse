@@ -1,7 +1,7 @@
 """
 SAbDab_get_structure_summary
 
-Get per-structure curated antibody annotations from SAbDab for a PDB ID. Returns the SAbDab summa...
+Get current per-structure SAbDab2 annotations for a PDB ID. Returns summary fields plus full anti...
 """
 
 from typing import Any, Optional, Callable
@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def SAbDab_get_structure_summary(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_structure_summary",
     pdb_id: Optional[str] = None,
     pdb_code: Optional[str] = None,
     pdb: Optional[str] = None,
@@ -19,7 +19,7 @@ def SAbDab_get_structure_summary(
     validate: bool = True,
 ) -> Any:
     """
-    Get per-structure curated antibody annotations from SAbDab for a PDB ID. Returns the SAbDab summa...
+    Get current per-structure SAbDab2 annotations for a PDB ID. Returns summary fields plus full anti...
 
     Parameters
     ----------

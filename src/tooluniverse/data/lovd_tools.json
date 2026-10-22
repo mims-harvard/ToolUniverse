@@ -1,12 +1,13 @@
 [
     {
         "name": "LOVD_get_gene",
-        "description": "Get gene information from LOVD (Leiden Open Variation Database). Returns HGNC ID, Entrez ID, chromosomal location, RefSeq transcript(s), genomic build, curation details, and dates. LOVD hosts curated variant databases for over 23,000 genes used in clinical diagnostics.",
+        "description": "Get a complete LOVD gene record after normalizing the HGNC symbol to uppercase and verifying the returned symbol. Returns HGNC/Entrez IDs, chromosome and coordinates, RefSeq transcripts/build, curation details, and dates. Malformed or non-JSON responses are explicit errors.",
         "parameter": {
             "type": "object",
             "properties": {
                 "gene_symbol": {
                     "type": "string",
+                    "minLength": 1,
                     "description": "HGNC gene symbol (e.g., 'TP53', 'BRCA1', 'BRCA2', 'EGFR')."
                 }
             },
@@ -54,12 +55,13 @@
     },
     {
         "name": "LOVD_get_variants",
-        "description": "Get all curated variants for a gene from LOVD. Returns variant details including HGVS DNA/RNA/protein notation, genomic positions (hg19), LOVD variant DBID, and reporting count. Note: some genes may have hundreds or thousands of variants.",
+        "description": "Get the full unpaginated LOVD variant response for a gene. Every record's gene symbol and Variant/DNA structure are validated; metadata reports the returned count, completeness basis, and symbol verification. Live TP53 currently returns 880 curated records, including repeated DBIDs when LOVD exposes distinct reports.",
         "parameter": {
             "type": "object",
             "properties": {
                 "gene_symbol": {
                     "type": "string",
+                    "minLength": 1,
                     "description": "HGNC gene symbol (e.g., 'TP53', 'BRCA1')."
                 }
             },
@@ -110,24 +112,31 @@
     },
     {
         "name": "LOVD_search_variants",
-        "description": "Search variants in LOVD by DBID or HGVS DNA notation. Use variant_dbid for exact LOVD variant IDs (e.g., 'TP53_010464') or dna_notation for HGVS notation without RefSeq prefix (e.g., 'c.*2609C>A'). At least one search parameter is required.",
+        "description": "Search LOVD variants by exactly one DBID or HGVS DNA notation. The wrapper verifies every returned DBID/DNA value and gene symbol. LOVD's HTTP 404 plus empty array for a valid no-match filter is normalized to a successful empty result, distinct from a malformed response. RefSeq-prefixed returned DNA values are matched to the requested suffix.",
         "parameter": {
             "type": "object",
             "properties": {
                 "gene_symbol": {
                     "type": "string",
+                    "minLength": 1,
                     "description": "HGNC gene symbol (e.g., 'TP53', 'BRCA1')."
                 },
                 "variant_dbid": {
                     "type": "string",
+                    "minLength": 1,
                     "description": "LOVD variant DBID (e.g., 'TP53_010464'). Unique identifier assigned by LOVD."
                 },
                 "dna_notation": {
                     "type": "string",
+                    "minLength": 1,
                     "description": "HGVS DNA notation without RefSeq prefix (e.g., 'c.*2609C>A', 'c.742C>T'). Use coding 'c.' notation."
                 }
             },
-            "required": ["gene_symbol"]
+            "required": ["gene_symbol"],
+            "oneOf": [
+                {"required": ["variant_dbid"]},
+                {"required": ["dna_notation"]}
+            ]
         },
         "fields": {
             "operation": "search_variants"

@@ -215,6 +215,13 @@ class GBIFTaxonomyTool(BaseTool):
             return 20
         return max(1, min(n, 100))
 
+    @staticmethod
+    def _offset(arguments: Dict[str, Any]) -> int:
+        try:
+            return max(0, int(arguments.get("offset") or 0))
+        except (TypeError, ValueError):
+            return 0
+
     # ------------------------------------------------------------------ #
     def _get_paged_usages(self, arguments: Dict[str, Any], sub: str) -> Dict[str, Any]:
         """children / synonyms: GET /species/{key}/{sub} -> paged usage list."""
@@ -222,12 +229,20 @@ class GBIFTaxonomyTool(BaseTool):
         if err:
             return err
         limit = self._limit(arguments)
+        offset = self._offset(arguments)
         url = self.base_url + "/species/" + str(key) + "/" + sub
-        ok, payload, _ = _http_get(url, {"limit": limit, "offset": 0}, self.timeout)
+        ok, payload, _ = _http_get(
+            url, {"limit": limit, "offset": offset}, self.timeout
+        )
         if not ok:
             return {"status": "error", "error": payload}
-        results = payload.get("results", []) if isinstance(payload, dict) else []
+        raw_results = payload.get("results", []) if isinstance(payload, dict) else []
+        results = raw_results
         data = [_slim_usage(r) for r in results]
+        end_of_records = (
+            payload.get("endOfRecords") if isinstance(payload, dict) else True
+        )
+        has_more = not end_of_records
         return {
             "status": "success",
             "data": data,
@@ -235,9 +250,11 @@ class GBIFTaxonomyTool(BaseTool):
                 "taxon_key": key,
                 "endpoint": "species/" + str(key) + "/" + sub,
                 "returned": len(data),
-                "end_of_records": payload.get("endOfRecords")
-                if isinstance(payload, dict)
-                else None,
+                "limit": limit,
+                "offset": offset,
+                "end_of_records": end_of_records,
+                "has_more": has_more,
+                "next_offset": offset + len(results) if has_more else None,
             },
         }
 
@@ -271,11 +288,16 @@ class GBIFTaxonomyTool(BaseTool):
         lang = arguments.get("language")
         if lang is not None:
             lang = str(lang).strip().lower() or None
+        limit = min(max(1, int(arguments.get("limit") or 100)), 100)
+        offset = self._offset(arguments)
         url = self.base_url + "/species/" + str(key) + "/vernacularNames"
-        ok, payload, _ = _http_get(url, {"limit": 100, "offset": 0}, self.timeout)
+        ok, payload, _ = _http_get(
+            url, {"limit": limit, "offset": offset}, self.timeout
+        )
         if not ok:
             return {"status": "error", "error": payload}
-        results = payload.get("results", []) if isinstance(payload, dict) else []
+        raw_results = payload.get("results", []) if isinstance(payload, dict) else []
+        results = raw_results
         if lang:
             results = [r for r in results if (r.get("language") or "").lower() == lang]
         # de-duplicate on (name, language) preserving order
@@ -288,6 +310,10 @@ class GBIFTaxonomyTool(BaseTool):
                 continue
             seen.add(sig)
             data.append(slim)
+        end_of_records = (
+            payload.get("endOfRecords") if isinstance(payload, dict) else True
+        )
+        has_more = not end_of_records
         return {
             "status": "success",
             "data": data,
@@ -296,6 +322,12 @@ class GBIFTaxonomyTool(BaseTool):
                 "endpoint": "species/" + str(key) + "/vernacularNames",
                 "language_filter": lang,
                 "returned": len(data),
+                "raw_returned": len(raw_results),
+                "limit": limit,
+                "offset": offset,
+                "end_of_records": end_of_records,
+                "has_more": has_more,
+                "next_offset": offset + len(raw_results) if has_more else None,
             },
         }
 

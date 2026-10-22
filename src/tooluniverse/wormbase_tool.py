@@ -242,7 +242,7 @@ class WormBaseTool(BaseTool):
         phenotypes = []
         pheno_data = fields.get("phenotype", {}).get("data", [])
         if isinstance(pheno_data, list):
-            for p in pheno_data[:50]:
+            for p in pheno_data:
                 if isinstance(p, dict):
                     pheno_info = p.get("phenotype", {})
                     pheno_entry = {
@@ -264,7 +264,7 @@ class WormBaseTool(BaseTool):
         not_observed = []
         not_pheno_data = fields.get("phenotype_not_observed", {}).get("data", [])
         if isinstance(not_pheno_data, list):
-            for p in not_pheno_data[:20]:
+            for p in not_pheno_data:
                 if isinstance(p, dict):
                     pheno_info = p.get("phenotype", {})
                     not_observed.append(
@@ -282,10 +282,12 @@ class WormBaseTool(BaseTool):
             "wormbase_id": gene_id,
             "gene_name": gene_name,
             "phenotype_count": len(pheno_data) if isinstance(pheno_data, list) else 0,
+            "phenotypes_returned": len(phenotypes),
             "phenotypes": phenotypes,
             "not_observed_count": len(not_pheno_data)
             if isinstance(not_pheno_data, list)
             else 0,
+            "phenotypes_not_observed_returned": len(not_observed),
             "phenotypes_not_observed": not_observed,
         }
 
@@ -328,7 +330,7 @@ class WormBaseTool(BaseTool):
         expressed_in = []
         tissue_data = fields.get("expressed_in", {}).get("data", [])
         if isinstance(tissue_data, list):
-            for t in tissue_data[:30]:
+            for t in tissue_data:
                 if isinstance(t, dict):
                     ontology_term = t.get("ontology_term", {})
                     expressed_in.append(
@@ -346,7 +348,7 @@ class WormBaseTool(BaseTool):
         expressed_during = []
         stage_data = fields.get("expressed_during", {}).get("data", [])
         if isinstance(stage_data, list):
-            for s in stage_data[:20]:
+            for s in stage_data:
                 if isinstance(s, dict):
                     ontology_term = s.get("ontology_term", {})
                     expressed_during.append(
@@ -364,7 +366,7 @@ class WormBaseTool(BaseTool):
         subcellular = []
         sub_data = fields.get("subcellular_localization", {}).get("data", [])
         if isinstance(sub_data, list):
-            for loc in sub_data[:10]:
+            for loc in sub_data:
                 if isinstance(loc, dict):
                     ontology_term = loc.get("ontology_term", {})
                     subcellular.append(
@@ -382,7 +384,7 @@ class WormBaseTool(BaseTool):
         clusters = []
         cluster_data = fields.get("expression_cluster", {}).get("data", [])
         if isinstance(cluster_data, list):
-            for c in cluster_data[:15]:
+            for c in cluster_data:
                 if isinstance(c, dict):
                     cluster_info = c.get("expression_cluster", {})
                     clusters.append(
@@ -402,12 +404,22 @@ class WormBaseTool(BaseTool):
             "expressed_in_count": len(tissue_data)
             if isinstance(tissue_data, list)
             else 0,
+            "expressed_in_returned": len(expressed_in),
             "expressed_in": expressed_in,
+            "expressed_during_count": len(stage_data)
+            if isinstance(stage_data, list)
+            else 0,
+            "expressed_during_returned": len(expressed_during),
             "expressed_during": expressed_during,
+            "subcellular_localization_count": len(sub_data)
+            if isinstance(sub_data, list)
+            else 0,
+            "subcellular_localization_returned": len(subcellular),
             "subcellular_localization": subcellular,
             "expression_clusters_count": len(cluster_data)
             if isinstance(cluster_data, list)
             else 0,
+            "expression_clusters_returned": len(clusters),
             "expression_clusters": clusters,
         }
 
@@ -422,12 +434,12 @@ class WormBaseTool(BaseTool):
         }
 
     @staticmethod
-    def _parse_ortholog_entries(entries, limit):
+    def _parse_ortholog_entries(entries, limit, offset=0):
         """Parse a list of homology-widget ortholog/paralog entries."""
         parsed = []
         if not isinstance(entries, list):
             return parsed
-        for e in entries[:limit]:
+        for e in entries[offset : offset + limit]:
             if not isinstance(e, dict):
                 continue
             ortholog = e.get("ortholog") or {}
@@ -463,6 +475,9 @@ class WormBaseTool(BaseTool):
                 "error": "gene_id parameter is required (e.g., 'WBGene00006818' or 'unc-86')",
             }
         gene_id = _resolve_wbgene_id(gene_input)
+        ortholog_limit = max(1, int(arguments.get("ortholog_limit", 50)))
+        paralog_limit = max(1, int(arguments.get("paralog_limit", 30)))
+        offset = max(0, int(arguments.get("offset", 0)))
 
         url = f"{WORMBASE_BASE_URL}/widget/gene/{gene_id}/homology"
         response = requests.get(
@@ -477,18 +492,39 @@ class WormBaseTool(BaseTool):
         nematode = fields.get("nematode_orthologs", {}).get("data")
         paralogs = fields.get("paralogs", {}).get("data")
 
+        other_count = len(other) if isinstance(other, list) else 0
+        nematode_count = len(nematode) if isinstance(nematode, list) else 0
+        paralog_count = len(paralogs) if isinstance(paralogs, list) else 0
+        other_page = self._parse_ortholog_entries(other, ortholog_limit, offset)
+        nematode_page = self._parse_ortholog_entries(
+            nematode, ortholog_limit, offset
+        )
+        paralog_page = self._parse_ortholog_entries(paralogs, paralog_limit, offset)
+        other_next = offset + len(other_page)
+        nematode_next = offset + len(nematode_page)
+        paralog_next = offset + len(paralog_page)
+        other_more = other_next < other_count
+        nematode_more = nematode_next < nematode_count
+        paralog_more = paralog_next < paralog_count
         result = {
             "wormbase_id": gene_id,
-            "cross_species_ortholog_count": len(other)
-            if isinstance(other, list)
-            else 0,
-            "cross_species_orthologs": self._parse_ortholog_entries(other, 50),
-            "nematode_ortholog_count": len(nematode)
-            if isinstance(nematode, list)
-            else 0,
-            "nematode_orthologs": self._parse_ortholog_entries(nematode, 50),
-            "paralog_count": len(paralogs) if isinstance(paralogs, list) else 0,
-            "paralogs": self._parse_ortholog_entries(paralogs, 30),
+            "cross_species_ortholog_count": other_count,
+            "cross_species_orthologs": other_page,
+            "cross_species_ortholog_returned": len(other_page),
+            "cross_species_ortholog_has_more": other_more,
+            "cross_species_ortholog_next_offset": other_next if other_more else None,
+            "nematode_ortholog_count": nematode_count,
+            "nematode_orthologs": nematode_page,
+            "nematode_ortholog_returned": len(nematode_page),
+            "nematode_ortholog_has_more": nematode_more,
+            "nematode_ortholog_next_offset": nematode_next if nematode_more else None,
+            "paralog_count": paralog_count,
+            "paralogs": paralog_page,
+            "paralog_returned": len(paralog_page),
+            "paralog_has_more": paralog_more,
+            "paralog_next_offset": paralog_next if paralog_more else None,
+            "offset": offset,
+            "has_more": other_more or nematode_more or paralog_more,
         }
 
         return {
@@ -510,6 +546,8 @@ class WormBaseTool(BaseTool):
                 "error": "gene_id parameter is required (e.g., 'WBGene00006818' or 'unc-86')",
             }
         gene_id = _resolve_wbgene_id(gene_input)
+        limit = max(1, int(arguments.get("limit", 150)))
+        offset = max(0, int(arguments.get("offset", 0)))
 
         url = f"{WORMBASE_BASE_URL}/widget/gene/{gene_id}/interactions"
         response = requests.get(
@@ -560,13 +598,27 @@ class WormBaseTool(BaseTool):
             else:
                 physical.append(entry)
 
+        physical_page = physical[offset : offset + limit]
+        genetic_page = genetic[offset : offset + limit]
+        physical_next = offset + len(physical_page)
+        genetic_next = offset + len(genetic_page)
+        physical_has_more = physical_next < len(physical)
+        genetic_has_more = genetic_next < len(genetic)
         result = {
             "wormbase_id": gene_id,
             "total_interactions": len(edges),
             "physical_count": len(physical),
-            "physical_interactions": physical[:150],
+            "physical_returned": len(physical_page),
+            "physical_interactions": physical_page,
+            "physical_has_more": physical_has_more,
+            "physical_next_offset": physical_next if physical_has_more else None,
             "genetic_count": len(genetic),
-            "genetic_interactions": genetic[:150],
+            "genetic_returned": len(genetic_page),
+            "genetic_interactions": genetic_page,
+            "genetic_has_more": genetic_has_more,
+            "genetic_next_offset": genetic_next if genetic_has_more else None,
+            "offset": offset,
+            "has_more": physical_has_more or genetic_has_more,
         }
 
         return {

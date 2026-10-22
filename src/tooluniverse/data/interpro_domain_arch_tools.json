@@ -1,13 +1,24 @@
 [
   {
     "name": "InterPro_get_protein_domain_architecture",
-    "description": "Get the complete Pfam domain architecture for a protein with exact residue positions using the InterPro API. Returns all Pfam domains mapped to the protein with start/end coordinates, E-values, and integrated InterPro entries. Much more detailed than simple domain lists - includes precise domain boundaries essential for understanding protein function. Example: P04637 (TP53, 393aa) has 4 Pfam domains: PF00870 (P53 DNA-binding, 100-288), PF07710 (tetramerisation, 319-357), PF08563 (transactivation, 6-30), PF18521 (transactivation domain 2, 35-59).",
+    "description": "Get Pfam domain architecture for a protein with exact residue positions using the InterPro API. Entry results are cursor-paginated: when has_more is true, pass next_cursor as cursor to retrieve the next page.",
     "parameter": {
       "type": "object",
       "properties": {
         "accession": {
           "type": "string",
           "description": "UniProt protein accession. Examples: 'P04637' (TP53, 4 Pfam domains), 'P00533' (EGFR), 'P38398' (BRCA1), 'P01308' (Insulin)."
+        },
+        "max_results": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200,
+          "default": 50,
+          "description": "Maximum InterPro entries to return per page (default 50, max 200)."
+        },
+        "cursor": {
+          "type": ["string", "null"],
+          "description": "Opaque InterPro cursor returned as next_cursor by a previous call."
         }
       },
       "required": [
@@ -40,6 +51,10 @@
                 "number"
               ]
             },
+            "total_entries": {"type": "integer"},
+            "returned_entries": {"type": "integer"},
+            "has_more": {"type": "boolean"},
+            "next_cursor": {"type": ["string", "null"]},
             "domain_count": {
               "type": [
                 "integer",
@@ -102,7 +117,7 @@
   },
   {
     "name": "InterPro_get_structures_for_domain",
-    "description": "Find all PDB structures containing a specific Pfam domain using the InterPro API. Returns experimental structures (X-ray, cryo-EM, NMR) that contain the specified domain, with resolution and experiment type. Useful for finding structural templates for a domain of interest. Example: PF00870 (P53 DNA-binding domain) has 215 PDB structures; PF00069 (Protein kinase) has 5,238 structures. Results sorted by most recent.",
+    "description": "Find PDB structures containing a specific Pfam domain using the InterPro API. Results are cursor-paginated: when has_more is true, pass next_cursor as cursor to retrieve the next page.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -114,6 +129,10 @@
           "type": "integer",
           "description": "Maximum number of PDB structures to return (default 20, max 200).",
           "default": 20
+        },
+        "cursor": {
+          "type": ["string", "null"],
+          "description": "Opaque InterPro cursor returned as next_cursor by a previous call."
         }
       },
       "required": [
@@ -154,6 +173,8 @@
                 "number"
               ]
             },
+            "has_more": {"type": "boolean"},
+            "next_cursor": {"type": ["string", "null"]},
             "structures": {
               "type": "array",
               "items": {
@@ -195,7 +216,7 @@
   },
   {
     "name": "InterPro_get_clan_members",
-    "description": "Get all member families in a Pfam clan (superfamily) using the InterPro API. Pfam clans group related families that share a common evolutionary origin. Returns member family accessions, names, types, and relationship scores. Example: CL0016 (PKinase) contains 30+ member families including PF00069 (Protein kinase), PF03770 (Inositol polyphosphate kinase), PF02958 (EcKL), and many others. Useful for understanding domain superfamily relationships and finding distantly related proteins.",
+    "description": "Get member families in a Pfam clan (superfamily) using the InterPro API. member_count is the complete total; use member_offset and max_results to page through the sorted member list until next_member_offset is null.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -207,6 +228,12 @@
           "type": "integer",
           "description": "Maximum number of member families to return (default 50, max 200).",
           "default": 50
+        },
+        "member_offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset into the clan member list (default 0)."
         }
       },
       "required": [
@@ -246,6 +273,9 @@
                 "number"
               ]
             },
+            "returned": {"type": "integer"},
+            "members_truncated": {"type": "boolean"},
+            "next_member_offset": {"type": ["integer", "null"]},
             "members": {
               "type": "array",
               "items": {

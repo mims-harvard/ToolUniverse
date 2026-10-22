@@ -2,7 +2,7 @@
   {
     "type": "NCBINucleotideSearchTool",
     "name": "NCBI_search_nucleotide",
-    "description": "Search NCBI Nucleotide database (GenBank/EMBL/RefSeq) by organism, gene name, or keywords. Returns GenBank UIDs which can be used to fetch accession numbers. Supports filtering by organism, gene, strain, sequence type (complete genome, mRNA, RefSeq). Use this to discover DNA/RNA sequences for specific organisms or genes. Returns both EMBL/GenBank accessions (U00096, M15390) and RefSeq accessions (NC_*, NM_*). Follow up with NCBI_fetch_accessions to get actual accession numbers.",
+    "description": "Search NCBI Nucleotide (GenBank/EMBL/RefSeq) with exact offset pagination and automatically resolve each returned UID to an accession. The response reports count, returned, has_more, and next_offset; continue with offset=next_offset until has_more is false. Supports organism, gene, strain, sequence type, title keywords, or a free-form NCBI query.",
     "parameter": {
       "type": "object",
       "required": [],
@@ -43,10 +43,16 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum number of results to return (default: 20, max: 100)",
+          "description": "Page size (1-100).",
           "default": 20,
           "minimum": 1,
           "maximum": 100
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based result offset, mapped to NCBI ESearch retstart. Continue with data.next_offset.",
+          "default": 0,
+          "minimum": 0
         },
         "sort": {
           "type": "string",
@@ -86,7 +92,22 @@
             },
             "returned": {
               "type": "integer",
-              "description": "Number of UIDs returned (limited by limit parameter)"
+              "description": "Number of UIDs returned on this page."
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": ["integer", "null"]
+            },
+            "truncated": {
+              "type": "boolean"
             },
             "search_term": {
               "type": "string",
@@ -123,6 +144,21 @@
           "type": "integer",
           "description": "Number of UIDs returned"
         },
+        "offset": {
+          "type": "integer"
+        },
+        "limit": {
+          "type": "integer"
+        },
+        "has_more": {
+          "type": "boolean"
+        },
+        "next_offset": {
+          "type": ["integer", "null"]
+        },
+        "truncated": {
+          "type": "boolean"
+        },
         "search_term": {
           "type": "string",
           "description": "Generated NCBI search term used"
@@ -139,7 +175,8 @@
       {
         "organism": "Homo sapiens",
         "gene": "BRCA1",
-        "limit": 10
+        "limit": 10,
+        "offset": 10
       },
       {
         "organism": "SARS-CoV-2",

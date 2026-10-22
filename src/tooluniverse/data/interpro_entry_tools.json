@@ -1,13 +1,24 @@
 [
   {
     "name": "InterPro_get_entries_for_protein",
-    "description": "Get all InterPro domain and family entries annotated on a specific protein. Performs a reverse lookup from a UniProt protein accession to all InterPro entries (domains, families, homologous superfamilies, conserved sites) that have been detected on that protein. Example: P04637 (TP53) has 9 InterPro entries including IPR002117 (p53 family), IPR011615 (p53 DNA-binding domain), IPR010991 (p53 tetramerisation domain), IPR013872 (p53 transactivation domain).",
+    "description": "Get InterPro domain and family entries annotated on a protein. Results are cursor-paginated when needed: pass next_cursor as cursor while has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
         "accession": {
           "type": "string",
           "description": "UniProt protein accession. Examples: 'P04637' (TP53, 9 entries), 'P00533' (EGFR), 'P01308' (Insulin), 'P38398' (BRCA1)."
+        },
+        "page_size": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200,
+          "default": 100,
+          "description": "Maximum entries to return per page (default 100, max 200)."
+        },
+        "cursor": {
+          "type": ["string", "null"],
+          "description": "Opaque InterPro cursor returned as next_cursor by a previous call."
         }
       },
       "required": [
@@ -40,6 +51,9 @@
                 "number"
               ]
             },
+            "returned": {"type": "integer"},
+            "has_more": {"type": "boolean"},
+            "next_cursor": {"type": ["string", "null"]},
             "entries": {
               "type": "array",
               "items": {
@@ -81,7 +95,7 @@
   },
   {
     "name": "InterPro_search_entries",
-    "description": "Search InterPro entries (domains, families, sites) by keyword. Returns matching InterPro entries with accession, name, type, and statistics (protein count, structure count, taxa count). Useful for discovering protein domains and families by name or function. Example: searching 'zinc finger' returns 466 entries including IPR000058 (AN1-type), IPR000306 (FYVE zinc finger), IPR000315 (B-box-type). Searching 'kinase' returns domain and family entries for protein kinases.",
+    "description": "Search InterPro entries (domains, families, sites) by keyword. Results are cursor-paginated: when has_more is true, pass next_cursor as cursor with the same query and filters.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -91,12 +105,19 @@
         },
         "entry_type": {
           "type": "string",
+          "enum": ["domain", "family", "homologous_superfamily", "repeat", "conserved_site", "active_site", "binding_site", "ptm"],
           "description": "Filter by entry type. Options: 'domain', 'family', 'homologous_superfamily', 'repeat', 'conserved_site', 'active_site', 'binding_site', 'ptm'."
         },
         "page_size": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 50,
           "description": "Number of results to return (1-50, default 20).",
           "default": 20
+        },
+        "cursor": {
+          "type": ["string", "null"],
+          "description": "Opaque InterPro cursor returned as next_cursor by a previous call."
         }
       },
       "required": [
@@ -137,6 +158,8 @@
                 "number"
               ]
             },
+            "has_more": {"type": "boolean"},
+            "next_cursor": {"type": ["string", "null"]},
             "entries": {
               "type": "array",
               "items": {

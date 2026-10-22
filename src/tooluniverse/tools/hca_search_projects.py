@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def hca_search_projects(
-    action: str,
+    action: Optional[str] = "search_projects",
     organ: Optional[str] = None,
     disease: Optional[str] = None,
     limit: Optional[int] = 10,

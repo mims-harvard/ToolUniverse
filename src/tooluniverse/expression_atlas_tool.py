@@ -118,6 +118,20 @@ class ExpressionAtlasTool(BaseTool):
             )
         return page, offset, note
 
+    @staticmethod
+    def _page_fields(records, page, offset, arguments):
+        """Machine-readable companion to the legacy human page note."""
+        raw_limit = arguments.get("limit")
+        limit = 50 if raw_limit in (None, "") else int(raw_limit)
+        limit = max(1, min(limit, 500))
+        has_more = offset + len(page) < len(records)
+        return {
+            "limit": limit,
+            "has_more": has_more,
+            "next_offset": offset + len(page) if has_more else None,
+            "result_set_complete": offset == 0 and not has_more,
+        }
+
     def _get_baseline_expression(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
         List baseline expression experiments for a species.
@@ -193,6 +207,7 @@ class ExpressionAtlasTool(BaseTool):
                     "total_baseline": len(baseline_exps),
                     "returned_baseline": len(_page),
                     "offset": _offset,
+                    **self._page_fields(results, _page, _offset, arguments),
                     **({"page_note": _note} if _note else {}),
                 },
                 "note": (
@@ -309,6 +324,7 @@ class ExpressionAtlasTool(BaseTool):
                 "experiment_count": len(experiments),
                 "returned_experiments": len(_page),
                 "offset": _offset,
+                **self._page_fields(experiments, _page, _offset, arguments),
                 **({"page_note": _note} if _note else {}),
             }
             if gene:
@@ -418,6 +434,7 @@ class ExpressionAtlasTool(BaseTool):
                 "total_count": len(experiments),
                 "returned_experiments": len(_page),
                 "offset": _offset,
+                **self._page_fields(experiments, _page, _offset, arguments),
                 "gene_specific_count": len(gene_exp_ids),
                 **({"page_note": _note} if _note else {}),
             }

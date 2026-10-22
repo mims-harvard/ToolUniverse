@@ -142,6 +142,21 @@ def test_mapped_variants_limit_truncates():
     assert out["data"]["truncated"] is True
 
 
+def test_mapped_variants_offset_recovers_tail():
+    tool = _mavedb_tool("get_mapped_variants")
+    with patch.object(tool.session, "get", return_value=_fake_response(json_body=_MAPPED_BODY)):
+        out = tool.run(
+            {"urn": "urn:mavedb:00001263-a-2", "limit": 1, "offset": 1}
+        )
+    data = out["data"]
+    assert [row["variant_urn"] for row in data["mapped_variants"]] == [
+        "urn:mavedb:00001263-a-2#40"
+    ]
+    assert data["total_mapped_variants"] == 2
+    assert data["has_more"] is False
+    assert data["next_offset"] is None
+
+
 def test_mapped_variants_missing_urn():
     """Missing urn returns a structured error, never raises."""
     tool = _mavedb_tool("get_mapped_variants")
@@ -215,6 +230,18 @@ def test_clinical_controls_significance_filter():
     assert out["data"]["clinical_controls"][0]["clinical_significance"] == "Pathogenic"
 
 
+def test_clinical_controls_offset_is_after_filtering():
+    tool = _mavedb_tool("get_clinical_controls")
+    with patch.object(tool.session, "get", return_value=_fake_response(json_body=_CONTROLS_BODY)):
+        out = tool.run(
+            {"urn": "urn:mavedb:00001263-a-2", "limit": 1, "offset": 1}
+        )
+    data = out["data"]
+    assert [row["db_identifier"] for row in data["clinical_controls"]] == ["51061"]
+    assert data["total_clinical_controls"] == 2
+    assert data["has_more"] is False
+
+
 def test_clinical_controls_http_error():
     """HTTP 500 from MaveDB surfaces as a structured error."""
     tool = _mavedb_tool("get_clinical_controls")
@@ -283,6 +310,38 @@ def test_gnomad_variants_empty():
     assert out["status"] == "success"
     assert out["data"]["total_gnomad_variants"] == 0
     assert out["data"]["gnomad_variants"] == []
+
+
+def test_gnomad_variants_offset_recovers_later_record():
+    body = [
+        _GNOMAD_BODY[0],
+        {**_GNOMAD_BODY[0], "dbIdentifier": "13-32319100-A-G"},
+    ]
+    tool = _mavedb_tool("get_gnomad_variants")
+    with patch.object(tool.session, "get", return_value=_fake_response(json_body=body)):
+        out = tool.run(
+            {"urn": "urn:mavedb:00001263-a-2", "limit": 1, "offset": 1}
+        )
+    data = out["data"]
+    assert [row["db_identifier"] for row in data["gnomad_variants"]] == [
+        "13-32319100-A-G"
+    ]
+    assert data["total_gnomad_variants"] == 2
+    assert data["has_more"] is False
+
+
+def test_mavedb_list_operations_reject_negative_offset():
+    for operation in (
+        "get_mapped_variants",
+        "get_clinical_controls",
+        "get_gnomad_variants",
+    ):
+        tool = _mavedb_tool(operation)
+        with patch.object(tool.session, "get") as mock_get:
+            out = tool.run({"urn": "urn:mavedb:00001263-a-2", "offset": -1})
+        assert out["status"] == "error"
+        assert "non-negative" in out["error"]
+        mock_get.assert_not_called()
 
 
 def test_gnomad_variants_http_error():

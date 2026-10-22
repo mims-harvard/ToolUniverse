@@ -607,11 +607,9 @@ class HPAGetRnaExpressionBySourceTool(HPASearchApiTool):
                 "expression_level": expression_level,
                 "expression_unit": "nTPM",
                 "column_queried": api_column,
-                "available_sources": (
-                    available_sources[:10]
-                    if len(available_sources) > 10
-                    else available_sources
-                ),
+                # Do not hide valid HPA sources in the aggregate-column
+                # fallback.  The old [:10] slice made the tail unreachable.
+                "available_sources": available_sources,
                 "total_available_sources": len(available_sources),
                 "status": (
                     "success"
@@ -771,8 +769,18 @@ class HPASearchGenesTool(HPASearchApiTool):
             key=lambda g: (g.get("gene_name") or "").upper() != query_upper
         )
         total_matches = len(formatted_results)
-        max_results = arguments.get("max_results") or 50
-        truncated_results = formatted_results[:max_results]
+        max_results = arguments.get("max_results", 50)
+        offset = arguments.get("offset", 0)
+        if (
+            isinstance(max_results, bool)
+            or not isinstance(max_results, int)
+            or max_results < 1
+        ):
+            return {"status": "error", "error": "max_results must be a positive integer"}
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {"status": "error", "error": "offset must be a non-negative integer"}
+        truncated_results = formatted_results[offset : offset + max_results]
+        has_more = offset + len(truncated_results) < total_matches
 
         return {
             "status": "success",
@@ -780,7 +788,13 @@ class HPASearchGenesTool(HPASearchApiTool):
                 "search_query": search_query,
                 "match_count": len(truncated_results),
                 "total_matches": total_matches,
-                "truncated": total_matches > len(truncated_results),
+                "offset": offset,
+                "limit": max_results,
+                "has_more": has_more,
+                "next_offset": offset + len(truncated_results) if has_more else None,
+                "truncated": offset > 0 or has_more,
+                "result_set_complete": offset == 0
+                and len(truncated_results) == total_matches,
                 "genes": truncated_results,
             },
         }
@@ -1603,11 +1617,8 @@ class HPAGetContextualBiologicalProcessTool(BaseTool):
                     "expression_in_context": f"{expression_value} nTPM",
                     "expression_level": expression_level,
                     "total_biological_processes": len(processes_list),
-                    "biological_processes": (
-                        processes_list[:10]
-                        if len(processes_list) > 10
-                        else processes_list
-                    ),
+                    "returned_biological_processes": len(processes_list),
+                    "biological_processes": processes_list,
                     "contextual_conclusion": conclusion,
                     "functional_relevance": relevance,
                 },

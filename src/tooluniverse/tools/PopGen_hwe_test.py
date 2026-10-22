@@ -9,10 +9,10 @@ from ._shared_client import get_shared_client
 
 
 def PopGen_hwe_test(
-    operation: str,
     obs_AA: int,
     obs_Aa: int,
     obs_aa: int,
+    operation: Optional[str] = "hwe_test",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

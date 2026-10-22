@@ -15,7 +15,7 @@ def BindingDB_get_ligands_by_uniprots(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
     Get binding affinity data for multiple proteins by UniProt IDs. Returns SMILES and affinities for...
 
@@ -34,7 +34,7 @@ def BindingDB_get_ligands_by_uniprots(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -1,7 +1,7 @@
 [
   {
     "name": "UniProtRef_search_diseases",
-    "description": "Search the UniProt controlled disease vocabulary for disease definitions. Returns disease entries with OMIM, MeSH, MedGen, and SNOMED cross-references plus the number of reviewed proteins associated with each disease. Use this to find UniProt disease IDs (DI-XXXXX) for downstream analysis. Example: searching 'breast cancer' returns DI-03803 (lobular breast cancer), DI-01559 (familial breast-ovarian cancer 1), DI-02603 (familial breast-ovarian cancer 2).",
+    "description": "Search the UniProt controlled disease vocabulary with official cursor pagination. Returns disease definitions and cross-references; metadata reports the true upstream total and next_cursor.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -11,7 +11,13 @@
         },
         "size": {
           "type": "integer",
-          "description": "Maximum number of results to return (default: 10, max: 25)."
+          "minimum": 1,
+          "maximum": 500,
+          "description": "Results per official cursor page (default 10, maximum 500). Invalid values return an error rather than being silently clamped."
+        },
+        "cursor": {
+          "type": "string",
+          "description": "Opaque cursor from metadata.next_cursor. Omit for the first page."
         }
       },
       "required": [
@@ -196,7 +202,7 @@
   },
   {
     "name": "UniProtRef_search_keywords",
-    "description": "Search the UniProt keyword controlled vocabulary. Keywords are standardized terms used to annotate protein functions, biological processes, cellular components, diseases, and technical features in UniProt. Returns keyword IDs, categories, definitions, and protein counts. Example: searching 'kinase' returns KW-0418 (Kinase), KW-0723 (Serine/threonine-protein kinase), etc. with their definitions and how many proteins carry each keyword.",
+    "description": "Search the UniProt keyword controlled vocabulary with official cursor pagination. Returns keyword definitions and protein counts; metadata reports the true upstream total and next_cursor.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -206,7 +212,13 @@
         },
         "size": {
           "type": "integer",
-          "description": "Maximum number of results to return (default: 10, max: 25)."
+          "minimum": 1,
+          "maximum": 500,
+          "description": "Results per official cursor page (default 10, maximum 500). Invalid values return an error rather than being silently clamped."
+        },
+        "cursor": {
+          "type": "string",
+          "description": "Opaque cursor from metadata.next_cursor. Omit for the first page."
         }
       },
       "required": [
@@ -373,13 +385,26 @@
   },
   {
     "name": "UniProtRef_get_proteome",
-    "description": "Get reference proteome information from UniProt by proteome ID. Returns the proteome description, organism taxonomy, assembly information, chromosome-level protein counts, and genome annotation sources. Essential for understanding the protein complement of a species. Example: UP000005640 returns the human reference proteome (Homo sapiens, GRCh38.p14) with 24 chromosomes + mitochondrion and ~80K total proteins.",
+    "description": "Get reference proteome information from UniProt by proteome ID. Returns the complete upstream description with description_length (not the former 500-character prefix). The total protein count covers every component; the component list is explicitly paginated with complete totals and a next offset in metadata.",
     "parameter": {
       "type": "object",
       "properties": {
         "proteome_id": {
           "type": "string",
           "description": "UniProt proteome ID. Examples: 'UP000005640' (human), 'UP000000589' (mouse), 'UP000002311' (yeast), 'UP000000625' (E. coli K-12)."
+        },
+        "component_offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based component offset. Continue with metadata.next_component_offset."
+        },
+        "component_limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 30,
+          "description": "Maximum components returned in this response. total_protein_count always covers all components."
         }
       },
       "required": [
@@ -408,6 +433,9 @@
             },
             "description": {
               "type": "string"
+            },
+            "description_length": {
+              "type": "integer"
             },
             "organism": {
               "type": "object",
@@ -479,7 +507,7 @@
   },
   {
     "name": "UniProtRef_search_proteomes",
-    "description": "Search UniProt reference proteomes by organism name, taxon ID, or keyword. Returns proteome IDs, organism names, proteome types, and total protein counts. Use this to find the reference proteome ID for an organism before using UniProtRef_get_proteome for detailed data. Example: searching 'Arabidopsis thaliana' returns UP000006548 (reference proteome with 39K+ proteins).",
+    "description": "Search UniProt reference proteomes with official cursor pagination. Returns proteome IDs, organisms, types, and protein counts; metadata reports the true upstream total and next_cursor.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -489,7 +517,13 @@
         },
         "size": {
           "type": "integer",
-          "description": "Maximum number of results to return (default: 10, max: 25)."
+          "minimum": 1,
+          "maximum": 500,
+          "description": "Results per official cursor page (default 10, maximum 500). Invalid values return an error rather than being silently clamped."
+        },
+        "cursor": {
+          "type": "string",
+          "description": "Opaque cursor from metadata.next_cursor. Omit for the first page."
         }
       },
       "required": [

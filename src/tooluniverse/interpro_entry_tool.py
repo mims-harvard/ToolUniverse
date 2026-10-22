@@ -12,6 +12,7 @@ No authentication required. Free public access.
 
 import requests
 from typing import Dict, Any
+from urllib.parse import parse_qs, urlparse
 from .base_tool import BaseTool
 
 
@@ -69,6 +70,42 @@ class InterProEntryTool(BaseTool):
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
+    @staticmethod
+    def _next_cursor(data: Dict[str, Any]):
+        next_url = data.get("next")
+        if not next_url:
+            return None
+        values = parse_qs(urlparse(next_url).query).get("cursor", [])
+        return values[0] if values else None
+
+    @staticmethod
+    def _add_cursor(params: Dict[str, Any], arguments: Dict[str, Any]) -> None:
+        cursor = arguments.get("cursor")
+        if cursor:
+            params["cursor"] = cursor
+
+    @staticmethod
+    def _page_controls(arguments: Dict[str, Any], default: int, maximum: int):
+        page_size = arguments.get("page_size", default)
+        if page_size is None:
+            page_size = default
+        if (
+            isinstance(page_size, bool)
+            or not isinstance(page_size, int)
+            or not 1 <= page_size <= maximum
+        ):
+            return {
+                "status": "error",
+                "error": f"page_size must be an integer from 1 to {maximum}",
+            }
+        cursor = arguments.get("cursor")
+        if cursor is not None and (not isinstance(cursor, str) or not cursor.strip()):
+            return {
+                "status": "error",
+                "error": "cursor must be a non-empty string when supplied",
+            }
+        return page_size, cursor
+
     def _get_entries_for_protein(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get all InterPro domain/family entries annotated on a protein."""
         accession = arguments.get("accession", "")
@@ -79,7 +116,12 @@ class InterProEntryTool(BaseTool):
             }
 
         url = f"{INTERPRO_BASE_URL}/entry/interpro/protein/uniprot/{accession}"
-        params = {"page_size": 200}
+        controls = self._page_controls(arguments, 100, 200)
+        if isinstance(controls, dict):
+            return controls
+        page_size, cursor = controls
+        params = {"page_size": page_size}
+        self._add_cursor(params, arguments)
         response = requests.get(
             url,
             params=params,
@@ -111,11 +153,22 @@ class InterProEntryTool(BaseTool):
                 }
             )
 
+        next_cursor = self._next_cursor(data)
+        total = data.get("count", len(entries))
         return {
             "status": "success",
             "data": {
                 "protein_accession": accession,
-                "total_entries": data.get("count", len(entries)),
+                "total_entries": total,
+                "returned": len(entries),
+                "page_size": page_size,
+                "has_more": next_cursor is not None,
+                "next_cursor": next_cursor,
+                "truncated": cursor is not None or next_cursor is not None,
+                "result_set_complete": bool(
+                    cursor is None and next_cursor is None and len(entries) == total
+                ),
+                "pagination_stalled": bool(next_cursor and not entries),
                 "entries": entries,
             },
             "metadata": {
@@ -134,13 +187,32 @@ class InterProEntryTool(BaseTool):
             }
 
         entry_type = arguments.get("entry_type", None)
-        page_size = arguments.get("page_size", 20)
+        valid_entry_types = {
+            "domain",
+            "family",
+            "homologous_superfamily",
+            "repeat",
+            "conserved_site",
+            "active_site",
+            "binding_site",
+            "ptm",
+        }
+        if entry_type is not None and entry_type not in valid_entry_types:
+            return {
+                "status": "error",
+                "error": "entry_type must be one of: " + ", ".join(sorted(valid_entry_types)),
+            }
+        controls = self._page_controls(arguments, 20, 50)
+        if isinstance(controls, dict):
+            return controls
+        page_size, cursor = controls
 
         url = f"{INTERPRO_BASE_URL}/entry/interpro"
         params = {
             "search": query,
-            "page_size": min(page_size, 50),
+            "page_size": page_size,
         }
+        self._add_cursor(params, arguments)
         if entry_type:
             params["type"] = entry_type
 
@@ -177,12 +249,22 @@ class InterProEntryTool(BaseTool):
                 }
             )
 
+        next_cursor = self._next_cursor(data)
+        total = data.get("count", len(entries))
         return {
             "status": "success",
             "data": {
                 "query": query,
-                "total_results": data.get("count", len(entries)),
+                "total_results": total,
                 "returned": len(entries),
+                "page_size": page_size,
+                "has_more": next_cursor is not None,
+                "next_cursor": next_cursor,
+                "truncated": cursor is not None or next_cursor is not None,
+                "result_set_complete": bool(
+                    cursor is None and next_cursor is None and len(entries) == total
+                ),
+                "pagination_stalled": bool(next_cursor and not entries),
                 "entries": entries,
             },
             "metadata": {

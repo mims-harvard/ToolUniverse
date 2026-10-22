@@ -9,15 +9,15 @@ from ._shared_client import get_shared_client
 
 
 def HFInference_embed_text(
-    operation: str,
     model_id: str,
     text: str,
+    operation: Optional[str] = "embed_text",
     wait_for_model: Optional[bool] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Generate a dense embedding vector for text using any HuggingFace feature-extraction model (server...
 
@@ -40,7 +40,7 @@ def HFInference_embed_text(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

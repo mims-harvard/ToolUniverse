@@ -332,7 +332,7 @@
   {
     "type": "EuropePMCRESTTool",
     "name": "EuropePMC_get_citations",
-    "description": "Get citations for an article from Europe PMC. Citations are articles that cite the specified article. Requires a source (e.g., 'MED' for PubMed, 'PMC' for PMC) and article ID. Use EuropePMC_search_articles to find article IDs first.",
+    "description": "Get one page of citations for an article from Europe PMC. Returns exact hitCount-derived pagination metadata (total_results, total_pages, has_more, and next_page), so callers can retrieve every citing article. Requires a source (e.g., 'MED' for PubMed, 'PMC' for PMC) and article ID.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -364,7 +364,10 @@
       ]
     },
     "fields": {
-      "endpoint": "https://www.ebi.ac.uk/europepmc/webservices/rest/{source}/{article_id}/citations"
+      "endpoint": "https://www.ebi.ac.uk/europepmc/webservices/rest/{source}/{article_id}/citations",
+      "pagination": "epmc_page",
+      "record_container": "citationList",
+      "record_key": "citation"
     },
     "return_schema": {
       "oneOf": [
@@ -443,7 +446,7 @@
   {
     "type": "EuropePMCRESTTool",
     "name": "EuropePMC_get_references",
-    "description": "Get references (bibliography) for an article from Europe PMC. References are articles cited by the specified article. Requires a source (e.g., 'MED' for PubMed, 'PMC' for PMC) and article ID. Use EuropePMC_search_articles to find article IDs first.",
+    "description": "Get one page of references (bibliography) for an article from Europe PMC. Returns exact hitCount-derived pagination metadata (total_results, total_pages, has_more, and next_page), so callers can retrieve every cited article. Requires a source (e.g., 'MED' for PubMed, 'PMC' for PMC) and article ID.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -475,7 +478,10 @@
       ]
     },
     "fields": {
-      "endpoint": "https://www.ebi.ac.uk/europepmc/webservices/rest/{source}/{article_id}/references"
+      "endpoint": "https://www.ebi.ac.uk/europepmc/webservices/rest/{source}/{article_id}/references",
+      "pagination": "epmc_page",
+      "record_container": "referenceList",
+      "record_key": "reference"
     },
     "return_schema": {
       "oneOf": [

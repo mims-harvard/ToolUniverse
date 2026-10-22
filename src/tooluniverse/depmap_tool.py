@@ -278,7 +278,7 @@ class DepMapTool(BaseTool):
         query_upper: str,
         symbol_of,
         request_timeout: int,
-    ) -> List[Dict[str, Any]]:
+    ) -> tuple[List[Dict[str, Any]], int | None, int]:
         """Binary-search a symbol-sorted, paginated JSON:API catalog for the
         single page that could contain ``query_upper``.
 
@@ -320,8 +320,8 @@ class DepMapTool(BaseTool):
             elif query_upper > symbol_of(page_items[-1]):
                 lo = mid + 1
             else:
-                return page_items
-        return []
+                return page_items, fetched_page, total_pages
+        return [], None, total_pages
 
     def _search_cell_lines(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -490,9 +490,35 @@ class DepMapTool(BaseTool):
             # full 45k-gene catalog); this API is occasionally slow on an
             # individual request (confirmed live, one page took 22s), so
             # give each request more headroom than the tool's default.
-            page_items = self._find_catalog_page(
+            page_items, catalog_page, total_pages = self._find_catalog_page(
                 url, params, query_upper, _gene_symbol, max(self.timeout, 45)
             )
+
+            # An exact symbol lookup is complete on the located page. For a
+            # prefix-only query (for example "C"), matching symbols can span
+            # multiple subsequent 1000-record pages; continue until the
+            # sorted catalog has moved beyond the prefix.
+            exact_on_page = any(
+                _gene_symbol(item) == query_upper for item in page_items
+            )
+            if page_items and not exact_on_page and catalog_page is not None:
+                next_page = catalog_page + 1
+                while next_page <= total_pages:
+                    params["page[number]"] = next_page
+                    response = requests.get(
+                        url, params=params, timeout=max(self.timeout, 45)
+                    )
+                    response.raise_for_status()
+                    next_items = response.json().get("data", [])
+                    matching = [
+                        item
+                        for item in next_items
+                        if _gene_symbol(item).startswith(query_upper)
+                    ]
+                    page_items.extend(matching)
+                    if not matching or len(matching) < len(next_items):
+                        break
+                    next_page += 1
 
             genes = []
             for item in page_items:
@@ -538,12 +564,23 @@ class DepMapTool(BaseTool):
                     },
                 }
 
+            total_matches = len(genes)
+            limit = max(1, min(int(arguments.get("limit", 20)), 500))
+            offset = max(0, int(arguments.get("offset", 0)))
+            page_genes = genes[offset : offset + limit]
+            has_more = offset + len(page_genes) < total_matches
+
             return {
                 "status": "success",
                 "data": {
                     "query": query,
-                    "genes": genes[:20],
-                    "count": len(genes),
+                    "genes": page_genes,
+                    "count": total_matches,
+                    "offset": offset,
+                    "limit": limit,
+                    "returned": len(page_genes),
+                    "has_more": has_more,
+                    "next_offset": offset + len(page_genes) if has_more else None,
                 },
             }
         except requests.exceptions.Timeout:

@@ -1,7 +1,7 @@
 """
 LipidMaps_get_gene
 
-Look up a lipid-metabolism gene in the LIPID MAPS Proteome Database (LMPD). Resolves a gene to it...
+Look up a lipid-metabolism gene in the LIPID MAPS Proteome Database (LMPD). A gene symbol can mat...
 """
 
 from typing import Any, Optional, Callable
@@ -16,9 +16,9 @@ def LipidMaps_get_gene(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
-    Look up a lipid-metabolism gene in the LIPID MAPS Proteome Database (LMPD). Resolves a gene to it...
+    Look up a lipid-metabolism gene in the LIPID MAPS Proteome Database (LMPD). A gene symbol can mat...
 
     Parameters
     ----------
@@ -37,7 +37,7 @@ def LipidMaps_get_gene(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

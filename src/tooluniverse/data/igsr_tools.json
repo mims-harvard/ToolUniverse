@@ -2,7 +2,7 @@
   {
     "name": "IGSR_search_populations",
     "type": "IGSRTool",
-    "description": "Search 1000 Genomes Project populations from the International Genome Sample Resource (IGSR). The 1000 Genomes Project characterized genetic variation across 26 populations grouped into 5 superpopulations: AFR (African), AMR (Admixed American), EAS (East Asian), EUR (European), SAS (South Asian). Returns population codes, names, geographic coordinates, sample counts, and superpopulation assignments. Use this to find populations for allele frequency comparisons, population stratification analysis, or ancestry-specific variant studies.",
+    "description": "Search 1000 Genomes Project populations from IGSR. Results are recoverably paginated: start with offset=0 and continue with next_offset while has_more is true. Pagination is applied after the superpopulation filter. Returns population codes, names, coordinates, sample counts, and superpopulation assignments.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -32,8 +32,14 @@
           "type": "integer",
           "default": 25,
           "minimum": 1,
-          "maximum": 100,
-          "description": "Maximum number of results to return."
+          "maximum": 500,
+          "description": "Results per page (1-500). The IGSR server's real maximum is 500; invalid values return an error rather than being silently clamped."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based result offset. Continue with next_offset while has_more is true."
         }
       }
     },
@@ -50,6 +56,9 @@
               "type": "integer",
               "description": "Number of records included in this response (at most `limit`)."
             },
+            "offset": {"type": "integer"},
+            "has_more": {"type": "boolean"},
+            "next_offset": {"type": ["integer", "null"]},
             "populations": {
               "type": "array",
               "items": {
@@ -121,7 +130,7 @@
   {
     "name": "IGSR_search_samples",
     "type": "IGSRTool",
-    "description": "Search samples from the 1000 Genomes Project by population, data collection, or sample name. Returns sample names (e.g., HG00096, NA12878), sex, BioSample IDs, population assignments, and available data collections. Use this to find samples from specific populations for variant analysis, to identify samples with particular sequencing data types (WGS, exome, RNA-seq), or to look up specific well-characterized samples like NA12878 (reference genome sample).",
+    "description": "Search samples from the 1000 Genomes Project by population, data collection, or sample name. Results are recoverably paginated: start with offset=0 and continue with next_offset while has_more is true. Returns sample names, sex, BioSample IDs, population assignments, and available data collections.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -158,8 +167,14 @@
           "type": "integer",
           "default": 25,
           "minimum": 1,
-          "maximum": 100,
-          "description": "Maximum number of results to return."
+          "maximum": 500,
+          "description": "Results per page (1-500). The IGSR server's real maximum is 500; invalid values return an error rather than being silently clamped."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based result offset. Continue with next_offset while has_more is true."
         }
       }
     },
@@ -176,6 +191,9 @@
               "type": "integer",
               "description": "Number of records included in this response (at most `limit`)."
             },
+            "offset": {"type": "integer"},
+            "has_more": {"type": "boolean"},
+            "next_offset": {"type": ["integer", "null"]},
             "samples": {
               "type": "array",
               "items": {
@@ -250,7 +268,7 @@
   {
     "name": "IGSR_list_data_collections",
     "type": "IGSRTool",
-    "description": "List available data collections from the International Genome Sample Resource (IGSR). Data collections include the original 1000 Genomes Project phases, the 30x high-coverage resequencing, Human Genome Structural Variation Consortium (HGSVC), Human Pangenome Reference Consortium (HPRC), and other related studies. Returns collection codes, titles, sample/population counts, and available data types (sequence, alignment, variants). Use this to discover what genomics datasets are available through IGSR.",
+    "description": "List available data collections from IGSR. Results are recoverably paginated: start with offset=0 and continue with next_offset while has_more is true. Returns collection codes, titles, sample/population counts, and available data types.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -266,8 +284,14 @@
           "type": "integer",
           "default": 50,
           "minimum": 1,
-          "maximum": 100,
-          "description": "Maximum number of results to return."
+          "maximum": 500,
+          "description": "Results per page (1-500). The IGSR server's real maximum is 500; invalid values return an error rather than being silently clamped."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based result offset. Continue with next_offset while has_more is true."
         }
       }
     },
@@ -284,6 +308,9 @@
               "type": "integer",
               "description": "Number of records included in this response (at most `limit`)."
             },
+            "offset": {"type": "integer"},
+            "has_more": {"type": "boolean"},
+            "next_offset": {"type": ["integer", "null"]},
             "collections": {
               "type": "array",
               "items": {

@@ -2,7 +2,7 @@
   {
     "type": "PubMedRESTTool",
     "name": "PubMed_search_articles",
-    "description": "Search PubMed biomedical literature database using NCBI E-utilities (esearch + esummary). Returns articles with PMID, title, authors, journal, publication year, DOI, article type, and PubMed URL. Automatically fetches rich metadata for each article. Use this to discover medical/life sciences literature, find articles by topic, or search for publications by author or journal. Rate limiting is automatically handled (3 req/sec without API key, 10 req/sec with key set via NCBI_API_KEY environment variable).",
+    "description": "Search PubMed using NCBI E-utilities (esearch + esummary). Returns PMID, title, the complete esummary author list with authors_count, journal, publication year, DOI, article type, and URLs; author lists are not limited to the former five-person prefix. Rate limiting is automatically handled.",
     "optional_api_keys": [
       "NCBI_API_KEY"
     ],
@@ -70,10 +70,14 @@
               },
               "authors": {
                 "type": "array",
-                "description": "List of author names (up to 5 authors shown)",
+                "description": "Complete author-name list returned by NCBI esummary",
                 "items": {
                   "type": "string"
                 }
+              },
+              "authors_count": {
+                "type": "integer",
+                "description": "Number of authors returned"
               },
               "journal": {
                 "type": [

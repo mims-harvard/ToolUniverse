@@ -16,7 +16,7 @@ def ENCODE_list_files(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     List ENCODE data files with filters by file format, output type, or assay. Returns file metadata ...
 
@@ -37,7 +37,7 @@ def ENCODE_list_files(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

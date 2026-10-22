@@ -1,7 +1,7 @@
 [
   {
     "name": "Wikidata_search_entities",
-    "description": "Search Wikidata for entities (items, properties, or lexemes) by label or description using the MediaWiki Wikibase API. Wikidata is the world's largest open knowledge graph with 100M+ data items. Returns entity IDs (Q-numbers), labels, descriptions, and aliases. Complementary to Wikidata_SPARQL_query for finding entity IDs before constructing SPARQL queries.",
+    "description": "Search Wikidata entities with explicit continuation pagination. Continue with metadata.next_continue while metadata.has_more is true. Wikidata does not report a total result count during entity search, so metadata.matches_lower_bound is a verified lower bound until the final page.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -29,7 +29,16 @@
             "integer",
             "null"
           ],
-          "description": "Number of results to return (default 7, max 50)"
+          "minimum": 1,
+          "maximum": 50,
+          "default": 7,
+          "description": "Results per page (default 7, max 50)"
+        },
+        "continue": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Continuation offset from the prior response's metadata.next_continue. Use 0 for the first page."
         }
       },
       "required": [
@@ -44,7 +53,8 @@
       },
       "headers": {
         "User-Agent": "ToolUniverse/1.0 (scientific research; https://github.com/tooluniverse/ToolUniverse)"
-      }
+      },
+      "pagination": "wikidata_continue"
     },
     "type": "BaseRESTTool",
     "test_examples": [

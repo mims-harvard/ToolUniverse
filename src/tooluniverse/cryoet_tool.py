@@ -46,6 +46,36 @@ class CryoETTool(BaseTool):
             # 7 tools.
             operation = arguments.get("operation") or self.get_schema_const_operation()
 
+            if operation.startswith("list_"):
+                props = self.tool_config.get("parameter", {}).get("properties", {})
+                if "limit" in props:
+                    limit = arguments.get("limit", props["limit"].get("default", 10))
+                    maximum = props["limit"].get("maximum", 100)
+                    if (
+                        isinstance(limit, bool)
+                        or not isinstance(limit, int)
+                        or not 1 <= limit <= maximum
+                    ):
+                        return {
+                            "status": "error",
+                            "error": f"limit must be an integer between 1 and {maximum}",
+                            "parameter": "limit",
+                        }
+                    offset = arguments.get("offset", 0)
+                    if (
+                        isinstance(offset, bool)
+                        or not isinstance(offset, int)
+                        or offset < 0
+                    ):
+                        return {
+                            "status": "error",
+                            "error": "offset must be a non-negative integer",
+                            "parameter": "offset",
+                        }
+                    arguments = dict(arguments)
+                    arguments["limit"] = limit
+                    arguments["offset"] = offset
+
             if operation == "list_datasets":
                 return self._list_datasets(arguments)
             elif operation == "get_dataset":
@@ -70,6 +100,40 @@ class CryoETTool(BaseTool):
         except Exception as e:
             return {"status": "error", "error": str(e)}
 
+    @staticmethod
+    def _page_result(records, key, limit, offset, **context):
+        """Return one evidence-based page using a limit+1 GraphQL lookahead."""
+        records = records if isinstance(records, list) else []
+        has_more = len(records) > limit
+        page = records[:limit]
+        returned = len(page)
+        terminal_position_known = not has_more and (offset == 0 or returned > 0)
+        return {
+            "status": "success",
+            "data": {**context, "count": returned, key: page},
+            "metadata": {
+                "returned": returned,
+                "count_semantics": "records_on_current_page_not_total_results",
+                "total_results": offset + returned if terminal_position_known else None,
+                "total_results_is_exact": terminal_position_known,
+                "matches_lower_bound": (
+                    offset + returned + (1 if has_more else 0)
+                    if returned or offset == 0
+                    else None
+                ),
+                "total_results_upper_bound": (
+                    offset if not has_more and not returned and offset > 0 else None
+                ),
+                "limit": limit,
+                "offset": offset,
+                "has_more": has_more,
+                "next_offset": offset + returned if has_more else None,
+                "truncated": offset > 0 or has_more,
+                "result_set_complete": bool(offset == 0 and not has_more),
+                "pagination_scope": "cryoet_graphql_limit_offset_lookahead",
+            },
+        }
+
     # ------------------------------------------------------------------ #
     # list_datasets
     # ------------------------------------------------------------------ #
@@ -78,8 +142,8 @@ class CryoETTool(BaseTool):
         try:
             organism = arguments.get("organism_name")
             tissue = arguments.get("tissue_name")
-            limit = int(arguments.get("limit", 10))
-            offset = int(arguments.get("offset", 0))
+            limit = arguments.get("limit", 10)
+            offset = arguments.get("offset", 0)
 
             where_parts = []
             if organism:
@@ -93,7 +157,7 @@ class CryoETTool(BaseTool):
             query = f"""
             {{
               datasets(
-                {where_arg}limitOffset: {{limit: {limit}, offset: {offset}}}
+                {where_arg}limitOffset: {{limit: {limit + 1}, offset: {offset}}}
               ) {{
                 id
                 title
@@ -118,13 +182,7 @@ class CryoETTool(BaseTool):
                     "error": str(result["errors"]),
                 }
             datasets = result.get("data", {}).get("datasets", [])
-            return {
-                "status": "success",
-                "data": {
-                    "count": len(datasets),
-                    "datasets": datasets,
-                },
-            }
+            return self._page_result(datasets, "datasets", limit, offset)
         except Exception as e:
             return {"status": "error", "error": str(e)}
 
@@ -197,14 +255,14 @@ class CryoETTool(BaseTool):
                     "error": "dataset_id is required for list_runs operation",
                 }
             dataset_id = int(dataset_id)
-            limit = int(arguments.get("limit", 20))
-            offset = int(arguments.get("offset", 0))
+            limit = arguments.get("limit", 20)
+            offset = arguments.get("offset", 0)
 
             query = f"""
             {{
               runs(
                 where: {{datasetId: {{_eq: {dataset_id}}}}},
-                limitOffset: {{limit: {limit}, offset: {offset}}}
+                limitOffset: {{limit: {limit + 1}, offset: {offset}}}
               ) {{
                 id
                 name
@@ -218,14 +276,9 @@ class CryoETTool(BaseTool):
             if "errors" in result:
                 return {"status": "error", "error": str(result["errors"])}
             runs = result.get("data", {}).get("runs", [])
-            return {
-                "status": "success",
-                "data": {
-                    "dataset_id": dataset_id,
-                    "count": len(runs),
-                    "runs": runs,
-                },
-            }
+            return self._page_result(
+                runs, "runs", limit, offset, dataset_id=dataset_id
+            )
         except Exception as e:
             return {"status": "error", "error": str(e)}
 
@@ -242,14 +295,14 @@ class CryoETTool(BaseTool):
                     "error": "run_id is required for list_tomograms operation",
                 }
             run_id = int(run_id)
-            limit = int(arguments.get("limit", 10))
-            offset = int(arguments.get("offset", 0))
+            limit = arguments.get("limit", 10)
+            offset = arguments.get("offset", 0)
 
             query = f"""
             {{
               tomograms(
                 where: {{runId: {{_eq: {run_id}}}}},
-                limitOffset: {{limit: {limit}, offset: {offset}}}
+                limitOffset: {{limit: {limit + 1}, offset: {offset}}}
               ) {{
                 id
                 name
@@ -278,14 +331,9 @@ class CryoETTool(BaseTool):
             if "errors" in result:
                 return {"status": "error", "error": str(result["errors"])}
             tomograms = result.get("data", {}).get("tomograms", [])
-            return {
-                "status": "success",
-                "data": {
-                    "run_id": run_id,
-                    "count": len(tomograms),
-                    "tomograms": tomograms,
-                },
-            }
+            return self._page_result(
+                tomograms, "tomograms", limit, offset, run_id=run_id
+            )
         except Exception as e:
             return {"status": "error", "error": str(e)}
 
@@ -302,8 +350,8 @@ class CryoETTool(BaseTool):
                     "error": "run_id is required for list_annotations operation",
                 }
             run_id = int(run_id)
-            limit = int(arguments.get("limit", 20))
-            offset = int(arguments.get("offset", 0))
+            limit = arguments.get("limit", 20)
+            offset = arguments.get("offset", 0)
             curator_only = arguments.get("curator_recommended_only", False)
 
             where_parts = [f"runId: {{_eq: {run_id}}}"]
@@ -316,7 +364,7 @@ class CryoETTool(BaseTool):
             {{
               annotations(
                 where: {where_clause},
-                limitOffset: {{limit: {limit}, offset: {offset}}}
+                limitOffset: {{limit: {limit + 1}, offset: {offset}}}
               ) {{
                 id
                 objectName
@@ -341,14 +389,9 @@ class CryoETTool(BaseTool):
             if "errors" in result:
                 return {"status": "error", "error": str(result["errors"])}
             annotations = result.get("data", {}).get("annotations", [])
-            return {
-                "status": "success",
-                "data": {
-                    "run_id": run_id,
-                    "count": len(annotations),
-                    "annotations": annotations,
-                },
-            }
+            return self._page_result(
+                annotations, "annotations", limit, offset, run_id=run_id
+            )
         except Exception as e:
             return {"status": "error", "error": str(e)}
 
@@ -359,8 +402,8 @@ class CryoETTool(BaseTool):
         """List tilt-series raw acquisition metadata, optionally filtered by run."""
         try:
             run_id = arguments.get("run_id")
-            limit = int(arguments.get("limit", 10))
-            offset = int(arguments.get("offset", 0))
+            limit = arguments.get("limit", 10)
+            offset = arguments.get("offset", 0)
 
             where_arg = ""
             if run_id is not None:
@@ -369,7 +412,7 @@ class CryoETTool(BaseTool):
             query = f"""
             {{
               tiltseries(
-                {where_arg}limitOffset: {{limit: {limit}, offset: {offset}}}
+                {where_arg}limitOffset: {{limit: {limit + 1}, offset: {offset}}}
               ) {{
                 id
                 runId
@@ -398,14 +441,13 @@ class CryoETTool(BaseTool):
             if "errors" in result:
                 return {"status": "error", "error": str(result["errors"])}
             tiltseries = result.get("data", {}).get("tiltseries", [])
-            return {
-                "status": "success",
-                "data": {
-                    "run_id": int(run_id) if run_id is not None else None,
-                    "count": len(tiltseries),
-                    "tiltseries": tiltseries,
-                },
-            }
+            return self._page_result(
+                tiltseries,
+                "tiltseries",
+                limit,
+                offset,
+                run_id=int(run_id) if run_id is not None else None,
+            )
         except Exception as e:
             return {"status": "error", "error": str(e)}
 
@@ -416,8 +458,8 @@ class CryoETTool(BaseTool):
         """Browse top-level depositions, optionally filtered by deposition id."""
         try:
             deposition_id = arguments.get("deposition_id")
-            limit = int(arguments.get("limit", 10))
-            offset = int(arguments.get("offset", 0))
+            limit = arguments.get("limit", 10)
+            offset = arguments.get("offset", 0)
 
             where_arg = ""
             if deposition_id is not None:
@@ -426,7 +468,7 @@ class CryoETTool(BaseTool):
             query = f"""
             {{
               depositions(
-                {where_arg}limitOffset: {{limit: {limit}, offset: {offset}}}
+                {where_arg}limitOffset: {{limit: {limit + 1}, offset: {offset}}}
               ) {{
                 id
                 title
@@ -444,12 +486,6 @@ class CryoETTool(BaseTool):
             if "errors" in result:
                 return {"status": "error", "error": str(result["errors"])}
             depositions = result.get("data", {}).get("depositions", [])
-            return {
-                "status": "success",
-                "data": {
-                    "count": len(depositions),
-                    "depositions": depositions,
-                },
-            }
+            return self._page_result(depositions, "depositions", limit, offset)
         except Exception as e:
             return {"status": "error", "error": str(e)}

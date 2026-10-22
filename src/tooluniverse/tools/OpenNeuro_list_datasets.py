@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def OpenNeuro_list_datasets(
-    first: Optional[int | Any] = None,
-    after: Optional[str | Any] = None,
+    first: Optional[int] = None,
+    after: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -21,9 +21,9 @@ def OpenNeuro_list_datasets(
 
     Parameters
     ----------
-    first : int | Any
+    first : int
         Number of datasets to return (default 10, max 25)
-    after : str | Any
+    after : str
         Cursor for pagination - use endCursor from previous response
     stream_callback : Callable, optional
         Callback for streaming output

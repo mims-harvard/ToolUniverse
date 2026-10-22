@@ -4,7 +4,6 @@ import requests
 import xmltodict
 from typing import Optional, Dict, Any
 import re
-import json
 
 from .base_tool import BaseTool
 from .tool_registry import register_tool
@@ -147,23 +146,14 @@ class MedlinePlusRESTTool(BaseTool):
 
         # Format response based on tool type
         if tool_name == "MedlinePlus_search_topics_by_keyword":
-            # First print raw response for debugging
-            print("\n🔍 Raw response structure:")
-            print(
-                json.dumps(response, indent=2, ensure_ascii=False)[:2000] + "..."
-                if len(json.dumps(response, indent=2, ensure_ascii=False)) > 2000
-                else json.dumps(response, indent=2, ensure_ascii=False)
-            )
-
             # Extract topic information from XML structure
             nlm_result = response.get("nlmSearchResult", {})
             if not nlm_result:
                 return {"status": "error", "error": "nlmSearchResult node not found"}
 
             # Get document list
-            document_list = nlm_result.get("list", {}).get("document", [])
-            if not document_list:
-                return {"status": "error", "error": "document list not found"}
+            result_list = nlm_result.get("list", {})
+            document_list = result_list.get("document", [])
 
             # Ensure document_list is a list
             if isinstance(document_list, dict):
@@ -217,20 +207,38 @@ class MedlinePlusRESTTool(BaseTool):
                                 "language": language,
                                 "rank": doc_rank,
                                 "also_called": also_called,
-                                "summary": (
-                                    full_summary[:500] + "..."
-                                    if len(str(full_summary)) > 500
-                                    else full_summary
-                                ),
+                                "summary": full_summary,
+                                "summary_length": len(str(full_summary)),
                                 "groups": groups,
                             }
                         )
 
-            return (
-                {"topics": formatted_topics}
-                if formatted_topics
-                else {"error": "Failed to parse health topic information"}
+            def parse_count(value, fallback):
+                try:
+                    return int(value)
+                except (TypeError, ValueError):
+                    return fallback
+
+            returned = len(formatted_topics)
+            total_available = parse_count(
+                nlm_result.get("count", result_list.get("@num")), returned
             )
+            offset = parse_count(
+                nlm_result.get("retstart", result_list.get("@start")), 0
+            )
+            limit = parse_count(
+                nlm_result.get("retmax", result_list.get("@per")), returned
+            )
+            has_more = offset + returned < total_available
+            return {
+                "topics": formatted_topics,
+                "total_available": total_available,
+                "returned": returned,
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "next_offset": offset + returned if has_more else None,
+            }
 
         elif tool_name == "MedlinePlus_get_genetics_condition_by_name":
             inheritance = [
@@ -319,9 +327,8 @@ class MedlinePlusRESTTool(BaseTool):
                 formatted_responses.append(
                     {
                         "title": title,
-                        "summary": summary[:500] + "..."
-                        if len(summary) > 500
-                        else summary,
+                        "summary": summary,
+                        "summary_length": len(summary),
                         "url": url,
                     }
                 )
@@ -357,9 +364,6 @@ class MedlinePlusRESTTool(BaseTool):
         if isinstance(url, dict) and "error" in url:
             return url
 
-        # Print complete URL
-        print(f"\n🔗 Request URL: {url}")
-
         # Make request
         try:
             resp = requests.get(url, timeout=self.timeout)
@@ -369,10 +373,6 @@ class MedlinePlusRESTTool(BaseTool):
                     "error": f"MedlinePlus returned non-200 status code: {resp.status_code}",
                     "detail": resp.text,
                 }
-
-            print(f"\n📊 Response status: {resp.status_code}")
-            print(f"📏 Response length: {len(resp.text)} characters")
-            print(f"🔤 First 500 characters of response: {resp.text[:500]}...")
 
             # Improved parsing logic
             tool_name = self.tool_config["name"]
@@ -384,11 +384,9 @@ class MedlinePlusRESTTool(BaseTool):
                 # JSON format
                 try:
                     response = resp.json()
-                    print("📋 Parsed as: JSON")
                 except Exception:
                     # If JSON parsing fails, fall back to XML
                     response = xmltodict.parse(resp.text)
-                    print("📋 Parsed as: XML -> Dictionary (fallback)")
             elif (
                 url.endswith(".xml")
                 or response_text.startswith("<?xml")
@@ -396,23 +394,15 @@ class MedlinePlusRESTTool(BaseTool):
             ):
                 # XML format
                 response = xmltodict.parse(resp.text)
-                print("📋 Parsed as: XML -> Dictionary")
             elif tool_name == "MedlinePlus_search_topics_by_keyword":
                 # Search tool defaults to XML
                 response = xmltodict.parse(resp.text)
-                print("📋 Parsed as: XML -> Dictionary (Search tool)")
             elif tool_name == "MedlinePlus_get_genetics_index":
                 # Genetics index defaults to XML
                 response = xmltodict.parse(resp.text)
-                print("📋 Parsed as: XML -> Dictionary (Genetics index)")
             else:
                 # Other cases keep original text
                 response = resp.text
-                print("📋 Parsed as: Plain text")
-
-            print(f"🔍 Parsed data type: {type(response)}")
-            if isinstance(response, dict):
-                print(f"🗝️ Top-level dictionary keys: {list(response.keys())}")
 
             return self._format_response(response, tool_name)
 
@@ -424,9 +414,22 @@ class MedlinePlusRESTTool(BaseTool):
 
     # Tool methods
     def search_topics_by_keyword(
-        self, term: str, db: str, rettype: str = "brief"
+        self,
+        term: str,
+        db: str,
+        rettype: str = "brief",
+        retstart: int = 0,
+        retmax: int = 10,
     ) -> Dict[str, Any]:
-        return self.run({"term": term, "db": db, "rettype": rettype})
+        return self.run(
+            {
+                "term": term,
+                "db": db,
+                "rettype": rettype,
+                "retstart": retstart,
+                "retmax": retmax,
+            }
+        )
 
     def connect_lookup_by_code(
         self,

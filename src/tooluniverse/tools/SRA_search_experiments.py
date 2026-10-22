@@ -1,7 +1,7 @@
 """
 SRA_search_experiments
 
-Search the NCBI Sequence Read Archive (SRA) for sequencing experiments by keyword, organism, libr...
+Search the NCBI Sequence Read Archive (SRA) for sequencing experiments by keyword, organism, stra...
 """
 
 from typing import Any, Optional, Callable
@@ -14,13 +14,14 @@ def SRA_search_experiments(
     library_strategy: Optional[str] = None,
     platform: Optional[str] = None,
     limit: Optional[int] = 10,
+    start: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search the NCBI Sequence Read Archive (SRA) for sequencing experiments by keyword, organism, libr...
+    Search the NCBI Sequence Read Archive (SRA) for sequencing experiments by keyword, organism, stra...
 
     Parameters
     ----------
@@ -34,6 +35,8 @@ def SRA_search_experiments(
         Sequencing platform filter (e.g., 'ILLUMINA', 'PACBIO_SMRT', 'OXFORD_NANOPORE...
     limit : int
         Maximum results to return (1-50, default 10)
+    start : int
+        Zero-based SRA search offset. Continue with next_start while has_more is true.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def SRA_search_experiments(
             "library_strategy": library_strategy,
             "platform": platform,
             "limit": limit,
+            "start": start,
         }.items()
         if v is not None
     }

@@ -1,7 +1,7 @@
 [
   {
     "name": "iNaturalist_search_taxa",
-    "description": "Search for species and taxa in the iNaturalist taxonomy. Returns matching organisms with their scientific and common names, taxonomic rank, observation count, and conservation status. iNaturalist aggregates citizen science biodiversity observations worldwide. Example: searching 'Panthera tigris' returns the tiger with 22000+ observations.",
+    "description": "Search iNaturalist taxa with exact total and page continuation. Page-based access is limited to 10,000 ranked matches; refine broad searches when metadata.upstream_truncated is true.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -10,11 +10,17 @@
           "description": "Search query for taxon name (scientific or common). Examples: 'Panthera tigris', 'monarch butterfly', 'redwood', 'Homo sapiens', 'blue whale'."
         },
         "per_page": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "description": "Number of results to return (1-200, default 10)."
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200,
+          "default": 10,
+          "description": "Number of results to return per page (1-200, default 10)."
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "One-based results page (default 1). iNaturalist exposes at most the first 10,000 matching records through this endpoint."
         }
       },
       "required": [
@@ -233,7 +239,7 @@
   },
   {
     "name": "iNaturalist_search_observations",
-    "description": "Search for georeferenced species observations from iNaturalist citizen scientists. Filter by taxon, location, date, and quality grade. Returns observation details including species, location, observer, date, and photo URLs. Useful for biodiversity surveys, species distribution mapping, and ecological research. Example: research-grade observations of bottlenose dolphins (taxon 41482) returns recent sightings with GPS coordinates.",
+    "description": "Search iNaturalist observations by taxon/name, place, and quality, ordered by observation ID descending. Use metadata.next_page within the 10,000-result page window, or page=1 with metadata.next_id_below for sliding-window traversal beyond 10,000 records.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -252,10 +258,9 @@
           "description": "Text search for species name. Alternative to taxon_id."
         },
         "quality_grade": {
-          "type": [
-            "string",
-            "null"
-          ],
+          "type": "string",
+          "enum": ["research", "needs_id", "casual"],
+          "default": "research",
           "description": "Observation quality: 'research' (community-verified), 'needs_id' (unverified), or 'casual'. Default: 'research'."
         },
         "place_id": {
@@ -266,11 +271,22 @@
           "description": "iNaturalist place ID to filter by location. Example: 10211 (Yellowstone National Park)."
         },
         "per_page": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "description": "Number of results (1-200, default 10)."
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200,
+          "default": 10,
+          "description": "Number of results per page (1-200, default 10)."
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "One-based results page (default 1). iNaturalist exposes at most the first 10,000 matching records through this endpoint."
+        },
+        "id_below": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Sliding-window cursor. Set page=1 and pass metadata.next_id_below from the previous response to continue beyond the 10,000-result page limit."
         }
       },
       "required": []
@@ -402,18 +418,23 @@
           "description": "Place ID to filter by location. Example: 10211 (Yellowstone)."
         },
         "quality_grade": {
-          "type": [
-            "string",
-            "null"
-          ],
+          "type": "string",
+          "enum": ["research", "needs_id", "casual"],
+          "default": "research",
           "description": "Quality filter: 'research', 'needs_id', or 'casual'. Default: 'research'."
         },
         "per_page": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "description": "Number of species to return (1-500, default 20)."
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 20,
+          "description": "Number of species to return per page (1-500, default 20)."
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "One-based results page (default 1). iNaturalist exposes at most the first 10,000 matching records through this endpoint."
         }
       },
       "required": []

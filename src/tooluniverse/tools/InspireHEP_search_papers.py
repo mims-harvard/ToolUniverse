@@ -1,7 +1,7 @@
 """
 InspireHEP_search_papers
 
-Search high-energy physics literature in the INSPIRE-HEP database, the premier repository for phy...
+Search high-energy physics literature in INSPIRE-HEP. Results use exact one-based page pagination...
 """
 
 from typing import Any, Optional, Callable
@@ -10,26 +10,29 @@ from ._shared_client import get_shared_client
 
 def InspireHEP_search_papers(
     q: str,
-    sort: Optional[str | Any] = None,
-    size: Optional[int | Any] = None,
-    fields: Optional[str | Any] = None,
+    sort: Optional[str] = None,
+    size: Optional[int] = 10,
+    page: Optional[int] = 1,
+    fields: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search high-energy physics literature in the INSPIRE-HEP database, the premier repository for phy...
+    Search high-energy physics literature in INSPIRE-HEP. Results use exact one-based page pagination...
 
     Parameters
     ----------
     q : str
         INSPIRE search query. Examples: 'higgs boson discovery', 'author:einstein', '...
-    sort : str | Any
+    sort : str
         Sort order. Values: 'mostrecent' (default), 'mostcited'. Examples: 'mostcited...
-    size : int | Any
-        Number of results (1-25). Default: 10
-    fields : str | Any
+    size : int
+        Results per page (1-25, default 10)
+    page : int
+        One-based result page. Continue with metadata.next_page.
+    fields : str
         Comma-separated fields to return. Default includes titles, authors, abstract,...
     stream_callback : Callable, optional
         Callback for streaming output
@@ -47,7 +50,13 @@ def InspireHEP_search_papers(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"q": q, "sort": sort, "size": size, "fields": fields}.items()
+        for k, v in {
+            "q": q,
+            "sort": sort,
+            "size": size,
+            "page": page,
+            "fields": fields,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

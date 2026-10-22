@@ -87,7 +87,23 @@ class DfamTool(BaseTool):
             params["type"] = repeat_type
 
         limit = arguments.get("limit", 20)
-        params["limit"] = min(limit, 50)
+        offset = arguments.get("offset", 0)
+        if limit is None:
+            limit = 20
+        if offset is None:
+            offset = 0
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 1000:
+            return {
+                "status": "error",
+                "error": "limit must be an integer between 1 and 1000",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+            }
+        params["limit"] = limit
+        params["start"] = offset
 
         url = f"{DFAM_BASE_URL}/families"
         response = requests.get(url, params=params, timeout=self.timeout)
@@ -110,13 +126,22 @@ class DfamTool(BaseTool):
                 }
             )
 
+        total = data.get("total_count", len(families))
+        returned = len(families)
+        has_more = offset + returned < total
         return {
             "status": "success",
             "data": families,
             "metadata": {
                 "source": "Dfam (dfam.org)",
-                "total_count": data.get("total_count", len(families)),
-                "returned": len(families),
+                "total_count": total,
+                "returned": returned,
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_offset": offset + returned if has_more else None,
+                "total_is_exact": True,
             },
         }
 

@@ -291,8 +291,18 @@ class BaseTool:
             # Only filter known internal parameters, not all underscore-prefixed params
             # to allow optional streaming parameter _tooluniverse_stream
             internal_params = {"ctx", "_tooluniverse_stream"}
+            properties = schema.get("properties", {})
+            fixed_operation = (self.tool_config.get("fields") or {}).get("operation")
             filtered_arguments = {
-                k: v for k, v in arguments.items() if k not in internal_params
+                k: v
+                for k, v in arguments.items()
+                if k not in internal_params
+                and not (
+                    k == "operation"
+                    and "operation" not in properties
+                    and isinstance(fixed_operation, str)
+                    and v == fixed_operation
+                )
             }
 
             jsonschema.validate(filtered_arguments, schema)
@@ -324,7 +334,6 @@ class BaseTool:
             # (no near-miss, not a total mismatch) is left alone -- lower
             # risk of being a genuine mistake, and flagging it risks
             # rejecting legitimate pass-through/forward-compatible callers.
-            properties = schema.get("properties", {})
             if properties and filtered_arguments:
                 unknown = self._unknown_keys(filtered_arguments, properties)
                 if unknown:

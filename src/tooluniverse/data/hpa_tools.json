@@ -62,7 +62,7 @@
   {
     "type": "HPASearchGenesTool",
     "name": "HPA_search_genes_by_query",
-    "description": "Search for matching genes by gene name, keywords, or cell line names and return Ensembl ID list. This is the entry tool for many HPA query workflows.",
+    "description": "Search HPA genes by gene name, keyword, synonym, or cell-line text. HPA's search can be very broad, so exact symbols are ranked first and results use recoverable offset pagination. Continue with next_offset while has_more is true; total_matches is the complete HPA response size.",
     "fields": {
       "endpoint": "https://www.proteinatlas.org/api/search_download.php",
       "timeout": 30,
@@ -77,7 +77,13 @@
         },
         "max_results": {
           "type": ["integer", "null"],
+          "minimum": 1,
           "description": "Maximum number of gene matches to return (default: 50). This search does a broad full-text match with no server-side limit, so a short/common query can otherwise return thousands of results; exact gene-symbol matches are ranked first."
+        },
+        "offset": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "description": "Zero-based offset in the complete ranked HPA response. Continue with next_offset."
         }
       },
       "required": [
@@ -653,7 +659,7 @@
   {
     "type": "HPAGetContextualBiologicalProcessTool",
     "name": "HPA_get_contextual_biological_process_analysis",
-    "description": "Analyze a gene's biological processes in the context of a specific tissue or cell line by integrating functional annotation with expression data to determine functional relevance.",
+    "description": "Analyze a gene's biological processes in the context of a specific tissue or cell line by integrating functional annotation with expression data to determine functional relevance. Returns the complete HPA biological-process list; total_biological_processes and returned_biological_processes explicitly report completeness.",
     "fields": {
       "endpoint": "composite_workflow",
       "timeout": 60,
@@ -687,10 +693,36 @@
     "return_schema": {
       "type": "object",
       "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "gene": {"type": "string"},
+            "gene_synonym": {"type": "string"},
+            "ensembl_id": {"type": "string"},
+            "context": {"type": "string"},
+            "context_type": {"type": "string"},
+            "context_category": {"type": "string"},
+            "expression_in_context": {"type": "string"},
+            "expression_level": {"type": "string"},
+            "total_biological_processes": {"type": "integer"},
+            "returned_biological_processes": {"type": "integer"},
+            "biological_processes": {
+              "type": "array",
+              "items": {"type": "string"}
+            },
+            "contextual_conclusion": {"type": "string"},
+            "functional_relevance": {"type": "string"}
+          },
+          "additionalProperties": true
+        },
         "error": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties": true
     }
   },
   {

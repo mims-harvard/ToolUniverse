@@ -81,6 +81,25 @@ class BioPortalTool(BaseTool):
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
+    @staticmethod
+    def _page_controls(arguments: Dict[str, Any], default: int, maximum: int):
+        page_size = arguments.get("page_size", default)
+        page = arguments.get("page", 1)
+        if page_size is None:
+            page_size = default
+        if (
+            isinstance(page_size, bool)
+            or not isinstance(page_size, int)
+            or not 1 <= page_size <= maximum
+        ):
+            return {
+                "status": "error",
+                "error": f"page_size must be an integer from 1 to {maximum}",
+            }
+        if isinstance(page, bool) or not isinstance(page, int) or page < 1:
+            return {"status": "error", "error": "page must be a positive integer"}
+        return page_size, page
+
     def _search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search across all (or specific) ontologies for terms."""
         query = arguments.get("query", "")
@@ -88,14 +107,22 @@ class BioPortalTool(BaseTool):
             return {"status": "error", "error": "query parameter is required"}
 
         ontologies = arguments.get("ontologies")
-        page_size = arguments.get("page_size") or 10
-        exact_match = arguments.get("exact_match") or False
+        controls = self._page_controls(arguments, 10, 50)
+        if isinstance(controls, dict):
+            return controls
+        page_size, page = controls
+        exact_match = arguments.get("exact_match", False)
+        if exact_match is None:
+            exact_match = False
+        if not isinstance(exact_match, bool):
+            return {"status": "error", "error": "exact_match must be a boolean"}
 
         url = f"{BIOPORTAL_BASE_URL}/search"
         params = {
             "q": query,
             "apikey": BIOPORTAL_API_KEY,
-            "pagesize": min(page_size, 50),
+            "pagesize": page_size,
+            "page": page,
             "display_links": "false",
             "display_context": "false",
         }
@@ -107,9 +134,12 @@ class BioPortalTool(BaseTool):
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
         data = response.json()
+        current_page = data.get("page", page)
+        page_count = data.get("pageCount", 1)
 
         results = []
         for item in data.get("collection", []):
+            synonyms = item.get("synonym") or []
             results.append(
                 {
                     "label": item.get("prefLabel"),
@@ -117,7 +147,8 @@ class BioPortalTool(BaseTool):
                     if item.get("@id")
                     else None,
                     "full_id": item.get("@id"),
-                    "synonyms": item.get("synonym", [])[:5],
+                    "synonyms": synonyms,
+                    "synonym_count": len(synonyms),
                     "definition": (item.get("definition") or [None])[0],
                     "ontology": item.get("@id", "").split("/obo/")[0].split("/")[-1]
                     if "/obo/" in item.get("@id", "")
@@ -127,14 +158,29 @@ class BioPortalTool(BaseTool):
                 }
             )
 
+        total_count = data.get("totalCount", len(results))
+        has_more = current_page < page_count
+        stalled = bool(has_more and not results)
         return {
             "status": "success",
             "data": results,
             "metadata": {
                 "source": "BioPortal (NCBO)",
-                "total_count": data.get("totalCount", len(results)),
-                "page": data.get("page", 1),
-                "page_count": data.get("pageCount", 1),
+                "total_count": total_count,
+                "returned": len(results),
+                "page_size": page_size,
+                "page": current_page,
+                "page_count": page_count,
+                "has_more": has_more and not stalled,
+                "next_page": current_page + 1 if has_more and not stalled else None,
+                "truncated": current_page > 1 or has_more,
+                "result_set_complete": current_page == 1 and len(results) == total_count,
+                "pagination_stalled": stalled,
+                "warning": (
+                    "BioPortal reported additional pages but returned an empty collection."
+                    if stalled
+                    else None
+                ),
                 "query": query,
             },
         }
@@ -247,6 +293,13 @@ class BioPortalTool(BaseTool):
                 "status": "error",
                 "error": "Both ontology and concept_id are required",
             }
+        if direction is None:
+            direction = "children"
+        if direction not in {"children", "parents", "ancestors"}:
+            return {
+                "status": "error",
+                "error": "direction must be children, parents, or ancestors",
+            }
 
         import urllib.parse
 
@@ -259,12 +312,16 @@ class BioPortalTool(BaseTool):
         else:
             url = f"{BIOPORTAL_BASE_URL}/ontologies/{ontology}/classes/{encoded_id}/children"
 
-        page_size = arguments.get("page_size") or 25
+        controls = self._page_controls(arguments, 25, 100)
+        if isinstance(controls, dict):
+            return controls
+        page_size, page = controls
         params = {
             "apikey": BIOPORTAL_API_KEY,
             "display_links": "false",
             "display_context": "false",
-            "pagesize": min(page_size, 100),
+            "pagesize": page_size,
+            "page": page,
         }
 
         response = requests.get(url, params=params, timeout=self.timeout)
@@ -276,11 +333,16 @@ class BioPortalTool(BaseTool):
         if isinstance(data, list):
             items = data
             total = len(data)
+            current_page = 1
+            page_count = 1
         else:
             items = data.get("collection", [])
             total = data.get("totalCount", len(items))
+            current_page = data.get("page", page)
+            page_count = data.get("pageCount", 1)
 
         for item in items:
+            synonyms = item.get("synonym") or []
             concepts.append(
                 {
                     "label": item.get("prefLabel"),
@@ -288,12 +350,15 @@ class BioPortalTool(BaseTool):
                     if item.get("@id")
                     else None,
                     "full_id": item.get("@id"),
-                    "synonyms": item.get("synonym", [])[:3],
+                    "synonyms": synonyms,
+                    "synonym_count": len(synonyms),
                     "definition": (item.get("definition") or [None])[0],
                     "obsolete": item.get("obsolete", False),
                 }
             )
 
+        has_more = current_page < page_count
+        stalled = bool(has_more and not concepts)
         return {
             "status": "success",
             "data": concepts,
@@ -302,6 +367,20 @@ class BioPortalTool(BaseTool):
                 "ontology": ontology,
                 "direction": direction,
                 "total_count": total,
+                "returned": len(concepts),
+                "page_size": page_size,
+                "page": current_page,
+                "page_count": page_count,
+                "has_more": has_more and not stalled,
+                "next_page": current_page + 1 if has_more and not stalled else None,
+                "truncated": current_page > 1 or has_more,
+                "result_set_complete": current_page == 1 and len(concepts) == total,
+                "pagination_stalled": stalled,
+                "warning": (
+                    "BioPortal reported additional hierarchy pages but returned an empty collection."
+                    if stalled
+                    else None
+                ),
                 "concept_id": concept_id,
             },
         }

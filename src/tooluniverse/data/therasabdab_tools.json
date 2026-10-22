@@ -1,13 +1,26 @@
 [
     {
         "name": "TheraSAbDab_search_therapeutics",
-        "description": "Search therapeutic antibodies by name in Thera-SAbDab. Returns WHO INN name, target antigen, format (IgG, bispecific, ADC), clinical phase, and PDB structures. Use for finding approved/clinical antibody drugs.",
+        "description": "Search therapeutic antibodies by name or target keyword in Thera-SAbDab. Returns WHO INN name, target antigen, format, clinical-trial stage, and explicit pagination metadata. Follow next_offset while has_more is true so broad searches are not silently limited to the first 20 matches.",
         "parameter": {
             "type": "object",
             "properties": {
                 "query": {
                     "type": "string",
                     "description": "Search query - antibody name (e.g., 'trastuzumab', 'pembrolizumab', 'rituximab')"
+                },
+                "limit": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 500,
+                    "default": 100,
+                    "description": "Maximum matching therapeutics to return"
+                },
+                "offset": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "default": 0,
+                    "description": "Zero-based match offset; continue with next_offset"
                 }
             },
             "required": ["query"]
@@ -29,7 +42,12 @@
                     "properties": {
                         "query": {"type": "string"},
                         "therapeutics": {"type": "array"},
-                        "count": {"type": "integer"}
+                        "count": {"type": "integer"},
+                        "returned": {"type": "integer"},
+                        "offset": {"type": "integer"},
+                        "limit": {"type": "integer"},
+                        "has_more": {"type": "boolean"},
+                        "next_offset": {"type": ["integer", "null"]}
                     }
                 },
                 "error": {"type": "string"}
@@ -43,10 +61,24 @@
     },
     {
         "name": "TheraSAbDab_get_all_therapeutics",
-        "description": "Get summary of all therapeutic antibodies in Thera-SAbDab database. Returns counts by format (IgG, bispecific, ADC) and clinical phase. Use for landscape analysis of antibody therapeutics.",
+        "description": "Get the complete Thera-SAbDab therapeutic-antibody catalog through limit/offset pages, plus counts by format and the real clinical-trial-stage field. Follow next_offset while has_more is true. Use for landscape analysis of antibody therapeutics.",
         "parameter": {
             "type": "object",
-            "properties": {}
+            "properties": {
+                "limit": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 500,
+                    "default": 100,
+                    "description": "Maximum catalog records to return"
+                },
+                "offset": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "default": 0,
+                    "description": "Zero-based catalog offset; continue with next_offset"
+                }
+            }
         },
         "fields": {
             "operation": "get_all_therapeutics"
@@ -65,7 +97,13 @@
                         "total_count": {"type": "integer"},
                         "by_format": {"type": "object"},
                         "by_phase": {"type": "object"},
-                        "sample": {"type": "array"}
+                        "sample": {"type": "array"},
+                        "therapeutics": {"type": "array"},
+                        "returned": {"type": "integer"},
+                        "offset": {"type": "integer"},
+                        "limit": {"type": "integer"},
+                        "has_more": {"type": "boolean"},
+                        "next_offset": {"type": ["integer", "null"]}
                     }
                 },
                 "error": {"type": "string"}
@@ -79,13 +117,26 @@
     },
     {
         "name": "TheraSAbDab_search_by_target",
-        "description": "Find therapeutic antibodies targeting a specific antigen. Returns all clinical/approved antibodies against the target (e.g., all anti-PD1 antibodies). Essential for competitive landscape analysis.",
+        "description": "Find therapeutic antibodies targeting an exact antigen alias. Returns paginated clinical/approved antibodies and exact count; follow next_offset while has_more is true (for example, PD-1 has more than the former fixed 20-record cutoff). Essential for competitive landscape analysis.",
         "parameter": {
             "type": "object",
             "properties": {
                 "target": {
                     "type": "string",
                     "description": "Target antigen name (e.g., 'PD-1', 'HER2', 'CD20', 'TNF-alpha', 'VEGF')"
+                },
+                "limit": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 500,
+                    "default": 100,
+                    "description": "Maximum matching therapeutics to return"
+                },
+                "offset": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "default": 0,
+                    "description": "Zero-based match offset; continue with next_offset"
                 }
             },
             "required": ["target"]
@@ -107,7 +158,12 @@
                     "properties": {
                         "target": {"type": "string"},
                         "therapeutics": {"type": "array"},
-                        "count": {"type": "integer"}
+                        "count": {"type": "integer"},
+                        "returned": {"type": "integer"},
+                        "offset": {"type": "integer"},
+                        "limit": {"type": "integer"},
+                        "has_more": {"type": "boolean"},
+                        "next_offset": {"type": ["integer", "null"]}
                     }
                 },
                 "error": {"type": "string"}

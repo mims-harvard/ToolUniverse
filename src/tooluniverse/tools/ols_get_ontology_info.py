@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def ols_get_ontology_info(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_ontology_info",
     ontology_id: Optional[str] = None,
     ontology: Optional[str] = None,
     *,

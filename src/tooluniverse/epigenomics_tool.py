@@ -32,6 +32,12 @@ ENSEMBL_REST_URL = "https://rest.ensembl.org"
 # occasionally 503. Exponential backoff with jitter.
 _RETRY_STATUS_CODES = {408, 429, 500, 502, 503, 504}
 _MAX_RETRIES = 3
+_GEO_SEARCH_ENDPOINTS = {
+    "geo_methylation_search",
+    "geo_chipseq_search",
+    "geo_rnaseq_search",
+    "geo_atacseq_search",
+}
 
 
 def _encode_empty_result_note(biosample: Any = None) -> str:
@@ -123,6 +129,27 @@ class EpigenomicsTool(BaseTool):
             org = arguments["organism"].lower()
             if org in self._ORGANISM_ALIASES:
                 arguments = dict(arguments, organism=self._ORGANISM_ALIASES[org])
+        if self.endpoint in _GEO_SEARCH_ENDPOINTS:
+            limit = arguments.get("limit")
+            if limit is None:
+                limit = arguments.get("max_results", 20)
+            offset = arguments.get("offset", 0)
+            if (
+                isinstance(limit, bool)
+                or not isinstance(limit, int)
+                or not 1 <= limit <= 100
+            ):
+                return {
+                    "status": "error",
+                    "error": "limit must be an integer between 1 and 100",
+                    "parameter": "limit",
+                }
+            if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+                return {
+                    "status": "error",
+                    "error": "offset must be a non-negative integer",
+                    "parameter": "offset",
+                }
         try:
             result = self._dispatch(arguments)
             if isinstance(result, dict) and "status" not in result:
@@ -550,7 +577,9 @@ class EpigenomicsTool(BaseTool):
     # GEO Search Tools
     # =========================================================================
 
-    def _geo_esearch(self, term: str, limit: int = 20) -> Dict[str, Any]:
+    def _geo_esearch(
+        self, term: str, limit: int = 20, offset: int = 0
+    ) -> Dict[str, Any]:
         """Search GEO datasets via NCBI E-utilities.
 
         Uses NCBI_API_KEY from env when set (lifts the rate cap from 3 to
@@ -561,13 +590,37 @@ class EpigenomicsTool(BaseTool):
             {
                 "db": "gds",
                 "term": term,
-                "retmax": min(int(limit), 100),
+                "retmax": limit,
+                "retstart": offset,
                 "retmode": "json",
             }
         )
         response = _request_with_backoff(url, params=params, timeout=self.timeout)
         response.raise_for_status()
         return response.json()
+
+    @staticmethod
+    def _geo_page_fields(
+        total: int, ids: list, datasets: list, limit: int, offset: int
+    ) -> Dict[str, Any]:
+        """Describe the exact GSE candidate page and ESummary parse completeness."""
+        candidate_returned = len(ids)
+        returned = len(datasets)
+        has_more = offset + candidate_returned < total
+        return {
+            "returned": returned,
+            "candidate_returned": candidate_returned,
+            "omitted_records": candidate_returned - returned,
+            "offset": offset,
+            "limit": limit,
+            "has_more": has_more,
+            "next_offset": (
+                offset + candidate_returned
+                if candidate_returned and has_more
+                else None
+            ),
+            "truncated": has_more,
+        }
 
     def _geo_esummary(self, ids: list) -> Dict[str, Any]:
         """Get summary for GEO dataset IDs via NCBI E-utilities.
@@ -593,6 +646,7 @@ class EpigenomicsTool(BaseTool):
         query = arguments.get("query", "")
         organism = arguments.get("organism", "Homo sapiens")
         limit = arguments.get("limit", 20)
+        offset = arguments.get("offset", 0)
 
         # Feature-70A-008: avoid double-adding "methylation" if query already contains it
         term_parts = [query]
@@ -600,9 +654,10 @@ class EpigenomicsTool(BaseTool):
             term_parts.append("methylation")
         if organism:
             term_parts.append(f"{organism}[Organism]")
+        term_parts.append("gse[ETYP]")
         term = " AND ".join(term_parts)
 
-        search_result = self._geo_esearch(term, limit)
+        search_result = self._geo_esearch(term, limit, offset)
         esearch = search_result.get("esearchresult", {})
         total = int(esearch.get("count", 0))
         ids = esearch.get("idlist", [])
@@ -615,9 +670,10 @@ class EpigenomicsTool(BaseTool):
                 uid_data = result.get(str(uid), {})
                 if not isinstance(uid_data, dict) or "accession" not in uid_data:
                     continue
-                # Filter out platform records (GPL) — only return dataset series (GSE)
+                # Defensive check: the ESearch term already restricts to GSE,
+                # but never relabel any unexpected GSM/GPL record as a dataset.
                 acc = uid_data.get("accession", "")
-                if acc.startswith("GPL"):
+                if not acc.startswith("GSE"):
                     continue
                 datasets.append(
                     {
@@ -636,6 +692,7 @@ class EpigenomicsTool(BaseTool):
             "data": {
                 "total": total,
                 "datasets": datasets,
+                **self._geo_page_fields(total, ids, datasets, limit, offset),
             },
             "metadata": {
                 "source": "NCBI GEO (ncbi.nlm.nih.gov/geo)",
@@ -650,14 +707,16 @@ class EpigenomicsTool(BaseTool):
         query = arguments.get("query", "")
         organism = arguments.get("organism", "Homo sapiens")
         limit = arguments.get("limit", 20)
+        offset = arguments.get("offset", 0)
 
         # Build search term with ChIP-seq context
         term_parts = [query, "ChIP-seq"]
         if organism:
             term_parts.append(f"{organism}[Organism]")
+        term_parts.append("gse[ETYP]")
         term = " AND ".join(term_parts)
 
-        search_result = self._geo_esearch(term, limit)
+        search_result = self._geo_esearch(term, limit, offset)
         esearch = search_result.get("esearchresult", {})
         total = int(esearch.get("count", 0))
         ids = esearch.get("idlist", [])
@@ -670,9 +729,9 @@ class EpigenomicsTool(BaseTool):
                 uid_data = result.get(str(uid), {})
                 if not isinstance(uid_data, dict) or "accession" not in uid_data:
                     continue
-                # Filter out platform records (GPL) — only return dataset series (GSE)
+                # Defensive check against an upstream type-filter regression.
                 acc = uid_data.get("accession", "")
-                if acc.startswith("GPL"):
+                if not acc.startswith("GSE"):
                     continue
                 datasets.append(
                     {
@@ -690,6 +749,7 @@ class EpigenomicsTool(BaseTool):
             "data": {
                 "total": total,
                 "datasets": datasets,
+                **self._geo_page_fields(total, ids, datasets, limit, offset),
             },
             "metadata": {
                 "source": "NCBI GEO (ncbi.nlm.nih.gov/geo)",
@@ -750,13 +810,15 @@ class EpigenomicsTool(BaseTool):
         query = arguments.get("query", "")
         organism = arguments.get("organism", "Homo sapiens")
         limit = arguments.get("limit") or arguments.get("max_results") or 20
+        offset = arguments.get("offset", 0)
 
         term_parts = [query, "RNA-seq"]
         if organism:
             term_parts.append(f"{organism}[Organism]")
+        term_parts.append("gse[ETYP]")
         term = " AND ".join(t for t in term_parts if t)
 
-        search_result = self._geo_esearch(term, limit)
+        search_result = self._geo_esearch(term, limit, offset)
         esearch = search_result.get("esearchresult", {})
         total = int(esearch.get("count", 0))
         ids = esearch.get("idlist", [])
@@ -770,7 +832,7 @@ class EpigenomicsTool(BaseTool):
                 if not isinstance(uid_data, dict) or "accession" not in uid_data:
                     continue
                 acc = uid_data.get("accession", "")
-                if acc.startswith("GPL"):
+                if not acc.startswith("GSE"):
                     continue
                 datasets.append(
                     {
@@ -788,6 +850,7 @@ class EpigenomicsTool(BaseTool):
             "data": {
                 "total": total,
                 "datasets": datasets,
+                **self._geo_page_fields(total, ids, datasets, limit, offset),
             },
             "metadata": {
                 "source": "NCBI GEO (ncbi.nlm.nih.gov/geo)",
@@ -802,13 +865,15 @@ class EpigenomicsTool(BaseTool):
         query = arguments.get("query", "")
         organism = arguments.get("organism", "Homo sapiens")
         limit = arguments.get("limit") or arguments.get("max_results") or 20
+        offset = arguments.get("offset", 0)
 
         term_parts = [query, "ATAC-seq"]
         if organism:
             term_parts.append(f"{organism}[Organism]")
+        term_parts.append("gse[ETYP]")
         term = " AND ".join(t for t in term_parts if t)
 
-        search_result = self._geo_esearch(term, limit)
+        search_result = self._geo_esearch(term, limit, offset)
         esearch = search_result.get("esearchresult", {})
         total = int(esearch.get("count", 0))
         ids = esearch.get("idlist", [])
@@ -822,7 +887,7 @@ class EpigenomicsTool(BaseTool):
                 if not isinstance(uid_data, dict) or "accession" not in uid_data:
                     continue
                 acc = uid_data.get("accession", "")
-                if acc.startswith("GPL"):
+                if not acc.startswith("GSE"):
                     continue
                 datasets.append(
                     {
@@ -840,6 +905,7 @@ class EpigenomicsTool(BaseTool):
             "data": {
                 "total": total,
                 "datasets": datasets,
+                **self._geo_page_fields(total, ids, datasets, limit, offset),
             },
             "metadata": {
                 "source": "NCBI GEO (ncbi.nlm.nih.gov/geo)",

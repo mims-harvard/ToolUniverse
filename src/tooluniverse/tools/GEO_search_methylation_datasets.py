@@ -1,7 +1,7 @@
 """
 GEO_search_methylation_datasets
 
-Search NCBI GEO for DNA methylation array datasets, including Illumina 450K, EPIC (850K), and oth...
+Search NCBI GEO GSE series for DNA methylation datasets with exact offset pagination. Returns GSE...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,14 @@ def GEO_search_methylation_datasets(
     query: str,
     organism: Optional[str] = "Homo sapiens",
     limit: Optional[int] = 20,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search NCBI GEO for DNA methylation array datasets, including Illumina 450K, EPIC (850K), and oth...
+    Search NCBI GEO GSE series for DNA methylation datasets with exact offset pagination. Returns GSE...
 
     Parameters
     ----------
@@ -27,7 +28,9 @@ def GEO_search_methylation_datasets(
     organism : str
         Organism filter (e.g., 'Homo sapiens', 'Mus musculus').
     limit : int
-        Maximum number of dataset IDs to return.
+        Page size (1-100).
+    offset : int
+        Zero-based GSE result offset. Continue with data.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,12 @@ def GEO_search_methylation_datasets(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"query": query, "organism": organism, "limit": limit}.items()
+        for k, v in {
+            "query": query,
+            "organism": organism,
+            "limit": limit,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

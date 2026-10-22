@@ -14,7 +14,7 @@ def InterPro_get_domain_details(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Get detailed information about a specific InterPro domain entry including description, hierarchy,...
 
@@ -31,7 +31,7 @@ def InterPro_get_domain_details(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

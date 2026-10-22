@@ -34,6 +34,11 @@ def _http_get(
                     "minimum": 1,
                     "maximum": 100,
                 },
+                "page": {
+                    "type": "integer",
+                    "default": 1,
+                    "minimum": 1,
+                },
             },
             "required": ["query"],
         },
@@ -53,18 +58,30 @@ class RNAcentralSearchTool:
         query = {
             "query": arguments.get("query"),
             "page_size": int(arguments.get("page_size", 10)),
+            "page": max(int(arguments.get("page", 1)), 1),
         }
         url = f"{base}/rna/?{urlencode(query)}"
         try:
             data = _http_get(
                 url, headers={"Accept": "application/json"}, timeout=timeout
             )
+            results = data.get("results", []) if isinstance(data, dict) else []
+            has_more = bool(data.get("next")) if isinstance(data, dict) else False
             return {
                 "status": "success",
                 "source": "RNAcentral",
                 "endpoint": "rna",
                 "query": query,
                 "data": data,
+                "metadata": {
+                    "returned": len(results),
+                    "page": query["page"],
+                    "page_size": query["page_size"],
+                    "has_more": has_more,
+                    "truncated": has_more,
+                    "next_page": query["page"] + 1 if has_more else None,
+                    "next_url": data.get("next") if isinstance(data, dict) else None,
+                },
                 "success": True,
             }
         except Exception as e:
@@ -129,7 +146,12 @@ class RNAcentralGetTool:
         sub_resources = fields.get("sub_resources")
 
         if sub_resources:
-            return self._get_sub_resources(base, acc, sub_resources, timeout)
+            controls = self._sub_resource_controls(arguments, sub_resources)
+            if isinstance(controls, dict) and controls.get("status") == "error":
+                return controls
+            return self._get_sub_resources(
+                base, acc, sub_resources, timeout, controls
+            )
 
         endpoint = "rna/{accession}"
         url = f"{base}/rna/{acc}"
@@ -155,12 +177,48 @@ class RNAcentralGetTool:
                 "success": False,
             }
 
-    def _get_sub_resources(self, base, acc, sub_resources, timeout):
+    @staticmethod
+    def _sub_resource_controls(arguments, sub_resources):
+        page_size = arguments.get("page_size", 10)
+        if (
+            isinstance(page_size, bool)
+            or not isinstance(page_size, int)
+            or not 1 <= page_size <= 50
+        ):
+            return {
+                "status": "error",
+                "error": "page_size must be an integer between 1 and 50",
+                "parameter": "page_size",
+                "source": "RNAcentral",
+                "success": False,
+            }
+        controls = {"page_size": page_size}
+        for name in sub_resources:
+            parameter = f"{name}_page"
+            page = arguments.get(parameter, 1)
+            if isinstance(page, bool) or not isinstance(page, int) or page < 1:
+                return {
+                    "status": "error",
+                    "error": f"{parameter} must be a positive integer",
+                    "parameter": parameter,
+                    "source": "RNAcentral",
+                    "success": False,
+                }
+            controls[parameter] = page
+        return controls
+
+    def _get_sub_resources(self, base, acc, sub_resources, timeout, controls):
         """Fetch and merge one or more rna/{accession}/{name} sub-endpoints."""
         data: Dict[str, Any] = {}
         errors = []
         for name in sub_resources:
-            url = f"{base}/rna/{acc}/{name}?format=json"
+            page = controls[f"{name}_page"]
+            params = {
+                "format": "json",
+                "page_size": controls["page_size"],
+                "page": page,
+            }
+            url = f"{base}/rna/{acc}/{name}/?{urlencode(params)}"
             try:
                 payload = _http_get(
                     url, headers={"Accept": "application/json"}, timeout=timeout
@@ -173,7 +231,22 @@ class RNAcentralGetTool:
                     if isinstance(payload, dict) and payload.get("count") is not None
                     else len(results)
                 )
-                data[name] = {"count": count, "results": results}
+                has_more = bool(payload.get("next"))
+                truncated = page > 1 or has_more
+                data[name] = {
+                    "count": count,
+                    "results": results,
+                    "returned": len(results),
+                    "page": page,
+                    "page_size": controls["page_size"],
+                    "has_more": has_more,
+                    "next_page": page + 1 if has_more else None,
+                    "previous_page": (
+                        page - 1 if payload.get("previous") else None
+                    ),
+                    "truncated": truncated,
+                    "result_set_complete": not truncated,
+                }
             except Exception as e:
                 errors.append(f"{name}: {e}")
 
@@ -195,6 +268,17 @@ class RNAcentralGetTool:
             "accession": acc,
             "data": data,
             "partial_errors": errors or None,
+            "metadata": {
+                "publication_total_is_record_count": True,
+                "unique_pmids_not_guaranteed": "publications" in sub_resources,
+                "warning": (
+                    "RNAcentral may repeat a PMID with different citation "
+                    "metadata; publications.count is not guaranteed to be a "
+                    "unique PMID count."
+                    if "publications" in sub_resources
+                    else None
+                ),
+            },
             "success": True,
         }
 

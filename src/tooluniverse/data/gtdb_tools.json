@@ -1,7 +1,7 @@
 [
   {
     "name": "GTDB_search_taxon",
-    "description": "Search the Genome Taxonomy Database (GTDB) for prokaryotic taxa by partial name. GTDB provides a standardized genome-based taxonomy for Bacteria and Archaea, resolving polyphyletic groups in NCBI taxonomy. Returns matching taxon names with GTDB rank prefixes (d__=domain, p__=phylum, c__=class, o__=order, f__=family, g__=genus, s__=species). Search is case-insensitive and matches partial names. Use this for looking up standardized prokaryotic taxonomy names, finding correct GTDB identifiers, or exploring taxonomic groups like Lachnospiraceae, Enterobacteriaceae, or Clostridia.",
+    "description": "Search GTDB taxa by partial name, returning rank-prefixed names (d__, p__, c__, o__, f__, g__, s__). The upstream endpoint accepts at most 100 matches and has no offset. When data.possible_more is true, the result may be incomplete and the query must be narrowed; data.complete_known is true only when fewer than limit matches are returned.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -19,6 +19,8 @@
         },
         "limit": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
           "description": "Maximum number of results per rank (default: 20, max: 100)"
         }
       },
@@ -84,7 +86,7 @@
   },
   {
     "name": "GTDB_get_species",
-    "description": "Get detailed information about a GTDB species cluster, including all genomes assigned to that species. A GTDB species cluster groups genomes by average nucleotide identity (ANI). Returns the full list of genomes with their accessions, NCBI organism names, NCBI taxonomy, and whether they are the GTDB species representative or NCBI type material. Useful for exploring species diversity, finding representative genomes, and comparing GTDB vs NCBI classifications.",
+    "description": "Get a recoverable page of genomes in a GTDB species cluster. total_genomes is exact because GTDB returns the complete cluster; continue with next_offset while has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -102,7 +104,15 @@
         },
         "max_genomes": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
           "description": "Maximum number of genomes to return (default: 20). Species clusters can have thousands of genomes."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based genome offset. Continue with next_offset."
         }
       },
       "required": [
@@ -139,6 +149,18 @@
             "genomes_shown": {
               "type": "integer",
               "description": "Number of genomes in the response (may be limited)"
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": ["integer", "null"]
             },
             "genomes": {
               "type": "array",
@@ -294,7 +316,7 @@
   },
   {
     "name": "GTDB_search_genomes",
-    "description": "Search for prokaryotic genomes in GTDB by organism name. This matches against the whole taxonomic clade, not just the organism-name text, so results can include other members of the same family/genus alongside genomes whose own name matches the query (exact/prefix name matches are ranked first). Returns genome accessions with both NCBI and GTDB taxonomy classifications, allowing comparison between the two taxonomic systems. Each result shows the genome accession (GCA/GCF), NCBI organism name, NCBI taxonomy, GTDB taxonomy, and whether the genome is a GTDB species representative. Supports pagination. Useful for finding genome accessions, exploring taxonomic reclassifications, and linking genomes to the GTDB taxonomy.",
+    "description": "Search prokaryotic genomes in GTDB using strict one-based page pagination and pages up to 1000 records. Page 0 is rejected because the live API treats it anomalously and can return the entire result set. Metadata reports exact total_results, total_pages, has_more, and next_page. Exact/prefix organism-name matches are ranked first within each returned page.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -312,11 +334,14 @@
         },
         "page": {
           "type": "integer",
-          "description": "Page number for pagination (default: 1)"
+          "minimum": 1,
+          "description": "One-based page number (default 1). Never use 0; continue with metadata.next_page."
         },
         "items_per_page": {
           "type": "integer",
-          "description": "Number of results per page (default: 10, max: 50)"
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Number of results per page (default 10, max 1000)."
         }
       },
       "required": [

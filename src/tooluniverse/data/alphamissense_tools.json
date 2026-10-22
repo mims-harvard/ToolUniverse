@@ -1,7 +1,7 @@
 [
     {
         "name": "AlphaMissense_get_protein_scores",
-        "description": "Get AlphaMissense pathogenicity scores for EVERY residue of a protein in one call. The upstream hegelab API only exposes per-residue queries; this tool hides that by looking up the protein length from UniProt and concurrently fetching all residues via a thread pool. Returns a list of per-position records (one per residue) plus protein length, count of successful fetches, and the pathogenic/ambiguous/benign thresholds. Use this when you want whole-protein vulnerability assessment, hotspot detection, or to build a (20 × n_positions) AlphaMissense score matrix for benchmarking. Set max_residues > 0 to cap the loop for fast diagnostic calls.",
+        "description": "Get AlphaMissense pathogenicity scores across a protein. The upstream hegelab API only exposes per-residue queries; this tool looks up the UniProt length and concurrently fetches a recoverable page of positions. Returns per-position records, protein length, attempted/returned counts, thresholds, and explicit pagination metadata. Use max_residues > 0 for a bounded page and pass next_residue_offset back as residue_offset until has_more is false; max_residues=0 fetches all remaining positions.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -11,7 +11,14 @@
                 },
                 "max_residues": {
                     "type": ["integer", "null"],
-                    "description": "Optional cap on the number of residues fetched. 0 / null / omitted = no cap (fetch every residue of the protein, recommended for whole-protein analysis). Positive integer = fetch only the first N residues (useful for fast diagnostic calls on very long proteins).",
+                    "minimum": 0,
+                    "description": "Maximum positions to attempt in this page. 0 / null / omitted fetches all positions at or after residue_offset. A positive value returns at most N positions and exposes next_residue_offset when more remain.",
+                    "default": 0
+                },
+                "residue_offset": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "Zero-based number of protein positions to skip before this page. Start with 0 and, when has_more is true, continue with next_residue_offset.",
                     "default": 0
                 }
             },
@@ -32,8 +39,10 @@
             }
         ],
         "return_schema": {
-          "oneOf": [
-            {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string", "enum": ["success", "error"]},
+            "data": {
               "type": "object",
               "properties": {
                 "uniprot_id": {
@@ -61,6 +70,12 @@
                     "null"
                   ]
                 },
+                "residue_offset": {"type": "integer"},
+                "has_more": {"type": "boolean"},
+                "next_residue_offset": {"type": ["integer", "null"]},
+                "result_set_complete": {"type": "boolean"},
+                "n_positions_failed": {"type": "integer"},
+                "note": {"type": "string"},
                 "thresholds": {
                   "type": "object"
                 },
@@ -72,21 +87,18 @@
                 "uniprot_id",
                 "protein_length",
                 "scores",
-                "n_positions_returned"
+                "n_positions_returned",
+                "n_positions_attempted",
+                "residue_offset",
+                "has_more",
+                "next_residue_offset",
+                "result_set_complete"
               ]
             },
-            {
-              "type": "object",
-              "properties": {
-                "error": {
-                  "type": "string"
-                }
-              },
-              "required": [
-                "error"
-              ]
-            }
-          ]
+            "error": {"type": "string"},
+            "pdb_download": {"type": "string"}
+          },
+          "required": ["status"]
         },
         "label": ["AlphaMissense", "Protein", "Pathogenicity"],
         "metadata": {

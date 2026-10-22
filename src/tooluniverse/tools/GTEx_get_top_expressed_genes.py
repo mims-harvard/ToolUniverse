@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def GTEx_get_top_expressed_genes(
     tissue_site_detail_id: str,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_top_expressed_genes",
     filter_mt_genes: Optional[bool] = True,
     dataset_id: Optional[str] = "gtex_v8",
     page: Optional[int] = 0,
@@ -19,7 +19,7 @@ def GTEx_get_top_expressed_genes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
     Get top expressed genes in a specific tissue sorted by median expression. Returns gene list with ...
 
@@ -46,7 +46,7 @@ def GTEx_get_top_expressed_genes(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

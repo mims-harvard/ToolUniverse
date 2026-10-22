@@ -1,7 +1,7 @@
 """
 BVBRC_search_genome_features
 
-Search for genome features (genes, proteins, CDS) in BV-BRC pathogen genomes. Find specific genes...
+Search for genome features (genes, proteins, CDS) in BV-BRC pathogen genomes with explicit pagina...
 """
 
 from typing import Any, Optional, Callable
@@ -9,31 +9,34 @@ from ._shared_client import get_shared_client
 
 
 def BVBRC_search_genome_features(
-    gene: Optional[str | Any] = None,
-    product: Optional[str | Any] = None,
-    genome_id: Optional[str | Any] = None,
-    limit: Optional[int | Any] = None,
-    keyword: Optional[str | Any] = None,
+    gene: Optional[str] = None,
+    product: Optional[str] = None,
+    genome_id: Optional[str] = None,
+    limit: Optional[int] = None,
+    keyword: Optional[str] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search for genome features (genes, proteins, CDS) in BV-BRC pathogen genomes. Find specific genes...
+    Search for genome features (genes, proteins, CDS) in BV-BRC pathogen genomes with explicit pagina...
 
     Parameters
     ----------
-    gene : str | Any
+    gene : str
         Gene name to search for. Examples: 'mecA' (methicillin resistance), 'blaTEM' ...
-    product : str | Any
+    product : str
         Gene product keyword to search. Examples: 'beta-lactamase', 'penicillin-bindi...
-    genome_id : str | Any
+    genome_id : str
         Restrict search to a specific genome. Example: '83332.12'.
-    limit : int | Any
+    limit : int
         Maximum number of results. Default: 10. Max: 100.
-    keyword : str | Any
+    keyword : str
         Alias for product: gene product keyword to search (e.g., 'spike protein', 'be...
+    offset : int
+        Zero-based result offset. Use metadata.next_offset to continue.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def BVBRC_search_genome_features(
             "genome_id": genome_id,
             "limit": limit,
             "keyword": keyword,
+            "offset": offset,
         }.items()
         if v is not None
     }

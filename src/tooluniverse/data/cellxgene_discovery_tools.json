@@ -1,13 +1,18 @@
 [
   {
     "name": "CxGDisc_list_collections",
-    "description": "List curated single-cell RNA-seq collections from CZI CellxGene Discovery. Each collection is a published dataset group with DOI, typically corresponding to a paper. The platform hosts 350+ public collections spanning diverse tissues, diseases, and organisms with cell-type annotations. Returns collection name, DOI, dataset count, total cell count, and curator info.",
+    "description": "List curated single-cell RNA-seq collections from CZI CellxGene Discovery. Each collection is a published dataset group with DOI, typically corresponding to a paper. Returns the complete (untruncated) collection description, collection name, DOI, dataset count, total cell count, curator info, exact total/returned counts, and explicit pagination fields. Follow next_offset while has_more is true to retrieve later collections.",
     "parameter": {
       "type": "object",
       "properties": {
         "limit": {
           "type": "integer",
           "description": "Maximum number of collections to return (1-100). Default: 20."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Zero-based result offset. Default: 0. Use the returned next_offset to retrieve the next slice."
         }
       },
       "required": []
@@ -34,6 +39,21 @@
               "type": "integer",
               "description": "Number returned in this response"
             },
+            "offset": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "truncated": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
             "collections": {
               "type": "array",
               "description": "Collection summaries with name, DOI, dataset count, cell count",
@@ -45,6 +65,13 @@
                   },
                   "name": {
                     "type": "string"
+                  },
+                  "description": {
+                    "type": ["string", "null"],
+                    "description": "Complete, untruncated collection description"
+                  },
+                  "description_length": {
+                    "type": "integer"
                   },
                   "doi": {
                     "type": [
@@ -79,7 +106,7 @@
   },
   {
     "name": "CxGDisc_get_collection",
-    "description": "Get detailed information about a specific CellxGene Discovery collection, including all datasets with tissue, disease, organism, cell type, and assay details. Example: collection '48259aa8-f168-4bf5-b797-af8e88da6637' is the Human Breast Cell Atlas with 5 datasets (stroma, epithelial, integrated) totaling 2.8M cells. Each dataset includes cell count, tissue labels, disease status, and available assay types.",
+    "description": "Get detailed information about a specific CellxGene Discovery collection, including all datasets and every tissue, disease, organism, cell-type, and assay label (cell-type lists are not truncated). Example: collection '48259aa8-f168-4bf5-b797-af8e88da6637' is the Human Breast Cell Atlas with 5 datasets totaling 2.8M cells; its integrated dataset currently exposes 26 cell types.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -169,6 +196,10 @@
                       "type": "string"
                     }
                   },
+                  "cell_type_count": {
+                    "type": "integer",
+                    "description": "Number of complete cell-type labels returned"
+                  },
                   "assays": {
                     "type": "array",
                     "items": {
@@ -196,7 +227,7 @@
   },
   {
     "name": "CxGDisc_search_datasets",
-    "description": "Search CellxGene Discovery single-cell RNA-seq datasets by tissue, disease, organism, or cell type. The platform hosts 2,000+ datasets with detailed cell-type annotations. Supports flexible text-based filtering: 'lung' returns 134 lung datasets, 'brain' returns 144, 'T cell' returns 667, 'cancer' returns 193. Results sorted by cell count (largest first).",
+    "description": "Search CellxGene Discovery single-cell RNA-seq datasets by tissue, disease, organism, or cell type. Results are sorted by cell count (largest first) and include exact total/returned counts plus explicit pagination fields. Follow next_offset while has_more is true to retrieve later matching datasets.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -219,6 +250,11 @@
         "limit": {
           "type": "integer",
           "description": "Maximum datasets to return (1-100). Default: 20."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Zero-based result offset. Default: 0. Use the returned next_offset to retrieve the next slice."
         }
       },
       "required": []
@@ -250,6 +286,21 @@
             "returned": {
               "type": "integer",
               "description": "Number returned in this response"
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "truncated": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
             },
             "datasets": {
               "type": "array",

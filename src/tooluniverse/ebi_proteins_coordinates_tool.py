@@ -102,13 +102,23 @@ class EBIProteinsCoordinatesTool(BaseTool):
 
         # Extract genomic coordinates
         gn_coordinates = data.get("gnCoordinate", [])
+        coordinate_offset = max(int(arguments.get("coordinate_offset") or 0), 0)
+        coordinate_limit = min(
+            max(int(arguments.get("coordinate_limit") or 10), 1), 500
+        )
+        exon_offset = max(int(arguments.get("exon_offset") or 0), 0)
+        exon_limit = min(max(int(arguments.get("exon_limit") or 20), 1), 1000)
+        coordinate_page = gn_coordinates[
+            coordinate_offset : coordinate_offset + coordinate_limit
+        ]
         mappings = []
-        for gc in gn_coordinates[:10]:  # Limit to 10 transcript mappings
+        for gc in coordinate_page:
             genomic_loc = gc.get("genomicLocation", {})
             exons = genomic_loc.get("exon", [])
+            exon_page = exons[exon_offset : exon_offset + exon_limit]
 
             exon_mappings = []
-            for exon in exons[:20]:
+            for exon in exon_page:
                 prot_loc = exon.get("proteinLocation", {})
                 genome_loc = exon.get("genomeLocation", {})
                 exon_mappings.append(
@@ -131,10 +141,21 @@ class EBIProteinsCoordinatesTool(BaseTool):
                     "end": genomic_loc.get("end"),
                     "reverse_strand": genomic_loc.get("reverseStrand"),
                     "num_exons": len(exons),
+                    "exon_offset": exon_offset,
+                    "exons_returned": len(exon_page),
+                    "exons_truncated": exon_offset + len(exon_page) < len(exons),
+                    "next_exon_offset": (
+                        exon_offset + len(exon_page)
+                        if exon_offset + len(exon_page) < len(exons)
+                        else None
+                    ),
                     "exons": exon_mappings,
                 }
             )
 
+        mappings_truncated = (
+            coordinate_offset + len(coordinate_page) < len(gn_coordinates)
+        )
         return {
             "status": "success",
             "data": {
@@ -143,11 +164,21 @@ class EBIProteinsCoordinatesTool(BaseTool):
                 "taxid": data.get("taxid"),
                 "gene": gene_info,
                 "coordinate_mappings": mappings,
+                "total_coordinate_mappings": len(gn_coordinates),
+                "coordinate_offset": coordinate_offset,
+                "coordinate_mappings_returned": len(coordinate_page),
+                "coordinate_mappings_truncated": mappings_truncated,
+                "next_coordinate_offset": (
+                    coordinate_offset + len(coordinate_page)
+                    if mappings_truncated
+                    else None
+                ),
             },
             "metadata": {
                 "source": "EBI Proteins API (ebi.ac.uk/proteins/api)",
                 "total_transcript_mappings": len(gn_coordinates),
                 "returned_mappings": len(mappings),
+                "coordinate_offset": coordinate_offset,
             },
         }
 

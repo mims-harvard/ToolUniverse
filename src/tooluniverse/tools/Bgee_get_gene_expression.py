@@ -11,6 +11,8 @@ from ._shared_client import get_shared_client
 def Bgee_get_gene_expression(
     gene_id: str,
     species_id: str,
+    limit: Optional[int] = 50,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,6 +27,10 @@ def Bgee_get_gene_expression(
         Ensembl gene ID. Examples: 'ENSG00000141510' (human TP53), 'ENSMUSG0000005955...
     species_id : str
         NCBI taxonomy ID for the species. Examples: '9606' (human), '10090' (mouse), ...
+    limit : int
+        Maximum number of expression calls to return in this page.
+    offset : int
+        Zero-based expression-call offset. Use metadata.next_offset to retrieve the n...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +47,12 @@ def Bgee_get_gene_expression(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"gene_id": gene_id, "species_id": species_id}.items()
+        for k, v in {
+            "gene_id": gene_id,
+            "species_id": species_id,
+            "limit": limit,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

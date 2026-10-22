@@ -86,9 +86,7 @@ class RCSBSearchTool(BaseTool):
             },
         }
 
-    def _build_structure_query(
-        self, pdb_id: str, similarity_threshold: float, max_results: int
-    ) -> Dict[str, Any]:
+    def _build_structure_query(self, pdb_id: str, max_results: int) -> Dict[str, Any]:
         """
         Build structure similarity search query.
 
@@ -120,13 +118,21 @@ class RCSBSearchTool(BaseTool):
             },
         }
 
-    def _enrich_text_results(self, results: list) -> list:
+    def _enrich_text_results(self, results: list) -> tuple[list, Dict[str, Any]]:
         """Fetch title, resolution, and method for text search PDB IDs."""
+        enrichment = {
+            "requested_entries": 0,
+            "enriched_entries": 0,
+            "missing_entries": [],
+            "complete": True,
+            "error": None,
+        }
         if not results:
-            return results
+            return results, enrichment
         pdb_ids = [r["pdb_id"] for r in results if r.get("pdb_id")]
+        enrichment["requested_entries"] = len(pdb_ids)
         if not pdb_ids:
-            return results
+            return results, enrichment
         try:
             # Use RCSB GraphQL API to batch-fetch metadata
             graphql_url = "https://data.rcsb.org/graphql"
@@ -148,8 +154,29 @@ class RCSBSearchTool(BaseTool):
                 timeout=10,
             )
             if resp.status_code != 200:
-                return results
-            entries = resp.json().get("data", {}).get("entries", [])
+                enrichment.update(
+                    {
+                        "complete": False,
+                        "error": f"RCSB GraphQL metadata request returned HTTP {resp.status_code}",
+                        "missing_entries": pdb_ids,
+                    }
+                )
+                return results, enrichment
+            payload = resp.json()
+            entries = (
+                payload.get("data", {}).get("entries", [])
+                if isinstance(payload, dict)
+                else None
+            )
+            if not isinstance(entries, list):
+                enrichment.update(
+                    {
+                        "complete": False,
+                        "error": "RCSB GraphQL metadata response did not contain entries",
+                        "missing_entries": pdb_ids,
+                    }
+                )
+                return results, enrichment
             metadata = {}
             for entry in entries:
                 if not entry:
@@ -165,9 +192,28 @@ class RCSBSearchTool(BaseTool):
             for r in results:
                 meta = metadata.get(r.get("pdb_id"), {})
                 r.update({k: v for k, v in meta.items() if v is not None})
-        except Exception:
-            pass  # Return results without metadata on failure
-        return results
+            missing = [pdb_id for pdb_id in pdb_ids if pdb_id not in metadata]
+            enrichment.update(
+                {
+                    "enriched_entries": len(pdb_ids) - len(missing),
+                    "missing_entries": missing,
+                    "complete": not missing,
+                    "error": (
+                        None
+                        if not missing
+                        else "RCSB GraphQL omitted metadata for one or more entries"
+                    ),
+                }
+            )
+        except (requests.exceptions.RequestException, ValueError) as exc:
+            enrichment.update(
+                {
+                    "complete": False,
+                    "error": f"RCSB GraphQL metadata request failed: {exc}",
+                    "missing_entries": pdb_ids,
+                }
+            )
+        return results, enrichment
 
     def _build_text_query(self, search_text: str, max_results: int) -> Dict[str, Any]:
         """
@@ -297,29 +343,52 @@ class RCSBSearchTool(BaseTool):
             arguments = {}
 
         query = arguments.get("query", "")
-        if query:
-            query = str(query).strip()
+        if not isinstance(query, str):
+            return {"status": "error", "error": "query must be a string"}
+        query = query.strip()
         search_type = arguments.get("search_type", "sequence")
-        if search_type:
-            search_type = str(search_type).lower()
-        else:
-            search_type = "sequence"
+        if not isinstance(search_type, str):
+            return {"status": "error", "error": "search_type must be a string"}
+        search_type = search_type.strip().lower()
 
-        # Get and validate similarity_threshold with clamping
         similarity_threshold_raw = arguments.get("similarity_threshold", 0.7)
-        try:
-            similarity_threshold = float(similarity_threshold_raw)
-            similarity_threshold = max(0.0, min(1.0, similarity_threshold))
-        except (ValueError, TypeError):
-            similarity_threshold = 0.7
+        if isinstance(similarity_threshold_raw, bool) or not isinstance(
+            similarity_threshold_raw, (int, float)
+        ):
+            return {
+                "status": "error",
+                "error": "similarity_threshold must be a number from 0 to 1",
+            }
+        similarity_threshold = float(similarity_threshold_raw)
+        if not 0 <= similarity_threshold <= 1:
+            return {
+                "status": "error",
+                "error": "similarity_threshold must be a number from 0 to 1",
+            }
 
-        # Get and validate max_results with clamping
         max_results_raw = arguments.get("max_results", 20)
-        try:
-            max_results = int(max_results_raw)
-            max_results = max(1, min(100, max_results))
-        except (ValueError, TypeError):
-            max_results = 20
+        if (
+            isinstance(max_results_raw, bool)
+            or not isinstance(max_results_raw, int)
+            or not 1 <= max_results_raw <= 100
+        ):
+            return {
+                "status": "error",
+                "error": "max_results must be an integer from 1 to 100",
+            }
+        max_results = max_results_raw
+
+        start_raw = arguments.get("start", 0)
+        if (
+            isinstance(start_raw, bool)
+            or not isinstance(start_raw, int)
+            or start_raw < 0
+        ):
+            return {
+                "status": "error",
+                "error": "start must be a non-negative integer",
+            }
+        start = start_raw
 
         # Validate parameters
         if not query:
@@ -346,9 +415,7 @@ class RCSBSearchTool(BaseTool):
                     ),
                 }
 
-            api_query = self._build_structure_query(
-                query, similarity_threshold, max_results
-            )
+            api_query = self._build_structure_query(query, max_results)
             query_type = "structure"
 
         elif search_type == "sequence":
@@ -385,6 +452,11 @@ class RCSBSearchTool(BaseTool):
                 ),
             }
 
+        # Every search mode uses the same official RCSB pagination object.
+        # The builders historically fixed start=0, making total_count misleading
+        # because callers could never retrieve anything after the first page.
+        api_query["request_options"]["paginate"]["start"] = start
+
         # Make API request
         try:
             response = requests.post(
@@ -404,6 +476,11 @@ class RCSBSearchTool(BaseTool):
                 }
             else:
                 response_data = response.json()
+                if not isinstance(response_data, dict):
+                    return {
+                        "status": "error",
+                        "error": "RCSB search response was not a JSON object",
+                    }
 
         except requests.exceptions.Timeout:
             return {
@@ -474,13 +551,45 @@ class RCSBSearchTool(BaseTool):
 
         # Parse results
         try:
+            result_set = response_data.get("result_set")
+            total_found = response_data.get("total_count")
+            if not isinstance(result_set, list):
+                raise ValueError("RCSB response result_set was not an array")
+            if (
+                isinstance(total_found, bool)
+                or not isinstance(total_found, int)
+                or total_found < 0
+            ):
+                raise ValueError(
+                    "RCSB response total_count was not a non-negative integer"
+                )
+            if len(result_set) > max_results:
+                raise ValueError("RCSB returned more rows than the requested page size")
             results = self._parse_search_results(response_data)
+            if len(results) != len(result_set):
+                raise ValueError("RCSB result_set contained malformed entries")
+            for index, result in enumerate(results, start=start + 1):
+                result["rank"] = index
 
             # Get total_count from API response if available
             # This represents the total number of matches in the database,
             # not just the number of results returned
             # (which may be limited by max_results)
-            total_found = response_data.get("total_count", len(results))
+            if start + len(results) > total_found:
+                raise ValueError("RCSB page extends beyond the reported total_count")
+            if total_found > start and not results:
+                raise ValueError(
+                    "RCSB returned an empty page before total_count was exhausted"
+                )
+            has_more = start + len(results) < total_found
+            pagination = {
+                "start": start,
+                "returned": len(results),
+                "has_more": has_more,
+                "next_start": start + len(results) if has_more else None,
+                "requested_page_complete": True,
+                "result_set_complete": not has_more,
+            }
 
             if not results:
                 if query_type == "text":
@@ -501,24 +610,33 @@ class RCSBSearchTool(BaseTool):
                         "total_found": total_found,
                         "results": [],
                         "message": message,
+                        "similarity_threshold_applied": query_type == "sequence",
+                        **pagination,
                     },
                 }
 
             # Feature-79B-003: Enrich text search results with metadata
             # (title, resolution, method) from RCSB data API
             if query_type == "text":
-                results = self._enrich_text_results(results)
+                results, metadata_enrichment = self._enrich_text_results(results)
+            else:
+                metadata_enrichment = None
 
             result_dict = {
                 "query": query,
                 "search_type": query_type,
                 "total_found": total_found,
                 "results": results,
+                "similarity_threshold_applied": query_type == "sequence",
+                **pagination,
             }
 
-            # Only include similarity_threshold for sequence/structure searches
-            if query_type != "text":
+            if query_type == "sequence":
                 result_dict["similarity_threshold"] = similarity_threshold
+            elif query_type == "structure":
+                result_dict["structure_operator"] = "strict_shape_match"
+            if metadata_enrichment is not None:
+                result_dict["metadata_enrichment"] = metadata_enrichment
 
             return {"status": "success", "data": result_dict}
 

@@ -6,24 +6,24 @@
       "type": "object",
       "properties": {
         "limit": {
-          "type": [
-            "integer",
-            "null"
-          ],
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 25,
           "description": "Maximum number of studies to return (default 25, max 1000)"
         },
         "offset": {
-          "type": [
-            "integer",
-            "null"
-          ],
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
           "description": "Offset for pagination"
         }
       },
       "required": []
     },
     "fields": {
-      "endpoint": "https://idr.openmicroscopy.org/api/v0/m/projects/"
+      "endpoint": "https://idr.openmicroscopy.org/api/v0/m/projects/",
+      "pagination": "idr_meta_offset"
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -612,17 +612,16 @@
           "description": "IDR project/study ID (e.g., 101). Obtain from IDR_list_studies."
         },
         "limit": {
-          "type": [
-            "integer",
-            "null"
-          ],
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 25,
           "description": "Maximum number of datasets to return (default 25, max 1000)"
         },
         "offset": {
-          "type": [
-            "integer",
-            "null"
-          ],
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
           "description": "Offset for pagination"
         }
       },
@@ -631,7 +630,8 @@
       ]
     },
     "fields": {
-      "endpoint": "https://idr.openmicroscopy.org/api/v0/m/projects/{project_id}/datasets/"
+      "endpoint": "https://idr.openmicroscopy.org/api/v0/m/projects/{project_id}/datasets/",
+      "pagination": "idr_meta_offset"
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -942,17 +942,16 @@
           "description": "IDR dataset ID (e.g. 51). Obtain from IDR_get_study_datasets."
         },
         "limit": {
-          "type": [
-            "integer",
-            "null"
-          ],
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 25,
           "description": "Maximum number of images to return (default 25, max 1000)."
         },
         "offset": {
-          "type": [
-            "integer",
-            "null"
-          ],
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
           "description": "Offset for pagination."
         }
       },
@@ -961,7 +960,8 @@
       ]
     },
     "fields": {
-      "endpoint": "https://idr.openmicroscopy.org/api/v0/m/datasets/{dataset_id}/images/"
+      "endpoint": "https://idr.openmicroscopy.org/api/v0/m/datasets/{dataset_id}/images/",
+      "pagination": "idr_meta_offset"
     },
     "type": "BaseRESTTool",
     "test_examples": [

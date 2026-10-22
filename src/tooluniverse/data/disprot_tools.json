@@ -1,20 +1,31 @@
 [
     {
         "name": "DisProt_search",
-        "description": "Search DisProt for intrinsically disordered proteins by text query (gene name, protein name, organism, or keyword). DisProt is a manually curated database providing experimentally validated disorder annotations with evidence codes and literature references. Returns DisProt ID, UniProt accession, protein name, organism, disorder content fraction, and number of annotated regions. Useful for finding disordered proteins in a specific pathway or organism. Example: searching 'TP53' returns DP00086 (p53, 37.7% disorder, 63 regions); searching 'amyloid' returns proteins associated with amyloid formation.",
+        "description": "Search DisProt for intrinsically disordered proteins using DisProt's free-text search across database fields. Results are explicitly paginated, and metadata reports the full match count and next page. Returns DisProt ID, UniProt accession, protein name, organism, disorder content fraction, and number of annotated regions.",
         "parameter": {
             "type": "object",
             "properties": {
                 "query": {
                     "type": "string",
+                    "minLength": 1,
                     "description": "Search term: gene name (e.g., 'TP53'), protein name (e.g., 'kinase'), organism (e.g., 'sapiens'), or keyword (e.g., 'amyloid', 'phase separation')."
                 },
                 "page_size": {
                     "type": "integer",
-                    "description": "Number of results to return (default 10, max 20)."
+                    "minimum": 1,
+                    "maximum": 500,
+                    "default": 10,
+                    "description": "Number of results per page (default 10, ToolUniverse safety maximum 500). The DisProt API documents page_size without an upstream maximum."
+                },
+                "page": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "default": 0,
+                    "description": "Zero-based result page. Use metadata.next_page to continue. Default: 0."
                 }
             },
-            "required": ["query"]
+            "required": ["query"],
+            "additionalProperties": false
         },
         "fields": {
             "endpoint": "search"
@@ -61,16 +72,31 @@
     },
     {
         "name": "DisProt_get_entry",
-        "description": "Get detailed disorder region annotations for a protein from DisProt. Accepts either a DisProt ID (e.g., DP00086) or UniProt accession (e.g., P04637). Returns experimentally validated disordered regions with residue ranges, evidence codes, experimental methods, cross-references to PDB structures, and classification terms. Essential for understanding intrinsically disordered regions (IDRs) in a protein of interest. Example: P04637 (TP53) has 63 disorder regions, 37.7% disorder content, including transactivation domain regions validated by NMR and X-ray crystallography.",
+        "description": "Get detailed disorder region annotations for a protein from DisProt. Accepts either a DisProt ID or UniProt accession. Regions use explicit offset/limit pagination; response metadata reports the exact returned and total region counts, whether more regions exist, and the next offset. Every region retains all returned cross-references.",
         "parameter": {
             "type": "object",
             "properties": {
                 "accession": {
                     "type": "string",
+                    "minLength": 1,
                     "description": "DisProt ID (e.g., 'DP00086') or UniProt accession (e.g., 'P04637'). Both formats accepted."
+                },
+                "region_offset": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "default": 0,
+                    "description": "Zero-based offset within the entry's disorder regions. Default: 0."
+                },
+                "region_limit": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 500,
+                    "default": 30,
+                    "description": "Maximum disorder regions returned per call. Default: 30. Use metadata.next_region_offset to continue."
                 }
             },
-            "required": ["accession"]
+            "required": ["accession"],
+            "additionalProperties": false
         },
         "fields": {
             "endpoint": "get_entry"

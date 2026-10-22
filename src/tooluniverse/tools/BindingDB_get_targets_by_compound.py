@@ -15,7 +15,7 @@ def BindingDB_get_targets_by_compound(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
     Find protein targets for a compound by SMILES structure. Returns proteins with binding affinity d...
 
@@ -34,7 +34,7 @@ def BindingDB_get_targets_by_compound(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

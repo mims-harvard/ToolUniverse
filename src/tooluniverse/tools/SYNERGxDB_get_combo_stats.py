@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def SYNERGxDB_get_combo_stats(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_combo_stats",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

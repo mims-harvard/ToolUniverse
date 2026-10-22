@@ -1,7 +1,7 @@
 """
 CEDA_search_datasets
 
-Search the CEDA (Centre for Environmental Data Analysis) data catalogue for UK and global environ...
+Search the CEDA environmental data catalogue with a real case-insensitive Django filter over one ...
 """
 
 from typing import Any, Optional, Callable
@@ -9,24 +9,27 @@ from ._shared_client import get_shared_client
 
 
 def CEDA_search_datasets(
-    q: Optional[str | Any] = None,
-    limit: Optional[int | Any] = None,
-    offset: Optional[int | Any] = None,
+    q: Optional[str] = None,
+    search_field: Optional[str] = "title",
+    limit: Optional[int] = 10,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search the CEDA (Centre for Environmental Data Analysis) data catalogue for UK and global environ...
+    Search the CEDA environmental data catalogue with a real case-insensitive Django filter over one ...
 
     Parameters
     ----------
-    q : str | Any
-        Search query for datasets. Examples: 'climate model', 'sea surface temperatur...
-    limit : int | Any
+    q : str
+        Case-insensitive substring applied to search_field. Omit to list all observat...
+    search_field : str
+        Single CEDA field searched by q; the API cannot OR across these fields.
+    limit : int
         Number of results to return (default 10, max 100)
-    offset : int | Any
+    offset : int
         Offset for pagination
     stream_callback : Callable, optional
         Callback for streaming output
@@ -44,7 +47,12 @@ def CEDA_search_datasets(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"q": q, "limit": limit, "offset": offset}.items()
+        for k, v in {
+            "q": q,
+            "search_field": search_field,
+            "limit": limit,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

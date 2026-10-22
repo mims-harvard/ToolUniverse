@@ -1,7 +1,7 @@
 """
 civic_search_molecular_profiles
 
-Search for molecular profiles in CIViC database. Molecular profiles represent combinations of var...
+Search CIViC molecular profiles with exact totalCount and cursor pagination. When metadata.has_mo...
 """
 
 from typing import Any, Optional, Callable
@@ -10,6 +10,7 @@ from ._shared_client import get_shared_client
 
 def civic_search_molecular_profiles(
     limit: Optional[int] = 20,
+    after: Optional[str] = None,
     query: Optional[str] = None,
     name: Optional[str] = None,
     *,
@@ -18,12 +19,14 @@ def civic_search_molecular_profiles(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search for molecular profiles in CIViC database. Molecular profiles represent combinations of var...
+    Search CIViC molecular profiles with exact totalCount and cursor pagination. When metadata.has_mo...
 
     Parameters
     ----------
     limit : int
         Maximum number of molecular profiles to return (default: 20, recommended max:...
+    after : str
+        Opaque continuation cursor from metadata.next_cursor.
     query : str
         Filter by molecular profile name (e.g., 'BRAF V600E', 'EGFR T790M', 'FLT3 ITD...
     name : str
@@ -44,7 +47,12 @@ def civic_search_molecular_profiles(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"limit": limit, "query": query, "name": name}.items()
+        for k, v in {
+            "limit": limit,
+            "after": after,
+            "query": query,
+            "name": name,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

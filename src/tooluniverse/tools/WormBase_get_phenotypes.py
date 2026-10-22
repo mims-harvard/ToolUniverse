@@ -1,7 +1,7 @@
 """
 WormBase_get_phenotypes
 
-Get phenotype annotations for a C. elegans gene from WormBase. Returns observed phenotypes (from ...
+Get complete observed and not-observed phenotype annotation arrays for a C. elegans gene from the...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def WormBase_get_phenotypes(
     validate: bool = True,
 ) -> Any:
     """
-    Get phenotype annotations for a C. elegans gene from WormBase. Returns observed phenotypes (from ...
+    Get complete observed and not-observed phenotype annotation arrays for a C. elegans gene from the...
 
     Parameters
     ----------

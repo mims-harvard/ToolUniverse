@@ -60,10 +60,11 @@
     },
     {
         "name": "USDA_plants_search_by_name",
-        "description": "Resolve a plant scientific name, common name, or genus to USDA PLANTS symbol(s). The other USDA PLANTS tools (USDA_plants_get_profile, USDA_plants_get_characteristics) require a PLANTS symbol (e.g. 'ABBA') as input; use this tool first when you only know the plant by name. Returns a list of matching plants, each with its Symbol, ScientificName, CommonName, and Rank (Species/Genus/Variety). Example: 'white oak' -> QUAR / Quercus arizonica (Arizona white oak); 'red maple' -> ACRU / Acer rubrum; 'Quercus' -> QUERC (Genus). No API key required.",
+        "description": "Resolve a plant scientific name, common name, or genus to USDA PLANTS symbol(s). Returns exact total_results and recoverable offset pagination metadata; continue with next_offset while has_more is true. Use returned symbols with USDA_plants_get_profile or USDA_plants_get_characteristics. Example: 'Quercus' matches hundreds of genus/species/variety records.",
         "parameter": {"type": "object", "properties": {
             "searchText": {"type": "string", "description": "Plant scientific name, common name, or genus to search. Examples: 'white oak', 'red maple', 'Quercus', 'Acer rubrum'."},
-            "limit": {"type": ["integer", "null"], "description": "Maximum number of matches to return (default 25, max 200)."}
+            "limit": {"type": ["integer", "null"], "description": "Maximum number of matches to return (default 25, max 200)."},
+            "offset": {"type": ["integer", "null"], "minimum": 0, "description": "Zero-based offset in the complete USDA match list. Continue with metadata.next_offset."}
         }, "required": ["searchText"]},
         "fields": {"timeout": 30, "action": "search"},
         "type": "USDAPlantsProfileTool",

@@ -1,7 +1,7 @@
 """
 MGnify_get_interpro
 
-Get InterPro protein domain annotations from a MGnify metagenomics analysis. Returns InterPro ide...
+Get a page of InterPro protein-domain annotations from a MGnify analysis, including accession, de...
 """
 
 from typing import Any, Optional, Callable
@@ -10,6 +10,7 @@ from ._shared_client import get_shared_client
 
 def MGnify_get_interpro(
     analysis_id: str,
+    page: Optional[int] = 1,
     page_size: Optional[int] = 25,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -17,12 +18,14 @@ def MGnify_get_interpro(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Get InterPro protein domain annotations from a MGnify metagenomics analysis. Returns InterPro ide...
+    Get a page of InterPro protein-domain annotations from a MGnify analysis, including accession, de...
 
     Parameters
     ----------
     analysis_id : str
         MGnify analysis accession (e.g., 'MGYA00585482'). Find IDs via MGnify_list_an...
+    page : int
+        One-based result page. Continue with metadata.next_page.
     page_size : int
         Number of InterPro entries to return per page (default 25, max 100).
     stream_callback : Callable, optional
@@ -41,7 +44,11 @@ def MGnify_get_interpro(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"analysis_id": analysis_id, "page_size": page_size}.items()
+        for k, v in {
+            "analysis_id": analysis_id,
+            "page": page,
+            "page_size": page_size,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

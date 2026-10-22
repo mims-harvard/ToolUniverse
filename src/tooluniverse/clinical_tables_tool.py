@@ -84,6 +84,68 @@ class ClinicalTablesTool(BaseTool):
 
         return {"total_count": total_count, "count": len(results), "results": results}
 
+    @staticmethod
+    def _validate_pagination(arguments: Dict[str, Any], max_cap: int):
+        """Validate official count/offset controls and the 7,500-result window."""
+        max_results = arguments.get("max_results", 20)
+        offset = arguments.get("offset", 0)
+        if (
+            isinstance(max_results, bool)
+            or not isinstance(max_results, int)
+            or not 1 <= max_results <= max_cap
+        ):
+            return {
+                "status": "error",
+                "error": f"max_results must be an integer between 1 and {max_cap}",
+                "parameter": "max_results",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+                "parameter": "offset",
+            }
+        if offset + max_results > 7500:
+            return {
+                "status": "error",
+                "error": (
+                    "offset + max_results must not exceed the Clinical Tables "
+                    "retrieval limit of 7500"
+                ),
+                "parameter": "offset",
+            }
+        return offset, max_results
+
+    @staticmethod
+    def _pagination_metadata(parsed, offset: int, max_results: int):
+        """Expose exact page continuation and upstream window truncation."""
+        try:
+            total = int(parsed.get("total_count", 0))
+        except (TypeError, ValueError):
+            total = parsed.get("count", 0)
+        returned_count = parsed.get("count", 0)
+        accessible = min(total, 7500)
+        has_more = offset + returned_count < accessible
+        upstream_truncated = total > accessible
+        return {
+            "total_results": total,
+            "accessible_results": accessible,
+            "upstream_truncated": upstream_truncated,
+            "returned_count": returned_count,
+            "offset": offset,
+            "max_results": max_results,
+            "has_more": has_more,
+            "next_offset": offset + returned_count if returned_count and has_more else None,
+            "truncated": has_more or upstream_truncated,
+            "result_set_complete": not has_more and not upstream_truncated,
+            "warning": (
+                "NLM Clinical Tables limits retrieval to the first 7500 matches; "
+                "refine the search to reach records outside that window."
+                if upstream_truncated
+                else None
+            ),
+        }
+
     def _search(
         self,
         endpoint: str,
@@ -97,8 +159,15 @@ class ClinicalTablesTool(BaseTool):
         if not terms:
             return {"status": "error", "error": "terms parameter is required"}
 
-        max_results = min(int(arguments.get("max_results", 20) or 20), max_cap)
-        params: Dict[str, Any] = {"terms": terms, "maxList": max_results}
+        pagination_args = self._validate_pagination(arguments, max_cap)
+        if isinstance(pagination_args, dict):
+            return pagination_args
+        offset, max_results = pagination_args
+        params: Dict[str, Any] = {
+            "terms": terms,
+            "count": max_results,
+            "offset": offset,
+        }
         # Some tables (e.g. disease_names) only populate their name via the default
         # display column and return blanks when an explicit df is requested; for
         # those we omit df and label the default column with display_fields[0].
@@ -112,8 +181,14 @@ class ClinicalTablesTool(BaseTool):
             return api_response
 
         parsed = self._parse(api_response, display_fields, extra_fields)
+        if parsed.get("status") == "error":
+            return parsed
         parsed["search_terms"] = terms
-        return parsed
+        return {
+            "status": "success",
+            "data": parsed,
+            "metadata": self._pagination_metadata(parsed, offset, max_results),
+        }
 
     def _search_rxterms(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Drug-name autocomplete with available strengths/forms and RxCUIs."""

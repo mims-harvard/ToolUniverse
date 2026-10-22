@@ -1,7 +1,7 @@
 """
 OpenNeuro_search_by_modality
 
-Search OpenNeuro neuroimaging datasets filtered by imaging modality. Supported modalities include...
+Search OpenNeuro neuroimaging datasets filtered by imaging modality. Returns the exact matching c...
 """
 
 from typing import Any, Optional, Callable
@@ -10,21 +10,24 @@ from ._shared_client import get_shared_client
 
 def OpenNeuro_search_by_modality(
     modality: str,
-    first: Optional[int | Any] = None,
+    first: Optional[int] = 10,
+    after: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search OpenNeuro neuroimaging datasets filtered by imaging modality. Supported modalities include...
+    Search OpenNeuro neuroimaging datasets filtered by imaging modality. Returns the exact matching c...
 
     Parameters
     ----------
     modality : str
         Imaging modality to filter by. Options: 'MRI', 'EEG', 'iEEG', 'MEG', 'PET'.
-    first : int | Any
+    first : int
         Number of datasets to return (default 10, max 25)
+    after : str
+        Opaque continuation cursor from metadata.next_cursor.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,7 +43,9 @@ def OpenNeuro_search_by_modality(
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
-        k: v for k, v in {"modality": modality, "first": first}.items() if v is not None
+        k: v
+        for k, v in {"modality": modality, "first": first, "after": after}.items()
+        if v is not None
     }
     return get_shared_client().run_one_function(
         {

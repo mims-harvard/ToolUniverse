@@ -13,6 +13,7 @@ Reference: Cerami et al., Nucleic Acids Res. 2011; Rodchenkov et al., Nucleic Ac
 """
 
 import requests
+import math
 from typing import Dict, Any, Optional
 
 from .base_tool import BaseTool
@@ -20,6 +21,23 @@ from .tool_registry import register_tool
 
 
 PC2_BASE_URL = "https://www.pathwaycommons.org/pc2"
+
+SIF_PATTERNS = {
+    "controls-state-change-of",
+    "controls-transport-of",
+    "controls-phosphorylation-of",
+    "controls-expression-of",
+    "catalysis-precedes",
+    "in-complex-with",
+    "interacts-with",
+    "neighbor-of",
+    "consumption-controlled-by",
+    "controls-production-of",
+    "controls-transport-of-chemical",
+    "chemical-affects",
+    "reacts-with",
+    "used-to-produce",
+}
 
 
 @register_tool("PathwayCommonsTool")
@@ -80,6 +98,69 @@ class PathwayCommonsTool(BaseTool):
                 "error": "PathwayCommons error: {}".format(str(e)),
             }
 
+    @staticmethod
+    def _validated_int(
+        arguments: Dict[str, Any],
+        name: str,
+        default: int,
+        minimum: int,
+        maximum: Optional[int] = None,
+    ):
+        value = arguments.get(name, default)
+        if isinstance(value, bool) or not isinstance(value, int):
+            return None, "{} must be an integer".format(name)
+        if value < minimum:
+            return None, "{} must be at least {}".format(name, minimum)
+        if maximum is not None and value > maximum:
+            return None, "{} must be at most {}".format(name, maximum)
+        return value, None
+
+    @staticmethod
+    def _graph_filters(arguments: Dict[str, Any], allow_direction: bool):
+        params = {}
+        for name in ("datasource", "organism"):
+            value = arguments.get(name)
+            if value is not None:
+                if not isinstance(value, str) or not value.strip():
+                    return None, "{} must be a non-empty string".format(name)
+                params[name] = value.strip()
+
+        pattern = arguments.get("pattern")
+        if pattern is not None:
+            if (
+                not isinstance(pattern, list)
+                or not pattern
+                or any(not isinstance(item, str) or not item.strip() for item in pattern)
+            ):
+                return None, "pattern must be a non-empty list of interaction types"
+            normalized = [item.strip().lower().replace("_", "-") for item in pattern]
+            unknown = sorted(set(normalized) - SIF_PATTERNS)
+            if unknown:
+                return None, "Unsupported pattern values: {}".format(", ".join(unknown))
+            params["pattern"] = normalized
+
+        subpw = arguments.get("subpw")
+        if subpw is not None:
+            if not isinstance(subpw, bool):
+                return None, "subpw must be a boolean"
+            params["subpw"] = subpw
+
+        direction = arguments.get("direction")
+        if direction is not None:
+            if not allow_direction:
+                return None, "direction is only supported for neighborhood queries"
+            if not isinstance(direction, str):
+                return None, "direction must be a string"
+            normalized_direction = direction.strip().lower().replace("_", "")
+            allowed = {"upstream", "downstream", "bothstream", "undirected"}
+            if normalized_direction not in allowed:
+                return None, "direction must be one of {}".format(
+                    ", ".join(sorted(allowed))
+                )
+            params["direction"] = normalized_direction
+
+        return params, None
+
     def _search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search PathwayCommons for pathways/interactions by gene or keyword."""
         query = arguments.get("query") or arguments.get("q")
@@ -100,9 +181,13 @@ class PathwayCommonsTool(BaseTool):
         if organism:
             params["organism"] = organism
 
-        page = arguments.get("page")
-        if page is not None:
-            params["page"] = page
+        page, error = self._validated_int(arguments, "page", 0, 0)
+        if error:
+            return {
+                "status": "error",
+                "error": "page must be a non-negative integer (0-based)",
+            }
+        params["page"] = page
 
         response = self.session.get(
             "{}/search".format(PC2_BASE_URL), params=params, timeout=self.timeout
@@ -133,13 +218,51 @@ class PathwayCommonsTool(BaseTool):
                 }
             )
 
+        total_hits = data.get("numHits")
+        page_size = data.get("maxHitsPerPage")
+        actual_page = data.get("pageNo")
+        if (
+            isinstance(total_hits, bool)
+            or not isinstance(total_hits, int)
+            or total_hits < 0
+            or isinstance(page_size, bool)
+            or not isinstance(page_size, int)
+            or page_size <= 0
+            or isinstance(actual_page, bool)
+            or not isinstance(actual_page, int)
+            or actual_page < 0
+        ):
+            return {
+                "status": "error",
+                "error": "PathwayCommons search returned invalid pagination metadata",
+            }
+        if actual_page != page:
+            return {
+                "status": "error",
+                "error": "PathwayCommons returned page {} for requested page {}".format(
+                    actual_page, page
+                ),
+            }
+
+        total_pages = math.ceil(total_hits / page_size) if total_hits else 0
+        expected_more = actual_page + 1 < total_pages
+        pagination_stalled = expected_more and not results
+        has_more = expected_more and not pagination_stalled
+
         return {
             "status": "success",
             "data": results,
             "metadata": {
-                "total_hits": data.get("numHits", 0),
-                "max_hits_per_page": data.get("maxHitsPerPage", 100),
-                "page": data.get("pageNo", 0),
+                "total_hits": total_hits,
+                "total_hits_is_exact": True,
+                "returned": len(results),
+                "max_hits_per_page": page_size,
+                "page": actual_page,
+                "total_pages": total_pages,
+                "has_more": has_more,
+                "next_page": actual_page + 1 if has_more else None,
+                "pagination_stalled": pagination_stalled,
+                "complete": not has_more and not pagination_stalled,
                 "query": query,
             },
         }
@@ -232,8 +355,20 @@ class PathwayCommonsTool(BaseTool):
         if not gene:
             return {"status": "error", "error": "Missing required parameter: gene"}
 
-        limit = arguments.get("limit", 1)
-        datasource = arguments.get("datasource")
+        limit, error = self._validated_int(arguments, "limit", 1, 1, 100)
+        if error:
+            return {"status": "error", "error": error}
+        max_return, error = self._validated_int(
+            arguments, "max_results", 100, 1, 500
+        )
+        if error:
+            return {"status": "error", "error": error}
+        offset, error = self._validated_int(arguments, "offset", 0, 0)
+        if error:
+            return {"status": "error", "error": error}
+        filters, error = self._graph_filters(arguments, allow_direction=True)
+        if error:
+            return {"status": "error", "error": error}
 
         params = {
             "source": gene,
@@ -241,8 +376,7 @@ class PathwayCommonsTool(BaseTool):
             "format": "TXT",
             "limit": limit,
         }
-        if datasource:
-            params["datasource"] = datasource
+        params.update(filters)
 
         response = self.session.get(
             "{}/graph".format(PC2_BASE_URL), params=params, timeout=self.timeout
@@ -261,18 +395,37 @@ class PathwayCommonsTool(BaseTool):
             return {
                 "status": "success",
                 "data": {"interactions": [], "gene": gene},
-                "metadata": {"gene": gene, "interaction_count": 0},
+                "metadata": {
+                    "gene": gene,
+                    "total_interactions": 0,
+                    "returned": 0,
+                    "offset": offset,
+                    "has_more": False,
+                    "next_offset": None,
+                    "limit": limit,
+                    "complete_graph_retrieved": True,
+                    "source_resolution": self._source_resolution(gene),
+                },
             }
 
-        lines = text.split("\n")
-        header = None
+        lines = text.splitlines()
+        expected_header = [
+            "PARTICIPANT_A",
+            "INTERACTION_TYPE",
+            "PARTICIPANT_B",
+        ]
+        header = lines[0].split("\t") if lines else []
+        if header[:3] != expected_header:
+            return {
+                "status": "error",
+                "error": "PathwayCommons returned an unexpected TXT graph format",
+            }
         interactions = []
 
-        for line in lines:
+        for line in lines[1:]:
+            if not line.strip():
+                break
             fields = line.split("\t")
-            if header is None:
-                header = fields
-                continue
             if len(fields) >= 3:
                 interaction = {
                     "participant_a": fields[0],
@@ -298,22 +451,36 @@ class PathwayCommonsTool(BaseTool):
             if ix["participant_b"].upper() != gene.upper():
                 partners.add(ix["participant_b"])
 
-        max_return = arguments.get("max_results", 100)
+        page = interactions[offset : offset + max_return]
+        next_offset = offset + len(page)
+        has_more = next_offset < len(interactions)
         return {
             "status": "success",
             "data": {
                 "gene": gene,
-                "interactions": interactions[:max_return],
+                "interactions": page,
                 "interaction_type_counts": interaction_types,
                 "unique_partners": len(partners),
             },
             "metadata": {
                 "gene": gene,
                 "total_interactions": len(interactions),
-                "returned": min(len(interactions), max_return),
+                "returned": len(page),
+                "offset": offset,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
                 "limit": limit,
+                "complete_graph_retrieved": True,
+                "source_resolution": self._source_resolution(gene),
             },
         }
+
+    @staticmethod
+    def _source_resolution(source: str) -> str:
+        normalized = source.lower()
+        if normalized.startswith(("http://", "https://", "bioregistry.io/")):
+            return "exact_uri"
+        return "exploratory_id_mapping"
 
     @staticmethod
     def _parse_sif_edges(text: str) -> list:
@@ -363,12 +530,15 @@ class PathwayCommonsTool(BaseTool):
                 "error": "Missing required parameter: genes (list of gene symbols/identifiers)",
             }
 
-        # Clean: drop blanks and de-duplicate while preserving order.
+        # Clean: reject malformed members and de-duplicate while preserving order.
         seen = set()
         clean_genes = []
         for g in genes:
             if not isinstance(g, str):
-                continue
+                return {
+                    "status": "error",
+                    "error": "genes must contain only strings",
+                }
             g = g.strip()
             if not g or g.upper() in seen:
                 continue
@@ -390,13 +560,23 @@ class PathwayCommonsTool(BaseTool):
             "kind": "PATHSBETWEEN",
             "format": "SIF",
         }
-        limit = arguments.get("limit")
-        if limit is not None:
-            params["limit"] = limit
+        limit, error = self._validated_int(arguments, "limit", 1, 1, 3)
+        if error:
+            return {"status": "error", "error": error}
+        max_return, error = self._validated_int(
+            arguments, "max_results", 200, 1, 2000
+        )
+        if error:
+            return {"status": "error", "error": error}
+        offset, error = self._validated_int(arguments, "offset", 0, 0)
+        if error:
+            return {"status": "error", "error": error}
+        params["limit"] = limit
 
-        datasource = arguments.get("datasource")
-        if datasource:
-            params["datasource"] = datasource
+        filters, error = self._graph_filters(arguments, allow_direction=False)
+        if error:
+            return {"status": "error", "error": error}
+        params.update(filters)
 
         # PATHSBETWEEN graph queries are heavier than search; allow a longer
         # per-request budget but cap at 30s to satisfy the contract.
@@ -415,7 +595,6 @@ class PathwayCommonsTool(BaseTool):
         text = response.text.strip()
         edges = self._parse_sif_edges(text)
 
-        max_return = arguments.get("max_results", 200)
         relation_counts = {}
         entities = set()
         for edge in edges:
@@ -433,11 +612,14 @@ class PathwayCommonsTool(BaseTool):
                 "in Pathway Commons."
             )
 
+        page = edges[offset : offset + max_return]
+        next_offset = offset + len(page)
+        has_more = next_offset < len(edges)
         return {
             "status": "success",
             "data": {
                 "genes": clean_genes,
-                "edges": edges[:max_return],
+                "edges": page,
                 "relation_counts": relation_counts,
                 "entity_count": len(entities),
                 "note": note,
@@ -445,7 +627,14 @@ class PathwayCommonsTool(BaseTool):
             "metadata": {
                 "genes": clean_genes,
                 "total_edges": len(edges),
-                "returned": min(len(edges), max_return),
+                "returned": len(page),
+                "offset": offset,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
                 "limit": limit,
+                "complete_graph_retrieved": True,
+                "source_resolution": [
+                    self._source_resolution(gene) for gene in clean_genes
+                ],
             },
         }

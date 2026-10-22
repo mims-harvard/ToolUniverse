@@ -1,7 +1,7 @@
 """
 BVBRC_search_subsystems
 
-Search for functional subsystems (curated groups of functionally related proteins) in BV-BRC path...
+Search for functional subsystems in BV-BRC with explicit pagination and true Content-Range totals.
 """
 
 from typing import Any, Optional, Callable
@@ -9,34 +9,37 @@ from ._shared_client import get_shared_client
 
 
 def BVBRC_search_subsystems(
-    taxon_id: Optional[str | Any] = None,
-    superclass: Optional[str | Any] = None,
-    subsystem_name: Optional[str | Any] = None,
-    role_name: Optional[str | Any] = None,
-    genome_id: Optional[str | Any] = None,
-    limit: Optional[int | Any] = None,
+    taxon_id: Optional[str] = None,
+    superclass: Optional[str] = None,
+    subsystem_name: Optional[str] = None,
+    role_name: Optional[str] = None,
+    genome_id: Optional[str] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search for functional subsystems (curated groups of functionally related proteins) in BV-BRC path...
+    Search for functional subsystems in BV-BRC with explicit pagination and true Content-Range totals.
 
     Parameters
     ----------
-    taxon_id : str | Any
+    taxon_id : str
         NCBI Taxonomy ID. Examples: '1773' (M. tuberculosis), '1280' (S. aureus), '56...
-    superclass : str | Any
+    superclass : str
         Top-level functional category. Options include: 'METABOLISM', 'STRESS RESPONS...
-    subsystem_name : str | Any
+    subsystem_name : str
         Subsystem name keyword. Examples: 'mycothiol', 'iron acquisition', 'beta-lact...
-    role_name : str | Any
+    role_name : str
         Specific functional role keyword. Examples: 'catalase', 'penicillin-binding p...
-    genome_id : str | Any
+    genome_id : str
         Restrict to a specific genome. Example: '83332.12'.
-    limit : int | Any
+    limit : int
         Maximum number of results. Default: 25. Max: 100.
+    offset : int
+        Zero-based result offset. Use metadata.next_offset to continue.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -60,6 +63,7 @@ def BVBRC_search_subsystems(
             "role_name": role_name,
             "genome_id": genome_id,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

@@ -17,6 +17,23 @@ from .tool_registry import register_tool
 PROTEINS_API_BASE_URL = "https://www.ebi.ac.uk/proteins/api"
 
 
+def _paginate(items, arguments: Dict[str, Any], default_limit: int = 100):
+    """Return one local page plus explicit collection completeness metadata."""
+    limit = int(arguments.get("limit", default_limit))
+    offset = int(arguments.get("offset", 0))
+    page = items[offset : offset + limit]
+    next_offset = offset + len(page)
+    has_more = next_offset < len(items)
+    return page, {
+        "returned": len(page),
+        "limit": limit,
+        "offset": offset,
+        "has_more": has_more,
+        "truncated": has_more,
+        "next_offset": next_offset if has_more else None,
+    }
+
+
 @register_tool("EBIProteinsExtTool")
 class EBIProteinsExtTool(BaseTool):
     """
@@ -101,8 +118,10 @@ class EBIProteinsExtTool(BaseTool):
         response.raise_for_status()
         data = response.json()
 
+        raw_features = data.get("features", [])
+        page_features, paging = _paginate(raw_features, arguments)
         features = []
-        for f in data.get("features", []):
+        for f in page_features:
             # Extract evidence details
             evidences = []
             for ev in f.get("evidences", []):
@@ -123,7 +142,7 @@ class EBIProteinsExtTool(BaseTool):
                     "position_end": f.get("end"),
                     "original_sequence": f.get("alternativeSequence"),
                     "description": f.get("description"),
-                    "evidences": evidences[:5],
+                    "evidences": evidences,
                 }
             )
 
@@ -133,8 +152,9 @@ class EBIProteinsExtTool(BaseTool):
                 "accession": data.get("accession"),
                 "entry_name": data.get("entryName"),
                 "gene_name": None,
-                "features": features[:100],
-                "total_features": len(data.get("features", [])),
+                "features": features,
+                "total_features": len(raw_features),
+                **paging,
             },
             "metadata": {
                 "source": "EBI Proteins API - Mutagenesis",
@@ -157,8 +177,10 @@ class EBIProteinsExtTool(BaseTool):
         response.raise_for_status()
         data = response.json()
 
+        raw_features = data.get("features", [])
+        page_features, paging = _paginate(raw_features, arguments)
         features = []
-        for f in data.get("features", []):
+        for f in page_features:
             # Extract source databases
             evidences = []
             for ev in f.get("evidences", []):
@@ -179,7 +201,7 @@ class EBIProteinsExtTool(BaseTool):
                     "position_start": f.get("begin"),
                     "position_end": f.get("end"),
                     "description": f.get("description"),
-                    "evidences": evidences[:5],
+                    "evidences": evidences,
                 }
             )
 
@@ -188,8 +210,9 @@ class EBIProteinsExtTool(BaseTool):
             "data": {
                 "accession": data.get("accession"),
                 "entry_name": data.get("entryName"),
-                "features": features[:100],
-                "total_features": len(data.get("features", [])),
+                "features": features,
+                "total_features": len(raw_features),
+                **paging,
             },
             "metadata": {
                 "source": "EBI Proteins API - Proteomics PTM",
@@ -236,8 +259,9 @@ class EBIProteinsExtTool(BaseTool):
             src = f.get("sourceType", "unknown")
             source_counts[src] = source_counts.get(src, 0) + 1
 
+        page_features, paging = _paginate(raw_features, arguments)
         variants = []
-        for f in raw_features[:100]:
+        for f in page_features:
             # Extract clinical significance
             clinical = []
             for cs in f.get("clinicalSignificances", []):
@@ -259,9 +283,11 @@ class EBIProteinsExtTool(BaseTool):
                     }
                 )
 
-            # Extract cross-references (first 3)
+            # Preserve all cross-references.  A real TP53 response contains up
+            # to 43 references for a single variant; keeping only three made
+            # ClinVar/COSMIC/dbSNP support disappear without warning.
             xrefs = []
-            for x in f.get("xrefs", [])[:3]:
+            for x in f.get("xrefs", []):
                 xrefs.append(
                     {
                         "database": x.get("name"),
@@ -292,6 +318,7 @@ class EBIProteinsExtTool(BaseTool):
                 "total_variants": len(raw_features),
                 "total_all_sources": len(data.get("features", [])),
                 "source_counts": source_counts,
+                **paging,
             },
             "metadata": {
                 "source": "EBI Proteins API - Variation",
@@ -318,10 +345,12 @@ class EBIProteinsExtTool(BaseTool):
         response.raise_for_status()
         data = response.json()
 
+        raw_features = data.get("features", [])
+        page_features, paging = _paginate(raw_features, arguments)
         features = []
-        for f in data.get("features", []):
+        for f in page_features:
             evidences = []
-            for ev in f.get("evidences", [])[:3]:
+            for ev in f.get("evidences", []):
                 src = ev.get("source", {})
                 evidences.append(
                     {
@@ -349,8 +378,9 @@ class EBIProteinsExtTool(BaseTool):
                 "entry_name": data.get("entryName"),
                 "sequence_length": len(data.get("sequence") or ""),
                 "category_queried": category,
-                "features": features[:100],
-                "total_features": len(data.get("features", [])),
+                "features": features,
+                "total_features": len(raw_features),
+                **paging,
             },
             "metadata": {
                 "source": "EBI Proteins API - Features",
@@ -472,10 +502,12 @@ class EBIProteinsExtTool(BaseTool):
         response.raise_for_status()
         data = response.json()
 
+        raw_features = data.get("features", [])
+        page_features, paging = _paginate(raw_features, arguments)
         peptides = []
-        for f in data.get("features", []):
+        for f in page_features:
             evidences = []
-            for ev in f.get("evidences", [])[:3]:
+            for ev in f.get("evidences", []):
                 src = ev.get("source", {})
                 evidences.append(
                     {
@@ -500,8 +532,9 @@ class EBIProteinsExtTool(BaseTool):
             "data": {
                 "accession": data.get("accession"),
                 "entry_name": data.get("entryName"),
-                "peptides": peptides[:100],
-                "total_peptides": len(data.get("features", [])),
+                "peptides": peptides,
+                "total_peptides": len(raw_features),
+                **paging,
             },
             "metadata": {
                 "source": "EBI Proteins API - Proteomics",
@@ -571,10 +604,14 @@ class EBIProteinsExtTool(BaseTool):
             },
         }
 
-    def _parse_variation_entries(self, data: Any) -> list:
+    def _parse_variation_entries(
+        self, data: Any, arguments: Dict[str, Any]
+    ) -> list:
         """Normalize variation-by-id responses (list of UniProt entries)."""
         if not isinstance(data, list):
             data = [data] if isinstance(data, dict) else []
+        xref_offset = max(int(arguments.get("xref_offset") or 0), 0)
+        xref_limit = min(max(int(arguments.get("xref_limit") or 5), 1), 500)
 
         entries = []
         for e in data:
@@ -582,8 +619,10 @@ class EBIProteinsExtTool(BaseTool):
                 continue
             features = []
             for f in e.get("features", []):
+                all_xrefs = f.get("xrefs", [])
+                xref_page = all_xrefs[xref_offset : xref_offset + xref_limit]
                 xrefs = []
-                for x in f.get("xrefs", [])[:5]:
+                for x in xref_page:
                     xrefs.append(
                         {
                             "name": x.get("name"),
@@ -606,6 +645,16 @@ class EBIProteinsExtTool(BaseTool):
                         "consequence_type": f.get("consequenceType"),
                         "clinical_significances": clinical if clinical else None,
                         "xrefs": xrefs if xrefs else None,
+                        "xrefs_total": len(all_xrefs),
+                        "xrefs_returned": len(xref_page),
+                        "xrefs_truncated": (
+                            xref_offset + len(xref_page) < len(all_xrefs)
+                        ),
+                        "next_xref_offset": (
+                            xref_offset + len(xref_page)
+                            if xref_offset + len(xref_page) < len(all_xrefs)
+                            else None
+                        ),
                     }
                 )
             entries.append(
@@ -637,7 +686,7 @@ class EBIProteinsExtTool(BaseTool):
         response.raise_for_status()
         data = response.json()
 
-        entries = self._parse_variation_entries(data)
+        entries = self._parse_variation_entries(data, arguments)
         return {
             "status": "success",
             "data": {
@@ -668,7 +717,7 @@ class EBIProteinsExtTool(BaseTool):
         response.raise_for_status()
         data = response.json()
 
-        entries = self._parse_variation_entries(data)
+        entries = self._parse_variation_entries(data, arguments)
         return {
             "status": "success",
             "data": {
@@ -698,10 +747,12 @@ class EBIProteinsExtTool(BaseTool):
         response.raise_for_status()
         data = response.json()
 
+        raw_features = data.get("features", [])
+        page_features, paging = _paginate(raw_features, arguments)
         peptides = []
-        for f in data.get("features", []):
+        for f in page_features:
             evidences = []
-            for ev in f.get("evidences", [])[:3]:
+            for ev in f.get("evidences", []):
                 src = ev.get("source", {}) or {}
                 evidences.append(
                     {
@@ -725,8 +776,9 @@ class EBIProteinsExtTool(BaseTool):
             "data": {
                 "accession": data.get("accession"),
                 "entry_name": data.get("entryName"),
-                "peptides": peptides[:100],
-                "total_peptides": len(data.get("features", [])),
+                "peptides": peptides,
+                "total_peptides": len(raw_features),
+                **paging,
             },
             "metadata": {
                 "source": "EBI Proteins API - HPP Proteomics",

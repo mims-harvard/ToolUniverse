@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def SIDER_search_drug(
-    operation: str,
     drug_name: str,
+    operation: Optional[str] = "search_drug",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

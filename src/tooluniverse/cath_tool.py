@@ -188,10 +188,17 @@ class CATHTool(BaseTool):
         resp_data = response.json()
 
         funfams_raw = resp_data.get("data", [])
-        max_results = arguments.get("max_results", 25)
+        try:
+            max_results = max(1, int(arguments.get("max_results") or 25))
+            offset = max(0, int(arguments.get("offset", 0)))
+        except (TypeError, ValueError):
+            return {
+                "status": "error",
+                "error": "Parameters 'max_results' and 'offset' must be integers.",
+            }
 
         funfams = []
-        for ff in funfams_raw[:max_results]:
+        for ff in funfams_raw[offset : offset + max_results]:
             funfams.append(
                 {
                     "funfam_number": ff.get("funfam_number"),
@@ -202,11 +209,19 @@ class CATHTool(BaseTool):
                 }
             )
 
+        total_funfams = len(funfams_raw)
+        has_more = offset + len(funfams) < total_funfams
         return {
             "status": "success",
             "data": {
                 "superfamily_id": superfamily_id,
-                "total_funfams": len(funfams_raw),
+                "total_funfams": total_funfams,
+                "returned": len(funfams),
+                "offset": offset,
+                "max_results": max_results,
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_offset": offset + len(funfams) if has_more else None,
                 "funfams": funfams,
             },
             "metadata": {

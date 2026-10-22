@@ -1,7 +1,7 @@
 """
 ChEMBL_search_mechanisms
 
-Search mechanisms of action by drug, target, or mechanism type. To find drug or target IDs, use C...
+Search mechanisms of action by drug or mechanism type. To find mechanisms for a target, use ChEMB...
 """
 
 from typing import Any, Optional, Callable
@@ -20,14 +20,14 @@ def ChEMBL_search_mechanisms(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search mechanisms of action by drug, target, or mechanism type. To find drug or target IDs, use C...
+    Search mechanisms of action by drug or mechanism type. To find mechanisms for a target, use ChEMB...
 
     Parameters
     ----------
     drug_chembl_id : str
         Filter by drug ChEMBL ID
     target_chembl_id : str
-        Filter by target ChEMBL ID
+        NOT SUPPORTED: the /mechanism.json endpoint ignores target-based filters, so ...
     mechanism_of_action__contains : str
         Filter by mechanism description (contains)
     limit : int

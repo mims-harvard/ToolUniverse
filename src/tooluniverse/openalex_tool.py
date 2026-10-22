@@ -12,10 +12,10 @@ logger = get_logger("OpenAlexTool")
 def _with_api_key(params):
     """Add the OpenAlex API key when configured.
 
-    OpenAlex requires an API key as of 2026-02-13 (the polite-pool `mailto`
-    parameter was discontinued); anonymous requests now return HTTP 503. The
-    key is a query parameter named `api_key` (free at openalex.org/settings/api)
-    and is read from the OPENALEX_API_KEY environment variable.
+    The key is an optional query parameter named ``api_key`` and is read from
+    ``OPENALEX_API_KEY``. Anonymous requests were confirmed working in the
+    live API on 2026-08-11, so absence of a key must not be preclassified as a
+    failure; normal HTTP handling below remains authoritative if policy changes.
     """
     key = os.environ.get("OPENALEX_API_KEY")
     if key:
@@ -374,7 +374,7 @@ class OpenAlexRESTTool(BaseTool):
         arguments = dict(arguments or {})
         if "search" not in arguments and isinstance(arguments.get("query"), str):
             arguments["search"] = arguments.get("query")
-        if "per_page" not in arguments and isinstance(arguments.get("limit"), int):
+        if isinstance(arguments.get("limit"), int):
             arguments["per_page"] = arguments.get("limit")
         # Prevent alias keys from being forwarded to OpenAlex as raw query params
         # (OpenAlex rejects unknown params like `query`/`limit` with HTTP 400).
@@ -472,7 +472,60 @@ class OpenAlexRESTTool(BaseTool):
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         url: Optional[str] = None
         try:
-            url, params = self._build_url_and_params(arguments or {})
+            arguments = dict(arguments or {})
+            fields = self.tool_config.get("fields", {}) or {}
+            pagination = fields.get("pagination") == "openalex_cursor_or_page"
+            if pagination:
+                props = self.tool_config.get("parameter", {}).get("properties", {})
+                per_page = arguments.get(
+                    "limit",
+                    arguments.get(
+                        "per_page", props.get("per_page", {}).get("default", 10)
+                    ),
+                )
+                if (
+                    isinstance(per_page, bool)
+                    or not isinstance(per_page, int)
+                    or not 1 <= per_page <= 200
+                ):
+                    return {
+                        "status": "error",
+                        "error": "per_page/limit must be an integer between 1 and 200",
+                        "parameter": "limit" if "limit" in arguments else "per_page",
+                    }
+                arguments["per_page"] = per_page
+                cursor = arguments.get("cursor")
+                if cursor is not None:
+                    if not isinstance(cursor, str) or not cursor.strip():
+                        return {
+                            "status": "error",
+                            "error": "cursor must be '*' or a non-empty cursor returned by OpenAlex",
+                            "parameter": "cursor",
+                        }
+                    arguments["cursor"] = cursor.strip()
+                    arguments.pop("page", None)
+                else:
+                    page = arguments.get(
+                        "page", props.get("page", {}).get("default", 1)
+                    )
+                    if isinstance(page, bool) or not isinstance(page, int) or page < 1:
+                        return {
+                            "status": "error",
+                            "error": "page must be a positive integer (1-based)",
+                            "parameter": "page",
+                        }
+                    if page * per_page > 10_000:
+                        return {
+                            "status": "error",
+                            "error": (
+                                "OpenAlex basic page pagination cannot access results beyond "
+                                "10,000; start cursor pagination with cursor='*' instead"
+                            ),
+                            "parameter": "page",
+                        }
+                    arguments["page"] = page
+
+            url, params = self._build_url_and_params(arguments)
             resp = request_with_retry(
                 self.session,
                 "GET",
@@ -492,7 +545,68 @@ class OpenAlexRESTTool(BaseTool):
                     "detail": (resp.text or "")[:500],
                 }
 
-            return {"status": "success", "data": resp.json(), "url": final_url}
+            data = resp.json()
+            result = {"status": "success", "data": data, "url": final_url}
+            if pagination and isinstance(data, dict):
+                records = data.get("results", [])
+                if not isinstance(records, list):
+                    records = []
+                meta = data.get("meta", {})
+                if not isinstance(meta, dict):
+                    meta = {}
+                total = meta.get("count")
+                total_is_exact = isinstance(total, int) and not isinstance(total, bool)
+                next_cursor = meta.get("next_cursor")
+                cursor = arguments.get("cursor")
+                returned = len(records)
+                if cursor is not None:
+                    has_more = bool(returned and next_cursor)
+                    result["metadata"] = {
+                        "mode": "cursor",
+                        "returned": returned,
+                        "total_results": total if total_is_exact else None,
+                        "total_results_is_exact": total_is_exact,
+                        "cursor": cursor,
+                        "has_more": has_more,
+                        "next_cursor": next_cursor if has_more else None,
+                        "truncated": cursor != "*" or has_more,
+                        "result_set_complete": bool(
+                            total_is_exact and cursor == "*" and returned == total
+                        ),
+                        "pagination_scope": "openalex_official_cursor",
+                    }
+                else:
+                    page = arguments["page"]
+                    per_page = arguments["per_page"]
+                    accessible = min(total, 10_000) if total_is_exact else 10_000
+                    consumed = (page - 1) * per_page + returned
+                    has_more = bool(returned and consumed < accessible)
+                    upstream_truncated = bool(total_is_exact and total > 10_000)
+                    result["metadata"] = {
+                        "mode": "basic_page",
+                        "returned": returned,
+                        "total_results": total if total_is_exact else None,
+                        "total_results_is_exact": total_is_exact,
+                        "accessible_results": accessible,
+                        "page": page,
+                        "per_page": per_page,
+                        "has_more": has_more,
+                        "next_page": page + 1 if has_more else None,
+                        "upstream_truncated": upstream_truncated,
+                        "truncated": page > 1 or has_more or upstream_truncated,
+                        "result_set_complete": bool(
+                            total_is_exact and page == 1 and returned == total
+                        ),
+                        "pagination_scope": "openalex_basic_page_10000_window",
+                        "warning": (
+                            "OpenAlex basic page pagination exposes only the first 10,000 "
+                            "matches. Start cursor pagination with cursor='*' and continue "
+                            "with metadata.next_cursor to retrieve beyond that window."
+                            if upstream_truncated
+                            else None
+                        ),
+                    }
+            return result
         except Exception as e:
             return {
                 "status": "error",

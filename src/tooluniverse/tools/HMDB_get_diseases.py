@@ -1,7 +1,7 @@
 """
 HMDB_get_diseases
 
-Alias for Metabolite_get_diseases. Get disease associations for a metabolite via CTD database.
+Alias for Metabolite_get_diseases. Get CTD disease associations for a metabolite with recoverable...
 """
 
 from typing import Any, Optional, Callable
@@ -9,16 +9,19 @@ from ._shared_client import get_shared_client
 
 
 def HMDB_get_diseases(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_diseases",
     hmdb_id: Optional[str] = None,
     compound_name: Optional[str] = None,
+    pubchem_cid: Optional[str] = None,
+    limit: Optional[int] = 50,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Alias for Metabolite_get_diseases. Get disease associations for a metabolite via CTD database.
+    Alias for Metabolite_get_diseases. Get CTD disease associations for a metabolite with recoverable...
 
     Parameters
     ----------
@@ -28,6 +31,12 @@ def HMDB_get_diseases(
         HMDB ID (e.g., HMDB0000122)
     compound_name : str
         Compound name (e.g., glucose)
+    pubchem_cid : str
+        PubChem CID as an alternative identifier to hmdb_id or compound_name.
+    limit : int
+        Maximum number of disease associations to return (default 50).
+    offset : int
+        Zero-based disease-association offset. Continue with next_offset while has_mo...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +57,9 @@ def HMDB_get_diseases(
             "operation": operation,
             "hmdb_id": hmdb_id,
             "compound_name": compound_name,
+            "pubchem_cid": pubchem_cid,
+            "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

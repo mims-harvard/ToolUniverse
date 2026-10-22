@@ -179,6 +179,7 @@ class ELMTool(BaseTool):
         elm_identifier = arguments.get("elm_identifier")
         query = arguments.get("query")
         max_results = arguments.get("max_results", 100)
+        offset = arguments.get("offset", 0)
 
         resp = self.session.get(
             "{}/interactiondomains.tsv".format(ELM_BASE_URL),
@@ -220,7 +221,10 @@ class ELMTool(BaseTool):
             )
 
         total = len(results)
-        results = results[:max_results]
+        max_results = max(1, min(int(max_results), 500))
+        offset = max(0, int(offset))
+        results = results[offset : offset + max_results]
+        has_more = offset + len(results) < total
 
         return {
             "status": "success",
@@ -228,6 +232,10 @@ class ELMTool(BaseTool):
             "metadata": {
                 "total_mappings": total,
                 "returned": len(results),
+                "offset": offset,
+                "limit": max_results,
+                "has_more": has_more,
+                "next_offset": offset + len(results) if has_more else None,
                 "filter_elm_identifier": elm_identifier,
                 "filter_query": query,
             },
@@ -238,6 +246,7 @@ class ELMTool(BaseTool):
         motif_type = arguments.get("motif_type")
         query = arguments.get("query")
         max_results = arguments.get("max_results", 50)
+        offset = arguments.get("offset", 0)
 
         resp = self.session.get(
             "{}/elms/elms_index.tsv".format(ELM_BASE_URL),
@@ -287,7 +296,10 @@ class ELMTool(BaseTool):
             )
 
         total = len(results)
-        results = results[:max_results]
+        max_results = max(1, min(int(max_results), 400))
+        offset = max(0, int(offset))
+        results = results[offset : offset + max_results]
+        has_more = offset + len(results) < total
 
         return {
             "status": "success",
@@ -295,6 +307,10 @@ class ELMTool(BaseTool):
             "metadata": {
                 "total_classes": total,
                 "returned": len(results),
+                "offset": offset,
+                "limit": max_results,
+                "has_more": has_more,
+                "next_offset": offset + len(results) if has_more else None,
                 "filter_type": motif_type,
                 "filter_query": query,
             },

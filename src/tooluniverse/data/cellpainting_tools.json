@@ -123,7 +123,7 @@
   {
     "name": "CellPainting_get_well_data",
     "type": "CellPaintingTool",
-    "description": "Get well-level metadata and image links for a specific plate in a Cell Painting experiment from the Image Data Resource (IDR). Returns well IDs, row/column positions, well URLs, and links to microscopy images. Use CellPainting_get_screen_plates to find valid plate IDs. Example: Get the first 5 wells of plate 5104 from idr0016.",
+    "description": "Get a paginated slice of well-level metadata and image links for a specific Cell Painting plate from the Image Data Resource (IDR). Use offset with pagination.next_offset until pagination.has_more is false to retrieve every well; pagination.total_count reports the plate size.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -145,6 +145,12 @@
           "maximum": 1000,
           "default": 20,
           "description": "Maximum number of wells to return (default 20)"
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based well offset. Continue with pagination.next_offset while pagination.has_more is true."
         }
       },
       "required": [

@@ -56,6 +56,21 @@ def test_parse_civic_reads_nested_nodes_and_filters():
     assert out["variants"][0]["civic_id"] == 12
 
 
+def test_parse_civic_preserves_connection_completeness():
+    t = _tool()
+    real = {"data": {"gene": {"variants": {
+        "totalCount": 8,
+        "nodes": [{"id": 1, "name": "A1"}, {"id": 2, "name": "A2"}],
+        "pageInfo": {"hasNextPage": True, "endCursor": "cursor-2"},
+    }}}}
+    out = t._parse_civic(real, "V600E")
+    assert out["total_gene_variants"] == 8
+    assert out["gene_variants_examined"] == 2
+    assert out["gene_results_truncated"] is True
+    assert out["gene_result_set_complete"] is False
+    assert out["next_gene_cursor"] == "cursor-2"
+
+
 def test_parse_civic_gene_only_query_reports_zero_matched_not_all():
     """Fix-R51A-1: a gene-only query (variant_token=None) previously counted
     EVERY gene-level CIViC variant as "matched" -- the filter's
@@ -86,6 +101,10 @@ def test_parse_clinvar_falls_back_to_gene_context_when_no_exact_match():
         {"title": "NM_004333.6(BRAF):c.1018A>G (p.Ile340Val)", "clinical_significance": "Benign"}]}}
     out = t._parse_clinvar(real, "V600E")
     assert out["total_gene_variants"] == 66
+    assert out["gene_variants_examined"] == 2
+    assert out["gene_results_truncated"] is True
+    assert out["gene_result_set_complete"] is False
+    assert out["next_gene_offset"] == 2
     assert out["matched"] == 0
     assert out["exact_match"] is False
     assert len(out["variants"]) == 2  # gene-level context, not empty

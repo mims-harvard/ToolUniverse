@@ -15,6 +15,7 @@ def ENCORI_get_miRNA_targets(
     clip_min: Optional[int] = None,
     program_min: Optional[int] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -37,6 +38,8 @@ def ENCORI_get_miRNA_targets(
         Minimum number of prediction programs that must call the interaction (default...
     limit : int
         Maximum interactions to return (1-500, default 50).
+    offset : int
+        Zero-based ranked interaction offset. Continue with metadata.next_offset whil...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -60,6 +63,7 @@ def ENCORI_get_miRNA_targets(
             "clip_min": clip_min,
             "program_min": program_min,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

@@ -1,7 +1,7 @@
 [
   {
     "name": "MedlinePlus_search_topics_by_keyword",
-    "description": "Search for relevant information in MedlinePlus Web Service by keyword across health topics or other sub-libraries (such as drugs, genetics, etc.).",
+    "description": "Search the MedlinePlus Web Service by keyword across health topics and other supported databases. Exposes upstream retstart/retmax pagination and reports total_available, returned, has_more, and next_offset so agents can retrieve all matches instead of silently receiving only the first page. Topic summaries are returned in full with summary_length.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -31,6 +31,18 @@
           ],
           "description": "Result return format, options: brief (concise information, default), topic (detailed XML record), all (includes all available information).",
           "default": "topic"
+        },
+        "retstart": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Zero-based offset of the first result to return. Use next_offset from the preceding response to retrieve the next page.",
+          "default": 0
+        },
+        "retmax": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum number of matching records requested from MedlinePlus for this page.",
+          "default": 10
         }
       },
       "required": [
@@ -39,9 +51,9 @@
       ]
     },
     "fields": {
-      "endpoint": "https://wsearch.nlm.nih.gov/ws/query?db={db}&term={term}&rettype={rettype}",
-      "input_description": "Input parameters:\n- term: keyword to search (URL encoded);\n- db: database name, e.g., healthTopics, drugs, etc.;\n- rettype: return format, options: brief, topic, all.",
-      "output_description": "Returns MedlinePlus Web Service response XML, will contain title, summary, links, etc. for matching topics, the returned data will be parsed into a Python dictionary for subsequent use."
+      "endpoint": "https://wsearch.nlm.nih.gov/ws/query?db={db}&term={term}&rettype={rettype}&retstart={retstart}&retmax={retmax}",
+      "input_description": "Input parameters:\n- term: keyword to search (URL encoded);\n- db: database name, e.g., healthTopics, drugs, etc.;\n- rettype: return format, options: brief, topic, all;\n- retstart: zero-based result offset;\n- retmax: requested page size.",
+      "output_description": "Returns parsed MedlinePlus matches with complete summaries and explicit pagination metadata: total_available, returned, offset, limit, has_more, and next_offset."
     },
     "type": "MedlinePlusRESTTool",
     "test_examples": [
@@ -81,7 +93,12 @@
                 }
               },
               "summary": {
-                "type": "string"
+                "type": "string",
+                "description": "Complete upstream topic summary without wrapper-side truncation"
+              },
+              "summary_length": {
+                "type": "integer",
+                "description": "Exact number of characters in summary"
               },
               "groups": {
                 "type": "array",
@@ -91,13 +108,37 @@
               }
             }
           }
+        },
+        "total_available": {
+          "type": "integer",
+          "description": "Total number of upstream matches for the query"
+        },
+        "returned": {
+          "type": "integer",
+          "description": "Number of topics returned in this page"
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based offset of this page"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Page size reported by MedlinePlus"
+        },
+        "has_more": {
+          "type": "boolean",
+          "description": "Whether more matches remain after this page"
+        },
+        "next_offset": {
+          "type": ["integer", "null"],
+          "description": "Offset to request for the next page, or null when complete"
         }
       }
     }
   },
   {
     "name": "MedlinePlus_connect_lookup_by_code",
-    "description": "Look up corresponding MedlinePlus page information through MedlinePlus Connect Web Service using clinical/drug/test codes (such as ICD-10 CM, RXCUI, LOINC, etc.), supports JSON or XML format return.",
+    "description": "Look up MedlinePlus pages through MedlinePlus Connect using clinical, drug, or test codes such as ICD-10-CM, RXCUI, and LOINC. Returns each complete upstream summary with summary_length; long evidence text is not limited to the former 500-character prefix. Supports JSON or XML upstream formats.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -168,6 +209,10 @@
               "summary": {
                 "type": "string",
                 "description": "Summary text of the matched page"
+              },
+              "summary_length": {
+                "type": "integer",
+                "description": "Exact number of characters in the complete upstream summary"
               },
               "url": {
                 "type": "string",

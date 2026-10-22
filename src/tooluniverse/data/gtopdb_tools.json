@@ -1,7 +1,7 @@
 [
   {
     "name": "GtoPdb_search_targets",
-    "description": "Search the Guide to Pharmacology database (GtoPdb) for drug targets including GPCRs, ion channels, nuclear receptors, enzymes, transporters, and catalytic receptors. Returns target IDs, names, abbreviations, types, and family classifications. GtoPdb is the IUPHAR/BPS reference resource for pharmacological drug targets with 3000+ curated targets. No authentication required.",
+    "description": "Search the Guide to Pharmacology database (GtoPdb) for drug targets with recoverable local offset pagination over the complete upstream response. Returns target IDs, names, abbreviations, types, and family classifications. Continue with next_offset while has_more is true. No authentication required.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -32,6 +32,19 @@
             "null"
           ],
           "description": "Name/keyword to search for. Alias for the \"name\" parameter."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 50,
+          "description": "Number of targets on this page (1-1000; default 50)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based target offset. Continue with next_offset while has_more is true."
         }
       },
       "required": []
@@ -56,50 +69,22 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "array",
-          "description": "List of pharmacological targets",
-          "items": {
-            "type": "object",
-            "properties": {
-              "targetId": {
-                "type": "integer",
-                "description": "GtoPdb target ID"
-              },
-              "name": {
-                "type": "string",
-                "description": "Full target name"
-              },
-              "abbreviation": {
-                "type": [
-                  "string",
-                  "null"
-                ],
-                "description": "Common abbreviation"
-              },
-              "type": {
-                "type": "string",
-                "description": "Target type (GPCR, Ion channel, etc.)"
-              },
-              "familyIds": {
-                "type": "array",
-                "items": {
-                  "type": "integer"
-                },
-                "description": "Family IDs"
-              },
-              "subunitIds": {
-                "type": "array",
-                "items": {
-                  "type": "integer"
-                }
-              },
-              "complexIds": {
-                "type": "array",
-                "items": {
-                  "type": "integer"
-                }
-              }
-            }
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {
+              "type": "array",
+              "description": "Current page of pharmacological targets",
+              "items": {"type": "object"}
+            },
+            "count": {"type": "integer"},
+            "total_available": {"type": "integer"},
+            "returned": {"type": "integer"},
+            "offset": {"type": "integer"},
+            "limit": {"type": "integer"},
+            "has_more": {"type": "boolean"},
+            "next_offset": {"type": ["integer", "null"]},
+            "result_set_complete": {"type": "boolean"}
           }
         },
         {
@@ -118,7 +103,7 @@
   },
   {
     "name": "GtoPdb_search_ligands",
-    "description": "Search the Guide to Pharmacology database for pharmacological ligands (drugs, natural products, endogenous compounds). Returns ligand details including type, approval status, INN name, WHO essential medicine status, and whether it is an approved drug. GtoPdb covers 10,000+ curated ligands with pharmacological activity data. No authentication required.",
+    "description": "Search the Guide to Pharmacology database for pharmacological ligands with recoverable local offset pagination over the complete upstream response. Returns ligand details including type, approval status, INN name, and WHO essential-medicine status. Continue with next_offset while has_more is true. No authentication required.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -149,6 +134,19 @@
             "null"
           ],
           "description": "Name/keyword to search for. Alias for the \"name\" parameter."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 50,
+          "description": "Number of ligands on this page (1-1000; default 50)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based ligand offset. Continue with next_offset while has_more is true."
         }
       },
       "required": []
@@ -172,15 +170,37 @@
       }
     ],
     "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "object"
-      }
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {
+              "type": "array",
+              "description": "Current page of pharmacological ligands",
+              "items": {"type": "object"}
+            },
+            "count": {"type": "integer"},
+            "total_available": {"type": "integer"},
+            "returned": {"type": "integer"},
+            "offset": {"type": "integer"},
+            "limit": {"type": "integer"},
+            "has_more": {"type": "boolean"},
+            "next_offset": {"type": ["integer", "null"]},
+            "result_set_complete": {"type": "boolean"}
+          }
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
     }
   },
   {
     "name": "GtoPdb_get_interactions",
-    "description": "Get pharmacological interactions between targets and ligands from the Guide to Pharmacology database. Provide gene_symbol (convenience, auto-resolves to targetId), targetId (from GtoPdb_search_targets), or ligandId (from GtoPdb_search_ligands) to filter interactions. Returns binding affinity (Ki, Kd, IC50, EC50), action type (agonist, antagonist, inhibitor, etc.), species, and assay information. NOTE: GtoPdb coverage focuses on GPCRs, ion channels, nuclear receptors, and enzymes; kinase inhibitors (EGFR, BRAF, ALK, VEGFR inhibitors) have limited interaction data \u2014 use ChEMBL_get_drug_mechanisms for those instead. No authentication required.",
+    "description": "Get pharmacological interactions between targets and ligands from the Guide to Pharmacology database. Results are recoverably paginated: start with offset=0 and continue with next_offset while has_more is true. Provide gene_symbol (convenience, auto-resolves to targetId), targetId (from GtoPdb_search_targets), or ligandId (from GtoPdb_search_ligands) to filter interactions. Set approved_only=true to cross-reference the GtoPdb ligand registry and retain only interactions whose ligand is explicitly approved; if that secondary lookup fails, the tool returns an error rather than silently returning unfiltered records. Returns binding affinity (Ki, Kd, IC50, EC50), action type, species, and assay information. No authentication required.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -218,6 +238,24 @@
             "null"
           ],
           "description": "Filter by species. Examples: 'Human', 'Mouse', 'Rat'"
+        },
+        "approved_only": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, retain only interactions whose ligandId is marked approved in the GtoPdb ligand registry. This is an exact client-side cross-reference; failure of the registry lookup returns an error, never unfiltered success."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum interactions to return on this page.",
+          "default": 50,
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based interaction offset. Continue with next_offset while has_more is true.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": []
@@ -246,9 +284,20 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "array",
-          "items": {
-            "type": "object"
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {"type": "array", "items": {"type": "object"}},
+            "count": {"type": "integer"},
+            "total_available": {"type": "integer"},
+            "unfiltered_total_available": {"type": "integer"},
+            "approved_only_applied": {"type": "boolean"},
+            "returned": {"type": "integer"},
+            "offset": {"type": "integer"},
+            "limit": {"type": "integer"},
+            "has_more": {"type": "boolean"},
+            "next_offset": {"type": ["integer", "null"]},
+            "result_set_complete": {"type": "boolean"}
           }
         },
         {
@@ -267,7 +316,7 @@
   },
   {
     "name": "GtoPdb_search_diseases",
-    "description": "Search the Guide to Pharmacology (GtoPdb / IUPHAR-BPS) for diseases by name, and retrieve their curated disease IDs, names, synonyms, and cross-references to external databases (OMIM, Orphanet, Disease Ontology). GtoPdb links diseases to the drug targets and approved/experimental ligands relevant to them. Example: 'epilepsy' returns disease entries such as 'Epilepsy and Intellectual Disability'. No authentication required.",
+    "description": "Search the Guide to Pharmacology (GtoPdb / IUPHAR-BPS) for diseases with recoverable local offset pagination over the complete upstream response. Returns curated disease IDs, names, synonyms, and external cross-references. Continue with next_offset while has_more is true. No authentication required.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -284,6 +333,19 @@
             "null"
           ],
           "description": "Name/keyword to search for. Alias for the \"name\" parameter."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 50,
+          "description": "Number of diseases on this page (1-1000; default 50)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based disease offset. Continue with next_offset while has_more is true."
         }
       },
       "required": [],
@@ -305,44 +367,22 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "diseaseId": {
-                "type": [
-                  "integer",
-                  "null"
-                ],
-                "description": "GtoPdb disease ID"
-              },
-              "name": {
-                "type": [
-                  "string",
-                  "null"
-                ],
-                "description": "Disease name"
-              },
-              "description": {
-                "type": [
-                  "string",
-                  "null"
-                ]
-              },
-              "synonyms": {
-                "type": "array",
-                "items": {
-                  "type": [
-                    "object",
-                    "string"
-                  ],
-                  "description": "GtoPdb returns synonyms as objects like {\"name\": \"...\"}; a plain string is also accepted."
-                }
-              },
-              "databaseLinks": {
-                "type": "array"
-              }
-            }
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {
+              "type": "array",
+              "description": "Current page of GtoPdb diseases",
+              "items": {"type": "object"}
+            },
+            "count": {"type": "integer"},
+            "total_available": {"type": "integer"},
+            "returned": {"type": "integer"},
+            "offset": {"type": "integer"},
+            "limit": {"type": "integer"},
+            "has_more": {"type": "boolean"},
+            "next_offset": {"type": ["integer", "null"]},
+            "result_set_complete": {"type": "boolean"}
           }
         },
         {

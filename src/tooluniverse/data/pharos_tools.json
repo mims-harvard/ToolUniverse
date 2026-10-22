@@ -55,7 +55,7 @@
     },
     {
         "name": "Pharos_search_targets",
-        "description": "Search drug targets in Pharos database by keyword. Supports filtering by Target Development Level (Tdark for understudied, Tchem for chemically tractable, Tclin for approved drugs). Returns TDL, protein family, and novelty scores.",
+        "description": "Search drug targets in Pharos by keyword with optional Target Development Level filtering. Pharos currently ignores targets top/skip and returns the same first 10 ranked records; this wrapper locally honors top up to 10, reports the exact match count and accessible_results, and warns when the upstream ranked window is truncated.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -72,8 +72,8 @@
                     "type": "integer",
                     "default": 10,
                     "minimum": 1,
-                    "maximum": 100,
-                    "description": "Maximum number of results (1-100)"
+                    "maximum": 10,
+                    "description": "Number of records to return from Pharos' fixed first-10 ranked window (1-10)."
                 }
             },
             "required": ["query"]
@@ -150,7 +150,7 @@
     },
     {
         "name": "Pharos_get_disease_targets",
-        "description": "Get drug targets associated with a disease from Pharos. Returns targets with TDL classification to identify druggable vs understudied proteins for the disease. Supports TDL filtering to find Tdark opportunities.",
+        "description": "Get Pharos targets associated with a disease, with a real optional TDL facet filter. Pharos currently ignores targets top/skip and returns the same first 10 ranked records; the wrapper reports the exact filtered count, accessible_results and truncation rather than offering false pagination.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -165,10 +165,10 @@
                 },
                 "top": {
                     "type": "integer",
-                    "default": 20,
+                    "default": 10,
                     "minimum": 1,
-                    "maximum": 100,
-                    "description": "Maximum number of results (1-100)"
+                    "maximum": 10,
+                    "description": "Number of records to return from Pharos' fixed first-10 ranked window (1-10)."
                 }
             },
             "required": ["disease"]
@@ -210,7 +210,7 @@
     },
     {
         "name": "Pharos_get_target_ligands",
-        "description": "Get per-target ligand and drug bioactivities from Pharos/TCRD for a drug target (by gene symbol or UniProt ID). Returns ligandCounts (total ligand and approved-drug counts) plus the top ligands with synonyms (ChEMBL etc.) and measured bioactivities: activity type (IC50/Ki/EC50/Kd), value (typically -log10 molar / pActivity), and mechanism of action. Use to assess chemical tractability and known chemistry of a target.",
+        "description": "Get per-target ligand and drug bioactivities from Pharos/TCRD by gene symbol or UniProt ID. Returns exact ligand/drug counts and a native skip/top page of ligands with synonyms and measured bioactivities; use metadata.next_skip to continue through all ligands.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -228,6 +228,12 @@
                     "minimum": 1,
                     "maximum": 50,
                     "description": "Maximum number of ligands to return (1-50)."
+                },
+                "skip": {
+                    "type": "integer",
+                    "default": 0,
+                    "minimum": 0,
+                    "description": "Zero-based offset into the target's ligand list."
                 }
             }
         },

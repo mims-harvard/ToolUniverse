@@ -1,7 +1,7 @@
 """
 ThreeDBeacons_get_structures
 
-Get detailed list of 3D structure models for a protein from the 3D Beacons Hub. Returns individua...
+Get detailed 3D structure models for a protein from the 3D Beacons Hub. Returns model identifier,...
 """
 
 from typing import Any, Optional, Callable
@@ -13,13 +13,14 @@ def ThreeDBeacons_get_structures(
     category: Optional[str] = None,
     provider: Optional[str] = None,
     max_results: Optional[int] = 20,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get detailed list of 3D structure models for a protein from the 3D Beacons Hub. Returns individua...
+    Get detailed 3D structure models for a protein from the 3D Beacons Hub. Returns model identifier,...
 
     Parameters
     ----------
@@ -30,7 +31,9 @@ def ThreeDBeacons_get_structures(
     provider : str
         Filter by data provider. Options: 'PDBe', 'AlphaFold DB', 'SWISS-MODEL', 'PED...
     max_results : int
-        Maximum structures to return (default 20, max 100).
+        Maximum structures to return on this page (default 20).
+    offset : int
+        Zero-based offset in the complete filtered structure list. Continue with data...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def ThreeDBeacons_get_structures(
             "category": category,
             "provider": provider,
             "max_results": max_results,
+            "offset": offset,
         }.items()
         if v is not None
     }

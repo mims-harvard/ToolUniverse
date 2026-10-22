@@ -2,7 +2,7 @@
   {
     "type": "ZoomaTool",
     "name": "ZOOMA_annotate_text",
-    "description": "Map a free-text term (e.g. a sample attribute, phenotype, organism name, anatomical part, or disease label) to ontology terms using EBI ZOOMA. Returns matched ontology terms as semantic-tag IRIs (OBO/EFO PURLs) with a confidence rating (HIGH/GOOD/MEDIUM/LOW), the curation source, the evidence type, and OLS lookup links. Use this when you have arbitrary text and need the most likely standardized ontology term(s) \u2014 for instance normalizing experiment metadata or resolving a disease/tissue name to an ontology ID. Optionally restrict matches to one or more ontologies (e.g. 'efo', 'mondo', 'uberon'), give a property type hint, set a minimum confidence, and cap the number of results.",
+    "description": "Map free text to ontology terms with EBI ZOOMA and exact local pagination over the complete upstream annotation array. Returns semantic-tag IRIs/CURIEs, confidence, provenance and OLS links. metadata.total_matches is the exact count after min_confidence filtering; continue with metadata.next_offset while has_more is true. Optionally restrict ontology sources or provide a property-type hint.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -18,25 +18,50 @@
           "description": "Optional property-type hint that narrows the annotation context, e.g. 'disease', 'organism part', 'cell type', 'organism'. Leave unset to let ZOOMA infer it."
         },
         "ontologies": {
-          "type": [
-            "string",
-            "null"
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1
+            },
+            {
+              "type": "null"
+            }
           ],
-          "description": "Optional comma-separated ontology source filter restricting matches to these ontologies, e.g. 'efo' or 'efo,uberon' or 'mondo'. Leave unset to search all sources."
+          "description": "Ontology source filter as a comma-separated string or string array, e.g. 'efo,uberon' or ['efo','uberon']."
         },
         "min_confidence": {
           "type": [
             "string",
             "null"
           ],
-          "description": "Optional minimum confidence to keep, one of 'LOW', 'MEDIUM', 'GOOD', 'HIGH'. Annotations below this level are dropped. Leave unset to keep all."
+          "description": "Optional minimum confidence to keep, one of LOW, MEDIUM, GOOD, HIGH. Invalid values are rejected rather than silently disabling the filter.",
+          "enum": ["LOW", "MEDIUM", "GOOD", "HIGH", null]
         },
         "max_results": {
           "type": [
             "integer",
             "null"
           ],
-          "description": "Maximum number of annotations to return (default 10). ZOOMA can return 100+ fuzzy matches for common terms."
+          "description": "Legacy alias for limit. Maximum annotations on this page; defaults to 10.",
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "limit": {
+          "type": ["integer", "null"],
+          "description": "Maximum annotations on this local page, 1-1000. Takes precedence over max_results and defaults to 10.",
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": ["integer", "null"],
+          "description": "Zero-based offset into the exact match set after min_confidence filtering. Continue with metadata.next_offset.",
+          "minimum": 0
         }
       },
       "required": [
@@ -141,7 +166,8 @@
       {
         "property_value": "diabetes",
         "ontologies": "efo",
-        "max_results": 5
+        "limit": 5,
+        "offset": 0
       },
       {
         "property_value": "Homo sapiens",

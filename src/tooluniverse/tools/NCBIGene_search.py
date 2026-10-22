@@ -1,7 +1,7 @@
 """
 NCBIGene_search
 
-Search the NCBI Gene database using the E-utilities API. Find gene IDs (Entrez Gene IDs) by gene ...
+Search NCBI Gene using ESearch with explicit offset pagination and normalized exact metadata. Con...
 """
 
 from typing import Any, Optional, Callable
@@ -10,21 +10,24 @@ from ._shared_client import get_shared_client
 
 def NCBIGene_search(
     term: str,
-    retmax: Optional[int] = None,
+    retmax: Optional[int] = 10,
+    retstart: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search the NCBI Gene database using the E-utilities API. Find gene IDs (Entrez Gene IDs) by gene ...
+    Search NCBI Gene using ESearch with explicit offset pagination and normalized exact metadata. Con...
 
     Parameters
     ----------
     term : str
         Search query. Use gene symbol with organism filter for best results. Format: ...
     retmax : int
-        Maximum number of results to return (default 10, max 100).
+        Page size (1-100).
+    retstart : int
+        Zero-based result offset. Use esearchresult.retstart plus the number of retur...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -39,7 +42,11 @@ def NCBIGene_search(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"term": term, "retmax": retmax}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {"term": term, "retmax": retmax, "retstart": retstart}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "NCBIGene_search",

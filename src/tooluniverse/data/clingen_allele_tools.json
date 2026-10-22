@@ -1,7 +1,7 @@
 [
   {
     "name": "ClinGenAllele_lookup_hgvs",
-    "description": "Look up a genetic variant by HGVS expression in the ClinGen Allele Registry to get its canonical allele identifier (CA ID) and cross-references to ClinVar, dbSNP, COSMIC, gnomAD, and other databases. Accepts genomic (NC_*), coding (NM_*), or protein (NP_*) HGVS expressions.",
+    "description": "Look up a genetic variant by HGVS expression in the ClinGen Allele Registry. Returns the CA ID plus complete external database records, genomic alleles, transcript alleles, HGVS forms, coordinates, reference sequences, protein effects, and explicit counts; no former 5/10-record cutoffs. Accepts genomic, coding, or protein HGVS.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -39,6 +39,8 @@
             "items": {"type": "string"}
           }
         },
+        "external_record_details": {"type": "object"},
+        "external_record_count": {"type": "integer"},
         "genomic_alleles": {
           "type": ["array", "null"],
           "items": {
@@ -49,10 +51,13 @@
               "end": {"type": ["integer", "null"]},
               "allele": {"type": ["string", "null"]},
               "reference_allele": {"type": ["string", "null"]},
-              "reference_genome": {"type": ["string", "null"]}
+              "reference_genome": {"type": ["string", "null"]},
+              "hgvs": {"type": "array", "items": {"type": "string"}},
+              "reference_sequence": {"type": ["string", "null"]}
             }
           }
         },
+        "genomic_allele_count": {"type": "integer"},
         "transcript_alleles": {
           "type": ["array", "null"],
           "items": {
@@ -60,16 +65,22 @@
             "properties": {
               "hgvs": {"type": ["array", "null"], "items": {"type": "string"}},
               "gene_symbol": {"type": ["string", "null"]},
-              "protein_effect": {"type": ["string", "null"]}
+              "protein_effect": {"type": ["string", "null"]},
+              "protein_effect_details": {"type": ["object", "null"]},
+              "coordinates": {"type": "array"},
+              "gene": {"type": ["string", "null"]},
+              "gene_ncbi_id": {"type": ["integer", "null"]},
+              "reference_sequence": {"type": ["string", "null"]}
             }
           }
-        }
+        },
+        "transcript_allele_count": {"type": "integer"}
       }
     }
   },
   {
     "name": "ClinGenAllele_get_allele",
-    "description": "Get detailed information for a canonical allele by its ClinGen Allele Registry CA ID. Returns cross-references to ClinVar, dbSNP, COSMIC, gnomAD, genomic coordinates, and transcript-level HGVS expressions.",
+    "description": "Get complete information for a ClinGen Allele Registry CA ID, including all external records, genomic alleles, transcript alleles, HGVS forms, coordinates, reference sequences, protein effects, and explicit counts; no former 5/10-record cutoffs.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -108,6 +119,8 @@
             "items": {"type": "string"}
           }
         },
+        "external_record_details": {"type": "object"},
+        "external_record_count": {"type": "integer"},
         "genomic_alleles": {
           "type": ["array", "null"],
           "items": {
@@ -118,10 +131,13 @@
               "end": {"type": ["integer", "null"]},
               "allele": {"type": ["string", "null"]},
               "reference_allele": {"type": ["string", "null"]},
-              "reference_genome": {"type": ["string", "null"]}
+              "reference_genome": {"type": ["string", "null"]},
+              "hgvs": {"type": "array", "items": {"type": "string"}},
+              "reference_sequence": {"type": ["string", "null"]}
             }
           }
         },
+        "genomic_allele_count": {"type": "integer"},
         "transcript_alleles": {
           "type": ["array", "null"],
           "items": {
@@ -129,10 +145,16 @@
             "properties": {
               "hgvs": {"type": ["array", "null"], "items": {"type": "string"}},
               "gene_symbol": {"type": ["string", "null"]},
-              "protein_effect": {"type": ["string", "null"]}
+              "protein_effect": {"type": ["string", "null"]},
+              "protein_effect_details": {"type": ["object", "null"]},
+              "coordinates": {"type": "array"},
+              "gene": {"type": ["string", "null"]},
+              "gene_ncbi_id": {"type": ["integer", "null"]},
+              "reference_sequence": {"type": ["string", "null"]}
             }
           }
-        }
+        },
+        "transcript_allele_count": {"type": "integer"}
       }
     }
   }

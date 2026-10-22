@@ -69,10 +69,8 @@ class MODOMICSTool(BaseTool):
             }
         return handler(arguments)
 
-    def _list_modifications(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """List all RNA modifications in MODOMICS."""
-        limit = arguments.get("limit", 50)
-
+    def _fetch_catalog(self):
+        """Fetch and validate the complete catalog returned by the public API."""
         url = f"{MODOMICS_BASE}/modifications"
         resp = requests.get(url, timeout=self.timeout)
         if resp.status_code != 200:
@@ -80,121 +78,177 @@ class MODOMICSTool(BaseTool):
                 "status": "error",
                 "error": f"API returned {resp.status_code}: {resp.text[:200]}",
             }
-
-        data = resp.json()
-        # MODOMICS returns a dict keyed by ID
-        modifications = []
-        for mod_id, mod_data in list(data.items())[:limit]:
-            modifications.append(
-                {
-                    "id": mod_data.get("id"),
-                    "name": mod_data.get("name"),
-                    "short_name": mod_data.get("short_name"),
-                    "formula": mod_data.get("formula"),
-                    "mass_avg": mod_data.get("mass_avg"),
-                    "mass_monoiso": mod_data.get("mass_monoiso"),
-                    "reference_moiety": mod_data.get("reference_moiety"),
-                    "smiles": mod_data.get("smile"),
+        try:
+            data = resp.json()
+        except ValueError:
+            return {"status": "error", "error": "MODOMICS returned invalid JSON"}
+        if not isinstance(data, dict):
+            return {
+                "status": "error",
+                "error": "MODOMICS catalog response was not an object keyed by ID",
+            }
+        catalog = []
+        for key, record in data.items():
+            if (
+                not isinstance(key, str)
+                or not key.isdigit()
+                or not isinstance(record, dict)
+            ):
+                return {
+                    "status": "error",
+                    "error": "MODOMICS catalog contained a malformed keyed record",
                 }
-            )
+            key_id = int(key)
+            if record.get("id") != key_id:
+                return {
+                    "status": "error",
+                    "error": "MODOMICS catalog key conflicts with embedded modification ID",
+                    "catalog_key": key,
+                    "embedded_id": record.get("id"),
+                }
+            catalog.append((key_id, record))
+        catalog.sort(key=lambda item: item[0])
+        return catalog
 
+    @staticmethod
+    def _controls(arguments: Dict[str, Any], default_limit: int):
+        limit = arguments.get("limit", default_limit)
+        offset = arguments.get("offset", 0)
+        if (
+            isinstance(limit, bool)
+            or not isinstance(limit, int)
+            or not 1 <= limit <= 500
+        ):
+            return {
+                "status": "error",
+                "error": "limit must be an integer from 1 to 500",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+            }
+        return limit, offset
+
+    @staticmethod
+    def _record(record: Dict[str, Any]) -> Dict[str, Any]:
+        return {
+            "id": record.get("id"),
+            "name": record.get("name"),
+            "short_name": record.get("short_name"),
+            "new_abbrev": record.get("new_abbrev"),
+            "formula": record.get("formula"),
+            "mass_avg": record.get("mass_avg"),
+            "mass_monoiso": record.get("mass_monoiso"),
+            "mass_prot": record.get("mass_prot"),
+            "reference_moiety": record.get("reference_moiety"),
+            "smiles": record.get("smile"),
+            "product_ions": record.get("product_ions"),
+            "lc_elution_comment": record.get("lc_elution_comment"),
+            "lc_elution_time": record.get("lc_elution_time"),
+        }
+
+    def _list_modifications(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """List all RNA modifications in MODOMICS."""
+        controls = self._controls(arguments, 50)
+        if isinstance(controls, dict):
+            return controls
+        limit, offset = controls
+        catalog = self._fetch_catalog()
+        if isinstance(catalog, dict):
+            return catalog
+        modifications = [
+            self._record(record) for _, record in catalog[offset : offset + limit]
+        ]
+
+        next_offset = offset + len(modifications)
+        has_more = next_offset < len(catalog)
         return {
             "status": "success",
             "data": {
                 "modifications": modifications,
-                "total": len(data),
+                "total": len(catalog),
                 "returned": len(modifications),
+                "offset": offset,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
+                "result_set_complete": not has_more,
             },
+            "metadata": {"source": "MODOMICS complete modifications catalog"},
         }
 
     def _get_modification(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get details of a specific RNA modification by ID."""
         mod_id = arguments.get("modification_id")
-        if not mod_id:
+        if isinstance(mod_id, bool) or not isinstance(mod_id, int) or mod_id < 1:
             return {
                 "status": "error",
-                "error": "modification_id parameter is required",
+                "error": "modification_id must be a positive integer",
             }
-
-        url = f"{MODOMICS_BASE}/modifications/{mod_id}"
-        resp = requests.get(url, timeout=self.timeout)
-        if resp.status_code != 200:
-            return {
-                "status": "error",
-                "error": f"API returned {resp.status_code}: {resp.text[:200]}",
-            }
-
-        data = resp.json()
-        # Response is a dict keyed by ID, even for single item
-        if not data:
+        catalog = self._fetch_catalog()
+        if isinstance(catalog, dict):
+            return catalog
+        matches = [record for key, record in catalog if key == mod_id]
+        if not matches:
             return {
                 "status": "error",
                 "error": f"No modification found with ID {mod_id}",
+                "requested_modification_id": mod_id,
+                "catalog_total": len(catalog),
             }
-
-        mod_data = list(data.values())[0]
         return {
             "status": "success",
-            "data": {
-                "id": mod_data.get("id"),
-                "name": mod_data.get("name"),
-                "short_name": mod_data.get("short_name"),
-                "new_abbrev": mod_data.get("new_abbrev"),
-                "formula": mod_data.get("formula"),
-                "mass_avg": mod_data.get("mass_avg"),
-                "mass_monoiso": mod_data.get("mass_monoiso"),
-                "mass_prot": mod_data.get("mass_prot"),
-                "reference_moiety": mod_data.get("reference_moiety"),
-                "smiles": mod_data.get("smile"),
-                "product_ions": mod_data.get("product_ions"),
-                "lc_elution_comment": mod_data.get("lc_elution_comment"),
-                "lc_elution_time": mod_data.get("lc_elution_time"),
+            "data": self._record(matches[0]),
+            "metadata": {
+                "source": "MODOMICS complete modifications catalog",
+                "lookup_strategy": "exact_catalog_key",
+                "requested_modification_id": mod_id,
+                "returned_modification_id": matches[0]["id"],
+                "catalog_total": len(catalog),
+                "requested_scope_complete": True,
             },
         }
 
     def _search_modifications(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search RNA modifications by name or short name."""
         query = arguments.get("query", "")
-        if not query:
-            return {"status": "error", "error": "query parameter is required"}
-
-        limit = arguments.get("limit", 20)
-
-        url = f"{MODOMICS_BASE}/modifications"
-        resp = requests.get(url, timeout=self.timeout)
-        if resp.status_code != 200:
-            return {
-                "status": "error",
-                "error": f"API returned {resp.status_code}: {resp.text[:200]}",
-            }
-
-        data = resp.json()
-        query_lower = query.lower()
+        if not isinstance(query, str) or not query.strip():
+            return {"status": "error", "error": "query must be a non-empty string"}
+        controls = self._controls(arguments, 20)
+        if isinstance(controls, dict):
+            return controls
+        limit, offset = controls
+        catalog = self._fetch_catalog()
+        if isinstance(catalog, dict):
+            return catalog
+        query_lower = query.strip().casefold()
 
         # Client-side search across name, short_name, formula
         matches = []
-        for mod_data in data.values():
-            name = (mod_data.get("name") or "").lower()
-            short = (mod_data.get("short_name") or "").lower()
-            formula = (mod_data.get("formula") or "").lower()
+        for _, mod_data in catalog:
+            name = (mod_data.get("name") or "").casefold()
+            short = (mod_data.get("short_name") or "").casefold()
+            formula = (mod_data.get("formula") or "").casefold()
             if query_lower in name or query_lower in short or query_lower in formula:
-                matches.append(
-                    {
-                        "id": mod_data.get("id"),
-                        "name": mod_data.get("name"),
-                        "short_name": mod_data.get("short_name"),
-                        "formula": mod_data.get("formula"),
-                        "mass_avg": mod_data.get("mass_avg"),
-                        "reference_moiety": mod_data.get("reference_moiety"),
-                        "smiles": mod_data.get("smile"),
-                    }
-                )
+                matches.append(self._record(mod_data))
 
+        page = matches[offset : offset + limit]
+        next_offset = offset + len(page)
+        has_more = next_offset < len(matches)
         return {
             "status": "success",
             "data": {
-                "results": matches[:limit],
+                "results": page,
                 "total_matches": len(matches),
-                "returned": min(len(matches), limit),
+                "returned": len(page),
+                "offset": offset,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
+                "result_set_complete": not has_more,
+            },
+            "metadata": {
+                "source": "MODOMICS complete modifications catalog",
+                "catalog_total": len(catalog),
+                "search_fields": ["name", "short_name", "formula"],
             },
         }

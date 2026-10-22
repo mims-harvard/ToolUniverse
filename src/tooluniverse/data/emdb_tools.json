@@ -125,7 +125,7 @@
   {
     "type": "EMDBRESTTool",
     "name": "EMDB_search_structures",
-    "description": "Search the Electron Microscopy Data Bank (EMDB) for cryo-EM structures using keywords. Returns a list of matching EMDB entries with basic metadata including entry IDs, titles, organisms, methods, resolutions, and deposition dates. Use this to discover relevant structures by protein name, organism, biological process, or disease. Essential for finding structures to analyze or download.",
+    "description": "Search EMDB through the official EBI Search emdb domain with exact hitCount and start/rows pagination. The former /emdb/api/search path currently returns HTTP 200 empty arrays for valid common queries. Continue with metadata.next_start; use EMDB_get_structure on returned IDs for full archive metadata.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -136,7 +136,15 @@
         "rows": {
           "type": "integer",
           "default": 10,
-          "description": "Maximum number of search results to return (default: 10, max: 1000)."
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Search results per page (default 10, max 100)."
+        },
+        "start": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based EBI Search offset. Continue with metadata.next_start."
         }
       },
       "required": [
@@ -144,30 +152,42 @@
       ]
     },
     "fields": {
-      "endpoint": "https://www.ebi.ac.uk/emdb/api/search/{query}",
+      "endpoint": "https://www.ebi.ac.uk/ebisearch/ws/rest/emdb",
+      "params": {
+        "format": "json",
+        "fields": "name,description,resolution,organism"
+      },
+      "param_mapping": {
+        "rows": "size"
+      },
+      "pagination": "ebi_search_start",
       "return_format": "JSON"
     },
     "return_schema": {
-      "type": "array",
-      "description": "Array of EMDB entry objects from search results.",
-      "items": {
-        "type": "object",
-        "additionalProperties": true,
-        "properties": {
-          "_id": {"type": "string"},
-          "emdb_id": {"type": "string"},
-          "admin": {"type": "object", "additionalProperties": true},
-          "map": {"type": "object", "additionalProperties": true},
-          "sample": {"type": "object", "additionalProperties": true},
-          "crossreferences": {"type": "object", "additionalProperties": true},
-          "interpretation": {"type": "object", "additionalProperties": true}
-        }
+      "type": "object",
+      "description": "EBI Search envelope with exact hitCount and an EMDB entry page.",
+      "properties": {
+        "hitCount": {"type": "integer"},
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "id": {"type": "string"},
+              "source": {"type": "string"},
+              "fields": {"type": "object", "additionalProperties": true}
+            }
+          }
+        },
+        "facets": {"type": "array"}
       }
     },
     "test_examples": [
       {
         "query": "ribosome",
-        "rows": 10
+        "rows": 10,
+        "start": 0
       },
       {
         "query": "spike protein",

@@ -1,7 +1,7 @@
 """
 EPA_get_tri_facility_chemical_releases
 
-Get the per-chemical, per-year EPA Toxics Release Inventory (TRI) reporting forms submitted by ON...
+Get per-chemical, per-year EPA TRI reporting forms for one facility. Results use native Envirofac...
 """
 
 from typing import Any, Optional, Callable
@@ -11,20 +11,23 @@ from ._shared_client import get_shared_client
 def EPA_get_tri_facility_chemical_releases(
     tri_facility_id: str,
     limit: Optional[int] = None,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get the per-chemical, per-year EPA Toxics Release Inventory (TRI) reporting forms submitted by ON...
+    Get per-chemical, per-year EPA TRI reporting forms for one facility. Results use native Envirofac...
 
     Parameters
     ----------
     tri_facility_id : str
         EPA TRI facility identifier, e.g. '15902CCKRN75BRI'. Obtain from EPA_search_t...
     limit : int
-        Max reporting forms to return (default 10, max 100).
+        Max reporting forms per page (default 10, max 100).
+    offset : int
+        Zero-based row offset; continue with metadata.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +44,11 @@ def EPA_get_tri_facility_chemical_releases(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"tri_facility_id": tri_facility_id, "limit": limit}.items()
+        for k, v in {
+            "tri_facility_id": tri_facility_id,
+            "limit": limit,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

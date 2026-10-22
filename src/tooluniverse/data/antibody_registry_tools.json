@@ -2,7 +2,7 @@
   {
     "type": "AntibodyRegistryTool",
     "name": "AntibodyRegistry_search",
-    "description": "Search the Antibody Registry (antibodyregistry.org, a SciCrunch/RRID resource of 3M+ research antibodies) by target, name, or vendor keyword. Returns matching antibodies each with its persistent RRID (e.g. AB_2298772), target (and target UniProt/Entrez id), clonality, clone id, host/source organism, conjugate, applications, vendor, catalog number, and defining citation. Use it to find a validated antibody for a protein target or to obtain the RRID a journal requires for reproducibility. For resolving a known RRID, use AntibodyRegistry_get_by_rrid instead.",
+    "description": "Search the Antibody Registry (antibodyregistry.org, a SciCrunch/RRID resource of 3M+ research antibodies) by target, name, or vendor keyword. Returns persistent RRIDs and scientifically useful antibody metadata. Results use one-based pagination; metadata reports the exact total, total_pages, has_more, and next_page so all matches remain reachable. For resolving a known RRID, use AntibodyRegistry_get_by_rrid instead.",
     "fields": {"operation": "search"},
     "parameter": {
       "type": "object",
@@ -13,14 +13,14 @@
         },
         "size": {
           "type": "integer",
-          "description": "Number of results to return (1-100, default 10).",
+          "description": "Number of results per page (1-500, default 10). The official API rejects values above 500; invalid values return an error rather than being silently clamped.",
           "minimum": 1,
-          "maximum": 100,
+          "maximum": 500,
           "default": 10
         },
         "page": {
           "type": "integer",
-          "description": "Result page, starting at 1 (default 1).",
+          "description": "One-based result page (default 1). Continue with metadata.next_page while metadata.has_more is true.",
           "minimum": 1,
           "default": 1
         }

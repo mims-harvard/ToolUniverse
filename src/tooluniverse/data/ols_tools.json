@@ -2,7 +2,7 @@
   {
     "type": "OLSTool",
     "name": "ols_search_terms",
-    "description": "Search for terms in OLS (Ontology Lookup Service)",
+    "description": "Search terms in the EBI Ontology Lookup Service with explicit Solr offset pagination. When has_more is true pass next_start as start with the same filters.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -46,6 +46,12 @@
             "null"
           ],
           "description": "Alias for rows. Maximum number of results to return (default: 10, max: 100)."
+        },
+        "start": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based OLS search offset. Continue with next_start while has_more is true."
         }
       },
       "required": [
@@ -91,76 +97,26 @@
     "return_schema": {
       "type": "object",
       "properties": {
-        "response": {
-          "type": "object",
-          "properties": {
-            "docs": {
-              "type": "array"
-            },
-            "numFound": {
-              "type": "integer"
-            },
-            "start": {
-              "type": "integer"
-            }
-          }
+        "terms": {
+          "type": "array"
         },
-        "responseHeader": {
-          "type": "object",
-          "properties": {
-            "QTime": {
-              "type": "integer"
-            },
-            "status": {
-              "type": "integer"
-            }
-          }
+        "total_items": {
+          "type": "integer"
         },
-        "facet_counts": {
-          "type": "object",
-          "properties": {
-            "facet_fields": {
-              "type": "object",
-              "properties": {
-                "ontologyPreferredPrefix": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "isDefiningOntology": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "ontologyId": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "ontologyIri": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "isObsolete": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                },
-                "type": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
+        "showing": {
+          "type": "integer"
+        },
+        "start": {
+          "type": "integer"
+        },
+        "has_more": {
+          "type": "boolean"
+        },
+        "next_start": {
+          "type": [
+            "integer",
+            "null"
+          ]
         },
         "query": {
           "type": "string"
@@ -273,7 +229,7 @@
   {
     "type": "OLSTool",
     "name": "ols_search_ontologies",
-    "description": "Search for ontologies in OLS",
+    "description": "Search for ontologies in OLS with zero-based page pagination. Continue with pagination.next_page while pagination.has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -342,6 +298,15 @@
           "items": {
             "type": "object"
           }
+        },
+        "pagination": {
+          "type": "object"
+        },
+        "search": {
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "error": {
           "type": "string"
@@ -473,6 +438,12 @@
           "type": "integer",
           "description": "Number of results to return (default: 20)",
           "default": 20
+        },
+        "page": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based result page. Continue with next_page while pagination.has_more is true."
         }
       },
       "required": []
@@ -508,20 +479,17 @@
     "return_schema": {
       "type": "object",
       "properties": {
-        "page": {
-          "type": "integer"
-        },
-        "numElements": {
-          "type": "integer"
-        },
-        "totalPages": {
-          "type": "integer"
-        },
-        "totalElements": {
-          "type": "integer"
-        },
-        "elements": {
+        "terms": {
           "type": "array"
+        },
+        "total_items": {
+          "type": "integer"
+        },
+        "showing": {
+          "type": "integer"
+        },
+        "pagination": {
+          "type": "object"
         },
         "term_iri": {
           "type": "string"
@@ -577,6 +545,12 @@
           "type": "integer",
           "description": "Number of results to return (default: 20)",
           "default": 20
+        },
+        "page": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based result page. Continue with next_page while pagination.has_more is true."
         }
       },
       "required": []
@@ -611,20 +585,17 @@
     "return_schema": {
       "type": "object",
       "properties": {
-        "page": {
-          "type": "integer"
-        },
-        "numElements": {
-          "type": "integer"
-        },
-        "totalPages": {
-          "type": "integer"
-        },
-        "totalElements": {
-          "type": "integer"
-        },
-        "elements": {
+        "terms": {
           "type": "array"
+        },
+        "total_items": {
+          "type": "integer"
+        },
+        "showing": {
+          "type": "integer"
+        },
+        "pagination": {
+          "type": "object"
         },
         "term_iri": {
           "type": "string"

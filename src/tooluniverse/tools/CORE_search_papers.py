@@ -1,7 +1,7 @@
 """
 CORE_search_papers
 
-Search for open access academic papers using CORE API. CORE aggregates OA repository and journal ...
+Search open-access papers in CORE with recoverable offset pagination. Start with offset=0 and con...
 """
 
 from typing import Any, Optional, Callable
@@ -15,6 +15,7 @@ def CORE_search_papers(
     limit: Optional[int] = 10,
     page_size: Optional[int] = None,
     max_results: Optional[int] = None,
+    offset: Optional[int] = 0,
     year_from: Optional[int] = None,
     year_to: Optional[int] = None,
     language: Optional[str] = None,
@@ -24,7 +25,7 @@ def CORE_search_papers(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Search for open access academic papers using CORE API. CORE aggregates OA repository and journal ...
+    Search open-access papers in CORE with recoverable offset pagination. Start with offset=0 and con...
 
     Parameters
     ----------
@@ -40,6 +41,8 @@ def CORE_search_papers(
         Alias for `limit`.
     max_results : int
         Alias for `limit`.
+    offset : int
+        Zero-based CORE result offset. Continue with metadata.next_offset.
     year_from : int
         Start year for publication date filter (e.g., 2020). Optional parameter to li...
     year_to : int
@@ -69,6 +72,7 @@ def CORE_search_papers(
             "limit": limit,
             "page_size": page_size,
             "max_results": max_results,
+            "offset": offset,
             "year_from": year_from,
             "year_to": year_to,
             "language": language,

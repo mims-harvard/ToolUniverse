@@ -39,7 +39,7 @@
   },
   {
     "name": "Monarch_get_associations",
-    "description": "Query disease-gene-phenotype associations in the Monarch Initiative knowledge graph. Find gene-phenotype, disease-phenotype, gene-disease, or gene-pathway associations. Provide a subject CURIE (entity of interest) or object CURIE, with optional category filter. Uses the /association/all endpoint. Example: subject=HGNC:11998 returns all TP53 associations including phenotypes and diseases.",
+    "description": "Query disease-gene-phenotype associations in Monarch with exact offset pagination. Provide a subject or object CURIE; metadata reports total_results, has_more and next_offset.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -57,10 +57,20 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum associations to return (default: 20, max: 200)."
+          "minimum": 1,
+          "maximum": 200,
+          "default": 20,
+          "description": "Associations per page (1-200)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset. Continue with metadata.next_offset."
         }
       },
-      "required": []
+      "required": [],
+      "additionalProperties": false
     },
     "fields": {
       "endpoint": "associations"
@@ -90,7 +100,7 @@
   },
   {
     "name": "Monarch_search",
-    "description": "Search the Monarch Initiative knowledge graph for biomedical entities by name or keyword. Returns genes, diseases, phenotypes, and other entities matching the query, with CURIE identifiers and categories. Filter by category (biolink:Gene, biolink:Disease, biolink:PhenotypicFeature) to narrow results. Use returned CURIEs with Monarch_get_entity and Monarch_get_associations for detailed lookups.",
+    "description": "Search the Monarch knowledge graph for biomedical entities with exact offset pagination. Metadata reports total_results, has_more and next_offset.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -104,10 +114,20 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum results (default: 10, max: 50)."
+          "minimum": 1,
+          "maximum": 50,
+          "default": 10,
+          "description": "Results per page (1-50)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset. Continue with metadata.next_offset."
         }
       },
-      "required": ["query"]
+      "required": ["query"],
+      "additionalProperties": false
     },
     "fields": {
       "endpoint": "search"

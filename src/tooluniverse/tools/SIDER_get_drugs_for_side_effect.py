@@ -1,7 +1,7 @@
 """
 SIDER_get_drugs_for_side_effect
 
-Find all drugs associated with a specific side effect in SIDER. Returns drugs known to cause the ...
+Find unique drugs associated with one SIDER side effect using exact, recoverable local pagination...
 """
 
 from typing import Any, Optional, Callable
@@ -9,28 +9,31 @@ from ._shared_client import get_shared_client
 
 
 def SIDER_get_drugs_for_side_effect(
-    operation: str,
-    meddra_code: Optional[str | Any] = None,
-    side_effect_name: Optional[str | Any] = None,
+    operation: Optional[str] = "get_drugs_for_side_effect",
+    meddra_code: Optional[str] = None,
+    side_effect_name: Optional[str] = None,
     limit: Optional[int] = 50,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Find all drugs associated with a specific side effect in SIDER. Returns drugs known to cause the ...
+    Find unique drugs associated with one SIDER side effect using exact, recoverable local pagination...
 
     Parameters
     ----------
     operation : str
         Operation type
-    meddra_code : str | Any
+    meddra_code : str
         MedDRA concept code / UMLS CUI (e.g., 'C0018681' for headache, 'C0027497' for...
-    side_effect_name : str | Any
+    side_effect_name : str
         Side effect name to search (e.g., 'headache', 'nausea', 'diarrhea'). Will sea...
     limit : int
-        Maximum number of drugs to return (default: 50)
+        Maximum drugs on this page (default: 50)
+    offset : int
+        Zero-based offset into the exact drug association set; continue with metadata...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def SIDER_get_drugs_for_side_effect(
             "meddra_code": meddra_code,
             "side_effect_name": side_effect_name,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

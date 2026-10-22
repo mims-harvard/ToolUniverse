@@ -1,7 +1,7 @@
 """
 CellMarker_search_by_cell_type
 
-Search the CellMarker 2.0 database for marker genes of a specific cell type. Returns curated list...
+Search the CellMarker 2.0 database for marker genes of a cell-type phrase. Matching respects phra...
 """
 
 from typing import Any, Optional, Callable
@@ -9,17 +9,19 @@ from ._shared_client import get_shared_client
 
 
 def CellMarker_search_by_cell_type(
-    operation: str,
     cell_name: str,
+    operation: Optional[str] = "search_by_cell_type",
     species: Optional[str] = None,
     tissue_type: Optional[str] = None,
+    limit: Optional[int] = 500,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search the CellMarker 2.0 database for marker genes of a specific cell type. Returns curated list...
+    Search the CellMarker 2.0 database for marker genes of a cell-type phrase. Matching respects phra...
 
     Parameters
     ----------
@@ -31,6 +33,10 @@ def CellMarker_search_by_cell_type(
         Species filter. If omitted, searches both species.
     tissue_type : str
         Filter results by tissue type (e.g., 'Blood', 'Lung', 'Brain'). Case-insensit...
+    limit : int
+        Maximum number of marker summaries and curated records to return from the sha...
+    offset : int
+        Zero-based offset applied to both marker_genes and records. Use data.next_off...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +58,8 @@ def CellMarker_search_by_cell_type(
             "cell_name": cell_name,
             "species": species,
             "tissue_type": tissue_type,
+            "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

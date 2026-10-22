@@ -1,6 +1,6 @@
 import json
 from typing import Any, Dict
-from urllib.parse import urlencode
+from urllib.parse import quote, urlencode
 from urllib.request import Request, urlopen
 
 from tooluniverse.tool_registry import register_tool
@@ -56,60 +56,65 @@ class OBISTaxaTool:
         timeout = int(self.tool_config.get("settings", {}).get("timeout", 30))
 
         scientificname = arguments.get("scientificname")
-        size = int(arguments.get("size", 10))
+        size = arguments.get("size", 10)
+        offset = arguments.get("offset", 0)
+        if not isinstance(scientificname, str) or not scientificname.strip():
+            return {"status": "error", "error": "scientificname must be a non-empty string"}
+        if isinstance(size, bool) or not isinstance(size, int) or not 1 <= size <= 100:
+            return {
+                "status": "error",
+                "error": "size must be an integer between 1 and 100",
+                "parameter": "size",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+                "parameter": "offset",
+            }
 
-        # Note: OBIS v3 API does not have /taxon endpoint
-        # Use occurrence search with scientificname filter instead
-        # This returns occurrences which can be used to identify taxa
-        query = {
-            "scientificname": scientificname,
-            "size": size,
-        }
-        url = f"{base}/occurrence?{urlencode(query)}"
+        query = {"scientificname": scientificname, "size": size, "offset": offset}
+        url = f"{base}/taxon/{quote(scientificname.strip(), safe='')}"
         try:
             data = _http_get(
                 url, headers={"Accept": "application/json"}, timeout=timeout
             )
-            # Extract unique taxa from occurrences
-            if isinstance(data, dict) and "results" in data:
-                results = data.get("results", [])
-                # Extract unique scientific names and taxonomic info
-                taxa_list = []
-                seen_names = set()
-                for occ in results:
-                    sci_name = occ.get("scientificName")
-                    if sci_name and sci_name not in seen_names:
-                        seen_names.add(sci_name)
-                        taxa_list.append(
-                            {
-                                "scientificName": sci_name,
-                                "aphiaID": occ.get("aphiaID"),
-                                "rank": occ.get("taxonRank"),
-                                "kingdom": occ.get("kingdom"),
-                                "phylum": occ.get("phylum"),
-                                "class": occ.get("class_"),
-                                "order": occ.get("order"),
-                                "family": occ.get("family"),
-                                "genus": occ.get("genus"),
-                            }
-                        )
-                        if len(taxa_list) >= size:
-                            break
-                # Return in expected schema format
-                wrapped_data = {
-                    "results": taxa_list,
-                    "total": len(taxa_list),
-                }
-            else:
-                wrapped_data = {"results": [], "total": 0}
+            upstream = data.get("results", []) if isinstance(data, dict) else []
+            if not isinstance(upstream, list):
+                upstream = []
+            total = data.get("total", len(upstream)) if isinstance(data, dict) else len(upstream)
+            total_is_exact = isinstance(total, int) and not isinstance(total, bool)
+            page_records = []
+            for record in upstream[offset : offset + size]:
+                normalized = dict(record)
+                normalized.setdefault("aphiaID", record.get("taxonID"))
+                normalized.setdefault("rank", record.get("taxonRank"))
+                page_records.append(normalized)
+            returned = len(page_records)
+            has_more = bool(total_is_exact and offset + returned < total)
+            wrapped_data = {"results": page_records, "total": total}
 
             return {
                 "status": "success",
                 "source": "OBIS",
-                "endpoint": "occurrence",  # Note: taxon endpoint not available, using occurrence
+                "endpoint": "taxon/{scientificname}",
                 "query": query,
                 "data": wrapped_data,
                 "success": True,
+                "metadata": {
+                    "returned": returned,
+                    "total_results": total if total_is_exact else None,
+                    "total_results_is_exact": total_is_exact,
+                    "offset": offset,
+                    "size": size,
+                    "has_more": has_more,
+                    "next_offset": offset + returned if has_more else None,
+                    "truncated": offset > 0 or has_more,
+                    "result_set_complete": bool(
+                        total_is_exact and offset == 0 and returned == total
+                    ),
+                    "pagination_scope": "obis_exact_name_local_offset",
+                },
             }
         except Exception as e:
             return {
@@ -159,25 +164,65 @@ class OBISOccurrenceTool:
         )
         timeout = int(self.tool_config.get("settings", {}).get("timeout", 30))
 
+        size = arguments.get("size", 10)
+        after = arguments.get("after")
+        if isinstance(size, bool) or not isinstance(size, int) or not 1 <= size <= 100:
+            return {
+                "status": "error",
+                "error": "size must be an integer between 1 and 100",
+                "parameter": "size",
+            }
+        if after is not None and (not isinstance(after, str) or not after.strip()):
+            return {
+                "status": "error",
+                "error": "after must be a non-empty OBIS occurrence UUID",
+                "parameter": "after",
+            }
         query: Dict[str, Any] = {}
-        for key in ("scientificname", "areaid", "size"):
+        for key in ("scientificname", "areaid", "after"):
             if key in arguments and arguments[key] is not None:
                 query[key] = arguments[key]
-        if "size" not in query:
-            query["size"] = 10
+        # Fetch one extra UUID so has_more never relies on page fullness alone.
+        query["size"] = size + 1
 
         url = f"{base}/occurrence?{urlencode(query)}"
         try:
             data = _http_get(
                 url, headers={"Accept": "application/json"}, timeout=timeout
             )
+            records = data.get("results", []) if isinstance(data, dict) else []
+            if not isinstance(records, list):
+                records = []
+            has_more = len(records) > size
+            page_records = records[:size]
+            total = data.get("total") if isinstance(data, dict) else None
+            total_is_exact = isinstance(total, int) and not isinstance(total, bool)
+            next_after = page_records[-1].get("id") if has_more and page_records else None
+            output_data = dict(data) if isinstance(data, dict) else {}
+            output_data["results"] = page_records
             return {
                 "status": "success",
                 "source": "OBIS",
                 "endpoint": "occurrence",
-                "query": query,
-                "data": data,
+                "query": {**query, "size": size},
+                "data": output_data,
                 "success": True,
+                "metadata": {
+                    "returned": len(page_records),
+                    "total_results": total if total_is_exact else None,
+                    "total_results_is_exact": total_is_exact,
+                    "size": size,
+                    "after": after,
+                    "has_more": has_more,
+                    "next_after": next_after,
+                    "truncated": after is not None or has_more,
+                    "result_set_complete": bool(
+                        total_is_exact and after is None and len(page_records) == total
+                    ),
+                    "cursor_field": "id",
+                    "cursor_is_not_occurrenceID": True,
+                    "pagination_scope": "obis_occurrence_uuid_after_lookahead",
+                },
             }
         except Exception as e:
             return {

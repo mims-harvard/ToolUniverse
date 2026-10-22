@@ -64,7 +64,27 @@ class OpenNeuroTool(GraphQLTool):
         # tolerate that so the participantCount and pageInfo.count still return.
         if self.tool_config.get("name") == "OpenNeuro_advanced_search":
             return self._run_advanced_search(arguments)
-        return super().run(arguments)
+        result = super().run(arguments)
+        if (
+            self.tool_config.get("name") == "OpenNeuro_search_by_modality"
+            and result.get("status") == "success"
+        ):
+            connection = result.get("data", {}).get("datasets", {})
+            page_info = connection.get("pageInfo", {})
+            edges = connection.get("edges", [])
+            has_more = bool(page_info.get("hasNextPage"))
+            total = page_info.get("count")
+            result["metadata"] = {
+                "returned": len(edges),
+                "total_results": total,
+                "total_results_is_exact": total is not None,
+                "has_more": has_more,
+                "next_cursor": page_info.get("endCursor") if has_more else None,
+                "result_set_complete": arguments.get("after") is None
+                and total is not None
+                and len(edges) == total,
+            }
+        return result
 
     def _run_advanced_search(self, arguments):
         try:
@@ -115,16 +135,42 @@ class OpenNeuroTool(GraphQLTool):
                     ),
                 }
 
+            raw_connection = data.get("advancedSearch") or {}
+            raw_edges = raw_connection.get("edges") or []
+            readable_on_page = sum(
+                1
+                for edge in raw_edges
+                if isinstance(edge, dict) and isinstance(edge.get("node"), dict)
+            )
+            permission_omitted = len(raw_edges) - readable_on_page
+            page_info = raw_connection.get("pageInfo") or {}
+            has_more = bool(page_info.get("hasNextPage"))
+            total = page_info.get("count")
+
             data = remove_none_and_empty_values({"data": data}).get("data", data)
-            result = {"status": "success", "data": data}
+            result = {
+                "status": "success",
+                "data": data,
+                "metadata": {
+                    "returned_readable": readable_on_page,
+                    "permission_omitted_on_page": permission_omitted,
+                    "total_results": total,
+                    "total_results_is_exact": total is not None,
+                    "has_more": has_more,
+                    "next_cursor": page_info.get("endCursor") if has_more else None,
+                    "result_set_complete": arguments.get("after") is None
+                    and not has_more
+                    and permission_omitted == 0
+                    and total is not None
+                    and readable_on_page == total,
+                },
+            }
             if payload.get("errors"):
-                result["metadata"] = {
-                    "note": (
-                        "Some matched datasets are not anonymously readable; "
-                        "their edges were omitted. pageInfo.count and "
-                        "participantCount remain accurate."
-                    )
-                }
+                result["metadata"]["note"] = (
+                    "Some matched datasets on this page are not anonymously readable; "
+                    "their edges were omitted. Continue with next_cursor whenever has_more "
+                    "is true; total_results and participantCount remain accurate."
+                )
             return result
         except Exception as exc:  # never raise out of run()
             return {

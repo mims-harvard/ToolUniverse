@@ -1,7 +1,7 @@
 """
 EPMC_get_references
 
-Get the reference list (bibliography) of a specific paper from Europe PMC. Given a PubMed ID (PMI...
+Get one page of the reference list (bibliography) of a specific paper from Europe PMC. Given a Pu...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def EPMC_get_references(
     validate: bool = True,
 ) -> Any:
     """
-    Get the reference list (bibliography) of a specific paper from Europe PMC. Given a PubMed ID (PMI...
+    Get one page of the reference list (bibliography) of a specific paper from Europe PMC. Given a Pu...
 
     Parameters
     ----------

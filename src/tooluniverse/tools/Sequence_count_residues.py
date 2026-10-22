@@ -9,10 +9,12 @@ from ._shared_client import get_shared_client
 
 
 def Sequence_count_residues(
-    operation: str,
     residue: str,
+    operation: Optional[str] = "count_residues",
     sequence: Optional[str] = None,
     uniprot_id: Optional[str] = None,
+    position_limit: Optional[int] = 50,
+    position_offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -31,6 +33,10 @@ def Sequence_count_residues(
         UniProt accession to fetch sequence from (e.g., 'P00533' for EGFR). Optional ...
     residue : str
         Single character residue to count (e.g., 'C' for cysteine)
+    position_limit : int
+        Maximum number of matching 1-based residue positions to return on this page.
+    position_offset : int
+        Zero-based offset into all matching residue positions. Continue with data.nex...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +58,8 @@ def Sequence_count_residues(
             "sequence": sequence,
             "uniprot_id": uniprot_id,
             "residue": residue,
+            "position_limit": position_limit,
+            "position_offset": position_offset,
         }.items()
         if v is not None
     }

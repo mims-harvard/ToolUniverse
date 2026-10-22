@@ -16,6 +16,7 @@ from urllib.request import Request, urlopen
 from tooluniverse.tool_registry import register_tool
 
 SPARQL_ENDPOINT = "https://sparql.wikipathways.org/sparql"
+ASSET_BASE_URL = "https://www.wikipathways.org/wikipathways-assets/pathways"
 _BROWSER_UA = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
     "AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -51,6 +52,34 @@ def _wpid_from_uri(uri: str) -> str:
     return tail.split("_", 1)[0]
 
 
+def _sparql_literal(value: str) -> str:
+    """Escape a Python string for interpolation inside a SPARQL string literal."""
+    return (
+        value.replace("\\", "\\\\")
+        .replace('"', '\\"')
+        .replace("\n", "\\n")
+        .replace("\r", "\\r")
+    )
+
+
+def _validated_int(arguments, name, default, minimum=0, maximum=None):
+    value = arguments.get(name, default)
+    if isinstance(value, bool) or not isinstance(value, int):
+        return None, f"{name} must be an integer"
+    if value < minimum:
+        return None, f"{name} must be at least {minimum}"
+    if maximum is not None and value > maximum:
+        return None, f"{name} must be at most {maximum}"
+    return value, None
+
+
+def _fetch_asset(wpid: str, extension: str, timeout: int) -> tuple[str, str]:
+    url = f"{ASSET_BASE_URL}/{wpid}/{wpid}.{extension}"
+    req = Request(url, headers={"User-Agent": _BROWSER_UA})
+    with urlopen(req, timeout=timeout) as resp:
+        return resp.read().decode("utf-8", errors="replace"), url
+
+
 @register_tool(
     "WikiPathwaysSearchTool",
     config={
@@ -58,8 +87,9 @@ def _wpid_from_uri(uri: str) -> str:
         "type": "WikiPathwaysSearchTool",
         "description": (
             "Search WikiPathways for pathways by free-text title match. "
-            "Returns WPIDs, titles, and organisms. Backed by the "
-            "sparql.wikipathways.org SPARQL endpoint."
+            "Returns recoverably paginated WPIDs, titles, and organisms. "
+            "Continue with metadata.next_offset while metadata.has_more. "
+            "Backed by the sparql.wikipathways.org SPARQL endpoint."
         ),
         "parameter": {
             "type": "object",
@@ -69,7 +99,13 @@ def _wpid_from_uri(uri: str) -> str:
                     "type": "string",
                     "description": "Optional organism filter, e.g., 'Homo sapiens'",
                 },
-                "limit": {"type": "integer", "default": 20},
+                "limit": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 200,
+                    "default": 20,
+                },
+                "offset": {"type": "integer", "minimum": 0, "default": 0},
             },
             "required": ["query"],
         },
@@ -82,9 +118,24 @@ class WikiPathwaysSearchTool:
 
     def run(self, arguments: Dict[str, Any]):
         timeout = int((self.tool_config.get("settings") or {}).get("timeout", 30))
-        query = (arguments.get("query") or "").lower().replace('"', "")
+        raw_query = arguments.get("query")
+        if not isinstance(raw_query, str) or not raw_query.strip():
+            return {"status": "error", "error": "query must be a non-empty string"}
+        query = raw_query.strip().lower()
         organism = arguments.get("organism")
-        limit = int(arguments.get("limit", 20))
+        if organism is not None and (
+            not isinstance(organism, str) or not organism.strip()
+        ):
+            return {
+                "status": "error",
+                "error": "organism must be a non-empty string",
+            }
+        limit, error = _validated_int(arguments, "limit", 20, 1, 200)
+        if error:
+            return {"status": "error", "error": error}
+        offset, error = _validated_int(arguments, "offset", 0, 0)
+        if error:
+            return {"status": "error", "error": error}
 
         # Fix-11B-2: pathway titles in WikiPathways are typically unhyphenated
         # gene/protein shorthand ("IL4 signaling"), but researchers naturally
@@ -93,10 +144,10 @@ class WikiPathwaysSearchTool:
         # Stripping hyphens from both sides of the CONTAINS comparison keeps
         # the plain-substring search simple while absorbing this common
         # notation mismatch.
-        query_norm = query.replace("-", "")
+        query_norm = _sparql_literal(query.replace("-", ""))
 
         organism_filter = (
-            f'  FILTER(LCASE(STR(?organism)) = "{organism.lower()}")'
+            f'  FILTER(LCASE(STR(?organism)) = "{_sparql_literal(organism.strip().lower())}")'
             if organism
             else ""
         )
@@ -109,14 +160,17 @@ SELECT DISTINCT ?pathway ?title ?organism WHERE {{
            wp:organismName ?organism .
   FILTER(CONTAINS(REPLACE(LCASE(?title), "-", ""), "{query_norm}"))
 {organism_filter}
-}} LIMIT {limit}
+}}
+ORDER BY LCASE(STR(?title)) STR(?pathway)
+LIMIT {limit + 1}
+OFFSET {offset}
 """
         try:
             j = _sparql(sparql, timeout=timeout)
         except Exception as e:
             return {"status": "error", "error": f"WikiPathways SPARQL error: {e}"}
 
-        results = [
+        all_results = [
             {
                 "wpid": _wpid_from_uri(_val(b, "pathway")),
                 "uri": _val(b, "pathway"),
@@ -125,12 +179,21 @@ SELECT DISTINCT ?pathway ?title ?organism WHERE {{
             }
             for b in j.get("results", {}).get("bindings", [])
         ]
+        has_more = len(all_results) > limit
+        results = all_results[:limit]
         return {
             "status": "success",
             "data": results,
             "metadata": {
                 "query": query,
-                "count": len(results),
+                "returned": len(results),
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "next_offset": offset + len(results) if has_more else None,
+                "complete": not has_more,
+                "total_hits": None,
+                "total_hits_is_known": False,
                 "backend": "WikiPathways SPARQL",
             },
         }
@@ -142,14 +205,30 @@ SELECT DISTINCT ?pathway ?title ?organism WHERE {{
         "name": "WikiPathways_get_pathway",
         "type": "WikiPathwaysGetTool",
         "description": (
-            "Fetch a WikiPathways pathway by WPID. Returns title, organism, "
-            "description, and the list of gene / metabolite participants. "
-            "Backed by the sparql.wikipathways.org SPARQL endpoint."
+            "Fetch a WikiPathways pathway by WPID. JSON returns metadata and "
+            "recoverably paginated gene-participant rows with exact totals; "
+            "GPML returns the complete official static XML asset."
         ),
         "parameter": {
             "type": "object",
             "properties": {
                 "wpid": {"type": "string", "description": "Pathway ID, e.g., WP254"},
+                "format": {
+                    "type": "string",
+                    "enum": ["json", "gpml"],
+                    "default": "json",
+                },
+                "gene_limit": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 500,
+                    "default": 200,
+                },
+                "gene_offset": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "default": 0,
+                },
             },
             "required": ["wpid"],
         },
@@ -162,9 +241,41 @@ class WikiPathwaysGetTool:
 
     def run(self, arguments: Dict[str, Any]):
         timeout = int((self.tool_config.get("settings") or {}).get("timeout", 30))
-        wpid = (arguments.get("wpid") or "").upper().replace('"', "")
-        if not wpid:
-            return {"status": "error", "error": "wpid parameter is required"}
+        raw_wpid = arguments.get("wpid")
+        if not isinstance(raw_wpid, str) or not raw_wpid.strip():
+            return {"status": "error", "error": "wpid must be a non-empty string"}
+        wpid = raw_wpid.strip().upper()
+        if not wpid.startswith("WP") or not wpid[2:].isdigit():
+            return {"status": "error", "error": "wpid must match WP followed by digits"}
+
+        output_format = arguments.get("format", "json")
+        if output_format not in {"json", "gpml"}:
+            return {"status": "error", "error": "format must be json or gpml"}
+        if output_format == "gpml":
+            try:
+                gpml, source_url = _fetch_asset(wpid, "gpml", timeout)
+            except Exception as e:
+                return {"status": "error", "error": f"WikiPathways GPML error: {e}"}
+            return {
+                "status": "success",
+                "data": {
+                    "wpid": wpid,
+                    "format": "gpml",
+                    "gpml": gpml,
+                    "source_url": source_url,
+                },
+                "metadata": {
+                    "backend": "WikiPathways static assets",
+                    "complete": True,
+                },
+            }
+
+        gene_limit, error = _validated_int(arguments, "gene_limit", 200, 1, 500)
+        if error:
+            return {"status": "error", "error": error}
+        gene_offset, error = _validated_int(arguments, "gene_offset", 0, 0)
+        if error:
+            return {"status": "error", "error": error}
 
         # The pathway URI ends with /<WPID>_r<revision>, and dc:identifier
         # is the un-revisioned identifiers.org URI. Filter on the URI pattern.
@@ -192,11 +303,33 @@ SELECT DISTINCT ?gene_id ?gene_label ?datasource WHERE {{
         rdfs:label ?gene_label ;
         dc:source ?datasource .
   ?pathway dc:identifier <{identifier_uri}> .
-}} LIMIT 200
+}}
+ORDER BY STR(?gene_id) LCASE(STR(?gene_label)) STR(?datasource)
+LIMIT {gene_limit + 1}
+OFFSET {gene_offset}
+"""
+        count_sparql = f"""
+PREFIX wp: <http://vocabularies.wikipathways.org/wp#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT (COUNT(*) AS ?total_rows) (COUNT(DISTINCT ?gene) AS ?gene_products) WHERE {{
+  {{
+    SELECT DISTINCT ?gene ?gene_id ?gene_label ?datasource WHERE {{
+      ?gene dcterms:isPartOf ?pathway ;
+            a wp:GeneProduct ;
+            dc:identifier ?gene_id ;
+            rdfs:label ?gene_label ;
+            dc:source ?datasource .
+      ?pathway dc:identifier <{identifier_uri}> .
+    }}
+  }}
+}}
 """
         try:
             info = _sparql(info_sparql, timeout=timeout)
             genes = _sparql(gene_sparql, timeout=timeout)
+            counts = _sparql(count_sparql, timeout=timeout)
         except Exception as e:
             return {"status": "error", "error": f"WikiPathways SPARQL error: {e}"}
 
@@ -207,7 +340,7 @@ SELECT DISTINCT ?gene_id ?gene_label ?datasource WHERE {{
                 "error": f"Pathway '{wpid}' not found in WikiPathways SPARQL endpoint",
             }
         b = bindings[0]
-        gene_list = [
+        all_gene_rows = [
             {
                 "id": _val(g, "gene_id"),
                 "label": _val(g, "gene_label"),
@@ -215,6 +348,24 @@ SELECT DISTINCT ?gene_id ?gene_label ?datasource WHERE {{
             }
             for g in genes.get("results", {}).get("bindings", [])
         ]
+        count_bindings = counts.get("results", {}).get("bindings", [])
+        if not count_bindings:
+            return {
+                "status": "error",
+                "error": "WikiPathways SPARQL did not return participant counts",
+            }
+        try:
+            total_gene_rows = int(_val(count_bindings[0], "total_rows"))
+            gene_product_count = int(_val(count_bindings[0], "gene_products"))
+        except (TypeError, ValueError):
+            return {
+                "status": "error",
+                "error": "WikiPathways SPARQL returned invalid participant counts",
+            }
+        gene_list = all_gene_rows[:gene_limit]
+        expected_more = gene_offset + len(gene_list) < total_gene_rows
+        pagination_stalled = expected_more and not gene_list
+        has_more = expected_more and not pagination_stalled
         return {
             "status": "success",
             "data": {
@@ -223,7 +374,23 @@ SELECT DISTINCT ?gene_id ?gene_label ?datasource WHERE {{
                 "title": _val(b, "title"),
                 "organism": _val(b, "organism"),
                 "genes": gene_list,
-                "gene_count": len(gene_list),
+                "gene_count": total_gene_rows,
+                "gene_product_count": gene_product_count,
             },
-            "metadata": {"backend": "WikiPathways SPARQL"},
+            "metadata": {
+                "backend": "WikiPathways SPARQL",
+                "gene_rows_returned": len(gene_list),
+                "gene_offset": gene_offset,
+                "gene_limit": gene_limit,
+                "total_gene_rows": total_gene_rows,
+                "total_gene_rows_is_exact": True,
+                "gene_product_count": gene_product_count,
+                "gene_product_count_is_exact": True,
+                "has_more": has_more,
+                "next_gene_offset": (
+                    gene_offset + len(gene_list) if has_more else None
+                ),
+                "pagination_stalled": pagination_stalled,
+                "complete": not has_more and not pagination_stalled,
+            },
         }

@@ -26,6 +26,7 @@ ACTIONABILITY_PEDIATRIC_URL = (
     "https://actionability.clinicalgenome.org/ac/Pediatric/api"
 )
 EREPO_BASE_URL = "https://erepo.clinicalgenome.org/evrepo/api"
+EREPO_SUMMARY_BASE_URL = f"{EREPO_BASE_URL}/summary"
 
 
 @register_tool("ClinGenTool")
@@ -92,10 +93,36 @@ class ClinGenTool(BaseTool):
                     == gene_upper
                 ]
 
+            try:
+                limit = max(1, min(int(arguments.get("limit") or 100), 500))
+                offset = max(0, int(arguments.get("offset", 0)))
+            except (TypeError, ValueError):
+                return {
+                    "status": "error",
+                    "error": "Parameters 'limit' and 'offset' must be integers.",
+                }
+            total = len(curations)
+            page = curations[offset : offset + limit]
+            has_more = offset + len(page) < total
             return {
                 "status": "success",
-                "data": curations[:100],  # Limit to first 100 for performance
-                "total": len(curations),
+                "data": page,
+                "total": total,
+                "returned": len(page),
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_offset": offset + len(page) if has_more else None,
+                "metadata": {
+                    "total": total,
+                    "returned": len(page),
+                    "offset": offset,
+                    "limit": limit,
+                    "has_more": has_more,
+                    "truncated": has_more,
+                    "next_offset": offset + len(page) if has_more else None,
+                },
                 "source": "ClinGen Gene-Disease Validity",
             }
         except requests.exceptions.Timeout:
@@ -185,10 +212,27 @@ class ClinGenTool(BaseTool):
                     == gene_upper
                 ]
 
+            try:
+                limit = max(1, min(int(arguments.get("limit") or 100), 500))
+                offset = max(0, int(arguments.get("offset", 0)))
+            except (TypeError, ValueError):
+                return {
+                    "status": "error",
+                    "error": "Parameters 'limit' and 'offset' must be integers.",
+                }
+            total = len(curations)
+            page = curations[offset : offset + limit]
+            has_more = offset + len(page) < total
             return {
                 "status": "success",
-                "data": curations[:100],  # Limit for performance
-                "total": len(curations),
+                "data": page,
+                "total": total,
+                "returned": len(page),
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_offset": offset + len(page) if has_more else None,
                 "include_regions": include_regions,
                 "source": "ClinGen Dosage Sensitivity",
             }
@@ -316,10 +360,27 @@ class ClinGenTool(BaseTool):
                     or gene_upper in str(c.get("hgncId", "")).upper()
                 ]
 
+            try:
+                limit = max(1, min(int(arguments.get("limit") or 100), 500))
+                offset = max(0, int(arguments.get("offset", 0)))
+            except (TypeError, ValueError):
+                return {
+                    "status": "error",
+                    "error": "Parameters 'limit' and 'offset' must be integers.",
+                }
+            total = len(curations)
+            page = curations[offset : offset + limit]
+            has_more = offset + len(page) < total
             return {
                 "status": "success",
-                "data": curations[:100],
-                "total": len(curations),
+                "data": page,
+                "total": total,
+                "returned": len(page),
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_offset": offset + len(page) if has_more else None,
                 "context": context,
                 "source": f"ClinGen Clinical Actionability ({context})",
             }
@@ -407,10 +468,33 @@ class ClinGenTool(BaseTool):
 
     @staticmethod
     def _flatten_classification(item: Dict[str, Any]) -> Dict[str, Any]:
-        """Map one classifications?gene=/variant= JSON record to the tool's
-        declared 7-field return_schema (Variation, ClinVar Variation Id,
-        HGNC Gene Symbol, Disease, Mondo Id, Assertion, Expert Panel)."""
+        """Map one Evidence Repository classification to the public schema."""
         hgvs = item.get("hgvs") or []
+        # The current /api/summary endpoint uses a flat record shape. Keep
+        # the original seven compatibility fields while exposing the
+        # criteria, evidence summary, dates, and identifiers the old compact
+        # projection omitted.
+        if "preferredVarTitle" in item or isinstance(item.get("gene"), str):
+            return {
+                "Variation": item.get("preferredVarTitle")
+                or (hgvs[-1] if hgvs else None),
+                "ClinVar Variation Id": item.get("cvId"),
+                "HGNC Gene Symbol": item.get("gene"),
+                "Disease": item.get("condition"),
+                "Mondo Id": item.get("mondoId"),
+                "Assertion": item.get("classification"),
+                "Expert Panel": item.get("ep"),
+                "CAID": item.get("caId"),
+                "Mode of Inheritance": item.get("moi"),
+                "Met Criteria": item.get("metCodes") or [],
+                "Unmet Criteria": item.get("unMetCodes") or [],
+                "Summary": item.get("summaryDesc"),
+                "Approved Date": item.get("approvedDate"),
+                "Published Date": item.get("publishedDate"),
+                "Document Version": item.get("docVersion"),
+                "UUID": item.get("uuid"),
+                "HGVS": hgvs,
+            }
         gene = item.get("gene") or {}
         condition = item.get("condition") or {}
         guidelines = item.get("guidelines") or []
@@ -433,16 +517,10 @@ class ClinGenTool(BaseTool):
     def _get_variant_classifications(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get variant pathogenicity classifications from ClinGen Evidence Repository.
 
-        classifications/all fetches the *entire* ~22MB, ~10k-row repository
-        with no server-side filter and filters client-side -- confirmed live
-        this routinely took 2-5+ minutes (and sometimes hung past a 300s
-        client timeout) even for a gene with zero curated variants. The
-        classifications endpoint (no /all) supports server-side gene=/
-        variant= filtering and returns in ~1s -- confirmed live for both a
-        curated gene (PAH) and an uncurated one (empty result, still ~1s).
-        Calling it with neither gene nor variant set is just as unbounded as
-        classifications/all (confirmed live: also hangs past 30s with no
-        params), so require at least one.
+        Use the current Summary API used by the official UI. Its count and
+        pg/pgSize endpoints provide real filtering and pagination; the legacy
+        classifications endpoint silently returned a fixed first 25 records
+        and ignored common pagination parameters.
         """
         gene = arguments.get("gene")
         variant = arguments.get("variant")
@@ -458,43 +536,92 @@ class ClinGenTool(BaseTool):
                 ),
             }
         try:
-            params = {}
+            try:
+                limit = max(1, min(int(arguments.get("limit", 100)), 500))
+            except (TypeError, ValueError):
+                limit = 100
+            try:
+                offset = max(0, int(arguments.get("offset", 0)))
+            except (TypeError, ValueError):
+                offset = 0
+
+            columns = []
+            values = []
+            match_types = []
             if gene:
-                params["gene"] = gene
+                columns.append("gene")
+                values.append(str(gene))
+                match_types.append("exact")
             if variant:
-                params["variant"] = variant
+                variant_str = str(variant).strip()
+                normalized_caid = variant_str.upper().removeprefix("CAR:")
+                if normalized_caid.startswith("CA"):
+                    columns.append("caId")
+                    values.append(normalized_caid)
+                    match_types.append("exact")
+                elif variant_str.isdigit():
+                    columns.append("cvId")
+                    values.append(variant_str)
+                    match_types.append("exact")
+                else:
+                    columns.append("hgvs")
+                    values.append(variant_str)
+                    match_types.append("contains")
 
-            response = requests.get(
-                f"{EREPO_BASE_URL}/classifications", params=params, timeout=self.timeout
+            filter_params = {
+                "columns": ",".join(columns),
+                "values": ",".join(values),
+                "matchTypes": ",".join(match_types),
+                "matchMode": "and",
+            }
+            count_response = requests.get(
+                f"{EREPO_SUMMARY_BASE_URL}/classifications/count",
+                params=filter_params,
+                timeout=self.timeout,
             )
-            response.raise_for_status()
-            payload = response.json()
-            items = payload.get("variantInterpretations", [])
+            count_response.raise_for_status()
+            total = int(count_response.json().get("data", {}).get("total", 0))
 
-            # The upstream `variant=` param resolves to that variant's gene
-            # and returns every variant for the gene, not just the one
-            # requested (confirmed live: variant=CA114360 returns 25 PAH
-            # rows, not 1) -- narrow back down to an exact match on the
-            # variant's own identifiers/HGVS forms.
-            if variant:
-                variant_str = str(variant).upper()
-                items = [
-                    item
-                    for item in items
-                    if variant_str in str(item.get("caid", "")).upper()
-                    or variant_str == str(item.get("variationId", "")).upper()
-                    or any(variant_str in h.upper() for h in item.get("hgvs") or [])
-                ]
+            items = []
+            if offset < total:
+                # The official UI supports at most 500 rows per server page.
+                # Fetch one or (when the requested slice crosses a boundary)
+                # two pages, then apply the exact zero-based offset locally.
+                server_page_size = 500
+                first_page = offset // server_page_size + 1
+                last_index = min(offset + limit, total) - 1
+                last_page = last_index // server_page_size + 1
+                for page in range(first_page, last_page + 1):
+                    page_params = {
+                        **filter_params,
+                        "pgSize": server_page_size,
+                        "pg": page,
+                    }
+                    response = requests.get(
+                        f"{EREPO_SUMMARY_BASE_URL}/classifications",
+                        params=page_params,
+                        timeout=self.timeout,
+                    )
+                    response.raise_for_status()
+                    items.extend(response.json().get("data", []) or [])
+
+                start_within_first_page = offset % server_page_size
+                items = items[start_within_first_page : start_within_first_page + limit]
 
             data = [self._flatten_classification(item) for item in items]
-
+            next_offset = offset + len(data)
             result = {
                 "status": "success",
-                "data": data[:100],
-                "total": len(data),
-                "source": "ClinGen Evidence Repository",
+                "data": data,
+                "total": total,
+                "returned": len(data),
+                "offset": offset,
+                "limit": limit,
+                "has_more": next_offset < total,
+                "next_offset": next_offset if next_offset < total else None,
+                "source": "ClinGen Evidence Repository Summary API",
             }
-            if not data:
+            if total == 0:
                 queried = f"gene '{gene}'" if gene else f"variant '{variant}'"
                 result["note"] = (
                     f"No variant classifications found for {queried}. "
@@ -503,6 +630,11 @@ class ClinGenTool(BaseTool):
                     "Not all genes have active VCEPs. Try ClinGen_get_gene_validity "
                     "for gene-disease validity or clinvar_search_variants for "
                     "ClinVar variant classifications."
+                )
+            elif not data:
+                result["note"] = (
+                    f"Requested offset {offset} is beyond the {total} matching "
+                    "variant classifications."
                 )
             return result
         except requests.exceptions.Timeout:

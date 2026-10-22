@@ -9,9 +9,9 @@ from ._shared_client import get_shared_client
 
 
 def DoseResponse_calculate_ic50(
-    operation: str,
     concentrations: list[Any],
     responses: list[Any],
+    operation: Optional[str] = "calculate_ic50",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

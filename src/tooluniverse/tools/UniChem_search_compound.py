@@ -1,7 +1,7 @@
 """
 UniChem_search_compound
 
-Search UniChem for a chemical compound by InChIKey, source compound ID, or UCI (UniChem Compound ...
+Search UniChem by InChI, InChIKey, source compound ID, or UCI. Every returned compound is preserv...
 """
 
 from typing import Any, Optional, Callable
@@ -11,22 +11,22 @@ from ._shared_client import get_shared_client
 def UniChem_search_compound(
     compound: str,
     type_: str,
-    sourceID: Optional[int | Any] = None,
+    sourceID: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search UniChem for a chemical compound by InChIKey, source compound ID, or UCI (UniChem Compound ...
+    Search UniChem by InChI, InChIKey, source compound ID, or UCI. Every returned compound is preserv...
 
     Parameters
     ----------
     compound : str
         The compound identifier to search. Can be an InChIKey (e.g., 'BSYNRYMUTXBXSQ-...
     type_ : str
-        Type of the compound identifier. One of: 'inchikey', 'sourceID', 'uci'. Defau...
-    sourceID : int | Any
+        Type of compound representation. sourceID means a source compound ID and requ...
+    sourceID : int
         Required when type='sourceID'. The source database ID (e.g., 1=ChEMBL, 2=Drug...
     stream_callback : Callable, optional
         Callback for streaming output

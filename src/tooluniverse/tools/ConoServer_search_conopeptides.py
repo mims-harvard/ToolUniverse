@@ -17,6 +17,7 @@ def ConoServer_search_conopeptides(
     organism: Optional[str] = None,
     conopeptide_class: Optional[str] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -43,6 +44,8 @@ def ConoServer_search_conopeptides(
         Conopeptide class, e.g. 'conotoxin'.
     limit : int
         Max records to return (default 25, max 200).
+    offset : int
+        Zero-based result offset. Continue with data.next_offset while has_more is true.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -68,6 +71,7 @@ def ConoServer_search_conopeptides(
             "organism": organism,
             "conopeptide_class": conopeptide_class,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

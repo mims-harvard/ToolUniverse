@@ -9,13 +9,13 @@ from ._shared_client import get_shared_client
 
 
 def SYNERGxDB_search_combos(
-    operation: Optional[str] = None,
-    drug_id_1: Optional[int | Any] = None,
-    drug_name_1: Optional[str | Any] = None,
-    drug_id_2: Optional[int | Any] = None,
-    drug_name_2: Optional[str | Any] = None,
-    sample: Optional[str | Any] = None,
-    dataset: Optional[int | str | Any] = None,
+    operation: Optional[str] = "search_combos",
+    drug_id_1: Optional[int] = None,
+    drug_name_1: Optional[str] = None,
+    drug_id_2: Optional[int] = None,
+    drug_name_2: Optional[str] = None,
+    sample: Optional[str] = None,
+    dataset: Optional[int | str] = None,
     page: Optional[int] = 1,
     per_page: Optional[int] = 20,
     *,
@@ -30,17 +30,17 @@ def SYNERGxDB_search_combos(
     ----------
     operation : str
         Operation type
-    drug_id_1 : int | Any
+    drug_id_1 : int
         SYNERGxDB drug ID for drug A. Use SYNERGxDB_list_drugs to find IDs. Examples:...
-    drug_name_1 : str | Any
+    drug_name_1 : str
         Drug name for drug A — triggers automatic SYNERGxDB ID lookup (e.g., 'gemcita...
-    drug_id_2 : int | Any
+    drug_id_2 : int
         SYNERGxDB drug ID for drug B. Examples: 97 (Topotecan), 34 (Erlotinib), 24 (D...
-    drug_name_2 : str | Any
+    drug_name_2 : str
         Drug name for drug B — triggers automatic SYNERGxDB ID lookup (e.g., 'erlotin...
-    sample : str | Any
+    sample : str
         Cell line ID (integer as string) or tissue name. Valid tissue names: 'colorec...
-    dataset : int | str | Any
+    dataset : int | str
         Dataset source ID (integer) or name (string). Examples: 2 or 'NCI-ALMANAC', 1...
     page : int
         Page number for paginated results (default: 1)

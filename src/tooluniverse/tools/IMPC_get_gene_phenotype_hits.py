@@ -1,7 +1,7 @@
 """
 IMPC_get_gene_phenotype_hits
 
-Get detailed statistical results from IMPC phenotyping for a gene. Returns p-values, effect sizes...
+Get detailed IMPC statistical phenotype results for a gene with exact Solr offset pagination. Fil...
 """
 
 from typing import Any, Optional, Callable
@@ -13,13 +13,14 @@ def IMPC_get_gene_phenotype_hits(
     mgi_id: Optional[str] = None,
     significant_only: Optional[bool] = True,
     limit: Optional[int] = 100,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
-    Get detailed statistical results from IMPC phenotyping for a gene. Returns p-values, effect sizes...
+    Get detailed IMPC statistical phenotype results for a gene with exact Solr offset pagination. Fil...
 
     Parameters
     ----------
@@ -31,6 +32,8 @@ def IMPC_get_gene_phenotype_hits(
         Return only significant results (default: true)
     limit : int
         Maximum results (default: 100)
+    offset : int
+        Zero-based statistical-result offset. Continue with data.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,7 +43,7 @@ def IMPC_get_gene_phenotype_hits(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
@@ -52,6 +55,7 @@ def IMPC_get_gene_phenotype_hits(
             "mgi_id": mgi_id,
             "significant_only": significant_only,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

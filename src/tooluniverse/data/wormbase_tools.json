@@ -88,7 +88,7 @@
   },
   {
     "name": "WormBase_get_phenotypes",
-    "description": "Get phenotype annotations for a C. elegans gene from WormBase. Returns observed phenotypes (from RNAi, mutation, transgene experiments), phenotypes not observed, and total counts. Phenotype data uses the WormBase Phenotype Ontology (WPO). Example: WBGene00006763 (unc-26) has 125+ observed phenotypes including locomotion defects, synaptic vesicle recycling abnormalities, and pharyngeal pumping defects.",
+    "description": "Get complete observed and not-observed phenotype annotation arrays for a C. elegans gene from the WormBase widget response. No fixed 50/20-item post-processing cutoff is applied; count and returned fields make completeness explicit.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -130,6 +130,9 @@
             "phenotype_count": {
               "type": "integer"
             },
+            "phenotypes_returned": {
+              "type": "integer"
+            },
             "phenotypes": {
               "type": "array",
               "items": {
@@ -157,6 +160,9 @@
               }
             },
             "not_observed_count": {
+              "type": "integer"
+            },
+            "phenotypes_not_observed_returned": {
               "type": "integer"
             },
             "phenotypes_not_observed": {
@@ -197,7 +203,7 @@
   },
   {
     "name": "WormBase_get_expression",
-    "description": "Get expression data for a C. elegans gene from WormBase. Returns tissues where the gene is expressed, developmental stages, subcellular localization, and expression clusters. Expression data is curated from GFP reporters, antibody staining, RNA in situ, and microarray experiments. Example: WBGene00006763 (unc-26) is expressed in 38 tissues including neurons, pharynx, and body wall muscle.",
+    "description": "Get complete expression annotations from WormBase: tissues, developmental stages, subcellular localizations, and expression clusters. No fixed 30/20/10/15-item post-processing cutoffs are applied; each category reports count and returned values.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -239,6 +245,9 @@
             "expressed_in_count": {
               "type": "integer"
             },
+            "expressed_in_returned": {
+              "type": "integer"
+            },
             "expressed_in": {
               "type": "array",
               "items": {
@@ -259,6 +268,12 @@
                 }
               }
             },
+            "expressed_during_count": {
+              "type": "integer"
+            },
+            "expressed_during_returned": {
+              "type": "integer"
+            },
             "expressed_during": {
               "type": "array",
               "items": {
@@ -278,6 +293,12 @@
                   }
                 }
               }
+            },
+            "subcellular_localization_count": {
+              "type": "integer"
+            },
+            "subcellular_localization_returned": {
+              "type": "integer"
             },
             "subcellular_localization": {
               "type": "array",
@@ -300,6 +321,9 @@
               }
             },
             "expression_clusters_count": {
+              "type": "integer"
+            },
+            "expression_clusters_returned": {
               "type": "integer"
             },
             "expression_clusters": {
@@ -340,13 +364,33 @@
   },
   {
     "name": "WormBase_get_orthologs",
-    "description": "Get orthologs and homologs of a C. elegans gene across species from WormBase (Inparanoid/EnsEMBL-Compara/OrthoFinder etc.), plus nematode orthologs and within-worm paralogs. Accepts a WBGene ID or gene name (auto-resolved). Example: WBGene00006818 (unc-86) returns cross-species orthologs like zebrafish pou4f4 and nematode orthologs like CSP40.g8217 (c_tribulationis).",
+    "description": "Get cross-species orthologs, nematode orthologs, and within-worm paralogs. All three lists are independently recoverably paginated with the same offset; continue while data.has_more is true and consult each category's count/next_offset.",
     "parameter": {
       "type": "object",
       "properties": {
         "gene_id": {
           "type": "string",
           "description": "WBGene identifier or gene name. Examples: 'WBGene00006818', 'unc-86'."
+        },
+        "ortholog_limit": {
+          "type": "integer",
+          "description": "Maximum rows per cross-species and nematode ortholog list (default 50).",
+          "default": 50,
+          "minimum": 1,
+          "maximum": 500
+        },
+        "paralog_limit": {
+          "type": "integer",
+          "description": "Maximum paralogs per page (default 30).",
+          "default": 30,
+          "minimum": 1,
+          "maximum": 500
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based offset applied independently to all three lists.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": [
@@ -377,6 +421,9 @@
             "cross_species_ortholog_count": {
               "type": "integer"
             },
+            "cross_species_ortholog_returned": {"type": "integer"},
+            "cross_species_ortholog_has_more": {"type": "boolean"},
+            "cross_species_ortholog_next_offset": {"type": ["integer", "null"]},
             "cross_species_orthologs": {
               "type": "array",
               "items": {
@@ -412,6 +459,9 @@
             "nematode_ortholog_count": {
               "type": "integer"
             },
+            "nematode_ortholog_returned": {"type": "integer"},
+            "nematode_ortholog_has_more": {"type": "boolean"},
+            "nematode_ortholog_next_offset": {"type": ["integer", "null"]},
             "nematode_orthologs": {
               "type": "array",
               "items": {
@@ -421,6 +471,11 @@
             "paralog_count": {
               "type": "integer"
             },
+            "paralog_returned": {"type": "integer"},
+            "paralog_has_more": {"type": "boolean"},
+            "paralog_next_offset": {"type": ["integer", "null"]},
+            "offset": {"type": "integer"},
+            "has_more": {"type": "boolean"},
             "paralogs": {
               "type": "array",
               "items": {
@@ -445,13 +500,26 @@
   },
   {
     "name": "WormBase_get_interactions",
-    "description": "Get physical and genetic interactions for a C. elegans gene from WormBase, split into physical and genetic lists with interactor names, IDs, interaction type, and citation. Accepts a WBGene ID or gene name. Example: WBGene00006818 (unc-86) has a physical interactor die-1 (WBGene00000995) and a genetic interactor ttx-3 (WBGene00006654).",
+    "description": "Get physical and genetic interactions for a C. elegans gene. Both lists are independently recoverably paginated with the same offset; continue while data.has_more is true and use each category's next_offset/count fields to quantify completeness.",
     "parameter": {
       "type": "object",
       "properties": {
         "gene_id": {
           "type": "string",
           "description": "WBGene identifier or gene name. Examples: 'WBGene00006818', 'unc-86'."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum interactions to return per category (default 150).",
+          "default": 150,
+          "minimum": 1,
+          "maximum": 500
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based offset applied independently to physical and genetic lists.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": [
@@ -485,6 +553,9 @@
             "physical_count": {
               "type": "integer"
             },
+            "physical_returned": {"type": "integer"},
+            "physical_has_more": {"type": "boolean"},
+            "physical_next_offset": {"type": ["integer", "null"]},
             "physical_interactions": {
               "type": "array",
               "items": {
@@ -532,6 +603,11 @@
             "genetic_count": {
               "type": "integer"
             },
+            "genetic_returned": {"type": "integer"},
+            "genetic_has_more": {"type": "boolean"},
+            "genetic_next_offset": {"type": ["integer", "null"]},
+            "offset": {"type": "integer"},
+            "has_more": {"type": "boolean"},
             "genetic_interactions": {
               "type": "array",
               "items": {

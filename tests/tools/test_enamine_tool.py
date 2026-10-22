@@ -47,8 +47,9 @@ class TestEnamineTool:
 
         result = tool.run({"operation": "search_catalog", "query": "pyridine"})
 
-        assert result["status"] == "success"
-        assert "search_url" in result["data"]
+        assert result["status"] == "error"
+        assert "no catalog data was retrieved" in result["error"]
+        assert "search_url" in result
 
     @patch("tooluniverse.enamine_tool.requests.get")
     def test_get_libraries_success(self, mock_get, tool):
@@ -59,9 +60,30 @@ class TestEnamineTool:
 
         result = tool.run({"operation": "get_libraries"})
 
-        assert result["status"] == "success"
-        assert "libraries" in result["data"]
-        assert len(result["data"]["libraries"]) > 0
+        assert result["status"] == "error"
+        assert "no live library data was retrieved" in result["error"]
+
+    @patch("tooluniverse.enamine_tool.requests.get")
+    def test_search_catalog_pages_json_payload_without_fixed_twenty(self, mock_get, tool):
+        response = MagicMock(status_code=200)
+        response.headers = {"Content-Type": "application/json"}
+        response.json.return_value = {"results": [{"id": i} for i in range(25)]}
+        mock_get.return_value = response
+
+        result = tool.run(
+            {"operation": "search_catalog", "query": "amine", "limit": 3, "offset": 20}
+        )
+
+        assert [row["id"] for row in result["data"]["results"]] == [20, 21, 22]
+        assert result["metadata"]["next_offset"] == 23
+        assert result["metadata"]["upstream_result_set_complete"] is None
+
+    @patch("tooluniverse.enamine_tool.requests.get")
+    def test_search_catalog_rejects_malformed_pagination(self, mock_get, tool):
+        for pagination in ({"limit": "2"}, {"limit": 0}, {"offset": -1}, {"offset": False}):
+            result = tool.run({"operation": "search_catalog", "query": "amine", **pagination})
+            assert result["status"] == "error"
+        mock_get.assert_not_called()
 
 
 class TestEnamineToolInterface:

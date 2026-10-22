@@ -15,7 +15,7 @@ def RGD_get_strain_annotations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Get curated disease, phenotype, and variant-trait ontology annotations for a rat strain from the ...
 
@@ -34,7 +34,7 @@ def RGD_get_strain_annotations(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

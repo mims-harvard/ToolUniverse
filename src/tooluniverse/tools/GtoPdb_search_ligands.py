@@ -1,7 +1,7 @@
 """
 GtoPdb_search_ligands
 
-Search the Guide to Pharmacology database for pharmacological ligands (drugs, natural products, e...
+Search the Guide to Pharmacology database for pharmacological ligands with recoverable local offs...
 """
 
 from typing import Any, Optional, Callable
@@ -9,28 +9,34 @@ from ._shared_client import get_shared_client
 
 
 def GtoPdb_search_ligands(
-    name: Optional[str | Any] = None,
-    type_: Optional[str | Any] = None,
-    approved: Optional[bool | Any] = None,
-    query: Optional[str | Any] = None,
+    name: Optional[str] = None,
+    type_: Optional[str] = None,
+    approved: Optional[bool] = None,
+    query: Optional[str] = None,
+    limit: Optional[int] = 50,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
-    Search the Guide to Pharmacology database for pharmacological ligands (drugs, natural products, e...
+    Search the Guide to Pharmacology database for pharmacological ligands with recoverable local offs...
 
     Parameters
     ----------
-    name : str | Any
+    name : str
         Ligand name or INN to search. Examples: 'aspirin', 'morphine', 'dopamine', 'c...
-    type_ : str | Any
+    type_ : str
         Ligand type filter. Values: 'Approved', 'Synthetic organic', 'Natural product...
-    approved : bool | Any
+    approved : bool
         Filter to approved drugs only (true) or all ligands (false/omit)
-    query : str | Any
+    query : str
         Name/keyword to search for. Alias for the "name" parameter.
+    limit : int
+        Number of ligands on this page (1-1000; default 50).
+    offset : int
+        Zero-based ligand offset. Continue with next_offset while has_more is true.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,7 +46,7 @@ def GtoPdb_search_ligands(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
@@ -52,6 +58,8 @@ def GtoPdb_search_ligands(
             "type": type_,
             "approved": approved,
             "query": query,
+            "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

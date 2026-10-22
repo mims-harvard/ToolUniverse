@@ -198,7 +198,7 @@ def test_transient_http_failure_stops_after_three_attempts(monkeypatch):
     }
 
 
-def test_ortholog_page_size_is_enforced_when_ncbi_returns_full_set(monkeypatch):
+def test_ortholog_complete_set_supports_local_offset_pagination(monkeypatch):
     calls = []
     payload = {
         "reports": [
@@ -220,12 +220,14 @@ def test_ortholog_page_size_is_enforced_when_ncbi_returns_full_set(monkeypatch):
         }
     )
 
-    result = tool.run({"gene_id": "7157", "page_size": 2})
+    result = tool.run({"gene_id": "7157", "page_size": 2, "offset": 2})
 
-    assert [item["gene_id"] for item in result["data"]] == ["0", "1"]
+    assert [item["gene_id"] for item in result["data"]] == ["2", "3"]
     assert result["metadata"]["total_available"] == 5
     assert result["metadata"]["returned"] == 2
-    assert calls[0][1]["params"]["page_size"] == 2
+    assert result["metadata"]["next_offset"] == 4
+    assert result["metadata"]["pagination_mode"] == "local_complete_response"
+    assert calls[0][1]["params"]["page_size"] == 1000
 
 
 @pytest.mark.parametrize(
@@ -461,10 +463,10 @@ def test_ncbi_parameter_schemas_reject_invalid_boundary_values():
             "NCBIDatasets_get_genome_assembly",
             {"accession": "NC_000913.3"},
         ),
-        (
-            "NCBIDatasets_list_genomes_by_taxon",
-            {"taxon": "human", "limit": 101},
-        ),
+            (
+                "NCBIDatasets_list_genomes_by_taxon",
+                {"taxon": "human", "limit": 1001},
+            ),
         (
             "NCBIDatasets_get_sequence_reports",
             {"accession": "GCF_000005845.2", "page_size": 0},

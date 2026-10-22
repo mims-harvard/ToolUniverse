@@ -110,7 +110,7 @@
   {
     "type": "FAERSAnalyticsTool",
     "name": "FAERS_filter_serious_events",
-    "description": "Filter for serious adverse events (death, hospitalization, disability, life-threatening). Returns top reactions meeting seriousness criteria. Example: fulvestrant serious events \u2192 Death: 150 cases, Hospitalization: 500 cases. Use for risk-benefit assessment.",
+    "description": "Filter for serious adverse events (death, hospitalization, disability, life-threatening). Returns ranked reactions with recoverable pagination: start at offset=0 and continue with next_offset while has_more is true. openFDA exposes at most its 1,000 most frequent reaction terms. Use for risk-benefit assessment.",
     "parameter": {
       "type": "object",
       "required": [],
@@ -147,6 +147,19 @@
         "adverse_event": {
           "type": "string",
           "description": "Specific adverse event MedDRA term to filter within serious events (e.g., MYOCARDIAL INFARCTION, DEATH). Use uppercase MedDRA PT terms."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum ranked reactions to return on this page.",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based ranked-reaction offset. Continue with next_offset while has_more is true.",
+          "default": 0,
+          "minimum": 0
         }
       }
     },
@@ -262,7 +275,7 @@
   {
     "type": "FAERSAnalyticsTool",
     "name": "FAERS_rollup_meddra_hierarchy",
-    "description": "Aggregate adverse events by MedDRA hierarchy (Preferred Term level). Returns top 50 PTs with counts. Note: Full HLT/SOC hierarchy requires MedDRA license. Use for adverse event profile overview.",
+    "description": "Aggregate adverse events at the MedDRA Preferred Term level. Returns a recoverably paginated ranked list: start at offset=0 and continue with next_offset while has_more is true. openFDA exposes at most the 1,000 most frequent PTs, and total_unique_PTs_is_exact states whether that cap was reached. Full HLT/SOC hierarchy requires a MedDRA license.",
     "parameter": {
       "type": "object",
       "required": [],
@@ -279,6 +292,19 @@
         "drug": {
           "type": "string",
           "description": "Alias for drug_name. Generic drug name."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum ranked Preferred Terms to return on this page.",
+          "default": 50,
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based Preferred Term offset. Continue with next_offset while has_more is true.",
+          "default": 0,
+          "minimum": 0
         }
       }
     },

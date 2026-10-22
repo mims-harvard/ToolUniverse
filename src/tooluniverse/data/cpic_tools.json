@@ -1023,34 +1023,22 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "array",
-          "description": "Alleles in this page of results",
-          "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string",
-                "description": "Star allele name (e.g. '*4')"
-              },
-              "functionalstatus": {
-                "type": [
-                  "null",
-                  "string"
-                ]
-              },
-              "activityvalue": {
-                "type": [
-                  "null",
-                  "string"
-                ]
-              },
-              "clinicalfunctionalstatus": {
-                "type": [
-                  "null",
-                  "string"
-                ]
-              }
-            }
+          "type": "object",
+          "properties": {
+            "status": {"type": "string"},
+            "data": {
+              "type": "array",
+              "description": "Alleles in this page of results",
+              "items": {"type": "object"}
+            },
+            "count": {"type": "integer"},
+            "returned": {"type": "integer"},
+            "total_count": {"type": "integer"},
+            "offset": {"type": "integer"},
+            "limit": {"type": "integer"},
+            "has_more": {"type": "boolean"},
+            "next_offset": {"type": ["integer", "null"]},
+            "result_set_complete": {"type": "boolean"}
           }
         },
         {

@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def BiGG_download_model(
-    operation: str,
     model_id: str,
+    operation: Optional[str] = "download_model",
     format: Optional[str] = "json",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,

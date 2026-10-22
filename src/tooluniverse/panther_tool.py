@@ -180,6 +180,14 @@ class PANTHERTool(BaseTool):
             organism = 9606
         if annotation_dataset is None:
             annotation_dataset = "GO:0008150"
+        try:
+            limit = min(max(1, int(arguments.get("limit", 50))), 1000)
+        except (TypeError, ValueError):
+            limit = 50
+        try:
+            offset = max(0, int(arguments.get("offset", 0)))
+        except (TypeError, ValueError):
+            offset = 0
 
         url = f"{PANTHER_BASE_URL}/enrich/overrep"
         params = {
@@ -207,7 +215,11 @@ class PANTHERTool(BaseTool):
         enriched = []
         for r in results:
             fdr = r.get("fdr", 1.0)
-            if fdr is None or not isinstance(fdr, (int, float)):
+            if (
+                fdr is None
+                or not isinstance(fdr, (int, float))
+                or fdr >= 0.05
+            ):
                 continue
             fold = r.get("fold_enrichment", 0)
             if fold is None or not isinstance(fold, (int, float)):
@@ -231,15 +243,21 @@ class PANTHERTool(BaseTool):
         # Sort by FDR then fold enrichment
         enriched.sort(key=lambda x: (x["fdr"], -x["fold_enrichment"]))
 
-        # Return top 50 most significant
-        enriched_top = enriched[:50]
+        total_enriched_terms = len(enriched)
+        enriched_page = enriched[offset : offset + limit]
+        has_more = offset + len(enriched_page) < total_enriched_terms
 
         result = {
             "gene_list": gene_list,
             "organism": organism,
             "annotation_dataset": annotation_dataset,
-            "result_count": len(enriched_top),
-            "enriched_terms": enriched_top,
+            "result_count": len(enriched_page),
+            "total_enriched_terms": total_enriched_terms,
+            "enriched_terms": enriched_page,
+            "offset": offset,
+            "limit": limit,
+            "has_more": has_more,
+            "next_offset": offset + len(enriched_page) if has_more else None,
         }
 
         return {
@@ -249,6 +267,8 @@ class PANTHERTool(BaseTool):
                 "source": "PANTHER",
                 "query": gene_list,
                 "endpoint": "enrich/overrep",
+                "raw_term_count": len(results),
+                "significance_threshold": "FDR < 0.05",
             },
         }
 

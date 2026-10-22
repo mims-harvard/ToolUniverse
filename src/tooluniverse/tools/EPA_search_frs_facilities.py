@@ -1,7 +1,7 @@
 """
 EPA_search_frs_facilities
 
-Search the EPA Facility Registry Service (FRS) — EPA's integrated registry of regulated facility ...
+Search EPA Facility Registry Service sites by US state and optional city. Results use native Envi...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,14 @@ def EPA_search_frs_facilities(
     state: str,
     city: Optional[str] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search the EPA Facility Registry Service (FRS) — EPA's integrated registry of regulated facility ...
+    Search EPA Facility Registry Service sites by US state and optional city. Results use native Envi...
 
     Parameters
     ----------
@@ -27,7 +28,9 @@ def EPA_search_frs_facilities(
     city : str
         Optional city name filter.
     limit : int
-        Max facilities (default 10, max 100).
+        Max facilities per page (default 10, max 100).
+    offset : int
+        Zero-based row offset; continue with metadata.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,12 @@ def EPA_search_frs_facilities(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"state": state, "city": city, "limit": limit}.items()
+        for k, v in {
+            "state": state,
+            "city": city,
+            "limit": limit,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

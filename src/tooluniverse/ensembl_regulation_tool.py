@@ -77,6 +77,23 @@ class EnsemblRegulationTool(BaseTool):
             "error": f"Unknown endpoint_type: {self.endpoint_type}",
         }
 
+    @staticmethod
+    def _paginate(items: list, arguments: Dict[str, Any]) -> tuple[list, Dict[str, Any]]:
+        """Page a complete Ensembl response and expose continuation state."""
+        limit = min(max(int(arguments.get("limit", 200)), 1), 1000)
+        offset = max(int(arguments.get("offset", 0)), 0)
+        page = items[offset : offset + limit]
+        has_more = offset + len(page) < len(items)
+        return page, {
+            "returned": len(page),
+            "total": len(items),
+            "limit": limit,
+            "offset": offset,
+            "has_more": has_more,
+            "truncated": len(page) < len(items),
+            "next_offset": offset + len(page) if has_more else None,
+        }
+
     def _motif_features(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get TF binding motif features in a genomic region."""
         species = arguments.get("species", "homo_sapiens")
@@ -117,13 +134,15 @@ class EnsemblRegulationTool(BaseTool):
                 }
             )
 
+        motif_page, paging = self._paginate(motifs, arguments)
         return {
             "status": "success",
             "data": {
                 "region": region,
                 "species": species,
                 "motif_count": len(motifs),
-                "motif_features": motifs[:200],
+                "motif_features": motif_page,
+                **paging,
             },
             "metadata": {
                 "source": "Ensembl REST API",
@@ -170,13 +189,15 @@ class EnsemblRegulationTool(BaseTool):
         # Sort by score descending
         elements.sort(key=lambda x: x.get("score", 0), reverse=True)
 
+        element_page, paging = self._paginate(elements, arguments)
         return {
             "status": "success",
             "data": {
                 "region": region,
                 "species": species,
                 "element_count": len(elements),
-                "constrained_elements": elements[:200],
+                "constrained_elements": element_page,
+                **paging,
             },
             "metadata": {
                 "source": "Ensembl Compara",

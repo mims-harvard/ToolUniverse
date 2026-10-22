@@ -217,8 +217,10 @@ class PubMedRESTTool(BaseRESTTool):
             authors = []
             if "authors" in article_data:
                 authors = [
-                    author.get("name", "") for author in article_data["authors"]
-                ][:5]  # Limit to first 5 authors
+                    author.get("name", "")
+                    for author in article_data["authors"]
+                    if author.get("name")
+                ]
 
             # Extract article info
             pub_date = article_data.get("pubdate", "")
@@ -246,6 +248,7 @@ class PubMedRESTTool(BaseRESTTool):
                 "pmid": pmid,
                 "title": article_data.get("title", ""),
                 "authors": authors,
+                "authors_count": len(authors),
                 "journal": journal,
                 "pub_date": pub_date,
                 "pub_year": pub_year,
@@ -412,17 +415,23 @@ class PubMedRESTTool(BaseRESTTool):
                     abstract_parts.append(f"{label}: {text}" if label else text)
             abstract = " ".join(abstract_parts)
 
-            # Authors (first 10)
+            # Complete author list, including consortium/collective authors.
             authors = []
-            for au in (art.findall("AuthorList/Author") or [])[:10]:
+            for au in art.findall("AuthorList/Author") or []:
                 last, fore = au.findtext("LastName", ""), au.findtext("ForeName", "")
-                name = f"{last} {fore}".strip() if last else fore
+                collective = au.findtext("CollectiveName", "")
+                name = (f"{last} {fore}".strip() if last else fore) or collective
                 if not name:
                     continue
                 entry = {"name": name}
-                aff = _text(au, ".//Affiliation")
-                if aff:
-                    entry["affiliation"] = aff
+                affiliations = [
+                    "".join(aff.itertext()).strip()
+                    for aff in au.findall("AffiliationInfo/Affiliation")
+                    if "".join(aff.itertext()).strip()
+                ]
+                if affiliations:
+                    entry["affiliation"] = affiliations[0]
+                    entry["affiliations"] = affiliations
                 authors.append(entry)
 
             journal_el = art.find("Journal")
@@ -472,6 +481,7 @@ class PubMedRESTTool(BaseRESTTool):
                 "title": title,
                 "abstract": abstract or None,
                 "authors": authors,
+                "authors_count": len(authors),
                 "journal": journal or None,
                 "pub_date": pub_date,
                 "pub_year": pub_year,

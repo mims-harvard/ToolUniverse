@@ -221,7 +221,7 @@
   },
   {
     "name": "WorldBank_search_indicators",
-    "description": "Search World Bank for development indicators by keyword. Returns indicator codes, names, descriptions, units, and source databases. Use this to discover indicator codes for WorldBank_get_indicator. The World Development Indicators (WDI) database contains 1400+ indicators covering health, education, economy, environment, infrastructure, poverty, and more.",
+    "description": "Search the World Bank indicator catalog by keyword. The upstream API ignores query, so ToolUniverse retrieves its complete accessible catalog, filters locally across indicator ID/name/description/source, and applies exact offset pagination to accessible matches. Begin with offset=0 and continue with metadata.next_offset. metadata.upstream_catalog_omitted reports any discrepancy between World Bank's declared and returned catalog sizes.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -234,7 +234,16 @@
             "integer",
             "null"
           ],
-          "description": "Number of results to return (default 10, max 1000)"
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 10,
+          "description": "Matching indicators per local page (default 10, max 1000)"
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset within locally filtered matches. Continue with metadata.next_offset."
         }
       },
       "required": [
@@ -244,8 +253,16 @@
     "fields": {
       "endpoint": "https://api.worldbank.org/v2/indicator",
       "params": {
-        "format": "json"
-      }
+        "format": "json",
+        "per_page": "32767",
+        "page": "1"
+      },
+      "client_only_params": [
+        "query",
+        "per_page",
+        "offset"
+      ],
+      "pagination": "worldbank_indicator_search"
     },
     "type": "BaseRESTTool",
     "test_examples": [

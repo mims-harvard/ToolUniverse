@@ -70,10 +70,11 @@ class CoreTool(BaseTool):
         self,
         query: str,
         limit: int = 10,
+        offset: int = 0,
         year_from: Optional[int] = None,
         year_to: Optional[int] = None,
         language: Optional[str] = None,
-    ) -> List[Dict[str, Any]]:
+    ) -> Dict[str, Any]:
         """
         Search for papers using CORE API.
 
@@ -91,8 +92,8 @@ class CoreTool(BaseTool):
             # Build search parameters
             params = {
                 "q": query,
-                "limit": min(limit, 100),  # CORE API max limit is 100
-                "page": 1,
+                "limit": limit,
+                "offset": offset,
             }
 
             # Apply filters client-side: CORE query syntax for year/language is not
@@ -108,17 +109,19 @@ class CoreTool(BaseTool):
                 max_attempts=3,
             )
             if response.status_code != 200:
-                return [
-                    {
-                        "error": f"CORE API request failed: {response.status_code} for url: {getattr(response, 'url', None) or ''}".strip()
-                    }
-                ]
+                return {
+                    "status": "error",
+                    "error": f"CORE API request failed: {response.status_code} for url: {getattr(response, 'url', None) or ''}".strip(),
+                }
 
             data = response.json()
             results = []
+            upstream_results = data.get("results", [])
+            if not isinstance(upstream_results, list):
+                upstream_results = []
 
             # Parse results
-            for item in data.get("results", []):
+            for item in upstream_results:
                 year = self._extract_year(item.get("publishedDate"))
                 lang_code = (item.get("language") or {}).get("code") or "Unknown"
 
@@ -150,12 +153,62 @@ class CoreTool(BaseTool):
                 }
                 results.append(paper)
 
-            return results
+            total_hits = data.get("totalHits")
+            total_is_exact = isinstance(total_hits, int) and not isinstance(
+                total_hits, bool
+            )
+            upstream_returned = len(upstream_results)
+            next_offset = offset + upstream_returned
+            stalled = bool(
+                total_is_exact and not upstream_results and offset < total_hits
+            )
+            has_more = bool(
+                total_is_exact and upstream_results and next_offset < total_hits
+            )
+            return {
+                "status": "success",
+                "data": results,
+                "metadata": {
+                    "returned": len(results),
+                    "upstream_returned": upstream_returned,
+                    "upstream_total_results": total_hits if total_is_exact else None,
+                    "upstream_total_results_is_exact": total_is_exact,
+                    "offset": offset,
+                    "limit": limit,
+                    "has_more": has_more,
+                    "next_offset": next_offset if has_more else None,
+                    "truncated": offset > 0 or has_more,
+                    "result_set_complete": bool(
+                        total_is_exact and offset == 0 and upstream_returned == total_hits
+                    ),
+                    "pagination_stalled": stalled,
+                    "client_side_filters": {
+                        "year_from": year_from,
+                        "year_to": year_to,
+                        "language": language,
+                    },
+                    "filtered_total_results": None
+                    if any(value is not None for value in (year_from, year_to, language))
+                    else total_hits,
+                    "warning": (
+                        "CORE reported additional upstream papers but returned an empty page at this offset."
+                        if stalled
+                        else (
+                            "Year/language filters are applied to each upstream page client-side; continue with next_offset even when the filtered page is short or empty."
+                            if any(
+                                value is not None
+                                for value in (year_from, year_to, language)
+                            )
+                            else None
+                        )
+                    ),
+                },
+            }
 
         except requests.exceptions.RequestException as e:
-            return [{"error": f"CORE API request failed: {str(e)}"}]
+            return {"status": "error", "error": f"CORE API request failed: {str(e)}"}
         except Exception as e:
-            return [{"error": f"CORE API error: {str(e)}"}]
+            return {"status": "error", "error": f"CORE API error: {str(e)}"}
 
     def _extract_authors(self, authors: List[Dict]) -> List[str]:
         """Extract author names from CORE API response."""
@@ -174,7 +227,7 @@ class CoreTool(BaseTool):
         except Exception:
             return "Unknown"
 
-    def run(self, tool_arguments) -> List[Dict[str, Any]]:
+    def run(self, tool_arguments) -> Dict[str, Any]:
         """
         Execute the CORE search.
 
@@ -191,19 +244,32 @@ class CoreTool(BaseTool):
             or ""
         )
         if not query:
-            return [{"error": "Query parameter is required"}]
+            return {"status": "error", "error": "Query parameter is required"}
 
-        limit = tool_arguments.get(
-            "limit",
-            tool_arguments.get("page_size", tool_arguments.get("max_results", 10)),
-        )
+        limit = tool_arguments.get("limit", 10)
+        for alias in ("page_size", "max_results"):
+            if tool_arguments.get(alias) is not None:
+                if limit != 10 and limit != tool_arguments[alias]:
+                    return {
+                        "status": "error",
+                        "error": f"Conflicting limit and {alias}; provide only one page-size value",
+                    }
+                limit = tool_arguments[alias]
+        offset = tool_arguments.get("offset", 0)
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 100:
+            return {"status": "error", "error": "limit must be an integer from 1 to 100"}
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {"status": "error", "error": "offset must be a non-negative integer"}
         year_from = tool_arguments.get("year_from")
         year_to = tool_arguments.get("year_to")
         language = tool_arguments.get("language")
+        if year_from is not None and year_to is not None and year_from > year_to:
+            return {"status": "error", "error": "year_from must not exceed year_to"}
 
         return self._search(
             query=query,
             limit=limit,
+            offset=offset,
             year_from=year_from,
             year_to=year_to,
             language=language,

@@ -64,6 +64,21 @@ def test_natural_call_succeeds_end_to_end(tu):
     assert result.get("status") == "success", result
 
 
+def test_injected_operation_not_rejected_for_parameterless_fixed_tool(tu, monkeypatch):
+    """An internal fields.operation is routing state, not a user argument typo."""
+
+    tool = tu._get_tool_instance("ClinGen_get_gene_validity", cache=True)
+    monkeypatch.setattr(
+        tool,
+        "run",
+        lambda arguments: {"status": "success", "arguments": arguments},
+    )
+    result = tu.run({"name": "ClinGen_get_gene_validity", "arguments": {}})
+
+    assert result["status"] == "success"
+    assert result["arguments"]["operation"] == "get_gene_validity"
+
+
 def test_wired_operations_match_documented_examples():
     """A wrong default would silently run the wrong handler -- guard against it."""
     mismatched = []
@@ -117,7 +132,9 @@ def test_every_wired_tool_accepts_its_example_without_operation():
             schema = cfg.get("parameter") or {}
             if not schema.get("properties"):
                 continue
-            examples = [e for e in (cfg.get("test_examples") or []) if isinstance(e, dict)]
+            examples = [
+                e for e in (cfg.get("test_examples") or []) if isinstance(e, dict)
+            ]
             if not examples:
                 continue
             natural = {k: v for k, v in examples[0].items() if k != "operation"}

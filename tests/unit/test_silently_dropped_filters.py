@@ -63,9 +63,11 @@ def test_mgnify_genome_type_fails_closed_instead_of_returning_everything():
     assert params is None, "must not issue an unfiltered request"
 
 
-def test_mgnify_page_size_is_still_capped():
-    _, params = _mgnify_params({"taxonomy": "Bacteroides", "page_size": 5000})
-    assert params["page_size"] == 100
+def test_mgnify_page_size_is_rejected_instead_of_silently_capped():
+    result, params = _mgnify_params({"taxonomy": "Bacteroides", "page_size": 5000})
+    assert result["status"] == "error"
+    assert result["parameter"] == "page_size"
+    assert params is None
 
 
 # --------------------------------------------------------------------------

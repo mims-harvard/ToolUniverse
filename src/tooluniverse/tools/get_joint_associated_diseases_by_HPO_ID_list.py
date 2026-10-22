@@ -16,7 +16,7 @@ def get_joint_associated_diseases_by_HPO_ID_list(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
     Retrieve diseases associated with a list of phenotypes or symptoms by a list of HPO IDs.
 
@@ -37,7 +37,7 @@ def get_joint_associated_diseases_by_HPO_ID_list(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

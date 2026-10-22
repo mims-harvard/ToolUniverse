@@ -1,7 +1,7 @@
 """
 AOPWiki_list_aops
 
-List Adverse Outcome Pathways (AOPs) from AOPWiki. Returns AOP IDs, titles, and short names. AOPs...
+List the complete AOP-Wiki Adverse Outcome Pathway catalog. Every upstream page is fetched and ch...
 """
 
 from typing import Any, Optional, Callable
@@ -16,12 +16,12 @@ def AOPWiki_list_aops(
     validate: bool = True,
 ) -> list[Any]:
     """
-    List Adverse Outcome Pathways (AOPs) from AOPWiki. Returns AOP IDs, titles, and short names. AOPs...
+    List the complete AOP-Wiki Adverse Outcome Pathway catalog. Every upstream page is fetched and ch...
 
     Parameters
     ----------
-    search : str, optional
-        Case-insensitive keyword to filter AOPs by title or short name. Omit t...
+    search : str
+        Case-insensitive keyword to filter AOPs by title or short name. Omit to retur...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

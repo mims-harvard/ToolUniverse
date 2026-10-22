@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def CryoET_list_tomograms(
-    operation: str,
     run_id: int,
+    operation: Optional[str] = "list_tomograms",
     limit: Optional[int] = 10,
     offset: Optional[int] = 0,
     *,

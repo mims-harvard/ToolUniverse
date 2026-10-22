@@ -415,13 +415,19 @@ class CPICGetAllelesTool(BaseTool):
         if total is None:
             total = offset + len(data)
 
+        has_more = offset + len(data) < total
         result: Dict[str, Any] = {
             "status": "success",
             "data": data,
             "url": response.url,
             "count": len(data),
+            "returned": len(data),
             "total_count": total,
             "offset": offset,
+            "limit": limit,
+            "has_more": has_more,
+            "next_offset": offset + len(data) if has_more else None,
+            "result_set_complete": offset == 0 and not has_more,
         }
         if data and offset + len(data) < total:
             result["note"] = (

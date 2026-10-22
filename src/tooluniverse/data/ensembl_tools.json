@@ -240,7 +240,7 @@
   {
     "type": "EnsemblRESTTool",
     "name": "ensembl_get_variants",
-    "description": "Get genetic variants (SNPs, indels) in a genomic region. Returns variant information including positions, alleles, and consequences. Use this to find variants overlapping a specific genomic region.",
+    "description": "Get genetic variants (SNPs, indels) in a genomic region using explicit offset/limit pagination over the complete Ensembl overlap response. Metadata reports the true total, returned count, truncation state, and next offset, preventing large regions from appearing complete after downstream context truncation.",
     "endpoint": "/overlap/region/{species}/{region}",
     "parameter": {
       "type": "object",
@@ -258,11 +258,28 @@
           "type": "string",
           "default": "variation",
           "description": "Feature type to retrieve (default 'variation')"
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based offset within all variants returned by Ensembl."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "default": 500,
+          "minimum": 1,
+          "maximum": 5000,
+          "description": "Maximum variants returned in this response (default 500, max 5000). Set null to return the complete upstream array."
         }
       },
       "required": [
         "region"
-      ]
+      ],
+      "additionalProperties": false
     },
     "return_schema": {
       "type": "array",

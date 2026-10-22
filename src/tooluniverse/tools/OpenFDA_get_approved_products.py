@@ -1,7 +1,7 @@
 """
 OpenFDA_get_approved_products
 
-Get FDA-approved product details for a drug including all marketed formulations, active ingredien...
+Get every product under exactly one Drugs@FDA application, with complete brand/generic name array...
 """
 
 from typing import Any, Optional, Callable
@@ -9,24 +9,24 @@ from ._shared_client import get_shared_client
 
 
 def OpenFDA_get_approved_products(
-    operation: str,
-    drug_name: Optional[str | Any] = None,
-    application_number: Optional[str | Any] = None,
+    operation: Optional[str] = "get_approved_products",
+    drug_name: Optional[str] = None,
+    application_number: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get FDA-approved product details for a drug including all marketed formulations, active ingredien...
+    Get every product under exactly one Drugs@FDA application, with complete brand/generic name array...
 
     Parameters
     ----------
     operation : str
         Operation type
-    drug_name : str | Any
-        Drug name (brand or generic, e.g., 'atorvastatin', 'Lipitor')
-    application_number : str | Any
+    drug_name : str
+        Drug name (brand or generic). Must resolve to exactly one application; otherw...
+    application_number : str
         FDA application number (e.g., 'NDA020702')
     stream_callback : Callable, optional
         Callback for streaming output

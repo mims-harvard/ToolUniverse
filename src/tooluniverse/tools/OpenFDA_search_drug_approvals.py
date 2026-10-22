@@ -1,7 +1,7 @@
 """
 OpenFDA_search_drug_approvals
 
-Search the FDA Drugs@FDA database for drug approval records by drug name, sponsor/manufacturer, o...
+Search FDA Drugs@FDA applications with exact total metadata and recoverable offset pagination. Co...
 """
 
 from typing import Any, Optional, Callable
@@ -9,31 +9,34 @@ from ._shared_client import get_shared_client
 
 
 def OpenFDA_search_drug_approvals(
-    operation: str,
-    drug_name: Optional[str | Any] = None,
-    sponsor: Optional[str | Any] = None,
-    application_number: Optional[str | Any] = None,
+    operation: Optional[str] = "search_approvals",
+    drug_name: Optional[str] = None,
+    sponsor: Optional[str] = None,
+    application_number: Optional[str] = None,
     limit: Optional[int] = 5,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search the FDA Drugs@FDA database for drug approval records by drug name, sponsor/manufacturer, o...
+    Search FDA Drugs@FDA applications with exact total metadata and recoverable offset pagination. Co...
 
     Parameters
     ----------
     operation : str
         Operation type
-    drug_name : str | Any
+    drug_name : str
         Drug name to search (brand or generic, e.g., 'aspirin', 'metformin', 'Lipitor...
-    sponsor : str | Any
+    sponsor : str
         Sponsor/manufacturer name (e.g., 'PFIZER', 'MERCK', 'NOVARTIS')
-    application_number : str | Any
+    application_number : str
         FDA application number (e.g., 'NDA021457', 'ANDA078372', 'BLA125554')
     limit : int
-        Maximum number of results (default: 5, max: 20)
+        Maximum applications on this page (default: 5, max: 100)
+    offset : int
+        openFDA skip offset; continue with metadata.next_offset
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def OpenFDA_search_drug_approvals(
             "sponsor": sponsor,
             "application_number": application_number,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

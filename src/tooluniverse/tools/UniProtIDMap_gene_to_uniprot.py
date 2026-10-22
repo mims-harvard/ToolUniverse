@@ -1,7 +1,7 @@
 """
 UniProtIDMap_gene_to_uniprot
 
-Convert gene names or symbols to UniProt accessions using the UniProt ID Mapping service. Shortcu...
+Convert gene symbols to UniProt accessions for a taxonomy. All upstream pages are fetched and exp...
 """
 
 from typing import Any, Optional, Callable
@@ -11,14 +11,16 @@ from ._shared_client import get_shared_client
 def UniProtIDMap_gene_to_uniprot(
     gene_names: str,
     tax_id: Optional[int] = 9606,
-    reviewed_only: Optional[bool | Any] = None,
+    reviewed_only: Optional[bool] = None,
+    limit: Optional[int] = 500,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Convert gene names or symbols to UniProt accessions using the UniProt ID Mapping service. Shortcu...
+    Convert gene symbols to UniProt accessions for a taxonomy. All upstream pages are fetched and exp...
 
     Parameters
     ----------
@@ -26,8 +28,12 @@ def UniProtIDMap_gene_to_uniprot(
         Comma-separated gene symbols. Examples: 'TP53', 'BRCA1,TP53,EGFR,KRAS', 'INS,...
     tax_id : int
         NCBI Taxonomy ID. Required. 9606 = human, 10090 = mouse, 10116 = rat, 7227 = ...
-    reviewed_only : bool | Any
+    reviewed_only : bool
         If true, return only Swiss-Prot (reviewed) entries. Default: false (all UniPr...
+    limit : int
+        Maximum mappings to return in this local page.
+    offset : int
+        Zero-based mapping offset; continue with next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +54,8 @@ def UniProtIDMap_gene_to_uniprot(
             "gene_names": gene_names,
             "tax_id": tax_id,
             "reviewed_only": reviewed_only,
+            "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

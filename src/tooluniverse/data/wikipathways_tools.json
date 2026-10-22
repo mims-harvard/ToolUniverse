@@ -2,7 +2,7 @@
   {
     "name": "WikiPathways_search",
     "type": "WikiPathwaysSearchTool",
-    "description": "Text search across community-curated pathways (disease, metabolic, signaling). Use to discover relevant pathways for a topic/gene set and obtain WPIDs for retrieval/visualization.",
+    "description": "Search pathway titles in the current WikiPathways SPARQL dataset. Results are recoverably paginated: start with offset=0 and continue with metadata.next_offset while metadata.has_more is true. The endpoint does not expose a cheap exact count, so metadata.total_hits is null and metadata.total_hits_is_known is false.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -13,6 +13,19 @@
         "organism": {
           "type": "string",
           "description": "Organism filter (scientific name), e.g., 'Homo sapiens'."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200,
+          "default": 20,
+          "description": "Number of pathways per page."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based result offset; continue with metadata.next_offset."
         }
       },
       "required": [
@@ -20,8 +33,8 @@
       ]
     },
     "fields": {
-      "endpoint": "https://webservice.wikipathways.org/findPathwaysByText",
-      "format": "json"
+      "endpoint": "https://sparql.wikipathways.org/sparql",
+      "format": "SPARQL JSON"
     },
     "return_schema": {
       "oneOf": [
@@ -87,7 +100,7 @@
   {
     "name": "WikiPathways_get_pathway",
     "type": "WikiPathwaysGetTool",
-    "description": "Fetch pathway content by WPID (JSON/GPML). Use to programmatically access pathway nodes/edges/metadata for enrichment reporting or network visualization.",
+    "description": "Fetch a WikiPathways pathway by WPID. format=json returns SPARQL pathway metadata plus a recoverably paginated gene-participant table; data.gene_count and metadata.total_gene_rows are exact row totals, while data.gene_product_count is the exact distinct node count. Continue with metadata.next_gene_offset. format=gpml returns the complete current GPML XML from the official static asset URL.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -103,6 +116,19 @@
           ],
           "default": "json",
           "description": "Response format: 'json' for structured, 'gpml' for GPML XML."
+        },
+        "gene_limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 200,
+          "description": "Gene-participant rows per page when format=json."
+        },
+        "gene_offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based gene-participant row offset; continue with metadata.next_gene_offset."
         }
       },
       "required": [
@@ -110,52 +136,54 @@
       ]
     },
     "fields": {
-      "endpoint": "https://webservice.wikipathways.org/getPathway",
-      "format": "json"
+      "endpoint": "https://sparql.wikipathways.org/sparql",
+      "asset_base": "https://www.wikipathways.org/wikipathways-assets/pathways"
     },
     "return_schema": {
-      "type": "object",
-      "description": "WikiPathways API response with pathway content",
-      "properties": {
-        "pathway": {
+      "oneOf": [
+        {
           "type": "object",
-          "description": "Pathway content and metadata",
           "properties": {
-            "id": {
-              "type": "string",
-              "description": "WikiPathways ID"
+            "wpid": {"type": "string"},
+            "uri": {"type": "string"},
+            "title": {"type": "string"},
+            "organism": {"type": "string"},
+            "genes": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {"type": "string"},
+                  "label": {"type": "string"},
+                  "datasource": {"type": "string"}
+                }
+              }
             },
-            "name": {
-              "type": "string",
-              "description": "Pathway name"
-            },
-            "species": {
-              "type": "string",
-              "description": "Organism name"
-            },
-            "revision": {
-              "type": "string",
-              "description": "Revision number"
-            },
-            "url": {
-              "type": "string",
-              "description": "Pathway URL"
-            },
-            "gpml": {
-              "type": [
-                "string",
-                "null"
-              ],
-              "description": "GPML XML content if format=gpml"
-            }
-          }
+            "gene_count": {"type": "integer", "description": "Exact total distinct participant-row count across all pages."},
+            "gene_product_count": {"type": "integer", "description": "Exact distinct GeneProduct node count."}
+          },
+          "required": ["wpid", "genes", "gene_count", "gene_product_count"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "wpid": {"type": "string"},
+            "format": {"const": "gpml"},
+            "gpml": {"type": "string"},
+            "source_url": {"type": "string"}
+          },
+          "required": ["wpid", "format", "gpml", "source_url"]
         }
-      }
+      ]
     },
     "test_examples": [
       {
         "wpid": "WP254",
         "format": "json"
+      },
+      {
+        "wpid": "WP254",
+        "format": "gpml"
       }
     ],
     "label": [

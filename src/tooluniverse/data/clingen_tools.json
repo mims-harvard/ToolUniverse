@@ -42,7 +42,7 @@
   },
   {
     "name": "ClinGen_get_gene_validity",
-    "description": "Get all ClinGen gene-disease validity curations. Returns comprehensive list of gene-disease relationships with classifications (Definitive, Strong, Moderate, Limited). Useful for batch analysis or exploring curated genes. Optional gene filter available.",
+    "description": "Get ClinGen gene-disease validity curations with classifications (Definitive, Strong, Moderate, Limited). The full catalog contains thousands of rows and is paged with limit/offset; total and next_offset make every curation reachable. An optional exact gene-symbol filter is available.",
     "type": "ClinGenTool",
     "parameter": {
       "type": "object",
@@ -50,6 +50,19 @@
         "gene": {
           "type": "string",
           "description": "Optional: Filter by gene symbol"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 100,
+          "description": "Maximum curations per page."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based curation offset. Continue with next_offset while has_more is true."
         }
       },
       "required": []
@@ -106,7 +119,7 @@
   },
   {
     "name": "ClinGen_get_dosage_sensitivity",
-    "description": "Get all ClinGen dosage sensitivity curations. Returns haploinsufficiency and triplosensitivity scores for curated genes. Set include_regions=true to also get recurrent CNV regions. Scores: 0=No evidence, 1=Little, 2=Emerging, 3=Sufficient evidence.",
+    "description": "Get ClinGen dosage sensitivity curations, including haploinsufficiency and triplosensitivity scores. The catalog is paged with limit/offset; total and next_offset make every curation reachable. Set include_regions=true to include recurrent CNV regions.",
     "type": "ClinGenTool",
     "parameter": {
       "type": "object",
@@ -119,6 +132,19 @@
           "type": "boolean",
           "description": "Include recurrent CNV regions (default: false)",
           "default": false
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 100,
+          "description": "Maximum curations per page."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based curation offset. Continue with next_offset while has_more is true."
         }
       },
       "required": []
@@ -138,7 +164,7 @@
   },
   {
     "name": "ClinGen_get_actionability_adult",
-    "description": "Get ClinGen clinical actionability curations for adult context. Returns genes with actionable findings, intervention scores, and outcome scores. Actionability scores help prioritize which incidental findings to return. Example: BRCA1/2 have high actionability for cancer screening.",
+    "description": "Get ClinGen clinical actionability curations for adult context, including actionable findings, intervention scores, and outcome scores. Results are paged with limit/offset; total and next_offset make every curation reachable.",
     "type": "ClinGenTool",
     "parameter": {
       "type": "object",
@@ -146,6 +172,19 @@
         "gene": {
           "type": "string",
           "description": "Optional: Filter by gene symbol"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 100,
+          "description": "Maximum curations per page."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based curation offset. Continue with next_offset while has_more is true."
         }
       },
       "required": []
@@ -196,7 +235,7 @@
   },
   {
     "name": "ClinGen_get_actionability_pediatric",
-    "description": "Get ClinGen clinical actionability curations for pediatric context. Returns genes with actionable findings in children, intervention recommendations, and evidence scores. Pediatric curations may differ from adult context due to age-specific interventions.",
+    "description": "Get ClinGen clinical actionability curations for pediatric context, including actionable findings, intervention recommendations, and evidence scores. Results are paged with limit/offset; total and next_offset make every curation reachable.",
     "type": "ClinGenTool",
     "parameter": {
       "type": "object",
@@ -204,6 +243,19 @@
         "gene": {
           "type": "string",
           "description": "Optional: Filter by gene symbol"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 100,
+          "description": "Maximum curations per page."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based curation offset. Continue with next_offset while has_more is true."
         }
       },
       "required": []
@@ -293,7 +345,7 @@
   },
   {
     "name": "ClinGen_get_variant_classifications",
-    "description": "Get variant pathogenicity classifications from ClinGen Evidence Repository. Returns expert-curated variant classifications with supporting evidence. Optional filters by gene or variant. Classifications follow ACMG/AMP guidelines with expert review.",
+    "description": "Get correctly filtered and paginated variant pathogenicity classifications from the ClinGen Evidence Repository Summary API. Returns the exact total and explicit next_offset, plus expert-curated classification, CAID/ClinVar IDs, condition and inheritance, met/unmet ACMG criteria, evidence summary, expert panel, dates, version, and HGVS forms. Filter by exact gene symbol or by CAID, ClinVar Variation ID, or HGVS/protein change.",
     "type": "ClinGenTool",
     "parameter": {
       "type": "object",
@@ -304,7 +356,20 @@
         },
         "variant": {
           "type": "string",
-          "description": "Optional: Filter by variant (HGVS notation or protein change)"
+          "description": "Optional: Filter by CAID (e.g. CA114360), numeric ClinVar Variation ID, HGVS notation, or protein change"
+        },
+        "limit": {
+          "type": "integer",
+          "default": 100,
+          "minimum": 1,
+          "maximum": 500,
+          "description": "Maximum classifications to return from this page"
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based classification offset; follow next_offset for later records"
         }
       },
       "required": []
@@ -324,13 +389,23 @@
           "Disease": {"type": ["string", "null"]},
           "Mondo Id": {"type": ["string", "null"]},
           "Assertion": {"type": ["string", "null"]},
-          "Expert Panel": {"type": ["string", "null"]}
+          "Expert Panel": {"type": ["string", "null"]},
+          "CAID": {"type": ["string", "null"]},
+          "Mode of Inheritance": {"type": ["string", "null"]},
+          "Met Criteria": {"type": "array"},
+          "Unmet Criteria": {"type": "array"},
+          "Summary": {"type": ["string", "null"]},
+          "Approved Date": {"type": ["string", "null"]},
+          "Published Date": {"type": ["string", "null"]},
+          "Document Version": {"type": ["string", "null"]},
+          "UUID": {"type": ["string", "null"]},
+          "HGVS": {"type": "array"}
         }
       }
     },
     "test_examples": [
-      {"gene": "BRCA1"},
-      {"gene": "PAH"}
+      {"gene": "BRCA1", "limit": 5},
+      {"gene": "PAH", "limit": 5, "offset": 5}
     ]
   }
 ]

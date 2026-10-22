@@ -1,7 +1,7 @@
 [
   {
     "name": "WHOGHO_search_indicators",
-    "description": "Search WHO Global Health Observatory (GHO) health indicators by name using the ODATA API. Returns indicator codes and names covering mortality, disease, nutrition, maternal health, mental health, and more. No authentication required. Use indicator codes with WHOGHO_get_indicator_data to retrieve actual data values. Examples: 'life expectancy' (WHOSIS_000001), 'malaria' (MALARIA002), 'obesity' (NCD_BMI_30C).",
+    "description": "Search WHO GHO indicators with exact OData $count and $skip/$top pagination. Continue with metadata.next_skip while metadata.has_more is true. Results use stable IndicatorCode ordering.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -17,7 +17,16 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of results to return. Default: 10, max: 100"
+          "minimum": 1,
+          "maximum": 100,
+          "default": 10,
+          "description": "Indicators per page (default 10, max 100)"
+        },
+        "skip": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based OData offset. Continue with metadata.next_skip."
         }
       },
       "required": []
@@ -25,12 +34,16 @@
     "fields": {
       "endpoint": "https://ghoapi.azureedge.net/api/Indicator",
       "params": {
-        "$top": 10
+        "$top": 10,
+        "$count": "true",
+        "$orderby": "IndicatorCode asc"
       },
       "param_mapping": {
         "filter": "$filter",
-        "top": "$top"
-      }
+        "top": "$top",
+        "skip": "$skip"
+      },
+      "pagination": "who_odata_skip"
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -88,7 +101,7 @@
   },
   {
     "name": "WHOGHO_get_indicator_data",
-    "description": "Get actual health data values for a specific WHO Global Health Observatory indicator by its code. Returns country-level data with values, confidence intervals, year, and sex/age breakdowns. No authentication required. Common indicator codes: WHOSIS_000001 (life expectancy at birth), MALARIA002 (malaria cases), MDG_0000000026 (HIV prevalence), NCD_BMI_30C (obesity prevalence), SDGPM25 (PM2.5 air pollution), WHS4_100 (hospital beds per 10000).",
+    "description": "Get WHO GHO indicator data with exact OData $count and $skip/$top pagination. Continue with metadata.next_skip while metadata.has_more is true. Results are deterministically ordered by geography, year, and dimension fields.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -108,7 +121,16 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of data rows to return. Default: 20"
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 20,
+          "description": "Data rows per page (default 20, max 1000)"
+        },
+        "skip": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based OData offset. Continue with metadata.next_skip."
         }
       },
       "required": [
@@ -118,12 +140,16 @@
     "fields": {
       "endpoint": "https://ghoapi.azureedge.net/api/{indicator_code}",
       "params": {
-        "$top": 20
+        "$top": 20,
+        "$count": "true",
+        "$orderby": "SpatialDim asc,TimeDim asc,Dim1 asc,Dim2 asc,Dim3 asc"
       },
       "param_mapping": {
         "filter": "$filter",
-        "top": "$top"
-      }
+        "top": "$top",
+        "skip": "$skip"
+      },
+      "pagination": "who_odata_skip"
     },
     "type": "BaseRESTTool",
     "test_examples": [

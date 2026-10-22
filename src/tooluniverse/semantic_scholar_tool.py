@@ -50,13 +50,51 @@ class SemanticScholarTool(BaseTool):
         limit = arguments.get("limit", 5)
         year = arguments.get("year")
         sort = arguments.get("sort")
+        offset = arguments.get("offset", 0)
+        token = arguments.get("token")
         include_abstract = bool(arguments.get("include_abstract", False))
         if not query:
             return {"status": "error", "error": "`query` parameter is required."}
+        if isinstance(limit, bool) or not isinstance(limit, int):
+            return {"status": "error", "error": "limit must be an integer"}
         if limit <= 0:
             return {"status": "success", "data": [], "metadata": {"total": 0}}
+        if (sort and limit > 1000) or (not sort and limit > 100):
+            maximum = 1000 if sort else 100
+            return {
+                "status": "error",
+                "error": f"limit must not exceed {maximum} for this search mode",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+            }
+        if sort and offset > 999:
+            return {
+                "status": "error",
+                "error": "offset must be between 0 and 999 for sorted bulk pages",
+            }
+        if not sort and offset > 9999:
+            return {
+                "status": "error",
+                "error": "offset must be between 0 and 9999 for regular search",
+            }
+        if token and not sort:
+            return {
+                "status": "error",
+                "error": "token is only valid when sort is provided",
+            }
+        pagination = {}
         papers = self._search(
-            query, limit, year=year, sort=sort, include_abstract=include_abstract
+            query,
+            limit,
+            year=year,
+            sort=sort,
+            offset=offset,
+            token=token,
+            include_abstract=include_abstract,
+            pagination_out=pagination,
         )
         # Check if _search returned an error list
         if papers and isinstance(papers[0], dict) and "error" in papers[0]:
@@ -69,7 +107,7 @@ class SemanticScholarTool(BaseTool):
         return {
             "status": "success",
             "data": papers,
-            "metadata": {"total": len(papers), "query": query},
+            "metadata": {"total": len(papers), "query": query, **pagination},
         }
 
     def _enforce_rate_limit(self, has_api_key: bool) -> None:
@@ -109,7 +147,16 @@ class SemanticScholarTool(BaseTool):
         return payload if isinstance(payload, dict) else None
 
     def _search(
-        self, query, limit, *, year=None, sort=None, include_abstract: bool = False
+        self,
+        query,
+        limit,
+        *,
+        year=None,
+        sort=None,
+        offset: int = 0,
+        token=None,
+        include_abstract: bool = False,
+        pagination_out=None,
     ):
         # Include identifiers and lightweight impact signals for better downstream utility.
         fields = [
@@ -144,6 +191,14 @@ class SemanticScholarTool(BaseTool):
             params["year"] = str(year)
         if sort:
             params["sort"] = sort
+            # Bulk ignores limit and returns an upstream page of up to 1000.
+            # Keep a local offset so callers can consume that page without
+            # skipping directly to the next opaque token.
+            params.pop("limit", None)
+            if token:
+                params["token"] = token
+        elif offset:
+            params["offset"] = offset
         headers = {"x-api-key": self.default_api_key} if self.default_api_key else {}
         self._enforce_rate_limit(bool(self.default_api_key))
         # Use /paper/search/bulk when sorting, as /paper/search silently
@@ -183,14 +238,66 @@ class SemanticScholarTool(BaseTool):
             ]
 
         results = payload.get("data", []) if isinstance(payload, dict) else []
+        total_results = payload.get("total") if isinstance(payload, dict) else None
+        if not isinstance(total_results, int):
+            total_results = len(results)
         if sort:
-            # /paper/search/bulk has no `limit` concept of its own (only
-            # token-based pagination over its full result set), so the
-            # `limit` param above is silently ignored server-side -- slice
-            # here instead of returning however many the page happened to
-            # contain (and instead of unnecessarily paying the N+1
-            # missing-abstract lookup cost below for rows beyond `limit`).
-            results = results[:limit]
+            upstream_page_size = len(results)
+            upstream_next_token = payload.get("token")
+            results = results[offset : offset + limit]
+            local_next = offset + len(results)
+            has_more_in_page = local_next < upstream_page_size
+            next_offset = local_next if has_more_in_page else None
+            next_token = (
+                upstream_next_token
+                if not has_more_in_page and upstream_next_token
+                else None
+            )
+            has_more = has_more_in_page or bool(next_token)
+            if isinstance(pagination_out, dict):
+                pagination_out.update(
+                    {
+                        "total_results": total_results,
+                        "returned": len(results),
+                        "pagination_mode": "bulk_token_with_local_offset",
+                        "page_token": token,
+                        "offset": offset,
+                        "upstream_page_size": upstream_page_size,
+                        "has_more": has_more,
+                        "next_offset": next_offset,
+                        "next_token": next_token,
+                        "result_set_complete": not has_more
+                        and offset == 0
+                        and len(results) == total_results,
+                        "pagination_note": (
+                            "While next_offset is non-null, repeat the same token "
+                            "(or omit it on the first upstream page) with that offset. "
+                            "When next_token is non-null, start that token at offset 0."
+                        ),
+                    }
+                )
+        elif isinstance(pagination_out, dict):
+            returned = len(results)
+            retrievable_results = min(total_results, 10000)
+            calculated_next = offset + returned
+            raw_next = payload.get("next")
+            next_offset = raw_next if isinstance(raw_next, int) else calculated_next
+            has_more = calculated_next < retrievable_results and returned > 0
+            pagination_out.update(
+                {
+                    "total_results": total_results,
+                    "returned": returned,
+                    "pagination_mode": "offset",
+                    "offset": offset,
+                    "retrievable_results": retrievable_results,
+                    "database_result_complete": total_results <= 10000,
+                    "has_more": has_more,
+                    "next_offset": next_offset if has_more else None,
+                    "retrieval_limit_reached": total_results > 10000
+                    and calculated_next >= 10000,
+                    "result_set_complete": offset == 0 and returned == total_results,
+                }
+            )
         papers = []
         for p in results:
             # Extract basic information

@@ -77,6 +77,23 @@ class ReactomeAnalysisTool(BaseTool):
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
+    @staticmethod
+    def _page_controls(arguments: Dict[str, Any]):
+        """Validate Reactome's one-based pathway paging without coercion/clamping."""
+        page_size = arguments.get("page_size", 20)
+        page = arguments.get("page", 1)
+        if page_size is None:
+            page_size = 20
+        if isinstance(page_size, bool) or not isinstance(page_size, int):
+            return {"status": "error", "error": "page_size must be an integer"}
+        if not 1 <= page_size <= 50:
+            return {"status": "error", "error": "page_size must be between 1 and 50"}
+        if isinstance(page, bool) or not isinstance(page, int):
+            return {"status": "error", "error": "page must be an integer"}
+        if page < 1:
+            return {"status": "error", "error": "page must be at least 1"}
+        return page_size, page
+
     def _pathway_enrichment(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Perform pathway overrepresentation analysis."""
         identifiers = arguments.get("identifiers", "")
@@ -90,9 +107,16 @@ class ReactomeAnalysisTool(BaseTool):
         if isinstance(identifiers, list):
             identifiers = "\n".join(identifiers)
 
-        page_size = arguments.get("page_size", 20)
+        controls = self._page_controls(arguments)
+        if isinstance(controls, dict):
+            return controls
+        page_size, page = controls
         include_disease = arguments.get("include_disease", True)
         projection = arguments.get("projection", True)
+        if not isinstance(include_disease, bool):
+            return {"status": "error", "error": "include_disease must be a boolean"}
+        if not isinstance(projection, bool):
+            return {"status": "error", "error": "projection must be a boolean"}
 
         url = (
             f"{ANALYSIS_BASE_URL}/identifiers/projection"
@@ -100,8 +124,8 @@ class ReactomeAnalysisTool(BaseTool):
             else f"{ANALYSIS_BASE_URL}/identifiers/"
         )
         params = {
-            "pageSize": min(page_size, 50),
-            "page": 1,
+            "pageSize": page_size,
+            "page": page,
             "includeDisease": str(include_disease).lower(),
         }
 
@@ -115,7 +139,9 @@ class ReactomeAnalysisTool(BaseTool):
         response.raise_for_status()
         data = response.json()
 
-        return self._format_analysis_result(data, identifiers)
+        return self._format_analysis_result(
+            data, identifiers, page=page, page_size=page_size
+        )
 
     def _species_comparison(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Perform species comparison analysis."""
@@ -129,13 +155,24 @@ class ReactomeAnalysisTool(BaseTool):
         if isinstance(identifiers, list):
             identifiers = "\n".join(identifiers)
 
-        arguments.get("species", 9606)
-        page_size = arguments.get("page_size", 20)
+        if arguments.get("species") is not None:
+            return {
+                "status": "error",
+                "error": (
+                    "species is not supported by Reactome's identifier-projection endpoint "
+                    "and was previously ignored. The service auto-maps submitted identifiers; "
+                    "use ReactomeAnalysis_species_comparison_v2 for explicit species-to-species comparison."
+                ),
+            }
+        controls = self._page_controls(arguments)
+        if isinstance(controls, dict):
+            return controls
+        page_size, page = controls
 
         url = f"{ANALYSIS_BASE_URL}/identifiers/projection"
         params = {
-            "pageSize": min(page_size, 50),
-            "page": 1,
+            "pageSize": page_size,
+            "page": page,
         }
 
         response = requests.post(
@@ -148,7 +185,9 @@ class ReactomeAnalysisTool(BaseTool):
         response.raise_for_status()
         data = response.json()
 
-        return self._format_analysis_result(data, identifiers)
+        return self._format_analysis_result(
+            data, identifiers, page=page, page_size=page_size
+        )
 
     def _token_result(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Retrieve analysis results by token."""
@@ -156,19 +195,22 @@ class ReactomeAnalysisTool(BaseTool):
         if not token:
             return {"status": "error", "error": "token parameter is required"}
 
-        page_size = arguments.get("page_size", 20)
+        controls = self._page_controls(arguments)
+        if isinstance(controls, dict):
+            return controls
+        page_size, page = controls
 
         url = f"{ANALYSIS_BASE_URL}/token/{token}"
         params = {
-            "pageSize": min(page_size, 50),
-            "page": 1,
+            "pageSize": page_size,
+            "page": page,
         }
 
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
         data = response.json()
 
-        return self._format_analysis_result(data, "")
+        return self._format_analysis_result(data, "", page=page, page_size=page_size)
 
     def _expression_analysis(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Quantitative expression analysis (type=EXPRESSION).
@@ -189,9 +231,16 @@ class ReactomeAnalysisTool(BaseTool):
         if isinstance(identifiers, list):
             identifiers = "\n".join(identifiers)
 
-        page_size = arguments.get("page_size", 20)
+        controls = self._page_controls(arguments)
+        if isinstance(controls, dict):
+            return controls
+        page_size, page = controls
         include_disease = arguments.get("include_disease", True)
         projection = arguments.get("projection", False)
+        if not isinstance(include_disease, bool):
+            return {"status": "error", "error": "include_disease must be a boolean"}
+        if not isinstance(projection, bool):
+            return {"status": "error", "error": "projection must be a boolean"}
 
         url = (
             f"{ANALYSIS_BASE_URL}/identifiers/projection"
@@ -199,8 +248,8 @@ class ReactomeAnalysisTool(BaseTool):
             else f"{ANALYSIS_BASE_URL}/identifiers/"
         )
         params = {
-            "pageSize": min(page_size, 50),
-            "page": 1,
+            "pageSize": page_size,
+            "page": page,
             "includeDisease": str(include_disease).lower(),
         }
 
@@ -214,7 +263,13 @@ class ReactomeAnalysisTool(BaseTool):
         response.raise_for_status()
         data = response.json()
 
-        return self._format_analysis_result(data, identifiers, include_expression=True)
+        return self._format_analysis_result(
+            data,
+            identifiers,
+            include_expression=True,
+            page=page,
+            page_size=page_size,
+        )
 
     def _species_comparison_v2(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """True cross-species comparison (type=SPECIES_COMPARISON).
@@ -233,19 +288,22 @@ class ReactomeAnalysisTool(BaseTool):
             }
 
         source = arguments.get("source_species", "homoSapiens")
-        page_size = arguments.get("page_size", 20)
+        controls = self._page_controls(arguments)
+        if isinstance(controls, dict):
+            return controls
+        page_size, page = controls
 
         url = f"{ANALYSIS_BASE_URL}/species/{source}/{species}"
         params = {
-            "pageSize": min(page_size, 50),
-            "page": 1,
+            "pageSize": page_size,
+            "page": page,
         }
 
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
         data = response.json()
 
-        return self._format_analysis_result(data, "")
+        return self._format_analysis_result(data, "", page=page, page_size=page_size)
 
     def _found_entities(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Per-pathway found-entities drill-down.
@@ -339,7 +397,12 @@ class ReactomeAnalysisTool(BaseTool):
         }
 
     def _format_analysis_result(
-        self, data: Dict, identifiers: str, include_expression: bool = False
+        self,
+        data: Dict,
+        identifiers: str,
+        include_expression: bool = False,
+        page: int = 1,
+        page_size: int = 20,
     ) -> Dict[str, Any]:
         """Format analysis result into standard output."""
         summary = data.get("summary", {})
@@ -369,13 +432,24 @@ class ReactomeAnalysisTool(BaseTool):
                 pathway_entry["entities_exp"] = entities.get("exp")
             pathways.append(pathway_entry)
 
+        total_pathways = data.get("pathwaysFound", 0)
+        has_more = (page - 1) * page_size + len(pathways) < total_pathways
+        stalled = not pathways and (page - 1) * page_size < total_pathways
         result_data = {
             "token": summary.get("token"),
             "analysis_type": summary.get("type"),
             "projection": summary.get("projection"),
             "identifiers_not_found": data.get("identifiersNotFound", 0),
-            "pathways_found": data.get("pathwaysFound", 0),
+            "pathways_found": total_pathways,
             "pathways": pathways,
+            "page": page,
+            "page_size": page_size,
+            "returned": len(pathways),
+            "has_more": has_more,
+            "next_page": page + 1 if has_more else None,
+            "truncated": page > 1 or has_more,
+            "result_set_complete": page == 1 and len(pathways) == total_pathways,
+            "pagination_stalled": stalled,
         }
         if include_expression:
             expression = data.get("expression") or {}
@@ -388,7 +462,18 @@ class ReactomeAnalysisTool(BaseTool):
             "data": result_data,
             "metadata": {
                 "source": "Reactome Analysis Service",
-                "total_pathways": data.get("pathwaysFound", 0),
+                "total_pathways": total_pathways,
                 "returned": len(pathways),
+                "page": page,
+                "has_more": has_more,
+                "next_page": page + 1 if has_more else None,
+                "truncated": page > 1 or has_more,
+                "result_set_complete": page == 1 and len(pathways) == total_pathways,
+                "pagination_stalled": stalled,
+                "warning": (
+                    "Reactome reported additional pathways but returned an empty page."
+                    if stalled
+                    else None
+                ),
             },
         }

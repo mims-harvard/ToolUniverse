@@ -1,7 +1,7 @@
 """
 ZINC_get_purchasable
 
-Browse ZINC compounds by purchasability tier. Returns compounds available at a specific availabil...
+Get the vendor/catalog purchasability and price list for a ZINC22 compound by its ZINC ID, via th...
 """
 
 from typing import Any, Optional, Callable
@@ -9,25 +9,22 @@ from ._shared_client import get_shared_client
 
 
 def ZINC_get_purchasable(
-    operation: str,
-    tier: str,
-    count: Optional[int] = 10,
+    zinc_id: str,
+    operation: Optional[str] = "get_purchasable",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
-    Browse ZINC compounds by purchasability tier. Returns compounds available at a specific availabil...
+    Get the vendor/catalog purchasability and price list for a ZINC22 compound by its ZINC ID, via th...
 
     Parameters
     ----------
     operation : str
         Operation type
-    tier : str
-        Purchasability tier. in-stock = ready to ship, for-sale = from vendor, on-dem...
-    count : int
-        Maximum number of results (default: 10, max: 100)
+    zinc_id : str
+        ZINC compound identifier, e.g., ZINC000000000053 (aspirin). zinc20 numeric an...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -37,14 +34,14 @@ def ZINC_get_purchasable(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"operation": operation, "tier": tier, "count": count}.items()
+        for k, v in {"operation": operation, "zinc_id": zinc_id}.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

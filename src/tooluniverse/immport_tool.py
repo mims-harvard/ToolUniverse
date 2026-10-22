@@ -71,10 +71,11 @@ class ImmPortTool(BaseTool):
         assay = arguments.get("assay_method")
         focus = arguments.get("research_focus")
         species = arguments.get("species")
-        limit = min(int(arguments.get("limit", 10)), 100)
+        limit = max(1, min(int(arguments.get("limit") or 10), 100))
+        from_record = max(0, int(arguments.get("from_record") or 0))
 
         pageSize = limit * 3 if (condition or assay or focus) else limit
-        params = {"term": query, "pageSize": pageSize}
+        params = {"term": query, "pageSize": pageSize, "fromRecord": from_record}
         if species:
             params["species"] = species
 
@@ -90,6 +91,9 @@ class ImmPortTool(BaseTool):
         hits_data = data.get("hits", {})
         total = hits_data.get("total", {}).get("value", 0)
         raw_hits = hits_data.get("hits", [])
+        next_from_record = from_record + len(raw_hits)
+        if next_from_record >= total or not raw_hits:
+            next_from_record = None
 
         filtered = []
         for hit in raw_hits:
@@ -140,6 +144,10 @@ class ImmPortTool(BaseTool):
             "metadata": {
                 "total_matches": total,
                 "returned": len(studies),
+                "raw_returned": len(raw_hits),
+                "from_record": from_record,
+                "has_more": next_from_record is not None,
+                "next_from_record": next_from_record,
                 "query": query,
                 "filters_applied": {
                     k: v

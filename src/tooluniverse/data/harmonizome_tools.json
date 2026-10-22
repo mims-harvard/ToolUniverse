@@ -102,7 +102,7 @@
   },
   {
     "name": "Harmonizome_get_dataset",
-    "description": "Get detailed information about a specific dataset integrated in Harmonizome (Ma'ayan Lab). Returns the dataset description, association type, measurement method, attribute type, PubMed references, and a catalog of gene sets within the dataset. Use Harmonizome_list_datasets first to find available dataset names. Example: 'CTD Gene-Disease Associations' returns 5218 gene sets with curated disease-gene associations.",
+    "description": "Get Harmonizome dataset metadata plus a recoverable page of its gene-set catalog. Large datasets contain thousands of gene sets; start at gene_set_offset=0 and continue with metadata.next_gene_set_offset while has_more_gene_sets is true. Metadata.total_gene_sets is exact.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -112,7 +112,14 @@
         },
         "gene_set_limit": {
           "type": "integer",
-          "description": "Maximum number of gene set names to return (default: 50)."
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Gene set names per page (default 50, max 1000)."
+        },
+        "gene_set_offset": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Zero-based offset into the complete gene-set catalog. Continue with metadata.next_gene_set_offset."
         }
       },
       "required": [
@@ -129,7 +136,8 @@
       },
       {
         "dataset_name": "KEGG Pathways",
-        "gene_set_limit": 10
+        "gene_set_limit": 10,
+        "gene_set_offset": 10
       }
     ],
     "return_schema": {
@@ -205,7 +213,7 @@
   },
   {
     "name": "Harmonizome_search",
-    "description": "Search Harmonizome across genes, datasets, or attributes by keyword. For gene search, returns matching gene symbols with names and NCBI IDs via exact lookup and suggest API. For dataset search, filters the 100+ dataset catalog by keyword. For attribute search, returns auto-complete suggestions. Use entity_type to control what is searched.",
+    "description": "Search Harmonizome across genes, datasets, or attributes. Results are recoverably paginated: start with offset=0 and continue with metadata.next_offset while metadata.has_more is true; dataset/attribute metadata includes the complete total. Gene search resolves Harmonizome's mixed-entity suggestions one by one: expected non-gene 404s are counted in rejected_non_gene_suggestions, while transport, HTTP, or malformed-data failures return an error instead of a plausible incomplete gene page.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -219,7 +227,16 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum results to return (default: 20)."
+          "description": "Maximum results to return (default: 20).",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based result offset. Continue with metadata.next_offset.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": [
@@ -248,17 +265,24 @@
   },
   {
     "name": "Harmonizome_search_genes",
-    "description": "Search for genes by keyword in Harmonizome (Ma'ayan Lab). Returns matching gene symbols that can be used with Harmonizome_get_gene for detailed information. Note: Harmonizome API does not support server-side text filtering; this endpoint returns a paginated list from the gene catalog. Use Harmonizome_search with entity_type='gene' for keyword-based gene search.",
+    "description": "Resolve Harmonizome genes by exact symbol and symbol-like suggestions. The upstream /gene collection silently ignores text filters, so this tool does not use it and will return no records for unsupported descriptive terms rather than unrelated catalog rows. Results support offset continuation when metadata.has_more is true; exact total count is unavailable for suggestions.",
     "parameter": {
       "type": "object",
       "properties": {
         "query": {
           "type": "string",
-          "description": "Search keyword. Examples: 'kinase', 'tumor suppressor', 'receptor'."
+          "description": "Gene symbol or symbol prefix. Examples: 'TP53', 'BRCA1', 'CDK'. Descriptive terms such as 'kinase' are not a supported gene-symbol search."
         },
         "limit": {
           "type": "integer",
+          "minimum": 1,
           "description": "Maximum results to return (default: 20)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Zero-based offset over gene-resolvable symbol suggestions. Continue with metadata.next_offset.",
+          "default": 0
         }
       },
       "required": [
@@ -271,10 +295,10 @@
     "type": "HarmonizomeTool",
     "test_examples": [
       {
-        "query": "kinase"
+        "query": "TP53"
       },
       {
-        "query": "tumor suppressor",
+        "query": "CDK",
         "limit": 10
       }
     ],
@@ -295,7 +319,7 @@
   },
   {
     "name": "Harmonizome_get_gene_set_members",
-    "description": "Retrieve the actual Harmonizome association payload (which Harmonizome_get_dataset and Harmonizome_get_gene deliberately omit). mode='gene_set' (default) returns the member genes of a curated attribute set with thresholdValue + standardizedValue - requires `attribute` (e.g. 'heart') and `dataset` (e.g. 'GTEx Tissue Gene Expression Profiles'). mode='gene' returns the full per-gene association table across all datasets - requires `gene_symbol` (e.g. 'DTD2'). Example: gene_set heart / GTEx Tissue Gene Expression Profiles -> 6473 members incl. {gene: DTD2, threshold_value: -1.0, standardized_value: -1.05248}. gene DTD2 -> 3787 associations across datasets.",
+    "description": "Retrieve Harmonizome gene-set members or per-gene associations. Both modes are recoverably paginated with limit/offset and metadata.next_offset; metadata.total_associations is the complete count.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -324,6 +348,12 @@
           "type": "integer",
           "description": "Maximum number of association rows to return (default 100). Sets can have thousands of members.",
           "default": 100
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based association offset. Continue with metadata.next_offset.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": []

@@ -9,10 +9,10 @@ from ._shared_client import get_shared_client
 
 
 def SwissTargetPrediction_predict(
-    operation: str,
     smiles: str,
-    organism: Optional[str | Any] = "Homo_sapiens",
-    top_n: Optional[int | Any] = None,
+    operation: Optional[str] = "predict",
+    organism: Optional[str] = "Homo_sapiens",
+    top_n: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -27,9 +27,9 @@ def SwissTargetPrediction_predict(
         Operation type
     smiles : str
         SMILES representation of the query molecule. Must be a valid, druglike small ...
-    organism : str | Any
+    organism : str
         Target organism proteome. Use underscores. Valid options: Homo_sapiens (defau...
-    top_n : int | Any
+    top_n : int
         Return only the top N predictions ranked by probability. If null, returns all...
     stream_callback : Callable, optional
         Callback for streaming output

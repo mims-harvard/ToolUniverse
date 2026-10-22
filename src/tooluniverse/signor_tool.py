@@ -117,6 +117,26 @@ def _format_interaction(row: Dict[str, str]) -> Dict[str, Any]:
     }
 
 
+def _paginate(rows: List[Dict[str, str]], params: Dict[str, Any], default_limit: int):
+    """Return a recoverable local page for SIGNOR's unpaginated TSV APIs."""
+    limit = params.get("limit", default_limit)
+    offset = params.get("offset", 0)
+    if isinstance(limit, bool) or not isinstance(limit, int) or limit < 1:
+        raise ValueError("limit must be an integer greater than or equal to 1")
+    if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+        raise ValueError("offset must be a non-negative integer")
+    page = rows[offset : offset + limit]
+    next_offset = offset + len(page)
+    has_more = next_offset < len(rows)
+    return page, {
+        "total_interactions": len(rows),
+        "returned": len(page),
+        "offset": offset,
+        "has_more": has_more,
+        "next_offset": next_offset if has_more else None,
+    }
+
+
 @register_tool("SIGNORTool")
 class SIGNORTool(BaseTool):
     """Query SIGNOR for causal signaling relationships and pathways."""
@@ -136,7 +156,6 @@ class SIGNORTool(BaseTool):
             or ""
         )
         organism = params.get("organism", 9606)
-        limit = params.get("limit", 50)
         if not entity_id:
             return {
                 "status": "error",
@@ -186,15 +205,15 @@ class SIGNORTool(BaseTool):
                 }
 
         rows = _parse_tsv(resp.text, DATA_COLUMNS, has_header=False)
-        interactions = [_format_interaction(row) for row in rows[:limit]]
+        page, pagination = _paginate(rows, params, 50)
+        interactions = [_format_interaction(row) for row in page]
         return {
             "status": "success",
             "data": interactions,
             "metadata": {
                 "entity_id": entity_id,
                 "organism": organism,
-                "total_interactions": len(rows),
-                "returned": len(interactions),
+                **pagination,
             },
         }
 
@@ -241,7 +260,6 @@ class SIGNORTool(BaseTool):
     def _get_pathway(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """Get interactions belonging to a specific SIGNOR pathway."""
         pathway_id = params.get("pathway_id", "")
-        limit = params.get("limit", 100)
         if not pathway_id:
             return {
                 "status": "error",
@@ -301,14 +319,14 @@ class SIGNORTool(BaseTool):
             "score",
         ]
         rows = _parse_tsv(resp.text, path_cols, has_header=True)
-        interactions = [_format_interaction(row) for row in rows[:limit]]
+        page, pagination = _paginate(rows, params, 100)
+        interactions = [_format_interaction(row) for row in page]
         return {
             "status": "success",
             "data": interactions,
             "metadata": {
                 "pathway_id": pathway_id,
-                "total_interactions": len(rows),
-                "returned": len(interactions),
+                **pagination,
             },
         }
 
@@ -342,7 +360,6 @@ class SIGNORTool(BaseTool):
                 "error": f"Invalid level {level}; must be 1, 2, or 3.",
             }
 
-        limit = params.get("limit", 200)
         proteins_param = ",".join(proteins)
 
         resp = self.session.get(
@@ -366,15 +383,15 @@ class SIGNORTool(BaseTool):
             }
 
         rows = _parse_tsv(text, DATA_COLUMNS, has_header=False)
-        interactions = [_format_interaction(row) for row in rows[:limit]]
+        page, pagination = _paginate(rows, params, 200)
+        interactions = [_format_interaction(row) for row in page]
         return {
             "status": "success",
             "data": interactions,
             "metadata": {
                 "proteins": proteins,
                 "level": level,
-                "total_interactions": len(rows),
-                "returned": len(interactions),
+                **pagination,
             },
         }
 

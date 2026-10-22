@@ -1,7 +1,7 @@
 """
 GO_get_genes_for_term
 
-Finds all genes/proteins associated with a specific Gene Ontology term using the Biolink API.
+Finds genes/proteins annotated to a Gene Ontology term, including annotations to its descendant t...
 """
 
 from typing import Any, Optional, Callable
@@ -10,24 +10,27 @@ from ._shared_client import get_shared_client
 
 def GO_get_genes_for_term(
     id: str,
-    taxon: str,
-    rows: int,
+    taxon: Optional[str] = None,
+    rows: Optional[int] = 100,
+    start: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
-    Finds all genes/proteins associated with a specific Gene Ontology term using the Biolink API.
+    Finds genes/proteins annotated to a Gene Ontology term, including annotations to its descendant t...
 
     Parameters
     ----------
     id : str
         The standard GO term ID, e.g., 'GO:0006915'.
     taxon : str
-        Optional species filter using a NCBI taxon ID. For example, Human is 'NCBITax...
+        Optional species filter using an NCBI taxon ID, e.g. 'NCBITaxon:9606' (human)...
     rows : int
-        The number of genes to return. Default is 100.
+        Maximum number of annotation rows to scan. Distinct genes returned may be few...
+    start : int
+        Zero-based offset into GOlr annotation rows. Use metadata.next_start to conti...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -37,14 +40,14 @@ def GO_get_genes_for_term(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"id": id, "taxon": taxon, "rows": rows}.items()
+        for k, v in {"id": id, "taxon": taxon, "rows": rows, "start": start}.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

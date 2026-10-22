@@ -2,7 +2,7 @@
   {
     "name": "HLALigandAtlas_get_benign_peptides",
     "type": "HLALigandAtlasTool",
-    "description": "Retrieve benign-tissue HLA-presented peptides (immunopeptidome) from the HLA Ligand Atlas (hla-ligand-atlas.org, release 2020.12) - the curated reference of self-peptides eluted from non-malignant human tissues, used to filter self-peptides during cancer neoantigen discovery. Filter the aggregated table by peptide sequence, HLA class (HLA-I or HLA-II), presenting donor allele, and/or tissue of origin. Each row reports the peptide, HLA class, the donor-allele presentation flags, and the tissues in which it was detected. Donor alleles carry one of THREE prefixes: 's/' = strong binder, 'w/' = weak binder, 'n/' = NON-binder (the allele was typed in the donor but is not predicted to present this peptide). Only 's/' entries indicate the peptide is actually presented by that allele -- treat 'n/' as evidence AGAINST presentation, not for it. Filtering by an exact peptide sequence or a specific tissue/allele is recommended because the aggregated table is large.",
+    "description": "Retrieve benign-tissue HLA-presented peptides from the complete HLA Ligand Atlas 2020.12 aggregated table with exact local pagination. metadata.total_matches is exact; continue with next_offset while has_more is true. Filter by exact peptide, HLA class, donor allele substring and/or tissue. Donor allele flags use 's/' = strong binder, 'w/' = weak binder, and 'n/' = NON-binder; a bare allele substring matches all three, so use s/A*02:01 when only predicted presentation should count.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -27,8 +27,16 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum number of peptide rows to return (1-500). Default 50.",
-          "default": 50
+          "description": "Maximum rows on this page, 1-500. Defaults to 50; invalid values are rejected.",
+          "default": 50,
+          "minimum": 1,
+          "maximum": 500
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based offset into the exact filtered match set; continue with metadata.next_offset.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": []
@@ -92,7 +100,8 @@
       {
         "hla_class": "HLA-I",
         "tissue": "Lung",
-        "limit": 10
+        "limit": 10,
+        "offset": 0
       }
     ],
     "fields": {

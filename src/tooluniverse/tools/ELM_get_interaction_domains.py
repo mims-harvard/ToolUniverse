@@ -1,7 +1,7 @@
 """
 ELM_get_interaction_domains
 
-Get the ELM motif-to-interaction-domain mapping: for each Short Linear Motif (SLiM) class, the pr...
+Get ELM motif-to-interaction-domain mappings with exact total and recoverable offset pagination. ...
 """
 
 from typing import Any, Optional, Callable
@@ -9,17 +9,18 @@ from ._shared_client import get_shared_client
 
 
 def ELM_get_interaction_domains(
-    operation: str,
+    operation: Optional[str] = "get_interaction_domains",
     elm_identifier: Optional[str] = None,
     query: Optional[str] = None,
     max_results: Optional[int] = 100,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get the ELM motif-to-interaction-domain mapping: for each Short Linear Motif (SLiM) class, the pr...
+    Get ELM motif-to-interaction-domain mappings with exact total and recoverable offset pagination. ...
 
     Parameters
     ----------
@@ -31,6 +32,8 @@ def ELM_get_interaction_domains(
         Free-text filter matched against ELM identifier, Pfam accession, domain name,...
     max_results : int
         Maximum mappings to return (default: 100, max: 500 covers all 427 mappings)
+    offset : int
+        Zero-based offset in the filtered mapping list.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def ELM_get_interaction_domains(
             "elm_identifier": elm_identifier,
             "query": query,
             "max_results": max_results,
+            "offset": offset,
         }.items()
         if v is not None
     }

@@ -1,7 +1,7 @@
 """
 iDigBio_search_media
 
-Search the iDigBio specimen MEDIA index (specimen photographs and scans) for a Darwin Core query....
+Search the iDigBio specimen MEDIA index (photographs and scans) with exact offset pagination. Met...
 """
 
 from typing import Any, Optional, Callable
@@ -20,14 +20,15 @@ def iDigBio_search_media(
     phylum: Optional[str] = None,
     class_: Optional[str] = None,
     order: Optional[str] = None,
-    limit: Optional[int] = None,
+    limit: Optional[int] = 10,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search the iDigBio specimen MEDIA index (specimen photographs and scans) for a Darwin Core query....
+    Search the iDigBio specimen MEDIA index (photographs and scans) with exact offset pagination. Met...
 
     Parameters
     ----------
@@ -54,7 +55,9 @@ def iDigBio_search_media(
     order : str
         Order.
     limit : int
-        Max media records (default 10, max 100).
+        Media records per page (1-100).
+    offset : int
+        Zero-based media offset. Continue with metadata.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -84,6 +87,7 @@ def iDigBio_search_media(
             "class": class_,
             "order": order,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

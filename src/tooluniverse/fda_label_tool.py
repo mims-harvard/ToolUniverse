@@ -125,7 +125,9 @@ class FDALabelTool(BaseTool):
         except Exception as e:
             return {"status": "error", "error": f"Unexpected error: {e}"}
 
-    def _query_drug_fields(self, drug_name: str, limit: int) -> list[dict] | None:
+    def _query_drug_fields(
+        self, drug_name: str, limit: int, offset: int = 0
+    ) -> dict | None:
         """Search generic_name then brand_name with quoted then unquoted fallback.
 
         Returns extracted label results on first match, or None if no results found.
@@ -136,49 +138,88 @@ class FDALabelTool(BaseTool):
             for q in (f'{field}:"{drug_name}"', f"{field}:{drug_name}"):
                 resp = requests.get(
                     FDA_LABEL_URL,
-                    params=self._params(search=q, limit=limit),
+                    params=self._params(search=q, limit=limit, skip=offset),
                     timeout=20,
                 )
                 if resp.status_code == 404:
                     continue
                 resp.raise_for_status()
-                results = resp.json().get("results", [])
+                body = resp.json()
+                results = body.get("results", [])
                 if results:
-                    return [_extract_label(r) for r in results]
+                    return {
+                        "labels": [_extract_label(r) for r in results],
+                        "total": body.get("meta", {})
+                        .get("results", {})
+                        .get("total", len(results)),
+                        "matched_query": q,
+                    }
         return None
 
     def _search(self, arguments: dict) -> Any:
         drug_name = arguments.get("drug_name")
         indication = arguments.get("indication")
         limit = min(int(arguments.get("limit", 5)), 20)
+        offset = max(0, int(arguments.get("offset", 0)))
 
         if not drug_name and not indication:
             return {"status": "error", "error": "Provide drug_name or indication"}
 
         if drug_name:
-            labels = self._query_drug_fields(drug_name, limit) or []
-            return _ok(labels, query=drug_name, query_field="drug_name")
+            match = self._query_drug_fields(drug_name, limit, offset)
+            labels = match["labels"] if match else []
+            total = match["total"] if match else 0
+            next_offset = offset + len(labels)
+            has_more = next_offset < total
+            return _ok(
+                labels,
+                query=drug_name,
+                query_field="drug_name",
+                matched_query=match.get("matched_query") if match else None,
+                total=total,
+                returned=len(labels),
+                offset=offset,
+                has_more=has_more,
+                next_offset=next_offset if has_more else None,
+            )
 
         q = f'indications_and_usage:"{indication}"'
         resp = requests.get(
             FDA_LABEL_URL,
-            params=self._params(search=q, limit=limit),
+            params=self._params(search=q, limit=limit, skip=offset),
             timeout=20,
         )
         labels = []
+        total = 0
         if resp.status_code != 404:
             resp.raise_for_status()
-            labels = [_extract_label(r) for r in resp.json().get("results", [])]
-        return _ok(labels, query=indication, query_field="indication")
+            body = resp.json()
+            labels = [_extract_label(r) for r in body.get("results", [])]
+            total = (
+                body.get("meta", {}).get("results", {}).get("total", len(labels))
+            )
+        next_offset = offset + len(labels)
+        has_more = next_offset < total
+        return _ok(
+            labels,
+            query=indication,
+            query_field="indication",
+            total=total,
+            returned=len(labels),
+            offset=offset,
+            has_more=has_more,
+            next_offset=next_offset if has_more else None,
+        )
 
     def _get_label(self, arguments: dict) -> Any:
         drug_name = arguments.get("drug_name", "")
         if not drug_name:
             return {"status": "error", "error": "drug_name is required"}
 
-        results = self._query_drug_fields(drug_name, limit=10)
-        if not results:
+        match = self._query_drug_fields(drug_name, limit=10)
+        if not match:
             return {"status": "error", "error": f"No FDA label found for '{drug_name}'"}
+        results = match["labels"]
 
         dn_upper = drug_name.upper()
 
@@ -194,16 +235,29 @@ class FDALabelTool(BaseTool):
 
     def _list_classes(self, arguments: dict) -> Any:
         limit = min(int(arguments.get("limit", 20)), 100)
+        offset = max(0, int(arguments.get("offset", 0)))
         resp = requests.get(
             FDA_LABEL_URL,
             params=self._params(
                 count="openfda.pharm_class_epc.exact",
-                limit=limit,
+                limit=1000,
             ),
             timeout=20,
         )
         resp.raise_for_status()
         data = resp.json()
         results = data.get("results", [])
-        classes = [{"drug_class": r["term"], "count": r["count"]} for r in results]
-        return _ok(classes)
+        page = results[offset : offset + limit]
+        classes = [{"drug_class": r["term"], "count": r["count"]} for r in page]
+        accessible_total = len(results)
+        next_offset = offset + len(classes)
+        has_more = next_offset < accessible_total
+        return _ok(
+            classes,
+            accessible_total=accessible_total,
+            total_is_exact=accessible_total < 1000,
+            returned=len(classes),
+            offset=offset,
+            has_more=has_more,
+            next_offset=next_offset if has_more else None,
+        )

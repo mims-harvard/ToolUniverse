@@ -1,7 +1,7 @@
 [
   {
     "name": "MaveDB_search_score_sets",
-    "description": "Search MaveDB for variant effect score sets from Multiplexed Assays of Variant Effect (MAVE) experiments, including deep mutational scanning. Returns score set URNs, titles, variant counts, and publication dates. Use gene names or protein names as search terms.",
+    "description": "Search MaveDB for variant effect score sets from Multiplexed Assays of Variant Effect (MAVE) experiments, including deep mutational scanning. Returns score set URNs, target genes, titles, variant counts, and publication dates. Metadata exposes the exact total and next_offset so every result from MaveDB's full search response is reachable.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -13,6 +13,12 @@
           "type": "integer",
           "description": "Maximum number of results to return.",
           "default": 20
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based result offset. Continue with metadata.next_offset while has_more is true."
         }
       },
       "required": ["query"]
@@ -343,7 +349,7 @@
   },
   {
     "name": "MaveDB_get_mapped_variants",
-    "description": "Get genomically-mapped variant coordinates (GA4GH VRS Allele + ClinGen Allele ID) for a MaveDB score set. Each MAVE variant is mapped to a postMapped VRS Allele carrying a genomic SequenceLocation (chromosome + start/end on the reference assembly, e.g. NC_000013.11 for chr13) plus the ClinGen canonical Allele ID (e.g. CA387754009), which links the functional score to ClinVar, dbSNP, and gnomAD. Intronic or unmappable variants have post_mapped=null and an error_message. Use this to translate raw MAVE scores into genome coordinates for downstream variant annotation. Obtain the URN from MaveDB_search_score_sets.",
+    "description": "Get genomically-mapped variant coordinates (GA4GH VRS Allele + ClinGen Allele ID) for a MaveDB score set. Each variant includes genomic SequenceLocation when mapped, ClinGen canonical Allele ID, alignment status, and mapping errors. The API returns the full list internally; limit/offset provide recoverable local pagination. Continue with next_offset while has_more is true. Obtain the URN from MaveDB_search_score_sets.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -353,7 +359,13 @@
         },
         "limit": {
           "type": ["integer", "null"],
-          "description": "Maximum number of mapped variants to return (client-side truncation). Set to 0 or null to return all (the API returns the full list in one call).",
+          "description": "Maximum mapped variants on this page. Set to 0 or null to return everything from offset onward.",
+          "default": 0
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Zero-based offset in the complete mapped-variant list. Continue with data.next_offset.",
           "default": 0
         }
       },
@@ -386,6 +398,11 @@
             "truncated": {
               "type": "boolean"
             },
+            "offset": {"type": "integer"},
+            "limit_applied": {"type": ["integer", "null"]},
+            "has_more": {"type": "boolean"},
+            "next_offset": {"type": ["integer", "null"]},
+            "result_set_complete": {"type": "boolean"},
             "n_with_genomic_location": {
               "type": "integer"
             },
@@ -517,7 +534,7 @@
   },
   {
     "name": "MaveDB_get_clinical_controls",
-    "description": "Get clinical-control variants (ClinVar pathogenic/benign/VUS) that overlap a MaveDB score set, used to calibrate MAVE functional scores into clinically-interpretable thresholds. Returns ClinVar entries with dbIdentifier, gene symbol, clinical significance (e.g. 'Uncertain significance', 'Pathogenic'), review status, ClinVar version (e.g. '01_2025'), and the MaveDB variant URN(s) sharing the same genomic coordinate. Optionally filter by clinical_significance. This is the reference set for building functional-score evidence (e.g. ACMG PS3/BS3). Obtain the URN from MaveDB_search_score_sets.",
+    "description": "Get ClinVar clinical-control variants overlapping a MaveDB score set for functional-score calibration. Returns identifiers, gene, clinical significance, review status, version, and linked MaveDB variant URNs. The significance filter is applied before exact total counts and recoverable limit/offset pagination; continue with next_offset while has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -531,7 +548,13 @@
         },
         "limit": {
           "type": ["integer", "null"],
-          "description": "Maximum number of clinical controls to return (client-side truncation). Set to 0 or null to return all.",
+          "description": "Maximum clinical controls on this page. Set to 0 or null to return everything from offset onward.",
+          "default": 0
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Zero-based offset after the optional significance filter. Continue with data.next_offset.",
           "default": 0
         }
       },
@@ -569,6 +592,11 @@
             "truncated": {
               "type": "boolean"
             },
+            "offset": {"type": "integer"},
+            "limit_applied": {"type": ["integer", "null"]},
+            "has_more": {"type": "boolean"},
+            "next_offset": {"type": ["integer", "null"]},
+            "result_set_complete": {"type": "boolean"},
             "significance_filter": {
               "type": [
                 "string",
@@ -650,7 +678,7 @@
   },
   {
     "name": "MaveDB_get_gnomad_variants",
-    "description": "Get gnomAD population-frequency variants observed within a MaveDB score set. Returns gnomAD variants with dbIdentifier (e.g. '13-32319097-A-C'), gnomAD version (e.g. 'v4.1'), allele count, allele number, and allele frequency, each linked to the MaveDB mapped variant via a genomic VRS Allele. Cross-reference allele frequency with the measured MAVE functional score: rare variants with strong functional impact are candidate disease alleles. Obtain the URN from MaveDB_search_score_sets.",
+    "description": "Get gnomAD population-frequency variants observed within a MaveDB score set. Returns identifier, version, allele count/number/frequency, and linked genomic VRS alleles. Exact totals and recoverable limit/offset pagination are reported; continue with next_offset while has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -660,7 +688,13 @@
         },
         "limit": {
           "type": ["integer", "null"],
-          "description": "Maximum number of gnomAD variants to return (client-side truncation). Set to 0 or null to return all.",
+          "description": "Maximum gnomAD variants on this page. Set to 0 or null to return everything from offset onward.",
+          "default": 0
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Zero-based offset in the complete gnomAD overlap list. Continue with data.next_offset.",
           "default": 0
         }
       },
@@ -692,6 +726,11 @@
             "truncated": {
               "type": "boolean"
             },
+            "offset": {"type": "integer"},
+            "limit_applied": {"type": ["integer", "null"]},
+            "has_more": {"type": "boolean"},
+            "next_offset": {"type": ["integer", "null"]},
+            "result_set_complete": {"type": "boolean"},
             "gnomad_variants": {
               "type": "array",
               "items": {

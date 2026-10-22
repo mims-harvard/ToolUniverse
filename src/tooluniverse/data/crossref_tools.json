@@ -2,7 +2,7 @@
   {
     "type": "CrossrefRESTTool",
     "name": "Crossref_search_works",
-    "description": "Search Crossref Works API for scholarly articles, publications, and research outputs by keyword. Returns metadata including title, abstract, journal, authors, publication year, DOI, URL, citations, and publisher. Supports filtering by publication type (journal article, conference paper, etc.) and date range. Use this to discover academic literature, verify citations, or build bibliographies. Find DOIs to use with Crossref_get_work for complete metadata. Note: Crossref's own API weakens keyword relevance-matching whenever a non-default 'sort' query param is combined with 'query' (e.g. sort=is-referenced-by-count), returning globally top-cited works largely unrelated to the search term -- omit 'sort' (the default relevance ranking) unless you have separately verified the combination for your query.",
+    "description": "Search Crossref Works API by keyword with exact totals and deep cursor pagination. Start with the default cursor='*'; while metadata.has_more is true, pass metadata.next_cursor as cursor with the same query and filters. Returns article metadata including DOI, title, authors, journal, citations, and publisher. Crossref's own API weakens keyword relevance whenever a non-default sort parameter is combined with query, so keep the default relevance ranking unless that combination has been independently verified.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -13,7 +13,14 @@
         "limit": {
           "type": "integer",
           "description": "Number of articles to return. This sets the maximum number of articles retrieved from Crossref. Max 100 per request.",
-          "default": 10
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "cursor": {
+          "type": "string",
+          "default": "*",
+          "description": "Crossref deep-pagination cursor. Use '*' for the first page, then metadata.next_cursor."
         },
         "filter": {
           "type": "string",
@@ -22,7 +29,8 @@
       },
       "required": [
         "query"
-      ]
+      ],
+      "additionalProperties": false
     },
     "return_schema": {
       "type": "array",
@@ -216,7 +224,7 @@
   {
     "type": "CrossrefRESTTool",
     "name": "Crossref_list_funders",
-    "description": "Search and list research funding organizations in the Crossref database. Returns funder details including funder ID, name, location, DOI count, and alternative names. Use this to discover funder identifiers for filtering publications by funding source, or to explore research funding patterns. Essential for grant analysis, funding compliance, or finding publications funded by specific organizations (e.g., NIH, NSF, ERC).",
+    "description": "Search Crossref funding organizations with exact totals and deep cursor pagination. Start with cursor='*' and continue with metadata.next_cursor while metadata.has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -230,8 +238,14 @@
           "default": 20,
           "minimum": 1,
           "maximum": 100
+        },
+        "cursor": {
+          "type": "string",
+          "default": "*",
+          "description": "Crossref deep-pagination cursor. Use '*' initially, then metadata.next_cursor."
         }
-      }
+      },
+      "additionalProperties": false
     },
     "fields": {
       "endpoint": "https://api.crossref.org/funders",
@@ -369,7 +383,7 @@
   {
     "type": "CrossrefRESTTool",
     "name": "Crossref_search_members",
-    "description": "Search Crossref members (publishers / depositing organizations) by name. Returns each member's numeric Crossref member id, primary name, location, and DOI-coverage analytics: counts of current, backfile, and total DOIs, plus per-year DOI breakdowns and prefixes. Use this to find a publisher's member id (for Crossref_get_member), compare publisher output, or analyze DOI/journal coverage. Example: query 'plos' -> member id 340 'Public Library of Science (PLoS)'.",
+    "description": "Search Crossref members (publishers / depositing organizations) by name with exact totals and deep cursor pagination. Start with cursor='*' and continue with metadata.next_cursor while metadata.has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -383,11 +397,17 @@
           "default": 20,
           "minimum": 1,
           "maximum": 100
+        },
+        "cursor": {
+          "type": "string",
+          "default": "*",
+          "description": "Crossref deep-pagination cursor. Use '*' initially, then metadata.next_cursor."
         }
       },
       "required": [
         "query"
-      ]
+      ],
+      "additionalProperties": false
     },
     "fields": {
       "endpoint": "https://api.crossref.org/members",

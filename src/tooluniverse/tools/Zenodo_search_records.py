@@ -1,7 +1,7 @@
 """
 Zenodo_search_records
 
-Search Zenodo for research data, publications, and datasets. Zenodo is an open-access repository ...
+Search Zenodo for research data, publications, and datasets with exact totals and explicit page n...
 """
 
 from typing import Any, Optional, Callable
@@ -11,6 +11,7 @@ from ._shared_client import get_shared_client
 def Zenodo_search_records(
     query: str,
     limit: Optional[int] = 10,
+    page: Optional[int] = 1,
     community: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -18,7 +19,7 @@ def Zenodo_search_records(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search Zenodo for research data, publications, and datasets. Zenodo is an open-access repository ...
+    Search Zenodo for research data, publications, and datasets with exact totals and explicit page n...
 
     Parameters
     ----------
@@ -26,6 +27,8 @@ def Zenodo_search_records(
         Free text search query for Zenodo records. Use keywords to search across titl...
     limit : int
         Maximum number of results to return. Must be between 1 and 200.
+    page : int
+        One-based result page. Continue with metadata.next_page.
     community : str
         Optional community slug to filter results by specific research community (e.g...
     stream_callback : Callable, optional
@@ -44,7 +47,12 @@ def Zenodo_search_records(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"query": query, "limit": limit, "community": community}.items()
+        for k, v in {
+            "query": query,
+            "limit": limit,
+            "page": page,
+            "community": community,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

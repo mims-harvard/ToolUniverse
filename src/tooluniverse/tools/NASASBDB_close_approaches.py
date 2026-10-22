@@ -1,7 +1,7 @@
 """
 NASASBDB_close_approaches
 
-Query NASA's Close Approach Data (CAD) API for asteroids and comets making close approaches to Ea...
+Query NASA/JPL Close Approach Data with explicit zero-based offset pagination and exact total met...
 """
 
 from typing import Any, Optional, Callable
@@ -9,34 +9,40 @@ from ._shared_client import get_shared_client
 
 
 def NASASBDB_close_approaches(
-    dist_max: Optional[str | Any] = None,
-    date_min: Optional[str | Any] = None,
-    date_max: Optional[str | Any] = None,
-    h_max: Optional[float | Any] = None,
-    des: Optional[str | Any] = None,
-    limit: Optional[int | Any] = None,
+    dist_max: Optional[str] = None,
+    date_min: Optional[str] = None,
+    date_max: Optional[str] = None,
+    h_max: Optional[float] = None,
+    des: Optional[str] = None,
+    limit: Optional[int] = 50,
+    offset: Optional[int] = 0,
+    sort: Optional[str] = "date",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Query NASA's Close Approach Data (CAD) API for asteroids and comets making close approaches to Ea...
+    Query NASA/JPL Close Approach Data with explicit zero-based offset pagination and exact total met...
 
     Parameters
     ----------
-    dist_max : str | Any
+    dist_max : str
         Maximum approach distance in AU. Examples: '0.01' (1.5 million km), '0.05' (7...
-    date_min : str | Any
+    date_min : str
         Start date for search (YYYY-MM-DD format). Default: current date.
-    date_max : str | Any
+    date_max : str
         End date for search (YYYY-MM-DD format). Example: '2025-12-31'
-    h_max : float | Any
+    h_max : float
         Filter by maximum absolute magnitude H (smaller H = larger object). H<18 is ~...
-    des : str | Any
+    des : str
         Filter by specific body designation (e.g., '99942' for Apophis, '2020 SO')
-    limit : int | Any
-        Maximum number of results (default 50, max 10000)
+    limit : int
+        Close approaches per page (default 50, max 10000)
+    offset : int
+        Zero-based result offset, mapped to JPL's limit-from. Continue with metadata....
+    sort : str
+        JPL CAD sort expression. Default 'date' for chronological traversal.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -60,6 +66,8 @@ def NASASBDB_close_approaches(
             "h-max": h_max,
             "des": des,
             "limit": limit,
+            "offset": offset,
+            "sort": sort,
         }.items()
         if v is not None
     }

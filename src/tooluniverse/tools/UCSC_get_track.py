@@ -1,7 +1,7 @@
 """
 UCSC_get_track
 
-Get annotation track data from the UCSC Genome Browser for a specified genomic region. Retrieves ...
+Get annotation track data for a genomic region. If UCSC reports maxItemsLimit=true, the response ...
 """
 
 from typing import Any, Optional, Callable
@@ -14,14 +14,14 @@ def UCSC_get_track(
     chrom: str,
     start: int,
     end: int,
-    maxItemsOutput: Optional[int | Any] = None,
+    maxItemsOutput: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get annotation track data from the UCSC Genome Browser for a specified genomic region. Retrieves ...
+    Get annotation track data for a genomic region. If UCSC reports maxItemsLimit=true, the response ...
 
     Parameters
     ----------
@@ -35,7 +35,7 @@ def UCSC_get_track(
         0-based start position (inclusive).
     end : int
         End position (exclusive). Must be > start.
-    maxItemsOutput : int | Any
+    maxItemsOutput : int
         Maximum number of items to return. Default: 100. Set to limit large result sets.
     stream_callback : Callable, optional
         Callback for streaming output

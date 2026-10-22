@@ -1,7 +1,7 @@
 """
 WormBase_get_expression
 
-Get expression data for a C. elegans gene from WormBase. Returns tissues where the gene is expres...
+Get complete expression annotations from WormBase: tissues, developmental stages, subcellular loc...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def WormBase_get_expression(
     validate: bool = True,
 ) -> Any:
     """
-    Get expression data for a C. elegans gene from WormBase. Returns tissues where the gene is expres...
+    Get complete expression annotations from WormBase: tissues, developmental stages, subcellular loc...
 
     Parameters
     ----------

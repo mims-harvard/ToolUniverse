@@ -13,10 +13,133 @@ No authentication required for reading. Free for all use.
 
 import requests
 from typing import Dict, Any
+from urllib.parse import parse_qs, urlparse
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
 BIOSAMPLES_BASE_URL = "https://www.ebi.ac.uk/biosamples"
+
+
+def _integer_argument(
+    value: Any, *, name: str, minimum: int, maximum: int
+) -> tuple[int | None, str | None]:
+    """Validate pagination integers without silently clamping them."""
+    if isinstance(value, bool):
+        return None, f"{name} must be an integer from {minimum} to {maximum}"
+    try:
+        parsed = int(value)
+    except (TypeError, ValueError):
+        return None, f"{name} must be an integer from {minimum} to {maximum}"
+    if isinstance(value, float) and not value.is_integer():
+        return None, f"{name} must be an integer from {minimum} to {maximum}"
+    if parsed < minimum or parsed > maximum:
+        return None, f"{name} must be an integer from {minimum} to {maximum}"
+    return parsed, None
+
+
+def _cursor_from_link(link: Any) -> str | None:
+    """Extract an opaque cursor token from a HAL link object."""
+    href = link.get("href") if isinstance(link, dict) else link
+    if not isinstance(href, str):
+        return None
+    values = parse_qs(urlparse(href).query).get("cursor")
+    return values[0] if values else None
+
+
+def _pagination_arguments(
+    arguments: Dict[str, Any]
+) -> tuple[int | None, int | None, str | None, str | None]:
+    limit_value = arguments.get("limit")
+    limit, error = _integer_argument(
+        10 if limit_value is None else limit_value,
+        name="limit",
+        minimum=1,
+        maximum=200,
+    )
+    if error:
+        return None, None, None, error
+
+    cursor_value = arguments.get("cursor")
+    if cursor_value is not None:
+        if "page" in arguments and arguments.get("page") is not None:
+            return None, None, None, "page and cursor are mutually exclusive"
+        if not isinstance(cursor_value, str) or not cursor_value:
+            return None, None, None, "cursor must be '*' or an opaque cursor token"
+        return limit, None, cursor_value, None
+
+    page_value = arguments.get("page")
+    page, error = _integer_argument(
+        0 if page_value is None else page_value,
+        name="page",
+        minimum=0,
+        maximum=500,
+    )
+    return limit, page, None, error
+
+
+def _pagination_metadata(
+    raw: Dict[str, Any],
+    *,
+    requested_page: int | None,
+    requested_cursor: str | None,
+    limit: int,
+    returned: int,
+) -> Dict[str, Any]:
+    links = raw.get("_links", {}) if isinstance(raw, dict) else {}
+    next_link = links.get("next")
+    next_url = next_link.get("href") if isinstance(next_link, dict) else next_link
+    page_info = raw.get("page", {}) if isinstance(raw, dict) else {}
+    page_info = page_info if isinstance(page_info, dict) else {}
+
+    if requested_cursor is not None:
+        has_more = bool(next_url)
+        return {
+            "pagination_mode": "cursor",
+            "cursor": requested_cursor,
+            "next_cursor": _cursor_from_link(next_link),
+            "next_url": next_url,
+            "current_page": None,
+            "next_page": None,
+            "total_elements": None,
+            "total_pages": None,
+            "returned": returned,
+            "limit": limit,
+            "has_more": has_more,
+            "truncated": has_more,
+            "cursor_required_for_complete_retrieval": False,
+        }
+
+    current_page = page_info.get("number", requested_page)
+    total_pages = page_info.get("totalPages")
+    has_more = (
+        current_page + 1 < total_pages
+        if isinstance(current_page, int) and isinstance(total_pages, int)
+        else bool(next_url)
+    )
+    page_limit_reached = bool(has_more and current_page == 500)
+    cursor_required = bool(isinstance(total_pages, int) and total_pages > 501)
+    return {
+        "pagination_mode": "page",
+        "total_elements": page_info.get("totalElements"),
+        "total_pages": total_pages,
+        "current_page": current_page,
+        "returned": returned,
+        "limit": limit,
+        "has_more": has_more,
+        "truncated": has_more,
+        "next_page": current_page + 1
+        if has_more and not page_limit_reached and isinstance(current_page, int)
+        else None,
+        "cursor_start": _cursor_from_link(links.get("cursor")),
+        "cursor_required_for_complete_retrieval": cursor_required,
+        "page_limit_reached": page_limit_reached,
+        "warning": (
+            "BioSamples page navigation is capped at page 500; restart with "
+            "cursor='*' and follow next_cursor for complete retrieval."
+            if cursor_required
+            else None
+        ),
+    }
 
 
 @register_tool("BioSamplesTool")
@@ -147,14 +270,19 @@ class BioSamplesTool(BaseTool):
                 "error": "query parameter is required (e.g., 'breast cancer', 'liver tissue')",
             }
 
-        size = min(arguments.get("limit", 10), 50)
-        page = arguments.get("page", 0)
+        size, page, cursor, pagination_error = _pagination_arguments(arguments)
+        if pagination_error:
+            return {"status": "error", "error": pagination_error}
+        assert size is not None
 
         params = {
             "text": query,
             "size": size,
-            "page": page,
         }
+        if cursor is not None:
+            params["cursor"] = cursor
+        else:
+            params["page"] = page
 
         url = f"{BIOSAMPLES_BASE_URL}/samples"
         response = requests.get(
@@ -188,21 +316,25 @@ class BioSamplesTool(BaseTool):
                 }
             )
 
-        # Pagination info
-        page_info = raw.get("page", {})
+        pagination = _pagination_metadata(
+            raw,
+            requested_page=page,
+            requested_cursor=cursor,
+            limit=size,
+            returned=len(results),
+        )
+        pagination.update(
+            {
+                "source": "EBI BioSamples",
+                "query": query,
+                "endpoint": "search",
+            }
+        )
 
         return {
             "status": "success",
             "data": results,
-            "metadata": {
-                "source": "EBI BioSamples",
-                "total_elements": page_info.get("totalElements"),
-                "total_pages": page_info.get("totalPages"),
-                "current_page": page_info.get("number"),
-                "returned": len(results),
-                "query": query,
-                "endpoint": "search",
-            },
+            "metadata": pagination,
         }
 
     def _search_by_filter(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -215,7 +347,10 @@ class BioSamplesTool(BaseTool):
                 "error": "Both 'attribute' and 'value' parameters are required (e.g., attribute='organism', value='Homo sapiens')",
             }
 
-        size = min(arguments.get("limit", 10), 50)
+        size, page, cursor, pagination_error = _pagination_arguments(arguments)
+        if pagination_error:
+            return {"status": "error", "error": pagination_error}
+        assert size is not None
 
         # Build filter string
         filter_str = f"attr:{attribute}:{value}"
@@ -224,6 +359,10 @@ class BioSamplesTool(BaseTool):
             "filter": filter_str,
             "size": size,
         }
+        if cursor is not None:
+            params["cursor"] = cursor
+        else:
+            params["page"] = page
 
         url = f"{BIOSAMPLES_BASE_URL}/samples"
         response = requests.get(
@@ -264,18 +403,25 @@ class BioSamplesTool(BaseTool):
                 }
             )
 
-        page_info = raw.get("page", {})
+        pagination = _pagination_metadata(
+            raw,
+            requested_page=page,
+            requested_cursor=cursor,
+            limit=size,
+            returned=len(results),
+        )
+        pagination.update(
+            {
+                "source": "EBI BioSamples",
+                "filter": filter_str,
+                "endpoint": "search_by_filter",
+            }
+        )
 
         return {
             "status": "success",
             "data": results,
-            "metadata": {
-                "source": "EBI BioSamples",
-                "total_elements": page_info.get("totalElements"),
-                "returned": len(results),
-                "filter": filter_str,
-                "endpoint": "search_by_filter",
-            },
+            "metadata": pagination,
         }
 
     def _get_relationships(self, arguments: Dict[str, Any]) -> Dict[str, Any]:

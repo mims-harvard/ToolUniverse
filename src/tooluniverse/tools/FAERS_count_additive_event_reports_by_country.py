@@ -13,6 +13,8 @@ def FAERS_count_additive_event_reports_by_country(
     patientsex: Optional[str] = None,
     patientagegroup: Optional[str] = None,
     serious: Optional[str] = None,
+    manufacturer_name: Optional[str] = None,
+    receivedate: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -31,6 +33,10 @@ def FAERS_count_additive_event_reports_by_country(
         Optional: Filter by patient age group. Omit this parameter if you don't want ...
     serious : str
         Optional: Filter by event seriousness. Omit this parameter if you don't want ...
+    manufacturer_name : str
+        Filter to reports where a drug's labeller/manufacturer matches, e.g. 'Pfizer'...
+    receivedate : str
+        Filter by the date FDA received the report. Accepts a single date 'YYYYMMDD' ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +58,8 @@ def FAERS_count_additive_event_reports_by_country(
             "patientsex": patientsex,
             "patientagegroup": patientagegroup,
             "serious": serious,
+            "manufacturer_name": manufacturer_name,
+            "receivedate": receivedate,
         }.items()
         if v is not None
     }

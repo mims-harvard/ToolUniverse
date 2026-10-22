@@ -53,17 +53,35 @@ class _EnvirofactsBase(BaseTool):
             limit = max(1, min(int(arguments.get("limit") or 10), 100))
         except (TypeError, ValueError):
             limit = 10
+        try:
+            offset = max(0, int(arguments.get("offset") or 0))
+        except (TypeError, ValueError):
+            offset = 0
 
-        path = f"{EFSERVICE}/{table}/{column}/{quote(value)}/rows/0:{limit - 1}/JSON"
+        filter_path = f"{EFSERVICE}/{table}/{column}/{quote(value)}"
+        path = (
+            f"{filter_path}/rows/{offset}:{offset + limit - 1}/JSON"
+        )
 
+        total = self._fetch_count(filter_path)
         rows = self._fetch(path)
         if isinstance(rows, dict) and rows.get("status") == "error":
             return rows
+        next_offset = offset + len(rows)
+        total_is_exact = total is not None
+        if total is None:
+            total = next_offset
+        has_more = next_offset < total if total_is_exact else len(rows) == limit
         return {
             "status": "success",
             "data": [self._summarize(r) for r in rows if isinstance(r, dict)],
             "metadata": {
-                "total_results": len(rows),
+                "total_results": total,
+                "total_is_exact": total_is_exact,
+                "returned": len(rows),
+                "offset": offset,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
                 "table": table,
                 "query": {param: value},
                 "source": "EPA Envirofacts",
@@ -96,20 +114,37 @@ class _EnvirofactsBase(BaseTool):
             limit = max(1, min(int(arguments.get("limit") or 10), 100))
         except (TypeError, ValueError):
             limit = 10
+        try:
+            offset = max(0, int(arguments.get("offset") or 0))
+        except (TypeError, ValueError):
+            offset = 0
 
-        path = f"{EFSERVICE}/{self.table}/{self.state_col}/{quote(state)}"
+        filter_path = f"{EFSERVICE}/{self.table}/{self.state_col}/{quote(state)}"
         if city:
-            path += f"/{self.city_col}/{quote(city.upper())}"
-        path += f"/rows/0:{limit - 1}/JSON"
+            filter_path += f"/{self.city_col}/{quote(city.upper())}"
+        path = (
+            f"{filter_path}/rows/{offset}:{offset + limit - 1}/JSON"
+        )
 
+        total = self._fetch_count(filter_path)
         rows = self._fetch(path)
         if isinstance(rows, dict) and rows.get("status") == "error":
             return rows
+        next_offset = offset + len(rows)
+        total_is_exact = total is not None
+        if total is None:
+            total = next_offset
+        has_more = next_offset < total if total_is_exact else len(rows) == limit
         return {
             "status": "success",
             "data": [self._summarize(r) for r in rows if isinstance(r, dict)],
             "metadata": {
-                "total_results": len(rows),
+                "total_results": total,
+                "total_is_exact": total_is_exact,
+                "returned": len(rows),
+                "offset": offset,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
                 "table": self.table,
                 "query": {"state": state, "city": city or None},
                 "source": "EPA Envirofacts",
@@ -139,6 +174,21 @@ class _EnvirofactsBase(BaseTool):
         if not isinstance(rows, list):
             return []
         return rows
+
+    def _fetch_count(self, filter_path: str) -> int | None:
+        """Return Envirofacts' exact count without failing an otherwise valid page."""
+        count_rows = self._fetch(f"{filter_path}/count/JSON")
+        if (
+            isinstance(count_rows, list)
+            and count_rows
+            and isinstance(count_rows[0], dict)
+        ):
+            raw_count = count_rows[0].get("TOTALQUERYRESULTS")
+            try:
+                return int(raw_count)
+            except (TypeError, ValueError):
+                pass
+        return None
 
     @staticmethod
     def _summarize(

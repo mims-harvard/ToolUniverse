@@ -1,7 +1,7 @@
 """
 NCI_search_cancer_resources
 
-Search NCI (National Cancer Institute) Resources for Researchers (R4R) for cancer research tools,...
+Search NCI Resources for Researchers (R4R) with explicit from/size pagination and exact total met...
 """
 
 from typing import Any, Optional, Callable
@@ -20,7 +20,7 @@ def NCI_search_cancer_resources(
     validate: bool = True,
 ) -> Any:
     """
-    Search NCI (National Cancer Institute) Resources for Researchers (R4R) for cancer research tools,...
+    Search NCI Resources for Researchers (R4R) with explicit from/size pagination and exact total met...
 
     Parameters
     ----------
@@ -29,7 +29,7 @@ def NCI_search_cancer_resources(
     size : int
         Number of results to return (default: 20, max: 50)
     from_ : int
-        Offset for pagination (default: 0)
+        Zero-based offset. Continue with metadata.next_from.
     toolTypes : str
         Filter by tool type key: 'analysis_tools', 'datasets_databases', 'lab_tools',...
     researchAreas : str

@@ -1,7 +1,7 @@
 """
 HGNC_search_by_location
 
-Search HGNC for genes at a specific chromosomal location. Returns all genes mapped to that cytoge...
+Search HGNC for every gene mapped to a cytogenetic band. The upstream endpoint is unpaginated; th...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def HGNC_search_by_location(
     validate: bool = True,
 ) -> Any:
     """
-    Search HGNC for genes at a specific chromosomal location. Returns all genes mapped to that cytoge...
+    Search HGNC for every gene mapped to a cytogenetic band. The upstream endpoint is unpaginated; th...
 
     Parameters
     ----------

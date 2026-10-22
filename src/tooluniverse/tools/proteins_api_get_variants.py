@@ -17,7 +17,7 @@ def proteins_api_get_variants(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> dict[str, Any]:
     """
     Get variation data for a protein including disease-associated variants, natural variants, and pop...
 
@@ -26,9 +26,9 @@ def proteins_api_get_variants(
     accession : str | list[Any]
         UniProt protein accession(s). Can be a single accession (e.g., 'P05067'), com...
     size : int
-        Maximum number of variants to return per protein (default: 100)
+        Maximum nested variant features to return per protein in this page (default: ...
     offset : int
-        Offset for pagination (default: 0)
+        Zero-based offset within each protein's nested features array. Continue with ...
     format : str
         Response format. JSON is recommended for most use cases.
     stream_callback : Callable, optional
@@ -40,7 +40,7 @@ def proteins_api_get_variants(
 
     Returns
     -------
-    list[Any]
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

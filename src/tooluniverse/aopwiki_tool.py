@@ -39,14 +39,9 @@ def _aopwiki_not_found(result: Any) -> bool:
         "name": "AOPWiki_list_aops",
         "type": "AOPWikiListTool",
         "description": (
-            "List Adverse Outcome Pathways (AOPs) from AOPWiki. Returns AOP IDs, "
-            "titles, and short names. AOPs describe causal chains from molecular "
-            "initiating events through key events to adverse outcomes, used in "
-            "toxicology and risk assessment. Pass `search` to keep only AOPs whose "
-            "title or short name contains a keyword (e.g. 'thyroid', 'PPAR', "
-            "'steatosis') -- AOPWiki publishes ~600 AOPs, so an unfiltered list is "
-            "rarely what you want. Use AOPWiki_get_aop on a returned ID for its key "
-            "events, stressor chemicals, and causal relationships."
+            "List the complete AOP-Wiki catalog after verifying stable page totals "
+            "and non-overlapping IDs. Optional search filters the verified complete "
+            "catalog by title or short name."
         ),
         "parameter": {
             "type": "object",
@@ -71,37 +66,112 @@ class AOPWikiListTool:
         base = self.tool_config.get("settings", {}).get("base_url", _BASE)
         timeout = int(self.tool_config.get("settings", {}).get("timeout", 30))
 
+        search_argument = arguments.get("search")
+        if search_argument is not None and not isinstance(search_argument, str):
+            return {"status": "error", "error": "search must be a string"}
+
         aops, page = [], 1
+        expected_total = None
+        expected_pages = None
+        seen_ids = set()
         try:
             while True:
                 payload = _get_json(
                     f"{base}/aops.json?per_page=500&page={page}", timeout=timeout
                 )
-                items = payload["aops"] if isinstance(payload, dict) else payload
+                if not isinstance(payload, dict):
+                    return {
+                        "status": "error",
+                        "error": "AOPWiki list response omitted pagination metadata; completeness cannot be verified",
+                    }
+                items = payload.get("aops")
                 if not isinstance(items, list):
                     return {"status": "error", "error": "Unexpected response format"}
-                aops.extend(
+                pagination = payload.get("pagination")
+                if not isinstance(pagination, dict):
+                    return {
+                        "status": "error",
+                        "error": "AOPWiki list response omitted pagination metadata; completeness cannot be verified",
+                    }
+                current_page = pagination.get("current_page")
+                total_entries = pagination.get("total_entries")
+                total_pages = pagination.get("total_pages")
+                if (
+                    isinstance(current_page, bool)
+                    or not isinstance(current_page, int)
+                    or current_page != page
+                    or isinstance(total_entries, bool)
+                    or not isinstance(total_entries, int)
+                    or total_entries < 0
+                    or isinstance(total_pages, bool)
+                    or not isinstance(total_pages, int)
+                    or total_pages < 1
+                ):
+                    return {
+                        "status": "error",
+                        "error": "AOPWiki returned invalid or conflicting pagination metadata",
+                    }
+                if expected_total is None:
+                    expected_total = total_entries
+                    expected_pages = total_pages
+                elif total_entries != expected_total or total_pages != expected_pages:
+                    return {
+                        "status": "error",
+                        "error": "AOPWiki pagination totals changed while pages were being retrieved",
+                    }
+
+                page_items = [
                     {
                         "id": it.get("id"),
                         "title": it.get("title"),
                         "short_name": it.get("short_name"),
                     }
                     for it in items
-                )
-                pagination = (
-                    payload.get("pagination") if isinstance(payload, dict) else None
-                )
-                if not pagination or page >= pagination.get("total_pages", 1):
+                    if isinstance(it, dict)
+                ]
+                page_ids = [item["id"] for item in page_items]
+                if len(set(page_ids)) != len(page_ids) or any(
+                    item_id in seen_ids for item_id in page_ids
+                ):
+                    return {
+                        "status": "error",
+                        "error": "AOPWiki pagination repeated an AOP across pages",
+                    }
+                seen_ids.update(page_ids)
+                aops.extend(page_items)
+                if page >= total_pages:
                     break
                 page += 1
         except Exception as e:
             return {"status": "error", "error": f"AOPWiki API error: {e}"}
 
+        if len(aops) != expected_total:
+            return {
+                "status": "error",
+                "error": (
+                    f"AOPWiki reported {expected_total} AOPs but returned {len(aops)}; "
+                    "result set is incomplete"
+                ),
+            }
+
+        metadata = {
+            "total_aops": expected_total,
+            "total_aops_is_exact": True,
+            "pages_fetched": expected_pages,
+            "result_set_complete": True,
+        }
+
         # AOPWiki's /aops.json has no server-side keyword filter, so filter the
         # fetched list here rather than making callers pull ~600 AOPs and grep.
-        search = str(arguments.get("search") or "").strip().lower()
+        search = (search_argument or "").strip().lower()
         if not search:
-            return {"status": "success", "data": aops}
+            return {
+                "status": "success",
+                "data": aops,
+                "count": len(aops),
+                "total_aops": expected_total,
+                "metadata": metadata,
+            }
 
         matches = [
             a
@@ -115,6 +185,7 @@ class AOPWikiListTool:
             "count": len(matches),
             "total_aops": len(aops),
             "search": arguments.get("search"),
+            "metadata": metadata,
         }
         if not matches:
             result["note"] = (
@@ -132,16 +203,16 @@ class AOPWikiListTool:
         "name": "AOPWiki_get_aop",
         "type": "AOPWikiDetailTool",
         "description": (
-            "Get detailed information about a specific Adverse Outcome Pathway "
-            "(AOP) from AOPWiki by AOP ID. Returns the molecular initiating "
-            "events (MIEs), key events (KEs), adverse outcomes (AOs), stressors "
-            "(chemicals), and key event relationships (causal chain)."
+            "Get one AOP with stressors, typed events, and directed event pairs. "
+            "The source relation number is an opaque AOP association reference, "
+            "not a safe /relationships/{id} identifier."
         ),
         "parameter": {
             "type": "object",
             "properties": {
                 "aop_id": {
                     "type": "integer",
+                    "minimum": 1,
                     "description": (
                         "AOP numeric identifier. Find IDs using AOPWiki_list_aops. "
                         "Example: 3 (mitochondrial complex I inhibition leading to "
@@ -176,6 +247,8 @@ class AOPWikiDetailTool:
         event_id = arguments.get("event_id")
         if event_id is None:
             return {"status": "error", "error": "event_id is required"}
+        if isinstance(event_id, bool) or not isinstance(event_id, int) or event_id <= 0:
+            return {"status": "error", "error": "event_id must be a positive integer"}
 
         try:
             result = _get_json(f"{base}/events/{event_id}.json", timeout=timeout)
@@ -223,6 +296,8 @@ class AOPWikiDetailTool:
         aop_id = arguments.get("aop_id")
         if aop_id is None:
             return {"status": "error", "error": "aop_id is required"}
+        if isinstance(aop_id, bool) or not isinstance(aop_id, int) or aop_id <= 0:
+            return {"status": "error", "error": "aop_id must be a positive integer"}
 
         try:
             result = _get_json(f"{base}/aops/{aop_id}.json", timeout=timeout)
@@ -246,19 +321,33 @@ class AOPWikiDetailTool:
                 for s in result.get("aop_stressors", [])
             ],
             "molecular_initiating_events": [
-                {"event_id": e.get("event_id"), "event": e.get("event")}
+                {
+                    "event_id": e.get("event_id"),
+                    "event": e.get("event"),
+                    "event_type": e.get("event_type"),
+                }
                 for e in result.get("aop_mies", [])
             ],
             "key_events": [
-                {"event_id": e.get("event_id"), "event": e.get("event")}
+                {
+                    "event_id": e.get("event_id"),
+                    "event": e.get("event"),
+                    "event_type": e.get("event_type"),
+                }
                 for e in result.get("aop_kes", [])
             ],
             "adverse_outcomes": [
-                {"event_id": e.get("event_id"), "event": e.get("event")}
+                {
+                    "event_id": e.get("event_id"),
+                    "event": e.get("event"),
+                    "event_type": e.get("event_type"),
+                }
                 for e in result.get("aop_aos", [])
             ],
             "relationships": [
                 {
+                    "source_relation": r.get("relation"),
+                    "source_relation_semantics": "opaque_aop_association_reference",
                     "upstream_event_id": r.get("upstream_event_id"),
                     "upstream_event": r.get("upstream_event"),
                     "downstream_event_id": r.get("downstream_event_id"),
@@ -268,4 +357,15 @@ class AOPWikiDetailTool:
             ],
         }
 
-        return {"status": "success", "data": data}
+        return {
+            "status": "success",
+            "data": data,
+            "metadata": {
+                "source_relation_values_safe_as_relationship_ids": False,
+                "source_relation_warning": (
+                    "AOP payload relation values are opaque association references. "
+                    "Do not use them as /relationships/{id}; live AOPWiki responses "
+                    "can resolve the same number to an unrelated event pair."
+                ),
+            },
+        }

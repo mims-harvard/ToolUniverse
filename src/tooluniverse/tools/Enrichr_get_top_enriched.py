@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def Enrichr_get_top_enriched(
     gene_list: list[str],
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_top_enriched",
     libraries: Optional[list[str]] = None,
     top_n: Optional[int] = 5,
     *,

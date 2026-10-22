@@ -1,7 +1,7 @@
 """
 OBIS_search_taxa
 
-Resolve marine taxa in OBIS by scientific name to obtain standardized identifiers (AphiaID), rank...
+Resolve an exact scientific name through OBIS /taxon/{scientificname}. Returns same-name accepted...
 """
 
 from typing import Any, Optional, Callable
@@ -11,20 +11,23 @@ from ._shared_client import get_shared_client
 def OBIS_search_taxa(
     scientificname: str,
     size: Optional[int] = 10,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
-    Resolve marine taxa in OBIS by scientific name to obtain standardized identifiers (AphiaID), rank...
+    Resolve an exact scientific name through OBIS /taxon/{scientificname}. Returns same-name accepted...
 
     Parameters
     ----------
     scientificname : str
         Scientific name query (e.g., 'Gadus').
     size : int
-        Number of records to return (1–100).
+        Number of taxon matches to return (1–100).
+    offset : int
+        Zero-based local offset over exact-name matches. Continue with metadata.next_...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,14 +37,18 @@ def OBIS_search_taxa(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"scientificname": scientificname, "size": size}.items()
+        for k, v in {
+            "scientificname": scientificname,
+            "size": size,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

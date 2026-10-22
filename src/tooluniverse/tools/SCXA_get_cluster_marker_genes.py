@@ -1,7 +1,7 @@
 """
 SCXA_get_cluster_marker_genes
 
-Get EBI Single Cell Expression Atlas computed marker genes per cell cluster (or per cell type) fo...
+Get EBI Single Cell Expression Atlas computed marker genes per cell cluster or inferred cell type...
 """
 
 from typing import Any, Optional, Callable
@@ -14,13 +14,14 @@ def SCXA_get_cluster_marker_genes(
     k: Optional[int] = None,
     organism_part: Optional[str] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get EBI Single Cell Expression Atlas computed marker genes per cell cluster (or per cell type) fo...
+    Get EBI Single Cell Expression Atlas computed marker genes per cell cluster or inferred cell type...
 
     Parameters
     ----------
@@ -33,7 +34,9 @@ def SCXA_get_cluster_marker_genes(
     organism_part : str
         Organism part for marker_type='cell_types' (e.g. 'pancreas', 'lung'). Require...
     limit : int
-        Optional maximum number of marker rows to return.
+        Optional page size. Omit to return all marker rows from offset.
+    offset : int
+        Zero-based marker-row offset. Default 0.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def SCXA_get_cluster_marker_genes(
             "k": k,
             "organism_part": organism_part,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

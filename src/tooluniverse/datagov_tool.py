@@ -36,7 +36,7 @@ class DataGovTool(BaseTool):
         arguments = arguments or {}
         query = (arguments.get("query") or "").strip()
         organization = arguments.get("organization")
-        rows = max(1, min(int(arguments.get("rows", 10)), 100))
+        after = arguments.get("after")
 
         if not query:
             return {
@@ -47,7 +47,11 @@ class DataGovTool(BaseTool):
                 },
             }
 
-        params = {"_q": query, "_format": "json", "rows": rows}
+        # The replacement search endpoint has a fixed page size of 20. Legacy
+        # `rows`, `limit`, and `size` parameters are silently ignored upstream.
+        params = {"_q": query, "_format": "json"}
+        if after:
+            params["after"] = after
         if organization:
             # The new endpoint takes the organization *slug* (e.g. 'epa-gov')
             # as a separate query param, not as a CKAN fq filter.
@@ -85,7 +89,8 @@ class DataGovTool(BaseTool):
             # array. Reconstruct a thin resources list from what's available.
             dcat = pkg.get("dcat") or {}
             resources = []
-            for dist in (dcat.get("distribution") or [])[:10]:
+            distributions = dcat.get("distribution") or []
+            for dist in distributions:
                 if not isinstance(dist, dict):
                     continue
                 resources.append(
@@ -106,6 +111,7 @@ class DataGovTool(BaseTool):
                     "metadata_modified": pkg.get("last_harvested_date"),
                     "tags": pkg.get("keyword") or [],
                     "resources": resources,
+                    "resource_count": len(resources),
                     "url": (
                         f"https://catalog.data.gov/dataset/{pkg['slug']}"
                         if pkg.get("slug")
@@ -119,8 +125,13 @@ class DataGovTool(BaseTool):
             "data": {
                 "query": query,
                 "organization": organization,
-                "total_count": len(results),
+                # This cursor API does not return a total-hit count.
+                "total_count": None,
                 "returned": len(datasets),
+                "page_size": 20,
+                "after": after,
+                "has_more": bool(body.get("after")),
+                "next_after": body.get("after"),
                 "datasets": datasets,
             },
             "metadata": {

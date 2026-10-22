@@ -77,6 +77,8 @@ class NextstrainTool(BaseTool):
     def _list_datasets(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """List available Nextstrain pathogen datasets."""
         pathogen_filter = arguments.get("pathogen", "").lower()
+        dataset_limit = max(1, min(int(arguments.get("dataset_limit", 10)), 500))
+        dataset_offset = max(0, int(arguments.get("dataset_offset", 0)))
 
         url = f"{NEXTSTRAIN_BASE_URL}/getAvailable"
         response = requests.get(url, timeout=self.timeout)
@@ -105,21 +107,35 @@ class NextstrainTool(BaseTool):
         # Build response
         results = []
         for pathogen, paths in sorted(pathogen_groups.items()):
+            sorted_paths = sorted(paths)
+            page = sorted_paths[dataset_offset : dataset_offset + dataset_limit]
+            next_offset = dataset_offset + len(page)
+            has_more = next_offset < len(sorted_paths)
             results.append(
                 {
                     "pathogen": pathogen,
-                    "dataset_count": len(paths),
-                    "datasets": sorted(paths)[:10],
+                    "dataset_count": len(sorted_paths),
+                    "datasets_returned": len(page),
+                    "dataset_offset": dataset_offset,
+                    "has_more": has_more,
+                    "next_dataset_offset": next_offset if has_more else None,
+                    "datasets": page,
                 }
             )
 
+        total_datasets = sum(r["dataset_count"] for r in results)
+        returned_datasets = sum(r["datasets_returned"] for r in results)
         return {
             "status": "success",
             "data": results,
             "metadata": {
                 "source": "Nextstrain",
                 "total_pathogens": len(results),
-                "total_datasets": sum(len(r["datasets"]) for r in results),
+                "total_datasets": total_datasets,
+                "returned_datasets": returned_datasets,
+                "dataset_limit": dataset_limit,
+                "dataset_offset": dataset_offset,
+                "groups_with_more": sum(1 for r in results if r["has_more"]),
                 "filter": pathogen_filter or "(none)",
                 "endpoint": "list_datasets",
             },
@@ -192,7 +208,11 @@ class NextstrainTool(BaseTool):
         if colorings:
             result["available_colorings"] = [
                 c.get("key", "") for c in colorings if isinstance(c, dict)
-            ][:15]
+            ]
+            result["available_colorings_count"] = len(
+                result["available_colorings"]
+            )
+            result["available_colorings_complete"] = True
 
         return {
             "status": "success",

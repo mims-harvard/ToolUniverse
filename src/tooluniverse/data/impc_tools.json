@@ -124,7 +124,7 @@
   },
   {
     "name": "IMPC_get_phenotypes_by_gene",
-    "description": "Get all phenotype annotations for a mouse gene from IMPC knockout screens. Returns MP ontology terms grouped by physiological system (e.g., nervous, cardiovascular, immune). Essential for understanding gene function and predicting drug side effects.",
+    "description": "Get IMPC phenotype calls for a mouse gene with exact Solr offset pagination. total_phenotype_calls counts all raw calls; phenotypes are unique MP terms on the current page only. Continue with next_offset while has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -142,8 +142,15 @@
           "default": 100,
           "minimum": 1,
           "maximum": 500
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based raw phenotype-call offset. Continue with data.next_offset.",
+          "default": 0,
+          "minimum": 0
         }
-      }
+      },
+      "additionalProperties": false
     },
     "fields": {
       "operation": "get_phenotypes_by_gene"
@@ -188,40 +195,40 @@
                 "type": "object",
                 "properties": {
                   "mp_term_id": {
-                    "type": "string"
+                    "type": ["string", "null"]
                   },
                   "mp_term_name": {
-                    "type": "string"
+                    "type": ["string", "null"]
                   },
                   "top_level_mp_term_id": {
-                    "type": "array",
+                    "type": ["array", "null"],
                     "items": {
                       "type": "string"
                     }
                   },
                   "top_level_mp_term_name": {
-                    "type": "array",
+                    "type": ["array", "null"],
                     "items": {
                       "type": "string"
                     }
                   },
                   "zygosity": {
-                    "type": "string"
+                    "type": ["string", "null"]
                   },
                   "sex": {
-                    "type": "string"
+                    "type": ["string", "null"]
                   },
                   "life_stage": {
-                    "type": "string"
+                    "type": ["string", "null"]
                   },
                   "procedure": {
-                    "type": "string"
+                    "type": ["string", "null"]
                   },
                   "parameter": {
-                    "type": "string"
+                    "type": ["string", "null"]
                   },
                   "p_value": {
-                    "type": "number"
+                    "type": ["number", "null"]
                   },
                   "effect_size": {
                     "type": [
@@ -230,10 +237,10 @@
                     ]
                   },
                   "phenotyping_center": {
-                    "type": "string"
+                    "type": ["string", "null"]
                   },
                   "allele_symbol": {
-                    "type": "string"
+                    "type": ["string", "null"]
                   }
                 }
               }
@@ -303,7 +310,7 @@
   },
   {
     "name": "IMPC_search_genes",
-    "description": "Search IMPC for mouse genes by symbol, name, synonym, or MGI ID. Returns matching genes with their phenotyping and production status. Use to find the correct MGI ID for a gene before querying phenotypes.",
+    "description": "Search IMPC mouse genes by symbol, name, synonym, or MGI ID with exact Solr offset pagination. Continue with next_offset while has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -317,11 +324,18 @@
           "default": 20,
           "minimum": 1,
           "maximum": 100
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based result offset. Continue with data.next_offset.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": [
         "query"
-      ]
+      ],
+      "additionalProperties": false
     },
     "fields": {
       "operation": "search_genes"
@@ -350,31 +364,31 @@
                 "type": "object",
                 "properties": {
                   "mgi_id": {
-                    "type": "string"
+                    "type": ["string", "null"]
                   },
                   "symbol": {
-                    "type": "string"
+                    "type": ["string", "null"]
                   },
                   "name": {
-                    "type": "string"
+                    "type": ["string", "null"]
                   },
                   "synonyms": {
-                    "type": "array",
+                    "type": ["array", "null"],
                     "items": {
                       "type": "string"
                     }
                   },
                   "human_ortholog": {
-                    "type": "array",
+                    "type": ["array", "null"],
                     "items": {
                       "type": "string"
                     }
                   },
                   "phenotype_status": {
-                    "type": "null"
+                    "type": ["string", "null"]
                   },
                   "production_status": {
-                    "type": "null"
+                    "type": ["string", "null"]
                   }
                 }
               }
@@ -425,7 +439,7 @@
   },
   {
     "name": "IMPC_get_gene_phenotype_hits",
-    "description": "Get detailed statistical results from IMPC phenotyping for a gene. Returns p-values, effect sizes, and classification tags for each phenotyping parameter. Filter by significant results only. Useful for quantifying phenotype severity.",
+    "description": "Get detailed IMPC statistical phenotype results for a gene with exact Solr offset pagination. Filter by significance and continue with next_offset while has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -448,8 +462,15 @@
           "default": 100,
           "minimum": 1,
           "maximum": 500
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based statistical-result offset. Continue with data.next_offset.",
+          "default": 0,
+          "minimum": 0
         }
-      }
+      },
+      "additionalProperties": false
     },
     "fields": {
       "operation": "get_gene_phenotype_hits"
@@ -494,43 +515,43 @@
                 "type": "object",
                 "properties": {
                   "parameter": {
-                    "type": "string"
+                    "type": ["string", "null"]
                   },
                   "procedure": {
-                    "type": "string"
+                    "type": ["string", "null"]
                   },
                   "mp_term_id": {
-                    "type": "string"
+                    "type": ["string", "null"]
                   },
                   "mp_term_name": {
-                    "type": "string"
+                    "type": ["string", "null"]
                   },
                   "top_level_mp_term": {
-                    "type": "array",
+                    "type": ["array", "null"],
                     "items": {
                       "type": "string"
                     }
                   },
                   "p_value": {
-                    "type": "number"
+                    "type": ["number", "null"]
                   },
                   "effect_size": {
-                    "type": "number"
+                    "type": ["number", "null"]
                   },
                   "significant": {
-                    "type": "boolean"
+                    "type": ["boolean", "null"]
                   },
                   "zygosity": {
-                    "type": "string"
+                    "type": ["string", "null"]
                   },
                   "sex": {
-                    "type": "string"
+                    "type": ["string", "null"]
                   },
                   "life_stage": {
-                    "type": "string"
+                    "type": ["string", "null"]
                   },
                   "statistical_method": {
-                    "type": "string"
+                    "type": ["string", "null"]
                   },
                   "classification_tag": {
                     "type": [
@@ -551,10 +572,10 @@
                     ]
                   },
                   "phenotyping_center": {
-                    "type": "string"
+                    "type": ["string", "null"]
                   },
                   "allele_symbol": {
-                    "type": "string"
+                    "type": ["string", "null"]
                   }
                 }
               }

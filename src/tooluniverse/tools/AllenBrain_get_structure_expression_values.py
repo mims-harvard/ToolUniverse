@@ -1,7 +1,7 @@
 """
 AllenBrain_get_structure_expression_values
 
-Get quantified per-structure gene-expression values (StructureUnionize) for one Allen Mouse Brain...
+Get quantified StructureUnionize expression values for one Allen Mouse Brain ISH experiment. Each...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,14 @@ def AllenBrain_get_structure_expression_values(
     section_data_set_id: int,
     include_structure: Optional[bool] = True,
     num_rows: Optional[int] = 50,
+    start_row: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any]:
     """
-    Get quantified per-structure gene-expression values (StructureUnionize) for one Allen Mouse Brain...
+    Get quantified StructureUnionize expression values for one Allen Mouse Brain ISH experiment. Each...
 
     Parameters
     ----------
@@ -27,7 +28,9 @@ def AllenBrain_get_structure_expression_values(
     include_structure : bool
         Whether to include the linked brain structure record (acronym, name, hierarch...
     num_rows : int
-        Max per-structure rows to return. There are ~2400 structures per dataset. Def...
+        Per-structure rows per page (1-2000). There are approximately 2400 rows per d...
+    start_row : int
+        Zero-based RMA row offset. Continue with metadata.next_start_row.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -37,7 +40,7 @@ def AllenBrain_get_structure_expression_values(
 
     Returns
     -------
-    Any
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
@@ -48,6 +51,7 @@ def AllenBrain_get_structure_expression_values(
             "section_data_set_id": section_data_set_id,
             "include_structure": include_structure,
             "num_rows": num_rows,
+            "start_row": start_row,
         }.items()
         if v is not None
     }

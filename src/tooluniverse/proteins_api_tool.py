@@ -118,13 +118,11 @@ class ProteinsAPIRESTTool(BaseTool):
                 params["taxid"] = "9606"
 
         elif tool_name == "proteins_api_get_variants":
-            # Variation API uses accession query parameter
+            # Variation API paginates protein entries, not the nested feature
+            # array that this tool documents as "variants per protein". Fetch
+            # the matching entry intact and page its features locally in run().
             if "accession" in args:
                 params["accession"] = args["accession"]
-            if "size" in args:
-                params["size"] = args.get("size", 100)
-            if "offset" in args:
-                params["offset"] = args["offset"]
 
         # Format parameter
         if "format" in args:
@@ -312,7 +310,12 @@ class ProteinsAPIRESTTool(BaseTool):
             return [str(accession).strip()]
 
     def _handle_batch_request(
-        self, accessions: List[str], tool_name: str, format: str = "json"
+        self,
+        accessions: List[str],
+        tool_name: str,
+        format: str = "json",
+        page_size: int = 100,
+        feature_offset: int = 0,
     ) -> Dict[str, Any]:
         """Handle batch requests by making multiple API calls and aggregating results"""
         results = []
@@ -358,6 +361,10 @@ class ProteinsAPIRESTTool(BaseTool):
 
                 response.raise_for_status()
                 data = response.json()
+                if tool_name == "proteins_api_get_variants":
+                    data = self._paginate_variant_features(
+                        data, page_size, feature_offset
+                    )
 
                 return (
                     acc,
@@ -397,6 +404,47 @@ class ProteinsAPIRESTTool(BaseTool):
 
         return response_data
 
+    @staticmethod
+    def _paginate_variant_features(
+        data: Any, page_size: int, feature_offset: int
+    ) -> Any:
+        """Page nested variation features without losing the parent record.
+
+        EBI's variation endpoint applies ``size`` and ``offset`` to returned
+        protein records. A query for one accession therefore has one record
+        containing thousands of ``features``; sending offset=100 upstream
+        returns no protein at all instead of variants 101 onward.
+        """
+        if not isinstance(data, list):
+            return data
+
+        paged_entries = []
+        for raw_entry in data:
+            if not isinstance(raw_entry, dict):
+                paged_entries.append(raw_entry)
+                continue
+            entry = dict(raw_entry)
+            features = raw_entry.get("features")
+            if isinstance(features, list):
+                total = len(features)
+                page = features[feature_offset : feature_offset + page_size]
+                has_more = feature_offset + len(page) < total
+                entry["features"] = page
+                entry["total_features"] = total
+                entry["features_returned"] = len(page)
+                entry["feature_offset"] = feature_offset
+                entry["feature_page_size"] = page_size
+                entry["features_truncated"] = feature_offset > 0 or has_more
+                entry["has_more_features"] = has_more
+                entry["next_feature_offset"] = (
+                    feature_offset + len(page) if has_more else None
+                )
+                entry["result_set_complete"] = (
+                    feature_offset == 0 and len(page) == total
+                )
+            paged_entries.append(entry)
+        return paged_entries
+
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the Proteins API call"""
         tool_name = self.tool_config.get("name", "")
@@ -421,6 +469,28 @@ class ProteinsAPIRESTTool(BaseTool):
             if gene_alias:
                 arguments = dict(arguments, query=gene_alias)
 
+        if tool_name == "proteins_api_get_variants":
+            page_size = arguments.get("size", 100)
+            feature_offset = arguments.get("offset", 0)
+            if (
+                isinstance(page_size, bool)
+                or not isinstance(page_size, int)
+                or page_size < 1
+            ):
+                return {
+                    "status": "error",
+                    "error": "size must be a positive integer",
+                }
+            if (
+                isinstance(feature_offset, bool)
+                or not isinstance(feature_offset, int)
+                or feature_offset < 0
+            ):
+                return {
+                    "status": "error",
+                    "error": "offset must be a non-negative integer",
+                }
+
         if tool_name in batch_tools and "accession" in arguments:
             accession = arguments.get("accession")
             accessions = self._parse_accessions(accession)
@@ -428,7 +498,13 @@ class ProteinsAPIRESTTool(BaseTool):
             # If multiple accessions, use batch handler
             if len(accessions) > 1:
                 format_param = arguments.get("format", "json")
-                return self._handle_batch_request(accessions, tool_name, format_param)
+                return self._handle_batch_request(
+                    accessions,
+                    tool_name,
+                    format_param,
+                    page_size=arguments.get("size", 100),
+                    feature_offset=arguments.get("offset", 0),
+                )
             # Single accession - continue with normal flow
             elif len(accessions) == 1:
                 arguments["accession"] = accessions[0]
@@ -533,16 +609,14 @@ class ProteinsAPIRESTTool(BaseTool):
                         widened_organism = auto_human and "taxid" not in cand
                         break
 
-            # Cap features per entry to avoid 25MB+ responses for heavily-annotated proteins
+            # Page the nested variation features. `size`/`offset` cannot be
+            # sent upstream because EBI applies them to protein records.
             if tool_name == "proteins_api_get_variants" and isinstance(data, list):
-                max_variants = int(arguments.get("max_variants", 200))
-                for entry in data:
-                    if isinstance(entry, dict) and "features" in entry:
-                        features = entry["features"]
-                        if len(features) > max_variants:
-                            entry["features"] = features[:max_variants]
-                            entry["features_truncated"] = True
-                            entry["total_features"] = len(features)
+                data = self._paginate_variant_features(
+                    data,
+                    arguments.get("size", 100),
+                    arguments.get("offset", 0),
+                )
 
             # For gene-name searches, sort exact gene matches to the top
             if (

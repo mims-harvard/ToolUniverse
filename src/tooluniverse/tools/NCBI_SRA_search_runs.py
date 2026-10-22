@@ -1,7 +1,7 @@
 """
 NCBI_SRA_search_runs
 
-Search NCBI Sequence Read Archive (SRA) for NGS/RNA-seq sequencing runs by study accession, organ...
+Search NCBI Sequence Read Archive (SRA) with exact offset pagination by study, organism, sequenci...
 """
 
 from typing import Any, Optional, Callable
@@ -17,6 +17,7 @@ def NCBI_SRA_search_runs(
     source: Optional[str] = None,
     query: Optional[str] = None,
     limit: Optional[int] = 20,
+    offset: Optional[int] = 0,
     sort: Optional[str] = "relevance",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -24,7 +25,7 @@ def NCBI_SRA_search_runs(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search NCBI Sequence Read Archive (SRA) for NGS/RNA-seq sequencing runs by study accession, organ...
+    Search NCBI Sequence Read Archive (SRA) with exact offset pagination by study, organism, sequenci...
 
     Parameters
     ----------
@@ -43,7 +44,9 @@ def NCBI_SRA_search_runs(
     query : str
         Free-form search query if not using structured filters. Use NCBI query syntax...
     limit : int
-        Maximum number of results to return (default: 20, max: 100)
+        Page size (1-100).
+    offset : int
+        Zero-based result offset, mapped to NCBI ESearch retstart. Continue with data...
     sort : str
         Sort order for results (default: relevance)
     stream_callback : Callable, optional
@@ -71,6 +74,7 @@ def NCBI_SRA_search_runs(
             "source": source,
             "query": query,
             "limit": limit,
+            "offset": offset,
             "sort": sort,
         }.items()
         if v is not None

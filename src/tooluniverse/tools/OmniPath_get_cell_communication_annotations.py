@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def OmniPath_get_cell_communication_annotations(
     proteins: str,
-    databases: Optional[str | Any] = None,
-    genesymbols: Optional[bool | Any] = None,
+    databases: Optional[str] = None,
+    genesymbols: Optional[bool] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,9 +24,9 @@ def OmniPath_get_cell_communication_annotations(
     ----------
     proteins : str
         UniProt accession(s) or gene symbol(s), comma-separated. Examples: 'P01137,P3...
-    databases : str | Any
+    databases : str
         Filter by annotation database(s), comma-separated. Cell communication databas...
-    genesymbols : bool | Any
+    genesymbols : bool
         Whether to include gene symbols in output (default: true).
     stream_callback : Callable, optional
         Callback for streaming output

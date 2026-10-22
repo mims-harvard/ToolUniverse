@@ -1,7 +1,7 @@
 """
 UniProt_search_uniref
 
-Search UniRef clusters. Returns clusters matching the query. Use this to find UniRef clusters for...
+Search UniRef clusters with explicit cursor pagination. data.next_cursor comes from the official ...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,14 @@ def UniProt_search_uniref(
     query: str,
     cluster_type: Optional[str] = "UniRef50",
     limit: Optional[int] = 25,
+    cursor: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
-    Search UniRef clusters. Returns clusters matching the query. Use this to find UniRef clusters for...
+    Search UniRef clusters with explicit cursor pagination. data.next_cursor comes from the official ...
 
     Parameters
     ----------
@@ -28,6 +29,8 @@ def UniProt_search_uniref(
         UniRef cluster type: UniRef100 (100% identity), UniRef90 (90% identity), UniR...
     limit : int
         Maximum number of results to return (default: 25, max: 500)
+    cursor : str
+        Opaque cursor from data.next_cursor. Omit for the first page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -37,7 +40,7 @@ def UniProt_search_uniref(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
@@ -48,6 +51,7 @@ def UniProt_search_uniref(
             "query": query,
             "cluster_type": cluster_type,
             "limit": limit,
+            "cursor": cursor,
         }.items()
         if v is not None
     }

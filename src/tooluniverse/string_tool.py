@@ -164,11 +164,23 @@ class STRINGRESTTool(BaseTool):
             metadata = {"columns": api_response["header"]}
             # `limit` is documented as "Maximum number of interactions to return",
             # but STRING interprets it as a network node-expansion count and then
-            # returns EVERY pairwise edge -- so limit=50 could yield 300+ rows,
-            # far more than asked. Honor the documented meaning by returning at
-            # most `limit` interactions, keeping the highest-confidence ones.
+            # returns EVERY pairwise edge -- so limit=50 could yield 300+ rows.
+            # Page those edges locally in a deterministic score order. Previously
+            # we kept only the first `limit` and discarded the rest without any
+            # way for an agent to retrieve them.
             limit = arguments.get("limit")
-            if isinstance(rows, list) and isinstance(limit, int) and len(rows) > limit:
+            interaction_offset = arguments.get("interaction_offset", 0)
+            if (
+                isinstance(interaction_offset, bool)
+                or not isinstance(interaction_offset, int)
+                or interaction_offset < 0
+            ):
+                return {
+                    "status": "error",
+                    "data": [],
+                    "error": "interaction_offset must be a non-negative integer",
+                }
+            if isinstance(rows, list) and isinstance(limit, int):
 
                 def _score(row):
                     try:
@@ -176,8 +188,27 @@ class STRINGRESTTool(BaseTool):
                     except (TypeError, ValueError):
                         return -1.0
 
-                rows = sorted(rows, key=_score, reverse=True)[:limit]
-                metadata["truncated_to_limit"] = limit
+                all_rows = sorted(rows, key=_score, reverse=True)
+                total_interactions = len(all_rows)
+                rows = all_rows[interaction_offset : interaction_offset + limit]
+                has_more = interaction_offset + len(rows) < total_interactions
+                metadata.update(
+                    {
+                        "total_interactions": total_interactions,
+                        "interaction_offset": interaction_offset,
+                        "page_size": len(rows),
+                        "has_more": has_more,
+                        "next_interaction_offset": (
+                            interaction_offset + len(rows) if has_more else None
+                        ),
+                        "result_set_complete": (
+                            interaction_offset == 0
+                            and len(rows) == total_interactions
+                        ),
+                    }
+                )
+                if total_interactions > len(rows):
+                    metadata["truncated_to_limit"] = limit
             if isinstance(rows, list):
                 rows = self._label_partners(rows, arguments)
                 metadata["partner_note"] = (

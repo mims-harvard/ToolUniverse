@@ -1,7 +1,7 @@
 [
   {
     "name": "ExpressionAtlas_get_baseline",
-    "description": "List baseline gene expression experiments in EBI Expression Atlas for a given species. The `gene` argument is used to label the request and suggest a follow-up call, but does NOT filter the returned experiment list (the underlying API has no reliable way to filter experiments by gene) -- use GxA_get_experiment_expression with an experiment_accession from the results and gene_id=<gene> to check whether a specific experiment actually has data for that gene. Complements GTEx and HPA. No API key needed.",
+    "description": "List baseline gene expression experiments in EBI Expression Atlas for a given species with recoverable offset pagination. Continue with next_offset while has_more is true. The `gene` argument labels the request but does NOT filter the experiment list; use GxA_get_experiment_expression with an experiment_accession and gene_id=<gene> for actual per-gene data. No API key needed.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -93,7 +93,13 @@
                 "integer",
                 "number"
               ]
-            }
+            },
+            "returned_baseline": {"type": "integer"},
+            "offset": {"type": "integer"},
+            "limit": {"type": "integer"},
+            "has_more": {"type": "boolean"},
+            "next_offset": {"type": ["integer", "null"]},
+            "result_set_complete": {"type": "boolean"}
           },
           "required": [
             "gene"
@@ -130,7 +136,7 @@
   },
   {
     "name": "ExpressionAtlas_search_differential",
-    "description": "Search for differential expression EXPERIMENTS from EBI Expression Atlas by condition text and/or a gene mentioned in the experiment description. Supports disease-context expression analysis. Caveat: `condition` does real text filtering, but `gene` is a text-search coincidence (experiment descriptions rarely name individual genes) and does not return actual per-gene differential-expression values -- treat gene-tagged results as a starting point for manual review, not a validated gene-specific result set.",
+    "description": "Search differential-expression EXPERIMENTS from EBI Expression Atlas with recoverable offset pagination; continue with next_offset while has_more is true. `condition` does real text filtering, but `gene` is only a text-search coincidence and does not return validated per-gene differential-expression values.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -233,7 +239,13 @@
                 "integer",
                 "number"
               ]
-            }
+            },
+            "returned_experiments": {"type": "integer"},
+            "offset": {"type": "integer"},
+            "limit": {"type": "integer"},
+            "has_more": {"type": "boolean"},
+            "next_offset": {"type": ["integer", "null"]},
+            "result_set_complete": {"type": "boolean"}
           },
           "required": [
             "gene"
@@ -268,7 +280,7 @@
   },
   {
     "name": "ExpressionAtlas_search_experiments",
-    "description": "Search all EBI Expression Atlas experiments (baseline + differential) by condition text and/or a gene mentioned in the experiment description. Returns experiment accessions, types, descriptions, and assay counts. Caveat: `condition` does real text filtering, but `gene` is a text-search coincidence (experiment descriptions rarely name individual genes), so a gene-only query effectively returns the unfiltered catalog -- use to find relevant expression datasets, not as a validated per-gene result set.",
+    "description": "Search all EBI Expression Atlas experiments (baseline + differential) with recoverable offset pagination; continue with next_offset while has_more is true. `condition` does real text filtering, but `gene` is only a text-search coincidence, so use this to find datasets rather than as a validated per-gene result set.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -373,7 +385,13 @@
                 "integer",
                 "number"
               ]
-            }
+            },
+            "returned_experiments": {"type": "integer"},
+            "offset": {"type": "integer"},
+            "limit": {"type": "integer"},
+            "has_more": {"type": "boolean"},
+            "next_offset": {"type": ["integer", "null"]},
+            "result_set_complete": {"type": "boolean"}
           },
           "required": [
             "gene"

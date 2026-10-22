@@ -1,7 +1,7 @@
 [
   {
     "name": "UniProtIDMap_convert_ids",
-    "description": "Convert protein/gene identifiers between databases using the UniProt ID Mapping service. Submits a mapping job and polls for results. Supports 100+ databases including UniProtKB, Gene Names, Ensembl, RefSeq, PDB, ChEMBL, and more. The canonical service for cross-database identifier conversion in proteomics and genomics. Example: convert gene names TP53,BRCA1,EGFR to UniProtKB accessions (P04637, P38398, P00533). Returns mapped IDs with from/to pairs.",
+    "description": "Convert identifiers with UniProt ID Mapping. All upstream result pages are fetched, then exposed through recoverable local limit/offset pagination. result_count is the full mapping count; follow next_offset while has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -24,6 +24,14 @@
             "null"
           ],
           "description": "NCBI Taxonomy ID to restrict results. Examples: 9606 (human), 10090 (mouse), 10116 (rat). Optional but recommended for gene names."
+        },
+        "limit": {
+          "type": "integer", "minimum": 1, "maximum": 5000, "default": 500,
+          "description": "Maximum mappings to return in this local page."
+        },
+        "offset": {
+          "type": "integer", "minimum": 0, "default": 0,
+          "description": "Zero-based mapping offset; continue with next_offset."
         }
       },
       "required": [
@@ -65,6 +73,11 @@
                 "number"
               ]
             },
+            "returned": {"type": "integer"},
+            "limit": {"type": "integer"},
+            "offset": {"type": "integer"},
+            "has_more": {"type": "boolean"},
+            "next_offset": {"type": ["integer", "null"]},
             "results": {
               "type": "array",
               "items": {
@@ -81,7 +94,7 @@
             },
             "truncated": {
               "type": "boolean",
-              "description": "True if more than 500 mapped results exist and were cut off from the results array (result_count still reflects the true total)."
+              "description": "True when this local page is only part of the full result set."
             },
             "failed_ids": {
               "type": "array"
@@ -107,13 +120,21 @@
   },
   {
     "name": "UniProtIDMap_to_pdb",
-    "description": "Convert UniProt accessions to PDB structure IDs using the UniProt ID Mapping service. Shortcut for the common use case of finding 3D structures for proteins. Returns all PDB entries associated with each UniProt accession, useful for structural biology workflows. Example: P04637 (TP53) maps to dozens of PDB structures; P00533 (EGFR) maps to hundreds.",
+    "description": "Convert UniProt accessions to PDB IDs. All upstream pages are fetched and exposed through local limit/offset pagination; follow next_offset while has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
         "uniprot_ids": {
           "type": "string",
           "description": "Comma-separated UniProt accession IDs. Examples: 'P04637' (TP53), 'P38398' (BRCA1), 'P00533' (EGFR), 'P04637,P38398,P00533'."
+        },
+        "limit": {
+          "type": "integer", "minimum": 1, "maximum": 5000, "default": 500,
+          "description": "Maximum mappings to return in this local page."
+        },
+        "offset": {
+          "type": "integer", "minimum": 0, "default": 0,
+          "description": "Zero-based mapping offset; continue with next_offset."
         }
       },
       "required": [
@@ -146,6 +167,11 @@
                 "number"
               ]
             },
+            "returned": {"type": "integer"},
+            "limit": {"type": "integer"},
+            "offset": {"type": "integer"},
+            "has_more": {"type": "boolean"},
+            "next_offset": {"type": ["integer", "null"]},
             "results": {
               "type": "array",
               "items": {
@@ -162,7 +188,7 @@
             },
             "truncated": {
               "type": "boolean",
-              "description": "True if more than 500 mapped results exist and were cut off from the results array (result_count still reflects the true total)."
+              "description": "True when this local page is only part of the full result set."
             }
           },
           "required": [
@@ -185,7 +211,7 @@
   },
   {
     "name": "UniProtIDMap_gene_to_uniprot",
-    "description": "Convert gene names or symbols to UniProt accessions using the UniProt ID Mapping service. Shortcut for the most common ID mapping task in bioinformatics: going from gene symbols to UniProt protein IDs. Restricts to a species via taxonomy ID to avoid ambiguous results. Example: 'TP53' in human (9606) maps to P04637 (canonical) plus isoforms.",
+    "description": "Convert gene symbols to UniProt accessions for a taxonomy. All upstream pages are fetched and exposed through local limit/offset pagination; follow next_offset while has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -204,6 +230,14 @@
             "null"
           ],
           "description": "If true, return only Swiss-Prot (reviewed) entries. Default: false (all UniProtKB entries)."
+        },
+        "limit": {
+          "type": "integer", "minimum": 1, "maximum": 5000, "default": 500,
+          "description": "Maximum mappings to return in this local page."
+        },
+        "offset": {
+          "type": "integer", "minimum": 0, "default": 0,
+          "description": "Zero-based mapping offset; continue with next_offset."
         }
       },
       "required": [
@@ -245,6 +279,11 @@
                 "number"
               ]
             },
+            "returned": {"type": "integer"},
+            "limit": {"type": "integer"},
+            "offset": {"type": "integer"},
+            "has_more": {"type": "boolean"},
+            "next_offset": {"type": ["integer", "null"]},
             "results": {
               "type": "array",
               "items": {
@@ -261,7 +300,7 @@
             },
             "truncated": {
               "type": "boolean",
-              "description": "True if more than 500 mapped results exist and were cut off from the results array (result_count still reflects the true total)."
+              "description": "True when this local page is only part of the full result set."
             }
           },
           "required": [

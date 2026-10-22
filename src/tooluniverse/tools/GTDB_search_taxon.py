@@ -1,7 +1,7 @@
 """
 GTDB_search_taxon
 
-Search the Genome Taxonomy Database (GTDB) for prokaryotic taxa by partial name. GTDB provides a ...
+Search GTDB taxa by partial name, returning rank-prefixed names (d__, p__, c__, o__, f__, g__, s_...
 """
 
 from typing import Any, Optional, Callable
@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def GTDB_search_taxon(
-    operation: str,
     query: str,
+    operation: Optional[str] = "search_taxon",
     limit: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -18,7 +18,7 @@ def GTDB_search_taxon(
     validate: bool = True,
 ) -> Any:
     """
-    Search the Genome Taxonomy Database (GTDB) for prokaryotic taxa by partial name. GTDB provides a ...
+    Search GTDB taxa by partial name, returning rank-prefixed names (d__, p__, c__, o__, f__, g__, s_...
 
     Parameters
     ----------

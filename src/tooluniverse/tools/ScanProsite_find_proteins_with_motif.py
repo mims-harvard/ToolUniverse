@@ -1,7 +1,7 @@
 """
 ScanProsite_find_proteins_with_motif
 
-Reverse PROSITE motif scan: given a PROSITE signature accession (e.g., PS00029 for LEUCINE_ZIPPER...
+Reverse PROSITE motif scan with recoverable pagination over every match present in the ScanProsit...
 """
 
 from typing import Any, Optional, Callable
@@ -13,13 +13,14 @@ def ScanProsite_find_proteins_with_motif(
     db: Optional[str] = "sprot",
     skip_frequent: Optional[bool] = True,
     max_results: Optional[int] = 50,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Reverse PROSITE motif scan: given a PROSITE signature accession (e.g., PS00029 for LEUCINE_ZIPPER...
+    Reverse PROSITE motif scan with recoverable pagination over every match present in the ScanProsit...
 
     Parameters
     ----------
@@ -30,7 +31,9 @@ def ScanProsite_find_proteins_with_motif(
     skip_frequent : bool
         If true (default), skip very frequent low-information signatures (SKIP-FLAG=T...
     max_results : int
-        Maximum number of matching protein records to return (default 50, max 1000). ...
+        Maximum response matches to return on this page (default 50, max 1000).
+    offset : int
+        Zero-based offset within matches available in this ScanProsite response.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def ScanProsite_find_proteins_with_motif(
             "db": db,
             "skip_frequent": skip_frequent,
             "max_results": max_results,
+            "offset": offset,
         }.items()
         if v is not None
     }

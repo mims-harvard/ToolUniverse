@@ -1,7 +1,7 @@
 """
 Orphanet_search_diseases
 
-Search Orphanet for rare diseases by keyword. Orphanet is the reference portal for rare diseases ...
+Search Orphanet rare diseases by keyword. Fuzzy searches can return thousands of matches, so resu...
 """
 
 from typing import Any, Optional, Callable
@@ -10,8 +10,9 @@ from ._shared_client import get_shared_client
 
 def Orphanet_search_diseases(
     query: str,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "search_diseases",
     limit: Optional[int] = 20,
+    offset: Optional[int] = 0,
     lang: Optional[str] = "en",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -19,7 +20,7 @@ def Orphanet_search_diseases(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search Orphanet for rare diseases by keyword. Orphanet is the reference portal for rare diseases ...
+    Search Orphanet rare diseases by keyword. Fuzzy searches can return thousands of matches, so resu...
 
     Parameters
     ----------
@@ -29,6 +30,8 @@ def Orphanet_search_diseases(
         Search query - disease name or keyword (e.g., 'Marfan', 'muscular dystrophy')
     limit : int
         Maximum number of results to return (default: 20, max: 200). The API may retu...
+    offset : int
+        Zero-based fuzzy-match offset. Continue with data.next_offset.
     lang : str
         Language code (en, fr, de, es, it, pt, pl, nl). Default: en
     stream_callback : Callable, optional
@@ -51,6 +54,7 @@ def Orphanet_search_diseases(
             "operation": operation,
             "query": query,
             "limit": limit,
+            "offset": offset,
             "lang": lang,
         }.items()
         if v is not None

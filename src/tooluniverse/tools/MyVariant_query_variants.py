@@ -1,7 +1,7 @@
 """
 MyVariant_query_variants
 
-Search for genetic variants by various criteria including rsID, gene, chromosome position, or cli...
+Search MyVariant.info with explicit offset pagination and pages up to 1000 records. BioThings exp...
 """
 
 from typing import Any, Optional, Callable
@@ -14,13 +14,15 @@ def MyVariant_query_variants(
         str
     ] = "dbsnp.rsid,clinvar.rcv.clinical_significance,cadd.phred,gnomad_genome.af.af",
     size: Optional[int] = 10,
+    offset: Optional[int] = 0,
+    sort: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search for genetic variants by various criteria including rsID, gene, chromosome position, or cli...
+    Search MyVariant.info with explicit offset pagination and pages up to 1000 records. BioThings exp...
 
     Parameters
     ----------
@@ -29,7 +31,11 @@ def MyVariant_query_variants(
     fields : str
         Comma-separated fields to return. Common: dbsnp, clinvar, cadd, gnomad_genome...
     size : int
-        Maximum number of results (1-100).
+        Maximum number of results (1-1000). offset + size may not exceed 10,000.
+    offset : int
+        Zero-based result offset within BioThings' first-10,000 window. Continue with...
+    sort : str
+        Optional upstream sort field. Use 'vcf.position' for stable exhaustive pagina...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -46,7 +52,13 @@ def MyVariant_query_variants(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"query": query, "fields": fields, "size": size}.items()
+        for k, v in {
+            "query": query,
+            "fields": fields,
+            "size": size,
+            "offset": offset,
+            "sort": sort,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

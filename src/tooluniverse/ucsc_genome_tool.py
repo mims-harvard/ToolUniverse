@@ -127,6 +127,7 @@ class UCSCGenomeTool(BaseTool):
         track = arguments.get("track")
         name_filter = arguments.get("name_filter")
         max_tracks = arguments.get("max_tracks", 500)
+        offset = arguments.get("offset", 0)
 
         if not genome:
             return {
@@ -180,6 +181,10 @@ class UCSCGenomeTool(BaseTool):
             max_tracks = 500
         if max_tracks <= 0:
             max_tracks = 500
+        try:
+            offset = max(0, int(offset))
+        except (TypeError, ValueError):
+            offset = 0
 
         nf = (
             name_filter.lower()
@@ -211,12 +216,18 @@ class UCSCGenomeTool(BaseTool):
             )
 
         total_matched = len(tracks)
+        track_page = tracks[offset : offset + max_tracks]
+        has_more = offset + len(track_page) < total_matched
         result = {
             "genome": genome,
             "name_filter": name_filter,
             "track_count": total_matched,
-            "returned_count": min(total_matched, max_tracks),
-            "tracks": tracks[:max_tracks],
+            "returned_count": len(track_page),
+            "offset": offset,
+            "limit": max_tracks,
+            "has_more": has_more,
+            "next_offset": offset + len(track_page) if has_more else None,
+            "tracks": track_page,
         }
         return {
             "status": "success",
@@ -239,6 +250,15 @@ class UCSCGenomeTool(BaseTool):
                 "error": "search_term parameter is required (e.g., 'TP53', 'BRCA1')",
             }
 
+        try:
+            limit = min(max(1, int(arguments.get("limit", 50))), 1000)
+        except (TypeError, ValueError):
+            limit = 50
+        try:
+            offset = max(0, int(arguments.get("offset", 0)))
+        except (TypeError, ValueError):
+            offset = 0
+
         url = f"{UCSC_BASE_URL}/search?search={search_term};genome={genome}"
         response = requests.get(url, timeout=self.timeout)
         response.raise_for_status()
@@ -250,7 +270,7 @@ class UCSCGenomeTool(BaseTool):
         for track_match in position_matches:
             track_name = track_match.get("trackName", "")
             track_desc = track_match.get("description", "")
-            for m in track_match.get("matches", [])[:20]:
+            for m in track_match.get("matches", []):
                 matches.append(
                     {
                         "track": track_name,
@@ -261,11 +281,19 @@ class UCSCGenomeTool(BaseTool):
                     }
                 )
 
+        total_matches = len(matches)
+        match_page = matches[offset : offset + limit]
+        has_more = offset + len(match_page) < total_matches
         result = {
             "genome": genome,
             "search_term": search_term,
-            "match_count": len(matches),
-            "matches": matches[:50],
+            "match_count": total_matches,
+            "returned_count": len(match_page),
+            "offset": offset,
+            "limit": limit,
+            "has_more": has_more,
+            "next_offset": offset + len(match_page) if has_more else None,
+            "matches": match_page,
         }
 
         return {
@@ -432,8 +460,18 @@ class UCSCGenomeTool(BaseTool):
             "start": start,
             "end": end,
             "item_count": len(items),
+            "items_returned": raw.get("itemsReturned", len(items)),
+            "max_items_limit_reached": bool(raw.get("maxItemsLimit", False)),
+            "truncated": bool(raw.get("maxItemsLimit", False)),
             "items": items,
         }
+
+        if result["truncated"]:
+            result["truncation_note"] = (
+                "UCSC reported maxItemsLimit=true, so additional track items exist but "
+                "the API provides no continuation cursor. Increase maxItemsOutput or split "
+                "the genomic interval into smaller non-overlapping regions."
+            )
 
         return {
             "status": "success",

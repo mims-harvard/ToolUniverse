@@ -19,7 +19,7 @@ def ebi_search_with_facets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
     Search EBI domain with faceted filtering and returns facet information. Use facetcount to request...
 
@@ -46,7 +46,7 @@ def ebi_search_with_facets(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

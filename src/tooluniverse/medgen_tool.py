@@ -101,13 +101,15 @@ class MedGenTool(BaseRESTTool):
                 "error": "query parameter is required (e.g., 'cystic fibrosis', 'BRCA1').",
             }
 
-        max_results = min(int(arguments.get("max_results", 10)), 50)
+        max_results = max(1, min(int(arguments.get("max_results", 10)), 50))
+        start = max(0, int(arguments.get("start", 0)))
 
         params = {
             "db": "medgen",
             "term": query,
             "retmode": "json",
             "retmax": max_results,
+            "retstart": start,
         }
         resp = self._ncbi_get(f"{EUTILS_BASE}/esearch.fcgi", params)
         search_data = resp.json()
@@ -120,7 +122,11 @@ class MedGenTool(BaseRESTTool):
                 "status": "success",
                 "data": {
                     "conditions": [],
-                    "total_count": 0,
+                    "total_count": total_count,
+                    "returned": 0,
+                    "start": start,
+                    "has_more": False,
+                    "next_start": None,
                 },
                 "metadata": {
                     "query": query,
@@ -171,11 +177,16 @@ class MedGenTool(BaseRESTTool):
                 }
             )
 
+        has_more = start + len(conditions) < total_count
         return {
             "status": "success",
             "data": {
                 "conditions": conditions,
                 "total_count": total_count,
+                "returned": len(conditions),
+                "start": start,
+                "has_more": has_more,
+                "next_start": start + len(conditions) if has_more else None,
             },
             "metadata": {
                 "query": query,
@@ -265,9 +276,11 @@ class MedGenTool(BaseRESTTool):
             ),
             "omim_ids": omim_ids,
             "associated_genes": genes,
-            "synonyms": synonyms[:20],
+            "synonyms": synonyms,
+            "synonym_count": len(synonyms),
             "modes_of_inheritance": inheritance,
-            "clinical_features": clinical_features[:30],
+            "clinical_features": clinical_features,
+            "clinical_feature_count": len(clinical_features),
         }
 
         return {

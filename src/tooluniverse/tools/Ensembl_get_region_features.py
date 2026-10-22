@@ -1,7 +1,7 @@
 """
 Ensembl_get_region_features
 
-Get all genomic features overlapping a specified chromosomal region. Returns genes, transcripts, ...
+Get genomic features overlapping a specified chromosomal region, including genes, transcripts, re...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,15 @@ def Ensembl_get_region_features(
     region: str,
     species: Optional[str] = None,
     feature_types: Optional[str] = None,
+    limit: Optional[int] = 100,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get all genomic features overlapping a specified chromosomal region. Returns genes, transcripts, ...
+    Get genomic features overlapping a specified chromosomal region, including genes, transcripts, re...
 
     Parameters
     ----------
@@ -28,6 +30,10 @@ def Ensembl_get_region_features(
         Genomic region in format 'chr:start-end'. Examples: '17:7661779-7687546' (TP5...
     feature_types : str
         Comma-separated feature types to retrieve. Options: 'gene', 'transcript', 're...
+    limit : int
+        Maximum overlapping features per page.
+    offset : int
+        Zero-based feature offset. Continue with data.next_offset while has_more is t...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +54,8 @@ def Ensembl_get_region_features(
             "species": species,
             "region": region,
             "feature_types": feature_types,
+            "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

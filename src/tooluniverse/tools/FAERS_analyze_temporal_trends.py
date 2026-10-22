@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def FAERS_analyze_temporal_trends(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "analyze_temporal_trends",
     drug_name: Optional[str] = None,
     adverse_event: Optional[str] = None,
     reaction: Optional[str] = None,

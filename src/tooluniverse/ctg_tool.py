@@ -362,6 +362,19 @@ class ClinicalTrialsTool(RESTfulTool):
         if advanced_clauses:
             params["filter.advanced"] = " AND ".join(advanced_clauses)
 
+        page_size = params.get("pageSize", 10)
+        if (
+            isinstance(page_size, bool)
+            or not isinstance(page_size, int)
+            or not 1 <= page_size <= 1000
+        ):
+            return {
+                "status": "error",
+                "error": "page_size/max_results must be an integer between 1 and 1000",
+                "parameter": "page_size",
+            }
+        params["pageSize"] = page_size
+
         resp = requests.get(f"{self._BASE_URL}/studies", params=params, timeout=30)
         resp.raise_for_status()
         data = resp.json()
@@ -414,15 +427,29 @@ class ClinicalTrialsTool(RESTfulTool):
                 }
             )
 
+        next_page_token = data.get("nextPageToken")
+        total_count = data.get("totalCount")
+        total_is_exact = isinstance(total_count, int) and not isinstance(
+            total_count, bool
+        )
         return {
             "status": "success",
             "data": {
                 "studies": studies,
-                # totalCount may be absent from API response; fallback to len(studies)
-                "total_count": data.get("totalCount") or len(studies),
-                "next_page_token": data.get("nextPageToken"),
+                "total_count": total_count,
+                "next_page_token": next_page_token,
             },
-            "metadata": {"source": "ClinicalTrials.gov API v2", "operation": "search"},
+            "metadata": {
+                "source": "ClinicalTrials.gov API v2",
+                "operation": "search",
+                "returned": len(studies),
+                "total_results": total_count if total_is_exact else None,
+                "total_results_is_exact": total_is_exact,
+                "page_size": page_size,
+                "has_more": isinstance(next_page_token, str) and bool(next_page_token),
+                "next_page_token": next_page_token,
+                "pagination_scope": "clinicaltrials_v2_next_page_token",
+            },
         }
 
     def _run_get_study(self, arguments):
@@ -442,6 +469,45 @@ class ClinicalTrialsTool(RESTfulTool):
         data = resp.json()
         proto = data.get("protocolSection", {})
 
+        arms_module = proto.get("armsInterventionsModule", {})
+        arms = [
+            {
+                "label": arm.get("label"),
+                "type": arm.get("type"),
+                "description": arm.get("description"),
+                "intervention_names": arm.get("interventionNames", []),
+            }
+            for arm in arms_module.get("armGroups", [])
+        ]
+        interventions = [
+            {
+                "type": item.get("type"),
+                "name": item.get("name"),
+                "description": item.get("description"),
+            }
+            for item in arms_module.get("interventions", [])
+        ]
+        primary_outcomes = [
+            {
+                "measure": outcome.get("measure"),
+                "description": outcome.get("description"),
+                "time_frame": outcome.get("timeFrame"),
+            }
+            for outcome in proto.get("outcomesModule", {}).get("primaryOutcomes", [])
+        ]
+        locations = [
+            {
+                "facility": location.get("facility"),
+                "city": location.get("city"),
+                "country": location.get("country"),
+                "status": location.get("status"),
+            }
+            for location in proto.get("contactsLocationsModule", {}).get(
+                "locations", []
+            )
+        ]
+        references = proto.get("referencesModule", {}).get("references", [])
+
         study = {
             "nct_id": proto.get("identificationModule", {}).get("nctId"),
             "brief_title": proto.get("identificationModule", {}).get("briefTitle"),
@@ -456,31 +522,22 @@ class ClinicalTrialsTool(RESTfulTool):
             ).get("count"),
             "brief_summary": proto.get("descriptionModule", {}).get("briefSummary"),
             "conditions": proto.get("conditionsModule", {}).get("conditions", []),
-            "interventions": [
-                {"type": i.get("type"), "name": i.get("name")}
-                for i in proto.get("armsInterventionsModule", {}).get(
-                    "interventions", []
-                )
-            ],
-            "primary_outcomes": [
-                {"measure": o.get("measure"), "timeFrame": o.get("timeFrame")}
-                for o in proto.get("outcomesModule", {}).get("primaryOutcomes", [])
-            ],
+            "arms": arms,
+            "arm_count": len(arms),
+            "interventions": interventions,
+            "intervention_count": len(interventions),
+            "primary_outcomes": primary_outcomes,
+            "primary_outcome_count": len(primary_outcomes),
             "eligibility_criteria": proto.get("eligibilityModule", {}).get(
                 "eligibilityCriteria"
             ),
             "sponsor": (
                 proto.get("sponsorCollaboratorsModule", {}).get("leadSponsor") or {}
             ).get("name"),
-            "locations": [
-                {
-                    "facility": loc.get("facility"),
-                    "city": loc.get("city"),
-                    "country": loc.get("country"),
-                }
-                for loc in proto.get("contactsLocationsModule", {}).get("locations", [])
-            ],
-            "references": proto.get("referencesModule", {}).get("references", []),
+            "locations": locations,
+            "location_count": len(locations),
+            "references": references,
+            "reference_count": len(references),
         }
 
         return {
@@ -521,10 +578,34 @@ class ClinicalTrialsTool(RESTfulTool):
         if not field:
             return {"status": "error", "error": "field is required"}
 
+        page_size = arguments.get("page_size", 50)
+        offset = arguments.get("offset", 0)
+        if (
+            isinstance(page_size, bool)
+            or not isinstance(page_size, int)
+            or not 1 <= page_size <= 250
+        ):
+            return {
+                "status": "error",
+                "error": "page_size must be an integer between 1 and 250",
+                "parameter": "page_size",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+                "parameter": "offset",
+            }
+
         # CTG API v2: endpoint is /stats/fieldValues (camelCase), param is 'fields' (plural)
         params = {"fields": field}
         if arguments.get("query_cond"):
-            params["query.cond"] = arguments["query_cond"]
+            query_cond = arguments["query_cond"]
+            params["query.cond"] = (
+                _phrase_quote_if_plain(query_cond)
+                if isinstance(query_cond, str)
+                else query_cond
+            )
 
         resp = requests.get(
             f"{self._BASE_URL}/stats/fieldValues", params=params, timeout=30
@@ -533,23 +614,65 @@ class ClinicalTrialsTool(RESTfulTool):
         data = resp.json()  # Returns a list of field objects
 
         values = []
+        unique_values_count = None
+        missing_studies_count = None
         if isinstance(data, list) and data:
             field_obj = data[0]
-            values = [
+            all_accessible_values = [
                 {"value": item.get("value"), "studies_count": item.get("studiesCount")}
                 for item in field_obj.get("topValues", [])
             ]
+            values = all_accessible_values[offset : offset + page_size]
+            unique_values_count = field_obj.get("uniqueValuesCount")
+            missing_studies_count = field_obj.get("missingStudiesCount")
+        else:
+            all_accessible_values = []
+
+        total_is_exact = isinstance(unique_values_count, int) and not isinstance(
+            unique_values_count, bool
+        )
+        accessible_count = len(all_accessible_values)
+        upstream_truncated = bool(
+            total_is_exact and unique_values_count > accessible_count
+        )
+        returned = len(values)
+        has_more = offset + returned < accessible_count
 
         return {
             "status": "success",
             "data": {
                 "field": field,
                 "values": values,
-                "total_count": len(values),
+                "total_count": unique_values_count if total_is_exact else None,
+                "accessible_values_count": accessible_count,
+                "missing_studies_count": missing_studies_count,
             },
             "metadata": {
                 "source": "ClinicalTrials.gov API v2",
                 "operation": "field_values",
+                "returned": returned,
+                "total_results": unique_values_count if total_is_exact else None,
+                "total_results_is_exact": total_is_exact,
+                "accessible_results": accessible_count,
+                "upstream_truncated": upstream_truncated,
+                "offset": offset,
+                "page_size": page_size,
+                "has_more": has_more,
+                "next_offset": offset + returned if has_more else None,
+                "truncated": offset > 0 or has_more or upstream_truncated,
+                "result_set_complete": bool(
+                    total_is_exact
+                    and offset == 0
+                    and returned == unique_values_count
+                    and not upstream_truncated
+                ),
+                "pagination_scope": "client_page_of_clinicaltrials_top_values",
+                "upstream_supports_pagination": False,
+                "warning": (
+                    "ClinicalTrials.gov reports more unique values than its fixed topValues window exposes. The wrapper can page only within accessible_results; use a more specific condition filter for other values."
+                    if upstream_truncated
+                    else None
+                ),
             },
         }
 

@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def CryoET_list_runs(
-    operation: str,
     dataset_id: int,
+    operation: Optional[str] = "list_runs",
     limit: Optional[int] = 20,
     offset: Optional[int] = 0,
     *,

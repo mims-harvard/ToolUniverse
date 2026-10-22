@@ -2,7 +2,7 @@
   {
     "name": "FDAGSRS_search_substances",
     "type": "FDAGSRSTool",
-    "description": "Search FDA GSRS (Global Substance Registration System) for substances by name, UNII code, InChIKey, or formula. Returns official FDA substance records with UNII identifiers, substance class, structure, and cross-references (DrugBank, WHO-ATC, CAS, EC/EINECS, CFR). No API key required. Example: 'aspirin' -> UNII R16CO5Y76E, chemical, approved.",
+    "description": "Search FDA GSRS for substances by name, UNII, InChIKey, or formula. Results are recoverably paginated with offset and metadata.next_offset. GSRS pins exact-name hits on later native pages; the wrapper removes that repeated pin so ranked results are not lost.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -22,7 +22,16 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of results to return (1-50, default 10)."
+          "description": "Maximum number of results to return (1-50, default 10).",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 50
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based ranked-result offset. Continue with metadata.next_offset while metadata.has_more is true.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": [
@@ -63,6 +72,8 @@
               "synonyms": {
                 "type": "array"
               },
+              "synonyms_total": {"type": "integer"},
+              "synonyms_truncated": {"type": "boolean"},
               "xrefs": {
                 "type": "object"
               }
@@ -98,7 +109,7 @@
   {
     "name": "FDAGSRS_get_substance",
     "type": "FDAGSRSTool",
-    "description": "Get full FDA substance record by UNII (Unique Ingredient Identifier) code. Returns complete substance data including all names, cross-references (DrugBank, WHO-ATC, CAS, EC number, CFR), structure, and approval status. No API key required. UNII is the official FDA identifier for all regulated substances. Example: UNII 'R16CO5Y76E' = aspirin.",
+    "description": "Get the full FDA substance record by UNII, including every inlined name and code from GSRS view=full, structure, and approval status. metadata.total_names and total_codes quantify completeness. Example: R16CO5Y76E is aspirin.",
     "parameter": {
       "type": "object",
       "properties": {

@@ -35,7 +35,7 @@ def jaspar_search_matrices(
     tax_group : str
         Filter by taxonomic group (e.g., 'vertebrates').
     species : str
-        Filter by NCBI taxonomy ID (e.g., '9606' for human).
+        Filter by NCBI taxonomy ID (e.g., '9606' for human). Sent to JASPAR as its `t...
     page : int
         Page number (1-based).
     page_size : int

@@ -1,7 +1,7 @@
 """
 STRING_get_interaction_partners
 
-Get interaction partners for a single protein from STRING database. Returns a ranked list of prot...
+Get ranked interaction partners for one protein from STRING. STRING's limit=0 returns the complet...
 """
 
 from typing import Any, Optional, Callable
@@ -12,14 +12,15 @@ def STRING_get_interaction_partners(
     identifiers: str,
     species: Optional[int] = 9606,
     limit: Optional[int] = 10,
-    required_score: Optional[int | Any] = None,
+    offset: Optional[int] = 0,
+    required_score: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get interaction partners for a single protein from STRING database. Returns a ranked list of prot...
+    Get ranked interaction partners for one protein from STRING. STRING's limit=0 returns the complet...
 
     Parameters
     ----------
@@ -28,8 +29,10 @@ def STRING_get_interaction_partners(
     species : int
         NCBI taxonomy ID (9606=human, 10090=mouse, 7227=fly, 6239=worm)
     limit : int
-        Maximum number of interaction partners to return
-    required_score : int | Any
+        Number of ranked partners in this client-side page (default 10)
+    offset : int
+        Zero-based ranked-partner offset. Continue with metadata.next_offset while me...
+    required_score : int
         Minimum combined STRING score (0-1000). 400=medium, 700=high, 900=highest con...
     stream_callback : Callable, optional
         Callback for streaming output
@@ -51,6 +54,7 @@ def STRING_get_interaction_partners(
             "identifiers": identifiers,
             "species": species,
             "limit": limit,
+            "offset": offset,
             "required_score": required_score,
         }.items()
         if v is not None

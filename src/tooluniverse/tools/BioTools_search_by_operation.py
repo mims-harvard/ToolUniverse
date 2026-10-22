@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def BioTools_search_by_operation(
-    operation: str,
+    operation: Optional[str] = "Sequence alignment",
     page: Optional[int] = 1,
     size: Optional[int] = 10,
     format: Optional[str] = "json",
@@ -28,7 +28,7 @@ def BioTools_search_by_operation(
     page : int
         Page number (1-based). Default: 1.
     size : int
-        Results per page (1-50). Default: 10.
+        Results per page (1-100). Mapped to per_page.
     format : str
         Response format. Must be 'json'.
     stream_callback : Callable, optional

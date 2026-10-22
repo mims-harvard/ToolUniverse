@@ -83,6 +83,8 @@ class TestGeneTreeParsing:
         assert data["tree_id"] == "ENSGT00950000183153"
         assert data["newick"] == _NEWICK_TEXT
         assert data["total_members"] == 2
+        assert data["returned"] == 2
+        assert data["has_more"] is False
         assert {m["gene_id"] for m in data["members"]} == {
             "ENSG00000141510",
             "ENSMUSG00000059552",
@@ -116,3 +118,24 @@ class TestGeneTreeParsing:
         assert result["status"] == "success"
         assert result["data"]["newick"] is None
         assert result["data"]["total_members"] == 2
+
+    def test_members_have_recoverable_offsets_without_collector_cap(self):
+        tree = {"id": "T", "tree": {"children": []}}
+        tree["tree"]["children"] = [
+            {
+                "id": {"accession": f"ENSG{i}"},
+                "taxonomy": {"scientific_name": "Homo sapiens"},
+            }
+            for i in range(205)
+        ]
+        tool = _tool()
+        with patch(
+            "tooluniverse.ensembl_compara_tool.requests.get",
+            side_effect=[_json_resp(tree), _text_resp("tree")],
+        ):
+            result = tool.run({"gene": "OR7D4", "limit": 3, "offset": 201})
+        assert result["data"]["total_members"] == 205
+        assert [m["gene_id"] for m in result["data"]["members"]] == [
+            "ENSG201", "ENSG202", "ENSG203"
+        ]
+        assert result["data"]["next_offset"] == 204

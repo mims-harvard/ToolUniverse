@@ -2,7 +2,7 @@
   {
     "name": "CancerPrognosis_get_survival_data",
     "type": "CancerPrognosisTool",
-    "description": "Retrieve patient-level overall survival (OS) and disease-free survival (DFS) data from a TCGA or cBioPortal cancer study. Returns per-patient survival times, event status, and age. Data can be directly used with Survival_kaplan_meier or Survival_log_rank_test tools for custom survival analyses. Supports 33 TCGA cancer types (BRCA, LUAD, COAD, GBM, etc.) and 400+ cBioPortal studies.",
+    "description": "Retrieve patient-level OS and DFS data from a TCGA or cBioPortal study. The tool fetches every raw clinical-data page before computing exact cohort counts. Patient arrays are recoverably paginated with patient_offset; follow the separate OS/DFS next_patient_offset fields until has_more is false.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -32,6 +32,12 @@
             "null"
           ],
           "description": "Maximum number of patient records to return (default 500, max 2000)"
+        },
+        "patient_offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset applied independently to the sorted OS and DFS patient lists."
         }
       },
       "required": []
@@ -51,6 +57,15 @@
                   "type": "string"
                 },
                 "total_patients": {
+                  "type": "integer"
+                },
+                "clinical_records_fetched": {
+                  "type": "integer"
+                },
+                "clinical_pages_fetched": {
+                  "type": "integer"
+                },
+                "patient_offset": {
                   "type": "integer"
                 },
                 "overall_survival": {
@@ -81,6 +96,12 @@
                           }
                         }
                       }
+                    },
+                    "has_more": {
+                      "type": "boolean"
+                    },
+                    "next_patient_offset": {
+                      "type": ["integer", "null"]
                     }
                   }
                 },
@@ -92,6 +113,12 @@
                     },
                     "n_events": {
                       "type": "integer"
+                    },
+                    "has_more": {
+                      "type": "boolean"
+                    },
+                    "next_patient_offset": {
+                      "type": ["integer", "null"]
                     }
                   }
                 }

@@ -1,7 +1,7 @@
 """
 PharmGKB_get_variant_annotations
 
-Get variant-level literature annotations from PharmGKB/ClinPGx, filtered by gene or chemical Phar...
+Get variant-level literature annotations from PharmGKB/ClinPGx, filtered by gene or chemical acce...
 """
 
 from typing import Any, Optional, Callable
@@ -13,13 +13,14 @@ def PharmGKB_get_variant_annotations(
     chemical_id: Optional[str] = None,
     drug_id: Optional[str] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get variant-level literature annotations from PharmGKB/ClinPGx, filtered by gene or chemical Phar...
+    Get variant-level literature annotations from PharmGKB/ClinPGx, filtered by gene or chemical acce...
 
     Parameters
     ----------
@@ -31,6 +32,8 @@ def PharmGKB_get_variant_annotations(
         Alias for chemical_id.
     limit : int
         Maximum number of variant annotations to return (default 50, max 500). CYP2C9...
+    offset : int
+        Zero-based variant-annotation offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def PharmGKB_get_variant_annotations(
             "chemical_id": chemical_id,
             "drug_id": drug_id,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

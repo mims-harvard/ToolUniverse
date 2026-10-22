@@ -11,6 +11,8 @@ from ._shared_client import get_shared_client
 def GxA_get_experiment_expression(
     experiment_accession: str,
     gene_id: Optional[str] = None,
+    limit: Optional[int] = 50,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,6 +27,10 @@ def GxA_get_experiment_expression(
         Expression Atlas experiment accession (e.g., 'E-MTAB-2836' for human tissues ...
     gene_id : str
         Optional Ensembl gene ID to filter expression data for a specific gene (e.g.,...
+    limit : int
+        Maximum number of gene profiles to scan and return per page (1-500; default 5...
+    offset : int
+        Zero-based offset into the filtered gene profiles (default 0). Continue with ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,6 +50,8 @@ def GxA_get_experiment_expression(
         for k, v in {
             "experiment_accession": experiment_accession,
             "gene_id": gene_id,
+            "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

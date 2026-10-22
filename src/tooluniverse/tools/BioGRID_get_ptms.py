@@ -16,6 +16,7 @@ def BioGRID_get_ptms(
     include_enzymes: Optional[bool] = True,
     include_evidence: Optional[bool] = True,
     limit: Optional[int] = 500,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -39,7 +40,9 @@ def BioGRID_get_ptms(
     include_evidence : bool
         Include experimental evidence and publication details. Default: true
     limit : int
-        Maximum number of PTMs to return (default: 500, max: 10000)
+        Maximum upstream PTM interaction records on this page
+    offset : int
+        Zero-based BioGRID upstream record offset
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -64,6 +67,7 @@ def BioGRID_get_ptms(
             "include_enzymes": include_enzymes,
             "include_evidence": include_evidence,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

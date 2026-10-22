@@ -133,29 +133,66 @@ class PDBe_KB_Tool(BaseTool):
         protein_data = data[acc]
         ligands = []
         all_ligand_entries = protein_data.get("data", [])
+        ligand_offset = max(int(arguments.get("ligand_offset") or 0), 0)
         max_ligands = arguments.get("max_ligands")
-        # `or 100` would silently turn an explicit 0 into 100 (0 is falsy),
-        # and a negative value would slice from the end instead of erroring
-        # -- check for None explicitly and clamp instead.
-        max_ligands = 100 if max_ligands is None else max(0, max_ligands)
+        # Check for None explicitly, then require a positive page size so the
+        # advertised next offset always advances.
+        max_ligands = 100 if max_ligands is None else max(1, int(max_ligands))
+        residue_offset = max(int(arguments.get("residue_offset") or 0), 0)
+        residue_limit = min(max(int(arguments.get("residue_limit") or 20), 1), 500)
+        pdb_entry_offset = max(int(arguments.get("pdb_entry_offset") or 0), 0)
+        pdb_entry_limit = min(
+            max(int(arguments.get("pdb_entry_limit") or 10), 1), 500
+        )
 
-        for entry in all_ligand_entries[:max_ligands]:
+        ligand_page = all_ligand_entries[
+            ligand_offset : ligand_offset + max_ligands
+        ]
+        for entry in ligand_page:
+            all_residues = entry.get("residues", [])
+            residue_page = all_residues[
+                residue_offset : residue_offset + residue_limit
+            ]
             binding_residues = []
-            for res in entry.get("residues", [])[:20]:
+            for res in residue_page:
+                all_pdb_entries = res.get("allPDBEntries", [])
+                pdb_entry_page = all_pdb_entries[
+                    pdb_entry_offset : pdb_entry_offset + pdb_entry_limit
+                ]
+                pdb_entries_truncated = (
+                    pdb_entry_offset + len(pdb_entry_page) < len(all_pdb_entries)
+                )
                 binding_residues.append(
                     {
                         "start": res.get("startIndex"),
                         "end": res.get("endIndex"),
-                        "pdb_entries": res.get("allPDBEntries", [])[:10],
+                        "pdb_entries": pdb_entry_page,
+                        "pdb_entries_total": len(all_pdb_entries),
+                        "pdb_entries_returned": len(pdb_entry_page),
+                        "pdb_entries_truncated": pdb_entries_truncated,
+                        "next_pdb_entry_offset": (
+                            pdb_entry_offset + len(pdb_entry_page)
+                            if pdb_entries_truncated
+                            else None
+                        ),
                     }
                 )
 
             additional = entry.get("additionalData", {})
+            residues_truncated = residue_offset + len(residue_page) < len(all_residues)
             ligands.append(
                 {
                     "name": entry.get("name"),
                     "accession": entry.get("accession"),
                     "binding_residues": binding_residues,
+                    "binding_residues_total": len(all_residues),
+                    "binding_residues_returned": len(residue_page),
+                    "binding_residues_truncated": residues_truncated,
+                    "next_residue_offset": (
+                        residue_offset + len(residue_page)
+                        if residues_truncated
+                        else None
+                    ),
                     "is_cofactor": bool(additional.get("coFactorId")),
                     "is_solvent": additional.get("isSolvent", False),
                     "chembl_id": additional.get("chemblId") or None,
@@ -168,15 +205,22 @@ class PDBe_KB_Tool(BaseTool):
             "protein_length": protein_data.get("length"),
             "ligands": ligands,
             "total_ligands": len(all_ligand_entries),
+            "ligand_offset": ligand_offset,
+            "ligands_returned": len(ligands),
         }
-        if len(all_ligand_entries) > max_ligands:
+        ligands_truncated = ligand_offset + len(ligand_page) < len(all_ligand_entries)
+        result_data["truncated"] = ligands_truncated
+        result_data["next_ligand_offset"] = (
+            ligand_offset + len(ligand_page) if ligands_truncated else None
+        )
+        if ligands_truncated:
             result_data["truncated"] = True
             result_data["truncation_note"] = (
-                f"Returning {max_ligands} of {len(all_ligand_entries)} ligands. "
-                f"Pass max_ligands={len(all_ligand_entries)} to retrieve all of them. "
+                f"Returning {len(ligands)} ligands from offset {ligand_offset} of "
+                f"{len(all_ligand_entries)} total. Continue with "
+                f"ligand_offset={ligand_offset + len(ligand_page)}. "
                 "The API does not guarantee ordering by clinical relevance, so "
-                "a specific ligand of interest (e.g. a named drug) may be cut off "
-                "at the default limit."
+                "page through every ligand when looking for a specific compound."
             )
 
         return {
@@ -207,28 +251,65 @@ class PDBe_KB_Tool(BaseTool):
         protein_data = data[acc]
         partners = []
         all_partner_entries = protein_data.get("data", [])
+        partner_offset = max(int(arguments.get("partner_offset") or 0), 0)
         max_partners = arguments.get("max_partners")
-        # `or 60` would silently turn an explicit 0 into 60 (0 is falsy),
-        # and a negative value would slice from the end instead of erroring
-        # -- check for None explicitly and clamp instead.
-        max_partners = 60 if max_partners is None else max(0, max_partners)
+        # Check for None explicitly, then require a positive page size so the
+        # advertised next offset always advances.
+        max_partners = 60 if max_partners is None else max(1, int(max_partners))
+        residue_offset = max(int(arguments.get("residue_offset") or 0), 0)
+        residue_limit = min(max(int(arguments.get("residue_limit") or 30), 1), 500)
+        pdb_entry_offset = max(int(arguments.get("pdb_entry_offset") or 0), 0)
+        pdb_entry_limit = min(
+            max(int(arguments.get("pdb_entry_limit") or 10), 1), 500
+        )
 
-        for entry in all_partner_entries[:max_partners]:
+        partner_page = all_partner_entries[
+            partner_offset : partner_offset + max_partners
+        ]
+        for entry in partner_page:
+            all_residues = entry.get("residues", [])
+            residue_page = all_residues[
+                residue_offset : residue_offset + residue_limit
+            ]
             interface_residues = []
-            for res in entry.get("residues", [])[:30]:
+            for res in residue_page:
+                all_pdb_entries = res.get("allPDBEntries", [])
+                pdb_entry_page = all_pdb_entries[
+                    pdb_entry_offset : pdb_entry_offset + pdb_entry_limit
+                ]
+                pdb_entries_truncated = (
+                    pdb_entry_offset + len(pdb_entry_page) < len(all_pdb_entries)
+                )
                 interface_residues.append(
                     {
                         "start": res.get("startIndex"),
                         "end": res.get("endIndex"),
-                        "pdb_entries": res.get("allPDBEntries", [])[:10],
+                        "pdb_entries": pdb_entry_page,
+                        "pdb_entries_total": len(all_pdb_entries),
+                        "pdb_entries_returned": len(pdb_entry_page),
+                        "pdb_entries_truncated": pdb_entries_truncated,
+                        "next_pdb_entry_offset": (
+                            pdb_entry_offset + len(pdb_entry_page)
+                            if pdb_entries_truncated
+                            else None
+                        ),
                     }
                 )
 
+            residues_truncated = residue_offset + len(residue_page) < len(all_residues)
             partners.append(
                 {
                     "partner_name": entry.get("name"),
                     "partner_accession": entry.get("accession"),
                     "interface_residues": interface_residues,
+                    "interface_residues_total": len(all_residues),
+                    "interface_residues_returned": len(residue_page),
+                    "interface_residues_truncated": residues_truncated,
+                    "next_residue_offset": (
+                        residue_offset + len(residue_page)
+                        if residues_truncated
+                        else None
+                    ),
                 }
             )
 
@@ -237,13 +318,22 @@ class PDBe_KB_Tool(BaseTool):
             "protein_length": protein_data.get("length"),
             "interaction_partners": partners,
             "total_partners": len(all_partner_entries),
+            "partner_offset": partner_offset,
+            "partners_returned": len(partners),
         }
-        if len(all_partner_entries) > max_partners:
+        partners_truncated = partner_offset + len(partner_page) < len(
+            all_partner_entries
+        )
+        result_data["truncated"] = partners_truncated
+        result_data["next_partner_offset"] = (
+            partner_offset + len(partner_page) if partners_truncated else None
+        )
+        if partners_truncated:
             result_data["truncated"] = True
             result_data["truncation_note"] = (
-                f"Returning {max_partners} of {len(all_partner_entries)} interaction "
-                f"partners. Pass max_partners={len(all_partner_entries)} to retrieve "
-                "all of them."
+                f"Returning {len(partners)} interaction partners from offset "
+                f"{partner_offset} of {len(all_partner_entries)} total. Continue "
+                f"with partner_offset={partner_offset + len(partner_page)}."
             )
 
         return {
@@ -278,15 +368,41 @@ class PDBe_KB_Tool(BaseTool):
 
         segments_data = data[acc]
         segments = []
+        segment_offset = max(int(arguments.get("segment_offset") or 0), 0)
+        segment_limit = min(max(int(arguments.get("segment_limit") or 10), 1), 100)
+        cluster_offset = max(int(arguments.get("cluster_offset") or 0), 0)
+        cluster_limit = min(max(int(arguments.get("cluster_limit") or 10), 1), 100)
+        member_offset = max(int(arguments.get("member_offset") or 0), 0)
+        member_limit = min(max(int(arguments.get("member_limit") or 20), 1), 500)
 
-        for seg in segments_data[:10]:
-            clusters = seg.get("clusters", [])
+        segment_page = segments_data[
+            segment_offset : segment_offset + segment_limit
+        ]
+        for seg in segment_page:
+            all_clusters = seg.get("clusters", [])
+            cluster_page = all_clusters[
+                cluster_offset : cluster_offset + cluster_limit
+            ]
             cluster_results = []
 
-            for cluster in clusters[:10]:
+            for cluster in cluster_page:
                 members = []
-                representative = None
-                for member in cluster[:20]:
+                representative_member = next(
+                    (m for m in cluster if m.get("is_representative", False)), None
+                )
+                representative = (
+                    {
+                        "pdb_id": representative_member.get("pdb_id"),
+                        "auth_asym_id": representative_member.get("auth_asym_id"),
+                        "struct_asym_id": representative_member.get("struct_asym_id"),
+                        "entity_id": representative_member.get("entity_id"),
+                        "is_representative": True,
+                    }
+                    if representative_member is not None
+                    else None
+                )
+                member_page = cluster[member_offset : member_offset + member_limit]
+                for member in member_page:
                     entry = {
                         "pdb_id": member.get("pdb_id"),
                         "auth_asym_id": member.get("auth_asym_id"),
@@ -294,26 +410,46 @@ class PDBe_KB_Tool(BaseTool):
                         "entity_id": member.get("entity_id"),
                         "is_representative": member.get("is_representative", False),
                     }
-                    if entry["is_representative"]:
-                        representative = entry
                     members.append(entry)
 
+                members_truncated = member_offset + len(member_page) < len(cluster)
                 cluster_results.append(
                     {
                         "representative": representative,
                         "total_members": len(cluster),
+                        "member_offset": member_offset,
+                        "members_returned": len(member_page),
+                        "members_truncated": members_truncated,
+                        "next_member_offset": (
+                            member_offset + len(member_page)
+                            if members_truncated
+                            else None
+                        ),
                         "members": members,
                     }
                 )
 
+            clusters_truncated = (
+                cluster_offset + len(cluster_page) < len(all_clusters)
+            )
             segments.append(
                 {
                     "segment_start": seg.get("segment_start"),
                     "segment_end": seg.get("segment_end"),
-                    "num_clusters": len(clusters),
+                    "num_clusters": len(all_clusters),
+                    "cluster_offset": cluster_offset,
+                    "clusters_returned": len(cluster_page),
+                    "clusters_truncated": clusters_truncated,
+                    "next_cluster_offset": (
+                        cluster_offset + len(cluster_page)
+                        if clusters_truncated
+                        else None
+                    ),
                     "clusters": cluster_results,
                 }
             )
+
+        segments_truncated = segment_offset + len(segment_page) < len(segments_data)
 
         return {
             "status": "success",
@@ -321,6 +457,14 @@ class PDBe_KB_Tool(BaseTool):
                 "uniprot_accession": acc,
                 "segments": segments,
                 "total_segments": len(segments_data),
+                "segment_offset": segment_offset,
+                "segments_returned": len(segment_page),
+                "segments_truncated": segments_truncated,
+                "next_segment_offset": (
+                    segment_offset + len(segment_page)
+                    if segments_truncated
+                    else None
+                ),
             },
             "metadata": {
                 "source": "PDBe-KB (PDBe Knowledge Base) Graph API",

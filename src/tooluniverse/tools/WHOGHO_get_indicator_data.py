@@ -1,7 +1,7 @@
 """
 WHOGHO_get_indicator_data
 
-Get actual health data values for a specific WHO Global Health Observatory indicator by its code....
+Get WHO GHO indicator data with exact OData $count and $skip/$top pagination. Continue with metad...
 """
 
 from typing import Any, Optional, Callable
@@ -10,24 +10,27 @@ from ._shared_client import get_shared_client
 
 def WHOGHO_get_indicator_data(
     indicator_code: str,
-    filter: Optional[str | Any] = None,
-    top: Optional[int | Any] = None,
+    filter: Optional[str] = None,
+    top: Optional[int] = 20,
+    skip: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get actual health data values for a specific WHO Global Health Observatory indicator by its code....
+    Get WHO GHO indicator data with exact OData $count and $skip/$top pagination. Continue with metad...
 
     Parameters
     ----------
     indicator_code : str
         WHO GHO indicator code. Examples: 'WHOSIS_000001' (life expectancy), 'MALARIA...
-    filter : str | Any
+    filter : str
         OData filter for data rows. Examples: "SpatialDim eq 'USA'", "TimeDim eq 2022...
-    top : int | Any
-        Maximum number of data rows to return. Default: 20
+    top : int
+        Data rows per page (default 20, max 1000)
+    skip : int
+        Zero-based OData offset. Continue with metadata.next_skip.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +51,7 @@ def WHOGHO_get_indicator_data(
             "indicator_code": indicator_code,
             "filter": filter,
             "top": top,
+            "skip": skip,
         }.items()
         if v is not None
     }

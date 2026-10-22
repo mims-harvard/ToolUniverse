@@ -1,7 +1,7 @@
 [
   {
     "name": "HuBMAP_search_datasets",
-    "description": "Search HuBMAP (Human BioMolecular Atlas Program) published datasets by organ, assay type, or free text. HuBMAP provides spatial biology and single-cell atlas datasets across 43 human organs with data types including scRNA-Seq, CODEX, MALDI, LC-MS, snATAC-Seq, and more. Organ codes: LK=Left Kidney, RK=Right Kidney, LI=Large Intestine, SI=Small Intestine, HT=Heart, LV=Liver, LU=Lung, SP=Spleen, TH=Thymus, LY=Lymph Node, BL=Bladder, PA=Pancreas, SK=Skin, BR=Brain, BM=Bone Marrow, MU=Muscle.",
+    "description": "Search HuBMAP published datasets by organ, assay type, or free text. Supports Elasticsearch-style offset pagination: while has_more is true, pass next_offset as offset to retrieve the next page. Reports total, returned, offset, limit, and next_offset. Organ codes include LK=Left Kidney, RK=Right Kidney, HT=Heart, LV=Liver, LU=Lung, BR=Brain, and others from HuBMAP_list_organs.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -25,7 +25,15 @@
         "limit": {
           "type": "integer",
           "description": "Maximum number of results (1-50, default 10)",
-          "default": 10
+          "default": 10,
+          "minimum": 1,
+          "maximum": 50
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based result offset. Omit for the first page; use next_offset for subsequent pages.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": []
@@ -62,6 +70,21 @@
                 },
                 "returned": {
                   "type": "integer"
+                },
+                "offset": {
+                  "type": "integer"
+                },
+                "limit": {
+                  "type": "integer"
+                },
+                "has_more": {
+                  "type": "boolean"
+                },
+                "next_offset": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 },
                 "datasets": {
                   "type": "array",
@@ -246,7 +269,7 @@
   },
   {
     "name": "HuBMAP_get_dataset",
-    "description": "Get detailed metadata for a specific HuBMAP dataset by its HuBMAP ID. Returns comprehensive information including title, description, data type, organ, group, contacts, contributors, DOI, and data access level. Use HuBMAP_search_datasets first to find HuBMAP IDs.",
+    "description": "Get detailed metadata for a HuBMAP dataset by ID. Returns complete contacts and contributors without the former 5/10-person caps, maps the live display_name field correctly, and preserves email, affiliation, ORCID, and contact/operator/principal-investigator roles. contacts_count and contributors_count quantify completeness.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -363,8 +386,14 @@
                 "contacts": {
                   "type": "array"
                 },
+                "contacts_count": {
+                  "type": "integer"
+                },
                 "contributors": {
                   "type": "array"
+                },
+                "contributors_count": {
+                  "type": "integer"
                 }
               }
             },

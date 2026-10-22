@@ -1,7 +1,7 @@
 """
 MODOMICS_get_modification
 
-Get detailed information about a specific RNA modification from MODOMICS by its numeric ID. Retur...
+Get one RNA modification by exact numeric ID from the complete MODOMICS catalog. The apparent /mo...
 """
 
 from typing import Any, Optional, Callable
@@ -16,12 +16,12 @@ def MODOMICS_get_modification(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get detailed information about a specific RNA modification from MODOMICS by its numeric ID. Retur...
+    Get one RNA modification by exact numeric ID from the complete MODOMICS catalog. The apparent /mo...
 
     Parameters
     ----------
     modification_id : int
-        MODOMICS modification numeric ID. Examples: 78 (pseudouridine), 2 (5,2'-O-dim...
+        Current MODOMICS modification numeric ID. Live catalog examples: 118 (pseudou...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

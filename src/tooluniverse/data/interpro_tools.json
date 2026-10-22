@@ -343,7 +343,7 @@
   {
     "type": "InterProRESTTool",
     "name": "InterPro_search_domains",
-    "description": "Search InterPro database for protein domains and families by name or accession. Returns matching domain entries with metadata.",
+    "description": "Search InterPro for protein domains and families by name or accession. Results use InterPro's cursor pagination. Response metadata reports the full count, whether more results exist, and next_cursor; pass that cursor back to retrieve the next page.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -357,11 +357,19 @@
           "default": 20,
           "minimum": 1,
           "maximum": 100
+        },
+        "cursor": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Opaque InterPro pagination cursor from metadata.next_cursor. Omit for the first page."
         }
       },
       "required": [
         "query"
-      ]
+      ],
+      "additionalProperties": false
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/interpro/api/entry/interpro?search={query}&page_size={page_size}",

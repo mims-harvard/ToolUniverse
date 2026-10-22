@@ -1,7 +1,7 @@
 """
 odphp_myhealthfinder
 
-This tool provides personalized preventive-care recommendations and it is helpful for different a...
+Retrieve personalized preventive-care recommendations from the ODPHP MyHealthfinder v4 API. The r...
 """
 
 from typing import Any, Optional, Callable
@@ -9,18 +9,18 @@ from ._shared_client import get_shared_client
 
 
 def odphp_myhealthfinder(
-    lang: str,
     age: int,
     sex: str,
-    pregnant: str,
-    strip_html: bool,
+    lang: Optional[str] = "en",
+    pregnant: Optional[str] = None,
+    strip_html: Optional[bool] = False,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
-    This tool provides personalized preventive-care recommendations and it is helpful for different a...
+    Retrieve personalized preventive-care recommendations from the ODPHP MyHealthfinder v4 API. The r...
 
     Parameters
     ----------
@@ -43,7 +43,7 @@ def odphp_myhealthfinder(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

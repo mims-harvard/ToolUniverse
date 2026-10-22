@@ -16491,7 +16491,7 @@
   },
   {
     "name": "FDA_get_drug_names_by_indication_stats",
-    "description": "Retrieve and aggregate drug names by indication using FDA count API. This tool uses count mechanism to efficiently get brand_name and generic_name distributions without fetching full records.",
+    "description": "Retrieve generic-name and brand-name frequency distributions for an indication using the openFDA count API. openFDA returns at most 1,000 distinct terms per count query and does not allow skip with count; when that ceiling is reached, meta marks the corresponding list incomplete and its count as a lower bound rather than silently presenting it as exhaustive.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -16541,6 +16541,21 @@
             },
             "indication": {
               "type": "string"
+            },
+            "generic_names_complete": {
+              "type": "boolean"
+            },
+            "brand_names_complete": {
+              "type": "boolean"
+            },
+            "counts_are_lower_bounds": {
+              "type": "boolean"
+            },
+            "api_count_term_limit": {
+              "type": "integer"
+            },
+            "warning": {
+              "type": ["string", "null"]
             }
           }
         },

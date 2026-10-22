@@ -1,7 +1,7 @@
 [
   {
     "name": "STRING_get_functional_annotations",
-    "description": "Get comprehensive functional annotations for a protein from STRING database. Returns per-protein annotations from Gene Ontology (Process, Function, Component), KEGG pathways, Reactome, WikiPathways, InterPro domains, Pfam, HPO phenotypes, DISEASES, TISSUES expression, and COMPARTMENTS subcellular localization. Different from STRING_functional_enrichment which tests for statistical enrichment of a protein SET - this tool returns all known annotations for individual proteins. Example: 'TP53' returns 1,877 annotations across 13 categories including 655 biological processes, 462 HPO phenotypes, 212 disease associations.",
+    "description": "Get comprehensive functional annotations for a protein from STRING, grouped by category. limit and offset are applied independently within every returned category; metadata.category_pagination reports each category's total, returned count, has_more, and next_offset. Use category to page one high-cardinality source efficiently. Different from STRING functional enrichment, which tests a protein set statistically.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -17,6 +17,18 @@
         "category": {
           "type": "string",
           "description": "Filter by annotation category. Options: 'Process' (GO BP), 'Function' (GO MF), 'Component' (GO CC), 'KEGG', 'RCTM' (Reactome), 'WikiPathways', 'InterPro', 'Pfam', 'HPO', 'DISEASES', 'TISSUES', 'COMPARTMENTS', 'Keyword'. Leave null for all categories."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 15,
+          "description": "Page size within each annotation category (default 15)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset within each annotation category. Continue with category_pagination[category].next_offset."
         }
       },
       "required": [
@@ -61,7 +73,7 @@
             },
             "annotations": {
               "type": "object",
-              "description": "Annotations grouped by category, each with term, description, number_of_genes, input_genes (max 15 per category)"
+              "description": "One resumable annotation page per category, each with term, description, number_of_genes, and input_genes"
             }
           }
         },

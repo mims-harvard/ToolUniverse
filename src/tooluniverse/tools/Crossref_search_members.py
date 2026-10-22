@@ -1,7 +1,7 @@
 """
 Crossref_search_members
 
-Search Crossref members (publishers / depositing organizations) by name. Returns each member's nu...
+Search Crossref members (publishers / depositing organizations) by name with exact totals and dee...
 """
 
 from typing import Any, Optional, Callable
@@ -11,13 +11,14 @@ from ._shared_client import get_shared_client
 def Crossref_search_members(
     query: str,
     limit: Optional[int] = 20,
+    cursor: Optional[str] = "*",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any]:
     """
-    Search Crossref members (publishers / depositing organizations) by name. Returns each member's nu...
+    Search Crossref members (publishers / depositing organizations) by name with exact totals and dee...
 
     Parameters
     ----------
@@ -25,6 +26,8 @@ def Crossref_search_members(
         Publisher / member name to search (e.g., 'plos', 'elsevier', 'springer', 'wil...
     limit : int
         Maximum number of members to return. Max 100 per request.
+    cursor : str
+        Crossref deep-pagination cursor. Use '*' initially, then metadata.next_cursor.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -34,12 +37,16 @@ def Crossref_search_members(
 
     Returns
     -------
-    Any
+    list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"query": query, "limit": limit}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {"query": query, "limit": limit, "cursor": cursor}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "Crossref_search_members",

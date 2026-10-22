@@ -1,7 +1,7 @@
 """
 CellMarker_search_cancer_markers
 
-Search the CellMarker 2.0 database for cancer-specific cell markers. Returns marker genes and cel...
+Search the CellMarker 2.0 database for cancer-context marker records with complete limit/offset p...
 """
 
 from typing import Any, Optional, Callable
@@ -9,17 +9,19 @@ from ._shared_client import get_shared_client
 
 
 def CellMarker_search_cancer_markers(
-    operation: str,
+    operation: Optional[str] = "search_cancer_markers",
     cancer_type: Optional[str] = None,
     gene_symbol: Optional[str] = None,
     cell_type: Optional[str] = None,
+    limit: Optional[int] = 500,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search the CellMarker 2.0 database for cancer-specific cell markers. Returns marker genes and cel...
+    Search the CellMarker 2.0 database for cancer-context marker records with complete limit/offset p...
 
     Parameters
     ----------
@@ -31,6 +33,10 @@ def CellMarker_search_cancer_markers(
         Marker gene to search in cancer context (e.g., 'CD274' for PD-L1, 'EPCAM')
     cell_type : str
         Cancer cell type to search for (e.g., 'Cancer stem cell', 'T cell', 'Macropha...
+    limit : int
+        Maximum number of cancer-context marker records to return in this page.
+    offset : int
+        Zero-based record offset. Use data.next_offset for the next page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +58,8 @@ def CellMarker_search_cancer_markers(
             "cancer_type": cancer_type,
             "gene_symbol": gene_symbol,
             "cell_type": cell_type,
+            "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

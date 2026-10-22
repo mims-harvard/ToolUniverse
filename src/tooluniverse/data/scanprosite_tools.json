@@ -105,7 +105,7 @@
   {
     "name": "ScanProsite_find_proteins_with_motif",
     "type": "PROSITETool",
-    "description": "Reverse PROSITE motif scan: given a PROSITE signature accession (e.g., PS00029 for LEUCINE_ZIPPER), enumerate ALL UniProtKB/Swiss-Prot proteins that contain that motif, with per-match positions. This is the INVERSE of the forward scan (ScanProsite_scan_protein / PROSITE_scan_sequence, which take a protein and return its motifs). Use this to find the proteome-wide occurrences of one signature - for example, every Swiss-Prot protein with a leucine zipper. Returns each matching protein's UniProt accession, entry name, and the start/stop of the motif. Results can be capped by the server for very frequent signatures (the 'capped' metadata flag indicates this). Note: very frequent low-information signatures flagged SKIP-FLAG=TRUE (e.g. PS00005 PKC phosphorylation, PS00008 N-myristoylation) are skipped by default and return no hits unless skip_frequent is set to false.",
+    "description": "Reverse PROSITE motif scan with recoverable pagination over every match present in the ScanProsite response. Continue with next_offset while has_more is true. If capped is true, the remote database scan itself is incomplete even after all available pages are consumed; complete_database_result and capped_note make this explicit.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -129,7 +129,13 @@
           "minimum": 1,
           "maximum": 1000,
           "default": 50,
-          "description": "Maximum number of matching protein records to return (default 50, max 1000). The 'total_matches' metadata reports the full count found by the server."
+          "description": "Maximum response matches to return on this page (default 50, max 1000)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset within matches available in this ScanProsite response."
         }
       },
       "required": ["signature_ac"]

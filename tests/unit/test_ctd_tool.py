@@ -34,13 +34,16 @@ def make_ctd_tool(input_type="chem", report_type="diseases_curated"):
     )
 
 
-def make_query_response(hits):
+def make_query_response(hits, total=None):
     """Mock a mydisease.info /query response."""
 
     response = Mock()
     response.status_code = 200
     response.raise_for_status.return_value = None
-    response.json.return_value = {"hits": hits}
+    response.json.return_value = {
+        "hits": hits,
+        "total": len(hits) if total is None else total,
+    }
     return response
 
 
@@ -51,6 +54,24 @@ def make_disease_response(doc):
     response.status_code = 200
     response.raise_for_status.return_value = None
     response.json.return_value = doc
+    return response
+
+
+def make_ols_response(label):
+    response = Mock()
+    response.status_code = 200
+    response.raise_for_status.return_value = None
+    response.json.return_value = {"_embedded": {"terms": [{"label": label}]}}
+    return response
+
+
+def make_mesh_response(label):
+    response = Mock()
+    response.status_code = 200
+    response.raise_for_status.return_value = None
+    response.json.return_value = {
+        "terms": [{"label": label, "preferred": True}]
+    }
     return response
 
 
@@ -87,9 +108,157 @@ def test_ctd_chemical_diseases_returns_normalised_edges(mock_get):
     assert result["data"][0]["source_name"] == "bisphenol A"
     assert result["data"][0]["target_id"] == "MONDO:0000495"
     assert result["data"][0]["target_name"] == "some disease"
+    assert result["data"][0]["target_name_source"] == "mydisease.mondo.label"
     assert result["data"][0]["qualified_predicate"] == "biolink:contributes_to"
     assert result["data"][0]["primary_knowledge_source"] == "infores:ctd"
     assert result["metadata"]["backend"].startswith("mydisease.info")
+
+
+@pytest.mark.unit
+@patch("tooluniverse.ctd_tool.requests.get")
+def test_ctd_resolves_missing_mydisease_label_via_exact_ols_curie(mock_get):
+    mock_get.side_effect = [
+        make_query_response(
+            [
+                {
+                    "_id": "EFO:0009426",
+                    "ctd": {
+                        "chemical_related_to_disease": {
+                            "chemical_name": "cholesterol",
+                            "direct_evidence": "marker/mechanism",
+                        }
+                    },
+                }
+            ]
+        ),
+        make_ols_response("necrosis"),
+    ]
+
+    result = make_ctd_tool().run({"input_terms": "cholesterol"})
+
+    assert result["data"][0]["target_name"] == "necrosis"
+    assert result["data"][0]["target_name_source"] == "EBI OLS (efo)"
+    assert result["metadata"]["unresolved_disease_name_count"] == 0
+    assert mock_get.call_args.kwargs["params"] == {"obo_id": "EFO:0009426"}
+
+
+@pytest.mark.unit
+@patch("tooluniverse.ctd_tool.requests.get")
+def test_ctd_resolves_mesh_and_umls_mapped_mesh_labels(mock_get):
+    mock_get.side_effect = [
+        make_query_response(
+            [
+                {
+                    "_id": "MESH:D003921",
+                    "ctd": {"chemical_related_to_disease": {"chemical_name": "cholesterol"}},
+                },
+                {
+                    "_id": "UMLS:C0025261",
+                    "umls": {"mesh": {"preferred": "D008569"}},
+                    "ctd": {"chemical_related_to_disease": {"chemical_name": "cholesterol"}},
+                },
+            ]
+        ),
+        make_mesh_response("Diabetes Mellitus, Experimental"),
+        make_mesh_response("Memory Disorders"),
+    ]
+
+    result = make_ctd_tool().run({"input_terms": "cholesterol"})
+
+    assert [row["target_name"] for row in result["data"]] == [
+        "Diabetes Mellitus, Experimental",
+        "Memory Disorders",
+    ]
+    assert all(row["target_name_source"] == "NLM MeSH" for row in result["data"])
+    assert result["metadata"]["unresolved_disease_name_count"] == 0
+    assert mock_get.call_args.kwargs["params"] == {"descriptor": "D008569"}
+
+
+@pytest.mark.unit
+@patch("tooluniverse.ctd_tool.requests.get")
+def test_ctd_chemical_search_fetches_all_upstream_pages_then_pages_edges(mock_get):
+    def hit(index):
+        return {
+            "_id": f"MONDO:000000{index}",
+            "mondo": {"label": f"disease {index}"},
+            "ctd": {
+                "chemical_related_to_disease": {
+                    "chemical_name": "bisphenol A",
+                    "pubmed": str(index),
+                }
+            },
+        }
+
+    mock_get.side_effect = [
+        make_query_response([hit(1), hit(2)], total=3),
+        make_query_response([hit(3)], total=3),
+    ]
+
+    result = make_ctd_tool().run(
+        {"input_terms": "bisphenol A", "limit": 1, "offset": 2}
+    )
+
+    assert [row["target_name"] for row in result["data"]] == ["disease 3"]
+    assert result["metadata"] | {
+        "total_results": 3,
+        "returned": 1,
+        "limit": 1,
+        "offset": 2,
+        "has_more": False,
+        "next_offset": None,
+        "result_set_complete": False,
+    } == result["metadata"]
+    assert [call.kwargs["params"]["from"] for call in mock_get.call_args_list] == [0, 2]
+
+
+@pytest.mark.unit
+@patch("tooluniverse.ctd_tool.requests.get")
+def test_ctd_disease_chemicals_supports_local_offset_paging(mock_get):
+    mock_get.side_effect = [
+        make_disease_response({"mondo": {"label": "asthma"}}),
+        make_disease_response(
+            {
+                "ctd": {
+                    "chemical_related_to_disease": [
+                        {"chemical_name": "one"},
+                        {"chemical_name": "two"},
+                        {"chemical_name": "three"},
+                    ]
+                }
+            }
+        ),
+    ]
+
+    tool = make_ctd_tool(input_type="disease", report_type="chems_curated")
+    result = tool.run({"input_terms": "MONDO:0004979", "limit": 1, "offset": 1})
+
+    assert [row["target_name"] for row in result["data"]] == ["two"]
+    assert result["metadata"]["total_results"] == 3
+    assert result["metadata"]["has_more"] is True
+    assert result["metadata"]["next_offset"] == 2
+
+
+@pytest.mark.unit
+@patch("tooluniverse.ctd_tool.requests.get")
+def test_ctd_handles_biothings_list_merged_mondo_and_umls_fields(mock_get):
+    mock_get.side_effect = [
+        make_query_response(
+            [
+                {
+                    "_id": "MONDO:0000001",
+                    "mondo": [{"label": "merged disease"}],
+                    "umls": [{"mesh": {"preferred": "D000001"}}],
+                    "ctd": {"chemical_related_to_disease": {"chemical_name": "cholesterol"}},
+                }
+            ]
+        )
+    ]
+
+    result = make_ctd_tool().run({"input_terms": "cholesterol"})
+
+    assert result["status"] == "success"
+    assert result["data"][0]["target_name"] == "merged disease"
+    assert mock_get.call_count == 1
 
 
 @pytest.mark.unit

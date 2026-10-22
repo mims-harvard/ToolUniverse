@@ -1,7 +1,7 @@
 [
   {
     "name": "SRA_search_experiments",
-    "description": "Search the NCBI Sequence Read Archive (SRA) for sequencing experiments by keyword, organism, library strategy, or sequencing platform. SRA is the largest repository of raw sequencing data, containing data from Illumina, PacBio, Oxford Nanopore, and other platforms. Library strategies include: RNA-Seq, WGS (whole genome), WXS (whole exome), ChIP-Seq, ATAC-seq, Bisulfite-Seq, AMPLICON, scRNA-Seq, and more.",
+    "description": "Search the NCBI Sequence Read Archive (SRA) for sequencing experiments by keyword, organism, strategy, or platform. Use the zero-based start offset and next_start while has_more is true to retrieve all matching experiments. Run arrays parsed from each NCBI summary are no longer post-truncated to 10.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -25,6 +25,12 @@
           "type": "integer",
           "description": "Maximum results to return (1-50, default 10)",
           "default": 10
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based SRA search offset. Continue with next_start while has_more is true."
         }
       },
       "required": []
@@ -48,6 +54,9 @@
               "properties": {
                 "total": {"type": "integer"},
                 "returned": {"type": "integer"},
+                "start": {"type": "integer"},
+                "has_more": {"type": "boolean"},
+                "next_start": {"type": ["integer", "null"]},
                 "query_used": {"type": "string"},
                 "experiments": {
                   "type": "array",
@@ -69,7 +78,9 @@
                       "study_accession": {"type": ["string", "null"]},
                       "bioproject": {"type": ["string", "null"]},
                       "submitter": {"type": ["string", "null"]},
-                      "runs": {"type": ["array", "null"]}
+                      "runs": {"type": ["array", "null"]},
+                      "runs_returned": {"type": ["integer", "null"]},
+                      "runs_complete": {"type": ["boolean", "null"]}
                     }
                   }
                 }
@@ -90,7 +101,7 @@
   },
   {
     "name": "SRA_get_experiment",
-    "description": "Get detailed metadata for a specific SRA experiment by accession number. Returns experiment title, organism, sequencing platform, library information, study details, and run statistics. Accepts SRA experiment accessions (SRX/ERX/DRX), study accessions (SRP/ERP/DRP), or sample accessions (SRS/ERS/DRS).",
+    "description": "Get detailed metadata for the first NCBI SRA record matching an accession. Returns the complete run array present in that record's eSummary plus runs_returned and runs_complete. For study/sample accessions with multiple experiment records, use SRA_search_experiments to enumerate them rather than assuming this single-record lookup represents the whole study.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -133,7 +144,9 @@
                 "study_name": {"type": ["string", "null"]},
                 "bioproject": {"type": ["string", "null"]},
                 "submitter": {"type": ["string", "null"]},
-                "runs": {"type": ["array", "null"]}
+                "runs": {"type": ["array", "null"]},
+                "runs_returned": {"type": ["integer", "null"]},
+                "runs_complete": {"type": ["boolean", "null"]}
               }
             },
             "metadata": {"type": "object"}

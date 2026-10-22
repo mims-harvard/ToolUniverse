@@ -65,7 +65,7 @@ class TestAllianceExpressionEndpoint(unittest.TestCase):
         args, kwargs = post.call_args
         assert args[0].endswith("/expression")
         assert kwargs["json"] == ["FB:FBgn0000490"]
-        assert kwargs["params"]["limit"] == 5
+        assert kwargs["params"] == {"limit": 5, "page": 1}
 
         assert out["status"] == "success"
         data = out["data"]
@@ -76,6 +76,26 @@ class TestAllianceExpressionEndpoint(unittest.TestCase):
         assert first["location"] == "abdominal 1 transverse muscle cell"
         assert first["data_provider"] == "FB"
         assert first["reference"] == "AGRKB:101000000075834"
+
+        assert data["page"] == 1
+        assert data["total_pages"] == 64
+        assert data["has_more"] is True
+        assert data["next_page"] == 2
+
+    def test_page_is_forwarded_and_exposes_continuation(self):
+        with patch("tooluniverse.alliance_genome_tool.requests.post") as post:
+            resp = MagicMock()
+            resp.json.return_value = _BODY
+            resp.raise_for_status.return_value = None
+            post.return_value = resp
+            out = _tool().run(
+                {"gene_id": "FB:FBgn0000490", "limit": 5, "page": 2}
+            )
+
+        assert post.call_args.kwargs["params"] == {"limit": 5, "page": 2}
+        assert out["data"]["page"] == 2
+        assert out["data"]["next_page"] == 3
+        assert out["data"]["result_set_complete"] is False
 
     def test_limit_is_clamped(self):
         with patch(

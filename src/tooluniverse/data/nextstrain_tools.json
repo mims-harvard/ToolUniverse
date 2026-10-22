@@ -1,7 +1,7 @@
 [
   {
     "name": "Nextstrain_list_datasets",
-    "description": "List available pathogen phylogenetic datasets from Nextstrain. Returns datasets grouped by pathogen (e.g., avian-flu, dengue, ebola, flu, measles, mpox, SARS-CoV-2, zika). Optionally filter by pathogen name. Nextstrain provides real-time molecular epidemiology for public health, tracking how pathogens evolve and spread worldwide.",
+    "description": "List available pathogen phylogenetic datasets from Nextstrain, grouped by pathogen. Nested dataset lists are recoverably paginated: start with dataset_offset=0 and, for each pathogen group, continue with next_dataset_offset while has_more is true. dataset_count is the full group size; datasets_returned is the current page size. Optionally filter by pathogen name.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -11,6 +11,19 @@
             "null"
           ],
           "description": "Optional pathogen name filter. Examples: 'flu', 'ebola', 'zika', 'dengue', 'mpox'. Leave empty for all pathogens."
+        },
+        "dataset_limit": {
+          "type": "integer",
+          "description": "Maximum datasets to return per matched pathogen group.",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 500
+        },
+        "dataset_offset": {
+          "type": "integer",
+          "description": "Zero-based offset applied within every matched pathogen group. Continue each group using its next_dataset_offset.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": []
@@ -40,6 +53,21 @@
               "dataset_count": {
                 "type": "integer"
               },
+              "datasets_returned": {
+                "type": "integer"
+              },
+              "dataset_offset": {
+                "type": "integer"
+              },
+              "has_more": {
+                "type": "boolean"
+              },
+              "next_dataset_offset": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
               "datasets": {
                 "type": "array",
                 "items": {
@@ -65,7 +93,7 @@
   },
   {
     "name": "Nextstrain_get_dataset",
-    "description": "Get metadata and phylogenetic summary for a Nextstrain pathogen dataset. Returns title, last update date, number of sequences, data provenance, maintainers, root node attributes, and available coloring options. Useful for understanding the scope and currency of pathogen genomic surveillance data. Example: 'zika' returns 1044 sequences tracking Zika virus evolution, last updated Dec 2025.",
+    "description": "Get metadata and phylogenetic summary for a Nextstrain pathogen dataset. Returns title, update date, sequence count, provenance, maintainers, root attributes, and the complete list of available coloring dimensions with an explicit count. Large datasets such as seasonal H3N2 expose more than 15 colorings.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -139,7 +167,9 @@
               "items": {
                 "type": "string"
               }
-            }
+            },
+            "available_colorings_count": {"type": "integer"},
+            "available_colorings_complete": {"type": "boolean"}
           }
         },
         {

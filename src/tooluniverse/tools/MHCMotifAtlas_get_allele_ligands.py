@@ -1,7 +1,7 @@
 """
 MHCMotifAtlas_get_allele_ligands
 
-Retrieve curated lists of naturally-presented MHC ligand peptides for a specific allele from the ...
+Retrieve the complete exact match set of naturally presented ligands for an MHC Motif Atlas allel...
 """
 
 from typing import Any, Optional, Callable
@@ -13,13 +13,14 @@ def MHCMotifAtlas_get_allele_ligands(
     mhc_class: Optional[str] = "I",
     include_sequence: Optional[bool] = False,
     limit: Optional[int] = 100,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Retrieve curated lists of naturally-presented MHC ligand peptides for a specific allele from the ...
+    Retrieve the complete exact match set of naturally presented ligands for an MHC Motif Atlas allel...
 
     Parameters
     ----------
@@ -30,7 +31,9 @@ def MHCMotifAtlas_get_allele_ligands(
     include_sequence : bool
         If true, also fetch the per-allele MHC protein sequence (from MHC_I_sequences...
     limit : int
-        Maximum number of ligand peptides to return (1-1000). Default 100.
+        Maximum ligand records on this page, 1-1000. Defaults to 100; invalid values ...
+    offset : int
+        Zero-based offset into this allele's exact ligand set; continue with metadata...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def MHCMotifAtlas_get_allele_ligands(
             "mhc_class": mhc_class,
             "include_sequence": include_sequence,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

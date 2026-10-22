@@ -9,6 +9,7 @@ Website: https://opig.stats.ox.ac.uk/webapps/sabdab-sabpred/sabdab
 
 import csv
 import io
+import re
 import requests
 from typing import Dict, Any
 from .base_tool import BaseTool
@@ -16,6 +17,7 @@ from .tool_registry import register_tool
 
 # SAbDab base URL
 SABDAB_BASE_URL = "https://opig.stats.ox.ac.uk/webapps/sabdab-sabpred/sabdab"
+SABDAB2_BASE_URL = "https://sabdab.opig.stats.ox.ac.uk"
 
 
 @register_tool("SAbDabTool")
@@ -44,6 +46,35 @@ class SAbDabTool(BaseTool):
         if not operation:
             operation = self.get_schema_const_operation()
 
+        allowed_arguments = {
+            "search_structures": {
+                "operation",
+                "query",
+                "antigen",
+                "limit",
+                "offset",
+                "pdb_id",
+                "species",
+                "resolution_max",
+                "method",
+                "antigen_type",
+                "antibody_type",
+                "construct_type",
+            },
+            "get_structure": {"operation", "pdb_id", "pdb_code"},
+            "get_structure_summary": {"operation", "pdb_id", "pdb_code", "pdb"},
+            # Keep the historical redirect hint for callers that confuse the
+            # database summary with per-structure retrieval.
+            "get_summary": {"operation", "pdb", "pdb_id"},
+        }
+        if operation in allowed_arguments:
+            unknown = sorted(set(arguments) - allowed_arguments[operation])
+            if unknown:
+                return {
+                    "status": "error",
+                    "error": f"Unknown parameter(s) for {operation}: {', '.join(unknown)}",
+                }
+
         if operation == "search_structures":
             return self._search_structures(arguments)
         elif operation == "get_structure":
@@ -59,56 +90,114 @@ class SAbDabTool(BaseTool):
             }
 
     def _search_structures(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Search SAbDab for antibody structures.
-
-        Args:
-            arguments: Dict containing:
-                - query: Search query (antigen name, species, etc.)
-                - limit: Maximum results
-        """
+        """Search the current SAbDab2 antibody-instance JSON API."""
         query = arguments.get("query") or arguments.get("antigen", "")
         limit = arguments.get("limit", 50)
+        offset = arguments.get("offset", 0)
+
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 100:
+            return {"status": "error", "error": "limit must be an integer from 1 to 100"}
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {"status": "error", "error": "offset must be a non-negative integer"}
+
+        params = {"limit": limit, "offset": offset}
+        filters = {
+            "binds_to_antigen": query,
+            "organism_scientific": arguments.get("species"),
+            "experimental_method": arguments.get("method"),
+            "resolution": arguments.get("resolution_max"),
+            "antigen_type": arguments.get("antigen_type"),
+            "antibody_type": arguments.get("antibody_type"),
+            "construct_type": arguments.get("construct_type"),
+        }
+        pdb_id = arguments.get("pdb_id")
+        if pdb_id:
+            try:
+                filters["pdb_entry"] = self._normalize_pdb_id(pdb_id)
+            except ValueError as exc:
+                return {"status": "error", "error": str(exc)}
+        for name, value in filters.items():
+            if value not in (None, ""):
+                params[name] = value
+
+        resolution = params.get("resolution")
+        if resolution is not None and (
+            isinstance(resolution, bool)
+            or not isinstance(resolution, (int, float))
+            or resolution <= 0
+        ):
+            return {"status": "error", "error": "resolution_max must be a positive number"}
 
         try:
-            # SAbDab search endpoint
+            # The legacy /search/?q=... route is only the React SPA shell and
+            # silently ignores both q and limit.  This is the endpoint used by
+            # the current SAbDab2 web application.
             response = requests.get(
-                f"{SABDAB_BASE_URL}/search/",
-                params={"q": query, "limit": limit},
+                f"{SABDAB2_BASE_URL}/api/antibody-instances",
+                params=params,
                 timeout=self.timeout,
                 headers={
                     "User-Agent": "ToolUniverse/SAbDab",
                     "Accept": "application/json",
                 },
             )
+            response.raise_for_status()
 
-            # SAbDab search endpoint returns HTML, not JSON — return browse URL
             if "json" in response.headers.get("Content-Type", ""):
                 data = response.json()
-                structures = data if isinstance(data, list) else data.get("results", [])
+                if not isinstance(data, dict) or not isinstance(data.get("results"), list):
+                    return {"status": "error", "error": "SAbDab returned malformed search JSON"}
+                structures = data["results"]
+                total = data.get("total")
+                if (
+                    not isinstance(total, int)
+                    or data.get("limit") != limit
+                    or data.get("offset") != offset
+                ):
+                    return {
+                        "status": "error",
+                        "error": "SAbDab search metadata conflicts with the requested pagination",
+                    }
+                if any(not isinstance(item, dict) or not item.get("id") for item in structures):
+                    return {"status": "error", "error": "SAbDab returned a malformed structure record"}
+                next_offset = offset + len(structures)
+                has_more = next_offset < total
                 return {
                     "status": "success",
                     "data": {
                         "structures": structures,
                         "count": len(structures),
+                        "returned_count": len(structures),
+                        "total": total,
+                        "limit": limit,
+                        "offset": offset,
+                        "has_more": has_more,
+                        "next_offset": next_offset if has_more else None,
+                        "result_set_complete": not has_more and offset == 0,
                         "query": query,
+                        "filters_applied": {
+                            key: value
+                            for key, value in params.items()
+                            if key not in ("limit", "offset")
+                        },
                     },
-                    "metadata": {"source": "SAbDab"},
+                    "metadata": {
+                        "source": "SAbDab2",
+                        "api_url": response.url,
+                        "pagination_warning": (
+                            "Additional records exist; call again with next_offset."
+                            if has_more
+                            else None
+                        ),
+                    },
                 }
 
-            browse_url = f"https://opig.stats.ox.ac.uk/webapps/sabdab-sabpred/sabdab/search/?q={query}"
             return {
-                "status": "success",
-                "data": {
-                    "query": query,
-                    "browse_url": browse_url,
-                    "note": (
-                        "SAbDab search does not expose a JSON API. "
-                        "Open browse_url to view matching antibody structures, "
-                        "or use SAbDab_get_structure with a known PDB ID for structured data."
-                    ),
-                },
-                "metadata": {"source": "SAbDab"},
+                "status": "error",
+                "error": (
+                    "SAbDab search returned non-JSON content; refusing to report "
+                    "the SPA page as search results"
+                ),
             }
 
         except requests.exceptions.RequestException as e:
@@ -128,12 +217,14 @@ class SAbDabTool(BaseTool):
         if not pdb_id:
             return {"status": "error", "error": "Missing required parameter: pdb_id"}
 
-        # SAbDab API requires lowercase PDB IDs
-        pdb_id_lower = pdb_id.lower()
+        try:
+            internal_pdb_id = self._normalize_pdb_id(pdb_id)
+        except ValueError as exc:
+            return {"status": "error", "error": str(exc)}
+        display_pdb_id = self._display_pdb_id(internal_pdb_id)
 
         try:
-            # Use direct PDB download endpoint (Chothia numbering)
-            pdb_url = f"{SABDAB_BASE_URL}/pdb/{pdb_id_lower}/"
+            pdb_url = f"{SABDAB2_BASE_URL}/api/pdb/{internal_pdb_id}"
             response = requests.get(
                 pdb_url,
                 timeout=self.timeout,
@@ -148,6 +239,51 @@ class SAbDabTool(BaseTool):
 
             response.raise_for_status()
 
+            if "json" in response.headers.get("Content-Type", ""):
+                source_record = response.json()
+                if (
+                    not isinstance(source_record, dict)
+                    or source_record.get("id") != internal_pdb_id
+                ):
+                    return {
+                        "status": "error",
+                        "error": "SAbDab structure identity conflicts with the requested PDB ID",
+                    }
+                related = self._get_structure_relationships(internal_pdb_id)
+                if related.get("status") == "error":
+                    return related
+                return {
+                    "status": "success",
+                    "data": {
+                        "pdb_id": display_pdb_id,
+                        "sabdab2_pdb_id": internal_pdb_id,
+                        "name": source_record.get("name"),
+                        "resolution": source_record.get("resolution"),
+                        "method": source_record.get("structure_method"),
+                        "r_work": source_record.get("r_work"),
+                        "r_free": source_record.get("r_free"),
+                        "status": source_record.get("status"),
+                        "polymer_instances": source_record.get("polymer_instances", []),
+                        "non_polymer_instances": source_record.get(
+                            "non_polymer_instances", []
+                        ),
+                        "antibody_instances": related["antibody_instances"],
+                        "antigen_instances": related["antigen_instances"],
+                        "source_record": source_record,
+                        "source_record_complete": True,
+                    },
+                    "metadata": {
+                        "source": "SAbDab2",
+                        "api_url": response.url,
+                        "note": (
+                            "Full current SAbDab2 JSON record with antibody "
+                            "and antigen relationships"
+                        ),
+                    },
+                }
+
+            # Backward-compatible parsing for deployments that still return
+            # a legacy Chothia-numbered PDB file.
             # Fix-R17D-2: SAbDab migrated to a new frontend ("SAbDab2", a
             # React SPA) and its old download URL now redirects to an
             # internal-only backend hostname (confirmed live: the new
@@ -187,7 +323,7 @@ class SAbDabTool(BaseTool):
                     ),
                 }
 
-            metadata = {"pdb_id": pdb_id}
+            metadata = {"pdb_id": display_pdb_id}
 
             # Parse REMARK 5 lines which contain SAbDab annotations
             remarks = []
@@ -207,7 +343,7 @@ class SAbDabTool(BaseTool):
             return {
                 "status": "success",
                 "data": {
-                    "pdb_id": pdb_id,
+                    "pdb_id": display_pdb_id,
                     "download_url": pdb_url,
                     "structure_url": f"{SABDAB_BASE_URL}/structureviewer/?pdb={pdb_id}",
                     "search_url": f"{SABDAB_BASE_URL}/search/?pdb={pdb_id}",
@@ -233,6 +369,113 @@ class SAbDabTool(BaseTool):
         """True when the response body is an HTML page (the SAbDab2 SPA shell)
         rather than the expected PDB/TSV data."""
         return text.lstrip()[:20].lower().startswith(("<!doctype html", "<html"))
+
+    @staticmethod
+    def _normalize_pdb_id(pdb_id: Any) -> str:
+        """Convert a public four-character PDB code to SAbDab2's identifier."""
+        if not isinstance(pdb_id, str) or not re.fullmatch(
+            r"[A-Za-z0-9]{4}", pdb_id.strip()
+        ):
+            raise ValueError("pdb_id must be exactly four letters or digits")
+        return f"pdb_{pdb_id.strip().lower().rjust(8, '0')}"
+
+    @staticmethod
+    def _display_pdb_id(internal_pdb_id: str) -> str:
+        return internal_pdb_id.removeprefix("pdb_").lstrip("0") or "0"
+
+    def _get_structure_relationships(self, internal_pdb_id: str) -> Dict[str, Any]:
+        """Fetch the antibody and antigen records displayed by SAbDab2's UI."""
+        antibody_instances = []
+        expected_total = None
+        offset = 0
+        seen_ids = set()
+        while expected_total is None or offset < expected_total:
+            response = requests.get(
+                f"{SABDAB2_BASE_URL}/api/antibody-instances",
+                params={"pdb_entry": internal_pdb_id, "limit": 100, "offset": offset},
+                timeout=self.timeout,
+                headers={
+                    "User-Agent": "ToolUniverse/SAbDab",
+                    "Accept": "application/json",
+                },
+            )
+            response.raise_for_status()
+            if "json" not in response.headers.get("Content-Type", ""):
+                return {
+                    "status": "error",
+                    "error": "SAbDab returned non-JSON relationship data",
+                }
+            payload = response.json()
+            page = payload.get("results") if isinstance(payload, dict) else None
+            total = payload.get("total") if isinstance(payload, dict) else None
+            if (
+                not isinstance(page, list)
+                or not isinstance(total, int)
+                or payload.get("limit") != 100
+                or payload.get("offset") != offset
+                or (expected_total is not None and total != expected_total)
+            ):
+                return {
+                    "status": "error",
+                    "error": "SAbDab antibody relationship pagination is malformed or inconsistent",
+                }
+            expected_total = total
+            if not page and offset < total:
+                return {
+                    "status": "error",
+                    "error": "SAbDab antibody relationship pagination stopped before total",
+                }
+            for antibody in page:
+                antibody_id = antibody.get("id") if isinstance(antibody, dict) else None
+                if not antibody_id or antibody_id in seen_ids:
+                    return {
+                        "status": "error",
+                        "error": "SAbDab returned malformed or duplicate antibody relationships",
+                    }
+                seen_ids.add(antibody_id)
+                antibody_instances.append(antibody)
+            offset += len(page)
+
+        if len(antibody_instances) != expected_total:
+            return {
+                "status": "error",
+                "error": "SAbDab antibody relationship results are unexpectedly truncated",
+            }
+
+        antigen_ids = sorted(
+            {
+                binding.get("antigen_instance_id")
+                for antibody in antibody_instances
+                for binding in antibody.get("antigen_bindings", [])
+                if binding.get("antigen_instance_id")
+            }
+        )
+        antigen_instances = []
+        for antigen_id in antigen_ids:
+            antigen_response = requests.get(
+                f"{SABDAB2_BASE_URL}/api/antigen-instance/{antigen_id}",
+                timeout=self.timeout,
+                headers={
+                    "User-Agent": "ToolUniverse/SAbDab",
+                    "Accept": "application/json",
+                },
+            )
+            antigen_response.raise_for_status()
+            if "json" not in antigen_response.headers.get("Content-Type", ""):
+                return {
+                    "status": "error",
+                    "error": "SAbDab returned non-JSON antigen data",
+                }
+            antigen = antigen_response.json()
+            if not isinstance(antigen, dict) or antigen.get("id") != antigen_id:
+                return {"status": "error", "error": "SAbDab antigen identity mismatch"}
+            antigen_instances.append(antigen)
+
+        return {
+            "status": "success",
+            "antibody_instances": antibody_instances,
+            "antigen_instances": antigen_instances,
+        }
 
     @staticmethod
     def _coerce(value: str):
@@ -289,7 +532,7 @@ class SAbDabTool(BaseTool):
 
         try:
             response = requests.get(
-                f"{SABDAB_BASE_URL}/summary/{pdb_id_lower}/",
+                f"{SABDAB2_BASE_URL}/api/pdb/{self._normalize_pdb_id(pdb_id_lower)}",
                 timeout=self.timeout,
                 headers={
                     "User-Agent": "ToolUniverse/SAbDab",
@@ -307,6 +550,76 @@ class SAbDabTool(BaseTool):
                 }
 
             response.raise_for_status()
+
+            if "json" in response.headers.get("Content-Type", ""):
+                source_record = response.json()
+                internal_pdb_id = self._normalize_pdb_id(pdb_id_lower)
+                if (
+                    not isinstance(source_record, dict)
+                    or source_record.get("id") != internal_pdb_id
+                ):
+                    return {
+                        "status": "error",
+                        "error": "SAbDab structure identity conflicts with the requested PDB ID",
+                    }
+                related = self._get_structure_relationships(internal_pdb_id)
+                if related.get("status") == "error":
+                    return related
+                antibodies = related["antibody_instances"]
+                antigens = related["antigen_instances"]
+                first_antibody = antibodies[0] if antibodies else {}
+                first_antigen = antigens[0] if antigens else {}
+                antigen_entity = first_antigen.get("polymer_instance") or first_antigen.get(
+                    "non_polymer_instance"
+                ) or {}
+                polymers = {
+                    item.get("sabdab_auth_asym_id"): item
+                    for item in source_record.get("polymer_instances", [])
+                }
+                heavy = first_antibody.get("heavy_like_segment") or {}
+                light = first_antibody.get("light_like_segment") or {}
+                heavy_polymer = polymers.get(heavy.get("sabdab_auth_asym_id"), {})
+                light_polymer = polymers.get(light.get("sabdab_auth_asym_id"), {})
+                return {
+                    "status": "success",
+                    "data": {
+                        "pdb_id": pdb_id_lower,
+                        "sabdab2_pdb_id": internal_pdb_id,
+                        "name": source_record.get("name"),
+                        "antigen_name": antigen_entity.get("name"),
+                        "antigen_type": antigen_entity.get("entity_type"),
+                        "antigen_species": antigen_entity.get("organism_scientific"),
+                        "heavy_species": heavy_polymer.get("organism_scientific"),
+                        "light_species": light_polymer.get("organism_scientific"),
+                        "resolution": source_record.get("resolution"),
+                        "method": source_record.get("structure_method"),
+                        "r_free": source_record.get("r_free"),
+                        "r_factor": source_record.get("r_work"),
+                        "heavy_subclass": heavy.get("v_gene"),
+                        "light_subclass": light.get("v_gene"),
+                        "light_ctype": light.get("type"),
+                        "scfv": first_antibody.get("type") == "SCFV",
+                        "engineered": None,
+                        "affinity": None,
+                        "delta_g": None,
+                        "affinity_method": None,
+                        "temperature": None,
+                        "pmid": None,
+                        "chains": antibodies,
+                        "count": len(antibodies),
+                        "antigen_instances": antigens,
+                        "source_record": source_record,
+                        "source_record_complete": True,
+                    },
+                    "metadata": {
+                        "source": "SAbDab2",
+                        "summary_url": response.url,
+                        "note": (
+                            "Current SAbDab2 JSON data; unavailable legacy affinity "
+                            "fields are explicitly null rather than silently omitted."
+                        ),
+                    },
+                }
 
             text = response.text
             content_type = response.headers.get("Content-Type", "")
@@ -414,7 +727,7 @@ class SAbDabTool(BaseTool):
             }
         try:
             response = requests.get(
-                f"{SABDAB_BASE_URL}/stats/",
+                f"{SABDAB2_BASE_URL}/api/stats/summary",
                 timeout=self.timeout,
                 headers={
                     "User-Agent": "ToolUniverse/SAbDab",
@@ -425,24 +738,30 @@ class SAbDabTool(BaseTool):
             if "json" in response.headers.get("Content-Type", ""):
                 data = response.json()
             else:
-                # Return static info about SAbDab
-                data = {
-                    "description": "SAbDab - Structural Antibody Database",
-                    "content": "All antibody structures from PDB with annotations",
-                    "features": [
-                        "CDR sequence annotations",
-                        "Heavy/light chain pairing",
-                        "Antigen information",
-                        "Species classification",
-                    ],
-                    "url": SABDAB_BASE_URL,
+                return {
+                    "status": "error",
+                    "error": (
+                        "SAbDab statistics returned non-JSON content; refusing "
+                        "to substitute static text for current database statistics"
+                    ),
                 }
+
+            required = {
+                "antibody_instances",
+                "PDB_entries",
+                "SAbDab2_entries",
+                "with_antigen",
+                "last_update",
+            }
+            if not isinstance(data, dict) or not required.issubset(data):
+                return {"status": "error", "error": "SAbDab returned malformed statistics"}
 
             return {
                 "status": "success",
                 "data": data,
                 "metadata": {
-                    "source": "SAbDab",
+                    "source": "SAbDab2",
+                    "api_url": response.url,
                 },
             }
 

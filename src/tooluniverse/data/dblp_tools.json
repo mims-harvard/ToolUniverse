@@ -2,7 +2,7 @@
   {
     "type": "DBLPTool",
     "name": "DBLP_search_publications",
-    "description": "Search DBLP Computer Science Bibliography for publications. Returns publications with title, authors, year, venue, URL, and electronic edition link.",
+    "description": "Search DBLP publications with offset pagination while preserving the historical list return type. Every paper contains search_pagination with total_matches, accessible_results, upstream_truncated, has_more, and next_offset. DBLP may compute only a ranked subset of broad matches, so refine the query when upstream_truncated is true. Fields DBLP does not provide (abstract, citations, open-access status, keywords) are null/empty and explicitly listed in unavailable_fields rather than fabricated as zero, false, or placeholder text.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -12,8 +12,16 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Number of publications to return. This sets the maximum number of publications retrieved from DBLP.",
-          "default": 10
+          "description": "Page size (1-1000), matching DBLP's documented h limit.",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based first hit (DBLP f parameter). Continue with each paper's search_pagination.next_offset.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": [
@@ -26,10 +34,11 @@
         "type": "object",
         "properties": {
           "title": {
-            "type": "string"
+            "type": ["string", "null"]
           },
           "abstract": {
-            "type": "string"
+            "type": ["string", "null"],
+            "description": "Always null because DBLP search does not provide abstracts."
           },
           "authors": {
             "type": "array",
@@ -46,37 +55,69 @@
             }
           },
           "year": {
-            "type": "integer"
+            "type": ["integer", "string", "null"]
           },
           "venue": {
-            "type": "string"
+            "type": ["string", "null"]
           },
           "url": {
-            "type": "string"
+            "type": ["string", "null"]
           },
           "ee": {
-            "type": "string"
+            "oneOf": [
+              {"type": "string"},
+              {"type": "array", "items": {"type": "string"}},
+              {"type": "null"}
+            ]
           },
           "doi": {
-            "type": "string"
+            "type": ["string", "null"]
           },
           "citations": {
-            "type": "integer"
+            "type": ["integer", "null"],
+            "description": "Null because DBLP search does not provide citation counts."
           },
           "open_access": {
-            "type": "boolean"
+            "type": ["boolean", "null"],
+            "description": "Null because DBLP search does not provide an open-access classification."
           },
           "keywords": {
-            "type": "string"
+            "type": "array",
+            "items": {"type": "string"}
           },
           "article_type": {
-            "type": "string"
+            "type": ["string", "null"],
+            "description": "Normalized from DBLP's actual publication type; never hard-coded."
+          },
+          "publication_type": {
+            "type": ["string", "null"],
+            "description": "Exact DBLP publication type label."
           },
           "publisher": {
-            "type": "string"
+            "type": ["string", "null"]
           },
           "source": {
             "type": "string"
+          },
+          "unavailable_fields": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "search_pagination": {
+            "type": "object",
+            "properties": {
+              "total_matches": {"type": "integer"},
+              "accessible_results": {"type": "integer"},
+              "upstream_truncated": {"type": "boolean"},
+              "returned": {"type": "integer"},
+              "offset": {"type": "integer"},
+              "requested_offset": {"type": "integer"},
+              "limit": {"type": "integer"},
+              "has_more": {"type": "boolean"},
+              "next_offset": {"type": ["integer", "null"]},
+              "truncated": {"type": "boolean"},
+              "warning": {"type": ["string", "null"]}
+            }
           },
           "data_quality": {
             "type": "object",
@@ -99,10 +140,16 @@
               "has_citations": {
                 "type": "boolean"
               },
+              "has_open_access_status": {
+                "type": "boolean"
+              },
               "has_keywords": {
                 "type": "boolean"
               },
               "has_url": {
+                "type": "boolean"
+              },
+              "has_publication_type": {
                 "type": "boolean"
               }
             }
@@ -117,13 +164,14 @@
       },
       {
         "query": "machine learning",
-        "limit": 1
+        "limit": 1,
+        "offset": 1
       }
     ]
   },
   {
     "name": "DBLP_search_authors",
-    "description": "Search and disambiguate authors in the DBLP Computer Science Bibliography by name. Resolves an author name to canonical DBLP author records, each with a stable PID URL (e.g., https://dblp.org/pid/l/JureLeskovec) plus, when available, affiliation notes, name aliases, and awards (e.g., 'Turing Award'). The PID is the gateway to that author's deduplicated publication list. Use this to identify the correct author before fetching their bibliography; DBLP_search_publications only searches papers, not authors.",
+    "description": "Search and disambiguate DBLP authors by name with offset pagination. Each response includes metadata.total_matches, accessible_results, upstream_truncated, has_more, and next_offset; follow next_offset within the computed DBLP window and refine broad queries when upstream_truncated is true. Hits resolve names to canonical PID URLs and may include affiliations, aliases, or awards.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -134,7 +182,15 @@
         "limit": {
           "type": "integer",
           "description": "Maximum number of author hits to return (default 10, max 1000).",
-          "default": 10
+          "default": 10,
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based first hit (DBLP f parameter). Continue with metadata.next_offset.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": [
@@ -145,8 +201,10 @@
       "endpoint": "https://dblp.org/search/author/api",
       "param_mapping": {
         "query": "q",
-        "limit": "h"
+        "limit": "h",
+        "offset": "f"
       },
+      "pagination": "dblp_offset",
       "params": {
         "format": "json"
       }
@@ -159,7 +217,8 @@
       },
       {
         "query": "yann lecun",
-        "limit": 3
+        "limit": 3,
+        "offset": 3
       }
     ],
     "return_schema": {
@@ -184,27 +243,35 @@
                     "@total": {
                       "type": "string"
                     },
+                    "@computed": {
+                      "type": "string"
+                    },
+                    "@sent": {
+                      "type": "string"
+                    },
+                    "@first": {
+                      "type": "string"
+                    },
                     "hit": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "@id": {
-                            "type": "string"
-                          },
-                          "@score": {
-                            "type": "string"
-                          },
-                          "info": {
-                            "type": "object",
-                            "description": "Author info including 'author' name, 'url' (PID URL), optional 'aliases', 'notes' (affiliations/awards)"
+                      "oneOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "object"
                           }
+                        },
+                        {
+                          "type": "object"
                         }
-                      }
+                      ],
+                      "description": "Author hits; a single hit may be returned as an object by DBLP. Each hit contains @id, @score, and info with author name, PID URL, and optional aliases or notes."
                     }
                   }
                 }
-              }
+              },
+              "required": [
+                "hits"
+              ]
             }
           },
           "required": [
@@ -227,7 +294,7 @@
   },
   {
     "name": "DBLP_search_venues",
-    "description": "Search DBLP for a publication VENUE (conference or journal) by acronym or full name, resolving it to its canonical DBLP venue record. For example 'ICML' resolves to 'International Conference on Machine Learning (ICML)' and 'neurips' resolves to 'Conference on Neural Information Processing Systems (NeurIPS)'. Each hit includes the venue name, acronym, type (Conference/Journal), and a DBLP venue URL for browsing its proceedings. DBLP_search_publications only searches papers, not venues.",
+    "description": "Search DBLP venues by acronym or full name with offset pagination. Each response includes metadata.total_matches, accessible_results, upstream_truncated, has_more, and next_offset; follow next_offset within the computed DBLP window and refine broad queries when upstream_truncated is true. Hits contain canonical venue names, acronyms, type, and DBLP URLs.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -238,7 +305,15 @@
         "limit": {
           "type": "integer",
           "description": "Maximum number of venue hits to return (default 10, max 1000).",
-          "default": 10
+          "default": 10,
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based first hit (DBLP f parameter). Continue with metadata.next_offset.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": [
@@ -249,8 +324,10 @@
       "endpoint": "https://dblp.org/search/venue/api",
       "param_mapping": {
         "query": "q",
-        "limit": "h"
+        "limit": "h",
+        "offset": "f"
       },
+      "pagination": "dblp_offset",
       "params": {
         "format": "json"
       }
@@ -263,7 +340,8 @@
       },
       {
         "query": "neurips",
-        "limit": 1
+        "limit": 1,
+        "offset": 1
       }
     ],
     "return_schema": {
@@ -288,27 +366,35 @@
                     "@total": {
                       "type": "string"
                     },
+                    "@computed": {
+                      "type": "string"
+                    },
+                    "@sent": {
+                      "type": "string"
+                    },
+                    "@first": {
+                      "type": "string"
+                    },
                     "hit": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "@id": {
-                            "type": "string"
-                          },
-                          "@score": {
-                            "type": "string"
-                          },
-                          "info": {
-                            "type": "object",
-                            "description": "Venue info including 'venue' name, optional 'acronym', 'type' (Conference/Journal), and 'url'"
+                      "oneOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "object"
                           }
+                        },
+                        {
+                          "type": "object"
                         }
-                      }
+                      ],
+                      "description": "Venue hits; a single hit may be returned as an object by DBLP. Each hit contains @id, @score, and info with venue name, optional acronym/type, and URL."
                     }
                   }
                 }
-              }
+              },
+              "required": [
+                "hits"
+              ]
             }
           },
           "required": [

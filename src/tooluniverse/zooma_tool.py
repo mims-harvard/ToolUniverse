@@ -70,26 +70,68 @@ class ZoomaTool(BaseTool):
 
     # ----------------------------------------------------------- annotate
     def _annotate(self, arguments: dict) -> dict:
-        property_value = (arguments.get("property_value") or "").strip()
-        if not property_value:
+        property_value = arguments.get("property_value")
+        if not isinstance(property_value, str) or not property_value.strip():
             return {
                 "status": "error",
-                "error": "Parameter 'property_value' is required (free text to annotate).",
+                "error": "Parameter 'property_value' must be a non-empty string.",
+            }
+        property_value = property_value.strip()
+
+        min_conf = arguments.get("min_confidence")
+        if min_conf is not None:
+            if not isinstance(min_conf, str) or min_conf.upper() not in _CONFIDENCE_RANK:
+                return {
+                    "status": "error",
+                    "error": "min_confidence must be one of LOW, MEDIUM, GOOD, HIGH",
+                }
+            min_conf = min_conf.upper()
+        min_rank = _CONFIDENCE_RANK.get(min_conf) if min_conf else None
+
+        limit = arguments.get("limit")
+        if limit is None:
+            limit = arguments.get("max_results", 10)
+        if limit is None:
+            limit = 10
+        offset = arguments.get("offset", 0)
+        if offset is None:
+            offset = 0
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 1000:
+            return {
+                "status": "error",
+                "error": "limit (or legacy max_results) must be an integer from 1 to 1000",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
             }
 
         params = {"propertyValue": property_value}
 
         property_type = arguments.get("property_type")
         if property_type:
-            params["propertyType"] = str(property_type).strip()
+            if not isinstance(property_type, str):
+                return {"status": "error", "error": "property_type must be a string"}
+            params["propertyType"] = property_type.strip()
 
         # Optional ontology / source filter, e.g. "efo" or "efo,uberon".
         ontologies = arguments.get("ontologies")
         if ontologies:
-            if isinstance(ontologies, (list, tuple)):
-                onto_list = [str(o).strip() for o in ontologies if str(o).strip()]
+            if isinstance(ontologies, list):
+                if any(not isinstance(item, str) for item in ontologies):
+                    return {
+                        "status": "error",
+                        "error": "ontologies list entries must be strings",
+                    }
+                onto_list = [item.strip() for item in ontologies if item.strip()]
+            elif isinstance(ontologies, str):
+                onto_list = [o.strip() for o in ontologies.split(",") if o.strip()]
             else:
-                onto_list = [o.strip() for o in str(ontologies).split(",") if o.strip()]
+                return {
+                    "status": "error",
+                    "error": "ontologies must be a comma-separated string or string list",
+                }
             if onto_list:
                 params["filter"] = (
                     "required:[none],ontologies:[" + ",".join(onto_list) + "]"
@@ -104,30 +146,42 @@ class ZoomaTool(BaseTool):
         resp.raise_for_status()
         raw = resp.json()
         if not isinstance(raw, list):
-            raw = []
+            return {
+                "status": "error",
+                "error": "ZOOMA annotation response was not a JSON array",
+            }
 
-        min_conf = arguments.get("min_confidence")
-        min_rank = _CONFIDENCE_RANK.get(str(min_conf).upper()) if min_conf else None
-
-        try:
-            max_results = int(arguments.get("max_results", 10))
-        except (TypeError, ValueError):
-            max_results = 10
-        if max_results < 1:
-            max_results = 1
-
-        annotations = []
+        filtered = []
         for item in raw:
+            if not isinstance(item, dict):
+                continue
             conf = item.get("confidence")
             if min_rank is not None:
                 rank = _CONFIDENCE_RANK.get(str(conf).upper())
                 if rank is None or rank < min_rank:
                     continue
-            annotations.append(self._format(item))
-            if len(annotations) >= max_results:
-                break
+            filtered.append(self._format(item))
 
-        return {"status": "success", "data": annotations}
+        annotations = filtered[offset : offset + limit]
+        next_offset = offset + len(annotations)
+        has_more = next_offset < len(filtered)
+        return {
+            "status": "success",
+            "data": annotations,
+            "metadata": {
+                "raw_annotations": len(raw),
+                "total_matches": len(filtered),
+                "total_matches_is_exact": True,
+                "returned": len(annotations),
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
+                "result_set_complete": offset == 0 and len(annotations) == len(filtered),
+                "min_confidence": min_conf,
+                "source": "EBI ZOOMA",
+            },
+        }
 
     @staticmethod
     def _format(item: dict) -> dict:
@@ -164,7 +218,10 @@ class ZoomaTool(BaseTool):
         resp.raise_for_status()
         raw = resp.json()
         if not isinstance(raw, list):
-            raw = []
+            return {
+                "status": "error",
+                "error": "ZOOMA datasource response was not a JSON array",
+            }
         data = [
             {
                 "name": s.get("name"),
@@ -174,7 +231,15 @@ class ZoomaTool(BaseTool):
             for s in raw
             if isinstance(s, dict)
         ]
-        return {"status": "success", "data": data}
+        return {
+            "status": "success",
+            "data": data,
+            "metadata": {
+                "total_datasources": len(data),
+                "total_is_exact": True,
+                "source": "EBI ZOOMA",
+            },
+        }
 
 
 def _iri_to_curie(iri: Any) -> str | None:

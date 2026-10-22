@@ -102,7 +102,7 @@ class PomBaseTool(BaseTool):
 
         # Extract key fields
         interpro = []
-        for match in raw.get("interpro_matches", [])[:15]:
+        for match in raw.get("interpro_matches", []):
             interpro.append(
                 {
                     "id": match.get("id"),
@@ -128,7 +128,9 @@ class PomBaseTool(BaseTool):
             "deletion_viability": raw.get("deletion_viability"),
             "biogrid_id": raw.get("biogrid_interactor_id"),
             "interpro_domains": interpro,
-            "tm_domains": tm_domains[:10] if tm_domains else [],
+            "interpro_domain_count": len(interpro),
+            "tm_domains": tm_domains,
+            "tm_domain_count": len(tm_domains),
             "characterisation_status": raw.get("characterisation_status"),
         }
 
@@ -151,7 +153,13 @@ class PomBaseTool(BaseTool):
                 "error": "query parameter is required (e.g., 'cdc2', 'kinase', 'pom1')",
             }
 
-        limit = min(arguments.get("limit", 10), 50)
+        limit = arguments.get("limit", 10)
+        offset = arguments.get("offset", 0)
+        if isinstance(limit, bool) or not isinstance(limit, int) or limit < 1:
+            return {"status": "error", "error": "limit must be a positive integer"}
+        limit = min(limit, 50)
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {"status": "error", "error": "offset must be a non-negative integer"}
 
         # Fetch gene summaries (cached in practice)
         url = f"{POMBASE_BASE_URL}/gene_summaries"
@@ -165,7 +173,7 @@ class PomBaseTool(BaseTool):
 
         # Search by gene name, systematic ID, or product description
         # gene_summaries returns a list of dicts (not a dict)
-        results = []
+        matches = []
         for gene_entry in all_genes:
             sys_id = gene_entry.get("uniquename", "")
             gene_name = (gene_entry.get("name") or "").lower()
@@ -173,7 +181,7 @@ class PomBaseTool(BaseTool):
             sys_lower = sys_id.lower()
 
             if query in gene_name or query in sys_lower or query in product:
-                results.append(
+                matches.append(
                     {
                         "systematic_id": sys_id,
                         "gene_name": gene_entry.get("name"),
@@ -181,8 +189,7 @@ class PomBaseTool(BaseTool):
                         "uniprot_id": gene_entry.get("uniprot_identifier"),
                     }
                 )
-                if len(results) >= limit:
-                    break
+        results = matches[offset : offset + limit]
 
         total_genes = len(all_genes) if isinstance(all_genes, list) else 0
 
@@ -192,7 +199,16 @@ class PomBaseTool(BaseTool):
             "metadata": {
                 "source": "PomBase",
                 "total_genes": total_genes,
+                "total_matches": len(matches),
                 "returned": len(results),
+                "offset": offset,
+                "limit": limit,
+                "has_more": offset + len(results) < len(matches),
+                "next_offset": (
+                    offset + len(results)
+                    if offset + len(results) < len(matches)
+                    else None
+                ),
                 "query": query,
                 "endpoint": "gene_summary_search",
             },
@@ -225,7 +241,7 @@ class PomBaseTool(BaseTool):
         # Phenotype annotations are under single_locus_phenotype / multi_locus_phenotype
         for cv_name, annotations in cv_annotations.items():
             if "phenotype" in cv_name.lower():
-                for ann in annotations[:30]:
+                for ann in annotations:
                     term_id = ann.get("term", "")
                     # Look up term name from the terms_by_termid dict
                     term_info = terms_lookup.get(term_id, {})
@@ -250,7 +266,7 @@ class PomBaseTool(BaseTool):
             "gene_name": gene_name,
             "deletion_viability": deletion_viability,
             "phenotype_count": len(phenotypes),
-            "phenotypes": phenotypes[:50],
+            "phenotypes": phenotypes,
         }
 
         return {
@@ -323,6 +339,25 @@ class PomBaseTool(BaseTool):
                 "error": "gene_id parameter is required (e.g., 'SPBC11B10.09' for cdc2)",
             }
 
+        interaction_limit = arguments.get("limit", 75)
+        physical_offset = arguments.get("physical_offset", 0)
+        genetic_offset = arguments.get("genetic_offset", 0)
+        if (
+            isinstance(interaction_limit, bool)
+            or not isinstance(interaction_limit, int)
+            or interaction_limit < 1
+        ):
+            return {"status": "error", "error": "limit must be a positive integer"}
+        for name, value in (
+            ("physical_offset", physical_offset),
+            ("genetic_offset", genetic_offset),
+        ):
+            if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+                return {
+                    "status": "error",
+                    "error": f"{name} must be a non-negative integer",
+                }
+
         raw = self._fetch_gene(gene_id)
         genes_lookup = raw.get("genes_by_uniquename", {})
 
@@ -330,8 +365,12 @@ class PomBaseTool(BaseTool):
             info = genes_lookup.get(uniquename) or {}
             return info.get("name") if isinstance(info, dict) else None
 
+        physical_raw = raw.get("physical_interactions", []) or []
+        physical_page = physical_raw[
+            physical_offset : physical_offset + interaction_limit
+        ]
         physical = []
-        for i in raw.get("physical_interactions", [])[:75]:
+        for i in physical_page:
             if not isinstance(i, dict):
                 continue
             partner = (
@@ -351,8 +390,10 @@ class PomBaseTool(BaseTool):
             )
 
         # genetic_interactions entries are [pair_dict, [evidence_dicts]] pairs.
+        genetic_raw = raw.get("genetic_interactions", []) or []
+        genetic_page = genetic_raw[genetic_offset : genetic_offset + interaction_limit]
         genetic = []
-        for entry in raw.get("genetic_interactions", [])[:75]:
+        for entry in genetic_page:
             pair = None
             evidence = None
             if isinstance(entry, (list, tuple)) and entry:
@@ -381,10 +422,27 @@ class PomBaseTool(BaseTool):
         result = {
             "systematic_id": raw.get("uniquename"),
             "gene_name": raw.get("name"),
-            "physical_interaction_count": len(raw.get("physical_interactions", [])),
+            "physical_interaction_count": len(physical_raw),
+            "physical_interactions_returned": len(physical),
+            "physical_offset": physical_offset,
+            "physical_has_more": physical_offset + len(physical_page) < len(physical_raw),
+            "next_physical_offset": (
+                physical_offset + len(physical_page)
+                if physical_offset + len(physical_page) < len(physical_raw)
+                else None
+            ),
             "physical_interactions": physical,
-            "genetic_interaction_count": len(raw.get("genetic_interactions", [])),
+            "genetic_interaction_count": len(genetic_raw),
+            "genetic_interactions_returned": len(genetic),
+            "genetic_offset": genetic_offset,
+            "genetic_has_more": genetic_offset + len(genetic_page) < len(genetic_raw),
+            "next_genetic_offset": (
+                genetic_offset + len(genetic_page)
+                if genetic_offset + len(genetic_page) < len(genetic_raw)
+                else None
+            ),
             "genetic_interactions": genetic,
+            "limit": interaction_limit,
         }
 
         return {
@@ -421,7 +479,7 @@ class PomBaseTool(BaseTool):
         for cv_name, code in aspects.items():
             annotations = cv_annotations.get(cv_name, [])
             aspect_counts[cv_name] = len(annotations)
-            for ann in annotations[:30]:
+            for ann in annotations:
                 if not isinstance(ann, dict):
                     continue
                 term_id = ann.get("term", "")

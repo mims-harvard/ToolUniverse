@@ -1,7 +1,7 @@
 [
   {
     "name": "EpiGraphDB_get_mendelian_randomization",
-    "description": "Get Mendelian Randomization (MR) evidence for a causal relationship between an exposure trait and an outcome trait using IEU OpenGWAS data. Returns MR estimates (beta, SE, p-value) from multiple instruments/methods. Example: exposure='Body mass index', outcome='Coronary heart disease' returns causal effect estimates.",
+    "description": "Get Mendelian Randomization (MR) evidence using IEU OpenGWAS data with recoverable offset pagination. Provide exposure_trait, outcome_trait, or both: a single trait retrieves all MR edges in that direction, while both constrain the relationship. Returns MR estimates (beta, SE, p-value) from multiple instruments/methods. Continue with next_offset while has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -17,11 +17,32 @@
           "type": "number",
           "description": "P-value threshold for instrument selection (default 1e-5).",
           "default": 1e-05
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 50,
+          "description": "Number of MR results per page (1-1000; default 50)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based MR result offset. Continue with next_offset while has_more is true."
         }
       },
-      "required": [
-        "exposure_trait",
-        "outcome_trait"
+      "anyOf": [
+        {
+          "required": [
+            "exposure_trait"
+          ]
+        },
+        {
+          "required": [
+            "outcome_trait"
+          ]
+        }
       ]
     },
     "fields": {
@@ -112,6 +133,27 @@
                 "integer",
                 "null"
               ]
+            },
+            "returned_count": {
+              "type": "integer"
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "result_set_complete": {
+              "type": "boolean"
             }
           }
         },
@@ -146,7 +188,7 @@
   },
   {
     "name": "EpiGraphDB_get_genetic_correlations",
-    "description": "Get strong genetic correlations (|rg| > 0.8) between a GWAS trait and other traits in the IEU OpenGWAS database, indicating shared genetic architecture. NOTE: the genetic-correlation graph is sparse and matches exact, case-sensitive trait labels, so many common traits (e.g. 'Body mass index') return no rows even though they exist in OpenGWAS — an empty result means 'no strong-rg edge in the graph', not 'no shared genetics'. Genetic correlation is NOT causal evidence; use EpiGraphDB_get_mendelian_randomization for causality. Example traits with data: 'Waist circumference', 'Hip circumference', 'Body fat percentage'.",
+    "description": "Get strong genetic correlations (|rg| > 0.8) between a GWAS trait and other traits with recoverable offset pagination. total_count, has_more, and next_offset expose the complete result set. NOTE: the graph is sparse and exact-label sensitive; an empty result means no strong-rg edge in this graph, not no shared genetics. Genetic correlation is NOT causal evidence. Example traits with data: 'Waist circumference', 'Hip circumference', 'Body fat percentage'.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -158,6 +200,19 @@
           "type": "number",
           "description": "Accepted for compatibility but NOT applied — the endpoint always returns the fixed |rg| > 0.8 set.",
           "default": 0.05
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 50,
+          "description": "Number of correlations per page (1-500; default 50)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based correlation offset. Continue with next_offset while has_more is true."
         }
       },
       "required": [
@@ -230,6 +285,13 @@
                 "integer",
                 "null"
               ]
+            },
+            "offset": {"type": "integer"},
+            "limit": {"type": "integer"},
+            "returned": {"type": "integer"},
+            "has_more": {"type": "boolean"},
+            "next_offset": {
+              "type": ["integer", "null"]
             }
           }
         },
@@ -263,7 +325,7 @@
   },
   {
     "name": "EpiGraphDB_get_drugs_for_trait",
-    "description": "Find drugs that target genes associated with a GWAS risk factor trait. Uses genetic evidence to identify drug repurposing candidates. Returns drugs whose target genes are significantly associated with the trait via GWAS. Example: 'LDL cholesterol' returns statins (targeting HMGCR), PCSK9 inhibitors, etc.",
+    "description": "Find drugs that target genes associated with a GWAS risk factor trait, ranked by supporting evidence and exposed through recoverable offset pagination. unique_drug_count is the full total; continue with next_offset while has_more is true. Example: 'LDL cholesterol' returns hundreds of genetically supported drug candidates.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -275,6 +337,19 @@
           "type": "number",
           "description": "GWAS p-value threshold for gene-trait associations (default 1e-4).",
           "default": 0.0001
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 30,
+          "description": "Number of unique drugs per page (1-500; default 30)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset into evidence-ranked unique drugs."
         }
       },
       "required": [
@@ -343,6 +418,13 @@
                 "integer",
                 "null"
               ]
+            },
+            "offset": {"type": "integer"},
+            "limit": {"type": "integer"},
+            "returned": {"type": "integer"},
+            "has_more": {"type": "boolean"},
+            "next_offset": {
+              "type": ["integer", "null"]
             }
           }
         },
@@ -484,7 +566,7 @@
   },
   {
     "name": "EpiGraphDB_search_gene",
-    "description": "Search for gene information in EpiGraphDB by gene symbol or Ensembl ID. Returns gene metadata including druggability classification, chromosomal location, and gene type. Example: 'BRCA1' returns Tier 2 druggability, chr17 location.",
+    "description": "Search for gene information in EpiGraphDB by gene symbol or Ensembl ID. Returns gene metadata including druggability classification, chromosomal location, and gene type. Fuzzy name search supports up to the upstream maximum of 200 rows but the source exposes no offset; when a page is full, truncated=true and total_found=null warn that more matches may exist. Use an exact Ensembl gene_id or narrow the name in that case.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -502,9 +584,11 @@
           ],
           "description": "Ensembl gene ID (e.g., 'ENSG00000012048'). Either gene_name or gene_id required."
         },
-        "limit": {
-          "type": "integer",
-          "description": "Maximum results to return (default 10, max 50).",
+      "limit": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 200,
+        "description": "Maximum results to return (default 10, upstream max 200). A full fuzzy-name page is marked truncated because the upstream endpoint has no offset.",
           "default": 10
         }
       },
@@ -578,12 +662,24 @@
                 }
               }
             },
-            "total_found": {
-              "type": [
-                "integer",
-                "null"
-              ]
-            }
+          "total_found": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "returned_count": {
+            "type": "integer"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "truncated": {
+            "type": "boolean"
+          },
+          "result_set_complete": {
+            "type": "boolean"
+          }
           }
         },
         {
@@ -833,7 +929,7 @@
   },
   {
     "name": "EpiGraphDB_get_literature_evidence",
-    "description": "Get SemMedDB literature triple evidence supporting a GWAS trait via EpiGraphDB. Returns subject-predicate-object triples (e.g. 'troglitazone INHIBITS Leptin|LEP') mined from PubMed and linked to GWAS hits for the trait, each citing a supporting article (pubmed_id). This is the literature/support-path evidence, complementing the Mendelian Randomization and gene-drug evidence paths. Example: trait='body mass index' returns SemMedDB triples around leptin, insulin, and related entities with PubMed citations.",
+    "description": "Get SemMedDB literature triple evidence supporting a GWAS trait via EpiGraphDB, with recoverable offset pagination. Returns subject-predicate-object triples mined from PubMed and linked to GWAS hits, each citing a supporting article (pubmed_id). Continue with next_offset while has_more is true. Because the upstream endpoint does not return an exact match count, total_count is null until the final page is reached. Example: trait='body mass index' returns more than 1,000 supporting rows at pval_threshold=1e-4.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -845,6 +941,19 @@
           "type": "number",
           "description": "GWAS p-value threshold for the trait's GWAS hits (default 1e-8).",
           "default": 1e-08
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 100,
+          "description": "Number of literature evidence rows per page (1-1000; default 100)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based row offset. Continue with next_offset while has_more is true."
         }
       },
       "required": [
@@ -912,6 +1021,27 @@
                 "integer",
                 "null"
               ]
+            },
+            "returned_count": {
+              "type": "integer"
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "result_set_complete": {
+              "type": "boolean"
             }
           }
         },

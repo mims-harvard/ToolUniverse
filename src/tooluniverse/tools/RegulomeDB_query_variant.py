@@ -1,7 +1,7 @@
 """
 RegulomeDB_query_variant
 
-Query RegulomeDB for regulatory variant annotations using rsID
+Query RegulomeDB for regulatory variant annotations using rsID. Nearby SNPs are independently pag...
 """
 
 from typing import Any, Optional, Callable
@@ -11,13 +11,15 @@ from ._shared_client import get_shared_client
 def RegulomeDB_query_variant(
     rsid: Optional[str] = None,
     variant: Optional[str] = None,
+    nearby_snp_offset: Optional[int] = 0,
+    nearby_snp_limit: Optional[int] = 10,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Query RegulomeDB for regulatory variant annotations using rsID
+    Query RegulomeDB for regulatory variant annotations using rsID. Nearby SNPs are independently pag...
 
     Parameters
     ----------
@@ -25,6 +27,10 @@ def RegulomeDB_query_variant(
         dbSNP rsID (e.g., 'rs4994', 'rs429358')
     variant : str
         Alias for rsid. dbSNP rsID (e.g., 'rs7903146', 'rs429358').
+    nearby_snp_offset : int
+        Zero-based offset into the nearby SNP list (default 0).
+    nearby_snp_limit : int
+        Maximum nearby SNPs to return (default 10, max 500).
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,7 +46,14 @@ def RegulomeDB_query_variant(
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
-        k: v for k, v in {"rsid": rsid, "variant": variant}.items() if v is not None
+        k: v
+        for k, v in {
+            "rsid": rsid,
+            "variant": variant,
+            "nearby_snp_offset": nearby_snp_offset,
+            "nearby_snp_limit": nearby_snp_limit,
+        }.items()
+        if v is not None
     }
     return get_shared_client().run_one_function(
         {

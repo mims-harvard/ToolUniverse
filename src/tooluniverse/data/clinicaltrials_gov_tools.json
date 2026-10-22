@@ -922,7 +922,7 @@
   },
   {
     "name": "ClinicalTrials_search_studies",
-    "description": "Search ClinicalTrials.gov for clinical trial studies by condition, intervention, sponsor, or other criteria. Returns NCT IDs, titles, status, phase, enrollment, and key trial metadata. Example: search for 'breast cancer' trials with 'pembrolizumab' that are RECRUITING in Phase 3.",
+    "description": "Search ClinicalTrials.gov for clinical trial studies by condition, intervention, sponsor, or other criteria. Returns NCT IDs, titles, status, phase, enrollment, and up to five intervention names per study; intervention_count and interventions_truncated disclose longer lists, which ClinicalTrials_get_study returns in full. Example: search for 'breast cancer' trials with 'pembrolizumab' that are RECRUITING in Phase 3.",
     "parameter": {
       "type": "object",
       "additionalProperties": false,
@@ -1098,6 +1098,14 @@
                   "interventions": {
                     "type": "array"
                   },
+                  "intervention_count": {
+                    "type": "integer",
+                    "description": "Total number of intervention names reported for this study"
+                  },
+                  "interventions_truncated": {
+                    "type": "boolean",
+                    "description": "Whether the search summary shows only the first five interventions; use ClinicalTrials_get_study for the full list"
+                  },
                   "sponsor": {
                     "type": [
                       "string",
@@ -1158,7 +1166,7 @@
   },
   {
     "name": "ClinicalTrials_get_study",
-    "description": "Get full details for a specific clinical trial by NCT ID from ClinicalTrials.gov. Returns comprehensive protocol including title, objectives, eligibility criteria, interventions, outcome measures, contacts, and results summary. Example: NCT04280705 returns the ACTT remdesivir COVID-19 trial with all details.",
+    "description": "Get full details for a specific clinical trial by NCT ID from ClinicalTrials.gov. Returns every arm, intervention, primary outcome, location, and reference supplied by the v2 single-study endpoint, together with explicit counts; these lists are not silently capped. Example: NCT04280705 returns the ACTT remdesivir COVID-19 trial with all details.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1237,8 +1245,20 @@
             "interventions": {
               "type": "array"
             },
+            "arms": {
+              "type": "array"
+            },
+            "arm_count": {
+              "type": "integer"
+            },
+            "intervention_count": {
+              "type": "integer"
+            },
             "primary_outcomes": {
               "type": "array"
+            },
+            "primary_outcome_count": {
+              "type": "integer"
             },
             "eligibility_criteria": {
               "type": [
@@ -1255,8 +1275,14 @@
             "locations": {
               "type": "array"
             },
+            "location_count": {
+              "type": "integer"
+            },
             "references": {
               "type": "array"
+            },
+            "reference_count": {
+              "type": "integer"
             }
           }
         },
@@ -1281,7 +1307,7 @@
   },
   {
     "name": "ClinicalTrials_search_by_intervention",
-    "description": "Search ClinicalTrials.gov for all clinical trials testing a specific drug, biologic, device, or other intervention. Returns trial IDs, titles, phases, status, and conditions being studied. Ideal for finding all trials for a given drug (e.g., 'nivolumab') across all disease indications.",
+    "description": "Search ClinicalTrials.gov trials for an intervention with opaque-token pagination. Continue by passing metadata.next_page_token back as next_page_token while metadata.has_more is true. CT.gov usually supplies an exact total on the first page but may omit it on token pages; metadata.total_results_is_exact reports availability per response.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1323,6 +1349,13 @@
           "default": 10,
           "minimum": 1,
           "maximum": 1000
+        },
+        "next_page_token": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Opaque token from metadata.next_page_token. Omit for the first page."
         }
       },
       "required": [
@@ -1385,7 +1418,7 @@
   },
   {
     "name": "ClinicalTrials_search_by_sponsor",
-    "description": "Search ClinicalTrials.gov for clinical trials by sponsor or lead organization. Returns trials funded by pharmaceutical companies, academic institutions, or government agencies. Example: find all Phase 3 trials sponsored by 'National Cancer Institute' for cancer conditions.",
+    "description": "Search ClinicalTrials.gov trials by sponsor with opaque-token pagination. Continue by passing metadata.next_page_token back as next_page_token while metadata.has_more is true. CT.gov usually supplies an exact total on the first page but may omit it on token pages; metadata.total_results_is_exact reports availability per response.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1420,6 +1453,13 @@
           "default": 10,
           "minimum": 1,
           "maximum": 1000
+        },
+        "next_page_token": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Opaque token from metadata.next_page_token. Omit for the first page."
         }
       },
       "required": [
@@ -1545,7 +1585,7 @@
   },
   {
     "name": "ClinicalTrials_get_field_values",
-    "description": "Get value distribution for a specific field across ClinicalTrials.gov studies. Returns all unique values with study counts. Use to see what status, phase, or study type options exist. Example: 'Phase' field returns counts for PHASE1, PHASE2, PHASE3, etc.",
+    "description": "Get ClinicalTrials.gov's most frequent values for one field with study counts. Low-cardinality fields can be complete, but the official endpoint exposes only a fixed top-250 window for high-cardinality fields while reporting the exact uniqueValuesCount. page_size/offset page locally within accessible_results; metadata.upstream_truncated warns when additional unique values are not accessible.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1562,8 +1602,16 @@
         },
         "page_size": {
           "type": "integer",
-          "description": "Number of field values to return (default 50).",
+          "minimum": 1,
+          "maximum": 250,
+          "description": "Number of values to return from the official top-values window (default 50, max 250).",
           "default": 50
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based local offset within the fixed accessible top-values window."
         }
       },
       "required": [
@@ -1610,6 +1658,15 @@
               }
             },
             "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "accessible_values_count": {
+              "type": "integer"
+            },
+            "missing_studies_count": {
               "type": [
                 "integer",
                 "null"

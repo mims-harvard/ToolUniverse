@@ -1,7 +1,7 @@
 """
 EuroPMCAnnot_get_chemicals_from_article
 
-Extract chemical/compound mentions from a scientific article using Europe PMC text mining. Return...
+Extract chemical/compound mentions from one article using Europe PMC text mining, with limit/offs...
 """
 
 from typing import Any, Optional, Callable
@@ -10,18 +10,24 @@ from ._shared_client import get_shared_client
 
 def EuroPMCAnnot_get_chemicals_from_article(
     article_id: str,
+    limit: Optional[int] = 200,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Extract chemical/compound mentions from a scientific article using Europe PMC text mining. Return...
+    Extract chemical/compound mentions from one article using Europe PMC text mining, with limit/offs...
 
     Parameters
     ----------
     article_id : str
         PMC article identifier. Format: 'PMC:PMCXXXXXXX'. Examples: 'PMC:PMC4353746',...
+    limit : int
+        Maximum number of chemical mentions to return in this page.
+    offset : int
+        Zero-based chemical-mention offset. Use data.next_offset for the next page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +42,11 @@ def EuroPMCAnnot_get_chemicals_from_article(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"article_id": article_id}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {"article_id": article_id, "limit": limit, "offset": offset}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "EuroPMCAnnot_get_chemicals_from_article",

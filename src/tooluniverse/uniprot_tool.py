@@ -2,6 +2,7 @@ import re
 import time
 import requests
 from typing import Any, Dict, Optional
+from urllib.parse import parse_qs, urlparse
 from .base_tool import BaseTool, ToolError
 from .tool_registry import register_tool
 
@@ -100,8 +101,11 @@ class UniProtRESTTool(BaseTool):
             url = url.replace(f"{{{k}}}", str(v))
         return url
 
-    def _compact_entry(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        """Return a bounded summary of a UniProtKB entry for LLM contexts."""
+    def _compact_entry(
+        self, data: Dict[str, Any], arguments: Optional[Dict[str, Any]] = None
+    ) -> Dict[str, Any]:
+        """Return an explicitly pageable summary of a UniProtKB entry."""
+        arguments = arguments or {}
         protein_desc = data.get("proteinDescription", {})
         protein_name = _protein_name(protein_desc)
         gene_names = []
@@ -110,8 +114,17 @@ class UniProtRESTTool(BaseTool):
             if gene_name:
                 gene_names.append(gene_name)
 
+        comment_limit = min(max(int(arguments.get("comment_limit", 25)), 1), 100)
+        comment_offset = max(int(arguments.get("comment_offset", 0)), 0)
+        feature_limit = min(max(int(arguments.get("feature_limit", 100)), 1), 500)
+        feature_offset = max(int(arguments.get("feature_offset", 0)), 0)
+        reference_limit = min(max(int(arguments.get("reference_limit", 25)), 1), 100)
+        reference_offset = max(int(arguments.get("reference_offset", 0)), 0)
+
+        all_comments = data.get("comments", [])
+        comment_page = all_comments[comment_offset : comment_offset + comment_limit]
         comment_summaries = []
-        for comment in data.get("comments", []):
+        for comment in comment_page:
             comment_type = comment.get("commentType", "")
             text_values = [
                 text["value"]
@@ -135,23 +148,60 @@ class UniProtRESTTool(BaseTool):
                     if isinstance(t, dict) and t.get("value")
                 ]
                 text_values = cofactor_names + note_texts + text_values
-            if text_values:
-                comment_summaries.append(
-                    {
-                        "commentType": comment_type,
-                        "texts": text_values[:3],
-                    }
-                )
-
-        feature_summaries = []
-        for feature in data.get("features", [])[:100]:
-            feature_summaries.append(
+            # Keep structured fields for comment types whose meaning is not
+            # represented by top-level text (INTERACTION, ALTERNATIVE PRODUCTS,
+            # WEB RESOURCE, etc.).  Omitting them made a present comment look
+            # absent even within the documented compact view.
+            details = {
+                key: value
+                for key, value in comment.items()
+                if key not in {"commentType", "texts"}
+            }
+            comment_summaries.append(
                 {
-                    "type": feature.get("type", ""),
-                    "description": feature.get("description", ""),
-                    "location": feature.get("location", {}),
+                    "commentType": comment_type,
+                    "texts": text_values,
+                    **({"details": details} if details else {}),
                 }
             )
+
+        all_features = data.get("features", [])
+        # A page is bounded, but each returned feature remains intact.  This
+        # preserves ECO evidence, ligand data, alternative sequences and other
+        # fields that the previous three-field projection silently discarded.
+        feature_summaries = all_features[
+            feature_offset : feature_offset + feature_limit
+        ]
+
+        all_references = data.get("references", [])
+        reference_summaries = all_references[
+            reference_offset : reference_offset + reference_limit
+        ]
+
+        def paging(total: int, returned: int, offset: int, limit: int) -> Dict[str, Any]:
+            has_more = offset + returned < total
+            return {
+                "returned": returned,
+                "total": total,
+                "limit": limit,
+                "offset": offset,
+                "truncated": returned < total,
+                "has_more": has_more,
+                "next_offset": offset + returned if has_more else None,
+            }
+
+        comment_paging = paging(
+            len(all_comments), len(comment_summaries), comment_offset, comment_limit
+        )
+        feature_paging = paging(
+            len(all_features), len(feature_summaries), feature_offset, feature_limit
+        )
+        reference_paging = paging(
+            len(all_references),
+            len(reference_summaries),
+            reference_offset,
+            reference_limit,
+        )
 
         return {
             "status": "success",
@@ -166,44 +216,137 @@ class UniProtRESTTool(BaseTool):
                 "annotationScore": data.get("annotationScore"),
                 "proteinExistence": data.get("proteinExistence", ""),
                 "keywords": data.get("keywords", []),
-                "comments": comment_summaries[:25],
+                "comments": comment_summaries,
                 "features": feature_summaries,
+                "references": reference_summaries,
                 "xref_count": len(data.get("uniProtKBCrossReferences", [])),
             },
             "metadata": {
                 "compact": True,
-                "comments_returned": min(len(comment_summaries), 25),
-                "features_returned": len(feature_summaries),
-                "total_comments": len(data.get("comments", [])),
-                "total_features": len(data.get("features", [])),
+                **{f"comments_{key}": value for key, value in comment_paging.items()},
+                **{f"features_{key}": value for key, value in feature_paging.items()},
+                **{
+                    f"references_{key}": value
+                    for key, value in reference_paging.items()
+                },
+                # Backward-compatible total aliases used by existing callers.
+                "total_comments": len(all_comments),
+                "total_features": len(all_features),
+                "total_references": len(all_references),
             },
         }
 
-    def _extract_data(self, data: Dict, extract_path: str) -> Any:
+    def _get_entry_publications(
+        self, accession: str, arguments: Dict[str, Any]
+    ) -> tuple[list, Dict[str, Any]]:
+        """Fetch the publications view, including mapped bibliography.
+
+        UniProtKB entry JSON only contains entry-curation references. The web
+        Publications tab uses a separate per-entry endpoint that also exposes
+        computationally mapped and community-curated literature.
+        """
+        source = arguments.get("publication_source", "computational")
+        source_facets = {
+            "computational": '(types:"1")',
+            "curated": '(types:"2")',
+            "community": '(types:"0")',
+        }
+        size = min(max(int(arguments.get("publication_limit", 25)), 1), 100)
+        params: Dict[str, Any] = {"size": size}
+        if source in source_facets:
+            params["facetFilter"] = source_facets[source]
+        if arguments.get("publication_cursor"):
+            params["cursor"] = arguments["publication_cursor"]
+
+        url = f"https://rest.uniprot.org/uniprotkb/{accession}/publications"
+        response = requests.get(url, params=params, timeout=self.timeout)
+        response.raise_for_status()
+        payload = response.json()
+        publications = payload.get("results", [])
+
+        try:
+            total = int(response.headers.get("x-total-results", len(publications)))
+        except (TypeError, ValueError):
+            total = len(publications)
+
+        next_url = None
+        link = response.headers.get("Link", "")
+        match = re.search(r'<([^>]+)>;\s*rel="next"', link)
+        if match:
+            next_url = match.group(1)
+        next_cursor = (
+            parse_qs(urlparse(next_url).query).get("cursor", [None])[0]
+            if next_url
+            else None
+        )
+        return publications, {
+            "publication_source": source,
+            "total_publications": total,
+            "publications_returned": len(publications),
+            "publications_truncated": bool(next_cursor),
+            "has_more_publications": bool(next_cursor),
+            "next_publication_cursor": next_cursor,
+        }
+
+    def _extract_data(
+        self,
+        data: Dict,
+        extract_path: str,
+        arguments: Optional[Dict[str, Any]] = None,
+    ) -> Any:
         """Custom data extraction with support for filtering"""
 
+        # Annotation extractors default to the structured form so evidence and
+        # qualifiers stop being dropped, but callers written against the
+        # historical flat string list can ask for it back with format="values".
+        response_format = (arguments or {}).get("format") or "structured"
+        legacy_values = response_format == "values"
+
         # Handle specific UniProt extraction patterns
-        if extract_path == ("comments[?(@.commentType=='FUNCTION')].texts[*].value"):
-            # Extract function comments
+        if extract_path == "function_annotations":
+            # Preserve evidence attached to each FUNCTION text rather than
+            # flattening annotations to strings and losing ECO/PubMed support.
             result = []
             for comment in data.get("comments", []):
                 if comment.get("commentType") == "FUNCTION":
                     for text in comment.get("texts", []):
                         if "value" in text:
-                            result.append(text["value"])
+                            result.append(
+                                text["value"]
+                                if legacy_values
+                                else {
+                                    "value": text["value"],
+                                    "evidences": text.get("evidences", []),
+                                }
+                            )
             return result
 
-        elif extract_path == (
-            "comments[?(@.commentType=="
-            "'SUBCELLULAR LOCATION')].subcellularLocations[*].location.value"
-        ):
-            # Extract subcellular locations
+        elif extract_path == "subcellular_location_annotations":
+            # Preserve the qualifiers that make a localization interpretable.
+            # Flattening this field to location.value silently discarded
+            # evidence, isoform/molecule specificity, topology, and notes.
             result = []
             for comment in data.get("comments", []):
                 if comment.get("commentType") == "SUBCELLULAR LOCATION":
-                    for location in comment.get("subcellularLocations", []):
-                        if "location" in location and ("value" in location["location"]):
-                            result.append(location["location"]["value"])
+                    molecule = comment.get("molecule")
+                    note = comment.get("note")
+                    for annotation in comment.get("subcellularLocations", []):
+                        location = annotation.get("location", {})
+                        if not location.get("value"):
+                            continue
+                        result.append(
+                            location["value"]
+                            if legacy_values
+                            else {
+                                "location": location.get("value"),
+                                "location_id": location.get("id"),
+                                "evidences": location.get("evidences", []),
+                                "molecule": molecule,
+                                "topology": annotation.get("topology"),
+                                "orientation": annotation.get("orientation"),
+                                "note": note,
+                            }
+                        )
             return result
 
         elif extract_path == "features[?(@.type=='VARIANT')]":
@@ -214,15 +357,28 @@ class UniProtRESTTool(BaseTool):
                     result.append(feature)
             return result
 
-        elif extract_path == (
-            "features[?(@.type=='MODIFIED RESIDUE' || @.type=='SIGNAL')]"
-        ):
-            # Extract PTM and signal features
-            result = []
-            for feature in data.get("features", []):
-                if feature.get("type") in ["Modified residue", "Signal"]:
-                    result.append(feature)
-            return result
+        elif extract_path == "ptm_and_processing_features":
+            # UniProt models both PTMs and chain-processing annotations as
+            # feature records. Returning only Modified residue and Signal
+            # omitted other documented members of those two groups.
+            supported_types = {
+                "Modified residue",
+                "Glycosylation",
+                "Lipidation",
+                "Disulfide bond",
+                "Cross-link",
+                "Signal",
+                "Transit peptide",
+                "Propeptide",
+                "Peptide",
+                "Chain",
+                "Initiator methionine",
+            }
+            return [
+                feature
+                for feature in data.get("features", [])
+                if feature.get("type") in supported_types
+            ]
 
         elif extract_path == (
             "comments[?(@.commentType=="
@@ -283,12 +439,33 @@ class UniProtRESTTool(BaseTool):
         body/page-size fallbacks for any endpoint that does supply them.
         """
         header = getattr(resp, "headers", {}).get("x-total-results")
-        if header is not None:
+        if isinstance(header, (str, int)) and not isinstance(header, bool):
             try:
                 return int(header)
             except (TypeError, ValueError):
                 pass
         return data.get("resultsFound", len(results))
+
+    @staticmethod
+    def _next_cursor(resp) -> Optional[str]:
+        """Extract UniProt's opaque next-page cursor from the Link header."""
+        link = getattr(resp, "headers", {}).get("Link", "")
+        if not isinstance(link, str):
+            return None
+        match = re.search(r'<([^>]+)>;\s*rel="next"', link)
+        if not match:
+            return None
+        return parse_qs(urlparse(match.group(1)).query).get("cursor", [None])[0]
+
+    def _search_paging(self, resp, total: int, returned: int) -> Dict[str, Any]:
+        next_cursor = self._next_cursor(resp)
+        return {
+            "has_more": bool(next_cursor),
+            "truncated": bool(next_cursor),
+            "next_cursor": next_cursor,
+            "total_results": total,
+            "returned": returned,
+        }
 
     def _handle_search(self, arguments: Dict[str, Any]) -> Any:
         """Handle search queries with flexible parameters"""
@@ -333,6 +510,8 @@ class UniProtRESTTool(BaseTool):
 
         # Build parameters
         params = {"query": full_query, "size": str(limit), "format": "json"}
+        if arguments.get("cursor"):
+            params["cursor"] = arguments["cursor"]
 
         # Add fields parameter if specified
         if fields and isinstance(fields, list):
@@ -347,14 +526,15 @@ class UniProtRESTTool(BaseTool):
 
             # Extract results
             results = data.get("results", [])
+            total = self._total_results(resp, data, results)
+            paging = self._search_paging(resp, total, len(results))
 
             # If custom fields requested, return raw API response for flexibility
             if fields and isinstance(fields, list):
                 return {
                     "status": "success",
                     "data": {
-                        "total_results": self._total_results(resp, data, results),
-                        "returned": len(results),
+                        **paging,
                         "results": results,
                     },
                 }
@@ -396,8 +576,7 @@ class UniProtRESTTool(BaseTool):
             return {
                 "status": "success",
                 "data": {
-                    "total_results": self._total_results(resp, data, results),
-                    "returned": len(results),
+                    **paging,
                     "results": formatted_results,
                 },
             }
@@ -466,23 +645,23 @@ class UniProtRESTTool(BaseTool):
             status_url = f"https://rest.uniprot.org/idmapping/status/{job_id}"
             results_url = f"https://rest.uniprot.org/idmapping/results/{job_id}"
 
-            raw_results = None
+            job_done = False
             start_time = time.time()
             while time.time() - start_time < max_wait_time:
                 status_resp = requests.get(status_url, timeout=self.timeout)
+                status_resp.raise_for_status()
                 status_data = status_resp.json()
 
                 job_status = status_data.get("jobStatus") or status_data.get("status")
 
                 if job_status == "FINISHED":
-                    # Explicit FINISHED status — fetch results separately
-                    results_resp = requests.get(results_url, timeout=self.timeout)
-                    raw_results = results_resp.json().get("results", [])
+                    job_done = True
                     break
                 elif "results" in status_data:
-                    # Feature-26A-13: UniProt status endpoint redirected (303) to
-                    # results page; results are embedded directly in status_data.
-                    raw_results = status_data["results"]
+                    # A fast job can redirect to an embedded first-page preview.
+                    # Treat that only as completion; always fetch the paginated
+                    # results endpoint so the preview cannot become the answer.
+                    job_done = True
                     break
                 elif job_status in ("FAILED", "ERROR"):
                     return {
@@ -492,7 +671,7 @@ class UniProtRESTTool(BaseTool):
 
                 time.sleep(1)  # Wait 1 second before next poll
 
-            if raw_results is None:
+            if not job_done:
                 return {
                     "status": "error",
                     "error": (
@@ -500,6 +679,23 @@ class UniProtRESTTool(BaseTool):
                         f"{max_wait_time}s. Try again or reduce the number of IDs."
                     ),
                 }
+
+            raw_results = []
+            failed_ids = []
+            next_url = results_url
+            params = {"size": 500}
+            while next_url:
+                results_resp = requests.get(
+                    next_url, params=params, timeout=self.timeout
+                )
+                results_resp.raise_for_status()
+                page_data = results_resp.json()
+                raw_results.extend(page_data.get("results", []))
+                failed_ids.extend(page_data.get("failedIds", []))
+                link = results_resp.headers.get("Link", "")
+                match = re.search(r'<([^>]+)>;\s*rel="next"', link)
+                next_url = match.group(1) if match else None
+                params = None
 
             # Step 3: Parse results
             # UniProt returns `to` as a plain string (for simple DB mappings like
@@ -527,10 +723,24 @@ class UniProtRESTTool(BaseTool):
                     # Simple string mapping (PDB, Ensembl, etc.)
                     formatted_results.append({"from": from_value, "to": str(to_value)})
 
+            result_offset = max(int(arguments.get("result_offset", 0)), 0)
+            result_limit = min(max(int(arguments.get("result_limit", 500)), 1), 5000)
+            visible_results = formatted_results[
+                result_offset : result_offset + result_limit
+            ]
+            has_more = result_offset + len(visible_results) < len(formatted_results)
             result_data = {
                 "mapped_count": len(formatted_results),
-                "results": formatted_results,
-                "failed_ids": [],
+                "returned": len(visible_results),
+                "result_offset": result_offset,
+                "result_limit": result_limit,
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_result_offset": (
+                    result_offset + len(visible_results) if has_more else None
+                ),
+                "results": visible_results,
+                "failed_ids": failed_ids,
             }
             return {"status": "success", "data": result_data}
 
@@ -591,6 +801,8 @@ class UniProtRESTTool(BaseTool):
             )
 
         params = {"query": full_query, "size": str(limit), "format": "json"}
+        if arguments.get("cursor"):
+            params["cursor"] = arguments["cursor"]
         url = "https://rest.uniprot.org/uniref/search"
 
         try:
@@ -599,11 +811,11 @@ class UniProtRESTTool(BaseTool):
             data = resp.json()
 
             results = data.get("results", [])
+            total = self._total_results(resp, data, results)
             return {
                 "status": "success",
                 "data": {
-                    "total_results": self._total_results(resp, data, results),
-                    "returned": len(results),
+                    **self._search_paging(resp, total, len(results)),
                     "results": results,
                 },
             }
@@ -627,6 +839,8 @@ class UniProtRESTTool(BaseTool):
         limit = min(limit_value, 500)
 
         params = {"query": query, "size": str(limit), "format": "json"}
+        if arguments.get("cursor"):
+            params["cursor"] = arguments["cursor"]
         url = "https://rest.uniprot.org/uniparc/search"
 
         try:
@@ -635,11 +849,11 @@ class UniProtRESTTool(BaseTool):
             data = resp.json()
 
             results = data.get("results", [])
+            total = self._total_results(resp, data, results)
             return {
                 "status": "success",
                 "data": {
-                    "total_results": self._total_results(resp, data, results),
-                    "returned": len(results),
+                    **self._search_paging(resp, total, len(results)),
                     "results": results,
                 },
             }
@@ -669,7 +883,20 @@ class UniProtRESTTool(BaseTool):
             return self._handle_id_mapping(arguments)
 
         # Build URL for standard accession-based queries
-        request_args = {k: v for k, v in arguments.items() if k != "compact"}
+        local_only_args = {
+            "compact",
+            "include_publications",
+            "publication_source",
+            "publication_limit",
+            "publication_cursor",
+            "comment_limit",
+            "comment_offset",
+            "feature_limit",
+            "feature_offset",
+            "reference_limit",
+            "reference_offset",
+        }
+        request_args = {k: v for k, v in arguments.items() if k not in local_only_args}
         url = self._build_url(request_args)
         try:
             resp = requests.get(url, timeout=self.timeout)
@@ -713,7 +940,7 @@ class UniProtRESTTool(BaseTool):
                         f"inactive/deleted ({reason_text})."
                     ),
                 }
-            result = self._extract_data(data, self.extract_path)
+            result = self._extract_data(data, self.extract_path, arguments)
 
             # Handle empty results
             if isinstance(result, list) and len(result) == 0:
@@ -726,6 +953,29 @@ class UniProtRESTTool(BaseTool):
 
             return result
 
+        publication_metadata: Dict[str, Any] = {}
+        publications = None
+        include_publications_default = (
+            self.tool_config.get("parameter", {})
+            .get("properties", {})
+            .get("include_publications", {})
+            .get("default", False)
+        )
+        if arguments.get("include_publications", include_publications_default):
+            try:
+                publications, publication_metadata = self._get_entry_publications(
+                    arguments.get("accession", ""), arguments
+                )
+            except (requests.exceptions.RequestException, ValueError) as exc:
+                publication_metadata = {
+                    "publications_complete": False,
+                    "publications_error": str(exc),
+                    "warning": (
+                        "The UniProtKB entry was retrieved, but its separate "
+                        "publications endpoint could not be retrieved."
+                    ),
+                }
+
         compact_default = (
             self.tool_config.get("parameter", {})
             .get("properties", {})
@@ -733,8 +983,17 @@ class UniProtRESTTool(BaseTool):
             .get("default", False)
         )
         if arguments.get("compact", compact_default) is True:
-            return self._compact_entry(data)
+            result = self._compact_entry(data, arguments)
+            if publications is not None:
+                result["data"]["additional_publications"] = publications
+            result["metadata"].update(publication_metadata)
+            return result
 
+        if publications is not None or publication_metadata:
+            data = dict(data)
+            if publications is not None:
+                data["additionalPublications"] = publications
+            data["_tooluniverseMetadata"] = publication_metadata
         return data
 
     # Method bindings for backward compatibility

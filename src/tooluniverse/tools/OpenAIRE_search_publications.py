@@ -1,7 +1,7 @@
 """
 OpenAIRE_search_publications
 
-Search OpenAIRE Explore for research products including publications, datasets, and software. Ope...
+Search OpenAIRE publications, datasets, or software with recoverable one-based pagination. Page s...
 """
 
 from typing import Any, Optional, Callable
@@ -10,22 +10,25 @@ from ._shared_client import get_shared_client
 
 def OpenAIRE_search_publications(
     query: str,
-    max_results: int,
-    type_: str,
+    max_results: Optional[int] = 10,
+    page: Optional[int] = 1,
+    type_: Optional[str] = "publications",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
-    Search OpenAIRE Explore for research products including publications, datasets, and software. Ope...
+    Search OpenAIRE publications, datasets, or software with recoverable one-based pagination. Page s...
 
     Parameters
     ----------
     query : str
         Search query for OpenAIRE research products. Use keywords to search across ti...
     max_results : int
-        Maximum number of results to return. Default is 10, maximum is 100.
+        Results per page (1-1000). Out-of-range values are rejected rather than silen...
+    page : int
+        One-based page. OpenAIRE requires page * max_results <= 10000; continue with ...
     type_ : str
         Type of research product to search: 'publications', 'datasets', or 'software'...
     stream_callback : Callable, optional
@@ -37,14 +40,19 @@ def OpenAIRE_search_publications(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"query": query, "max_results": max_results, "type": type_}.items()
+        for k, v in {
+            "query": query,
+            "max_results": max_results,
+            "page": page,
+            "type": type_,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

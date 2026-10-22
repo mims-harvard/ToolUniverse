@@ -138,6 +138,32 @@ class AllianceGenomeTool(BaseTool):
             }
 
     @staticmethod
+    def _page_parameters(arguments: Dict[str, Any]) -> tuple[int, int]:
+        """Validate the Alliance API's one-based page pagination."""
+        limit = arguments.get("limit", 20)
+        page = arguments.get("page", 1)
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 100:
+            raise ValueError("limit must be an integer from 1 to 100")
+        if isinstance(page, bool) or not isinstance(page, int) or page < 1:
+            raise ValueError("page must be a positive integer")
+        return limit, page
+
+    @staticmethod
+    def _page_metadata(total: int, returned: int, limit: int, page: int) -> Dict[str, Any]:
+        total_pages = (total + limit - 1) // limit if total else 0
+        has_more = page < total_pages
+        return {
+            "total_results": total,
+            "returned": returned,
+            "limit": limit,
+            "page": page,
+            "total_pages": total_pages,
+            "has_more": has_more,
+            "next_page": page + 1 if has_more else None,
+            "result_set_complete": page == 1 and returned == total,
+        }
+
+    @staticmethod
     def _normalize_gene_id(gene_id: str) -> str:
         """Auto-add required namespace prefix if missing."""
         if not gene_id:
@@ -217,14 +243,18 @@ class AllianceGenomeTool(BaseTool):
         cross_refs = data.get("crossReferences")
         if cross_refs is None:
             cross_refs = (data.get("crossReferenceMap") or {}).get("other", [])
+        xref_offset = max(int(arguments.get("xref_offset") or 0), 0)
+        xref_limit = min(max(int(arguments.get("xref_limit") or 10), 1), 500)
+        xref_page = cross_refs[xref_offset : xref_offset + xref_limit]
         xref_list = [
             {
                 "name": x.get("displayName") or x.get("name"),
                 "curie": x.get("referencedCurie"),
                 "url": x.get("crossRefCompleteUrl"),
             }
-            for x in cross_refs[:10]
+            for x in xref_page
         ]
+        xrefs_truncated = xref_offset + len(xref_page) < len(cross_refs)
 
         gene_type = data.get("geneType") or data.get("soTerm") or {}
 
@@ -257,6 +287,13 @@ class AllianceGenomeTool(BaseTool):
                     "strand": loc_info.get("strand"),
                 },
                 "cross_references": xref_list,
+                "cross_references_total": len(cross_refs),
+                "xref_offset": xref_offset,
+                "cross_references_returned": len(xref_page),
+                "cross_references_truncated": xrefs_truncated,
+                "next_xref_offset": (
+                    xref_offset + len(xref_page) if xrefs_truncated else None
+                ),
             },
             "metadata": {
                 "query_gene_id": gene_id,
@@ -275,25 +312,39 @@ class AllianceGenomeTool(BaseTool):
         if not query:
             return {"status": "error", "error": "query parameter is required"}
 
-        limit = int(arguments.get("limit", 10))
-        # When filtering by species, fetch more candidates so client-side filtering
-        # still returns enough results (Alliance has no server-side species filter).
-        # The autocomplete endpoint no longer honours a `category=gene` query
-        # param (it returns zero results) and mixes gene/disease/dataset hits,
-        # so fetch a buffer unfiltered and keep gene hits client-side. The gene
-        # id is now in `curie` (was `primaryKey`).
-        _SPECIES_FETCH_MULTIPLIER = 5
-        fetch_limit = min(max(limit * _SPECIES_FETCH_MULTIPLIER, 25), 100)
-        params = {"q": query, "limit": fetch_limit}
+        limit = arguments.get("limit", 10)
+        offset = arguments.get("offset", 0)
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 50:
+            return {
+                "status": "error",
+                "error": "limit must be an integer from 1 to 50",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+            }
+
+        # Autocomplete ignores limit/offset and always returns ten mixed hits.
+        # Full search exposes exact totals and real offset pagination.
+        params: Dict[str, Any] = {
+            "q": query,
+            "category": "gene_search_result",
+            "limit": limit,
+            "offset": offset,
+        }
+        if species_name:
+            params["species"] = species_name
 
         response = requests.get(
-            f"{ALLIANCE_BASE}/search_autocomplete",
+            f"{ALLIANCE_BASE}/search",
             params=params,
             headers={"Accept": "application/json"},
             timeout=self.timeout,
         )
         response.raise_for_status()
-        raw_results = response.json().get("results", [])
+        payload = response.json()
+        raw_results = payload.get("results", [])
 
         # Keep only gene hits (autocomplete also returns diseases, GO terms,
         # datasets, …).
@@ -301,7 +352,7 @@ class AllianceGenomeTool(BaseTool):
             r for r in raw_results if r.get("category") == "gene_search_result"
         ]
 
-        if species_prefix:
+        if species_prefix and not species_name:
             gene_results = [
                 r
                 for r in gene_results
@@ -314,22 +365,32 @@ class AllianceGenomeTool(BaseTool):
                 "name": r.get("name"),
                 "gene_id": r.get("curie"),
                 "category": "gene",
+                "species": r.get("species"),
             }
-            for r in gene_results[:limit]
+            for r in gene_results
         ]
 
+        total_results = payload.get("total")
+        if not isinstance(total_results, int):
+            total_results = len(genes)
+        next_offset = offset + len(genes)
+        has_more = next_offset < total_results
+
         metadata: Dict[str, Any] = {
-            "total_results": len(genes),
+            "total_results": total_results,
+            "returned": len(genes),
+            "offset": offset,
+            "limit": limit,
+            "has_more": has_more,
+            "next_offset": next_offset if has_more else None,
+            "result_set_complete": offset == 0 and len(genes) == total_results,
             "query": query,
             "source": "Alliance of Genome Resources",
         }
         if species_name:
             metadata["species"] = species_name
 
-        # Alliance's autocomplete matches gene symbols/synonyms, not descriptive
-        # gene *names*: e.g. "insulin" returns GO terms and diseases but no gene,
-        # while the symbol "INS" returns the genes. When no gene matched but other
-        # entity types did, say so instead of an indistinguishable empty result.
+        # Preserve an actionable note for legacy/mocked mixed-category payloads.
         if not genes and raw_results:
             other = sorted(
                 {
@@ -338,10 +399,14 @@ class AllianceGenomeTool(BaseTool):
                 }
             )
             metadata["note"] = (
-                f"No gene matched '{query}'. The Alliance autocomplete matches gene "
-                f"symbols/synonyms rather than descriptive names, and it instead "
+                f"No gene matched '{query}'. The Alliance response instead "
                 f"matched: {', '.join(c for c in other if c)}. Try the official gene "
                 "symbol (e.g. 'INS' for insulin)."
+            )
+        elif not genes and total_results == 0:
+            metadata["note"] = (
+                f"No Alliance gene matched '{query}'. Try an official gene symbol, "
+                "synonym, or a less restrictive term."
             )
 
         return {"status": "success", "data": genes, "metadata": metadata}
@@ -359,10 +424,9 @@ class AllianceGenomeTool(BaseTool):
         if not gene_id:
             return {"status": "error", "error": "gene_id parameter is required"}
 
-        limit = arguments.get("limit", 20)
-        page = arguments.get("page", 1)
+        limit, page = self._page_parameters(arguments)
         url = f"{ALLIANCE_BASE}/gene/{gene_id}/phenotypes"
-        params = {"limit": min(int(limit), 100), "page": int(page)}
+        params = {"limit": limit, "page": page}
 
         response = requests.get(
             url,
@@ -398,10 +462,8 @@ class AllianceGenomeTool(BaseTool):
             "status": "success",
             "data": phenotypes,
             "metadata": {
-                "total_results": total,
-                "returned": len(phenotypes),
+                **self._page_metadata(total, len(phenotypes), limit, page),
                 "query_gene_id": gene_id,
-                "page": int(page),
                 "source": "Alliance of Genome Resources",
             },
         }
@@ -415,10 +477,9 @@ class AllianceGenomeTool(BaseTool):
                 "error": "disease_id parameter is required (e.g., 'DOID:162' for cancer)",
             }
 
-        limit = arguments.get("limit", 20)
-        page = arguments.get("page", 1)
+        limit, page = self._page_parameters(arguments)
         url = f"{ALLIANCE_BASE}/disease/{disease_id}/genes"
-        params = {"limit": min(int(limit), 100), "page": int(page)}
+        params = {"limit": limit, "page": page}
 
         response = requests.get(
             url,
@@ -452,10 +513,8 @@ class AllianceGenomeTool(BaseTool):
             "status": "success",
             "data": genes,
             "metadata": {
-                "total_results": total,
-                "returned": len(genes),
+                **self._page_metadata(total, len(genes), limit, page),
                 "query_disease_id": disease_id,
-                "page": int(page),
                 "source": "Alliance of Genome Resources",
             },
         }
@@ -636,12 +695,16 @@ class AllianceGenomeTool(BaseTool):
         except (TypeError, ValueError):
             limit = 50
         limit = max(1, min(limit, 100))
+        try:
+            page = max(1, int(arguments.get("page", 1)))
+        except (TypeError, ValueError):
+            page = 1
 
         url = f"{ALLIANCE_BASE}/expression"
         response = requests.post(
             url,
             json=[gene_id],
-            params={"limit": limit},
+            params={"limit": limit, "page": page},
             headers={"Accept": "application/json", "Content-Type": "application/json"},
             timeout=self.timeout,
         )
@@ -667,11 +730,20 @@ class AllianceGenomeTool(BaseTool):
                 }
             )
 
+        total = data.get("total", len(annotations))
+        total_pages = (total + limit - 1) // limit if total else 0
+        has_more = page < total_pages
         return {
             "status": "success",
             "data": {
-                "total_annotations": data.get("total", len(annotations)),
+                "total_annotations": total,
                 "returned": len(annotations),
+                "limit": limit,
+                "page": page,
+                "total_pages": total_pages,
+                "has_more": has_more,
+                "next_page": page + 1 if has_more else None,
+                "result_set_complete": page == 1 and len(annotations) == total,
                 "annotations": annotations,
             },
             "metadata": {
@@ -867,13 +939,14 @@ class AllianceGenomeTool(BaseTool):
         if not gene_id:
             return {"status": "error", "error": "gene_id parameter is required"}
 
-        limit = min(int(arguments.get("limit", 20)), 100)
+        limit = min(max(1, int(arguments.get("limit", 20))), 100)
+        page = max(1, int(arguments.get("page", 1)))
         stringency = arguments.get("stringency", "stringent")
 
         orth_data = self._alliance_get(
             gene_id,
             "orthologs",
-            {"limit": limit, "page": 1, "filter.stringency": stringency},
+            {"limit": limit, "page": page, "filter.stringency": stringency},
         )
         orthologs = []
         for r in orth_data.get("results", []):
@@ -900,7 +973,9 @@ class AllianceGenomeTool(BaseTool):
                 }
             )
 
-        para_data = self._alliance_get(gene_id, "paralogs", {"limit": limit, "page": 1})
+        para_data = self._alliance_get(
+            gene_id, "paralogs", {"limit": limit, "page": page}
+        )
         paralogs = []
         for r in para_data.get("results", []):
             para = r.get("geneToGeneParalogy", {})
@@ -920,17 +995,39 @@ class AllianceGenomeTool(BaseTool):
                 }
             )
 
+        ortholog_total = orth_data.get("total", len(orthologs))
+        paralog_total = para_data.get("total", len(paralogs))
+        ortholog_has_more = page * limit < ortholog_total
+        paralog_has_more = page * limit < paralog_total
+        has_more = ortholog_has_more or paralog_has_more
+
         return {
             "status": "success",
             "data": {
-                "ortholog_count": orth_data.get("total", len(orthologs)),
+                "ortholog_count": ortholog_total,
                 "orthologs": orthologs,
-                "paralog_count": para_data.get("total", len(paralogs)),
+                "paralog_count": paralog_total,
                 "paralogs": paralogs,
             },
             "metadata": {
                 "query_gene_id": gene_id,
                 "stringency": stringency,
+                "page": page,
+                "limit": limit,
+                "has_more": has_more,
+                "next_page": page + 1 if has_more else None,
+                "categories": {
+                    "orthologs": {
+                        "total": ortholog_total,
+                        "returned": len(orthologs),
+                        "has_more": ortholog_has_more,
+                    },
+                    "paralogs": {
+                        "total": paralog_total,
+                        "returned": len(paralogs),
+                        "has_more": paralog_has_more,
+                    },
+                },
                 "source": "Alliance of Genome Resources",
             },
         }
@@ -943,8 +1040,7 @@ class AllianceGenomeTool(BaseTool):
         if not gene_id:
             return {"status": "error", "error": "gene_id parameter is required"}
 
-        limit = min(int(arguments.get("limit", 20)), 100)
-        page = int(arguments.get("page", 1))
+        limit, page = self._page_parameters(arguments)
 
         data = self._alliance_get(
             gene_id, "molecular-interactions", {"limit": limit, "page": page}
@@ -982,10 +1078,13 @@ class AllianceGenomeTool(BaseTool):
             "status": "success",
             "data": interactions,
             "metadata": {
-                "total_results": data.get("total", len(interactions)),
-                "returned": len(interactions),
+                **self._page_metadata(
+                    data.get("total", len(interactions)),
+                    len(interactions),
+                    limit,
+                    page,
+                ),
                 "query_gene_id": gene_id,
-                "page": page,
                 "source": "Alliance of Genome Resources",
             },
         }
@@ -996,10 +1095,11 @@ class AllianceGenomeTool(BaseTool):
         if not gene_id:
             return {"status": "error", "error": "gene_id parameter is required"}
 
-        limit = min(int(arguments.get("limit", 20)), 100)
+        limit = min(max(1, int(arguments.get("limit", 20))), 100)
+        page = max(1, int(arguments.get("page", 1)))
 
         allele_data = self._alliance_get(
-            gene_id, "alleles", {"limit": limit, "page": 1}
+            gene_id, "alleles", {"limit": limit, "page": page}
         )
         alleles = []
         for r in allele_data.get("results", []):
@@ -1021,7 +1121,9 @@ class AllianceGenomeTool(BaseTool):
                 }
             )
 
-        model_data = self._alliance_get(gene_id, "models", {"limit": limit, "page": 1})
+        model_data = self._alliance_get(
+            gene_id, "models", {"limit": limit, "page": page}
+        )
         models = []
         for r in model_data.get("results", []):
             model = r.get("model") or {}
@@ -1039,16 +1141,38 @@ class AllianceGenomeTool(BaseTool):
                 }
             )
 
+        allele_total = allele_data.get("total", len(alleles))
+        model_total = model_data.get("total", len(models))
+        allele_has_more = page * limit < allele_total
+        model_has_more = page * limit < model_total
+        has_more = allele_has_more or model_has_more
+
         return {
             "status": "success",
             "data": {
-                "allele_count": allele_data.get("total", len(alleles)),
+                "allele_count": allele_total,
                 "alleles": alleles,
-                "model_count": model_data.get("total", len(models)),
+                "model_count": model_total,
                 "models": models,
             },
             "metadata": {
                 "query_gene_id": gene_id,
+                "page": page,
+                "limit": limit,
+                "has_more": has_more,
+                "next_page": page + 1 if has_more else None,
+                "categories": {
+                    "alleles": {
+                        "total": allele_total,
+                        "returned": len(alleles),
+                        "has_more": allele_has_more,
+                    },
+                    "models": {
+                        "total": model_total,
+                        "returned": len(models),
+                        "has_more": model_has_more,
+                    },
+                },
                 "source": "Alliance of Genome Resources",
             },
         }

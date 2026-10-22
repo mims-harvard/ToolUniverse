@@ -79,6 +79,14 @@ class EnsemblOverlapTool(BaseTool):
         species = arguments.get("species", "human")
         region = arguments.get("region", "")
         feature_types = arguments.get("feature_types", "gene")
+        try:
+            limit = max(1, int(arguments.get("limit") or 100))
+            offset = max(0, int(arguments.get("offset", 0)))
+        except (TypeError, ValueError):
+            return {
+                "status": "error",
+                "error": "Parameters 'limit' and 'offset' must be integers.",
+            }
 
         if not region:
             return {
@@ -121,7 +129,7 @@ class EnsemblOverlapTool(BaseTool):
 
         # Format results
         formatted_features = []
-        for item in data[:100]:
+        for item in data[offset : offset + limit]:
             feature = {
                 "feature_type": item.get("feature_type"),
                 "id": item.get("id"),
@@ -139,19 +147,33 @@ class EnsemblOverlapTool(BaseTool):
             formatted_features.append(feature)
 
         type_summary = {k: len(v) for k, v in by_type.items()}
+        total_features = len(data)
+        has_more = offset + len(formatted_features) < total_features
 
         return {
             "status": "success",
             "data": {
                 "region": region,
                 "species": species,
+                "total_features": total_features,
+                "returned": len(formatted_features),
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_offset": offset + len(formatted_features) if has_more else None,
                 "features": formatted_features,
                 "type_summary": type_summary,
             },
             "metadata": {
                 "source": "Ensembl REST API (rest.ensembl.org)",
-                "total_features": len(data),
+                "total_features": total_features,
                 "returned": len(formatted_features),
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_offset": offset + len(formatted_features) if has_more else None,
             },
         }
 
@@ -159,6 +181,14 @@ class EnsemblOverlapTool(BaseTool):
         """Get features overlapping an Ensembl gene ID."""
         gene_id = arguments.get("gene_id", "")
         feature_types = arguments.get("feature_types", "gene")
+        try:
+            limit = max(1, int(arguments.get("limit") or 100))
+            offset = max(0, int(arguments.get("offset", 0)))
+        except (TypeError, ValueError):
+            return {
+                "status": "error",
+                "error": "Parameters 'limit' and 'offset' must be integers.",
+            }
 
         if not gene_id:
             return {
@@ -188,7 +218,7 @@ class EnsemblOverlapTool(BaseTool):
             by_type[ft].append(item)
 
         formatted_features = []
-        for item in data[:100]:
+        for item in data[offset : offset + limit]:
             feature = {
                 "feature_type": item.get("feature_type"),
                 "id": item.get("id"),
@@ -208,17 +238,31 @@ class EnsemblOverlapTool(BaseTool):
             formatted_features.append(feature)
 
         type_summary = {k: len(v) for k, v in by_type.items()}
+        total_features = len(data)
+        has_more = offset + len(formatted_features) < total_features
 
         return {
             "status": "success",
             "data": {
                 "gene_id": gene_id,
+                "total_features": total_features,
+                "returned": len(formatted_features),
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_offset": offset + len(formatted_features) if has_more else None,
                 "features": formatted_features,
                 "type_summary": type_summary,
             },
             "metadata": {
                 "source": "Ensembl REST API (rest.ensembl.org)",
-                "total_features": len(data),
+                "total_features": total_features,
                 "returned": len(formatted_features),
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_offset": offset + len(formatted_features) if has_more else None,
             },
         }

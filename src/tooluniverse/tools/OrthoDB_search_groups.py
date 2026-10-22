@@ -1,7 +1,7 @@
 """
 OrthoDB_search_groups
 
-Search for orthologous groups by gene/protein name in OrthoDB v12. OrthoDB catalogs orthologous g...
+Search for orthologous groups by gene/protein name in OrthoDB v12 with server-backed offset pagin...
 """
 
 from typing import Any, Optional, Callable
@@ -10,27 +10,30 @@ from ._shared_client import get_shared_client
 
 def OrthoDB_search_groups(
     query: str,
-    species: Optional[int | Any] = None,
-    level: Optional[int | Any] = None,
+    species: Optional[int] = None,
+    level: Optional[int] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search for orthologous groups by gene/protein name in OrthoDB v12. OrthoDB catalogs orthologous g...
+    Search for orthologous groups by gene/protein name in OrthoDB v12 with server-backed offset pagin...
 
     Parameters
     ----------
     query : str
         Gene or protein name to search. Examples: 'BRCA1', 'TP53', 'insulin', 'EGFR'.
-    species : int | Any
+    species : int
         NCBI taxonomy ID to filter by species. Examples: 9606 (human), 10090 (mouse),...
-    level : int | Any
+    level : int
         Taxonomic level for group definition. Examples: 7742 (Vertebrata), 33208 (Met...
     limit : int
-        Maximum number of groups to return (1-50). Default: 10.
+        Page size (1-50). Default: 10.
+    offset : int
+        Zero-based result offset. Default 0; continue with data.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def OrthoDB_search_groups(
             "species": species,
             "level": level,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

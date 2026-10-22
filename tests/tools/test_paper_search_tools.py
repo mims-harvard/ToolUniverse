@@ -17,6 +17,21 @@ from tooluniverse import ToolUniverse
 
 
 @pytest.mark.integration
+
+def _papers(result):
+    """Unwrap a paper-search result to its list of records.
+
+    These tools now return {"status", "data", "metadata"} so that truncation
+    and continuation are visible; previously they returned a bare list, which
+    gave callers no way to tell a full page from a complete result set.
+    """
+    if isinstance(result, dict):
+        assert result.get("status") == "success", result
+        assert "metadata" in result, "paging metadata must accompany results"
+        return result.get("data") or result.get("result") or []
+    return result
+
+
 class TestPaperSearchTools(unittest.TestCase):
     """Test cases for paper search tools"""
 
@@ -59,11 +74,11 @@ class TestPaperSearchTools(unittest.TestCase):
                 "sort_order": "descending",
             },
         }
-        result = self.tu.run_one_function(function_call)
+        papers = _papers(self.tu.run_one_function(function_call))
 
-        self.assertIsInstance(result, list)
-        if result:
-            paper = result[0]
+        self.assertIsInstance(papers, list)
+        if papers:
+            paper = papers[0]
             self.assertIn("title", paper)
             self.assertIn("abstract", paper)
             self.assertIn("authors", paper)
@@ -223,11 +238,11 @@ class TestPaperSearchTools(unittest.TestCase):
                 "type": "articles",
             },
         }
-        result = self.tu.run_one_function(function_call)
+        papers = _papers(self.tu.run_one_function(function_call))
 
-        self.assertIsInstance(result, list)
-        if result:
-            paper = result[0]
+        self.assertIsInstance(papers, list)
+        if papers:
+            paper = papers[0]
             self.assertIn("title", paper)
             self.assertIn("authors", paper)
             self.assertIn("data_quality", paper)
@@ -260,10 +275,10 @@ class TestPaperSearchTools(unittest.TestCase):
                 "sort_order": "descending",
             },
         }
-        result = self.tu.run_one_function(function_call)
+        papers = _papers(self.tu.run_one_function(function_call))
 
-        if result:
-            paper = result[0]
+        if papers:
+            paper = papers[0]
             if "data_quality" in paper:
                 quality = paper["data_quality"]
                 expected_fields = [

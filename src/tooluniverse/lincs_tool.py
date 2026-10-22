@@ -74,6 +74,21 @@ class LINCSSignatureTool(BaseTool):
             return {"status": "error", "error": "drug_name parameter is required"}
 
         limit = arguments.get("limit", 20)
+        offset = arguments.get("offset", 0)
+        if limit is None:
+            limit = 20
+        if offset is None:
+            offset = 0
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 1000:
+            return {
+                "status": "error",
+                "error": "limit must be an integer between 1 and 1000",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+            }
         cell_line = arguments.get("cell_line")
 
         # Build filter
@@ -81,7 +96,9 @@ class LINCSSignatureTool(BaseTool):
         if cell_line:
             where["meta.cell_line"] = cell_line
 
-        payload = {"filter": {"where": where, "limit": min(limit, 100)}}
+        # SigCom has no count endpoint. Fetch one lookahead record so has_more
+        # is reliable without pretending that the current page length is total.
+        payload = {"filter": {"where": where, "limit": limit + 1, "skip": offset}}
 
         resp = requests.post(
             f"{LINCS_BASE}/signatures/find",
@@ -90,6 +107,8 @@ class LINCSSignatureTool(BaseTool):
         )
         resp.raise_for_status()
         signatures = resp.json()
+        has_more = len(signatures) > limit
+        signatures = signatures[:limit]
 
         results = []
         for sig in signatures:
@@ -114,7 +133,19 @@ class LINCSSignatureTool(BaseTool):
             "status": "success",
             "data": results,
             "metadata": {
-                "total_results": len(results),
+                "total_results": (
+                    offset + len(results)
+                    if not has_more and (offset == 0 or bool(results))
+                    else None
+                ),
+                "total_is_exact": not has_more and (offset == 0 or bool(results)),
+                "matches_lower_bound": offset + len(results) + (1 if has_more else 0),
+                "returned": len(results),
+                "limit": limit,
+                "offset": offset,
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_offset": offset + len(results) if has_more else None,
                 "query_drug": drug_name,
                 "query_cell_line": cell_line,
                 "source": "LINCS SigCom",
@@ -132,8 +163,23 @@ class LINCSSignatureTool(BaseTool):
 
         keyword = arguments.get("keyword", "").lower()
         limit = arguments.get("limit", 50)
+        offset = arguments.get("offset", 0)
+        if limit is None:
+            limit = 50
+        if offset is None:
+            offset = 0
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 1000:
+            return {
+                "status": "error",
+                "error": "limit must be an integer between 1 and 1000",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+            }
 
-        results = []
+        matching_libraries = []
         for lib in libraries:
             meta = lib.get("meta", {})
             entry = {
@@ -148,16 +194,23 @@ class LINCSSignatureTool(BaseTool):
                 searchable = " ".join(str(v) for v in entry.values() if v).lower()
                 if keyword not in searchable:
                     continue
-            results.append(entry)
-            if len(results) >= limit:
-                break
+            matching_libraries.append(entry)
+
+        results = matching_libraries[offset : offset + limit]
+        has_more = offset + len(results) < len(matching_libraries)
 
         return {
             "status": "success",
             "data": results,
             "metadata": {
                 "total_libraries": len(libraries),
+                "total_matches": len(matching_libraries),
                 "returned": len(results),
+                "limit": limit,
+                "offset": offset,
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_offset": offset + len(results) if has_more else None,
                 "keyword_filter": keyword or None,
                 "source": "LINCS SigCom",
             },

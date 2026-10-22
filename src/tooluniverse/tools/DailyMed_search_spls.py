@@ -1,7 +1,7 @@
 """
 DailyMed_search_spls
 
-Search SPL list using multiple filter conditions (drug_name/ndc/rxcui/setid) and return metadata ...
+Search DailyMed SPL labels by any one or more of drug name, NDC, RxCUI, Set ID, or publication da...
 """
 
 from typing import Any, Optional, Callable
@@ -9,21 +9,22 @@ from ._shared_client import get_shared_client
 
 
 def DailyMed_search_spls(
-    drug_name: str,
+    drug_name: Optional[str] = None,
     ndc: Optional[str] = None,
     rxcui: Optional[str] = None,
     setid: Optional[str] = None,
     published_date_gte: Optional[str] = None,
     published_date_eq: Optional[str] = None,
-    pagesize: Optional[int] = 100,
+    pagesize: Optional[int] = None,
+    limit: Optional[int] = None,
     page: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
-    Search SPL list using multiple filter conditions (drug_name/ndc/rxcui/setid) and return metadata ...
+    Search DailyMed SPL labels by any one or more of drug name, NDC, RxCUI, Set ID, or publication da...
 
     Parameters
     ----------
@@ -40,7 +41,9 @@ def DailyMed_search_spls(
     published_date_eq : str
         Published date == specified date, format 'YYYY-MM-DD'.
     pagesize : int
-        Number of items per page, maximum 100, default 100.
+        Number of items per page (1-100). Server-side default is 100. Left undeclared...
+    limit : int
+        Alias for pagesize (1-100). Applied when pagesize is not supplied.
     page : int
         Page number, starts from 1, default 1.
     stream_callback : Callable, optional
@@ -52,7 +55,7 @@ def DailyMed_search_spls(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
@@ -67,6 +70,7 @@ def DailyMed_search_spls(
             "published_date_gte": published_date_gte,
             "published_date_eq": published_date_eq,
             "pagesize": pagesize,
+            "limit": limit,
             "page": page,
         }.items()
         if v is not None

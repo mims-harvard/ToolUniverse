@@ -23,7 +23,25 @@ class OpenAIREDatasetTool(BaseTool):
         keywords = (arguments.get("keywords") or "").strip()
         funder = arguments.get("funder")
         country = arguments.get("country")
-        size = max(1, min(int(arguments.get("size", 10)), 100))
+        size = arguments.get("size", 10)
+        page = arguments.get("page", 1)
+
+        if isinstance(size, bool) or not isinstance(size, int) or not 1 <= size <= 100:
+            return {
+                "status": "error",
+                "error": {
+                    "message": "Invalid size parameter",
+                    "details": "size must be an integer between 1 and 100",
+                },
+            }
+        if isinstance(page, bool) or not isinstance(page, int) or page < 1:
+            return {
+                "status": "error",
+                "error": {
+                    "message": "Invalid page parameter",
+                    "details": "page must be a positive integer",
+                },
+            }
 
         if not keywords:
             return {
@@ -34,7 +52,12 @@ class OpenAIREDatasetTool(BaseTool):
                 },
             }
 
-        params = {"keywords": keywords, "format": "json", "size": size}
+        params = {
+            "keywords": keywords,
+            "format": "json",
+            "size": size,
+            "page": page,
+        }
         if funder:
             params["funder"] = funder
         if country:
@@ -111,6 +134,14 @@ class OpenAIREDatasetTool(BaseTool):
             "metadata": {
                 "source": "OpenAIRE",
                 "api": OPENAIRE_DATASETS_URL,
+                "page": page,
+                "size": size,
+                "returned": len(datasets),
+                "total_results": total,
+                "total_results_is_exact": True,
+                "has_more": page * size < total,
+                "next_page": page + 1 if page * size < total else None,
+                "result_set_complete": page == 1 and len(datasets) == total,
             },
         }
 

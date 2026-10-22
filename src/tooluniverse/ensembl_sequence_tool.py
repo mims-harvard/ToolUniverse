@@ -76,8 +76,45 @@ class EnsemblSequenceTool(BaseTool):
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
+    @staticmethod
+    def _page_parameters(arguments: Dict[str, Any]):
+        max_length = arguments.get("max_length", 10000)
+        sequence_offset = arguments.get("sequence_offset", 0)
+        if (
+            isinstance(max_length, bool)
+            or not isinstance(max_length, int)
+            or max_length < 1
+        ):
+            return None, None, "max_length must be a positive integer"
+        if (
+            isinstance(sequence_offset, bool)
+            or not isinstance(sequence_offset, int)
+            or sequence_offset < 0
+        ):
+            return None, None, "sequence_offset must be a non-negative integer"
+        return max_length, sequence_offset, None
+
+    @staticmethod
+    def _paginate_sequence(seq: str, max_length: int, sequence_offset: int):
+        page = seq[sequence_offset : sequence_offset + max_length]
+        has_more = sequence_offset + len(page) < len(seq)
+        return page, {
+            "sequence_length": len(seq),
+            "sequence_returned_length": len(page),
+            "sequence_offset": sequence_offset,
+            "max_length": max_length,
+            "has_more": has_more,
+            "next_sequence_offset": (
+                sequence_offset + len(page) if has_more else None
+            ),
+            "result_set_complete": sequence_offset == 0 and len(page) == len(seq),
+        }
+
     def _get_region_sequence(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get DNA sequence for a genomic region."""
+        max_length, sequence_offset, page_error = self._page_parameters(arguments)
+        if page_error:
+            return {"status": "error", "error": page_error}
         species = arguments.get("species", "homo_sapiens")
         region = arguments.get("region", "")
         if not region:
@@ -102,6 +139,9 @@ class EnsemblSequenceTool(BaseTool):
         data = response.json()
 
         seq = data.get("seq", "")
+        sequence_page, pagination = self._paginate_sequence(
+            seq, max_length, sequence_offset
+        )
         return {
             "status": "success",
             "data": {
@@ -109,19 +149,24 @@ class EnsemblSequenceTool(BaseTool):
                 "region": region,
                 "molecule": data.get("molecule", "dna"),
                 "description": data.get("id", ""),
-                "sequence_length": len(seq),
-                "sequence": seq[:10000],
+                **pagination,
+                "sequence": sequence_page,
             },
             "metadata": {
                 "source": "Ensembl REST API - Region Sequence",
                 "species": species,
                 "region": region,
-                "truncated": len(seq) > 10000,
+                "truncated": not pagination["result_set_complete"],
+                "has_more": pagination["has_more"],
+                "next_sequence_offset": pagination["next_sequence_offset"],
             },
         }
 
     def _get_id_sequence(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get sequence for an Ensembl ID (gene, transcript, or protein)."""
+        max_length, sequence_offset, page_error = self._page_parameters(arguments)
+        if page_error:
+            return {"status": "error", "error": page_error}
         ensembl_id = arguments.get("ensembl_id", "")
         if not ensembl_id:
             return {
@@ -129,7 +174,14 @@ class EnsemblSequenceTool(BaseTool):
                 "error": "ensembl_id parameter is required (e.g., 'ENSP00000269305' for protein, 'ENST00000269305' for transcript)",
             }
 
-        seq_type = arguments.get("type", "protein")
+        seq_type = arguments.get("type")
+        if not seq_type:
+            if ensembl_id.upper().startswith("ENSP"):
+                seq_type = "protein"
+            elif ensembl_id.upper().startswith("ENST"):
+                seq_type = "cdna"
+            else:
+                seq_type = "genomic"
 
         url = f"{ENSEMBL_REST_BASE_URL}/sequence/id/{ensembl_id}"
         params = {"content-type": "application/json"}
@@ -144,6 +196,9 @@ class EnsemblSequenceTool(BaseTool):
 
         seq = data.get("seq", "")
         molecule = data.get("molecule", "")
+        sequence_page, pagination = self._paginate_sequence(
+            seq, max_length, sequence_offset
+        )
 
         return {
             "status": "success",
@@ -151,13 +206,15 @@ class EnsemblSequenceTool(BaseTool):
                 "ensembl_id": data.get("id", ensembl_id),
                 "molecule": molecule,
                 "description": data.get("desc"),
-                "sequence_length": len(seq),
-                "sequence": seq[:10000],
+                **pagination,
+                "sequence": sequence_page,
             },
             "metadata": {
                 "source": "Ensembl REST API - ID Sequence",
                 "ensembl_id": ensembl_id,
                 "type": seq_type,
-                "truncated": len(seq) > 10000,
+                "truncated": not pagination["result_set_complete"],
+                "has_more": pagination["has_more"],
+                "next_sequence_offset": pagination["next_sequence_offset"],
             },
         }

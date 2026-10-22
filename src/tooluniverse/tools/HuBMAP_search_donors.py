@@ -1,7 +1,7 @@
 """
 HuBMAP_search_donors
 
-Search HuBMAP (Human BioMolecular Atlas Program) human Donors -- the individuals from whom all Hu...
+Search HuBMAP human Donors with normalized demographics, exact totals, and Elasticsearch offset p...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,14 @@ def HuBMAP_search_donors(
     group_name: Optional[str] = None,
     query: Optional[str] = None,
     limit: Optional[int] = 10,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search HuBMAP (Human BioMolecular Atlas Program) human Donors -- the individuals from whom all Hu...
+    Search HuBMAP human Donors with normalized demographics, exact totals, and Elasticsearch offset p...
 
     Parameters
     ----------
@@ -28,6 +29,8 @@ def HuBMAP_search_donors(
         Free-text search across donor description and demographic values (e.g. 'femal...
     limit : int
         Maximum number of results (1-50, default 10).
+    offset : int
+        Number of matching donors to skip. Continue with metadata.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,12 @@ def HuBMAP_search_donors(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"group_name": group_name, "query": query, "limit": limit}.items()
+        for k, v in {
+            "group_name": group_name,
+            "query": query,
+            "limit": limit,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

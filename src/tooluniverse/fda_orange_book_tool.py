@@ -94,10 +94,11 @@ class FDAOrangeBookTool(BaseTool):
                 }
 
             search_query = "+AND+".join(search_terms)
-            limit = arguments.get("limit", 10)
+            limit = min(int(arguments.get("limit", 10)), 100)
+            offset = max(0, int(arguments.get("offset", 0)))
 
             url = f"{FDA_BASE_URL}/drug/drugsfda.json"
-            params = {"search": search_query, "limit": min(limit, 100)}
+            params = {"search": search_query, "limit": limit, "skip": offset}
 
             response = requests.get(url, params=params, timeout=30)
             response.raise_for_status()
@@ -128,11 +129,18 @@ class FDAOrangeBookTool(BaseTool):
 
                 drugs.append(drug_info)
 
+            total = data.get("meta", {}).get("results", {}).get("total", 0)
+            next_offset = offset + len(drugs)
+            has_more = next_offset < total
             return {
                 "status": "success",
                 "drugs": drugs,
                 "count": len(drugs),
-                "total": data.get("meta", {}).get("results", {}).get("total", 0),
+                "returned": len(drugs),
+                "offset": offset,
+                "total": total,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
             }
 
         except requests.exceptions.Timeout:
@@ -312,9 +320,11 @@ class FDAOrangeBookTool(BaseTool):
                     "error": "Must provide brand_name, generic_name, or drug_name",
                 }
 
-            # Step 1: Search by brand_name/generic_name to find the reference drug.
-            # Use limit=100 to avoid missing reference drugs beyond the default 10.
-            search_result = self._search_drug({**arguments, "limit": 100})
+            # Step 1: search every Drugs@FDA application page. The old
+            # fixed limit=100 undercounted common ingredients (IBUPROFEN has
+            # 272 matching applications) while presenting generic/reference
+            # counts as complete.
+            search_result = self._search_all_drugs(arguments)
             if search_result.get("status") != "success":
                 return search_result
 
@@ -335,8 +345,8 @@ class FDAOrangeBookTool(BaseTool):
                         break
 
                 if active_ingredient:
-                    ingredient_result = self._search_drug(
-                        {"generic_name": active_ingredient, "limit": 100}
+                    ingredient_result = self._search_all_drugs(
+                        {"generic_name": active_ingredient}
                     )
                     if ingredient_result.get("status") == "success":
                         # Merge, deduplicating by application_number
@@ -346,39 +356,45 @@ class FDAOrangeBookTool(BaseTool):
                                 drugs.append(d)
                                 seen.add(d["application_number"])
 
-            # Categorize reference vs generic products (one entry per application number)
+            # Categorize one record per application number. FDA's
+            # products.reference_drug flag identifies reference listed drugs;
+            # it does NOT mean every other product is a generic. Generic drug
+            # approvals are Abbreviated New Drug Applications (ANDAs), so use
+            # the application type rather than deriving a false classification
+            # from reference_drug != "Yes".
             reference_drugs = []
             generic_drugs = []
-            seen_ref_apps: set = set()
-            seen_gen_apps: set = set()
 
             for drug in drugs:
                 app_num = drug.get("application_number", "")
-                for product in drug.get("products", []):
-                    if product.get("reference_drug") == "Yes":
-                        if app_num not in seen_ref_apps:
-                            seen_ref_apps.add(app_num)
-                            reference_drugs.append(
-                                {
-                                    "application_number": app_num,
-                                    "brand_name": product.get("brand_name"),
-                                    "sponsor": drug.get("sponsor_name"),
-                                    "marketing_status": product.get("marketing_status"),
-                                }
-                            )
-                    else:
-                        if app_num not in seen_gen_apps:
-                            seen_gen_apps.add(app_num)
-                            generic_drugs.append(
-                                {
-                                    "application_number": app_num,
-                                    "brand_name": product.get("brand_name")
-                                    or "Generic",
-                                    "sponsor": drug.get("sponsor_name"),
-                                    "marketing_status": product.get("marketing_status"),
-                                    "te_code": product.get("te_code"),
-                                }
-                            )
+                products = drug.get("products", [])
+                reference_product = next(
+                    (p for p in products if p.get("reference_drug") == "Yes"),
+                    None,
+                )
+                if reference_product is not None:
+                    reference_drugs.append(
+                        {
+                            "application_number": app_num,
+                            "brand_name": reference_product.get("brand_name"),
+                            "sponsor": drug.get("sponsor_name"),
+                            "marketing_status": reference_product.get(
+                                "marketing_status"
+                            ),
+                        }
+                    )
+
+                if str(app_num).upper().startswith("ANDA"):
+                    product = products[0] if products else {}
+                    generic_drugs.append(
+                        {
+                            "application_number": app_num,
+                            "brand_name": product.get("brand_name") or "Generic",
+                            "sponsor": drug.get("sponsor_name"),
+                            "marketing_status": product.get("marketing_status"),
+                            "te_code": product.get("te_code"),
+                        }
+                    )
 
             return {
                 "status": "success",
@@ -387,6 +403,22 @@ class FDAOrangeBookTool(BaseTool):
                 "generic_drugs": generic_drugs,
                 "generic_count": len(generic_drugs),
                 "generics_available": len(generic_drugs) > 0,
+                "applications_scanned": len(drugs),
+                "counts_complete": True,
+                "classification_criteria": {
+                    "generic": (
+                        "application_number starts with ANDA (Abbreviated New "
+                        "Drug Application)"
+                    ),
+                    "reference": (
+                        "at least one Drugs@FDA product has reference_drug='Yes'"
+                    ),
+                    "counts_nonexclusive": (
+                        "An ANDA application can also be designated a reference "
+                        "drug; reference_count and generic_count need not sum to "
+                        "applications_scanned."
+                    ),
+                },
             }
 
         except Exception as e:
@@ -394,6 +426,52 @@ class FDAOrangeBookTool(BaseTool):
                 "status": "error",
                 "error": f"Failed to check generic availability: {str(e)}",
             }
+
+    def _search_all_drugs(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Retrieve every application for one Drugs@FDA search."""
+        base_arguments = {
+            k: v
+            for k, v in arguments.items()
+            if k not in ("operation", "limit", "offset")
+        }
+        offset = 0
+        drugs: List[Dict[str, Any]] = []
+        seen_apps = set()
+
+        while True:
+            page = self._search_drug(
+                {**base_arguments, "limit": 100, "offset": offset}
+            )
+            if page.get("status") != "success":
+                return {
+                    "status": "error",
+                    "error": (
+                        "Could not compute complete generic availability because "
+                        f"a Drugs@FDA page failed: {page.get('error', 'unknown error')}"
+                    ),
+                }
+            for drug in page.get("drugs", []):
+                app_num = drug.get("application_number")
+                if app_num not in seen_apps:
+                    seen_apps.add(app_num)
+                    drugs.append(drug)
+
+            if not page.get("has_more"):
+                return {
+                    "status": "success",
+                    "drugs": drugs,
+                    "total": page.get("total", len(drugs)),
+                }
+            next_offset = page.get("next_offset")
+            if next_offset is None or next_offset <= offset or next_offset > 25000:
+                return {
+                    "status": "error",
+                    "error": (
+                        "Could not compute complete generic availability within "
+                        "the openFDA paging range."
+                    ),
+                }
+            offset = next_offset
 
     def _get_te_code(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get therapeutic equivalence (TE) code information."""

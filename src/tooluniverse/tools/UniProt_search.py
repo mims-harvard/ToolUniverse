@@ -1,7 +1,7 @@
 """
 UniProt_search
 
-Search UniProtKB database with flexible query syntax. Returns protein entries with accession numb...
+Search UniProtKB with explicit cursor pagination. The response reports the true total, truncation...
 """
 
 from typing import Any, Optional, Callable
@@ -15,13 +15,14 @@ def UniProt_search(
     min_length: Optional[int] = None,
     max_length: Optional[int] = None,
     fields: Optional[list[str]] = None,
+    cursor: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Any:
     """
-    Search UniProtKB database with flexible query syntax. Returns protein entries with accession numb...
+    Search UniProtKB with explicit cursor pagination. The response reports the true total, truncation...
 
     Parameters
     ----------
@@ -32,11 +33,13 @@ def UniProt_search(
     limit : int
         Maximum number of results to return (default: 25, max: 500). Accepts string o...
     min_length : int
-        Minimum sequence length. Auto-converts to 'length:[min TO *]' range query.
+        Minimum sequence length. Auto-converts to an open-ended length range query (m...
     max_length : int
-        Maximum sequence length. Auto-converts to 'length:[* TO max]' range query.
+        Maximum sequence length. Auto-converts to an open-ended length range query (u...
     fields : list[str]
         List of field names to return (e.g., ['accession','gene_primary','length','or...
+    cursor : str
+        Opaque cursor from data.next_cursor. Omit for the first page; cursors must no...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -46,7 +49,7 @@ def UniProt_search(
 
     Returns
     -------
-    dict[str, Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
@@ -60,6 +63,7 @@ def UniProt_search(
             "min_length": min_length,
             "max_length": max_length,
             "fields": fields,
+            "cursor": cursor,
         }.items()
         if v is not None
     }

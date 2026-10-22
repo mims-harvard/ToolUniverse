@@ -1,7 +1,7 @@
 [
   {
     "name": "GitHub_search_repositories",
-    "description": "Search GitHub public repositories using GitHub's search API. Returns repository metadata including name, description, language, star count, fork count, topics, license, and creation/update dates. Supports filtering by language, topic, stars, forks, and creation date. Useful for finding open-source bioinformatics tools, scientific computing packages, and research codebases. Rate limit: 10 requests/minute unauthenticated.",
+    "description": "Search GitHub public repositories with explicit page pagination and completeness metadata. Continue with metadata.next_page while metadata.has_more is true. GitHub reports the full match count but exposes only the first 1,000 search results; metadata.retrieval_capped and warning make that hard limit explicit. Narrow broad queries to reach repositories outside that window. Rate limit: 10 requests/minute unauthenticated.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -28,7 +28,16 @@
             "integer",
             "null"
           ],
+          "minimum": 1,
+          "maximum": 100,
+          "default": 30,
           "description": "Results per page (default 30, max 100)"
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "One-based page within GitHub Search's first-1,000-result window. Continue with metadata.next_page."
         }
       },
       "required": [
@@ -39,7 +48,8 @@
       "endpoint": "https://api.github.com/search/repositories",
       "headers": {
         "Accept": "application/vnd.github.v3+json"
-      }
+      },
+      "pagination": "github_search_page"
     },
     "type": "BaseRESTTool",
     "test_examples": [

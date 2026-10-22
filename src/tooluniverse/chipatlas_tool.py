@@ -227,10 +227,29 @@ class ChIPAtlasTool(BaseTool):
             cell_type = arguments.get("cell_type")
             genome = arguments.get("genome", "hg38")
 
+            def page_parameter(name: str, default: int, minimum: int = 0) -> int:
+                value = arguments.get(name, default)
+                if isinstance(value, bool) or not isinstance(value, int) or value < minimum:
+                    comparator = "at least 1" if minimum == 1 else "non-negative"
+                    raise ValueError(f"{name} must be a {comparator} integer")
+                return value
+
+            limit = page_parameter("limit", 20, 1)
+            offset = page_parameter("offset", 0)
+            experiment_id_limit = page_parameter("experiment_id_limit", 100, 1)
+            experiment_id_offset = page_parameter("experiment_id_offset", 0)
+
             if not antigen and not cell_type:
                 return {
                     "status": "error",
                     "data": {"error": "Either antigen or cell_type must be provided"},
+                }
+            if antigen and cell_type:
+                return {
+                    "status": "error",
+                    "data": {
+                        "error": "Provide exactly one of antigen or cell_type; the two metadata indexes cannot be intersected by this tool"
+                    },
                 }
 
             # Download antigenList.tab or celltypeList.tab
@@ -250,7 +269,7 @@ class ChIPAtlasTool(BaseTool):
 
             # Parse TSV
             lines = response.text.strip().split("\n")
-            results = []
+            matches = []
 
             for line in lines:
                 fields = line.split("\t")
@@ -262,15 +281,15 @@ class ChIPAtlasTool(BaseTool):
                             fields[0] == genome
                             and search_value.lower() in fields[2].lower()
                         ):
-                            results.append(
+                            matches.append(
                                 {
                                     "genome": fields[0],
                                     "class": fields[1],
                                     "name": fields[2],
-                                    "num_experiments": fields[3],
-                                    "experiment_ids": fields[4].split(",")[
-                                        :10
-                                    ],  # Show first 10 IDs
+                                    "declared_num_experiments": int(fields[3]),
+                                    "all_experiment_ids": [
+                                        value for value in fields[4].split(",") if value
+                                    ],
                                 }
                             )
                     else:
@@ -280,23 +299,52 @@ class ChIPAtlasTool(BaseTool):
                             fields[0] == genome
                             and search_value.lower() in fields[2].lower()
                         ):
-                            results.append(
+                            matches.append(
                                 {
                                     "genome": fields[0],
                                     "cell_type_class": fields[1],
                                     "cell_type": fields[2],
-                                    "num_experiments": fields[3],
-                                    "experiment_ids": fields[4].split(",")[
-                                        :10
-                                    ],  # Show first 10 IDs
+                                    "declared_num_experiments": int(fields[3]),
+                                    "all_experiment_ids": [
+                                        value for value in fields[4].split(",") if value
+                                    ],
                                 }
                             )
+
+            results = []
+            for match in matches[offset : offset + limit]:
+                all_ids = match.pop("all_experiment_ids")
+                id_page = all_ids[
+                    experiment_id_offset : experiment_id_offset + experiment_id_limit
+                ]
+                next_id_offset = experiment_id_offset + len(id_page)
+                ids_have_more = next_id_offset < len(all_ids)
+                results.append(
+                    {
+                        **match,
+                        "num_experiments": len(all_ids),
+                        "experiment_ids": id_page,
+                        "experiment_ids_returned": len(id_page),
+                        "experiment_ids_offset": experiment_id_offset,
+                        "experiment_ids_have_more": ids_have_more,
+                        "next_experiment_id_offset": (
+                            next_id_offset if ids_have_more else None
+                        ),
+                    }
+                )
+
+            next_offset = offset + len(results)
+            has_more = next_offset < len(matches)
 
             result_data = {
                 "search_key": search_key,
                 "search_value": search_value,
                 "genome": genome,
-                "num_results": len(results),
+                "num_results": len(matches),
+                "returned": len(results),
+                "offset": offset,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
                 "results": results,
             }
 
@@ -326,6 +374,7 @@ class ChIPAtlasTool(BaseTool):
             )
             genome = arguments.get("genome", "hg38")
             limit = int(arguments.get("limit", 50))
+            offset = max(0, int(arguments.get("offset", 0)))
 
             if not antigen:
                 return {
@@ -397,6 +446,9 @@ class ChIPAtlasTool(BaseTool):
             partners = sorted(
                 best.values(), key=lambda d: d["best_overlap_score"], reverse=True
             )
+            page = partners[offset : offset + limit]
+            next_offset = offset + len(page)
+            has_more = next_offset < len(partners)
 
             return {
                 "status": "success",
@@ -405,7 +457,11 @@ class ChIPAtlasTool(BaseTool):
                     "cell_type_class": cell_type_class,
                     "genome": genome,
                     "partner_count": len(partners),
-                    "partners": partners[:limit],
+                    "partners": page,
+                    "returned": len(page),
+                    "offset": offset,
+                    "has_more": has_more,
+                    "next_offset": next_offset if has_more else None,
                     "url": url,
                 },
             }
@@ -429,6 +485,7 @@ class ChIPAtlasTool(BaseTool):
             genome = arguments.get("genome", "hg38")
             distance = str(arguments.get("distance", "5"))
             limit = int(arguments.get("limit", 100))
+            offset = max(0, int(arguments.get("offset", 0)))
 
             if not antigen:
                 return {
@@ -479,6 +536,9 @@ class ChIPAtlasTool(BaseTool):
                 genes.append({"gene": cols[0], "average_binding_score": avg})
 
             genes.sort(key=lambda d: d["average_binding_score"], reverse=True)
+            page = genes[offset : offset + limit]
+            next_offset = offset + len(page)
+            has_more = next_offset < len(genes)
 
             note = None
             if not genes:
@@ -494,7 +554,11 @@ class ChIPAtlasTool(BaseTool):
                     "genome": genome,
                     "distance_kb": distance,
                     "gene_count": len(genes),
-                    "target_genes": genes[:limit],
+                    "target_genes": page,
+                    "returned": len(page),
+                    "offset": offset,
+                    "has_more": has_more,
+                    "next_offset": next_offset if has_more else None,
                     "url": url,
                     **({"note": note} if note else {}),
                 },

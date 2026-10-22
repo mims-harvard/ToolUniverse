@@ -9,12 +9,13 @@ from ._shared_client import get_shared_client
 
 
 def ols_get_term_ancestors(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_term_ancestors",
     term_iri: Optional[str] = None,
     term_id: Optional[str] = None,
     ontology: Optional[str] = None,
     include_obsolete: Optional[bool] = False,
     size: Optional[int] = 20,
+    page: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -37,6 +38,8 @@ def ols_get_term_ancestors(
         Include obsolete terms (default: false)
     size : int
         Number of results to return (default: 20)
+    page : int
+        Zero-based result page. Continue with next_page while pagination.has_more is ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -60,6 +63,7 @@ def ols_get_term_ancestors(
             "ontology": ontology,
             "include_obsolete": include_obsolete,
             "size": size,
+            "page": page,
         }.items()
         if v is not None
     }

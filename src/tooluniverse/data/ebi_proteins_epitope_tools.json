@@ -108,12 +108,34 @@
                     },
                     "description": "PubMed IDs of supporting publications"
                   },
+                  "pmid_count": {
+                    "type": "integer",
+                    "description": "Number of returned PubMed references"
+                  },
                   "iedb_ids": {
                     "type": "array",
                     "items": {
                       "type": "string"
                     },
                     "description": "IEDB epitope identifiers"
+                  },
+                  "iedb_id_count": {
+                    "type": "integer",
+                    "description": "Number of returned IEDB identifiers"
+                  },
+                  "evidences": {
+                    "type": "array",
+                    "items": {"type": "object"},
+                    "description": "Complete evidence records returned by EBI Proteins"
+                  },
+                  "evidence_count": {
+                    "type": "integer",
+                    "description": "Number of complete evidence records"
+                  },
+                  "xrefs": {
+                    "type": "array",
+                    "items": {"type": "object"},
+                    "description": "Complete cross-reference records returned by EBI Proteins"
                   }
                 }
               }

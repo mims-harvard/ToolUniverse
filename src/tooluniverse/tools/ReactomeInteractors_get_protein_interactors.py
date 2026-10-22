@@ -1,7 +1,7 @@
 """
 ReactomeInteractors_get_protein_interactors
 
-Get protein-protein interaction partners for a specific protein from Reactome's IntAct-derived in...
+Get protein-protein interaction partners from Reactome's IntAct-derived data. Returns the authori...
 """
 
 from typing import Any, Optional, Callable
@@ -10,21 +10,24 @@ from ._shared_client import get_shared_client
 
 def ReactomeInteractors_get_protein_interactors(
     accession: str,
-    page_size: Optional[int | Any] = None,
+    page_size: Optional[int] = None,
+    page: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get protein-protein interaction partners for a specific protein from Reactome's IntAct-derived in...
+    Get protein-protein interaction partners from Reactome's IntAct-derived data. Returns the authori...
 
     Parameters
     ----------
     accession : str
         UniProt accession number for the query protein. Examples: 'P04637' (TP53), 'Q...
-    page_size : int | Any
-        Maximum number of interactors to return on this page (default: 20)...
+    page_size : int
+        Maximum number of interactors to return on this page (default: 20). Not cappe...
+    page : int
+        One-based Reactome interactor page. Continue with next_page while has_more is...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +44,11 @@ def ReactomeInteractors_get_protein_interactors(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"accession": accession, "page_size": page_size}.items()
+        for k, v in {
+            "accession": accession,
+            "page_size": page_size,
+            "page": page,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

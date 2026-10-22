@@ -318,6 +318,10 @@ class PharmGKBTool(BaseTool):
         except (TypeError, ValueError):
             limit = 50
         limit = max(1, min(limit, 500))
+        try:
+            offset = max(0, int(arguments.get("offset", 0)))
+        except (TypeError, ValueError):
+            offset = 0
 
         # Fix-Round3-004: listing mode had no way to filter by drug —
         # a caller who wanted "the FDA label for imatinib" had to page
@@ -350,18 +354,30 @@ class PharmGKBTool(BaseTool):
             results = [r for r in results if needle in str(r.get("name", "")).lower()]
 
         total = len(results)
-        truncated = results[:limit]
-        out: Dict[str, Any] = {"status": "success", "data": truncated}
+        page = results[offset : offset + limit]
+        has_more = offset + len(page) < total
+        out: Dict[str, Any] = {
+            "status": "success",
+            "data": page,
+            "metadata": {
+                "total_results": total,
+                "returned": len(page),
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "next_offset": offset + len(page) if has_more else None,
+            },
+        }
         if drug_name and total == 0:
             out["note"] = (
                 f"No {source} drug-label annotations matched "
                 f"drug_name='{drug_name}'."
             )
-        elif total > limit:
+        elif has_more:
             out["note"] = (
-                f"Showing {limit} of {total} {source} drug-label annotations"
+                f"Showing {len(page)} of {total} {source} drug-label annotations"
                 + (f" matching drug_name='{drug_name}'" if drug_name else "")
-                + ". Increase 'limit' or call with label_id=<id> for full details."
+                + ". Continue with metadata.next_offset or call with label_id=<id> for full details."
             )
         return out
 
@@ -426,6 +442,10 @@ class PharmGKBTool(BaseTool):
         except (TypeError, ValueError):
             limit = 50
         limit = max(1, min(limit, 500))
+        try:
+            offset = max(0, int(arguments.get("offset", 0)))
+        except (TypeError, ValueError):
+            offset = 0
 
         status_code, api_response, error = self._request_json(
             f"{PHARMGKB_BASE_URL}/data/variantAnnotation",
@@ -444,11 +464,23 @@ class PharmGKBTool(BaseTool):
         if not isinstance(results, list):
             results = [results]
         total = len(results)
-        truncated = results[:limit]
-        out: Dict[str, Any] = {"status": "success", "data": truncated}
-        if total > limit:
+        page = results[offset : offset + limit]
+        has_more = offset + len(page) < total
+        out: Dict[str, Any] = {
+            "status": "success",
+            "data": page,
+            "metadata": {
+                "total_results": total,
+                "returned": len(page),
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "next_offset": offset + len(page) if has_more else None,
+            },
+        }
+        if has_more:
             out["note"] = (
-                f"Showing {limit} of {total} variant annotations for "
-                f"{param_key}={param_value}. Increase 'limit' for more."
+                f"Showing {len(page)} of {total} variant annotations for "
+                f"{param_key}={param_value}. Continue with metadata.next_offset."
             )
         return out

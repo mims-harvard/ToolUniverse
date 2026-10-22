@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def GTEx_get_single_tissue_eqtls(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_single_tissue_eqtls",
     gencode_id: Optional[list[str]] = None,
     variant_id: Optional[list[str]] = None,
     tissue_site_detail_id: Optional[list[str]] = None,
@@ -20,7 +20,7 @@ def GTEx_get_single_tissue_eqtls(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
     Get significant single-tissue eQTL associations. Returns precomputed gene-variant associations wi...
 
@@ -49,7 +49,7 @@ def GTEx_get_single_tissue_eqtls(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 

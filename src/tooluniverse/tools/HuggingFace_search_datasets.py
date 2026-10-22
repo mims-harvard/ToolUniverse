@@ -1,7 +1,7 @@
 """
 HuggingFace_search_datasets
 
-Search HuggingFace Hub for machine learning datasets by keyword. HuggingFace hosts 100,000+ open ...
+Search HuggingFace Hub for machine learning datasets by keyword. Results use opaque cursor pagina...
 """
 
 from typing import Any, Optional, Callable
@@ -10,21 +10,24 @@ from ._shared_client import get_shared_client
 
 def HuggingFace_search_datasets(
     search: str,
-    limit: Optional[int | Any] = None,
+    limit: Optional[int] = 20,
+    cursor: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search HuggingFace Hub for machine learning datasets by keyword. HuggingFace hosts 100,000+ open ...
+    Search HuggingFace Hub for machine learning datasets by keyword. Results use opaque cursor pagina...
 
     Parameters
     ----------
     search : str
         Search query for dataset name or topic (e.g., 'protein sequence', 'medical im...
-    limit : int | Any
-        Maximum number of results to return (default 20, max 1000)
+    limit : int
+        Results per cursor page (default 20, max 1000)
+    cursor : str
+        Opaque continuation cursor from metadata.next_cursor. Omit on the first page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,7 +43,9 @@ def HuggingFace_search_datasets(
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
-        k: v for k, v in {"search": search, "limit": limit}.items() if v is not None
+        k: v
+        for k, v in {"search": search, "limit": limit, "cursor": cursor}.items()
+        if v is not None
     }
     return get_shared_client().run_one_function(
         {
