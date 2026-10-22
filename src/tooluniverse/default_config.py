@@ -236,6 +236,9 @@ default_tool_files = {
     "protein_ph_linkage": os.path.join(
         current_dir, "data", "protein_ph_linkage_tools.json"
     ),
+    "protein_design_context": os.path.join(
+        current_dir, "data", "protein_design_context_tools.json"
+    ),
     "protein_similarity_local": os.path.join(
         current_dir, "data", "protein_similarity_local_tools.json"
     ),
