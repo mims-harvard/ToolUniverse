@@ -1,7 +1,7 @@
 """
 TogoID_list_datasets
 
-List the biological identifier datasets TogoID can convert between (117 types across categories s...
+List the current TogoID identifier datasets and preserve each complete upstream configuration rec...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def TogoID_list_datasets(
     validate: bool = True,
 ) -> Any:
     """
-    List the biological identifier datasets TogoID can convert between (117 types across categories s...
+    List the current TogoID identifier datasets and preserve each complete upstream configuration rec...
 
     Parameters
     ----------

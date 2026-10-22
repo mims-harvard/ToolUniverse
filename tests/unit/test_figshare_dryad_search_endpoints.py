@@ -68,7 +68,12 @@ def test_figshare_search_is_a_post_with_the_query_in_the_json_body():
         )
     args, kwargs = request.call_args
     assert args[1:] == ("POST", "https://api.figshare.com/v2/articles/search")
-    assert kwargs["json"] == {"search_for": "wolf", "item_type": 3, "page_size": 5}
+    assert kwargs["json"] == {
+        "search_for": "wolf",
+        "item_type": 3,
+        "page": 1,
+        "page_size": 5,
+    }
     assert "params" not in kwargs  # nothing is sent as ignored query-string params
     assert result["status"] == "success"
     assert result["data"][0]["title"] == "wolf data"

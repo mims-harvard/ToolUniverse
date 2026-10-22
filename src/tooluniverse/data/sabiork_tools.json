@@ -1,7 +1,7 @@
 [
   {
     "name": "SABIO_RK_search_reactions",
-    "description": "Search SABIO-RK database for biochemical reaction kinetic parameters. Returns Km, kcat, Vmax, Ki values with substrate specificity, organism, and literature references. No authentication required. Search by EC number (e.g., 1.1.1.1), enzyme name (e.g., alcohol dehydrogenase), substrate (e.g., ethanol), organism (e.g., Homo sapiens), or product. SABIO-RK contains >200,000 kinetic entries curated from published literature.",
+    "description": "Search SABIO-RK for biochemical reaction kinetic laws. Returns exact total and offset pagination plus complete per-entry source JSON, kinetic parameter values and normalized units, experimental conditions, enzyme metadata, and publication evidence. Search by EC number, enzyme, substrate, organism, product, or parameter type. Use offset/next_offset to retrieve all results rather than silently stopping at the first page.",
     "type": "SABIORKTool",
     "parameter": {
       "type": "object",
@@ -14,37 +14,49 @@
         },
         "ec_number": {
           "type": "string",
+          "minLength": 1,
+          "pattern": "^[0-9]+\\.(?:[0-9]+|-)\\.(?:[0-9]+|-)\\.(?:[0-9]+|-)$",
           "description": "EC number (e.g., 1.1.1.1 for alcohol dehydrogenase, 2.7.1.1 for hexokinase)"
         },
         "enzyme_name": {
           "type": "string",
+          "minLength": 1,
           "description": "Enzyme common name (e.g., alcohol dehydrogenase, hexokinase, lactate dehydrogenase)"
         },
         "substrate": {
           "type": "string",
+          "minLength": 1,
           "description": "Substrate name (e.g., ethanol, glucose, ATP)"
         },
         "organism": {
           "type": "string",
+          "minLength": 1,
           "description": "Organism name (e.g., Homo sapiens, Escherichia coli, Saccharomyces cerevisiae)"
         },
         "product": {
           "type": "string",
+          "minLength": 1,
           "description": "Product name (e.g., acetaldehyde, pyruvate)"
         },
         "parameter_type": {
           "type": "string",
+          "minLength": 1,
           "description": "Filter by kinetic parameter type (e.g., Km, kcat, Vmax, Ki)"
         },
         "limit": {
-          "type": [
-            "integer",
-            "null"
-          ],
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
           "description": "Maximum number of kinetic laws to return (default 20, max 100)"
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Zero-based result offset (default 0). When has_more is true, pass next_offset to retrieve the next disjoint page."
         }
       },
-      "required": []
+      "required": [],
+      "additionalProperties": false
     },
     "return_schema": {
       "type": "object",
@@ -63,7 +75,10 @@
                 "description": "SABIO-RK entry identifier"
               },
               "ec_number": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
               "substrates": {
                 "type": "array",
@@ -88,7 +103,10 @@
                       "description": "Parameter type (Km, kcat, Ki, Vmax, kcat/Km)"
                     },
                     "name": {
-                      "type": "string"
+                      "type": [
+                        "string",
+                        "null"
+                      ]
                     },
                     "species": {
                       "type": [
@@ -98,7 +116,10 @@
                       "description": "Compound the constant refers to (e.g. the substrate for a Km), if SABIO-RK names one"
                     },
                     "value": {
-                      "type": "number",
+                      "type": [
+                        "number",
+                        "null"
+                      ],
                       "description": "Value as reported, in 'unit'"
                     },
                     "unit": {
@@ -126,6 +147,24 @@
                     },
                     "standard_deviation": {
                       "type": "number"
+                    },
+                    "normalized_value": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "normalized_unit": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "sbo_term": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
                     }
                   }
                 }
@@ -133,6 +172,34 @@
               "conditions": {
                 "type": "object",
                 "description": "Assay conditions: ph, temperature, temperature_unit (when reported)"
+              },
+              "experimental_conditions": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "publication": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "enzyme_description": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "source_record": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Complete SABIO-RK entry decoded from the Solr Json field."
+              },
+              "source_record_complete": {
+                "type": "boolean"
               }
             }
           }
@@ -144,6 +211,21 @@
         "returned_count": {
           "type": "integer",
           "description": "Number of kinetic laws returned in this response"
+        },
+        "offset": {
+          "type": "integer"
+        },
+        "has_more": {
+          "type": "boolean"
+        },
+        "next_offset": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "result_set_complete": {
+          "type": "boolean"
         }
       }
     },

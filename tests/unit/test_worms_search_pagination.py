@@ -102,6 +102,17 @@ def test_default_limit_is_twenty_not_five():
     result = _run({"query": "Gadus"})
     assert result["count"] == 20
     assert result["limit"] == 20
+    assert result["next_offset"] == 21
+
+
+def test_next_offset_resumes_after_returned_page():
+    first = _run({"query": "Gadus", "limit": 3, "offset": 1})
+    second = _run({"query": "Gadus", "limit": 3, "offset": first["next_offset"]})
+
+    assert first["next_offset"] == 4
+    assert {row["AphiaID"] for row in first["data"]}.isdisjoint(
+        row["AphiaID"] for row in second["data"]
+    )
 
 
 def test_no_stale_total_found_field():
@@ -128,6 +139,22 @@ def test_non_integer_limit_is_reported_as_error():
     result = _run({"query": "Gadus", "limit": "abc"})
     assert result["status"] == "error"
     assert "integer" in result["error"]
+
+
+@pytest.mark.parametrize(
+    "parameter,value",
+    [
+        ("limit", "20"),
+        ("limit", True),
+        ("offset", "1"),
+        ("offset", 0),
+        ("offset", True),
+    ],
+)
+def test_search_rejects_integer_coercion_and_offset_clamping(parameter, value):
+    result = _run({"query": "Gadus", parameter: value})
+    assert result["status"] == "error"
+    assert result["parameter"] == parameter
 
 
 def test_zero_limit_is_rejected():
@@ -160,6 +187,11 @@ def test_config_declares_offset_and_envelope_schema():
     tools = {t["name"]: t for t in json.loads(path.read_text())}
     search = tools["WoRMS_search_species"]
     assert "offset" in search["parameter"]["properties"]
+    assert {"like", "marine_only", "extant_only"} <= set(
+        search["parameter"]["properties"]
+    )
+    synonyms = tools["WoRMS_get_synonyms"]
+    assert {"limit", "offset"} <= set(synonyms["parameter"]["properties"])
     assert "oneOf" in search["return_schema"]
     # The endpoint recorded in the config must be the one the code actually calls.
     assert "AphiaRecordsByName" in search["fields"]["endpoint"]
@@ -200,3 +232,88 @@ def test_search_requests_use_offset_query_parameter(_requests):
     called = [c.args[0] for c in tool.session.get.call_args_list]
     assert any("offset=1" in u for u in called)
     assert any("offset=51" in u for u in called)
+
+
+def test_search_sends_official_matching_and_taxon_filters():
+    tool = WoRMSRESTTool(dict(SEARCH_CONFIG))
+    tool.session = _fake_session(3)
+    result = tool.run(
+        {
+            "query": "Gadus",
+            "like": False,
+            "marine_only": False,
+            "extant_only": False,
+        }
+    )
+
+    url = tool.session.get.call_args.args[0]
+    assert "like=false" in url
+    assert "marine_only=false" in url
+    assert "extant_only=false" in url
+    assert result["like"] is False
+    assert result["marine_only"] is False
+    assert result["extant_only"] is False
+
+
+def _synonym_tool(total_records=73):
+    config = dict(SEARCH_CONFIG)
+    config["fields"] = {"operation": "synonyms"}
+    tool = WoRMSRESTTool(config)
+    records = [
+        {"AphiaID": 2000 + index, "scientificname": f"synonym {index}"}
+        for index in range(total_records)
+    ]
+
+    def get(url, timeout=None):
+        offset = int(url.split("offset=")[1].split("&")[0])
+        page = records[offset - 1 : offset - 1 + tool._PAGE_SIZE]
+        response = MagicMock()
+        response.status_code = 200 if page else 204
+        response.text = "[...]" if page else ""
+        response.json.return_value = page
+        response.raise_for_status.return_value = None
+        return response
+
+    session = MagicMock()
+    session.get.side_effect = get
+    tool.session = session
+    return tool
+
+
+def test_synonyms_expose_reachable_record_offsets():
+    tool = _synonym_tool()
+    first = tool.run({"AphiaID": 126436, "limit": 30, "offset": 1})
+    second = tool.run(
+        {
+            "AphiaID": 126436,
+            "limit": 30,
+            "offset": first["next_offset"],
+        }
+    )
+    third = tool.run(
+        {
+            "AphiaID": 126436,
+            "limit": 30,
+            "offset": second["next_offset"],
+        }
+    )
+
+    assert first["next_offset"] == 31
+    assert second["next_offset"] == 61
+    assert third["count"] == 13
+    assert third["has_more"] is False
+    assert {row["AphiaID"] for row in first["data"]}.isdisjoint(
+        row["AphiaID"] for row in second["data"]
+    )
+
+
+@pytest.mark.parametrize(
+    "parameter,value",
+    [("limit", 0), ("limit", 1001), ("limit", "50"), ("offset", 0), ("offset", "1")],
+)
+def test_synonyms_reject_invalid_pagination_before_network(parameter, value):
+    tool = _synonym_tool()
+    result = tool.run({"AphiaID": 126436, parameter: value})
+    assert result["status"] == "error"
+    assert result["parameter"] == parameter
+    tool.session.get.assert_not_called()

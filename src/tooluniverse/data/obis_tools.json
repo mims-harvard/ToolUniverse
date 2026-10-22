@@ -2,7 +2,7 @@
   {
     "name": "OBIS_search_taxa",
     "type": "OBISTaxaTool",
-    "description": "Resolve marine taxa in OBIS by scientific name to obtain standardized identifiers (AphiaID), ranks, and names. Use before querying marine occurrences.",
+    "description": "Resolve an exact scientific name through OBIS /taxon/{scientificname}. Returns same-name accepted and unaccepted taxa with WoRMS taxonID/AphiaID, rank, status, accepted-name mapping, environment flags, and lineage. Uses local offset pagination over the complete response.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -15,7 +15,13 @@
           "default": 10,
           "minimum": 1,
           "maximum": 100,
-          "description": "Number of records to return (1\u2013100)."
+          "description": "Number of taxon matches to return (1\u2013100)."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based local offset over exact-name matches. Continue with metadata.next_offset."
         }
       },
       "required": [
@@ -46,7 +52,10 @@
                     ]
                   },
                   "rank": {
-                    "type": "null"
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "kingdom": {
                     "type": "string"
@@ -55,7 +64,10 @@
                     "type": "string"
                   },
                   "class": {
-                    "type": "null"
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "order": {
                     "type": "string"
@@ -116,7 +128,7 @@
   {
     "name": "OBIS_search_occurrences",
     "type": "OBISOccurrenceTool",
-    "description": "Retrieve marine species occurrence records (with coordinates/time) from OBIS using flexible filters. Use for ocean biodiversity distribution analyses.",
+    "description": "Retrieve one cursor page of marine occurrence records from OBIS. The API ignores offset/from/page; continue with metadata.next_after, which is the internal occurrence UUID field id (not Darwin Core occurrenceID). Exact total and one-record lookahead prevent silent truncation.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -133,7 +145,12 @@
           "default": 10,
           "minimum": 1,
           "maximum": 100,
-          "description": "Number of records to return (1\u2013100)."
+          "description": "Number of records in this cursor page (1\u2013100)."
+        },
+        "after": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Cursor from metadata.next_after. Must be the internal UUID in result field id, not occurrenceID."
         }
       }
     },

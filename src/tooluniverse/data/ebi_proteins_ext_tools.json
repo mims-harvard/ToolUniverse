@@ -1,13 +1,26 @@
 [
   {
     "name": "EBIProteins_get_mutagenesis",
-    "description": "Get mutagenesis experiment data for a protein from the EBI Proteins API. Returns experimentally characterized mutations with their functional effects, including gain/loss of function, binding changes, and structural impacts. Data is curated from UniProtKB with literature evidence. Essential for understanding structure-function relationships. Example: P04637 (TP53) returns 651 mutagenesis annotations showing effects of each mutation on p53 function.",
+    "description": "Get mutagenesis experiment data for a protein from the EBI Proteins API with limit/offset pagination and explicit completeness metadata. Returns experimentally characterized mutations, functional effects, and all supplied literature evidence. Example: P04637 (TP53) has 651 annotations; use next_offset to retrieve pages after the first 100.",
     "parameter": {
       "type": "object",
       "properties": {
         "accession": {
           "type": "string",
           "description": "UniProt accession. Examples: 'P04637' (TP53/p53), 'P38398' (BRCA1), 'P00533' (EGFR), 'P01308' (Insulin)."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 100,
+          "description": "Maximum number of mutagenesis features to return in this page."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based feature offset. Use data.next_offset for the next page."
         }
       },
       "required": [
@@ -110,13 +123,26 @@
   },
   {
     "name": "EBIProteins_get_proteomics_ptm",
-    "description": "Get post-translational modification (PTM) evidence from mass spectrometry proteomics for a protein from the EBI Proteins API. Returns experimentally detected PTMs (phosphorylation, acetylation, ubiquitination, etc.) with evidence from PeptideAtlas, ProteomicsDB, MaxQB, and EPD proteomics repositories. Shows modification positions, types, and detection confidence. Example: P04637 (TP53) returns 101 PTM features including phosphorylation sites critical for p53 regulation.",
+    "description": "Get mass-spectrometry PTM evidence from the EBI Proteins API with limit/offset pagination and explicit completeness metadata. Returns modification positions, types, and all supplied evidence from PeptideAtlas, ProteomicsDB, MaxQB, and EPD. Example: P04637 (TP53) has 101 PTM features, so the second page is required with the default limit.",
     "parameter": {
       "type": "object",
       "properties": {
         "accession": {
           "type": "string",
           "description": "UniProt accession. Examples: 'P04637' (TP53/p53), 'P38398' (BRCA1), 'P00533' (EGFR), 'P31749' (AKT1)."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 100,
+          "description": "Maximum number of proteomics PTM features to return in this page."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based feature offset. Use data.next_offset for the next page."
         }
       },
       "required": [
@@ -221,7 +247,7 @@
   },
   {
     "name": "EBIProteins_get_variation",
-    "description": "Get all known protein sequence variants for a UniProt protein from the EBI Proteins API. Returns variants from multiple sources including COSMIC (somatic mutations in cancer), ClinVar (clinical significance), gnomAD/ExAC (population frequencies), and UniProt (curated). Includes disease associations, clinical significance classifications, and cross-references. Essential for variant impact analysis and clinical interpretation. Example: P04637 (TP53) returns 3469 variants with cancer associations and clinical classifications.",
+    "description": "Get known protein sequence variants from the EBI Proteins API with source/disease filters, limit/offset pagination, and explicit completeness metadata. Preserves all supplied COSMIC, ClinVar, dbSNP, gnomAD/ExAC, and UniProt cross-references rather than only the first three. Example: P04637 (TP53) currently has more than 3,000 variants and requires multiple pages.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -239,6 +265,19 @@
         "disease_only": {
           "type": "boolean",
           "description": "If true, return only variants with disease associations. Default: false."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 100,
+          "description": "Maximum number of filtered variants to return in this page."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset after source_type and disease_only filtering. Use data.next_offset for the next page."
         }
       },
       "required": [
@@ -414,7 +453,7 @@
   },
   {
     "name": "EBIProteins_get_features",
-    "description": "Get protein features filtered by category from the EBI Proteins API. Categories include DOMAINS_AND_SITES (domains, binding sites, active sites, motifs), MOLECULE_PROCESSING (signal peptides, transit peptides, chains), PTM (glycosylation, phosphorylation, disulfide bonds), STRUCTURAL (helices, strands, turns), TOPOLOGY (transmembrane, extracellular, cytoplasmic), and VARIANTS. Provides a consolidated view of all UniProt-annotated features. Example: P04637 (TP53) with DOMAINS_AND_SITES returns 31 features including DNA-binding domain, transactivation regions.",
+    "description": "Get protein features by category from the EBI Proteins API with limit/offset pagination and explicit completeness metadata. Preserves every evidence record supplied for each feature. Categories include DOMAINS_AND_SITES, MOLECULE_PROCESSING, PTM, STRUCTURAL, TOPOLOGY, VARIANTS, and MUTAGENESIS. Example: P04637 has 31 domain/site features but more than 1,000 VARIANTS features.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -425,6 +464,19 @@
         "category": {
           "type": "string",
           "description": "Feature category. Options: 'DOMAINS_AND_SITES', 'MOLECULE_PROCESSING', 'PTM', 'STRUCTURAL', 'TOPOLOGY', 'VARIANTS', 'MUTAGENESIS'. Default: 'DOMAINS_AND_SITES'."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 100,
+          "description": "Maximum number of category features to return in this page."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based feature offset. Use data.next_offset for the next page."
         }
       },
       "required": [
@@ -757,13 +809,26 @@
   },
   {
     "name": "EBIProteins_get_proteomics_peptides",
-    "description": "Get mass spectrometry proteomics peptide evidence for a protein from the EBI Proteins API. Returns detected peptides with their positions, uniqueness status, and source databases (PeptideAtlas, ProteomicsDB, MaxQB, EPD). Shows which parts of the protein have been experimentally confirmed by mass spectrometry. Useful for validating protein expression and mapping coverage. Example: P04637 (TP53) returns 64 detected peptides, P00533 (EGFR) returns 241 peptides.",
+    "description": "Get mass-spectrometry peptide evidence from the EBI Proteins API with limit/offset pagination and explicit completeness metadata. Returns peptide positions, uniqueness, and all supplied source records from PeptideAtlas, ProteomicsDB, MaxQB, and EPD. Example: P00533 (EGFR) currently has more than 300 peptides and requires multiple pages.",
     "parameter": {
       "type": "object",
       "properties": {
         "accession": {
           "type": "string",
           "description": "UniProt accession. Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P38398' (BRCA1)."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 100,
+          "description": "Maximum number of proteomics peptides to return in this page."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based peptide offset. Use data.next_offset for the next page."
         }
       },
       "required": [
@@ -1045,13 +1110,26 @@
   },
   {
     "name": "EBIProteins_get_variation_by_dbsnp",
-    "description": "Reverse variation lookup by dbSNP rsID from the EBI Proteins API. Given a dbSNP rsID, returns every UniProt protein (including isoforms) that carries that variant, each with the mapped natural-variant features (wild-type and alternative residue, protein position, genomic location, clinical significances, cross-references to ClinVar/COSMIC/dbSNP). Inverse of looking up variants by protein accession. Example: 'rs1042522' (TP53 codon 72 Pro/Arg) returns 11 UniProt entries including TP53 isoforms and A0AAQ5BHX5, each with the position-72 variant feature.",
+    "description": "Reverse variation lookup by dbSNP rsID from the EBI Proteins API. Returns every affected UniProt entry and feature. Cross-references within every feature are independently paginated with xref_offset/xref_limit; inspect xrefs_total, xrefs_truncated, and next_xref_offset to retain all ClinVar/COSMIC/dbSNP evidence.",
     "parameter": {
       "type": "object",
       "properties": {
         "dbsnp_id": {
           "type": "string",
           "description": "dbSNP reference SNP ID (rsID). Examples: 'rs1042522' (TP53 Pro72Arg), 'rs429358' (APOE)."
+        },
+        "xref_offset": {
+          "type": "integer",
+          "description": "Zero-based xref offset applied within every returned variant feature.",
+          "default": 0,
+          "minimum": 0
+        },
+        "xref_limit": {
+          "type": "integer",
+          "description": "Cross-references returned per feature (default 5, maximum 500).",
+          "default": 5,
+          "minimum": 1,
+          "maximum": 500
         }
       },
       "required": [
@@ -1153,13 +1231,26 @@
   },
   {
     "name": "EBIProteins_get_variation_by_hgvs",
-    "description": "Reverse variation lookup by HGVS genomic expression from the EBI Proteins API. Given an HGVS genomic-level expression (e.g. 'NC_000017.11:g.7676154G>A'), returns every overlapping UniProt protein with the resulting variant consequence projected onto the protein sequence (wild-type and alternative residue, protein position, genomic location). Use to translate a genomic DNA change into its protein consequence across all affected UniProt entries. Example: 'NC_000017.11:g.7676154G>A' returns 4 UniProt entries; the TP53 (P04637) entry reports VARIANT P->L at residue 72 (the Pro72Leu protein consequence).",
+    "description": "Reverse variation lookup by HGVS genomic expression from the EBI Proteins API. Returns every projected protein consequence. Cross-references within every feature are independently paginated with xref_offset/xref_limit; inspect xrefs_total, xrefs_truncated, and next_xref_offset for completeness.",
     "parameter": {
       "type": "object",
       "properties": {
         "hgvs": {
           "type": "string",
           "description": "HGVS genomic expression using a RefSeq NC_ accession. Example: 'NC_000017.11:g.7676154G>A' (TP53 region)."
+        },
+        "xref_offset": {
+          "type": "integer",
+          "description": "Zero-based xref offset applied within every returned variant feature.",
+          "default": 0,
+          "minimum": 0
+        },
+        "xref_limit": {
+          "type": "integer",
+          "description": "Cross-references returned per feature (default 5, maximum 500).",
+          "default": 5,
+          "minimum": 1,
+          "maximum": 500
         }
       },
       "required": [
@@ -1261,13 +1352,26 @@
   },
   {
     "name": "EBIProteins_get_hpp_peptides",
-    "description": "Get Human Proteome Project (HPP) peptide-level mass-spectrometry evidence mapped to a protein from the EBI Proteins API. Returns HPP-curated peptides that confirm protein expression, each with sequence, start/end position, uniqueness flag, and source (e.g. HppPeptideAtlas). This is the stringent HPP evidence set, distinct from and larger than the generic proteomics peptide set for the same protein. Example: P04637 (TP53) returns 237 HPP features (vs 82 from generic /proteomics), e.g. peptide 'SDSDGLAPPQHLI' at residues 183-195, unique.",
+    "description": "Get Human Proteome Project (HPP) peptide-level mass-spectrometry evidence mapped to a protein from the EBI Proteins API. Returns HPP-curated peptides with sequence, positions, uniqueness, and supporting source, with complete limit/offset pagination and explicit total/has_more metadata. This is the stringent HPP evidence set, distinct from the generic proteomics peptide set. Example: P04637 (TP53) has 237 HPP features; use next_offset to retrieve pages after the first 100.",
     "parameter": {
       "type": "object",
       "properties": {
         "accession": {
           "type": "string",
           "description": "UniProt accession. Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P38398' (BRCA1)."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 100,
+          "description": "Maximum number of HPP peptides to return in this page."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based peptide offset. Use data.next_offset to retrieve the next page."
         }
       },
       "required": [

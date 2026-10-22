@@ -14,6 +14,8 @@ def GtoPdb_get_interactions(
     target_id: Optional[int] = None,
     ligandId: Optional[int] = None,
     species: Optional[str] = None,
+    limit: Optional[int] = 25,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -34,6 +36,10 @@ def GtoPdb_get_interactions(
         GtoPdb ligand ID. Get from GtoPdb_search_ligands. Examples: 5765 (aspirin), 7...
     species : str
         Filter by species. Examples: 'Human', 'Mouse', 'Rat'
+    limit : int
+        Number of interactions on this page (1-200; default 25).
+    offset : int
+        Zero-based interaction offset. Continue with next_offset while has_more is true.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +62,8 @@ def GtoPdb_get_interactions(
             "target_id": target_id,
             "ligandId": ligandId,
             "species": species,
+            "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

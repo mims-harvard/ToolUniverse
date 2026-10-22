@@ -14,6 +14,8 @@ def ReactomeContent_search(
     types: Optional[str] = "Pathway",
     rows: Optional[int] = None,
     start: Optional[int] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -31,9 +33,13 @@ def ReactomeContent_search(
     types : str
         Entity type to search. Options: 'Pathway', 'Reaction', 'Complex', 'Protein', ...
     rows : int
-        Number of results to return per page (1-1000). Omit to use Reactome's default...
+        Number of results to return per page (1-1000). Default 30. Queries often matc...
     start : int
         Zero-based offset of the first result to return, for paging through large res...
+    limit : int
+        Alias for rows, used when rows is not given.
+    offset : int
+        Alias for start, used when start is not given.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +62,8 @@ def ReactomeContent_search(
             "types": types,
             "rows": rows,
             "start": start,
+            "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

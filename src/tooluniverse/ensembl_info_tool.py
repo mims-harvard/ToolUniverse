@@ -87,11 +87,19 @@ class EnsemblInfoTool(BaseTool):
         response.raise_for_status()
         data = response.json()
 
-        # Extract chromosome information
+        # Extract chromosome information.  Some Ensembl assemblies label every
+        # top-level region as ``primary_assembly`` rather than ``chromosome``
+        # (for example gallus_gallus), so use the karyotype names as the
+        # authoritative chromosome set in addition to coord_system.
         top_level = data.get("top_level_region", [])
+        karyotype = data.get("karyotype", [])
+        karyotype_names = {str(name) for name in karyotype}
         chromosomes = []
         for region in top_level:
-            if region.get("coord_system") == "chromosome":
+            if (
+                region.get("coord_system") == "chromosome"
+                or str(region.get("name")) in karyotype_names
+            ):
                 chromosomes.append(
                     {
                         "name": region.get("name"),
@@ -119,10 +127,11 @@ class EnsemblInfoTool(BaseTool):
                 "genebuild_method": data.get("genebuild_method"),
                 "genebuild_last_update": data.get("genebuild_last_geneset_update"),
                 "golden_path_length": data.get("golden_path"),
-                "karyotype": data.get("karyotype", []),
+                "karyotype": karyotype,
                 "coordinate_system_versions": data.get("coord_system_versions", []),
                 "total_regions": len(top_level),
-                "chromosomes": chromosomes[:30],
+                "total_chromosomes": len(chromosomes),
+                "chromosomes": chromosomes,
             },
             "metadata": {
                 "source": "Ensembl REST API - Assembly Info",
@@ -156,9 +165,14 @@ class EnsemblInfoTool(BaseTool):
                 or str(s.get("taxon_id", "")) == search
             ]
 
-        # Format results
+        limit = min(max(int(arguments.get("limit", 50)), 1), 500)
+        offset = max(int(arguments.get("offset", 0)), 0)
+        matched_species = len(species_list)
+        page = species_list[offset : offset + limit]
+
+        # Format the requested page without changing the true match count.
         species_results = []
-        for s in species_list[:50]:
+        for s in page:
             taxon_id_raw = s.get("taxon_id")
             try:
                 taxon_id = int(taxon_id_raw) if taxon_id_raw is not None else None
@@ -182,9 +196,19 @@ class EnsemblInfoTool(BaseTool):
             "status": "success",
             "data": {
                 "total_species": len(data.get("species", [])),
-                "matched_species": len(species_results),
+                "matched_species": matched_species,
+                "returned_species": len(species_results),
                 "search_term": search if search else None,
                 "species": species_results,
+                "limit": limit,
+                "offset": offset,
+                "has_more": offset + len(species_results) < matched_species,
+                "truncated": len(species_results) < matched_species,
+                "next_offset": (
+                    offset + len(species_results)
+                    if offset + len(species_results) < matched_species
+                    else None
+                ),
             },
             "metadata": {
                 "source": "Ensembl REST API - Species Info",

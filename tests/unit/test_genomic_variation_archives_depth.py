@@ -122,6 +122,11 @@ class TestAlfaFrequencies(unittest.TestCase):
         self.assertAlmostEqual(
             eur["allele_frequencies"]["C"], 8521 / (8521 + 264725)
         )
+        self.assertEqual(
+            result["metadata"]["population_labels_source"], "live_ncbi_metadata"
+        )
+        self.assertTrue(result["metadata"]["population_metadata_retrieved_live"])
+        self.assertNotIn("warning", result["metadata"])
 
     def test_falls_back_to_bundled_pop_map_when_metadata_fails(self):
         """If metadata is unreachable, bundled SAMN->ancestry map is used."""
@@ -142,6 +147,45 @@ class TestAlfaFrequencies(unittest.TestCase):
         names = {p["population"] for p in pops}
         self.assertIn("European", names)
         self.assertIn("African", names)
+        metadata = result["metadata"]
+        self.assertEqual(metadata["population_labels_source"], "bundled_fallback")
+        self.assertFalse(metadata["population_metadata_retrieved_live"])
+        self.assertIn("metadata down", metadata["population_metadata_error"])
+        self.assertIn("bundled ALFA label snapshot", metadata["warning"])
+
+    def test_unknown_biosample_id_is_reported_as_unresolved(self):
+        """Unknown SAMN IDs stay visible and make label completeness false."""
+        tool = _ncbi_tool("alfa_frequencies")
+        frequency = {
+            "build_id": "x",
+            "results": {
+                "1@1": {
+                    "ref": "A",
+                    "counts": {
+                        "study": {
+                            "allele_counts": {"SAMN_UNKNOWN": {"A": 1, "G": 1}}
+                        }
+                    },
+                }
+            },
+        }
+
+        def fake_get(url, *args, **kwargs):
+            if url.endswith("/metadata/frequency"):
+                return _mock_resp(json_data=_ALFA_META_FAKE)
+            return _mock_resp(json_data=frequency)
+
+        with patch(
+            "tooluniverse.ncbi_variation_tool.requests.get", side_effect=fake_get
+        ):
+            result = tool.run({"rsid": "rs1"})
+
+        population = result["data"]["positions"][0]["studies"][0]["populations"][0]
+        self.assertEqual(population["population"], "SAMN_UNKNOWN")
+        self.assertFalse(result["metadata"]["population_labels_complete"])
+        self.assertEqual(
+            result["metadata"]["unresolved_biosample_ids"], ["SAMN_UNKNOWN"]
+        )
 
     def test_missing_rsid_is_error(self):
         tool = _ncbi_tool("alfa_frequencies")

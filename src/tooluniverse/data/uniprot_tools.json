@@ -1,7 +1,7 @@
 [
   {
     "name": "UniProt_get_entry_by_accession",
-    "description": "Get the complete JSON entry for a specified UniProtKB accession. WARNING: This tool returns the complete UniProtKB entry, which can be extremely large (40,000+ lines for some entries) and may cause LLM context limits to be exceeded or crashes. For most use cases, consider using more specific extraction tools instead: UniProt_get_function_by_accession, UniProt_get_sequence_by_accession, UniProt_get_recommended_name_by_accession, UniProt_get_organism_by_accession, UniProt_get_subcellular_location_by_accession, UniProt_get_disease_variants_by_accession, or UniProt_get_ptm_processing_by_accession.",
+    "description": "Get a UniProtKB entry plus its separate Publications-view bibliography. By default this returns explicitly pageable comments, features, references, and computationally mapped publications with true totals and continuation offsets/cursors. Returned feature and reference records preserve their complete nested evidence and qualifiers. Set compact=false for the complete raw UniProtKB entry.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -13,16 +13,86 @@
           "type": "boolean",
           "description": "Return a bounded summary instead of the complete UniProtKB JSON entry. Defaults to true to avoid oversized LLM outputs. Set compact=false only when you explicitly need the raw UniProtKB JSON.",
           "default": true
+        },
+        "include_publications": {
+          "type": "boolean",
+          "default": true,
+          "description": "Also query UniProt's per-entry publications endpoint, which includes computationally mapped and community-curated literature absent from the entry JSON."
+        },
+        "publication_source": {
+          "type": "string",
+          "enum": [
+            "computational",
+            "curated",
+            "community",
+            "all"
+          ],
+          "default": "computational",
+          "description": "Publication source filter. Default: computational, the bibliography class omitted from UniProtKB entry JSON."
+        },
+        "publication_limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25,
+          "description": "Maximum additional publications per page."
+        },
+        "publication_cursor": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Opaque cursor from metadata.next_publication_cursor. Omit for the first page."
+        },
+        "comment_limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25,
+          "description": "Maximum compact-view comments to return."
+        },
+        "comment_offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset into all entry comments."
+        },
+        "feature_limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 100,
+          "description": "Maximum compact-view features to return; each feature retains its complete nested fields."
+        },
+        "feature_offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset into all entry features."
+        },
+        "reference_limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 25,
+          "description": "Maximum compact-view curated entry references to return."
+        },
+        "reference_offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset into all curated entry references."
         }
       },
       "required": [
         "accession"
-      ]
+      ],
+      "additionalProperties": false
     },
     "fields": {
       "endpoint": "https://rest.uniprot.org/uniprotkb/{accession}.json",
       "input_description": "Input UniProtKB accession, e.g., P05067.",
-      "output_description": "Returns a compact bounded summary for that accession by default. Set compact=false to return the complete UniProtKB entry JSON. WARNING: raw output can be extremely large (40,000+ lines) and may exceed LLM context limits."
+      "output_description": "Returns a compact bounded entry summary plus computationally mapped publications by default. Metadata reports publication totals and next cursor. Set compact=false for the complete entry JSON."
     },
     "type": "UniProtRESTTool",
     "test_examples": [
@@ -216,13 +286,22 @@
   },
   {
     "name": "UniProt_get_function_by_accession",
-    "description": "Extract functional annotations from UniProtKB entry (Comment type = FUNCTION).",
+    "description": "Extract structured functional annotations from a UniProtKB entry, preserving the ECO, PubMed, and cross-entry evidence attached to each FUNCTION text.",
     "parameter": {
       "type": "object",
       "properties": {
         "accession": {
           "type": "string",
           "description": "UniProtKB accession, e.g., P05067."
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "structured",
+            "values"
+          ],
+          "default": "structured",
+          "description": "Output shape. 'structured' (default) returns one object per functional paragraph with its evidence list. 'values' returns the historical flat list of paragraph strings for callers that depend on it, and drops the evidence."
         }
       },
       "required": [
@@ -231,9 +310,9 @@
     },
     "fields": {
       "endpoint": "https://rest.uniprot.org/uniprotkb/{accession}.json",
-      "extract_path": "comments[?(@.commentType=='FUNCTION')].texts[*].value",
+      "extract_path": "function_annotations",
       "input_description": "Input UniProtKB accession, e.g., P05067.",
-      "output_description": "Returns a list of all functional paragraph texts from that entry."
+      "output_description": "Returns all functional paragraphs as objects containing the text value and its complete evidence list."
     },
     "type": "UniProtRESTTool",
     "test_examples": [
@@ -242,10 +321,36 @@
       }
     ],
     "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "type": "string"
+              },
+              "evidences": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            },
+            "required": [
+              "value",
+              "evidences"
+            ]
+          }
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Legacy flat list returned when format='values'."
+        }
+      ]
     }
   },
   {
@@ -346,13 +451,22 @@
   },
   {
     "name": "UniProt_get_subcellular_location_by_accession",
-    "description": "Extract subcellular localization annotations from UniProtKB entry (Comment type = SUBCELLULAR LOCATION).",
+    "description": "Extract structured subcellular localization annotations from a UniProtKB entry, preserving evidence, isoform/molecule specificity, topology, orientation, and notes.",
     "parameter": {
       "type": "object",
       "properties": {
         "accession": {
           "type": "string",
           "description": "UniProtKB accession, e.g., P05067."
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "structured",
+            "values"
+          ],
+          "default": "structured",
+          "description": "Output shape. 'structured' (default) returns one object per localization with evidence, isoform/molecule specificity, topology, orientation, and notes. 'values' returns the historical flat list of location strings for callers that depend on it, and drops those qualifiers."
         }
       },
       "required": [
@@ -361,9 +475,9 @@
     },
     "fields": {
       "endpoint": "https://rest.uniprot.org/uniprotkb/{accession}.json",
-      "extract_path": "comments[?(@.commentType=='SUBCELLULAR LOCATION')].subcellularLocations[*].location.value",
+      "extract_path": "subcellular_location_annotations",
       "input_description": "Input UniProtKB accession, e.g., P05067.",
-      "output_description": "Returns a list containing all annotated subcellular localization locations."
+      "output_description": "Returns structured localization records. Each record includes the location name and ID, its evidence, any isoform/molecule qualifier, topology/orientation, and the parent UniProt note."
     },
     "type": "UniProtRESTTool",
     "test_examples": [
@@ -372,10 +486,66 @@
       }
     ],
     "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "location": {
+                "type": "string"
+              },
+              "location_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "evidences": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "molecule": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "topology": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "orientation": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "note": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "location",
+              "evidences"
+            ]
+          }
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Legacy flat list returned when format='values'."
+        }
+      ]
     }
   },
   {
@@ -503,7 +673,7 @@
   },
   {
     "name": "UniProt_get_ptm_processing_by_accession",
-    "description": "Extract all PTM and processing sites from UniProtKB entry (feature type = MODIFIED RESIDUE or SIGNAL, etc.).",
+    "description": "Extract all UniProtKB post-translational modification and chain-processing features: modified residues, glycosylation, lipidation, disulfide bonds, cross-links, signal/transit peptides, propeptides, peptides, chains, and initiator-methionine processing.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -518,9 +688,9 @@
     },
     "fields": {
       "endpoint": "https://rest.uniprot.org/uniprotkb/{accession}.json",
-      "extract_path": "features[?(@.type=='MODIFIED RESIDUE' || @.type=='SIGNAL')]",
+      "extract_path": "ptm_and_processing_features",
       "input_description": "Input UniProtKB accession, e.g., P05067.",
-      "output_description": "Returns a list containing all modification sites and signal peptide feature objects."
+      "output_description": "Returns complete UniProt feature objects for all supported PTM and chain-processing feature types, including their locations, descriptions, and evidence."
     },
     "type": "UniProtRESTTool",
     "test_examples": [
@@ -660,7 +830,7 @@
   },
   {
     "name": "UniProt_search",
-    "description": "Search UniProtKB database with flexible query syntax. Returns protein entries with accession numbers and metadata. Query syntax supports: field searches (gene:TP53, taxonomy_id:9606, reviewed:true), ranges (length:[100 TO 500], mass:[20000 TO 50000]), wildcards (gene:MEIOB*), boolean operators (AND/OR/NOT), and parentheses for grouping. Examples: 'gene:TP53 AND taxonomy_id:9606', 'length:[400 TO 500] AND reviewed:true', 'tissue:brain NOT taxonomy_id:10090'. Scope by taxon with taxonomy_id (lineage match, 'Taxonomy [OC]') rather than organism_id ('Organism [OS]', exact organism node only): most bacterial entries are annotated at strain level, so a species-level organism_id silently returns 0 or an undercount (gene:gyrA AND organism_id:1423 -> 0 hits; taxonomy_id:1423 -> 1). A caller-supplied organism_id:<taxid> is rewritten to taxonomy_id:<taxid> and the change is reported in data.normalization_note.",
+    "description": "Search UniProtKB database with flexible query syntax. Returns protein entries with accession numbers and metadata. Query syntax supports: field searches (gene:TP53, taxonomy_id:9606, reviewed:true), ranges (length:[100 TO 500], mass:[20000 TO 50000]), wildcards (gene:MEIOB*), boolean operators (AND/OR/NOT), and parentheses for grouping. Examples: 'gene:TP53 AND taxonomy_id:9606', 'length:[400 TO 500] AND reviewed:true', 'tissue:brain NOT taxonomy_id:10090'. Scope by taxon with taxonomy_id (lineage match, 'Taxonomy [OC]') rather than organism_id ('Organism [OS]', exact organism node only): most bacterial entries are annotated at strain level, so a species-level organism_id silently returns 0 or an undercount (gene:gyrA AND organism_id:1423 -> 0 hits; taxonomy_id:1423 -> 1). A caller-supplied organism_id:<taxid> is rewritten to taxonomy_id:<taxid> and the change is reported in data.normalization_note. Pagination is cursor-based: the response reports the true total_results, returned, has_more/truncated, and next_cursor from UniProt's Link header; pass that cursor back for the next page.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -690,6 +860,13 @@
             "type": "string"
           },
           "description": "List of field names to return (e.g., ['accession','gene_primary','length','organism_name']). When specified, returns raw API response with requested fields. Common fields: accession, id, gene_names, gene_primary, protein_name, organism_name, organism_id, length, mass, sequence, reviewed, cc_function. See UniProt API docs for full list. Default (no fields): returns formatted response with accession, id, protein_name, gene_names, organism, length."
+        },
+        "cursor": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Opaque cursor from data.next_cursor. Omit for the first page; cursors must not be synthesized."
         }
       },
       "required": [
@@ -786,7 +963,7 @@
   },
   {
     "name": "UniProt_id_mapping",
-    "description": "Map IDs between different databases (e.g., Ensembl to UniProt, Gene Name to UniProt). Supports batch mapping and async task processing. Use this to convert between different database identifiers.",
+    "description": "Map IDs between databases using UniProt's asynchronous service. Fetches every upstream result page before applying explicit local result_offset/result_limit pagination; mapped_count is always the true complete mapping count.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -815,6 +992,19 @@
         "max_wait_time": {
           "type": "integer",
           "description": "Maximum time to wait for async task completion in seconds (default: 30)"
+        },
+        "result_offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based offset within the complete mapping result set."
+        },
+        "result_limit": {
+          "type": "integer",
+          "default": 500,
+          "minimum": 1,
+          "maximum": 5000,
+          "description": "Maximum mapped records returned in this response. mapped_count remains the complete total."
         }
       },
       "required": [
@@ -848,7 +1038,27 @@
                 "integer",
                 "number"
               ],
-              "description": "Number of mapping rows in `results`. This is a page count, not the number of matches -- compare against `total_results`."
+              "description": "Number of mapping rows UniProt returned across every fetched page; `results` is the window selected by result_offset/result_limit. Compare against `total_results`."
+            },
+            "returned": {
+              "type": "integer",
+              "description": "Rows in this `results` window."
+            },
+            "result_offset": {
+              "type": "integer"
+            },
+            "result_limit": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean",
+              "description": "True when more fetched rows remain beyond this window; continue with next_result_offset."
+            },
+            "next_result_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
             },
             "results": {
               "type": "array",
@@ -897,7 +1107,7 @@
             },
             "truncated": {
               "type": "boolean",
-              "description": "True when `results` is only a page of `total_results`."
+              "description": "True when `results` is only part of the mappings: either more rows remain beyond this window (has_more) or UniProt reported more mappings than it returned (see truncation_note)."
             },
             "truncation_note": {
               "type": "string"
@@ -1474,7 +1684,7 @@
   },
   {
     "name": "UniProt_search_uniref",
-    "description": "Search UniRef clusters. Returns clusters matching the query. Use this to find UniRef clusters for specific proteins or organisms. Query syntax supports protein accessions, gene names, organism filters, etc.",
+    "description": "Search UniRef clusters with explicit cursor pagination. data.next_cursor comes from the official Link header and retrieves the next distinct page.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1496,6 +1706,13 @@
           "type": "integer",
           "default": 25,
           "description": "Maximum number of results to return (default: 25, max: 500)"
+        },
+        "cursor": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Opaque cursor from data.next_cursor. Omit for the first page."
         }
       },
       "required": [
@@ -1892,7 +2109,7 @@
   },
   {
     "name": "UniProt_search_uniparc",
-    "description": "Search UniParc entries. Returns UniParc entries matching the query. Use this to find UniParc entries for specific proteins or sequences. Query syntax supports protein accessions, gene names, organism filters, etc.",
+    "description": "Search UniParc entries with explicit cursor pagination. data.next_cursor comes from the official Link header and retrieves the next distinct page.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1904,6 +2121,13 @@
           "type": "integer",
           "default": 25,
           "description": "Maximum number of results to return (default: 25, max: 500)"
+        },
+        "cursor": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Opaque cursor from data.next_cursor. Omit for the first page."
         }
       },
       "required": [

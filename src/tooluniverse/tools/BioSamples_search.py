@@ -12,6 +12,7 @@ def BioSamples_search(
     query: str,
     limit: Optional[int] = None,
     page: Optional[int] = None,
+    cursor: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,9 +26,11 @@ def BioSamples_search(
     query : str
         Free-text search query. Examples: 'breast cancer', 'liver tissue', 'CRISPR sc...
     limit : int
-        Maximum results to return (1-50, default 10).
+        Results per request (1-200, default 10), matching the official BioSamples max...
     page : int
-        Page number (0-indexed, default 0).
+        Deprecated zero-based page navigation (0-500, default 0). Do not combine with...
+    cursor : str
+        Official opaque cursor pagination token. Pass '*' for the first cursor page, ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,12 @@ def BioSamples_search(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"query": query, "limit": limit, "page": page}.items()
+        for k, v in {
+            "query": query,
+            "limit": limit,
+            "page": page,
+            "cursor": cursor,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

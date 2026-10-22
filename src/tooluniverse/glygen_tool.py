@@ -106,22 +106,14 @@ class GlyGenTool(BaseTool):
             "iupac": raw.get("iupac"),
             "wurcs": raw.get("wurcs"),
             "classification": raw.get("classification", []),
-            "species": [
-                {
-                    "name": s.get("name"),
-                    "taxid": s.get("taxid"),
-                    "common_name": s.get("common_name"),
-                }
-                for s in raw.get("species", [])[:20]
-            ],
+            "species": [dict(s) for s in raw.get("species", [])],
+            "species_count": len(raw.get("species", [])),
             "glycoprotein_count": len(raw.get("glycoprotein", [])),
             "glycoproteins": [
-                {
-                    "uniprot_ac": gp.get("uniprot_canonical_ac"),
-                    "protein_name": gp.get("protein_name"),
-                }
-                for gp in raw.get("glycoprotein", [])[:10]
+                {**gp, "uniprot_ac": gp.get("uniprot_canonical_ac")}
+                for gp in raw.get("glycoprotein", [])
             ],
+            "returned_glycoprotein_count": len(raw.get("glycoprotein", [])),
             "publication_count": len(raw.get("publication", [])),
             "composition": raw.get("composition", []),
             "byonic": raw.get("byonic"),
@@ -166,6 +158,11 @@ class GlyGenTool(BaseTool):
                 "error": "At least one search parameter required (mass_min/max, monosaccharide_min/max, glycan_type)",
             }
 
+        pagination_args = self._validate_search_pagination(arguments)
+        if isinstance(pagination_args, dict):
+            return pagination_args
+        offset, limit = pagination_args
+
         # Step 1: Submit search
         search_url = f"{GLYGEN_BASE_URL}/glycan/search/"
         search_resp = requests.post(
@@ -179,11 +176,15 @@ class GlyGenTool(BaseTool):
         list_id = search_data.get("list_id")
 
         if not list_id:
-            return {"data": [], "metadata": {"total_results": 0, "query": query}}
+            return {
+                "status": "success",
+                "data": [],
+                "metadata": self._search_pagination_metadata(
+                    {}, [], offset, limit, {"list_id": None, "query": query}
+                ),
+            }
 
         # Step 2: Retrieve results
-        limit = min(arguments.get("limit", 20), 50)
-        offset = arguments.get("offset", 1)
         list_url = f"{GLYGEN_BASE_URL}/glycan/list/"
         list_body = {
             "id": list_id,
@@ -218,16 +219,80 @@ class GlyGenTool(BaseTool):
         return {
             "status": "success",
             "data": results,
-            "metadata": {
-                "total_results": list_data.get("pagination", {}).get(
-                    "total_length", len(results)
-                ),
-                "list_id": list_id,
-                "query": query,
-                "offset": offset,
-                "limit": limit,
-            },
+            "metadata": self._search_pagination_metadata(
+                list_data,
+                results,
+                offset,
+                limit,
+                {"list_id": list_id, "query": query},
+            ),
         }
+
+    @staticmethod
+    def _validate_search_pagination(arguments: Dict[str, Any]):
+        """Validate GlyGen's one-based list offset without silent clamping."""
+        limit = arguments.get("limit", 20)
+        offset = arguments.get("offset", 1)
+        if (
+            isinstance(limit, bool)
+            or not isinstance(limit, int)
+            or not 1 <= limit <= 50
+        ):
+            return {
+                "status": "error",
+                "error": "limit must be an integer between 1 and 50",
+                "parameter": "limit",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 1:
+            return {
+                "status": "error",
+                "error": "offset must be a positive one-based integer",
+                "parameter": "offset",
+            }
+        return offset, limit
+
+    @staticmethod
+    def _search_pagination_metadata(
+        list_data: Dict[str, Any],
+        results: list,
+        requested_offset: int,
+        requested_limit: int,
+        extra: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """Build continuation metadata from GlyGen's list response."""
+        pagination = list_data.get("pagination", {})
+        offset = pagination.get("offset", requested_offset)
+        limit = pagination.get("limit", requested_limit)
+        total = pagination.get("total_length", len(results))
+        try:
+            offset = int(offset)
+        except (TypeError, ValueError):
+            offset = requested_offset
+        try:
+            limit = int(limit)
+        except (TypeError, ValueError):
+            limit = requested_limit
+        try:
+            total = int(total)
+        except (TypeError, ValueError):
+            total = len(results)
+        returned_count = len(results)
+        has_more = offset - 1 + returned_count < total
+        metadata = {
+            "total_results": total,
+            "returned_count": returned_count,
+            "offset": offset,
+            "requested_offset": requested_offset,
+            "limit": limit,
+            "has_more": has_more,
+            "next_offset": offset + returned_count
+            if returned_count and has_more
+            else None,
+            "truncated": has_more,
+            "result_set_complete": not has_more,
+        }
+        metadata.update(extra)
+        return metadata
 
     def _protein_detail(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get glycoprotein details including glycosylation sites."""
@@ -253,21 +318,25 @@ class GlyGenTool(BaseTool):
 
         result = {
             "protein_name": protein_names[0].get("name") if protein_names else None,
-            "gene_names": [g.get("name") for g in gene_names[:5]],
+            "gene_names": [g.get("name") for g in gene_names],
+            "gene_name_count": len(gene_names),
+            "gene_name_details": [dict(g) for g in gene_names],
             "species": species[0].get("name") if species else None,
             "mass": raw.get("mass"),
             "sequence_length": len(raw.get("sequence", {}).get("sequence", "")),
             "glycosylation_count": len(glycosylation),
             "glycosylation_sites": [
                 {
+                    **g,
                     "position": g.get("start_pos"),
                     "residue": g.get("residue"),
                     "type": g.get("type"),
                     "glytoucan_ac": g.get("glytoucan_ac"),
                     "site_category": g.get("site_category"),
                 }
-                for g in glycosylation[:30]
+                for g in glycosylation
             ],
+            "returned_glycosylation_count": len(glycosylation),
             "function": raw.get("function", [{}])[0].get("annotation")
             if raw.get("function")
             else None,
@@ -312,6 +381,11 @@ class GlyGenTool(BaseTool):
                 "error": "At least one search parameter required (organism_id, glycosylation_evidence, glycosylation_type, protein_name, gene_name)",
             }
 
+        pagination_args = self._validate_search_pagination(arguments)
+        if isinstance(pagination_args, dict):
+            return pagination_args
+        offset, limit = pagination_args
+
         # Step 1: Submit search
         search_url = f"{GLYGEN_BASE_URL}/protein/search/"
         search_resp = requests.post(
@@ -325,11 +399,15 @@ class GlyGenTool(BaseTool):
         list_id = search_data.get("list_id")
 
         if not list_id:
-            return {"data": [], "metadata": {"total_results": 0, "query": query}}
+            return {
+                "status": "success",
+                "data": [],
+                "metadata": self._search_pagination_metadata(
+                    {}, [], offset, limit, {"list_id": None, "query": query}
+                ),
+            }
 
         # Step 2: Retrieve results
-        limit = min(arguments.get("limit", 20), 50)
-        offset = arguments.get("offset", 1)
         list_url = f"{GLYGEN_BASE_URL}/protein/list/"
         list_body = {
             "id": list_id,
@@ -355,8 +433,8 @@ class GlyGenTool(BaseTool):
                     "protein_name": item.get("protein_name"),
                     "gene_name": item.get("gene_name"),
                     "organism": item.get("organism"),
-                    "glycosylation_count": item.get("total_n_glycosites", 0)
-                    + item.get("total_o_glycosites", 0),
+                    "glycosylation_count": (item.get("total_n_glycosites") or 0)
+                    + (item.get("total_o_glycosites") or 0),
                     "hit_score": item.get("hit_score"),
                 }
             )
@@ -364,15 +442,13 @@ class GlyGenTool(BaseTool):
         return {
             "status": "success",
             "data": results,
-            "metadata": {
-                "total_results": list_data.get("pagination", {}).get(
-                    "total_length", len(results)
-                ),
-                "list_id": list_id,
-                "query": query,
-                "offset": offset,
-                "limit": limit,
-            },
+            "metadata": self._search_pagination_metadata(
+                list_data,
+                results,
+                offset,
+                limit,
+                {"list_id": list_id, "query": query},
+            ),
         }
 
     def _site_detail(self, arguments: Dict[str, Any]) -> Dict[str, Any]:

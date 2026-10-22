@@ -1,7 +1,7 @@
 """
 LOVD_get_gene
 
-Get gene information from LOVD (Leiden Open Variation Database). Returns HGNC ID, Entrez ID, chro...
+Get a complete LOVD gene record after normalizing the HGNC symbol to uppercase and verifying the ...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def LOVD_get_gene(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get gene information from LOVD (Leiden Open Variation Database). Returns HGNC ID, Entrez ID, chro...
+    Get a complete LOVD gene record after normalizing the HGNC symbol to uppercase and verifying the ...
 
     Parameters
     ----------

@@ -68,11 +68,15 @@ _MAX_PUBLISHED = 100
 
 
 def _published(
-    rows: List[Dict[str, Any]], narrow_hint: str, total_is_capped: bool = False
+    rows: List[Dict[str, Any]],
+    narrow_hint: str,
+    total_is_capped: bool = False,
+    limit: int = _MAX_PUBLISHED,
+    offset: int = 0,
 ) -> Dict[str, Any]:
-    """Publish a capped slice of `rows` and state the cap beside the total.
+    """Publish one `limit`/`offset` page of `rows` and state it beside the total.
 
-    Every listing in this module caps `data` for payload size while reporting
+    Every listing in this module pages `data` for payload size while reporting
     the full `total` next to it. Undisclosed, that reads as a total which
     disagrees with the rows printed beside it: ClinGen_get_gene_validity
     published `total: 3659` directly above exactly 100 rows, on a tool whose
@@ -83,26 +87,39 @@ def _published(
     _truncation_disclosure) so a caller reading truncation generically does not
     need a spelling unique to this module. `total_is_capped` marks the case
     where the upstream request itself filled `_EREPO_MATCH_LIMIT`, which makes
-    `total` a lower bound rather than a count.
+    `total` a lower bound rather than a count. `has_more` / `next_offset` say
+    how to fetch the rest.
     """
-    published = rows[:_MAX_PUBLISHED]
+    published = rows[offset : offset + limit]
+    next_offset = offset + len(published)
+    has_more = next_offset < len(rows)
     result: Dict[str, Any] = {
         "data": published,
         "total": len(rows),
         "returned": len(published),
+        "offset": offset,
+        "limit": limit,
+        "has_more": has_more,
+        "next_offset": next_offset if has_more else None,
     }
+    span = (
+        f"rows {offset + 1}-{next_offset}"
+        if published
+        else f"no rows at offset {offset}"
+    )
+    more = f" Pass offset={next_offset} for the next page." if has_more else ""
     if total_is_capped:
         result["truncated"] = True
         result["truncation_note"] = (
             f"The query filled the {_EREPO_MATCH_LIMIT}-row request cap, so "
             f"`total` is a lower bound rather than the true count, and `data` "
-            f"carries the first {len(published)} rows. {narrow_hint}"
+            f"carries {span} ({len(published)} rows).{more} {narrow_hint}"
         )
     elif len(published) < len(rows):
         result["truncated"] = True
         result["truncation_note"] = (
-            f"`total` is the full count for this query; `data` carries only the "
-            f"first {len(published)} of them. {narrow_hint}"
+            f"`total` is the full count for this query; `data` carries {span} "
+            f"({len(published)} rows).{more} {narrow_hint}"
         )
     else:
         result["truncated"] = False
@@ -212,13 +229,36 @@ class ClinGenTool(BaseTool):
                     == gene_upper
                 ]
 
+            try:
+                limit = max(1, min(int(arguments.get("limit") or 100), 500))
+                offset = max(0, int(arguments.get("offset", 0)))
+            except (TypeError, ValueError):
+                return {
+                    "status": "error",
+                    "error": "Parameters 'limit' and 'offset' must be integers.",
+                }
+            page = _published(
+                curations,
+                "Pass `gene` to narrow to one gene's curations, or use "
+                "ClinGen_search_gene_validity, which returns every match.",
+                limit=limit,
+                offset=offset,
+            )
             return {
                 "status": "success",
-                **_published(
-                    curations,
-                    "Pass `gene` to narrow to one gene's curations, or use "
-                    "ClinGen_search_gene_validity, which returns every match.",
-                ),
+                **page,
+                "metadata": {
+                    key: page[key]
+                    for key in (
+                        "total",
+                        "returned",
+                        "offset",
+                        "limit",
+                        "has_more",
+                        "truncated",
+                        "next_offset",
+                    )
+                },
                 "source": "ClinGen Gene-Disease Validity",
             }
         except requests.exceptions.Timeout:
@@ -308,11 +348,21 @@ class ClinGenTool(BaseTool):
                     == gene_upper
                 ]
 
+            try:
+                limit = max(1, min(int(arguments.get("limit") or 100), 500))
+                offset = max(0, int(arguments.get("offset", 0)))
+            except (TypeError, ValueError):
+                return {
+                    "status": "error",
+                    "error": "Parameters 'limit' and 'offset' must be integers.",
+                }
             return {
                 "status": "success",
                 **_published(
                     curations,
                     "Pass `gene` to narrow to one gene's dosage curations.",
+                    limit=limit,
+                    offset=offset,
                 ),
                 "include_regions": include_regions,
                 "source": "ClinGen Dosage Sensitivity",
@@ -441,11 +491,21 @@ class ClinGenTool(BaseTool):
                     or gene_upper in str(c.get("hgncId", "")).upper()
                 ]
 
+            try:
+                limit = max(1, min(int(arguments.get("limit") or 100), 500))
+                offset = max(0, int(arguments.get("offset", 0)))
+            except (TypeError, ValueError):
+                return {
+                    "status": "error",
+                    "error": "Parameters 'limit' and 'offset' must be integers.",
+                }
             return {
                 "status": "success",
                 **_published(
                     curations,
                     "Pass `gene` to narrow to one gene's actionability curations.",
+                    limit=limit,
+                    offset=offset,
                 ),
                 "context": context,
                 "source": f"ClinGen Clinical Actionability ({context})",
@@ -582,7 +642,9 @@ class ClinGenTool(BaseTool):
 
     @staticmethod
     def _flatten_summary_row(row: Dict[str, Any]) -> Dict[str, Any]:
-        """Map one `summary/classifications` row to the same 7 fields."""
+        """Map one `summary/classifications` row to the same 7 fields, plus the
+        criteria, evidence summary, dates and identifiers that flat record
+        carries and the compact projection omitted."""
         hgvs = row.get("hgvs") or []
         return {
             "Variation": hgvs[-1] if hgvs else row.get("preferredVarTitle"),
@@ -592,6 +654,16 @@ class ClinGenTool(BaseTool):
             "Mondo Id": row.get("mondoId"),
             "Assertion": row.get("classification"),
             "Expert Panel": row.get("ep"),
+            "CAID": row.get("caId"),
+            "Mode of Inheritance": row.get("moi"),
+            "Met Criteria": row.get("metCodes") or [],
+            "Unmet Criteria": row.get("unMetCodes") or [],
+            "Summary": row.get("summaryDesc"),
+            "Approved Date": row.get("approvedDate"),
+            "Published Date": row.get("publishedDate"),
+            "Document Version": row.get("docVersion"),
+            "UUID": row.get("uuid"),
+            "HGVS": hgvs,
         }
 
     def _summary_rows(self, key: str, value: str) -> List[Dict[str, Any]]:
@@ -729,6 +801,15 @@ class ClinGenTool(BaseTool):
                 ),
             }
         try:
+            try:
+                limit = max(1, min(int(arguments.get("limit", _MAX_PUBLISHED)), 500))
+            except (TypeError, ValueError):
+                limit = _MAX_PUBLISHED
+            try:
+                offset = max(0, int(arguments.get("offset", 0)))
+            except (TypeError, ValueError):
+                offset = 0
+
             variant_key = variant_value = None
             if variant:
                 variant_key, variant_value = _variant_query_param(variant)
@@ -781,6 +862,8 @@ class ClinGenTool(BaseTool):
                     # can sweep the repository. Reachable, and `total` would be
                     # a floor rather than a count if it were reached.
                     total_is_capped=capped,
+                    limit=limit,
+                    offset=offset,
                 ),
                 "source": "ClinGen Evidence Repository",
             }
@@ -802,6 +885,11 @@ class ClinGenTool(BaseTool):
                     "not all genes have an active VCEP. Try "
                     "ClinGen_get_gene_validity for gene-disease validity or "
                     "ClinVar_search_variants for ClinVar classifications."
+                )
+            elif not result["data"]:
+                result["note"] = (
+                    f"Requested offset {offset} is beyond the {len(data)} matching "
+                    "variant classifications."
                 )
             return result
         except requests.exceptions.Timeout:

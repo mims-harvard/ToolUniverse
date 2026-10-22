@@ -1,7 +1,7 @@
 """
 EPMC_get_text_mined_annotations
 
-Get all text-mined annotations from a biomedical article via Europe PMC. Returns gene/protein men...
+Get all unique text-mined annotations from a biomedical article via Europe PMC. Returns the compl...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def EPMC_get_text_mined_annotations(
     validate: bool = True,
 ) -> Any:
     """
-    Get all text-mined annotations from a biomedical article via Europe PMC. Returns gene/protein men...
+    Get all unique text-mined annotations from a biomedical article via Europe PMC. Returns the compl...
 
     Parameters
     ----------

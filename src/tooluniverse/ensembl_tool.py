@@ -95,6 +95,20 @@ class EnsemblRESTTool(BaseTool):
             if k not in path_keys and v is not None:
                 query_params[k] = v
 
+        # The overlap API itself is not paginated. For potentially very large
+        # variant arrays, retrieve the complete upstream response and paginate
+        # locally so agents get an explicit completeness signal and can request
+        # deterministic chunks instead of losing records to display/context
+        # truncation. These wrapper-only parameters must not be sent to Ensembl.
+        is_variant_region_tool = self.tool_config.get("name") == "ensembl_get_variants"
+        variant_offset = max(int(arguments.get("offset", 0)), 0)
+        variant_limit = arguments.get("limit", 500)
+        if variant_limit is not None:
+            variant_limit = min(max(int(variant_limit), 1), 5000)
+        if is_variant_region_tool:
+            query_params.pop("offset", None)
+            query_params.pop("limit", None)
+
         # Ensembl's /sequence/id endpoint calls its protein-sequence option
         # "protein", not "peptide" -- confirmed live: type=peptide -> HTTP
         # 400 "The type 'peptide' is not understood by this service" for
@@ -172,6 +186,23 @@ class EnsemblRESTTool(BaseTool):
             response.raise_for_status()
 
             data = response.json()
+            pagination = None
+            if is_variant_region_tool and isinstance(data, list):
+                total = len(data)
+                end = total if variant_limit is None else variant_offset + variant_limit
+                data = data[variant_offset:end]
+                next_offset = variant_offset + len(data)
+                has_more = next_offset < total
+                pagination = {
+                    "total_results": total,
+                    "returned": len(data),
+                    "offset": variant_offset,
+                    "limit": variant_limit,
+                    "has_more": has_more,
+                    "truncated": has_more,
+                    "next_offset": next_offset if has_more else None,
+                    "pagination_scope": "ToolUniverse local pagination over the complete Ensembl response",
+                }
             return {
                 "status": "success",
                 "data": data,
@@ -179,6 +210,7 @@ class EnsemblRESTTool(BaseTool):
                 "content_type": response.headers.get(
                     "content-type", "application/json"
                 ),
+                **({"metadata": pagination} if pagination is not None else {}),
             }
 
         except requests.exceptions.Timeout:

@@ -15,6 +15,8 @@ def MyVariant_query_variants(
     ] = "dbsnp.rsid,clinvar.rcv.clinical_significance,cadd.phred,gnomad_genome.af.af",
     size: Optional[int] = 10,
     assembly: Optional[str] = "hg19",
+    offset: Optional[int] = 0,
+    sort: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -30,9 +32,13 @@ def MyVariant_query_variants(
     fields : str
         Comma-separated fields to return. Common: dbsnp, clinvar, cadd, gnomad_genome...
     size : int
-        Maximum number of results (1-100).
+        Maximum number of results (1-1000). offset + size may not exceed 10,000.
     assembly : str
         Reference genome assembly for the coordinates in the query and in the results...
+    offset : int
+        Zero-based result offset within BioThings' first-10,000 window. Continue with...
+    sort : str
+        Optional upstream sort field. Use 'vcf.position' for stable exhaustive pagina...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -54,6 +60,8 @@ def MyVariant_query_variants(
             "fields": fields,
             "size": size,
             "assembly": assembly,
+            "offset": offset,
+            "sort": sort,
         }.items()
         if v is not None
     }

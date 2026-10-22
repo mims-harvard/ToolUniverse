@@ -119,18 +119,33 @@ class TarkTranscriptTool(BaseTool):
         self.timeout = tool_config.get("fields", {}).get("timeout", 30)
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        stable_id = (arguments.get("stable_id") or "").strip()
-        if not stable_id:
+        if not isinstance(arguments, dict) or set(arguments) - {"stable_id"}:
+            return {"status": "error", "error": "Only stable_id is supported"}
+        stable_id = arguments.get("stable_id")
+        if not isinstance(stable_id, str) or not stable_id.strip():
             return {
                 "status": "error",
                 "error": "'stable_id' (e.g. 'ENST00000380152') is required",
             }
-        stable_id = stable_id.split(".")[0]
+        stable_id = stable_id.strip().upper()
+        parts = stable_id.split(".")
+        if (
+            len(parts) > 2
+            or not parts[0].startswith("ENST")
+            or not parts[0][4:].isdigit()
+            or (len(parts) == 2 and not parts[1].isdigit())
+        ):
+            return {
+                "status": "error",
+                "error": "stable_id must be an ENST identifier with optional numeric version",
+            }
+        base_id = parts[0]
+        requested_version = int(parts[1]) if len(parts) == 2 else None
 
         try:
             resp = requests.get(
                 f"{TARK_BASE}/transcript/",
-                params={"stable_id": stable_id, "expand": "transcript_release_set"},
+                params={"stable_id": base_id, "expand": "transcript_release_set"},
                 headers={"Accept": "application/json"},
                 timeout=self.timeout,
             )
@@ -147,6 +162,19 @@ class TarkTranscriptTool(BaseTool):
             return {"status": "error", "error": "Tark returned a non-JSON response"}
 
         results = payload.get("results", []) if isinstance(payload, dict) else []
+        if not isinstance(results, list) or any(
+            not isinstance(r, dict) or r.get("stable_id") != base_id for r in results
+        ):
+            return {
+                "status": "error",
+                "error": "Tark returned malformed or mismatched transcript records",
+            }
+        if requested_version is not None:
+            results = [
+                r
+                for r in results
+                if str(r.get("stable_id_version")) == str(requested_version)
+            ]
         if not results:
             return {
                 "status": "success",
@@ -168,6 +196,22 @@ class TarkTranscriptTool(BaseTool):
                     for rel in (r.get("transcript_release_set") or [])
                     if isinstance(rel, dict)
                 ],
+                "sequence": r.get("sequence"),
+                "exon_set_checksum": r.get("exon_set_checksum"),
+                "location_checksum": r.get("loc_checksum"),
+                "five_prime_utr": {
+                    k.removeprefix("five_prime_utr_"): v
+                    for k, v in r.items()
+                    if k.startswith("five_prime_utr_")
+                },
+                "three_prime_utr": {
+                    k.removeprefix("three_prime_utr_"): v
+                    for k, v in r.items()
+                    if k.startswith("three_prime_utr_")
+                },
+                "mane_transcript": r.get("mane_transcript"),
+                "mane_transcript_type": r.get("mane_transcript_type"),
+                "record": r,
             }
             for r in results
         ]
@@ -178,6 +222,9 @@ class TarkTranscriptTool(BaseTool):
                 "total_results": len(records),
                 "query_stable_id": stable_id,
                 "source": "Ensembl Tark transcript archive",
+                "requested_version": requested_version,
+                "returned_identity_verified": True,
+                "source_records_complete": True,
             },
         }
 

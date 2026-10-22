@@ -1,7 +1,7 @@
 """
 BVBRC_search_subsystems
 
-Search for functional subsystems (curated groups of functionally related proteins) in BV-BRC path...
+Search for functional subsystems in BV-BRC with explicit pagination and true Content-Range totals.
 """
 
 from typing import Any, Optional, Callable
@@ -15,13 +15,14 @@ def BVBRC_search_subsystems(
     role_name: Optional[str] = None,
     genome_id: Optional[str] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search for functional subsystems (curated groups of functionally related proteins) in BV-BRC path...
+    Search for functional subsystems in BV-BRC with explicit pagination and true Content-Range totals.
 
     Parameters
     ----------
@@ -37,6 +38,8 @@ def BVBRC_search_subsystems(
         Restrict to a specific genome. Example: '83332.12'.
     limit : int
         Maximum number of results. Default: 25. Max: 100.
+    offset : int
+        Zero-based result offset. Use metadata.next_offset to continue.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -60,6 +63,7 @@ def BVBRC_search_subsystems(
             "role_name": role_name,
             "genome_id": genome_id,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

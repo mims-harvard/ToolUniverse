@@ -24,7 +24,6 @@ def _run(tool, module, arguments):
 
 CASES = [
     (WikidataSPARQLTool, "wikidata_sparql_tool"),
-    (DBpediaSPARQLTool, "dbpedia_tool"),
 ]
 
 
@@ -52,3 +51,41 @@ def test_max_results_still_appends_a_limit_when_the_query_has_none(cls, module):
 def test_without_max_results_every_row_is_returned(cls, module):
     rows, _ = _run(cls({"name": "x"}), module, {"sparql": "SELECT ?x WHERE {} LIMIT 5"})
     assert len(rows) == 5
+
+
+# DBpedia returns a paged envelope: the query's own trailing LIMIT is replaced by
+# max_results + 1 (a look-ahead row that tells whether more rows exist) and an
+# explicit OFFSET, and the rows sit under data.results.
+DBPEDIA_BINDINGS = {"head": {"vars": ["x"]}, **BINDINGS}
+
+
+def _run_dbpedia(arguments):
+    response = MagicMock()
+    response.status_code = 200
+    response.json.return_value = DBPEDIA_BINDINGS
+    with patch("tooluniverse.dbpedia_tool.requests.get", return_value=response) as get:
+        result = DBpediaSPARQLTool({"name": "x"}).run(arguments)
+    return result, get.call_args.kwargs["params"]["query"]
+
+
+def test_dbpedia_max_results_caps_a_query_that_already_has_a_limit():
+    result, query = _run_dbpedia(
+        {"sparql": "SELECT ?x WHERE {} LIMIT 5", "max_results": 2}
+    )
+    assert [r["x"] for r in result["data"]["results"]] == ["v0", "v1"]
+    assert query.count("LIMIT") == 1
+    assert query.rstrip().endswith("LIMIT 3\nOFFSET 0")
+    assert result["data"]["has_more"] is True
+    assert result["data"]["next_offset"] == 2
+
+
+def test_dbpedia_max_results_applies_when_the_query_has_no_limit():
+    result, query = _run_dbpedia({"sparql": "SELECT ?x WHERE {}", "max_results": 3})
+    assert "LIMIT 4" in query
+    assert result["data"]["returned"] == 3
+
+
+def test_dbpedia_without_max_results_every_row_is_returned():
+    result, _ = _run_dbpedia({"sparql": "SELECT ?x WHERE {} LIMIT 5"})
+    assert len(result["data"]["results"]) == 5
+    assert result["data"]["result_set_complete"] is True

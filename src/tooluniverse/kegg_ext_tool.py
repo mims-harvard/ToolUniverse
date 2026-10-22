@@ -388,7 +388,10 @@ class KEGGExtTool(BaseTool):
         if not text.strip():
             return {"status": "error", "error": f"Compound not found: {compound_id}"}
 
-        # Parse KEGG flat file format
+        # Parse KEGG flat file format. Keep the generic field map as part of
+        # the response so new or less-common KEGG sections cannot disappear
+        # merely because the hand-written structured parser does not know them.
+        fields = self._parse_kegg_record(text)
         result = {
             "compound_id": compound_id,
             "names": [],
@@ -398,6 +401,14 @@ class KEGGExtTool(BaseTool):
             "pathways": {},
             "enzymes": [],
             "dblinks": {},
+            "reactions": fields.get("REACTION", []),
+            "modules": fields.get("MODULE", []),
+            "networks": fields.get("NETWORK", []),
+            "brite": fields.get("BRITE", []),
+            "atoms": fields.get("ATOM", []),
+            "bonds": fields.get("BOND", []),
+            "raw_fields": fields,
+            "raw_data": text,
         }
 
         current_field = None
@@ -469,6 +480,8 @@ class KEGGExtTool(BaseTool):
             "metadata": {
                 "source": "KEGG REST API",
                 "compound_id": compound_id,
+                "returned_fields": list(fields),
+                "all_upstream_fields_preserved": True,
             },
         }
 
@@ -541,26 +554,38 @@ class KEGGExtTool(BaseTool):
             description = parts[1].strip() if len(parts) > 1 else ""
             compounds.append({"compound_id": cid, "description": description})
 
+        total_results = len(compounds)
+        offset = max(int(arguments.get("offset") or 0), 0)
         max_results = arguments.get("max_results")
-        if max_results is not None:
-            try:
-                compounds = compounds[: int(max_results)]
-            except (TypeError, ValueError):
-                pass
+        if max_results is None:
+            visible_compounds = compounds[offset:]
+        else:
+            visible_compounds = compounds[offset : offset + max(int(max_results), 1)]
+        has_more = offset + len(visible_compounds) < total_results
 
         return {
             "status": "success",
             "data": {
                 "search_field": search_field,
                 "query": value,
-                "count": len(compounds),
-                "compounds": compounds,
+                "count": len(visible_compounds),
+                "total_results": total_results,
+                "offset": offset,
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_offset": offset + len(visible_compounds) if has_more else None,
+                "compounds": visible_compounds,
             },
             "metadata": {
                 "source": "KEGG COMPOUND (find)",
                 "search_field": search_field,
                 "query": value,
-                "total": len(compounds),
+                "total_results": total_results,
+                "returned": len(visible_compounds),
+                "offset": offset,
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_offset": offset + len(visible_compounds) if has_more else None,
             },
         }
 
@@ -657,7 +682,21 @@ class KEGGExtTool(BaseTool):
                     )
 
         max_results = arguments.get("max_results", 25)
-        diseases = diseases[:max_results]
+        offset = arguments.get("offset", 0)
+        if (
+            isinstance(max_results, bool)
+            or not isinstance(max_results, int)
+            or max_results < 1
+        ):
+            return {
+                "status": "error",
+                "error": "max_results must be a positive integer",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {"status": "error", "error": "offset must be a non-negative integer"}
+        total = len(diseases)
+        diseases = diseases[offset : offset + max_results]
+        has_more = offset + len(diseases) < total
 
         return {
             "status": "success",
@@ -665,7 +704,13 @@ class KEGGExtTool(BaseTool):
             "metadata": {
                 "source": "KEGG Disease",
                 "keyword": keyword,
-                "total": len(diseases),
+                "total": total,
+                "returned": len(diseases),
+                "offset": offset,
+                "limit": max_results,
+                "has_more": has_more,
+                "next_offset": offset + len(diseases) if has_more else None,
+                "result_set_complete": offset == 0 and len(diseases) == total,
             },
         }
 
@@ -1406,6 +1451,8 @@ class KEGGExtTool(BaseTool):
                 "compounds": compounds,
                 "orthology": orthologs,
                 "pathways": pathways,
+                "raw_fields": fields,
+                "raw_data": text,
             },
             "metadata": {"source": "KEGG MODULE", "module_id": module_id},
         }
@@ -1459,6 +1506,8 @@ class KEGGExtTool(BaseTool):
                 "rclass": rclass,
                 "pathways": pathways,
                 "modules": modules,
+                "raw_fields": fields,
+                "raw_data": text,
             },
             "metadata": {"source": "KEGG REACTION", "reaction_id": reaction_id},
         }
@@ -1523,6 +1572,8 @@ class KEGGExtTool(BaseTool):
                 "substrates": substrates,
                 "products": products,
                 "orthology": orthology,
+                "raw_fields": fields,
+                "raw_data": text,
             },
             "metadata": {"source": "KEGG ENZYME", "ec_number": ec_number},
         }

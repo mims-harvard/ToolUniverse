@@ -1,7 +1,7 @@
 [
   {
     "name": "EnsemblPheno_get_by_gene",
-    "description": "Get phenotype associations for a gene from the Ensembl REST API. Returns diseases, traits, and clinical conditions linked to the gene, aggregated from multiple sources including Cancer Gene Census, OMIM, ClinVar, NHGRI-EBI GWAS catalog, and Orphanet. Each entry includes the phenotype description, data source, genomic location, and ontology accessions (EFO, HP, Orphanet). Example: BRCA1 returns 162 phenotype associations across multiple cancer types and other conditions.",
+    "description": "Get phenotype associations for a gene from Ensembl with limit/offset pagination and explicit total/has_more metadata. Returns deduplicated diseases, traits, and clinical conditions from Cancer Gene Census, OMIM, ClinVar, NHGRI-EBI GWAS Catalog, Orphanet, and other sources. Example: TP53 currently has more than 400 associations and requires multiple pages.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -13,6 +13,19 @@
         "gene": {
           "type": "string",
           "description": "Gene symbol. Examples: 'BRCA1', 'TP53', 'EGFR', 'KRAS', 'BRAF'."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 200,
+          "description": "Maximum number of deduplicated phenotype associations to return in this page."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based association offset. Use data.next_offset for the next page."
         }
       },
       "required": [
@@ -22,6 +35,7 @@
     "fields": {
       "endpoint_type": "gene"
     },
+    "timeout": 90,
     "type": "EnsemblPhenotypeTool",
     "test_examples": [
       {
@@ -102,7 +116,7 @@
   },
   {
     "name": "EnsemblPheno_get_by_region",
-    "description": "Get phenotype associations for all variants and genes in a genomic region from the Ensembl REST API. Returns disease/trait associations from GWAS catalog, ClinVar, Cancer Gene Census, etc. for features overlapping the specified region. Useful for understanding the phenotypic landscape of a genomic interval, especially for interpreting GWAS loci or candidate regions. Example: TP53 region (chr17:7661779-7687538) returns phenotype associations from the NHGRI-EBI GWAS catalog.",
+    "description": "Get phenotype associations for variants and genes in an Ensembl region with limit/offset pagination and explicit total/has_more metadata. Returns deduplicated disease/trait associations from GWAS Catalog, ClinVar, Cancer Gene Census, and other sources. Even small well-studied regions can exceed 200 associations, so follow next_offset until has_more is false.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -121,6 +135,19 @@
             "null"
           ],
           "description": "Filter by feature type: 'Variation' (variants only), 'Gene' (genes only), 'QTL' (quantitative trait loci). Default: all types."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 200,
+          "description": "Maximum number of deduplicated phenotype associations to return in this page."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based association offset. Use data.next_offset for the next page."
         }
       },
       "required": [
@@ -130,6 +157,7 @@
     "fields": {
       "endpoint_type": "region"
     },
+    "timeout": 90,
     "type": "EnsemblPhenotypeTool",
     "test_examples": [
       {
@@ -207,7 +235,7 @@
   },
   {
     "name": "EnsemblPheno_get_by_term",
-    "description": "Reverse phenotype lookup from the Ensembl REST API: given a trait/disease NAME (e.g. 'Alzheimer disease') OR an ontology accession (EFO/HP/MONDO, e.g. 'EFO:0000249', 'HP:0002511'), return ALL associated variants and genes with their risk allele, p-value, beta, clinical significance, and source (NHGRI-EBI GWAS catalog, ClinVar, dbGaP, etc.). This is the inverse of the gene/region/variant -> phenotype tools: it starts from a phenotype and finds the underlying genetics. Provide the query under 'term' (name) or 'accession' (ontology ID); an ontology-looking value passed as 'term' is auto-routed to the accession endpoint. Example: 'Alzheimer disease' returns 4450 records (e.g. rs201377759 in APP); 'EFO:0000249' returns 3111 records (e.g. rs7810606 in EPHA1, GWAS p=4e-11). Up to 500 associations are returned.",
+    "description": "Reverse phenotype lookup from the Ensembl REST API: given a trait/disease name or ontology accession, return associated variants and genes with risk allele, p-value, beta, clinical significance, and source. Large result sets are paged with limit/offset; total_associations and next_offset make every association reachable.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -229,6 +257,19 @@
             "null"
           ],
           "description": "Ontology accession (EFO, HP, MONDO, Orphanet). Examples: 'EFO:0000249' (Alzheimer disease), 'HP:0002511' (Alzheimer disease phenotype), 'MONDO:0004975'. Mutually exclusive with 'term'."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 500,
+          "description": "Maximum associations per page."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based association offset. Continue with data.next_offset while has_more is true."
         }
       },
       "required": []
@@ -261,6 +302,27 @@
             },
             "association_count": {
               "type": "integer"
+            },
+            "returned": {
+              "type": "integer"
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "truncated": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
             },
             "associations": {
               "type": "array",
@@ -354,7 +416,7 @@
   },
   {
     "name": "EnsemblPheno_get_by_variant",
-    "description": "Get phenotype associations for a specific variant (by rsID) from the Ensembl REST API. Returns traits, diseases, and phenotypes associated with the variant from NHGRI-EBI GWAS catalog, ClinVar, and other sources. Includes risk alleles, beta coefficients/odds ratios, p-values, and study references. Example: rs429358 (APOE epsilon 4 variant) returns 1004 phenotype associations including Alzheimer disease, LDL cholesterol levels, and metabolite measurements.",
+    "description": "Get phenotype associations for a specific variant (by rsID) from the Ensembl REST API. Returns traits, diseases, and phenotypes from sources such as the NHGRI-EBI GWAS catalog and ClinVar. Large result sets are paged with limit/offset; total_phenotypes and next_offset make every association reachable.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -366,6 +428,19 @@
         "variant_id": {
           "type": "string",
           "description": "Variant rsID. Examples: 'rs429358' (APOE e4), 'rs7903146' (TCF7L2 diabetes), 'rs1801133' (MTHFR)."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 200,
+          "description": "Maximum phenotype associations per page."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based association offset. Continue with data.next_offset while has_more is true."
         }
       },
       "required": [
@@ -398,6 +473,27 @@
             },
             "phenotype_count": {
               "type": "integer"
+            },
+            "returned": {
+              "type": "integer"
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "truncated": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
             },
             "phenotypes": {
               "type": "array",

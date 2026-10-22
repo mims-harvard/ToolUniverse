@@ -170,7 +170,7 @@
   },
   {
     "name": "RCSBData_get_assembly",
-    "description": "Get biological assembly details for a PDB structure from the RCSB Data API. Returns oligomeric state (monomeric, dimeric, tetrameric, etc.), stoichiometry, polymer/nonpolymer entity counts in the assembly, symmetry operations, and evidence for the biological relevance of the assembly. Example: '4HHB' assembly 1 returns 'tetrameric' with 2 polymer entities (alpha and beta hemoglobin).",
+    "description": "Get biological assembly details for a PDB structure from the RCSB Data API. Returns oligomeric state, entity counts, and independently paginated symmetry operations and biological-relevance evidence. Continue each list with its pagination.next_offset while has_more is true. Example: viral capsid 1CWP assembly 1 has 62 symmetry operations.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -182,6 +182,32 @@
           "type": "string",
           "description": "Assembly identifier (default '1' for the first/preferred assembly). Most structures have assembly 1 as the biologically relevant form.",
           "default": "1"
+        },
+        "operation_limit": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Maximum symmetry operations per page."
+        },
+        "operation_offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based symmetry-operation offset; continue with operations_pagination.next_offset."
+        },
+        "evidence_limit": {
+          "type": "integer",
+          "default": 5,
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Maximum biological-relevance evidence records per page."
+        },
+        "evidence_offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based evidence offset; continue with evidence_pagination.next_offset."
         }
       },
       "required": [
@@ -276,12 +302,24 @@
               },
               "description": "Symmetry operations defining the assembly"
             },
+            "operation_count": {
+              "type": "integer"
+            },
+            "operations_pagination": {
+              "type": "object"
+            },
             "evidence": {
               "type": "array",
               "items": {
                 "type": "object"
               },
               "description": "Evidence for biological relevance"
+            },
+            "evidence_count": {
+              "type": "integer"
+            },
+            "evidence_pagination": {
+              "type": "object"
             }
           }
         },

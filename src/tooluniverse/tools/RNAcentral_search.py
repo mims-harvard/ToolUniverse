@@ -11,6 +11,7 @@ from ._shared_client import get_shared_client
 def RNAcentral_search(
     query: str,
     page_size: Optional[int] = 10,
+    page: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,6 +26,8 @@ def RNAcentral_search(
         RNA or gene name (e.g. 'MALAT1', 'let-7') or an RNAcentral accession (URS0000...
     page_size : int
         Number of records per page (1–100).
+    page : int
+        One-based page number. Continue with metadata.next_page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +44,7 @@ def RNAcentral_search(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"query": query, "page_size": page_size}.items()
+        for k, v in {"query": query, "page_size": page_size, "page": page}.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

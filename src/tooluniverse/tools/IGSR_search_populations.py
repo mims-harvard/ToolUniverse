@@ -1,7 +1,7 @@
 """
 IGSR_search_populations
 
-Search 1000 Genomes Project populations from the International Genome Sample Resource (IGSR). The...
+Search 1000 Genomes Project populations from IGSR. Results are recoverably paginated: start with ...
 """
 
 from typing import Any, Optional, Callable
@@ -13,13 +13,14 @@ def IGSR_search_populations(
     superpopulation: Optional[str] = None,
     query: Optional[str] = None,
     limit: Optional[int] = 25,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search 1000 Genomes Project populations from the International Genome Sample Resource (IGSR). The...
+    Search 1000 Genomes Project populations from IGSR. Results are recoverably paginated: start with ...
 
     Parameters
     ----------
@@ -30,7 +31,9 @@ def IGSR_search_populations(
     query : str
         Free-text search query to find populations by name or description (e.g., 'Chi...
     limit : int
-        Maximum number of results to return.
+        Results per page (1-500). The IGSR server's real maximum is 500; invalid valu...
+    offset : int
+        Zero-based result offset. Continue with next_offset while has_more is true.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def IGSR_search_populations(
             "superpopulation": superpopulation,
             "query": query,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

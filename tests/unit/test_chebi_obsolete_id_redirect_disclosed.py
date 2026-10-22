@@ -191,6 +191,11 @@ class TestDirectHitIsUnchanged:
             "smiles",
             "inchikey",
             "synonyms",
+            "synonyms_total",
+            "synonym_offset",
+            "synonyms_returned",
+            "synonyms_truncated",
+            "next_synonym_offset",
         ]
 
     def test_curie_form_of_a_primary_id_adds_nothing(self):

@@ -439,12 +439,14 @@ class FDALabelTool(BaseTool):
         limit: int,
         max_chars: int | None = None,
         route: str | None = None,
-    ) -> tuple[list[dict] | None, list[str]]:
+        offset: int = 0,
+    ) -> tuple[list[dict] | None, list[str], dict]:
         """Search generic_name then brand_name, exact phrase then all-tokens,
         then the product text of labels openFDA never linked.
 
-        Returns (extracted label results, truncated section names) on the first
-        match, or (None, []) if no results found. See `_name_queries` for the
+        Returns (extracted label results, truncated section names, paging) on
+        the first match, or (None, [], {}) if no results found. `paging` carries
+        the match `total` and the `matched_query`. See `_name_queries` for the
         query forms and why every term has to stay bound to the name field.
         A `route` (openFDA's spelling) is ANDed onto every query.
         """
@@ -454,50 +456,80 @@ class FDALabelTool(BaseTool):
                     _RetryableGet,
                     "GET",
                     FDA_LABEL_URL,
-                    params=self._params(search=_with_route(q, route), limit=limit),
+                    params=self._params(
+                        search=_with_route(q, route), limit=limit, skip=offset
+                    ),
                     timeout=20,
                 )
                 if resp.status_code == 404:
                     continue
                 resp.raise_for_status()
-                results = resp.json().get("results", [])
+                body = resp.json()
+                results = body.get("results", [])
                 if results:
-                    return self._extract_all(results, max_chars)
-        return self._query_unlinked_labels(drug_name, limit, max_chars, route)
+                    labels, truncated = self._extract_all(results, max_chars)
+                    total = (
+                        body.get("meta", {})
+                        .get("results", {})
+                        .get("total", len(results))
+                    )
+                    return labels, truncated, {"total": total, "matched_query": q}
+        return self._query_unlinked_labels(drug_name, limit, max_chars, route, offset)
 
     def _query_unlinked_labels(
-        self, drug_name: str, limit: int, max_chars: int | None, route: str | None
-    ) -> tuple[list[dict] | None, list[str]]:
+        self,
+        drug_name: str,
+        limit: int,
+        max_chars: int | None,
+        route: str | None,
+        offset: int = 0,
+    ) -> tuple[list[dict] | None, list[str], dict]:
         """Last resort: labels openFDA never linked, found by their product text.
 
         Runs only after every `openfda` name query missed, so it cannot change
         an answer the linked labels already give. See `_names_product_itself`
-        for why matches in the ingredient lists are dropped.
+        for why matches in the ingredient lists are dropped. The ingredient
+        filter runs locally, so `offset` pages the filtered list here rather
+        than being sent upstream as `skip`.
         """
+        fetch = min(max(offset + limit, _PRODUCT_TEXT_FETCH), 1000)
+        q = _with_route(_phrase(_PRODUCT_TEXT_FIELD, drug_name), route)
         resp = request_with_retry(
             _RetryableGet,
             "GET",
             FDA_LABEL_URL,
-            params=self._params(
-                search=_with_route(_phrase(_PRODUCT_TEXT_FIELD, drug_name), route),
-                limit=max(limit, _PRODUCT_TEXT_FETCH),
-            ),
+            params=self._params(search=q, limit=fetch),
             timeout=20,
         )
         if resp.status_code == 404:
-            return None, []
+            return None, [], {}
         resp.raise_for_status()
+        body = resp.json()
+        fetched = body.get("results", [])
         own = [
             r
-            for r in resp.json().get("results", [])
+            for r in fetched
             if not r.get("openfda")
             and _names_product_itself(
                 " ".join(r.get(_PRODUCT_TEXT_FIELD) or []), drug_name
             )
-        ][:limit]
-        if not own:
-            return None, []
-        return self._extract_all(own, max_chars)
+        ]
+        page = own[offset : offset + limit]
+        if not page:
+            return None, [], {}
+        upstream_total = (
+            body.get("meta", {}).get("results", {}).get("total", len(fetched))
+        )
+        labels, truncated = self._extract_all(page, max_chars)
+        return (
+            labels,
+            truncated,
+            {
+                "total": len(own),
+                "total_is_exact": upstream_total <= len(fetched),
+                "matched_query": q,
+            },
+        )
 
     @staticmethod
     def _extract_all(
@@ -516,6 +548,7 @@ class FDALabelTool(BaseTool):
         indication = arguments.get("indication")
         limit = min(int(arguments.get("limit", 5)), 20)
         max_chars = self._max_section_chars(arguments)
+        offset = max(0, int(arguments.get("offset", 0)))
 
         if not drug_name and not indication:
             return {"status": "error", "error": "Provide drug_name or indication"}
@@ -524,16 +557,30 @@ class FDALabelTool(BaseTool):
         if error:
             return {"status": "error", "error": error}
         if drug_name:
-            labels, truncated = self._query_drug_fields(
-                drug_name, limit, max_chars, route
+            labels, truncated, paging = self._query_drug_fields(
+                drug_name, limit, max_chars, route, offset
             )
+            labels = labels or []
+            total = paging.get("total", 0)
+            next_offset = offset + len(labels)
+            has_more = next_offset < total
+            extra = {}
+            if "total_is_exact" in paging:
+                extra["total_is_exact"] = paging["total_is_exact"]
             response = _disclose_truncation(
                 _ok(
-                    labels or [],
+                    labels,
                     query=drug_name,
                     query_field="drug_name",
                     max_section_chars=max_chars or 0,
                     **({"route": route} if route else {}),
+                    matched_query=paging.get("matched_query"),
+                    total=total,
+                    returned=len(labels),
+                    offset=offset,
+                    has_more=has_more,
+                    next_offset=next_offset if has_more else None,
+                    **extra,
                 ),
                 truncated,
                 max_chars,
@@ -547,23 +594,33 @@ class FDALabelTool(BaseTool):
             _RetryableGet,
             "GET",
             FDA_LABEL_URL,
-            params=self._params(search=q, limit=limit),
+            params=self._params(search=q, limit=limit, skip=offset),
             timeout=20,
         )
         labels = []
         truncated = []
+        total = 0
         if resp.status_code != 404:
             resp.raise_for_status()
-            for r in resp.json().get("results", []):
+            body = resp.json()
+            for r in body.get("results", []):
                 record, cut = _extract_label(r, max_chars)
                 labels.append(record)
                 truncated.extend(cut)
+            total = body.get("meta", {}).get("results", {}).get("total", len(labels))
+        next_offset = offset + len(labels)
+        has_more = next_offset < total
         return _disclose_truncation(
             _ok(
                 labels,
                 query=indication,
                 query_field="indication",
                 max_section_chars=max_chars or 0,
+                total=total,
+                returned=len(labels),
+                offset=offset,
+                has_more=has_more,
+                next_offset=next_offset if has_more else None,
             ),
             truncated,
             max_chars,
@@ -582,7 +639,7 @@ class FDALabelTool(BaseTool):
         # Fetch candidates untruncated so the best-match choice below is made on
         # complete records, and only the record we actually return gets cut --
         # otherwise the disclosure would name sections from discarded matches.
-        results, _ = self._query_drug_fields(
+        results, _, _ = self._query_drug_fields(
             drug_name, limit=10, max_chars=None, route=route
         )
         if not results:
@@ -617,18 +674,31 @@ class FDALabelTool(BaseTool):
 
     def _list_classes(self, arguments: dict) -> Any:
         limit = min(int(arguments.get("limit", 20)), 100)
+        offset = max(0, int(arguments.get("offset", 0)))
         resp = request_with_retry(
             _RetryableGet,
             "GET",
             FDA_LABEL_URL,
             params=self._params(
                 count="openfda.pharm_class_epc.exact",
-                limit=limit,
+                limit=1000,
             ),
             timeout=20,
         )
         resp.raise_for_status()
         data = resp.json()
         results = data.get("results", [])
-        classes = [{"drug_class": r["term"], "count": r["count"]} for r in results]
-        return _ok(classes)
+        page = results[offset : offset + limit]
+        classes = [{"drug_class": r["term"], "count": r["count"]} for r in page]
+        accessible_total = len(results)
+        next_offset = offset + len(classes)
+        has_more = next_offset < accessible_total
+        return _ok(
+            classes,
+            accessible_total=accessible_total,
+            total_is_exact=accessible_total < 1000,
+            returned=len(classes),
+            offset=offset,
+            has_more=has_more,
+            next_offset=next_offset if has_more else None,
+        )

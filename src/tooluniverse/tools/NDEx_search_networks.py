@@ -1,7 +1,7 @@
 """
 NDEx_search_networks
 
-Search the NDEx biological network repository for published networks by keyword. NDEx hosts thous...
+Search the NDEx biological network repository with zero-based page-index pagination and pages up ...
 """
 
 from typing import Any, Optional, Callable
@@ -18,16 +18,16 @@ def NDEx_search_networks(
     validate: bool = True,
 ) -> Any:
     """
-    Search the NDEx biological network repository for published networks by keyword. NDEx hosts thous...
+    Search the NDEx biological network repository with zero-based page-index pagination and pages up ...
 
     Parameters
     ----------
     query : str
         Search query for finding biological networks. Can include gene names, pathway...
     size : int
-        Maximum number of results to return (default: 10, max: 100).
+        Networks per search window (default 10, max 1000).
     start : int
-        Offset for pagination (default: 0).
+        Zero-based NDEx page index, not a record offset (default 0). Continue with me...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

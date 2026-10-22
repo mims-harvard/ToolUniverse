@@ -1,7 +1,7 @@
 """
 GBIF_get_taxon_synonyms
 
-List the taxonomic synonyms (unaccepted names that point to an accepted taxon) of a GBIF Backbone...
+List taxonomic synonyms of a GBIF Backbone taxon. Results use GBIF offset pagination; when metada...
 """
 
 from typing import Any, Optional, Callable
@@ -11,13 +11,14 @@ from ._shared_client import get_shared_client
 def GBIF_get_taxon_synonyms(
     taxon_key: int,
     limit: Optional[int] = 20,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    List the taxonomic synonyms (unaccepted names that point to an accepted taxon) of a GBIF Backbone...
+    List taxonomic synonyms of a GBIF Backbone taxon. Results use GBIF offset pagination; when metada...
 
     Parameters
     ----------
@@ -25,6 +26,8 @@ def GBIF_get_taxon_synonyms(
         GBIF Backbone usageKey of the accepted taxon, e.g. 5219404 (Panthera leo). Ob...
     limit : int
         Maximum number of synonyms to return (1-100, default 20).
+    offset : int
+        Zero-based GBIF result offset. Continue with metadata.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +44,7 @@ def GBIF_get_taxon_synonyms(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"taxon_key": taxon_key, "limit": limit}.items()
+        for k, v in {"taxon_key": taxon_key, "limit": limit, "offset": offset}.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

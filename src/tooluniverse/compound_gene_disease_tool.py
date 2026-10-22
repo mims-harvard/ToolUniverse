@@ -156,20 +156,47 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
 
         associations = self._build_concordance(results_by_source)
 
-        shown = associations[: self.ASSOCIATION_CAP]
+        limit = max(1, min(int(arguments.get("limit", self.ASSOCIATION_CAP)), 500))
+        offset = max(0, int(arguments.get("offset", 0)))
+        shown = associations[offset : offset + limit]
+        association_has_more = offset + len(shown) < len(associations)
+
+        source_limit = max(
+            1, min(int(arguments.get("source_limit", self.PER_SOURCE_CAP)), 500)
+        )
+        source_offset = max(0, int(arguments.get("source_offset", 0)))
+        per_source_results = {}
+        per_source_pagination = {}
+        for source, source_rows in results_by_source.items():
+            page = source_rows[source_offset : source_offset + source_limit]
+            has_more = source_offset + len(page) < len(source_rows)
+            per_source_results[source] = page
+            per_source_pagination[source] = {
+                "offset": source_offset,
+                "limit": source_limit,
+                "returned": len(page),
+                "has_more": has_more,
+                "next_offset": source_offset + len(page) if has_more else None,
+            }
+
         result: Dict[str, Any] = {
             "query": {"gene": gene, "disease": disease},
             "sources_queried": list(results_by_source.keys()),
             "sources_failed": sources_failed,
             "num_associations": len(associations),
+            "association_offset": offset,
+            "association_limit": limit,
+            "associations_has_more": association_has_more,
+            "next_association_offset": (
+                offset + len(shown) if association_has_more else None
+            ),
             "associations": shown,
             "truncated": len(associations) > len(shown),
-            "per_source_results": {
-                k: v[: self.PER_SOURCE_CAP] for k, v in results_by_source.items()
-            },
+            "per_source_results": per_source_results,
             "per_source_result_counts": {
                 k: len(v) for k, v in results_by_source.items()
             },
+            "per_source_pagination": per_source_pagination,
         }
         notes.extend(self._disclosure_notes(result, results_by_source))
         if notes:
@@ -191,23 +218,38 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
         """
         notes: List[str] = []
         if result["truncated"]:
+            limit = result.get("association_limit", self.ASSOCIATION_CAP)
+            offset = result.get("association_offset", 0)
+            next_offset = result.get("next_association_offset")
             notes.append(
                 f"'associations' is truncated: {result['num_associations']} "
-                "associations were built ('num_associations') but only the top "
-                f"{self.ASSOCIATION_CAP} are returned, ranked by cross-source "
-                "concordance then best score. An entity absent from this list is "
-                "not evidence that no source reported it."
+                "associations were built ('num_associations') but only "
+                f"{limit} per page are returned (offset {offset}), ranked by "
+                "cross-source concordance then best score. An entity absent "
+                "from this list is not evidence that no source reported it."
+                + (
+                    f" Re-run with offset={next_offset} for the next page."
+                    if next_offset is not None
+                    else ""
+                )
             )
-        cut = [
-            f"{k} {self.PER_SOURCE_CAP} of {n}"
-            for k, n in result["per_source_result_counts"].items()
-            if n > self.PER_SOURCE_CAP
-        ]
+        pagination = result.get("per_source_pagination", {})
+        cut = []
+        for k, n in result["per_source_result_counts"].items():
+            page = pagination.get(k, {})
+            shown = page.get("returned", min(n, self.PER_SOURCE_CAP))
+            if n > shown:
+                cut.append(f"{k} {shown} of {n}")
         if cut:
+            source_limit = next(
+                (p["limit"] for p in pagination.values() if "limit" in p),
+                self.PER_SOURCE_CAP,
+            )
             notes.append(
-                f"'per_source_results' is truncated to {self.PER_SOURCE_CAP} rows "
+                f"'per_source_results' is truncated to {source_limit} rows "
                 f"per source ({', '.join(cut)}); 'per_source_result_counts' gives "
-                "the untruncated count each source returned. Do not read a "
+                "the untruncated count each source returned and "
+                "'per_source_pagination' the next 'source_offset'. Do not read a "
                 "source's row count there as how much data it has."
             )
         # Only worth saying when the denominator actually misleads. With every
@@ -360,7 +402,7 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
         # GenCC "submissions" carry BOTH disease_title and gene_symbol; pick the
         # one the caller is asking for.
         if isinstance(data, dict) and "submissions" in data:
-            for sub in data["submissions"][:30]:
+            for sub in data["submissions"]:
                 if isinstance(sub, dict):
                     if query_by_disease:
                         name = sub.get("gene_symbol") or sub.get("disease_title") or ""
@@ -381,7 +423,7 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
             rows = (
                 (data.get("target") or {}).get("associatedDiseases", {}).get("rows", [])
             )
-            for row in rows[:30]:
+            for row in rows:
                 disease = (row or {}).get("disease") or {}
                 name = disease.get("name", "")
                 if name:
@@ -395,7 +437,7 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
             rows = (
                 (data.get("disease") or {}).get("associatedTargets", {}).get("rows", [])
             )
-            for row in rows[:30]:
+            for row in rows:
                 target = (row or {}).get("target") or {}
                 name = target.get("approvedSymbol", "")
                 if name:
@@ -407,7 +449,7 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
         # OpenTargets bare disease-name search fallback: "search.hits" (names).
         if isinstance(data, dict) and "search" in data:
             hits = data["search"].get("hits", [])
-            for hit in hits[:30]:
+            for hit in hits:
                 if isinstance(hit, dict):
                     name = hit.get("name", "")
                     items.append({"name": str(name), "score": None, "source": source})
@@ -423,7 +465,7 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
         # CFTR), so extract it.
         if isinstance(data, dict) and "variants" in data:
             if query_by_disease:
-                for v in (data.get("variants") or [])[:30]:
+                for v in data.get("variants") or []:
                     if isinstance(v, dict):
                         for g in v.get("genes", []) or []:
                             if g:
@@ -443,7 +485,7 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
         # for both query directions, same as ClinVar's disease->gene branch
         # falls back to what the source actually gives us.
         if isinstance(data, dict) and "entries" in data:
-            for row in (data.get("entries") or [])[:30]:
+            for row in data.get("entries") or []:
                 entry = (row or {}).get("entry") or {}
                 title = (entry.get("titles") or {}).get("preferredTitle", "")
                 if title:
@@ -464,7 +506,7 @@ class CompoundGeneDiseaseAssociationTool(BaseTool):
                 if query_by_disease
                 else disease_fields + gene_fields
             )
-            for item in data[:30]:
+            for item in data:
                 if isinstance(item, dict):
                     name = next((item[f] for f in order if item.get(f)), "")
                     score = item.get(

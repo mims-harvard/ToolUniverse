@@ -74,14 +74,7 @@ def test_search_curates_and_reports_total():
     assert out["data"][0]["aging_mechanisms"] == ["INS/IGF-1 pathway dysregulation"]
 
 
-def test_search_clamps_pagination():
-    captured = {}
-
-    def fake_get(url, params=None, **kw):
-        captured["params"] = params
-        return _resp(200, {"options": {}, "items": []})
-
-    with patch("tooluniverse.open_genes_tool.requests.get", side_effect=fake_get):
-        OpenGenesSearchTool(_cfg("OpenGenes_search_genes", "OpenGenesSearchTool")).run({"limit": 9999, "page": 0})
-    assert captured["params"]["pageSize"] == 100  # clamped to max
-    assert captured["params"]["page"] == 1  # clamped to min
+def test_search_rejects_invalid_pagination_instead_of_clamping():
+    tool = OpenGenesSearchTool(_cfg("OpenGenes_search_genes", "OpenGenesSearchTool"))
+    assert tool.run({"limit": 1001})["status"] == "error"
+    assert tool.run({"page": 0})["status"] == "error"

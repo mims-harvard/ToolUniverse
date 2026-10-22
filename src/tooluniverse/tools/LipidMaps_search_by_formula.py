@@ -1,7 +1,7 @@
 """
 LipidMaps_search_by_formula
 
-Search lipids by molecular formula in LIPID MAPS Structure Database. Returns all lipids matching ...
+Search the LIPID MAPS Structure Database by exact molecular formula. Returns the complete unpagin...
 """
 
 from typing import Any, Optional, Callable
@@ -17,7 +17,7 @@ def LipidMaps_search_by_formula(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Search lipids by molecular formula in LIPID MAPS Structure Database. Returns all lipids matching ...
+    Search the LIPID MAPS Structure Database by exact molecular formula. Returns the complete unpagin...
 
     Parameters
     ----------

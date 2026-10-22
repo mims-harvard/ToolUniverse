@@ -1,13 +1,31 @@
 [
   {
     "name": "Bgee_search_genes",
-    "description": "Search for genes in the Bgee comparative gene expression database across 29+ animal species. Bgee integrates RNA-Seq, Affymetrix, EST, and in situ hybridization data to provide curated expression calls. Search by gene symbol, name, or description. Returns matching genes with species information, biotype, and expression summaries. Example: searching 'TP53' returns tumor protein p53 across human, mouse, zebrafish, and other model organisms.",
+    "description": "Search for genes in the Bgee comparative gene expression database across 29+ animal species. Search by gene symbol, name, or description and optionally restrict to one NCBI taxonomy ID. Results support limit/offset pagination. Bgee's official endpoint can expose at most the first 10,000 matches for one query; metadata reports accessible_matches and upstream_truncated, and species_id can be used to partition very broad cross-species searches. Example: searching 'TP53' returns tumor protein p53 across human, mouse, zebrafish, and other model organisms.",
     "parameter": {
       "type": "object",
       "properties": {
         "query": {
           "type": "string",
           "description": "Gene name, symbol, or description to search for. Examples: 'TP53', 'insulin', 'BRCA1', 'sonic hedgehog'."
+        },
+        "species_id": {
+          "type": "string",
+          "description": "Optional NCBI taxonomy ID used by Bgee to restrict the search to one species, e.g. '9606' for human or '10090' for mouse. Recommended for broad queries whose cross-species total exceeds Bgee's 10,000-record upstream limit."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 20,
+          "description": "Maximum number of gene matches to return in this page."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9999,
+          "default": 0,
+          "description": "Zero-based result offset within Bgee's first 10,000 accessible matches. Use metadata.next_offset for the next page."
         }
       },
       "required": [
@@ -17,6 +35,7 @@
     "fields": {
       "endpoint": "gene_search"
     },
+    "timeout": 90,
     "type": "BgeeTool",
     "test_examples": [
       {
@@ -119,6 +138,19 @@
         "species_id": {
           "type": "string",
           "description": "NCBI taxonomy ID for the species. Examples: '9606' (human), '10090' (mouse), '7955' (zebrafish), '7227' (fruit fly)."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 50,
+          "description": "Maximum number of expression calls to return in this page."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based expression-call offset. Use metadata.next_offset to retrieve the next page."
         }
       },
       "required": [
@@ -129,6 +161,7 @@
     "fields": {
       "endpoint": "gene_expression"
     },
+    "timeout": 90,
     "type": "BgeeTool",
     "test_examples": [
       {

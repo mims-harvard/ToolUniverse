@@ -46,6 +46,29 @@ class EMPIARTool(BaseTool):
         query = args.get("query", "")
         page_size = args.get("page_size", 10)
         start = args.get("start", 0)
+        if not isinstance(query, str) or not query.strip():
+            return {
+                "status": "error",
+                "error": "query must be a non-empty string",
+                "parameter": "query",
+            }
+        if (
+            isinstance(page_size, bool)
+            or not isinstance(page_size, int)
+            or not 1 <= page_size <= 100
+        ):
+            return {
+                "status": "error",
+                "error": "page_size must be an integer between 1 and 100",
+                "parameter": "page_size",
+            }
+        if isinstance(start, bool) or not isinstance(start, int) or start < 0:
+            return {
+                "status": "error",
+                "error": "start must be a non-negative integer",
+                "parameter": "start",
+            }
+        query = query.strip()
 
         params = {
             "query": query,
@@ -72,13 +95,22 @@ class EMPIARTool(BaseTool):
                 }
             )
 
+        total_hits = data.get("hitCount", 0)
+        returned = len(entries)
+        has_more = start + returned < total_hits
+        truncated = start > 0 or has_more
         return {
             "status": "success",
             "data": entries,
             "metadata": {
-                "total_hits": data.get("hitCount", 0),
-                "returned": len(entries),
+                "total_hits": total_hits,
+                "returned": returned,
                 "start": start,
+                "page_size": page_size,
+                "has_more": has_more,
+                "next_start": start + returned if has_more else None,
+                "truncated": truncated,
+                "result_set_complete": not truncated,
             },
         }
 

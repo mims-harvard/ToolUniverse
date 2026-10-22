@@ -1,7 +1,7 @@
 """
 civic_get_variant
 
-Get detailed information about a specific variant in CIViC database by variant ID. Variants repre...
+Get detailed information about a specific variant in CIViC database by variant ID. Associated mol...
 """
 
 from typing import Any, Optional, Callable
@@ -10,18 +10,24 @@ from ._shared_client import get_shared_client
 
 def civic_get_variant(
     variant_id: int,
+    molecular_profile_limit: Optional[int] = 5,
+    molecular_profile_after: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get detailed information about a specific variant in CIViC database by variant ID. Variants repre...
+    Get detailed information about a specific variant in CIViC database by variant ID. Associated mol...
 
     Parameters
     ----------
     variant_id : int
         CIViC variant ID (e.g., 4170)
+    molecular_profile_limit : int
+        Maximum associated molecular profiles to return on this page (default: 5, max...
+    molecular_profile_after : str
+        Opaque continuation cursor from metadata.next_molecular_profile_cursor.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +42,15 @@ def civic_get_variant(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"variant_id": variant_id}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {
+            "variant_id": variant_id,
+            "molecular_profile_limit": molecular_profile_limit,
+            "molecular_profile_after": molecular_profile_after,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "civic_get_variant",

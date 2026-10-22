@@ -1,7 +1,7 @@
 """
 CTIS_search_trials
 
-Search the EU Clinical Trials Information System (CTIS) — the European clinical-trials register u...
+Search EU CTIS with strict, recoverable one-based pagination. Returns exact total_records plus ha...
 """
 
 from typing import Any, Optional, Callable
@@ -18,16 +18,16 @@ def CTIS_search_trials(
     validate: bool = True,
 ) -> Any:
     """
-    Search the EU Clinical Trials Information System (CTIS) — the European clinical-trials register u...
+    Search EU CTIS with strict, recoverable one-based pagination. Returns exact total_records plus ha...
 
     Parameters
     ----------
     query : str
         Free-text search, e.g. 'breast cancer', 'pembrolizumab', 'cystic fibrosis'.
     limit : int
-        Results per page (default 10, max 100).
+        Results per page, 1-100. Defaults to 10; invalid values are rejected rather t...
     page : int
-        Page number (default 1).
+        One-based CTIS page number. Defaults to 1; use metadata.next_page while metad...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

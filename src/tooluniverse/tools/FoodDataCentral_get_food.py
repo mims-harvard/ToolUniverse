@@ -1,7 +1,7 @@
 """
 FoodDataCentral_get_food
 
-Get detailed food information by FDC ID from USDA FoodData Central. Returns complete nutrient pro...
+Get detailed food information by a positive integer FDC ID from USDA FoodData Central. The wrappe...
 """
 
 from typing import Any, Optional, Callable
@@ -9,18 +9,18 @@ from ._shared_client import get_shared_client
 
 
 def FoodDataCentral_get_food(
-    fdc_id: int | str,
+    fdc_id: int,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get detailed food information by FDC ID from USDA FoodData Central. Returns complete nutrient pro...
+    Get detailed food information by a positive integer FDC ID from USDA FoodData Central. The wrappe...
 
     Parameters
     ----------
-    fdc_id : int | str
+    fdc_id : int
         FoodData Central food ID (e.g., 1105073 for raw bananas, 2012128 for a brande...
     stream_callback : Callable, optional
         Callback for streaming output

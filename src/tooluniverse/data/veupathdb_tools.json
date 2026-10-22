@@ -209,7 +209,7 @@
   },
   {
     "name": "VEuPathDB_search_genes_by_organism",
-    "description": "Search a VEuPathDB pathogen-genome database for all genes belonging to a given organism/strain, using the EuPathDB WDK GenesByTaxonGene search (POST query). VEuPathDB is a family of sites that share one API: PlasmoDB (malaria, Plasmodium), ToxoDB (Toxoplasma), FungiDB (fungi), VectorBase (disease vectors), CryptoDB, GiardiaDB, MicrosporidiaDB, PiroplasmaDB, TrichDB, TriTrypDB and AmoebaDB. Choose the site with the 'project' parameter and give the full organism name (genus + species + strain). Returns one row per gene with primary key (gene ID), protein product, organism, gene type and genomic location. Example: organism='Plasmodium falciparum 3D7', project='plasmodb' returns the ~5,720 P. falciparum 3D7 genes.",
+    "description": "Search genes belonging to an organism/strain in a VEuPathDB member database using the WDK GenesByTaxonGene report. Results use offset pagination; metadata reports the true total and, when has_more is true, the next_offset to pass with the same query.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -241,6 +241,12 @@
             "null"
           ],
           "description": "Maximum number of genes to return (1-500, default 25)."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based WDK gene result offset. Continue with metadata.next_offset while metadata.has_more is true."
         }
       },
       "required": [

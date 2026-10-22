@@ -73,6 +73,85 @@ class CrossrefRESTTool(BaseRESTTool):
             # query uses its original name
         }
 
+    def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        paginated = self.tool_config.get("name") in {
+            "Crossref_search_works",
+            "Crossref_list_funders",
+            "Crossref_search_members",
+        }
+        if not paginated:
+            return super().run(arguments)
+
+        arguments = dict(arguments or {})
+        limit = arguments.get("limit", 10)
+        offset = arguments.get("offset")
+        cursor = arguments.get("cursor", "*")
+        if (
+            isinstance(limit, bool)
+            or not isinstance(limit, int)
+            or not 1 <= limit <= 100
+        ):
+            return {
+                "status": "error",
+                "error": "limit must be an integer between 1 and 100",
+                "parameter": "limit",
+            }
+        if offset is not None and (
+            isinstance(offset, bool) or not isinstance(offset, int) or offset < 0
+        ):
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+                "parameter": "offset",
+            }
+        if not isinstance(cursor, str) or not cursor:
+            return {
+                "status": "error",
+                "error": "cursor must be '*' or a non-empty cursor returned by Crossref",
+                "parameter": "cursor",
+            }
+        # Crossref pages either by offset or by cursor, not both.
+        if offset is not None and cursor != "*":
+            return {
+                "status": "error",
+                "error": "Pass either offset or cursor, not both",
+                "parameter": "cursor",
+            }
+        arguments["limit"] = limit
+        arguments["cursor"] = None if offset is not None else cursor
+        result = super().run(arguments)
+        if result.get("status") != "success":
+            return result
+
+        metadata = result.setdefault("metadata", {})
+        total = metadata.get("total_results")
+        returned = result.get("count", 0)
+        next_cursor = metadata.get("upstream_next_cursor")
+        first_page = cursor == "*" and not offset
+        if offset is not None and isinstance(total, int):
+            has_more = offset + returned < total
+        elif cursor == "*" and isinstance(total, int):
+            has_more = returned < total
+        else:
+            has_more = returned == limit and bool(next_cursor)
+        metadata.update(
+            {
+                "returned": returned,
+                "limit": limit,
+                "total_results_is_exact": isinstance(total, int),
+                "has_more": has_more,
+                "next_cursor": next_cursor if has_more and offset is None else None,
+                "result_set_complete": first_page
+                and isinstance(total, int)
+                and returned == total,
+            }
+        )
+        if offset is not None:
+            metadata["offset"] = offset
+            metadata["next_offset"] = offset + returned if has_more else None
+        metadata.pop("upstream_next_cursor", None)
+        return result
+
     def _process_response(
         self, response: requests.Response, url: str
     ) -> Dict[str, Any]:
@@ -110,6 +189,14 @@ class CrossrefRESTTool(BaseRESTTool):
                             _requested_offset(response), len(items), total
                         )
                     )
+                next_cursor = message.get("next-cursor")
+                if total is not None or next_cursor is not None:
+                    result["metadata"] = {
+                        "total_results": total
+                        if isinstance(total, int) and not isinstance(total, bool)
+                        else None,
+                        "upstream_next_cursor": next_cursor,
+                    }
                 return result
             else:
                 # For detail endpoints, return the message directly

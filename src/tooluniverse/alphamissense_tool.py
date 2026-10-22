@@ -156,19 +156,36 @@ class AlphaMissenseTool(BaseTool):
           2. Fetching all residues concurrently via a thread pool
           3. Returning the aggregated per-position records
 
-        Set max_residues to cap the loop if you only want a partial protein
-        (e.g. for fast diagnostic calls). max_residues=0 (the default) means
-        no cap — fetch every residue.
+        Set max_residues to cap one page of results and residue_offset to
+        continue at the next position. max_residues=0 (the default) means no
+        cap — fetch every residue at or after residue_offset.
         """
         uniprot_id = arguments.get("uniprot_id")
         if not uniprot_id:
             return {"status": "error", "error": "uniprot_id parameter is required"}
 
         max_residues = arguments.get("max_residues", 0)
-        try:
-            max_residues = int(max_residues) if max_residues else 0
-        except (TypeError, ValueError):
+        residue_offset = arguments.get("residue_offset", 0)
+        if max_residues is None:
             max_residues = 0
+        if (
+            isinstance(max_residues, bool)
+            or not isinstance(max_residues, int)
+            or max_residues < 0
+        ):
+            return {
+                "status": "error",
+                "error": "max_residues must be a non-negative integer",
+            }
+        if (
+            isinstance(residue_offset, bool)
+            or not isinstance(residue_offset, int)
+            or residue_offset < 0
+        ):
+            return {
+                "status": "error",
+                "error": "residue_offset must be a non-negative integer",
+            }
 
         # 1. Protein length from UniProt
         protein_length = self._fetch_protein_length(uniprot_id)
@@ -181,9 +198,32 @@ class AlphaMissenseTool(BaseTool):
                 ),
             }
 
-        positions = list(range(1, protein_length + 1))
+        positions = list(range(residue_offset + 1, protein_length + 1))
         if max_residues and max_residues < len(positions):
             positions = positions[:max_residues]
+
+        if not positions:
+            return {
+                "status": "success",
+                "data": {
+                    "uniprot_id": uniprot_id,
+                    "protein_length": protein_length,
+                    "scores": [],
+                    "n_positions_returned": 0,
+                    "n_positions_attempted": 0,
+                    "residue_offset": residue_offset,
+                    "max_residues_cap": max_residues if max_residues else None,
+                    "has_more": False,
+                    "next_residue_offset": None,
+                    "result_set_complete": residue_offset == 0,
+                    "thresholds": {
+                        "pathogenic": f"> {self.PATHOGENIC_THRESHOLD}",
+                        "ambiguous": f"{self.BENIGN_THRESHOLD} - {self.PATHOGENIC_THRESHOLD}",
+                        "benign": f"< {self.BENIGN_THRESHOLD}",
+                    },
+                    "pdb_download": f"{ALPHAMISSENSE_BASE_URL}/pdb/AF-{uniprot_id}-F1-AM_v4.pdb",
+                },
+            }
 
         # 2. Concurrent per-residue fetch
         scores: List[Optional[Dict[str, Any]]] = [None] * len(positions)
@@ -246,7 +286,16 @@ class AlphaMissenseTool(BaseTool):
                 "scores": per_position,
                 "n_positions_returned": n_fetched,
                 "n_positions_attempted": len(positions),
+                "residue_offset": residue_offset,
                 "max_residues_cap": max_residues if max_residues else None,
+                "has_more": residue_offset + len(positions) < protein_length,
+                "next_residue_offset": (
+                    residue_offset + len(positions)
+                    if residue_offset + len(positions) < protein_length
+                    else None
+                ),
+                "result_set_complete": residue_offset == 0
+                and len(positions) == protein_length,
                 "thresholds": {
                     "pathogenic": f"> {self.PATHOGENIC_THRESHOLD}",
                     "ambiguous": f"{self.BENIGN_THRESHOLD} - {self.PATHOGENIC_THRESHOLD}",

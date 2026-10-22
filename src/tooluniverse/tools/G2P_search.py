@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def G2P_search(
     query: str,
-    page: Optional[int] = None,
+    page: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

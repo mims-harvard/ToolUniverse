@@ -1,7 +1,7 @@
 """
 Monarch_get_associations
 
-Query disease-gene-phenotype associations in the Monarch Initiative knowledge graph. Find gene-ph...
+Query disease-gene-phenotype associations in Monarch with exact offset pagination. Provide a subj...
 """
 
 from typing import Any, Optional, Callable
@@ -12,14 +12,15 @@ def Monarch_get_associations(
     subject: Optional[str] = None,
     object: Optional[str] = None,
     category: Optional[str] = None,
-    limit: Optional[int] = None,
+    limit: Optional[int] = 20,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> list[Any]:
     """
-    Query disease-gene-phenotype associations in the Monarch Initiative knowledge graph. Find gene-ph...
+    Query disease-gene-phenotype associations in Monarch with exact offset pagination. Provide a subj...
 
     Parameters
     ----------
@@ -30,7 +31,9 @@ def Monarch_get_associations(
     category : str
         Optional Biolink association category filter. Options: 'biolink:GeneToPhenoty...
     limit : int
-        Maximum associations to return (default: 20, max: 200).
+        Associations per page (1-200).
+    offset : int
+        Zero-based offset. Continue with metadata.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def Monarch_get_associations(
             "object": object,
             "category": category,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

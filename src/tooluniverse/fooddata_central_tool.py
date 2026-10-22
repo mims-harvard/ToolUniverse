@@ -9,6 +9,8 @@ API Documentation: https://fdc.nal.usda.gov/api-guide/
 OpenAPI Spec: https://fdc.nal.usda.gov/api-spec/fdc_api.html
 """
 
+import math
+
 import requests
 from typing import Dict, Any
 from .base_tool import BaseTool
@@ -132,23 +134,95 @@ class FoodDataCentralTool(BaseTool):
     def _search_foods(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search for foods by keyword/query string."""
         query = arguments.get("query", "")
-        if not query:
-            return {"status": "error", "error": "query parameter is required"}
+        if not isinstance(query, str) or not query.strip():
+            return {"status": "error", "error": "query must be a non-empty string"}
+        query = query.strip()
 
-        params = {"query": query}
-        if "page_size" in arguments:
-            params["pageSize"] = arguments["page_size"]
-        if "page_number" in arguments:
-            params["pageNumber"] = arguments["page_number"]
-        if "data_type" in arguments:
-            params["dataType"] = arguments["data_type"]
+        page_size = arguments.get("page_size", 25)
+        page_number = arguments.get("page_number", 1)
+        if (
+            isinstance(page_size, bool)
+            or not isinstance(page_size, int)
+            or not 1 <= page_size <= 200
+        ):
+            return {
+                "status": "error",
+                "error": "page_size must be an integer from 1 to 200",
+            }
+        if (
+            isinstance(page_number, bool)
+            or not isinstance(page_number, int)
+            or page_number < 1
+        ):
+            return {
+                "status": "error",
+                "error": "page_number must be a positive integer",
+            }
+        data_type = arguments.get("data_type")
+        allowed_data_types = {
+            "Foundation",
+            "Branded",
+            "SR Legacy",
+            "Survey (FNDDS)",
+        }
+        if data_type is not None and data_type not in allowed_data_types:
+            return {
+                "status": "error",
+                "error": "data_type is not a supported FoodData Central data type",
+            }
+
+        params = {"query": query, "pageSize": page_size, "pageNumber": page_number}
+        if data_type is not None:
+            params["dataType"] = data_type
 
         response = self._make_get_request("foods/search", params)
         data = response.json()
+        if not isinstance(data, dict) or not isinstance(data.get("foods"), list):
+            return {
+                "status": "error",
+                "error": "FoodData Central search response lacked a foods array",
+            }
+        total_hits = data.get("totalHits")
+        current_page = data.get("currentPage")
+        total_pages = data.get("totalPages")
+        if any(
+            isinstance(value, bool) or not isinstance(value, int) or value < 0
+            for value in (total_hits, current_page, total_pages)
+        ):
+            return {
+                "status": "error",
+                "error": "FoodData Central returned invalid pagination metadata",
+            }
+        if current_page != page_number:
+            return {
+                "status": "error",
+                "error": "FoodData Central returned a different page than requested",
+                "requested_page": page_number,
+                "returned_page": current_page,
+            }
+
+        raw_foods = data["foods"]
+        expected_pages = math.ceil(total_hits / page_size) if total_hits else 0
+        if total_pages != expected_pages:
+            return {
+                "status": "error",
+                "error": "FoodData Central pagination totals were internally inconsistent",
+                "total_hits": total_hits,
+                "page_size": page_size,
+                "reported_total_pages": total_pages,
+                "expected_total_pages": expected_pages,
+            }
 
         # Extract food results with key fields
         foods = []
-        for food in data.get("foods", []):
+        for food in raw_foods:
+            if not isinstance(food, dict) or not isinstance(
+                food.get("foodNutrients"), list
+            ):
+                return {
+                    "status": "error",
+                    "error": "FoodData Central returned a malformed food or nutrient array",
+                }
             food_item = {
                 "fdcId": food.get("fdcId"),
                 "description": food.get("description"),
@@ -158,9 +232,16 @@ class FoodDataCentralTool(BaseTool):
                 "servingSize": food.get("servingSize"),
                 "servingSizeUnit": food.get("servingSizeUnit", ""),
             }
-            # Include top nutrients
+            # Preserve the historical first-10 summary, but also expose the
+            # complete nutrient list returned by USDA. The API does not rank
+            # this array, so the first ten must not be treated as exhaustive.
             nutrients = []
-            for n in food.get("foodNutrients", [])[:10]:
+            for n in food["foodNutrients"]:
+                if not isinstance(n, dict):
+                    return {
+                        "status": "error",
+                        "error": "FoodData Central returned a malformed nutrient entry",
+                    }
                 nutrients.append(
                     {
                         "name": n.get("nutrientName", ""),
@@ -168,16 +249,34 @@ class FoodDataCentralTool(BaseTool):
                         "unit": n.get("unitName", ""),
                     }
                 )
-            food_item["topNutrients"] = nutrients
+            food_item["nutrients"] = nutrients
+            food_item["nutrientCount"] = len(nutrients)
+            food_item["topNutrients"] = nutrients[:10]
             foods.append(food_item)
 
+        has_more = current_page < total_pages
+        remaining = max(total_hits - ((current_page - 1) * page_size), 0)
+        expected_returned = min(page_size, remaining)
+        count_matches = len(foods) == expected_returned
+        stalled = not count_matches
         return {
             "status": "success",
             "data": foods,
             "metadata": {
-                "totalHits": data.get("totalHits", 0),
-                "currentPage": data.get("currentPage", 1),
-                "totalPages": data.get("totalPages", 0),
+                "totalHits": total_hits,
+                "currentPage": current_page,
+                "totalPages": total_pages,
+                "returned": len(foods),
+                "expectedReturned": expected_returned,
+                "returnedCountMatchesMetadata": count_matches,
+                "pageSize": page_size,
+                "hasMore": has_more,
+                "nextPage": current_page + 1 if has_more and count_matches else None,
+                "requestedPageComplete": count_matches,
+                "resultSetComplete": current_page == 1
+                and not has_more
+                and count_matches,
+                "paginationStalled": stalled,
                 "source": "USDA FoodData Central",
             },
         }
@@ -185,11 +284,25 @@ class FoodDataCentralTool(BaseTool):
     def _get_food_detail(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get detailed food information by FDC ID."""
         fdc_id = arguments.get("fdc_id")
-        if not fdc_id:
-            return {"status": "error", "error": "fdc_id parameter is required"}
+        if isinstance(fdc_id, bool) or not isinstance(fdc_id, int) or fdc_id < 1:
+            return {"status": "error", "error": "fdc_id must be a positive integer"}
 
         response = self._make_get_request(f"food/{fdc_id}")
         data = response.json()
+        if not isinstance(data, dict) or data.get("fdcId") != fdc_id:
+            return {
+                "status": "error",
+                "error": "FoodData Central detail response did not match requested fdc_id",
+                "requested_fdc_id": fdc_id,
+                "returned_fdc_id": data.get("fdcId")
+                if isinstance(data, dict)
+                else None,
+            }
+        if not isinstance(data.get("foodNutrients"), list):
+            return {
+                "status": "error",
+                "error": "FoodData Central detail response lacked foodNutrients",
+            }
 
         # Structure the response
         result = {

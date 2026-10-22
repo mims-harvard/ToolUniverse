@@ -28,7 +28,7 @@ def BioTools_search(
     page : int
         Page number for paginated results (1-based). Default: 1.
     size : int
-        Number of results per page (1-50). Default: 10.
+        Number of results per page (1-100). Mapped to bio.tools' real per_page parame...
     format : str
         Response format. Must be 'json'.
     stream_callback : Callable, optional

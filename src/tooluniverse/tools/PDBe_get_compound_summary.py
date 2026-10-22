@@ -1,7 +1,7 @@
 """
 PDBe_get_compound_summary
 
-Get detailed chemical compound information from PDBe by PDB chemical component ID (3-letter code)...
+Get detailed chemical compound information from PDBe by PDB chemical component ID. Returns comple...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def PDBe_get_compound_summary(
     validate: bool = True,
 ) -> Any:
     """
-    Get detailed chemical compound information from PDBe by PDB chemical component ID (3-letter code)...
+    Get detailed chemical compound information from PDBe by PDB chemical component ID. Returns comple...
 
     Parameters
     ----------

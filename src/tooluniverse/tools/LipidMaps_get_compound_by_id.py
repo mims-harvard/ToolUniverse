@@ -1,7 +1,7 @@
 """
 LipidMaps_get_compound_by_id
 
-Get lipid structure and classification by LIPID MAPS ID (LMID). Returns full lipid record includi...
+Get lipid structure and classification by exact LIPID MAPS ID (LMID). The wrapper validates outpu...
 """
 
 from typing import Any, Optional, Callable
@@ -17,7 +17,7 @@ def LipidMaps_get_compound_by_id(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get lipid structure and classification by LIPID MAPS ID (LMID). Returns full lipid record includi...
+    Get lipid structure and classification by exact LIPID MAPS ID (LMID). The wrapper validates outpu...
 
     Parameters
     ----------

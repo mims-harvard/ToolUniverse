@@ -1,7 +1,7 @@
 [
   {
     "name": "GBIF_get_taxon_children",
-    "description": "List the direct child taxa of a GBIF Backbone taxon. Given a taxonKey (e.g. a genus), returns its immediate children one rank down (e.g. the species in that genus), with key, scientificName, rank and taxonomicStatus for each. Use to walk DOWN the taxonomic tree. Get a taxonKey from GBIF_match_name or GBIF_search_species. Example: taxon_key=2435194 (genus Panthera) -> Panthera leo (5219404), Panthera onca (5219426), Panthera tigris, etc. No API key required.",
+    "description": "List direct child taxa of a GBIF Backbone taxon. Results use GBIF offset pagination; when metadata.has_more is true pass metadata.next_offset as offset with the same taxon_key and limit.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -13,6 +13,12 @@
           "type": ["integer", "null"],
           "description": "Maximum number of child taxa to return (1-100, default 20).",
           "default": 20
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based GBIF result offset. Continue with metadata.next_offset."
         }
       },
       "required": ["taxon_key"]
@@ -146,7 +152,7 @@
   },
   {
     "name": "GBIF_get_taxon_synonyms",
-    "description": "List the taxonomic synonyms (unaccepted names that point to an accepted taxon) of a GBIF Backbone taxon. Given the taxonKey of an accepted name, returns its synonym name-usages with key, scientificName and taxonomicStatus. Use to find alternative / historical scientific names for a species. Get a taxonKey from GBIF_match_name or GBIF_search_species. Example: taxon_key=5219404 (Panthera leo) -> Felis leo Linnaeus 1758, Felis imperialis Leidy 1873. No API key required.",
+    "description": "List taxonomic synonyms of a GBIF Backbone taxon. Results use GBIF offset pagination; when metadata.has_more is true pass metadata.next_offset as offset with the same inputs.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -158,6 +164,12 @@
           "type": ["integer", "null"],
           "description": "Maximum number of synonyms to return (1-100, default 20).",
           "default": 20
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based GBIF result offset. Continue with metadata.next_offset."
         }
       },
       "required": ["taxon_key"]
@@ -221,7 +233,7 @@
   },
   {
     "name": "GBIF_get_vernacular_names",
-    "description": "Get the vernacular (common) names of a GBIF Backbone taxon. Given a taxonKey, returns common names with their language code (ISO 639) and country, de-duplicated. Optionally filter by language. Use to find common names for a species across languages. Get a taxonKey from GBIF_match_name or GBIF_search_species. Example: taxon_key=5219404 (Panthera leo), language=eng -> 'Lion', 'African Lion'. No API key required.",
+    "description": "Get de-duplicated vernacular names of a GBIF Backbone taxon, optionally filtered by language. GBIF does not server-filter this endpoint by language, so filtering is applied to each raw page; continue through metadata.next_offset while metadata.has_more is true to avoid missing later names in the requested language.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -232,6 +244,19 @@
         "language": {
           "type": ["string", "null"],
           "description": "Optional ISO 639-3 language code to filter by, e.g. 'eng' (English), 'spa' (Spanish), 'fra' (French). If omitted, returns names in all languages."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 100,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Number of raw GBIF vernacular-name records to inspect per page."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based raw GBIF result offset. Continue with metadata.next_offset even when a language-filtered page returns no names."
         }
       },
       "required": ["taxon_key"]

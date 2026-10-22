@@ -2,9 +2,9 @@
 
 Regression: the tool defaulted to size=5 and returned the API's UNSORTED
 associations. For a well-studied gene (TCF7L2, 902 associations) the 5 rows were
-arbitrary -- all anthropometric (hip/waist/BMI) -- silently hiding the gene's
-flagship type-2-diabetes associations, misleading a clinician. The default is
-now 100 and the returned set is sorted by p-value (most significant first).
+arbitrary -- all anthropometric (hip/waist/BMI). The default is now 100 and
+each returned page is sorted by p-value (most significant first within that
+page); explicit pagination makes the rest of the catalog reachable.
 """
 import glob
 import json
@@ -42,6 +42,34 @@ def test_default_size_is_100_not_5():
     with patch.object(tool.session, "get", side_effect=fake_get):
         tool.run({"gene_name": "TCF7L2"})
     assert captured["params"]["size"] == 100
+
+
+@pytest.mark.unit
+def test_page_is_forwarded_and_continuation_is_reported():
+    captured = {}
+
+    def fake_get(url, params=None, timeout=None):
+        captured["params"] = params
+        return _Resp(
+            {
+                "_embedded": {"associations": [{"p_value": "1e-8"}]},
+                "page": {"totalElements": 10},
+            }
+        )
+
+    tool = _tool()
+    with patch.object(tool.session, "get", side_effect=fake_get):
+        result = tool.run({"gene_name": "TCF7L2", "size": 3, "page": 1})
+
+    assert captured["params"] == {
+        "mapped_gene": "TCF7L2",
+        "size": 3,
+        "page": 1,
+    }
+    assert result["page"] == 1
+    assert result["page_size"] == 3
+    assert result["has_more"] is True
+    assert result["next_page"] == 2
 
 
 @pytest.mark.unit

@@ -111,13 +111,15 @@ class XenbaseTool(BaseTool):
                 if taxon_filter == "NCBITaxon:8355" and "laevis" not in sp.lower():
                     continue
 
+            synonyms = r.get("synonyms") or []
             results.append(
                 {
                     "gene_id": pk,
                     "symbol": r.get("symbol"),
                     "name": r.get("name"),
                     "species": sp,
-                    "synonyms": r.get("synonyms", [])[:5],
+                    "synonyms": synonyms,
+                    "synonyms_count": len(synonyms),
                 }
             )
             if len(results) >= int(limit):

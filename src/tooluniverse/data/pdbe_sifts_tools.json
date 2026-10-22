@@ -128,6 +128,21 @@
               "type": "integer",
               "description": "Zero-based index of the first entry returned"
             },
+            "limit": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "result_set_complete": {
+              "type": "boolean"
+            },
             "note": {
               "type": "string",
               "description": "Present when more entries remain; explains how to page to them"
@@ -150,13 +165,26 @@
   },
   {
     "name": "PDBeSIFTS_get_pdb_to_uniprot",
-    "description": "Map PDB entry chains to UniProt protein accessions using PDBe SIFTS cross-referencing. For a given PDB structure, returns which UniProt proteins are present, which chains correspond to each protein, and the residue-level mapping between PDB and UniProt numbering. Essential for understanding multi-chain structures and identifying proteins in crystal/EM structures. Example: PDB 1tup maps chain A/B/C to P04637 (TP53) residues 94-312.",
+    "description": "Map PDB entry chains to UniProt accessions using PDBe SIFTS. Chain mappings within every returned accession are paginated with mapping_offset/mapping_limit. Inspect total_chain_mappings, chain_mappings_returned, chain_mappings_truncated, and next_mapping_offset; large assemblies such as 3j3q contain more than one thousand mappings for one accession.",
     "parameter": {
       "type": "object",
       "properties": {
         "pdb_id": {
           "type": "string",
           "description": "PDB entry ID (4-character code). Examples: '1tup' (p53-DNA complex), '1m17' (EGFR kinase), '3pxe' (BRCA1 BRCT), '4hhb' (hemoglobin)."
+        },
+        "mapping_offset": {
+          "type": "integer",
+          "description": "Zero-based chain-mapping offset applied within every returned UniProt accession.",
+          "default": 0,
+          "minimum": 0
+        },
+        "mapping_limit": {
+          "type": "integer",
+          "description": "Chain mappings returned per accession (default 20, maximum 500).",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 500
         }
       },
       "required": [
@@ -249,11 +277,23 @@
                   },
                   "total_chain_mappings": {
                     "type": "integer",
-                    "description": "Total chain mappings for this accession (chain_mappings shows at most the first 20)"
+                    "description": "Total chain mappings for this accession"
+                  },
+                  "mapping_offset": {
+                    "type": "integer"
+                  },
+                  "chain_mappings_returned": {
+                    "type": "integer"
                   },
                   "chain_mappings_truncated": {
                     "type": "boolean",
-                    "description": "True when total_chain_mappings exceeds the 20 returned in chain_mappings"
+                    "description": "True when more mappings remain after this page"
+                  },
+                  "next_mapping_offset": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
                   }
                 }
               },
@@ -409,6 +449,21 @@
             "offset": {
               "type": "integer",
               "description": "Zero-based index of the first entry returned"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "result_set_complete": {
+              "type": "boolean"
             },
             "note": {
               "type": "string",

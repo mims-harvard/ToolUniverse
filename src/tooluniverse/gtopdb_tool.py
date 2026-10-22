@@ -262,6 +262,31 @@ def _limit(arguments: Dict[str, Any]) -> int:
     return min(requested, MAX_LIMIT)
 
 
+def _page(arguments: Dict[str, Any], matches: List[Any], key: str) -> Dict[str, Any]:
+    """Slice *matches* by limit/offset and say how to reach the rest.
+
+    The bulk file is already fully in hand, so every record past the first
+    page is reachable by offset rather than lost to the limit.
+    """
+    limit = _limit(arguments)
+    offset = _as_int(arguments.get("offset"))
+    if offset is None or offset < 0:
+        offset = 0
+    page = matches[offset : offset + limit]
+    next_offset = offset + len(page)
+    has_more = next_offset < len(matches)
+    return {
+        "total_matches": len(matches),
+        "returned": len(page),
+        "offset": offset,
+        "limit": limit,
+        "has_more": has_more,
+        "next_offset": next_offset if has_more else None,
+        "result_set_complete": offset == 0 and not has_more,
+        key: page,
+    }
+
+
 def load_bulk(file_name: str, timeout: int = 60) -> List[Dict[str, str]]:
     """Download and parse one GtoPdb bulk CSV, once per process.
 
@@ -501,12 +526,9 @@ class GtoPdbRESTTool(BaseTool):
                 )
             )
 
-        limit = _limit(arguments)
         payload = {
             "source": f"{GTOPDB_BULK_BASE}/{TARGETS_FILE}",
-            "total_matches": len(matches),
-            "returned": min(len(matches), limit),
-            "targets": matches[:limit],
+            **_page(arguments, matches, "targets"),
         }
         if spec is not None and not matches and spec.canonical == "AccessoryProtein":
             payload["note"] = (
@@ -564,12 +586,9 @@ class GtoPdbRESTTool(BaseTool):
         if needle:
             matches.sort(key=lambda record: _relevance(record, needle, "name"))
 
-        limit = _limit(arguments)
         payload = {
             "source": f"{GTOPDB_BULK_BASE}/{LIGANDS_FILE}",
-            "total_matches": len(matches),
-            "returned": min(len(matches), limit),
-            "ligands": matches[:limit],
+            **_page(arguments, matches, "ligands"),
         }
         if spec is not None and not matches:
             seen = {
@@ -618,12 +637,9 @@ class GtoPdbRESTTool(BaseTool):
                 continue
             matches.append(record)
 
-        limit = _limit(arguments)
         payload = {
             "source": f"{GTOPDB_BULK_BASE}/{INTERACTIONS_FILE}",
-            "total_matches": len(matches),
-            "returned": min(len(matches), limit),
-            "interactions": matches[:limit],
+            **_page(arguments, matches, "interactions"),
         }
         if ligand_id is not None and not matches:
             payload["note"] = (

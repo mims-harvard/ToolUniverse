@@ -63,7 +63,10 @@ class TestGEOTool:
         params = self.tool._build_params(arguments)
         
         assert params["db"] == "gds"
-        assert params["term"] == "cancer AND Homo sapiens[organism] AND \"expression\"[study_type]"
+        assert params["term"] == (
+            '(gse[ETYP] OR gds[ETYP]) AND cancer AND Homo sapiens[organism] '
+            'AND "expression"[study_type]'
+        )
         assert params["retmode"] == "json"
         assert params["retmax"] == 10
     
@@ -76,7 +79,11 @@ class TestGEOTool:
         }
         params = self.tool._build_params(arguments)
         
-        expected_term = "cancer AND Mus musculus[organism]"
+        # db=gds is restricted to dataset record types so samples/platforms
+        # no longer leak into results; the user query is preserved verbatim.
+        expected_term = (
+            "(gse[ETYP] OR gds[ETYP]) AND cancer AND Mus musculus[organism]"
+        )
         assert params["term"] == expected_term
         assert params["retmax"] == 5
     
@@ -89,7 +96,9 @@ class TestGEOTool:
         }
         params = self.tool._build_params(arguments)
         
-        expected_term = "cancer AND \"methylation\"[study_type]"
+        expected_term = (
+            '(gse[ETYP] OR gds[ETYP]) AND cancer AND "methylation"[study_type]'
+        )
         assert params["term"] == expected_term
         assert params["retmax"] == 20
     

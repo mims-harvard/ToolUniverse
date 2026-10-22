@@ -95,3 +95,46 @@ def test_catalog_is_downloaded_page_by_page_once_and_cached():
     assert [c.kwargs["params"]["page"] for c in request.call_args_list] == [1, 2]
     assert first["data"][1][0]["id"] == "SP.POP.TOTL"  # found on the second page
     assert second["data"][1][0]["id"] == "NY.GDP.MKTP.CD"
+
+
+# Pagination contract: the search pages locally over the ranked matches and
+# says how to continue, instead of silently stopping at per_page.
+
+
+def test_different_queries_produce_different_hits_with_continuation():
+    gdp = _search({"query": "GDP", "per_page": 1, "offset": 0})
+    population = _search({"query": "population", "per_page": 1, "offset": 0})
+    assert gdp["data"][1][0]["id"] == "NY.GDP.MKTP.CD"
+    assert population["data"][1][0]["id"] == "SP.POP.TOTL"
+    assert gdp["metadata"]["total_results"] == 2
+    assert gdp["metadata"]["has_more"] is True
+    assert gdp["metadata"]["next_offset"] == 1
+    assert gdp["metadata"]["result_set_complete"] is False
+    assert gdp["metadata"]["total_results_is_exact"] is True
+
+
+def test_second_local_page_reaches_later_match():
+    result = _search({"query": "GDP", "per_page": 1, "offset": 1})
+    assert result["data"][1][0]["id"] == "NE.TRD.GNFS.ZS"
+    assert result["data"][0]["offset"] == 1
+    assert result["metadata"]["has_more"] is False
+    assert result["metadata"]["next_offset"] is None
+
+
+@pytest.mark.parametrize(
+    "arguments, parameter",
+    [
+        ({"query": "", "per_page": 10}, "query"),
+        ({"query": "x", "per_page": 0}, "per_page"),
+        ({"query": "x", "per_page": 1001}, "per_page"),
+        ({"query": "x", "offset": -1}, "offset"),
+        ({"query": "x", "offset": 1.5}, "offset"),
+    ],
+)
+def test_invalid_search_pagination_is_explicit(arguments, parameter):
+    tool = WorldBankIndicatorSearchTool({"name": "WorldBank_search_indicators"})
+    with patch.object(tool, "_wdi_catalog") as catalog:
+        result = tool.run(arguments)
+    assert result["status"] == "error"
+    assert result["parameter"] == parameter
+    catalog.assert_not_called()

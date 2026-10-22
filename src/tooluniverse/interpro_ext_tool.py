@@ -11,6 +11,7 @@ No authentication required. Free public access.
 
 import requests
 from typing import Dict, Any, Optional
+from urllib.parse import parse_qs, urlparse
 from .base_tool import BaseTool
 
 
@@ -93,13 +94,16 @@ class InterProExtTool(BaseTool):
                 "error": "domain_id parameter is required (InterPro accession, e.g., IPR011615)",
             }
 
-        page_size = min(int(arguments.get("page_size", 20)), 50)
+        page_size = max(1, min(int(arguments.get("page_size") or 20), 50))
         reviewed_only = arguments.get("reviewed_only", False)
 
         # Build URL for protein search by domain
         db = "reviewed" if reviewed_only else "uniprot"
         url = f"{INTERPRO_API_BASE_URL}/protein/{db}/entry/interpro/{domain_id}"
         params = {"page_size": page_size}
+        cursor = arguments.get("cursor")
+        if cursor:
+            params["cursor"] = cursor
 
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
@@ -108,6 +112,11 @@ class InterProExtTool(BaseTool):
 
         total_count = data.get("count", 0)
         results = data.get("results", [])
+        next_url = data.get("next")
+        next_cursor = None
+        if next_url:
+            cursor_values = parse_qs(urlparse(next_url).query).get("cursor", [])
+            next_cursor = cursor_values[0] if cursor_values else None
 
         proteins = []
         for r in results:
@@ -130,6 +139,9 @@ class InterProExtTool(BaseTool):
             "data": {
                 "domain_id": domain_id,
                 "total_proteins": total_count,
+                "returned": len(proteins),
+                "has_more": next_cursor is not None,
+                "next_cursor": next_cursor,
                 "proteins": proteins,
                 "page_size": page_size,
                 "reviewed_only": reviewed_only,

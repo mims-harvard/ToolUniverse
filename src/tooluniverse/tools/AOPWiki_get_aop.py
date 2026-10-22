@@ -1,7 +1,7 @@
 """
 AOPWiki_get_aop
 
-Get detailed information about a specific Adverse Outcome Pathway (AOP) from AOPWiki by AOP ID. R...
+Get one AOP-Wiki pathway with stressors, typed molecular initiating events, key events, adverse o...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def AOPWiki_get_aop(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get detailed information about a specific Adverse Outcome Pathway (AOP) from AOPWiki by AOP ID. R...
+    Get one AOP-Wiki pathway with stressors, typed molecular initiating events, key events, adverse o...
 
     Parameters
     ----------

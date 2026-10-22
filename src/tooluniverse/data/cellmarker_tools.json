@@ -2,7 +2,7 @@
   {
     "name": "CellMarker_search_by_gene",
     "type": "CellMarkerTool",
-    "description": "Search the CellMarker 2.0 database for cell types that express a given marker gene. Returns curated cell type annotations from single-cell RNA-seq studies and experimental literature. CellMarker 2.0 covers >500 cell types across >400 tissue types in human and mouse. Use this to identify which cell types a gene marks, enabling cell type annotation in scRNA-seq analysis. Example: CD3D marks T cells, CD68 marks macrophages, EPCAM marks epithelial cells.",
+    "description": "Search the CellMarker 2.0 database for cell types that express a given marker gene. Returns curated record-level annotations with limit/offset pagination and explicit total/has_more metadata. CellMarker 2.0 covers human and mouse cell types across many tissues. Example: CD3D marks T cells, CD68 marks macrophages, and EPCAM marks epithelial cells.",
     "category": "Genomics & Transcriptomics",
     "parameter": {
       "type": "object",
@@ -30,7 +30,8 @@
           ],
           "minimum": 1,
           "default": 200,
-          "description": "Maximum records to return. Default 200; total_records reports how many matched, so raise this or page with offset when it is larger."
+          "description": "Maximum records to return. Default 200; total_records reports how many matched, so raise this or page with offset when it is larger.",
+          "maximum": 1000
         },
         "offset": {
           "type": [
@@ -39,7 +40,7 @@
           ],
           "minimum": 0,
           "default": 0,
-          "description": "Records to skip before returning, for paging through total_records."
+          "description": "Records to skip before returning, for paging through total_records. Use data.next_offset for the next page."
         }
       },
       "required": [
@@ -112,7 +113,7 @@
   {
     "name": "CellMarker_search_by_cell_type",
     "type": "CellMarkerTool",
-    "description": "Search the CellMarker 2.0 database for marker genes of a specific cell type. Returns curated lists of marker genes that define a cell type, sourced from single-cell RNA-seq studies and experimental literature. Use this to find canonical markers for cell type annotation, or to build gene sets for cell scoring. Example: 'T cell' returns CD3D, CD3E, CD3G, etc. 'Macrophage' returns CD68, CD163, MARCO, etc.",
+    "description": "Search the CellMarker 2.0 database for marker genes of a cell-type phrase. Matching respects phrase boundaries, so 'T cell' includes qualified T-cell names but does not incorrectly match 'Fat cell' or 'Mast cell'. Marker summaries and curated records use limit/offset pagination with separate totals and has_more flags. Example: 'T cell' returns CD3D, CD3E, and CD3G; 'Macrophage' returns CD68 and CD163.",
     "category": "Genomics & Transcriptomics",
     "parameter": {
       "type": "object",
@@ -140,7 +141,8 @@
           ],
           "minimum": 1,
           "default": 200,
-          "description": "Maximum records to return. Default 200; total_records reports how many matched, so raise this or page with offset when it is larger."
+          "description": "Maximum records to return. Default 200; total_records reports how many matched, so raise this or page with offset when it is larger.",
+          "maximum": 1000
         },
         "offset": {
           "type": [
@@ -149,7 +151,7 @@
           ],
           "minimum": 0,
           "default": 0,
-          "description": "Records to skip before returning, for paging through total_records."
+          "description": "Records to skip before returning, for paging through total_records. Use data.next_offset for the next page."
         }
       },
       "required": [
@@ -307,7 +309,7 @@
   {
     "name": "CellMarker_search_cancer_markers",
     "type": "CellMarkerTool",
-    "description": "Search the CellMarker 2.0 database for cancer-specific cell markers. Returns marker genes and cell types found in cancer tissue contexts. Use this to identify tumor-specific markers, immune cell markers in the tumor microenvironment, or cancer stem cell markers. Filters results to 'Cancer cell' annotations only. At least one search parameter is required: cancer_type (tissue), gene_symbol, or cell_type.",
+    "description": "Search the CellMarker 2.0 database for cancer-context marker records with complete limit/offset pagination and explicit total/has_more metadata. Cell-type phrase matching respects boundaries, so 'T cell' does not match 'Fat cell' or 'Mast cell'. At least one of cancer_type, gene_symbol, or cell_type is required.",
     "category": "Genomics & Transcriptomics",
     "parameter": {
       "type": "object",
@@ -331,7 +333,8 @@
           ],
           "minimum": 1,
           "default": 200,
-          "description": "Maximum records to return. Default 200; total_records reports how many matched, so raise this or page with offset when it is larger."
+          "description": "Maximum records to return. Default 200; total_records reports how many matched, so raise this or page with offset when it is larger.",
+          "maximum": 1000
         },
         "offset": {
           "type": [
@@ -340,7 +343,7 @@
           ],
           "minimum": 0,
           "default": 0,
-          "description": "Records to skip before returning, for paging through total_records."
+          "description": "Records to skip before returning, for paging through total_records. Use data.next_offset for the next page."
         }
       },
       "required": []

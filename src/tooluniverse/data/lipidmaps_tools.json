@@ -1,16 +1,46 @@
 [
   {
     "name": "LipidMaps_get_compound_by_id",
-    "description": "Get lipid structure and classification by LIPID MAPS ID (LMID). Returns full lipid record including name, formula, exact mass, SMILES, InChI, cross-references to KEGG/HMDB/ChEBI/PubChem. Example: 'LMFA08040013' returns Palmitoyl-EA.",
+    "description": "Get lipid structure and classification by exact LIPID MAPS ID (LMID). The wrapper validates output fields before network access, requires JSON, verifies the returned LMID, and reports result-set and field-scope completeness. Example: LMFA08040013 returns Palmitoyl-EA with structure and external cross-references.",
     "parameter": {
       "type": "object",
       "properties": {
         "input_value": {
           "type": "string",
+          "minLength": 1,
           "description": "LIPID MAPS ID (LMID), e.g., 'LMFA08040013'. Format: LM + 2-letter category + 8-digit number."
         },
         "output_item": {
           "type": "string",
+          "enum": [
+            "all",
+            "classification",
+            "regno",
+            "lm_id",
+            "name",
+            "sys_name",
+            "synonyms",
+            "abbrev",
+            "abbrev_chains",
+            "core",
+            "main_class",
+            "sub_class",
+            "class_level4",
+            "exactmass",
+            "formula",
+            "inchi",
+            "inchi_key",
+            "kegg_id",
+            "hmdb_id",
+            "chebi_id",
+            "lipidbank_id",
+            "pubchem_cid",
+            "smiles",
+            "molfile",
+            "structure",
+            "physchem",
+            "png"
+          ],
           "description": "Type of output. Options: 'all' (complete record), 'name', 'formula', 'exactmass', 'smiles', 'classification', 'molfile'.",
           "default": "all"
         }
@@ -92,16 +122,46 @@
   },
   {
     "name": "LipidMaps_search_by_name",
-    "description": "Search for lipids by exact abbreviation in LIPID MAPS Structure Database. IMPORTANT: Only exact lipidomics abbreviations work (e.g., 'DHA', 'EPA', 'PC 34:1' sum-composition, 'PC 16:0/18:1' acyl-chain-specific -- automatically retried against LIPID MAPS' abbrev_chains field if the sum-composition lookup finds nothing, 'SM 34:1;O2' -- sphingolipids require the ';O2' hydroxyl-count suffix, plain 'SM 34:1' does not match). Class names like 'ceramide' or 'sphingomyelin' will NOT match — use LipidMaps_search_by_formula for class-level searches. Returns matching lipid records with structures and classification.",
+    "description": "Search exact lipidomics abbreviations in LIPID MAPS. Sum compositions use abbrev (e.g. PC 34:1); an acyl-chain slash form such as PC 16:0/18:1 is normalized before the first request to abbrev_chains=PC 16:0_18:1, avoiding the upstream router's 404. Sphingolipid sums require the ;O2-style suffix. Returns the complete unpaginated match set with explicit field-scope metadata; class names are not abbreviation searches.",
     "parameter": {
       "type": "object",
       "properties": {
         "input_value": {
           "type": "string",
+          "minLength": 1,
           "description": "Exact lipid abbreviation used in lipidomics (e.g., 'DHA', 'EPA', 'PC 34:1', 'PC 16:0/18:1', 'SM 34:1;O2'). Class names like 'ceramide' will not match — use exact abbreviations only. Sphingolipid sum-composition abbreviations must include the ';O2'-style hydroxyl-count suffix."
         },
         "output_item": {
           "type": "string",
+          "enum": [
+            "all",
+            "classification",
+            "regno",
+            "lm_id",
+            "name",
+            "sys_name",
+            "synonyms",
+            "abbrev",
+            "abbrev_chains",
+            "core",
+            "main_class",
+            "sub_class",
+            "class_level4",
+            "exactmass",
+            "formula",
+            "inchi",
+            "inchi_key",
+            "kegg_id",
+            "hmdb_id",
+            "chebi_id",
+            "lipidbank_id",
+            "pubchem_cid",
+            "smiles",
+            "molfile",
+            "structure",
+            "physchem",
+            "png"
+          ],
           "description": "Type of output. Options: 'all', 'name', 'formula', 'exactmass', 'smiles', 'classification'.",
           "default": "all"
         }
@@ -161,16 +221,46 @@
   },
   {
     "name": "LipidMaps_search_by_formula",
-    "description": "Search lipids by molecular formula in LIPID MAPS Structure Database. Returns all lipids matching the given formula. Example: 'C22H32O2' finds DHA and related C22:6 fatty acids.",
+    "description": "Search the LIPID MAPS Structure Database by exact molecular formula. Returns the complete unpaginated set and rejects malformed or non-JSON responses instead of silently dropping rows. Live C22H32O2 currently returns seven lipid records.",
     "parameter": {
       "type": "object",
       "properties": {
         "input_value": {
           "type": "string",
+          "minLength": 1,
           "description": "Molecular formula (e.g., 'C22H32O2', 'C16H32O2'). Standard chemical formula format."
         },
         "output_item": {
           "type": "string",
+          "enum": [
+            "all",
+            "classification",
+            "regno",
+            "lm_id",
+            "name",
+            "sys_name",
+            "synonyms",
+            "abbrev",
+            "abbrev_chains",
+            "core",
+            "main_class",
+            "sub_class",
+            "class_level4",
+            "exactmass",
+            "formula",
+            "inchi",
+            "inchi_key",
+            "kegg_id",
+            "hmdb_id",
+            "chebi_id",
+            "lipidbank_id",
+            "pubchem_cid",
+            "smiles",
+            "molfile",
+            "structure",
+            "physchem",
+            "png"
+          ],
           "description": "Type of output. Options: 'all', 'name', 'smiles', 'classification'.",
           "default": "all"
         }
@@ -297,12 +387,13 @@
   },
   {
     "name": "LipidMaps_get_compound_by_xref",
-    "description": "Look up a LIPID MAPS Structure Database (LMSD) record from an external cross-reference identifier, resolving any common metabolite/lipid ID to its LIPID MAPS lm_id plus all of its cross-references. Set xref_type to the namespace of input_value: 'kegg_id', 'hmdb_id', 'chebi_id', 'pubchem_cid', 'inchi_key', or 'abbrev_chains' (a structure-resolved lipid abbreviation such as 'PC(16:0/18:1)'). Examples: kegg_id 'C00157' -> lm_id LMGP01010000 (PC), hmdb_id HMDB00564, chebi_id 57643; hmdb_id 'HMDB0000564' -> lm_id LMGP01010564 (PC 16:0/16:0); abbrev_chains 'PC(16:0/18:1)' -> lm_id LMGP01010005. Sends a browser User-Agent so the JSON route passes Cloudflare.",
+    "description": "Resolve a KEGG, HMDB, ChEBI, PubChem, InChIKey, or chain-resolved abbreviation to every matching LIPID MAPS structure record. Namespace aliases cannot conflict, all path segments are encoded, output fields are validated, and the complete unpaginated match set is explicit. Slash chain forms are normalized to the API's underscore representation before request.",
     "parameter": {
       "type": "object",
       "properties": {
         "input_value": {
           "type": "string",
+          "minLength": 1,
           "description": "The cross-reference identifier value to resolve, e.g. 'C00157' (KEGG), 'HMDB0000564' (HMDB), '57643' (ChEBI), or 'PC(16:0/18:1)' (abbrev_chains)."
         },
         "xref_type": {
@@ -313,6 +404,35 @@
         },
         "output_item": {
           "type": "string",
+          "enum": [
+            "all",
+            "classification",
+            "regno",
+            "lm_id",
+            "name",
+            "sys_name",
+            "synonyms",
+            "abbrev",
+            "abbrev_chains",
+            "core",
+            "main_class",
+            "sub_class",
+            "class_level4",
+            "exactmass",
+            "formula",
+            "inchi",
+            "inchi_key",
+            "kegg_id",
+            "hmdb_id",
+            "chebi_id",
+            "lipidbank_id",
+            "pubchem_cid",
+            "smiles",
+            "molfile",
+            "structure",
+            "physchem",
+            "png"
+          ],
           "description": "Type of output. Options: 'all' (complete record with all cross-refs), 'name', 'formula', 'exactmass', 'smiles', 'classification'.",
           "default": "all"
         }

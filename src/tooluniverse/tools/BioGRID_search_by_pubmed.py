@@ -1,7 +1,7 @@
 """
 BioGRID_search_by_pubmed
 
-Retrieve all protein interactions curated from specific published studies using PubMed ID. Return...
+Retrieve BioGRID interactions curated from PubMed studies with recoverable official start/max pag...
 """
 
 from typing import Any, Optional, Callable
@@ -14,13 +14,14 @@ def BioGRID_search_by_pubmed(
     interaction_type: Optional[str] = "both",
     include_evidence: Optional[bool] = True,
     limit: Optional[int] = 1000,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Retrieve all protein interactions curated from specific published studies using PubMed ID. Return...
+    Retrieve BioGRID interactions curated from PubMed studies with recoverable official start/max pag...
 
     Parameters
     ----------
@@ -33,7 +34,9 @@ def BioGRID_search_by_pubmed(
     include_evidence : bool
         Include detailed evidence information (experimental systems, methods). Defaul...
     limit : int
-        Maximum number of interactions to return per publication (default: 1000, max:...
+        Maximum upstream interactions on this page (default: 1000, max: 9999).
+    offset : int
+        Zero-based BioGRID upstream record offset. Continue with metadata.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def BioGRID_search_by_pubmed(
             "interaction_type": interaction_type,
             "include_evidence": include_evidence,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

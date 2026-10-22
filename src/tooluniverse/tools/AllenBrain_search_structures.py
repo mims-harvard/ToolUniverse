@@ -1,7 +1,7 @@
 """
 AllenBrain_search_structures
 
-Search for brain structures/regions in the Allen Brain Atlas ontology by acronym or name. Returns...
+Search Allen Brain Atlas structures by acronym or name with exact RMA row pagination. Metadata re...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,14 @@ def AllenBrain_search_structures(
     acronym: Optional[str] = None,
     name: Optional[str] = None,
     num_rows: Optional[int] = 50,
+    start_row: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> list[Any]:
     """
-    Search for brain structures/regions in the Allen Brain Atlas ontology by acronym or name. Returns...
+    Search Allen Brain Atlas structures by acronym or name with exact RMA row pagination. Metadata re...
 
     Parameters
     ----------
@@ -27,7 +28,9 @@ def AllenBrain_search_structures(
     name : str
         Structure name for partial match (alternative to acronym). Example: 'hippocam...
     num_rows : int
-        Max results to return. Default: 50.
+        Results per page (1-2000).
+    start_row : int
+        Zero-based RMA row offset. Continue with metadata.next_start_row.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,12 @@ def AllenBrain_search_structures(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"acronym": acronym, "name": name, "num_rows": num_rows}.items()
+        for k, v in {
+            "acronym": acronym,
+            "name": name,
+            "num_rows": num_rows,
+            "start_row": start_row,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

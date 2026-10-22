@@ -1,7 +1,7 @@
 """
 PathwayCommons_get_neighborhood
 
-Get the interaction neighborhood for a gene from Pathway Commons. Returns all known interactions ...
+Get an interaction neighborhood from Pathway Commons. The API's extended TXT response contains bo...
 """
 
 from typing import Any, Optional, Callable
@@ -12,25 +12,40 @@ def PathwayCommons_get_neighborhood(
     gene: str,
     limit: Optional[int] = 1,
     datasource: Optional[str] = None,
+    organism: Optional[str] = None,
+    direction: Optional[str] = None,
+    pattern: Optional[list[str]] = None,
+    subpw: Optional[bool] = None,
     max_results: Optional[int] = 100,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get the interaction neighborhood for a gene from Pathway Commons. Returns all known interactions ...
+    Get an interaction neighborhood from Pathway Commons. The API's extended TXT response contains bo...
 
     Parameters
     ----------
     gene : str
-        Gene symbol (e.g., BRCA1, TP53, EGFR)
+        Pathway Commons source identifier. A full BioPAX URI from PathwayCommons_sear...
     limit : int
         Graph search depth (1 = direct neighbors, 2 = neighbors of neighbors). Defaul...
     datasource : str
         Filter by data source: reactome, kegg, biogrid, intact, hprd, pid, corum, ctd...
+    organism : str
+        Optional organism filter, preferably an NCBI taxonomy ID such as 9606.
+    direction : str
+        Graph traversal direction; default is undirected.
+    pattern : list[str]
+        Optional SIF interaction-type filters.
+    subpw : bool
+        Whether graph traversal may enter sub-pathways. Omit to use the upstream defa...
     max_results : int
         Maximum number of interactions to return (default: 100)
+    offset : int
+        Zero-based interaction offset. Continue with metadata.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -51,7 +66,12 @@ def PathwayCommons_get_neighborhood(
             "gene": gene,
             "limit": limit,
             "datasource": datasource,
+            "organism": organism,
+            "direction": direction,
+            "pattern": pattern,
+            "subpw": subpw,
             "max_results": max_results,
+            "offset": offset,
         }.items()
         if v is not None
     }

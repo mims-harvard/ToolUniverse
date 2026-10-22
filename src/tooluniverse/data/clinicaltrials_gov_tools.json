@@ -979,7 +979,7 @@
   },
   {
     "name": "ClinicalTrials_search_studies",
-    "description": "Search ClinicalTrials.gov for clinical trial studies by condition, intervention, sponsor, or other criteria. Returns NCT IDs, titles, status, phase, enrollment, and key trial metadata. Example: search for 'breast cancer' trials with 'pembrolizumab' that are RECRUITING in Phase 3. Query rewriting: multi-word intervention/condition/sponsor values are sent to ClinicalTrials.gov as an EXACT PHRASE, and intervention/sponsor values are further restricted to specific registry fields, so a phrase no registrant recorded verbatim can match 0 studies even when many trials mention it. The query actually executed is always returned in `executed_query` (with per-parameter detail in `query_rewrites`); when a rewritten query matches nothing, `relaxed_match_check` reports how many studies your original wording would have matched and how to retrieve them. To opt out of the rewrite, wrap a value in parentheses (e.g. '(donor derived cell therapy)') and it is sent verbatim as a loose keyword match.",
+    "description": "Search ClinicalTrials.gov for clinical trial studies by condition, intervention, sponsor, or other criteria. Returns NCT IDs, titles, status, phase, enrollment, and up to five intervention names per study; intervention_count and interventions_truncated disclose longer lists, which ClinicalTrials_get_study returns in full. Example: search for 'breast cancer' trials with 'pembrolizumab' that are RECRUITING in Phase 3. Query rewriting: multi-word intervention/condition/sponsor values are sent to ClinicalTrials.gov as an EXACT PHRASE, and intervention/sponsor values are further restricted to specific registry fields, so a phrase no registrant recorded verbatim can match 0 studies even when many trials mention it. The query actually executed is always returned in `executed_query` (with per-parameter detail in `query_rewrites`); when a rewritten query matches nothing, `relaxed_match_check` reports how many studies your original wording would have matched and how to retrieve them. To opt out of the rewrite, wrap a value in parentheses (e.g. '(donor derived cell therapy)') and it is sent verbatim as a loose keyword match.",
     "parameter": {
       "type": "object",
       "additionalProperties": false,
@@ -1155,6 +1155,14 @@
                   "interventions": {
                     "type": "array"
                   },
+                  "intervention_count": {
+                    "type": "integer",
+                    "description": "Total number of intervention names reported for this study"
+                  },
+                  "interventions_truncated": {
+                    "type": "boolean",
+                    "description": "Whether the search summary shows only the first five interventions; use ClinicalTrials_get_study for the full list"
+                  },
                   "sponsor": {
                     "type": [
                       "string",
@@ -1277,7 +1285,7 @@
   },
   {
     "name": "ClinicalTrials_get_study",
-    "description": "Get full details for a specific clinical trial by NCT ID from ClinicalTrials.gov. Returns comprehensive protocol including title, objectives, eligibility criteria, interventions, outcome measures, contacts, and results summary. Example: NCT04280705 returns the ACTT remdesivir COVID-19 trial with all details.",
+    "description": "Get full details for a specific clinical trial by NCT ID from ClinicalTrials.gov. Returns every arm, intervention, primary outcome, location, and reference supplied by the v2 single-study endpoint, together with explicit counts; these lists are not silently capped. Example: NCT04280705 returns the ACTT remdesivir COVID-19 trial with all details.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1356,8 +1364,20 @@
             "interventions": {
               "type": "array"
             },
+            "arms": {
+              "type": "array"
+            },
+            "arm_count": {
+              "type": "integer"
+            },
+            "intervention_count": {
+              "type": "integer"
+            },
             "primary_outcomes": {
               "type": "array"
+            },
+            "primary_outcome_count": {
+              "type": "integer"
             },
             "eligibility_criteria": {
               "type": [
@@ -1374,8 +1394,14 @@
             "locations": {
               "type": "array"
             },
+            "location_count": {
+              "type": "integer"
+            },
             "references": {
               "type": "array"
+            },
+            "reference_count": {
+              "type": "integer"
             }
           }
         },
@@ -1400,7 +1426,7 @@
   },
   {
     "name": "ClinicalTrials_search_by_intervention",
-    "description": "Search ClinicalTrials.gov for all clinical trials testing a specific drug, biologic, device, or other intervention. Returns trial IDs, titles, phases, status, and conditions being studied. Ideal for finding all trials for a given drug (e.g., 'nivolumab') across all disease indications. Query rewriting: multi-word intervention/condition/sponsor values are sent to ClinicalTrials.gov as an EXACT PHRASE, and intervention/sponsor values are further restricted to specific registry fields, so a phrase no registrant recorded verbatim can match 0 studies even when many trials mention it. The query actually executed is always returned in `executed_query` (with per-parameter detail in `query_rewrites`); when a rewritten query matches nothing, `relaxed_match_check` reports how many studies your original wording would have matched and how to retrieve them. To opt out of the rewrite, wrap a value in parentheses (e.g. '(donor derived cell therapy)') and it is sent verbatim as a loose keyword match.",
+    "description": "Search ClinicalTrials.gov for all clinical trials testing a specific drug, biologic, device, or other intervention. Returns trial IDs, titles, phases, status, and conditions being studied. Ideal for finding all trials for a given drug (e.g., 'nivolumab') across all disease indications. Query rewriting: multi-word intervention/condition/sponsor values are sent to ClinicalTrials.gov as an EXACT PHRASE, and intervention/sponsor values are further restricted to specific registry fields, so a phrase no registrant recorded verbatim can match 0 studies even when many trials mention it. The query actually executed is always returned in `executed_query` (with per-parameter detail in `query_rewrites`); when a rewritten query matches nothing, `relaxed_match_check` reports how many studies your original wording would have matched and how to retrieve them. To opt out of the rewrite, wrap a value in parentheses (e.g. '(donor derived cell therapy)') and it is sent verbatim as a loose keyword match. Pagination: continue by passing metadata.next_page_token back as next_page_token while metadata.has_more is true. CT.gov usually supplies an exact total on the first page but may omit it on token pages; metadata.total_results_is_exact reports availability per response.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1442,6 +1468,13 @@
           "default": 10,
           "minimum": 1,
           "maximum": 1000
+        },
+        "next_page_token": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Opaque token from metadata.next_page_token. Omit for the first page."
         }
       },
       "required": [
@@ -1566,7 +1599,7 @@
   },
   {
     "name": "ClinicalTrials_search_by_sponsor",
-    "description": "Search ClinicalTrials.gov for clinical trials by sponsor or lead organization. Returns trials funded by pharmaceutical companies, academic institutions, or government agencies. Example: find all Phase 3 trials sponsored by 'National Cancer Institute' for cancer conditions. Query rewriting: multi-word intervention/condition/sponsor values are sent to ClinicalTrials.gov as an EXACT PHRASE, and intervention/sponsor values are further restricted to specific registry fields, so a phrase no registrant recorded verbatim can match 0 studies even when many trials mention it. The query actually executed is always returned in `executed_query` (with per-parameter detail in `query_rewrites`); when a rewritten query matches nothing, `relaxed_match_check` reports how many studies your original wording would have matched and how to retrieve them. To opt out of the rewrite, wrap a value in parentheses (e.g. '(donor derived cell therapy)') and it is sent verbatim as a loose keyword match.",
+    "description": "Search ClinicalTrials.gov for clinical trials by sponsor or lead organization. Returns trials funded by pharmaceutical companies, academic institutions, or government agencies. Example: find all Phase 3 trials sponsored by 'National Cancer Institute' for cancer conditions. Query rewriting: multi-word intervention/condition/sponsor values are sent to ClinicalTrials.gov as an EXACT PHRASE, and intervention/sponsor values are further restricted to specific registry fields, so a phrase no registrant recorded verbatim can match 0 studies even when many trials mention it. The query actually executed is always returned in `executed_query` (with per-parameter detail in `query_rewrites`); when a rewritten query matches nothing, `relaxed_match_check` reports how many studies your original wording would have matched and how to retrieve them. To opt out of the rewrite, wrap a value in parentheses (e.g. '(donor derived cell therapy)') and it is sent verbatim as a loose keyword match. Pagination: continue by passing metadata.next_page_token back as next_page_token while metadata.has_more is true. CT.gov usually supplies an exact total on the first page but may omit it on token pages; metadata.total_results_is_exact reports availability per response.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1601,6 +1634,13 @@
           "default": 10,
           "minimum": 1,
           "maximum": 1000
+        },
+        "next_page_token": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Opaque token from metadata.next_page_token. Omit for the first page."
         }
       },
       "required": [
@@ -1805,7 +1845,7 @@
   },
   {
     "name": "ClinicalTrials_get_field_values",
-    "description": "Get the registry-wide value distribution for one ClinicalTrials.gov field: each distinct value with the number of studies recording it. Use to see what status, phase, or study type options exist. Example: 'Phase' returns counts for PHASE1, PHASE2, PHASE3, etc. IMPORTANT for any share or percentage: the rows are NOT a partition of the registry. Studies that record no value for the field are excluded from the rows entirely (for 'Phase', 141,728 of 597,913), and where the field is multi-valued a study recording several values is counted in several rows (for 'Phase', 24,529 studies), so the rows sum to neither the registry total nor a subset of it. Never use the sum of the rows as a denominator; use 'total_studies_in_registry' for a share of all studies or 'studies_with_value' for a share of those recording the field, and read 'coverage_note' before quoting any percentage. Only ENUM, STRING and BOOLEAN fields have a value distribution: for INTEGER and DATE fields (e.g. 'EnrollmentCount', 'StartDate') ClinicalTrials.gov publishes a min/max range instead of a ranking, so 'values' is empty and 'value_summary' carries the range.",
+    "description": "Get the registry-wide value distribution for one ClinicalTrials.gov field: each distinct value with the number of studies recording it. Use to see what status, phase, or study type options exist. Example: 'Phase' returns counts for PHASE1, PHASE2, PHASE3, etc. IMPORTANT for any share or percentage: the rows are NOT a partition of the registry. Studies that record no value for the field are excluded from the rows entirely (for 'Phase', 141,728 of 597,913), and where the field is multi-valued a study recording several values is counted in several rows (for 'Phase', 24,529 studies), so the rows sum to neither the registry total nor a subset of it. Never use the sum of the rows as a denominator; use 'total_studies_in_registry' for a share of all studies or 'studies_with_value' for a share of those recording the field, and read 'coverage_note' before quoting any percentage. Only ENUM, STRING and BOOLEAN fields have a value distribution: for INTEGER and DATE fields (e.g. 'EnrollmentCount', 'StartDate') ClinicalTrials.gov publishes a min/max range instead of a ranking, so 'values' is empty and 'value_summary' carries the range. ClinicalTrials.gov exposes only a fixed top-250 window of values for high-cardinality fields while reporting the exact unique_values_count; page_size/offset page locally within that window (accessible_values_count), metadata.has_more/next_offset continue the page, and metadata.upstream_truncated warns when additional unique values are not accessible.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1822,8 +1862,16 @@
         },
         "page_size": {
           "type": "integer",
-          "description": "Maximum number of value rows to return, highest study count first (default 50, minimum 1). Truncation is reported: when this cuts the list, 'truncated' is true and 'unique_values_count' still gives the true number of distinct values. The counts in 'missing_studies_count', 'studies_with_value' and 'coverage_note' always describe the whole facet, never just the returned rows.",
-          "default": 50
+          "description": "Maximum number of value rows to return, highest study count first (default 50, minimum 1, maximum 250 -- ClinicalTrials.gov never returns more than 250 values per field). Truncation is reported: when this cuts the list, 'truncated' is true and 'unique_values_count' still gives the true number of distinct values. The counts in 'missing_studies_count', 'studies_with_value' and 'coverage_note' always describe the whole facet, never just the returned rows.",
+          "default": 50,
+          "minimum": 1,
+          "maximum": 250
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based local offset within the fixed accessible top-values window."
         }
       },
       "required": [
@@ -1936,6 +1984,10 @@
                 "null"
               ],
               "description": "Number of value rows in this response."
+            },
+            "accessible_values_count": {
+              "type": "integer",
+              "description": "Number of value rows ClinicalTrials.gov exposed for this field (its top-values window); page_size/offset page within this many rows."
             },
             "truncated": {
               "type": [

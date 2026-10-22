@@ -14,6 +14,7 @@ import urllib.parse
 from typing import Dict, Any, Optional
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+from .uniprot_pagination import pagination_metadata
 
 UNIPROT_BASE_URL = "https://rest.uniprot.org/taxonomy"
 
@@ -218,9 +219,12 @@ class UniProtTaxonomyTool(BaseTool):
         size = arguments.get("size", 10)
 
         url = f"{UNIPROT_BASE_URL}/search"
+        params = {"query": query, "size": size}
+        if arguments.get("cursor"):
+            params["cursor"] = arguments["cursor"]
         response = requests.get(
             url,
-            params={"query": query, "size": size},
+            params=params,
             headers={"Accept": "application/json"},
             timeout=self.timeout,
         )
@@ -247,7 +251,7 @@ class UniProtTaxonomyTool(BaseTool):
             "data": results,
             "metadata": {
                 "source": "UniProt Taxonomy (rest.uniprot.org)",
-                "total_results": len(results),
                 "query": query,
+                **pagination_metadata(response, len(results)),
             },
         }

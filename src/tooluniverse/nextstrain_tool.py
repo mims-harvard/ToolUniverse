@@ -82,7 +82,10 @@ class NextstrainTool(BaseTool):
         """List available Nextstrain pathogen datasets."""
         pathogen_filter = (arguments.get("pathogen") or "").lower()
 
+        # dataset_limit is the paging spelling of the same per-pathogen cap.
         raw_limit = arguments.get("datasets_per_pathogen")
+        if raw_limit is None or raw_limit == "":
+            raw_limit = arguments.get("dataset_limit")
         if raw_limit is None or raw_limit == "":
             per_pathogen_limit = DEFAULT_DATASETS_PER_PATHOGEN
         else:
@@ -104,6 +107,17 @@ class NextstrainTool(BaseTool):
                         "(0 means return every dataset)."
                     ),
                 }
+
+        raw_offset = arguments.get("dataset_offset")
+        try:
+            dataset_offset = 0 if raw_offset in (None, "") else int(raw_offset)
+        except (TypeError, ValueError):
+            dataset_offset = -1
+        if dataset_offset < 0:
+            return {
+                "status": "error",
+                "error": "dataset_offset must be a non-negative integer.",
+            }
 
         url = f"{NEXTSTRAIN_BASE_URL}/getAvailable"
         response = requests.get(url, timeout=self.timeout)
@@ -133,12 +147,21 @@ class NextstrainTool(BaseTool):
         results = []
         for pathogen, paths in sorted(pathogen_groups.items()):
             ordered = sorted(paths)
-            listed = ordered if per_pathogen_limit == 0 else ordered[:per_pathogen_limit]
+            remaining = ordered[dataset_offset:]
+            listed = (
+                remaining if per_pathogen_limit == 0 else remaining[:per_pathogen_limit]
+            )
+            next_offset = dataset_offset + len(listed)
+            has_more = next_offset < len(ordered)
             entry = {
                 "pathogen": pathogen,
                 "dataset_count": len(ordered),
                 "datasets": listed,
                 "datasets_listed": len(listed),
+                "datasets_returned": len(listed),
+                "dataset_offset": dataset_offset,
+                "has_more": has_more,
+                "next_dataset_offset": next_offset if has_more else None,
             }
             if len(listed) < len(ordered):
                 entry["datasets_truncated"] = True
@@ -159,7 +182,10 @@ class NextstrainTool(BaseTool):
                 "total_pathogens": len(results),
                 "total_datasets": total_datasets,
                 "listed_datasets": listed_datasets,
+                "returned_datasets": listed_datasets,
                 "datasets_per_pathogen": per_pathogen_limit,
+                "dataset_offset": dataset_offset,
+                "groups_with_more": sum(1 for r in results if r["has_more"]),
                 "truncated": truncated,
                 "filter": pathogen_filter or "(none)",
                 "endpoint": "list_datasets",
@@ -168,13 +194,19 @@ class NextstrainTool(BaseTool):
 
         if truncated:
             largest = max(r["dataset_count"] for r in results)
+            if per_pathogen_limit:
+                scope = f"capped at {per_pathogen_limit} entries"
+            else:
+                scope = f"starts at dataset_offset={dataset_offset}"
             note = (
                 f"Listed {listed_datasets} of {total_datasets} datasets: each pathogen's "
-                f"'datasets' array is capped at {per_pathogen_limit} entries, while its "
+                f"'datasets' array is {scope}, while its "
                 f"'dataset_count' reports the true number available. To retrieve the rest, "
                 f"re-run with datasets_per_pathogen=0 (no cap) or a higher cap "
-                f"(datasets_per_pathogen={largest} covers the largest pathogen), and/or "
-                f"narrow the query with the 'pathogen' filter."
+                f"(datasets_per_pathogen={largest} covers the largest pathogen), page "
+                f"with dataset_offset set to each pathogen's 'next_dataset_offset' "
+                f"while 'has_more' is true, and/or narrow the query with the "
+                f"'pathogen' filter."
             )
             response["truncation_note"] = note
             response["metadata"]["truncation_note"] = note
@@ -252,6 +284,7 @@ class NextstrainTool(BaseTool):
             ]
             result["available_colorings"] = coloring_keys
             result["available_colorings_count"] = len(coloring_keys)
+            result["available_colorings_complete"] = True
 
         return {
             "status": "success",

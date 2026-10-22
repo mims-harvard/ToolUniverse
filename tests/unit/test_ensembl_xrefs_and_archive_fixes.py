@@ -65,16 +65,24 @@ def test_xrefs_database_summary_matches_returned_xrefs_count():
     assert result["metadata"]["total_xrefs"] == 157
 
 
-def test_xrefs_truncation_flag_set_when_cap_exceeded():
+def test_xrefs_after_default_page_are_reachable():
     tool = _xrefs_tool()
     raw = [{"dbname": "HGNC", "primary_id": str(i)} for i in range(600)]
 
     with patch("tooluniverse.ensembl_xrefs_tool.requests.get", return_value=_resp(raw)):
-        result = tool.run({"ensembl_id": "ENSG00000141510"})
+        first = tool.run({"ensembl_id": "ENSG00000141510"})
+        second = tool.run(
+            {"ensembl_id": "ENSG00000141510", "offset": 500, "limit": 500}
+        )
 
-    data = result["data"]
-    assert len(data["xrefs"]) == 500
-    assert data["truncated"] is True
+    assert len(first["data"]["xrefs"]) == 500
+    assert first["data"]["truncated"] is True
+    assert first["metadata"]["next_offset"] == 500
+    assert len(second["data"]["xrefs"]) == 100
+    assert second["metadata"]["has_more"] is False
+    assert {x["primary_id"] for x in first["data"]["xrefs"]}.isdisjoint(
+        x["primary_id"] for x in second["data"]["xrefs"]
+    )
 
 
 def test_archive_400_surfaces_upstream_not_found_message(monkeypatch):

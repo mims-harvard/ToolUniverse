@@ -1,7 +1,7 @@
 """
 DiseaseNames_search
 
-Disease-name autocomplete via the NLM Clinical Table Search Service (disease_names table). Given ...
+Search NLM disease names with official count+offset pagination. Returns canonical disease names w...
 """
 
 from typing import Any, Optional, Callable
@@ -11,20 +11,23 @@ from ._shared_client import get_shared_client
 def DiseaseNames_search(
     terms: str,
     max_results: Optional[int] = 20,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Disease-name autocomplete via the NLM Clinical Table Search Service (disease_names table). Given ...
+    Search NLM disease names with official count+offset pagination. Returns canonical disease names w...
 
     Parameters
     ----------
     terms : str
         Disease name or prefix to search, e.g. 'cystic fibrosis', 'lupus', 'sickle ce...
     max_results : int
-        Maximum number of matches to return (default 20, max 500).
+        Page size (default 20, range 1-500).
+    offset : int
+        Zero-based first match. Continue with metadata.next_offset; offset + max_resu...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +44,11 @@ def DiseaseNames_search(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"terms": terms, "max_results": max_results}.items()
+        for k, v in {
+            "terms": terms,
+            "max_results": max_results,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

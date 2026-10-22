@@ -188,13 +188,26 @@
     },
     {
         "name": "DepMap_search_genes",
-        "description": "Search for genes in DepMap/Sanger by symbol or name. Returns matching genes with Ensembl IDs and exact-match flags. Use this helper to find the correct gene symbol before querying dependencies, especially when DepMap_get_gene_dependencies returns mismatched genes.",
+        "description": "Search the full DepMap/Sanger gene catalog by exact symbol or symbol prefix. Prefix matches spanning multiple upstream catalog pages are collected, then exposed through recoverable offset pagination with total_genes (all matches), count/returned (this page), has_more, and next_offset.",
         "parameter": {
             "type": "object",
             "properties": {
                 "query": {
                     "type": "string",
                     "description": "Gene symbol or name to search (e.g., 'WDR7', 'EGFR', 'TP53')"
+                },
+                "limit": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 500,
+                    "default": 20,
+                    "description": "Number of matching genes per page (1-500; default 20)."
+                },
+                "offset": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "default": 0,
+                    "description": "Zero-based offset into the complete prefix match set."
                 }
             },
             "required": ["query"]
@@ -216,7 +229,28 @@
                     "properties": {
                         "query": {"type": "string"},
                         "genes": {"type": "array"},
-                        "count": {"type": "integer"}
+                        "count": {"type": "integer"},
+                        "total_genes": {
+                            "type": "integer"
+                        },
+                        "offset": {
+                            "type": "integer"
+                        },
+                        "limit": {
+                            "type": "integer"
+                        },
+                        "returned": {
+                            "type": "integer"
+                        },
+                        "has_more": {
+                            "type": "boolean"
+                        },
+                        "next_offset": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        }
                     }
                 },
                 "error": {"type": "string"}

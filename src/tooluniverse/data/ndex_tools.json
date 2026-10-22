@@ -1,7 +1,7 @@
 [
   {
     "name": "NDEx_search_networks",
-    "description": "Search the NDEx biological network repository for published networks by keyword. NDEx hosts thousands of curated protein-protein interaction (PPI) networks, signaling pathways, gene regulatory networks, and metabolic networks from research publications and databases like NCI-PID and SIGNOR. Returns network names, node/edge counts, DOIs, and UUIDs. Example: search 'BRCA1' finds interaction networks involving BRCA1; search 'p53 signaling' finds p53 pathway networks.",
+    "description": "Search the NDEx biological network repository with zero-based page-index pagination and pages up to 1000 records. NDEx calls the page index 'start' (it is not a record offset); begin with start=0 and continue with metadata.next_start. NDEx can return a short page before the end when some matches are not visible, so rely on has_more rather than returned < size.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -11,11 +11,14 @@
         },
         "size": {
           "type": "integer",
-          "description": "Maximum number of results to return (default: 10, max: 100)."
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Networks per search window (default 10, max 1000)."
         },
         "start": {
           "type": "integer",
-          "description": "Offset for pagination (default: 0)."
+          "minimum": 0,
+          "description": "Zero-based NDEx page index, not a record offset (default 0). Continue with metadata.next_start, which increments by one."
         }
       },
       "required": [
@@ -253,13 +256,39 @@
   },
   {
     "name": "NDEx_get_network",
-    "description": "Get the full content of a biological network from NDEx including all nodes (proteins/genes) and edges (interactions/relationships). Returns the network in a structured format with node names, edge source-target pairs, and interaction types. Large networks are truncated (max 200 nodes, 500 edges). Use NDEx_search_networks to find network UUIDs. Example: retrieves the BRCA1 interactome showing all protein interaction partners.",
+    "description": "Get a recoverable page of biological network content from NDEx, including nodes (proteins/genes) and edges (interactions/relationships). Nodes and edges have independent limits and offsets because their collection sizes differ. Follow next_node_offset and next_edge_offset until the corresponding have_more field is false to retrieve a complete large network. Use NDEx_search_networks to find network UUIDs.",
     "parameter": {
       "type": "object",
       "properties": {
         "uuid": {
           "type": "string",
           "description": "NDEx network UUID. Example: '34eec19d-ab5a-11ea-aaef-0ac135e8bacf' (BRCA1 interactome)."
+        },
+        "node_limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 200,
+          "description": "Maximum nodes to return on this page."
+        },
+        "node_offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based node offset. Follow next_node_offset for the next node page."
+        },
+        "edge_limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2000,
+          "default": 500,
+          "description": "Maximum edges to return on this page."
+        },
+        "edge_offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based edge offset. Follow next_edge_offset for the next edge page."
         }
       },
       "required": [
@@ -313,6 +342,42 @@
             "truncated_edges": {
               "type": "boolean",
               "description": "Whether edge list was truncated"
+            },
+            "node_offset": {
+              "type": "integer"
+            },
+            "edge_offset": {
+              "type": "integer"
+            },
+            "node_limit": {
+              "type": "integer"
+            },
+            "edge_limit": {
+              "type": "integer"
+            },
+            "returned_nodes": {
+              "type": "integer"
+            },
+            "returned_edges": {
+              "type": "integer"
+            },
+            "nodes_have_more": {
+              "type": "boolean"
+            },
+            "edges_have_more": {
+              "type": "boolean"
+            },
+            "next_node_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "next_edge_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
             }
           }
         },

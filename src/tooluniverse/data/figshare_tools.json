@@ -1,7 +1,7 @@
 [
   {
     "name": "Figshare_search_articles",
-    "description": "Search Figshare for research outputs (datasets, figures, code, posters, papers, theses, presentations) by keyword. Figshare is a major open-access research repository where researchers share supplementary data, code, figures, and complete datasets. Returns article ID, title, DOI, resource type, publication date, and authors. Essential for finding research datasets, supplementary materials, and research code associated with published papers.",
+    "description": "Search Figshare research outputs by keyword through the official article search endpoint. Results are explicitly paginated; continue with metadata.next_page while metadata.has_more is true. Figshare does not expose an exact total, so metadata.matches_lower_bound reports a verified lower bound.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -21,7 +21,16 @@
             "integer",
             "null"
           ],
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 10,
           "description": "Number of results (default 10, max 1000)"
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "One-based result page. Continue with metadata.next_page."
         },
         "published_since": {
           "type": [
@@ -33,7 +42,8 @@
       },
       "required": [
         "search_for"
-      ]
+      ],
+      "additionalProperties": false
     },
     "fields": {
       "endpoint": "https://api.figshare.com/v2/articles/search",

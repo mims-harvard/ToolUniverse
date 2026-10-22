@@ -1,7 +1,7 @@
 [
   {
     "name": "ChEBI_get_compound",
-    "description": "Get detailed information about a chemical entity from ChEBI (Chemical Entities of Biological Interest) by its CHEBI ID. Returns the compound name, definition, synonyms, molecular formula, mass, InChIKey, SMILES, charge, and star rating (curation quality: 3=manually curated, 2=checked, 1=unchecked). ChEBI is maintained by EBI and is the standard reference for small molecules in biology. Example: CHEBI:15365 returns acetylsalicylic acid (aspirin). ChEBI merges obsolete/duplicate accessions into a single primary entry and serves that primary for every id merged into it, so a legacy accession answers about a different compound (CHEBI:1 returns CHEBI:18357, (R)-noradrenaline). When that happens the result carries 'requested_chebi_id', 'requested_chebi_accession', 'redirect_note' and the primary entry's 'secondary_ids'; those keys are absent on a direct hit.",
+    "description": "Get detailed information about a chemical entity from ChEBI (Chemical Entities of Biological Interest) by its CHEBI ID. Returns the compound name, definition, synonyms, molecular formula, mass, InChIKey, SMILES, charge, and star rating (curation quality: 3=manually curated, 2=checked, 1=unchecked). ChEBI is maintained by EBI and is the standard reference for small molecules in biology. Example: CHEBI:15365 returns acetylsalicylic acid (aspirin). Synonyms (including brand and systematic names) are paginated: use synonym_offset/synonym_limit and inspect synonyms_total, synonyms_truncated, and next_synonym_offset; common drugs can have dozens of names. ChEBI merges obsolete/duplicate accessions into a single primary entry and serves that primary for every id merged into it, so a legacy accession answers about a different compound (CHEBI:1 returns CHEBI:18357, (R)-noradrenaline). When that happens the result carries 'requested_chebi_id', 'requested_chebi_accession', 'redirect_note' and the primary entry's 'secondary_ids'; those keys are absent on a direct hit.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -11,6 +11,19 @@
             "string"
           ],
           "description": "ChEBI identifier as a bare integer (e.g. 15365) or the 'CHEBI:15365' CURIE form returned by ChEBI_search. Examples: 15365 (aspirin), 17234 (glucose)."
+        },
+        "synonym_offset": {
+          "type": "integer",
+          "description": "Zero-based offset in the deduplicated name list.",
+          "default": 0,
+          "minimum": 0
+        },
+        "synonym_limit": {
+          "type": "integer",
+          "description": "Names returned per page (default 20, maximum 500).",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 500
         }
       },
       "required": [
@@ -112,6 +125,24 @@
                 "type": "string"
               },
               "description": "Only present on a redirect, and only where the endpoint reports it (the compound endpoint does; the ontology endpoints do not). The returned primary entry's full list of merged/secondary accessions - the evidence for 'redirect_note'."
+            },
+            "synonyms_total": {
+              "type": "integer"
+            },
+            "synonym_offset": {
+              "type": "integer"
+            },
+            "synonyms_returned": {
+              "type": "integer"
+            },
+            "synonyms_truncated": {
+              "type": "boolean"
+            },
+            "next_synonym_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
             }
           }
         },
@@ -131,7 +162,7 @@
   },
   {
     "name": "ChEBI_search",
-    "description": "Search the ChEBI database for chemical entities by name, formula, or keyword. Uses Elasticsearch-powered full-text search across compound names, synonyms, definitions, and formulas. Returns matching compounds with IDs, names, formulas, and masses. Note: smiles and inchikey are not available from the search endpoint (use ChEBI_get_compound for structural data). Compound names are HTML-stripped. ChEBI contains 195,000+ chemical entities of biological interest. The underlying API paginates at 15 hits per page; this tool fetches as many pages as needed to satisfy 'limit' and reports the full size of the match set as 'total_matches'.",
+    "description": "Search the ChEBI database for chemical entities by name, formula, or keyword. Uses Elasticsearch-powered full-text search across compound names, synonyms, definitions, and formulas. Returns matching compounds with IDs, names, formulas, and masses. The underlying API paginates at 15 hits per page; this wrapper maps limit/offset onto those pages and reports total_matches plus next_offset so all results remain reachable. Note: use ChEBI_get_compound for structural data.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -145,6 +176,12 @@
             "null"
           ],
           "description": "Maximum number of compounds to return. Default: 10. Max: 100. Values above 15 are served by fetching additional API pages, so they cost extra requests."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based result offset. Continue with data.next_offset while has_more is true."
         }
       },
       "required": [
@@ -183,6 +220,24 @@
                 "null"
               ],
               "description": "Total number of compounds in ChEBI matching the query, which may be far larger than result_count. Null when the API does not report a count. Compare against result_count to tell '10 returned of 116 matching' from 'only 10 exist'."
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "truncated": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
             },
             "compounds": {
               "type": "array",

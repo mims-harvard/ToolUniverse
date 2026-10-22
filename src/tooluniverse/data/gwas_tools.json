@@ -1929,7 +1929,7 @@
   {
     "type": "GWASGeneSearch",
     "name": "GWAS_search_associations_by_gene",
-    "description": "Search GWAS Catalog associations by gene name (returns strongest risk allele and p-value fields).",
+    "description": "Search GWAS Catalog associations by gene name with zero-based pagination. Results within each page are sorted by p-value, but the API does not provide a global significance sort. Continue with next_page while has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1939,8 +1939,14 @@
         },
         "size": {
           "type": "integer",
-          "description": "Max associations to return (default 100; results are sorted by p-value, most significant first).",
+          "description": "Associations per page (default 100, max 1000). Results are sorted by p-value within the returned page only.",
           "default": 100
+        },
+        "page": {
+          "type": "integer",
+          "description": "Zero-based GWAS Catalog result page. Continue with next_page while has_more is true.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": [
@@ -1965,6 +1971,21 @@
         },
         "total_found": {
           "type": "integer"
+        },
+        "page": {
+          "type": "integer"
+        },
+        "page_size": {
+          "type": "integer"
+        },
+        "has_more": {
+          "type": "boolean"
+        },
+        "next_page": {
+          "type": [
+            "integer",
+            "null"
+          ]
         },
         "queried_gene_name": {
           "type": "string",

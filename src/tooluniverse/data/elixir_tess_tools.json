@@ -1,7 +1,7 @@
 [
   {
     "name": "ELIXIRTeSS_search_materials",
-    "description": "Search ELIXIR TeSS (Training eSupport System) for bioinformatics and life science training materials. TeSS aggregates learning resources from ELIXIR nodes and partner organizations including tutorials, online courses, webinars, and training presentations. Returns materials with scientific topics, EDAM operations, difficulty levels, and resource URLs. Essential for finding bioinformatics training resources and educational content.",
+    "description": "Search ELIXIR TeSS for bioinformatics training materials. Results use one-based page pagination: start with page=1 and continue with metadata.next_page while metadata.has_more is true. TeSS exposes no total; ToolUniverse reports an exact total only when a short final page is reached. Returns topics, EDAM operations, difficulty, and resource URLs.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -45,14 +45,19 @@
             "integer",
             "null"
           ],
-          "description": "Number of results to return (default 10, max 100)"
+          "minimum": 1,
+          "maximum": 100,
+          "default": 10,
+          "description": "Results per page (default 10, max 100)"
         },
         "page": {
           "type": [
             "integer",
             "null"
           ],
-          "description": "Page number for pagination"
+          "minimum": 1,
+          "default": 1,
+          "description": "One-based page number. Continue with metadata.next_page."
         }
       },
       "required": []
@@ -61,7 +66,8 @@
       "endpoint": "https://tess.elixir-europe.org/materials.json",
       "params": {
         "page_size": "10"
-      }
+      },
+      "pagination": "tess_page"
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -194,7 +200,7 @@
   },
   {
     "name": "ELIXIRTeSS_search_events",
-    "description": "Search ELIXIR TeSS for upcoming and past bioinformatics training events, workshops, and courses. TeSS aggregates events from ELIXIR nodes and partner organizations across Europe and worldwide. Returns event details including organizer, location (online or physical), dates, costs, and registration links. Useful for finding bioinformatics training opportunities.",
+    "description": "Search ELIXIR TeSS for bioinformatics training events. Results use one-based page pagination: start with page=1 and continue with metadata.next_page while metadata.has_more is true. TeSS exposes no total; ToolUniverse reports an exact total only at a short final page. Returns organizer, location, dates, costs, and registration links.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -231,7 +237,19 @@
             "integer",
             "null"
           ],
-          "description": "Number of results to return (default 10)"
+          "minimum": 1,
+          "maximum": 100,
+          "default": 10,
+          "description": "Results per page (default 10, max 100)"
+        },
+        "page": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "default": 1,
+          "description": "One-based page number. Continue with metadata.next_page."
         }
       },
       "required": []
@@ -240,7 +258,8 @@
       "endpoint": "https://tess.elixir-europe.org/events.json",
       "params": {
         "page_size": "10"
-      }
+      },
+      "pagination": "tess_page"
     },
     "type": "BaseRESTTool",
     "test_examples": [

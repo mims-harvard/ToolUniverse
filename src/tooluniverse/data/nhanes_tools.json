@@ -119,7 +119,7 @@
   },
   {
     "name": "nhanes_search_datasets",
-    "description": "Search for NHANES datasets by keyword. Returns information about matching datasets including download links. Note: NHANES data files are typically in SAS/XPT format and may require conversion tools.",
+    "description": "Search the live CDC NHANES variable catalog by keyword and return deduplicated matching data files with download links. The result reports the exact total_count across every searched component/cycle. Continue with next_offset while has_more is true.",
     "type": "NHANESTool",
     "parameter": {
       "type": "object",
@@ -136,6 +136,12 @@
           "type": "integer",
           "description": "Maximum number of results (default: 20)",
           "default": 20
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Zero-based offset in the complete deduplicated match list. Use next_offset to continue.",
+          "default": 0
         }
       },
       "required": []
@@ -170,6 +176,32 @@
             "type": "string"
           },
           "description": "Which NHANES cycles were actually searched"
+        },
+        "count": {
+          "type": "integer",
+          "description": "Number of datasets returned on this page"
+        },
+        "total_count": {
+          "type": "integer",
+          "description": "Exact number of distinct matching files across all searched cycles/components"
+        },
+        "offset": {
+          "type": "integer"
+        },
+        "limit": {
+          "type": "integer"
+        },
+        "has_more": {
+          "type": "boolean"
+        },
+        "next_offset": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "result_set_complete": {
+          "type": "boolean"
         }
       }
     },

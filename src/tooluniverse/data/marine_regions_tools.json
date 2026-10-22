@@ -1,7 +1,7 @@
 [
   {
     "name": "MarineRegions_search_by_name",
-    "description": "Search the Marine Regions Gazetteer (VLIZ) for ocean/sea geographic features by name. Returns MRGID (Marine Regions Gazetteer ID), coordinates, place type, and source information. No authentication required. Covers IHO sea areas, exclusive economic zones, large marine ecosystems, ICES ecoregions, and 40,000+ other marine geographic features worldwide. Useful for standardizing geographic references in marine biology, oceanography, and environmental research.",
+    "description": "Search the Marine Regions Gazetteer (VLIZ) for ocean/sea geographic features by name. Returns at most 100 records per call. Continue with metadata.next_offset while metadata.has_more is true; the wrapper performs a one-record lookahead on full pages because the API does not return a total count. like, fuzzy, and offset are sent as official query parameters.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -14,21 +14,24 @@
             "boolean",
             "null"
           ],
-          "description": "If true, perform a partial/fuzzy name match (LIKE search). Default: true"
+          "default": true,
+          "description": "If true, perform a partial name match (SQL LIKE). Default: true"
         },
         "fuzzy": {
           "type": [
             "boolean",
             "null"
           ],
-          "description": "If true, perform fuzzy matching for approximate name searches. Default: false"
+          "default": false,
+          "description": "If true, perform Levenshtein fuzzy matching. Default: false"
         },
         "offset": {
           "type": [
             "integer",
             "null"
           ],
-          "description": "Pagination offset. Default: 0 (first page)",
+          "minimum": 0,
+          "description": "Zero-based record offset. Start at 0 and continue with metadata.next_offset.",
           "default": 0
         }
       },
@@ -37,8 +40,11 @@
       ]
     },
     "fields": {
-      "endpoint": "https://www.marineregions.org/rest/getGazetteerRecordsByName.json/{name}/like/true/false/{offset}",
-      "params": {}
+      "endpoint": "https://www.marineregions.org/rest/getGazetteerRecordsByName.json/{name}/",
+      "params": {
+        "count": 100
+      },
+      "pagination": "marine_regions_offset"
     },
     "type": "BaseRESTTool",
     "test_examples": [

@@ -1,12 +1,13 @@
 [
   {
     "name": "LNCipedia_search_lncrna",
-    "description": "Search for long non-coding RNAs (lncRNAs) by name, accession, or keyword using EBI Search over RNAcentral. RNAcentral aggregates lncRNA data from LNCipedia, NONCODE, LncBook, HGNC, RefSeq, GeneCards, and 50+ other databases. Supports filtering by species. Returns RNAcentral IDs, descriptions, sequence lengths, and source databases. Use to search for lncRNAs like MALAT1, HOTAIR, NEAT1, XIST, H19, or KCNQ1OT1. The human genome encodes 50,000+ lncRNA transcripts. Example: search 'MALAT1' returns URS0002A146E4_9606 (7472 nt, metastasis-associated lung adenocarcinoma transcript 1).",
+    "description": "Search long non-coding RNAs by name, accession, or keyword using EBI Search over RNAcentral. Results use exact offset pagination: while has_more is true, pass next_start as start with the same query and species filter.",
     "parameter": {
       "type": "object",
       "properties": {
         "query": {
           "type": "string",
+          "minLength": 1,
           "description": "Search query: lncRNA name (e.g., 'MALAT1', 'HOTAIR'), gene symbol, accession, or keyword. Supports AND/OR operators."
         },
         "species": {
@@ -15,7 +16,16 @@
         },
         "size": {
           "type": "integer",
-          "description": "Number of results to return (1-100). Default: 10."
+          "minimum": 1,
+          "maximum": 100,
+          "default": 10,
+          "description": "Number of results per page (1-100)."
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based EBI Search result offset. Continue with next_start."
         }
       },
       "required": [
@@ -54,6 +64,24 @@
               "type": "integer",
               "description": "Number of entries returned in this response"
             },
+            "start": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_start": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "truncated": {
+              "type": "boolean"
+            },
+            "result_set_complete": {
+              "type": "boolean"
+            },
             "entries": {
               "type": "array",
               "description": "List of lncRNA entries with IDs, descriptions, and metadata",
@@ -87,7 +115,17 @@
                 }
               }
             }
-          }
+          },
+          "required": [
+            "total_hits",
+            "returned",
+            "start",
+            "has_more",
+            "next_start",
+            "truncated",
+            "result_set_complete",
+            "entries"
+          ]
         },
         {
           "type": "object",
@@ -123,16 +161,18 @@
   },
   {
     "name": "LNCipedia_get_lncrna",
-    "description": "Get detailed lncRNA information from RNAcentral including full RNA sequence, species, gene associations, publication count, and source databases. Use a species-specific RNAcentral ID (format: URS_TAXID) or base URS ID with optional taxid. Key lncRNA IDs: URS0002A146E4_9606 (MALAT1, 7472 nt), URS00026A23F2_9606 (HOTAIR, 2273 nt), URS000075DAEC_9606 (NEAT1, 3756 nt). Returns the full nucleotide sequence which can be used for downstream analysis (structure prediction, conservation, etc.).",
+    "description": "Get detailed lncRNA information from RNAcentral including full RNA sequence, species, gene associations, publication count, and source databases. For species-specific metadata, use URS_TAXID or pass the same positive integer taxid with a base URS ID; the returned record identity and taxid are verified. A bare URS without taxid is a cross-species sequence record, so species is intentionally empty and publications_count may be null when RNAcentral supplies only a publications URL. Conflicting or nonexistent species identifiers return an error instead of falling back to another organism. Example human IDs include URS0002A146E4_9606 (MALAT1), URS00026A23F2_9606 (HOTAIR), and URS000075DAEC_9606 (NEAT1).",
     "parameter": {
       "type": "object",
       "properties": {
         "rnacentral_id": {
           "type": "string",
+          "pattern": "^URS[0-9A-Fa-f]{10}(?:_[1-9][0-9]*)?$",
           "description": "RNAcentral URS identifier. Use species-specific format 'URS_TAXID' (e.g., 'URS0002A146E4_9606' for human MALAT1) or base URS ID with taxid parameter."
         },
         "taxid": {
           "type": "integer",
+          "minimum": 1,
           "description": "NCBI Taxonomy ID for species-specific lookup (e.g., 9606 for human). Optional if rnacentral_id already includes taxid."
         }
       },
@@ -193,7 +233,11 @@
               }
             },
             "publications_count": {
-              "type": "integer"
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Species-specific publication count, or null when a bare cross-species URS record exposes only a publications URL."
             },
             "is_active": {
               "type": "boolean"
@@ -241,17 +285,27 @@
   },
   {
     "name": "LNCipedia_get_lncrna_publications",
-    "description": "Retrieve publications associated with a long non-coding RNA from RNAcentral. Returns publication titles, authors, PubMed IDs, DOIs, and journal information. Use after LNCipedia_search_lncrna to get the RNAcentral URS ID, then retrieve associated literature. MALAT1 and HOTAIR are among the most-studied lncRNAs with hundreds of publications.",
+    "description": "Retrieve publications associated with a long non-coding RNA from RNAcentral with explicit page pagination. While has_more is true, pass next_page as page. Metadata warns that RNAcentral can repeat a PMID with different source metadata, so total_publications is a source-record count rather than a guaranteed unique-PMID count.",
     "parameter": {
       "type": "object",
       "properties": {
         "rnacentral_id": {
           "type": "string",
+          "minLength": 1,
           "description": "RNAcentral URS identifier (e.g., 'URS0002A146E4' for MALAT1). Use base URS ID without taxid suffix."
         },
         "page_size": {
           "type": "integer",
-          "description": "Number of publications to return (1-50). Default: 10."
+          "minimum": 1,
+          "maximum": 50,
+          "default": 10,
+          "description": "Number of publications per page (1-50)."
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "One-based RNAcentral page number. Continue with next_page."
         }
       },
       "required": [
@@ -285,6 +339,33 @@
               "type": "integer",
               "description": "Number returned in this page"
             },
+            "page": {
+              "type": "integer"
+            },
+            "page_size": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_page": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "previous_page": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "truncated": {
+              "type": "boolean"
+            },
+            "result_set_complete": {
+              "type": "boolean"
+            },
             "publications": {
               "type": "array",
               "items": {
@@ -317,7 +398,19 @@
                 }
               }
             }
-          }
+          },
+          "required": [
+            "total_publications",
+            "returned",
+            "page",
+            "page_size",
+            "has_more",
+            "next_page",
+            "previous_page",
+            "truncated",
+            "result_set_complete",
+            "publications"
+          ]
         },
         {
           "type": "object",
@@ -352,17 +445,27 @@
   },
   {
     "name": "LNCipedia_get_lncrna_xrefs",
-    "description": "Get cross-references for a long non-coding RNA from RNAcentral. Returns database links from LNCipedia, NONCODE, LncBook, HGNC, RefSeq, GeneCards, MalaCards, Ensembl, and other sources. Includes external accession IDs, expert database URLs, and species information. Essential for mapping lncRNA IDs across databases and finding functional annotation data.",
+    "description": "Get cross-references for a long non-coding RNA from RNAcentral with explicit page pagination. While has_more is true, pass next_page as page so later database mappings remain reachable.",
     "parameter": {
       "type": "object",
       "properties": {
         "rnacentral_id": {
           "type": "string",
+          "minLength": 1,
           "description": "RNAcentral URS identifier (e.g., 'URS0002A146E4' for MALAT1). Use base URS ID without taxid suffix."
         },
         "page_size": {
           "type": "integer",
-          "description": "Number of cross-references to return (1-50). Default: 10."
+          "minimum": 1,
+          "maximum": 50,
+          "default": 10,
+          "description": "Number of cross-references per page (1-50)."
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "One-based RNAcentral page number. Continue with next_page."
         }
       },
       "required": [
@@ -395,6 +498,33 @@
             "returned": {
               "type": "integer",
               "description": "Number returned in this page"
+            },
+            "page": {
+              "type": "integer"
+            },
+            "page_size": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_page": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "previous_page": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "truncated": {
+              "type": "boolean"
+            },
+            "result_set_complete": {
+              "type": "boolean"
             },
             "cross_references": {
               "type": "array",
@@ -452,7 +582,19 @@
                 }
               }
             }
-          }
+          },
+          "required": [
+            "total_xrefs",
+            "returned",
+            "page",
+            "page_size",
+            "has_more",
+            "next_page",
+            "previous_page",
+            "truncated",
+            "result_set_complete",
+            "cross_references"
+          ]
         },
         {
           "type": "object",
@@ -487,12 +629,13 @@
   },
   {
     "name": "LNCipedia_search_ncrna_by_type",
-    "description": "Search for any type of non-coding RNA by RNA type classification. Supports all RNA types in RNAcentral: miRNA, lncRNA, rRNA, tRNA, snRNA, snoRNA, piRNA, pre_miRNA, SRP_RNA, RNase_P_RNA, antisense_RNA, and more. Useful for browsing or discovering ncRNAs of a specific type, optionally filtered by species or keyword. Example: search for all human snoRNAs, or find piRNAs related to a specific gene.",
+    "description": "Search any RNAcentral non-coding RNA type with exact offset pagination. Supports miRNA, lncRNA, rRNA, tRNA, snRNA, snoRNA, piRNA and others; while has_more is true, continue with next_start.",
     "parameter": {
       "type": "object",
       "properties": {
         "query": {
           "type": "string",
+          "minLength": 1,
           "description": "Search query: gene name, keyword, or accession. Use '*' for all entries of the specified RNA type."
         },
         "rna_type": {
@@ -505,7 +648,16 @@
         },
         "size": {
           "type": "integer",
-          "description": "Number of results to return (1-100). Default: 10."
+          "minimum": 1,
+          "maximum": 100,
+          "default": 10,
+          "description": "Number of results per page (1-100)."
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based EBI Search result offset. Continue with next_start."
         }
       },
       "required": [
@@ -542,6 +694,24 @@
               "type": "integer",
               "description": "Number of entries returned in this response"
             },
+            "start": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_start": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "truncated": {
+              "type": "boolean"
+            },
+            "result_set_complete": {
+              "type": "boolean"
+            },
             "entries": {
               "type": "array",
               "description": "List of ncRNA entries",
@@ -575,7 +745,17 @@
                 }
               }
             }
-          }
+          },
+          "required": [
+            "total_hits",
+            "returned",
+            "start",
+            "has_more",
+            "next_start",
+            "truncated",
+            "result_set_complete",
+            "entries"
+          ]
         },
         {
           "type": "object",

@@ -1,7 +1,7 @@
 """
 SemanticScholar_search_authors
 
-Search for researchers/authors on Semantic Scholar by name. Returns author IDs, names, h-index, c...
+Search for researchers/authors on Semantic Scholar by name. Results use exact offset pagination: ...
 """
 
 from typing import Any, Optional, Callable
@@ -11,6 +11,7 @@ from ._shared_client import get_shared_client
 def SemanticScholar_search_authors(
     query: str,
     limit: Optional[int] = 5,
+    offset: Optional[int] = 0,
     fields: Optional[str] = "name,hIndex,citationCount,paperCount,affiliations",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -18,7 +19,7 @@ def SemanticScholar_search_authors(
     validate: bool = True,
 ) -> Any:
     """
-    Search for researchers/authors on Semantic Scholar by name. Returns author IDs, names, h-index, c...
+    Search for researchers/authors on Semantic Scholar by name. Results use exact offset pagination: ...
 
     Parameters
     ----------
@@ -26,6 +27,8 @@ def SemanticScholar_search_authors(
         Author name to search for (e.g., 'Jennifer Doudna', 'Oren Etzioni', 'Yann LeC...
     limit : int
         Maximum number of results (default 5, max 1000)
+    offset : int
+        Zero-based author offset. Continue with metadata.next_offset while metadata.h...
     fields : str
         Comma-separated fields: name,hIndex,citationCount,paperCount,affiliations
     stream_callback : Callable, optional
@@ -44,7 +47,12 @@ def SemanticScholar_search_authors(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"query": query, "limit": limit, "fields": fields}.items()
+        for k, v in {
+            "query": query,
+            "limit": limit,
+            "offset": offset,
+            "fields": fields,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

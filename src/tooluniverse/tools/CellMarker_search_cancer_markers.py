@@ -1,7 +1,7 @@
 """
 CellMarker_search_cancer_markers
 
-Search the CellMarker 2.0 database for cancer-specific cell markers. Returns marker genes and cel...
+Search the CellMarker 2.0 database for cancer-context marker records with complete limit/offset p...
 """
 
 from typing import Any, Optional, Callable
@@ -20,7 +20,7 @@ def CellMarker_search_cancer_markers(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search the CellMarker 2.0 database for cancer-specific cell markers. Returns marker genes and cel...
+    Search the CellMarker 2.0 database for cancer-context marker records with complete limit/offset p...
 
     Parameters
     ----------
@@ -33,7 +33,7 @@ def CellMarker_search_cancer_markers(
     limit : int
         Maximum records to return. Default 200; total_records reports how many matche...
     offset : int
-        Records to skip before returning, for paging through total_records.
+        Records to skip before returning, for paging through total_records. Use data....
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

@@ -22,7 +22,23 @@ class DOAJTool(BaseTool):
         arguments = arguments or {}
         query = arguments.get("query")
         search_type = arguments.get("type", "articles")
-        max_results = int(arguments.get("max_results", 10))
+        raw_max_results = arguments.get("max_results", 10)
+        page = arguments.get("page", 1)
+        if (
+            isinstance(raw_max_results, bool)
+            or not isinstance(raw_max_results, int)
+            or not 1 <= raw_max_results <= 100
+        ):
+            return {
+                "status": "error",
+                "error": "max_results must be an integer between 1 and 100",
+            }
+        if isinstance(page, bool) or not isinstance(page, int) or page < 1:
+            return {
+                "status": "error",
+                "error": "page must be a positive integer (1-based)",
+            }
+        max_results = raw_max_results
 
         if not query:
             return {"status": "error", "error": "`query` parameter is required."}
@@ -35,7 +51,8 @@ class DOAJTool(BaseTool):
 
         endpoint = f"{self.base_url}/{search_type}/{query}"
         params = {
-            "pageSize": max(1, min(max_results, 100)),
+            "pageSize": max_results,
+            "page": page,
         }
         try:
             resp = requests.get(endpoint, params=params, timeout=20)
@@ -192,4 +209,40 @@ class DOAJTool(BaseTool):
                     }
                 )
 
-        return items
+        try:
+            total_results = int(data.get("total", len(items)))
+        except (TypeError, ValueError):
+            total_results = len(items)
+        try:
+            actual_page = int(data.get("page", page))
+            actual_page_size = int(data.get("pageSize", max_results))
+        except (TypeError, ValueError):
+            actual_page = page
+            actual_page_size = max_results
+        total_pages = (
+            (total_results + actual_page_size - 1) // actual_page_size
+            if actual_page_size
+            else None
+        )
+        has_more = (
+            bool(data.get("next"))
+            if "next" in data
+            else total_pages is not None and actual_page < total_pages
+        )
+        return {
+            "status": "success",
+            "data": items,
+            "metadata": {
+                "query": query,
+                "type": search_type,
+                "total_results": total_results,
+                "total_results_is_exact": True,
+                "returned": len(items),
+                "page": actual_page,
+                "page_size": actual_page_size,
+                "total_pages": total_pages,
+                "has_more": has_more,
+                "next_page": actual_page + 1 if has_more else None,
+                "last_page": total_pages,
+            },
+        }

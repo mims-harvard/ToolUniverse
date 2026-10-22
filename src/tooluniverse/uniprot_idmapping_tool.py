@@ -194,6 +194,23 @@ class UniProtIDMappingTool(BaseTool):
                 return segments[0].strip().strip("<>")
         return None
 
+    @staticmethod
+    def _paginate_parsed_results(parsed, arguments):
+        """Apply recoverable local pagination after all upstream pages are fetched."""
+        limit = max(1, min(int(arguments.get("limit", 500)), 5000))
+        offset = max(0, int(arguments.get("offset", 0)))
+        page = parsed[offset : offset + limit]
+        has_more = offset + len(page) < len(parsed)
+        return {
+            "results": page,
+            "returned": len(page),
+            "limit": limit,
+            "offset": offset,
+            "has_more": has_more,
+            "next_offset": offset + len(page) if has_more else None,
+            "truncated": offset > 0 or has_more,
+        }
+
     def _convert(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Generic ID conversion between any supported databases."""
         ids = arguments.get("ids", "")
@@ -227,14 +244,15 @@ class UniProtIDMappingTool(BaseTool):
                 to_val = to_val.get("primaryAccession", to_val.get("id", str(to_val)))
             parsed.append({"from": r.get("from", ""), "to": str(to_val)})
 
+        page_data = self._paginate_parsed_results(parsed, arguments)
+
         return {
             "status": "success",
             "data": {
                 "from_db": from_db,
                 "to_db": to_db,
                 "result_count": len(parsed),
-                "results": parsed[:500],
-                "truncated": len(parsed) > 500,
+                **page_data,
                 "failed_ids": result.get("failed_ids", []),
             },
             "metadata": {
@@ -262,14 +280,14 @@ class UniProtIDMappingTool(BaseTool):
         parsed = [
             {"from": r.get("from", ""), "to": str(r.get("to", ""))} for r in raw_results
         ]
+        page_data = self._paginate_parsed_results(parsed, arguments)
 
         return {
             "status": "success",
             "data": {
                 "query_ids": uniprot_ids,
                 "result_count": len(parsed),
-                "results": parsed[:500],
-                "truncated": len(parsed) > 500,
+                **page_data,
             },
             "metadata": {
                 "source": "UniProt ID Mapping Service",
@@ -303,14 +321,15 @@ class UniProtIDMappingTool(BaseTool):
                 to_val = to_val.get("primaryAccession", str(to_val))
             parsed.append({"from": r.get("from", ""), "to": str(to_val)})
 
+        page_data = self._paginate_parsed_results(parsed, arguments)
+
         return {
             "status": "success",
             "data": {
                 "gene_names": gene_names,
                 "species_taxid": tax_id,
                 "result_count": len(parsed),
-                "results": parsed[:500],
-                "truncated": len(parsed) > 500,
+                **page_data,
             },
             "metadata": {
                 "source": "UniProt ID Mapping Service",

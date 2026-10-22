@@ -1,7 +1,7 @@
 [
   {
     "name": "NCIThesaurus_search",
-    "description": "Search the NCI Thesaurus (NCIt) for biomedical concepts by term. NCIt is the National Cancer Institute's reference terminology covering cancer-related terms, diseases, drugs, anatomy, genes, and biological processes. Returns matching concepts with NCI codes, names, and semantic types. Essential for standardized cancer research vocabulary. Example: searching 'melanoma' returns C3224 (Melanoma) as the primary concept.",
+    "description": "Search the NCI Thesaurus (NCIt) for biomedical concepts with explicit match semantics and offset pagination. Returns concept codes, preferred names, terminology, and leaf status. Use metadata.next_offset until metadata.has_more is false; metadata.total_results is the full upstream match count. The default match_type='match' preserves the historical exact-style search; use 'contains' for broad substring retrieval.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -10,11 +10,31 @@
           "description": "Search term for NCI concepts. Examples: 'melanoma', 'breast cancer', 'imatinib', 'BRCA1', 'apoptosis', 'lung adenocarcinoma'."
         },
         "page_size": {
-          "type": [
-            "integer",
-            "null"
+          "type": "integer",
+          "description": "Number of results to return per page (default 10, range 1-100).",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based start index sent as the official EVS fromRecord parameter. Continue with metadata.next_offset.",
+          "default": 0,
+          "minimum": 0
+        },
+        "match_type": {
+          "type": "string",
+          "description": "Official EVS match behavior. 'match' is the compatibility default; 'contains' performs broad substring search.",
+          "enum": [
+            "contains",
+            "match",
+            "startsWith",
+            "phrase",
+            "AND",
+            "OR",
+            "fuzzy"
           ],
-          "description": "Number of results to return (default 10, max 100)."
+          "default": "match"
         }
       },
       "required": [
@@ -31,7 +51,9 @@
       },
       {
         "term": "BRCA1",
-        "page_size": 5
+        "page_size": 5,
+        "offset": 5,
+        "match_type": "contains"
       }
     ],
     "return_schema": {

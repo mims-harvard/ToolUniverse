@@ -13,6 +13,7 @@ No authentication required.
 
 import requests
 from typing import Dict, Any
+from urllib.parse import quote
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
@@ -86,19 +87,34 @@ class EnsemblXrefsTool(BaseTool):
 
     def _get_xrefs(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get external cross-references for an Ensembl ID."""
-        ensembl_id = arguments.get("ensembl_id", "")
+        ensembl_id = arguments.get("ensembl_id")
         external_db = arguments.get("external_db", None)
 
-        if not ensembl_id:
+        if not isinstance(ensembl_id, str) or not ensembl_id.strip():
             return {
                 "status": "error",
-                "error": "ensembl_id is required (e.g., 'ENSG00000141510', 'ENST00000269305').",
+                "error": "ensembl_id must be a non-empty string",
+                "parameter": "ensembl_id",
             }
+        if external_db is not None and (
+            not isinstance(external_db, str) or not external_db.strip()
+        ):
+            return {
+                "status": "error",
+                "error": "external_db must be a non-empty string when provided",
+                "parameter": "external_db",
+            }
+        pagination = self._pagination_controls(arguments, default_limit=500)
+        if isinstance(pagination, dict):
+            return pagination
+        limit, offset = pagination
+        ensembl_id = ensembl_id.strip()
+        external_db = external_db.strip() if external_db is not None else None
 
-        url = f"{ENSEMBL_REST_BASE}/xrefs/id/{ensembl_id}"
+        url = f"{ENSEMBL_REST_BASE}/xrefs/id/{quote(ensembl_id, safe='')}"
         params_parts = ["content-type=application/json"]
         if external_db:
-            params_parts.append(f"external_db={external_db}")
+            params_parts.append(f"external_db={quote(external_db, safe='')}")
 
         full_url = f"{url}?{';'.join(params_parts)}"
         response = requests.get(full_url, headers=ENSEMBL_HEADERS, timeout=self.timeout)
@@ -128,48 +144,77 @@ class EnsemblXrefsTool(BaseTool):
                 }
             )
 
-        # Fix-R19A-1: xrefs was silently truncated to 100 while
-        # database_summary was computed from the full, untruncated list --
-        # confirmed live for ENSG00000141510 (TP53, 157 real xrefs): the
-        # per-database counts in database_summary didn't match what was
-        # actually present in the truncated xrefs array, and there was no
-        # flag indicating truncation happened at all. Raised the cap high
-        # enough that this essentially never triggers in practice, and
-        # made truncation explicit when it does.
-        limit = 500
-        truncated = len(xrefs) > limit
+        page = xrefs[offset : offset + limit]
+        page_by_db = {}
+        for item in page:
+            db = item["dbname"]
+            page_by_db[db] = page_by_db.get(db, 0) + 1
+        next_offset = offset + len(page)
+        has_more = next_offset < len(xrefs)
+        truncated = offset > 0 or has_more
         return {
             "status": "success",
             "data": {
                 "ensembl_id": ensembl_id,
-                "xrefs": xrefs[:limit],
+                "xrefs": page,
                 "database_summary": by_db,
+                "page_database_summary": page_by_db,
                 "truncated": truncated,
             },
             "metadata": {
                 "source": "Ensembl REST API (rest.ensembl.org)",
                 "total_xrefs": len(data),
-                "returned": min(len(xrefs), limit),
+                "returned": len(page),
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
+                "result_set_complete": not truncated,
                 "databases_found": len(by_db),
             },
         }
 
     def _get_xrefs_by_symbol(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Look up Ensembl IDs for a gene symbol via external databases."""
-        symbol = arguments.get("symbol", "")
+        symbol = arguments.get("symbol")
         species = arguments.get("species", "human")
         external_db = arguments.get("external_db", None)
 
-        if not symbol:
+        if not isinstance(symbol, str) or not symbol.strip():
             return {
                 "status": "error",
-                "error": "symbol is required (gene symbol, e.g., 'TP53', 'BRCA1').",
+                "error": "symbol must be a non-empty string",
+                "parameter": "symbol",
             }
+        if not isinstance(species, str) or not species.strip():
+            return {
+                "status": "error",
+                "error": "species must be a non-empty Ensembl species name",
+                "parameter": "species",
+            }
+        if external_db is not None and (
+            not isinstance(external_db, str) or not external_db.strip()
+        ):
+            return {
+                "status": "error",
+                "error": "external_db must be a non-empty string when provided",
+                "parameter": "external_db",
+            }
+        pagination = self._pagination_controls(arguments, default_limit=50)
+        if isinstance(pagination, dict):
+            return pagination
+        limit, offset = pagination
+        symbol = symbol.strip()
+        species = species.strip()
+        external_db = external_db.strip() if external_db is not None else None
 
-        url = f"{ENSEMBL_REST_BASE}/xrefs/symbol/{species}/{symbol}"
+        url = (
+            f"{ENSEMBL_REST_BASE}/xrefs/symbol/"
+            f"{quote(species, safe='')}/{quote(symbol, safe='')}"
+        )
         params_parts = ["content-type=application/json"]
         if external_db:
-            params_parts.append(f"external_db={external_db}")
+            params_parts.append(f"external_db={quote(external_db, safe='')}")
 
         full_url = f"{url}?{';'.join(params_parts)}"
         response = requests.get(full_url, headers=ENSEMBL_HEADERS, timeout=self.timeout)
@@ -180,7 +225,7 @@ class EnsemblXrefsTool(BaseTool):
             return {"status": "error", "error": "Unexpected response format."}
 
         results = []
-        for item in data[:50]:
+        for item in data[offset : offset + limit]:
             results.append(
                 {
                     "id": item.get("id"),
@@ -188,6 +233,9 @@ class EnsemblXrefsTool(BaseTool):
                 }
             )
 
+        next_offset = offset + len(results)
+        has_more = next_offset < len(data)
+        truncated = offset > 0 or has_more
         return {
             "status": "success",
             "data": {
@@ -199,5 +247,33 @@ class EnsemblXrefsTool(BaseTool):
                 "source": "Ensembl REST API (rest.ensembl.org)",
                 "total_results": len(data),
                 "returned": len(results),
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
+                "truncated": truncated,
+                "result_set_complete": not truncated,
             },
         }
+
+    @staticmethod
+    def _pagination_controls(arguments: Dict[str, Any], default_limit: int):
+        limit = arguments.get("limit", default_limit)
+        if (
+            isinstance(limit, bool)
+            or not isinstance(limit, int)
+            or not 1 <= limit <= 5000
+        ):
+            return {
+                "status": "error",
+                "error": "limit must be an integer between 1 and 5000",
+                "parameter": "limit",
+            }
+        offset = arguments.get("offset", 0)
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+                "parameter": "offset",
+            }
+        return limit, offset

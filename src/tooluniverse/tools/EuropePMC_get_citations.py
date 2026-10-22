@@ -1,7 +1,7 @@
 """
 EuropePMC_get_citations
 
-Get citations for an article from Europe PMC. Citations are articles that cite the specified arti...
+Get one page of citations for an article from Europe PMC. Returns exact hitCount-derived paginati...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def EuropePMC_get_citations(
     validate: bool = True,
 ) -> Any:
     """
-    Get citations for an article from Europe PMC. Citations are articles that cite the specified arti...
+    Get one page of citations for an article from Europe PMC. Returns exact hitCount-derived paginati...
 
     Parameters
     ----------

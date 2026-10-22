@@ -1,7 +1,7 @@
 """
 PubTator3_GetEntityRelations
 
-Query the NCBI PubTator3 relation knowledge graph for a normalized biomedical entity and return R...
+Query the NCBI PubTator3 relation graph for a normalized biomedical entity. PubTator returns the ...
 """
 
 from typing import Any, Optional, Callable
@@ -13,13 +13,14 @@ def PubTator3_GetEntityRelations(
     type_: Optional[str] = None,
     e2: Optional[str] = None,
     limit: Optional[int] = 50,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Query the NCBI PubTator3 relation knowledge graph for a normalized biomedical entity and return R...
+    Query the NCBI PubTator3 relation graph for a normalized biomedical entity. PubTator returns the ...
 
     Parameters
     ----------
@@ -30,7 +31,9 @@ def PubTator3_GetEntityRelations(
     e2 : str
         Optional second normalized PubTator entity (@TYPE_Name) to query a specific p...
     limit : int
-        Maximum number of top-ranked relation edges to return (client-side truncation...
+        Number of ranked relation edges in this client-side page (default 50).
+    offset : int
+        Zero-based ranked-edge offset. Continue with metadata.next_offset while metad...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -47,7 +50,13 @@ def PubTator3_GetEntityRelations(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"e1": e1, "type": type_, "e2": e2, "limit": limit}.items()
+        for k, v in {
+            "e1": e1,
+            "type": type_,
+            "e2": e2,
+            "limit": limit,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

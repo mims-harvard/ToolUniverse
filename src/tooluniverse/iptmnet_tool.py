@@ -127,7 +127,8 @@ class iPTMnetTool(BaseTool):
         role = arguments.get("role", "Substrate")
         ptm_type = arguments.get("ptm_type")
         term_type = arguments.get("term_type", "All")
-        max_results = arguments.get("max_results", 25)
+        max_results = max(1, min(int(arguments.get("max_results", 25)), 100))
+        offset = max(0, int(arguments.get("offset", 0)))
 
         params = {
             "search_term": search_term,
@@ -155,7 +156,7 @@ class iPTMnetTool(BaseTool):
                 "error": "Unexpected response format from iPTMnet",
             }
 
-        results = data[:max_results]
+        results = data[offset : offset + max_results]
         formatted = []
         for entry in results:
             formatted.append(
@@ -175,12 +176,17 @@ class iPTMnetTool(BaseTool):
                 }
             )
 
+        has_more = offset + len(formatted) < len(data)
         return {
             "status": "success",
             "data": formatted,
             "metadata": {
                 "total_results": len(data),
                 "returned": len(formatted),
+                "offset": offset,
+                "limit": max_results,
+                "has_more": has_more,
+                "next_offset": offset + len(formatted) if has_more else None,
                 "search_term": search_term,
                 "role_filter": role,
                 "ptm_type_filter": ptm_type,

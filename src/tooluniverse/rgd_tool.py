@@ -19,6 +19,22 @@ from .tool_registry import register_tool
 RGD_BASE = "https://rest.rgd.mcw.edu/rgdws"
 
 
+def _paginate(items, arguments: Dict[str, Any], default_limit: int):
+    limit = int(arguments.get("limit", default_limit))
+    offset = int(arguments.get("offset", 0))
+    page = items[offset : offset + limit]
+    next_offset = offset + len(page)
+    has_more = next_offset < len(items)
+    return page, {
+        "limit": limit,
+        "offset": offset,
+        "returned": len(page),
+        "has_more": has_more,
+        "truncated": has_more,
+        "next_offset": next_offset if has_more else None,
+    }
+
+
 @register_tool("RGDTool")
 class RGDTool(BaseTool):
     """
@@ -146,7 +162,8 @@ class RGDTool(BaseTool):
                     "symbol": r.get("symbol"),
                     "name": r.get("name"),
                     "species": r.get("species"),
-                    "synonyms": r.get("synonyms", [])[:5],
+                    "synonyms": r.get("synonyms", []) or [],
+                    "synonym_count": len(r.get("synonyms", []) or []),
                 }
             )
             if len(genes) >= int(limit):
@@ -191,8 +208,9 @@ class RGDTool(BaseTool):
 
         aspect_counts = Counter(d.get("aspect", "?") for d in data)
 
+        page, paging = _paginate(data, arguments, 50)
         annotations = []
-        for ann in data[:50]:
+        for ann in page:
             annotations.append(
                 {
                     "term": ann.get("term"),
@@ -201,7 +219,7 @@ class RGDTool(BaseTool):
                     "aspect": ann.get("aspect"),
                     "evidence": ann.get("evidence"),
                     "data_src": ann.get("dataSrc"),
-                    "notes": (ann.get("notes") or "")[:200],
+                    "notes": ann.get("notes") or "",
                 }
             )
 
@@ -219,8 +237,8 @@ class RGDTool(BaseTool):
             "data": annotations,
             "metadata": {
                 "rgd_id": rgd_id,
-                "total_annotations": len(data) if not aspect else len(annotations),
-                "returned": len(annotations),
+                "total_annotations": len(data),
+                **paging,
                 "aspect_counts": {
                     aspect_labels.get(k, k): v for k, v in aspect_counts.items()
                 },
@@ -323,8 +341,9 @@ class RGDTool(BaseTool):
         if not isinstance(data, list):
             data = [data] if data else []
 
+        page, paging = _paginate(data, arguments, 100)
         qtls = []
-        for q in data[:100]:
+        for q in page:
             qtls.append(
                 {
                     "rgd_id": q.get("rgdId"),
@@ -348,7 +367,7 @@ class RGDTool(BaseTool):
                 "map_key": int(map_key),
                 "assembly": self._SPECIES_BY_MAP_KEY.get(int(map_key), str(map_key)),
                 "total_qtls": len(data),
-                "returned": len(qtls),
+                **paging,
                 "source": "RGD",
             },
         }
@@ -411,8 +430,9 @@ class RGDTool(BaseTool):
             if not isinstance(data, list):
                 data = [data] if data else []
 
+            page, paging = _paginate(data, arguments, 100)
             genes = []
-            for entry in data[:100]:
+            for entry in page:
                 gene = entry.get("gene") or {}
                 genes.append(
                     {
@@ -437,7 +457,7 @@ class RGDTool(BaseTool):
                     "stop": int(stop),
                     "map_key": int(map_key),
                     "total_genes": len(data),
-                    "returned": len(genes),
+                    **paging,
                     "source": "RGD",
                 },
             }

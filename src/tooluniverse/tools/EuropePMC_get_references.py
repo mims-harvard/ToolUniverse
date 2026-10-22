@@ -1,7 +1,7 @@
 """
 EuropePMC_get_references
 
-Get references (bibliography) for an article from Europe PMC. References are articles cited by th...
+Get one page of references (bibliography) for an article from Europe PMC. Returns exact hitCount-...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def EuropePMC_get_references(
     validate: bool = True,
 ) -> Any:
     """
-    Get references (bibliography) for an article from Europe PMC. References are articles cited by th...
+    Get one page of references (bibliography) for an article from Europe PMC. Returns exact hitCount-...
 
     Parameters
     ----------

@@ -1,7 +1,7 @@
 """
 GlyGen_search_glycans
 
-Search GlyGen for glycans by mass range, monosaccharide count, organism, or glycan type. Returns ...
+Search GlyGen for glycans by mass range, monosaccharide count, or glycan type with one-based offs...
 """
 
 from typing import Any, Optional, Callable
@@ -14,15 +14,15 @@ def GlyGen_search_glycans(
     monosaccharide_min: Optional[int] = None,
     monosaccharide_max: Optional[int] = None,
     glycan_type: Optional[str] = None,
-    limit: Optional[int] = None,
-    offset: Optional[int] = None,
+    limit: Optional[int] = 20,
+    offset: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search GlyGen for glycans by mass range, monosaccharide count, organism, or glycan type. Returns ...
+    Search GlyGen for glycans by mass range, monosaccharide count, or glycan type with one-based offs...
 
     Parameters
     ----------
@@ -37,9 +37,9 @@ def GlyGen_search_glycans(
     glycan_type : str
         Glycan type filter. Examples: 'N-linked', 'O-linked'.
     limit : int
-        Maximum results to return (default 20, max 50).
+        Results per request (default 20, range 1-50).
     offset : int
-        Pagination offset (1-indexed, default 1).
+        One-based first result (default 1). Continue with metadata.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

@@ -1,7 +1,7 @@
 """
 PathwayCommons_paths_between
 
-Find mechanistic interaction paths connecting a set of genes/proteins in Pathway Commons (PC2 kin...
+Find mechanistic paths connecting genes in Pathway Commons. Edge results are recoverably paginate...
 """
 
 from typing import Any, Optional, Callable
@@ -13,24 +13,36 @@ def PathwayCommons_paths_between(
     limit: Optional[int] = 1,
     datasource: Optional[str] = None,
     max_results: Optional[int] = 200,
+    organism: Optional[str] = None,
+    pattern: Optional[list[str]] = None,
+    subpw: Optional[bool] = None,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Find mechanistic interaction paths connecting a set of genes/proteins in Pathway Commons (PC2 kin...
+    Find mechanistic paths connecting genes in Pathway Commons. Edge results are recoverably paginate...
 
     Parameters
     ----------
     genes : list[str] | str
-        Two or more gene symbols / identifiers to connect, e.g. ["BRCA1", "BRCA2", "T...
+        Two or more source identifiers, e.g. ["BRCA1", "BRCA2", "TP53"], or a comma-s...
     limit : int
         Path length limit (graph search distance). Default 1 (direct mechanistic link...
     datasource : str
         Filter by data source: reactome, kegg, biogrid, intact, hprd, pid, corum, ctd...
     max_results : int
         Maximum number of edges to return (default: 200)
+    organism : str
+        Optional organism filter, preferably an NCBI taxonomy ID such as 9606.
+    pattern : list[str]
+        Optional SIF interaction-type filters.
+    subpw : bool
+        Whether graph traversal may enter sub-pathways. Omit to use the upstream defa...
+    offset : int
+        Zero-based edge offset. Continue with metadata.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +64,10 @@ def PathwayCommons_paths_between(
             "limit": limit,
             "datasource": datasource,
             "max_results": max_results,
+            "organism": organism,
+            "pattern": pattern,
+            "subpw": subpw,
+            "offset": offset,
         }.items()
         if v is not None
     }

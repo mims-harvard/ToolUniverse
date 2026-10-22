@@ -93,8 +93,20 @@ class SCExpressionAtlasTool(BaseTool):
             ]
 
         total = len(experiments)
-        limit = min(arguments.get("limit", 20), 100)
-        experiments = experiments[:limit]
+        limit = arguments.get("limit", 20)
+        offset = arguments.get("offset", 0)
+        if (
+            isinstance(limit, bool)
+            or not isinstance(limit, int)
+            or not 1 <= limit <= 100
+        ):
+            return {
+                "status": "error",
+                "error": "limit must be an integer from 1 to 100",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {"status": "error", "error": "offset must be a non-negative integer"}
+        experiments = experiments[offset : offset + limit]
 
         results = []
         for exp in experiments:
@@ -117,6 +129,12 @@ class SCExpressionAtlasTool(BaseTool):
             "metadata": {
                 "total_matching": total,
                 "returned": len(results),
+                "offset": offset,
+                "limit": limit,
+                "has_more": offset + len(results) < total,
+                "next_offset": (
+                    offset + len(results) if offset + len(results) < total else None
+                ),
                 "source": "EBI Single Cell Expression Atlas",
             },
         }
@@ -174,9 +192,16 @@ class SCExpressionAtlasTool(BaseTool):
             }
 
         rows = raw if isinstance(raw, list) else []
+        total = len(rows)
         limit = arguments.get("limit")
-        if isinstance(limit, int) and limit > 0:
-            rows = rows[:limit]
+        offset = arguments.get("offset", 0)
+        if limit is not None and (
+            isinstance(limit, bool) or not isinstance(limit, int) or limit <= 0
+        ):
+            return {"status": "error", "error": "limit must be a positive integer"}
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {"status": "error", "error": "offset must be a non-negative integer"}
+        rows = rows[offset:] if limit is None else rows[offset : offset + limit]
 
         markers = [
             {
@@ -201,7 +226,14 @@ class SCExpressionAtlasTool(BaseTool):
                 "organism_part": arguments.get("organism_part")
                 if marker_type == "cell_types"
                 else None,
-                "num_markers": len(markers),
+                "num_markers": total,
+                "returned": len(markers),
+                "offset": offset,
+                "limit": limit,
+                "has_more": offset + len(markers) < total,
+                "next_offset": (
+                    offset + len(markers) if offset + len(markers) < total else None
+                ),
             },
         }
 

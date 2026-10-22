@@ -11,6 +11,7 @@ from ._shared_client import get_shared_client
 def civic_get_molecular_profile(
     molecular_profile_id: int,
     evidence_limit: Optional[int] = 10,
+    evidence_after: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,7 +25,9 @@ def civic_get_molecular_profile(
     molecular_profile_id : int
         CIViC molecular profile ID (e.g., 12 for BRAF V600E)
     evidence_limit : int
-        Maximum number of evidence items to return (default: 10)
+        Maximum number of evidence items to return on this page (default: 10, maximum...
+    evidence_after : str
+        Opaque evidence cursor from metadata.next_evidence_cursor.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,6 +47,7 @@ def civic_get_molecular_profile(
         for k, v in {
             "molecular_profile_id": molecular_profile_id,
             "evidence_limit": evidence_limit,
+            "evidence_after": evidence_after,
         }.items()
         if v is not None
     }

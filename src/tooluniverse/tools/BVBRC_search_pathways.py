@@ -1,7 +1,7 @@
 """
 BVBRC_search_pathways
 
-Search for metabolic pathways in pathogen genomes from BV-BRC. Returns KEGG pathway assignments w...
+Search for metabolic pathways in BV-BRC with explicit pagination. Metadata reports the true row t...
 """
 
 from typing import Any, Optional, Callable
@@ -14,13 +14,14 @@ def BVBRC_search_pathways(
     ec_number: Optional[str] = None,
     genome_id: Optional[str] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search for metabolic pathways in pathogen genomes from BV-BRC. Returns KEGG pathway assignments w...
+    Search for metabolic pathways in BV-BRC with explicit pagination. Metadata reports the true row t...
 
     Parameters
     ----------
@@ -34,6 +35,8 @@ def BVBRC_search_pathways(
         Restrict to a specific genome. Example: '83332.12' (M. tuberculosis H37Rv).
     limit : int
         Maximum number of results. Default: 25. Max: 100.
+    offset : int
+        Zero-based result offset. Use metadata.next_offset to continue.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def BVBRC_search_pathways(
             "ec_number": ec_number,
             "genome_id": genome_id,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

@@ -1,7 +1,7 @@
 """
 LipidMaps_get_protein
 
-Look up a lipid-metabolism protein/enzyme in the LIPID MAPS Proteome Database (LMPD). Resolves a ...
+Look up a lipid-metabolism protein/enzyme in LIPID MAPS LMPD, including gene/species identifiers,...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def LipidMaps_get_protein(
     validate: bool = True,
 ) -> Any:
     """
-    Look up a lipid-metabolism protein/enzyme in the LIPID MAPS Proteome Database (LMPD). Resolves a ...
+    Look up a lipid-metabolism protein/enzyme in LIPID MAPS LMPD, including gene/species identifiers,...
 
     Parameters
     ----------

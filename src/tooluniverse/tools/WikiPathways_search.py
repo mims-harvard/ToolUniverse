@@ -1,7 +1,7 @@
 """
 WikiPathways_search
 
-Text search across community-curated pathways (disease, metabolic, signaling). Use to discover re...
+Search pathway titles in the current WikiPathways SPARQL dataset. Results are recoverably paginat...
 """
 
 from typing import Any, Optional, Callable
@@ -11,13 +11,15 @@ from ._shared_client import get_shared_client
 def WikiPathways_search(
     query: str,
     organism: Optional[str] = None,
+    limit: Optional[int] = 20,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Text search across community-curated pathways (disease, metabolic, signaling). Use to discover re...
+    Search pathway titles in the current WikiPathways SPARQL dataset. Results are recoverably paginat...
 
     Parameters
     ----------
@@ -25,6 +27,10 @@ def WikiPathways_search(
         Free-text query (keywords, gene symbols, processes), e.g., 'p53', 'glycolysis'.
     organism : str
         Organism filter (scientific name), e.g., 'Homo sapiens'.
+    limit : int
+        Number of pathways per page.
+    offset : int
+        Zero-based result offset; continue with metadata.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,7 +46,14 @@ def WikiPathways_search(
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
-        k: v for k, v in {"query": query, "organism": organism}.items() if v is not None
+        k: v
+        for k, v in {
+            "query": query,
+            "organism": organism,
+            "limit": limit,
+            "offset": offset,
+        }.items()
+        if v is not None
     }
     return get_shared_client().run_one_function(
         {

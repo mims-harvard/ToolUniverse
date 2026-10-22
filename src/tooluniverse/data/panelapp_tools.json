@@ -314,13 +314,19 @@
   },
   {
     "name": "PanelApp_search_genes",
-    "description": "Search for a gene across all Genomics England PanelApp panels to find which clinical testing panels include it. Returns all panels containing the gene, along with the confidence level, mode of inheritance, and associated phenotypes for each panel. This is invaluable for understanding the clinical significance of a gene - if it appears in multiple high-confidence panels, it has strong clinical evidence. Use gene symbols (e.g., 'TP53', 'BRCA1').",
+    "description": "Search a gene across Genomics England PanelApp panels with case-normalized symbols and page metadata. Lowercase symbols are converted to uppercase because PanelApp otherwise returns a silent empty success. Continue with metadata.next_page if metadata.has_more becomes true.",
     "parameter": {
       "type": "object",
       "properties": {
         "gene_symbol": {
           "type": "string",
           "description": "Gene symbol to search across all panels (e.g., 'TP53', 'BRCA1', 'EGFR', 'MLH1')"
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "One-based PanelApp response page. Continue with metadata.next_page when available."
         }
       },
       "required": [
@@ -331,7 +337,11 @@
       "endpoint": "https://panelapp.genomicsengland.co.uk/api/v1/genes/{gene_symbol}/",
       "params": {
         "format": "json"
-      }
+      },
+      "uppercase_params": [
+        "gene_symbol"
+      ],
+      "pagination": "panelapp_page"
     },
     "type": "BaseRESTTool",
     "test_examples": [

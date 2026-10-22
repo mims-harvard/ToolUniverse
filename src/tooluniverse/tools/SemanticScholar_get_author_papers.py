@@ -1,7 +1,7 @@
 """
 SemanticScholar_get_author_papers
 
-List an author's full publication bibliography from Semantic Scholar, one row per paper, with per...
+List an author's publication bibliography from Semantic Scholar. Results use offset pagination: b...
 """
 
 from typing import Any, Optional, Callable
@@ -14,14 +14,14 @@ def SemanticScholar_get_author_papers(
         str
     ] = "paperId,title,year,citationCount,venue,externalIds,authors,openAccessPdf",
     limit: Optional[int] = 50,
-    offset: Optional[int] = None,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    List an author's full publication bibliography from Semantic Scholar, one row per paper, with per...
+    List an author's publication bibliography from Semantic Scholar. Results use offset pagination: b...
 
     Parameters
     ----------
@@ -32,7 +32,7 @@ def SemanticScholar_get_author_papers(
     limit : int
         Maximum number of papers to return (default 50, max 1000).
     offset : int
-        Pagination offset into the author's paper list (default 0).
+        Zero-based paper offset. Continue with metadata.next_offset while metadata.ha...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

@@ -28,13 +28,15 @@ class FDAPharmacogenomicBiomarkersTool(BaseTool):
                 - drug_name (str, optional): Filter by drug name (case-insensitive partial match).
                 - biomarker (str, optional): Filter by biomarker (case-insensitive partial match).
                 - limit (int, optional): Maximum number of results to return (default: 10).
+                - offset (int, optional): Zero-based offset into filtered results.
 
         Returns:
             Dict[str, Any]: A dictionary containing the 'count' and 'results' list.
         """
         drug_name_filter = arguments.get("drug_name")
         biomarker_filter = arguments.get("biomarker")
-        limit = arguments.get("limit", 10)
+        limit = max(1, int(arguments.get("limit", 10)))
+        offset = max(0, int(arguments.get("offset", 0)))
 
         try:
             # TODO: Add caching mechanism if available in the ecosystem
@@ -62,13 +64,17 @@ class FDAPharmacogenomicBiomarkersTool(BaseTool):
                 if match:
                     filtered_results.append(record)
 
-            # Apply limit
-            limited_results = filtered_results[:limit]
+            page = filtered_results[offset : offset + limit]
+            next_offset = offset + len(page)
+            has_more = next_offset < len(filtered_results)
 
             payload = {
                 "count": len(filtered_results),
-                "shown": len(limited_results),
-                "results": limited_results,
+                "shown": len(page),
+                "offset": offset,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
+                "results": page,
             }
             return {"status": "success", **payload, "data": payload}
 

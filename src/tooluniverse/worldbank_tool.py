@@ -72,10 +72,36 @@ class WorldBankIndicatorSearchTool(BaseRESTTool):
             return _catalog
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        query = (arguments.get("query") or "").strip()
-        if not query:
-            return {"status": "error", "error": "query is required (e.g. 'GDP')."}
-        limit = max(1, min(int(arguments.get("per_page") or 10), 1000))
+        query = arguments.get("query")
+        if not isinstance(query, str) or not query.strip():
+            return {
+                "status": "error",
+                "error": "query is required (e.g. 'GDP').",
+                "parameter": "query",
+            }
+        query = query.strip()
+        limit = arguments.get("per_page")
+        if limit is None:
+            limit = 10
+        if (
+            isinstance(limit, bool)
+            or not isinstance(limit, int)
+            or not 1 <= limit <= 1000
+        ):
+            return {
+                "status": "error",
+                "error": "per_page must be an integer between 1 and 1000",
+                "parameter": "per_page",
+            }
+        offset = arguments.get("offset")
+        if offset is None:
+            offset = 0
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+                "parameter": "offset",
+            }
         try:
             catalog = self._wdi_catalog()
         except Exception as e:
@@ -92,17 +118,34 @@ class WorldBankIndicatorSearchTool(BaseRESTTool):
             if score is not None:
                 scored.append((-score, len(indicator.get("name") or ""), indicator))
         scored.sort(key=lambda row: row[:2])
-        items = [row[2] for row in scored[:limit]]
+        items = [row[2] for row in scored[offset : offset + limit]]
+        total = len(scored)
+        returned = len(items)
+        has_more = offset + returned < total
         meta = {
-            "page": 1,
-            "pages": 1,
+            "page": offset // limit + 1,
+            "pages": (total + limit - 1) // limit,
             "per_page": str(limit),
-            "total": len(scored),
+            "total": total,
+            "offset": offset,
             "catalog": "World Development Indicators (source 2)",
         }
         return {
             "status": "success",
             "data": [meta, items],
             "url": WDI_URL,
-            "count": len(items),
+            "count": returned,
+            "metadata": {
+                "returned": returned,
+                "total_results": total,
+                # Every catalog page is downloaded, so the match count is exact.
+                "total_results_is_exact": True,
+                "offset": offset,
+                "per_page": limit,
+                "has_more": has_more,
+                "next_offset": offset + returned if returned and has_more else None,
+                "truncated": offset > 0 or has_more,
+                "result_set_complete": offset == 0 and not has_more,
+                "pagination_scope": "client_filtered_wdi_catalog",
+            },
         }

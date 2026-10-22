@@ -15,6 +15,8 @@ def IDR_search_studies(
     case_sensitive: Optional[bool] = None,
     study: Optional[str] = None,
     resource: Optional[str] = None,
+    max_results: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -37,6 +39,10 @@ def IDR_search_studies(
         Optional study-name filter to restrict to one study.
     resource : str
         Resource type to search. Default 'image'.
+    max_results : int
+        Maximum number of matching study containers to return. Defaults to 1000.
+    offset : int
+        Zero-based offset in the complete matching container set. Use next_offset to ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -60,6 +66,8 @@ def IDR_search_studies(
             "case_sensitive": case_sensitive,
             "study": study,
             "resource": resource,
+            "max_results": max_results,
+            "offset": offset,
         }.items()
         if v is not None
     }

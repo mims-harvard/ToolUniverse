@@ -107,6 +107,7 @@ class RxClassTool(BaseTool):
         rxcui = arguments.get("rxcui")
         rela_source = arguments.get("rela_source", "ATC")
         limit = arguments.get("limit", 20)
+        offset = arguments.get("offset", 0)
 
         if not drug_name and not rxcui:
             return {"status": "error", "error": "Provide 'drug_name' or 'rxcui'."}
@@ -165,6 +166,12 @@ class RxClassTool(BaseTool):
                     "query": query_str,
                     "rela_source": rela_source,
                     "count": 0,
+                    "total_count": 0,
+                    "offset": offset,
+                    "limit": limit,
+                    "has_more": False,
+                    "next_offset": None,
+                    "result_set_complete": True,
                     "note": f"No drug classes found for '{query_str}' in source '{rela_source}'. Try rela_source='ALL' or a different source.",
                 },
             }
@@ -192,7 +199,13 @@ class RxClassTool(BaseTool):
                 }
             )
 
-        classes = classes[:limit]
+        if isinstance(limit, bool) or not isinstance(limit, int) or limit < 1:
+            return {"status": "error", "error": "limit must be a positive integer"}
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {"status": "error", "error": "offset must be a non-negative integer"}
+        total = len(classes)
+        classes = classes[offset : offset + limit]
+        has_more = offset + len(classes) < total
 
         return {
             "status": "success",
@@ -201,6 +214,12 @@ class RxClassTool(BaseTool):
                 "query": rxcui if rxcui else drug_name,
                 "rela_source": rela_source,
                 "count": len(classes),
+                "total_count": total,
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "next_offset": offset + len(classes) if has_more else None,
+                "result_set_complete": offset == 0 and len(classes) == total,
                 "available_sources": list(RELA_SOURCES.keys()),
             },
         }
@@ -214,6 +233,7 @@ class RxClassTool(BaseTool):
         rela_source = arguments.get("rela_source", "ATC")
         ttys = arguments.get("ttys", "IN")
         limit = arguments.get("limit", 50)
+        offset = arguments.get("offset", 0)
 
         if not class_id:
             return {
@@ -266,12 +286,25 @@ class RxClassTool(BaseTool):
                     "class_id": class_id,
                     "rela_source": rela_source,
                     "count": 0,
+                    "total_count": 0,
+                    "offset": offset,
+                    "limit": limit,
+                    "has_more": False,
+                    "next_offset": None,
+                    "result_set_complete": True,
                     "note": f"No drug members found for class '{class_id}'. Verify class ID and rela_source.",
                 },
             }
 
+        if isinstance(limit, bool) or not isinstance(limit, int) or limit < 1:
+            return {"status": "error", "error": "limit must be a positive integer"}
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {"status": "error", "error": "offset must be a non-negative integer"}
+
+        total = len(members)
+        page_members = members[offset : offset + limit]
         drugs = []
-        for m in members[:limit]:
+        for m in page_members:
             mc = m.get("minConcept", {})
             drugs.append(
                 {
@@ -281,6 +314,7 @@ class RxClassTool(BaseTool):
                 }
             )
 
+        has_more = offset + len(drugs) < total
         return {
             "status": "success",
             "data": drugs,
@@ -289,6 +323,12 @@ class RxClassTool(BaseTool):
                 "rela_source": rela_source,
                 "ttys": ttys,
                 "count": len(drugs),
+                "total_count": total,
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "next_offset": offset + len(drugs) if has_more else None,
+                "result_set_complete": offset == 0 and len(drugs) == total,
             },
         }
 
@@ -300,6 +340,7 @@ class RxClassTool(BaseTool):
         query = arguments.get("query") or arguments.get("keyword")
         class_type = arguments.get("class_type", "")
         limit = arguments.get("limit", 20)
+        offset = arguments.get("offset", 0)
 
         if not query:
             return {
@@ -336,7 +377,7 @@ class RxClassTool(BaseTool):
 
         all_classes = data.get("rxclassMinConceptList", {}).get("rxclassMinConcept", [])
         kw = query.strip().lower()
-        matches = [
+        all_matches = [
             {
                 "classId": c.get("classId", ""),
                 "className": c.get("className", ""),
@@ -344,7 +385,14 @@ class RxClassTool(BaseTool):
             }
             for c in all_classes
             if kw in c.get("className", "").lower()
-        ][:limit]
+        ]
+        if isinstance(limit, bool) or not isinstance(limit, int) or limit < 1:
+            return {"status": "error", "error": "limit must be a positive integer"}
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {"status": "error", "error": "offset must be a non-negative integer"}
+        total = len(all_matches)
+        matches = all_matches[offset : offset + limit]
+        has_more = offset + len(matches) < total
 
         return {
             "status": "success",
@@ -353,6 +401,12 @@ class RxClassTool(BaseTool):
                 "query": query,
                 "class_type": class_type or "all",
                 "count": len(matches),
+                "total_count": total,
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "next_offset": offset + len(matches) if has_more else None,
+                "result_set_complete": offset == 0 and len(matches) == total,
             },
         }
 

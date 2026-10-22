@@ -1,7 +1,7 @@
 """
 Harmonizome_search_genes
 
-Search for genes by keyword in Harmonizome (Ma'ayan Lab). Returns matching gene symbols that can ...
+Resolve Harmonizome genes by exact symbol and symbol-like suggestions. The upstream /gene collect...
 """
 
 from typing import Any, Optional, Callable
@@ -11,20 +11,23 @@ from ._shared_client import get_shared_client
 def Harmonizome_search_genes(
     query: str,
     limit: Optional[int] = None,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> list[Any]:
     """
-    Search for genes by keyword in Harmonizome (Ma'ayan Lab). Returns matching gene symbols that can ...
+    Resolve Harmonizome genes by exact symbol and symbol-like suggestions. The upstream /gene collect...
 
     Parameters
     ----------
     query : str
-        Search keyword. Examples: 'kinase', 'tumor suppressor', 'receptor'.
+        Gene symbol or symbol prefix. Examples: 'TP53', 'BRCA1', 'CDK'. Descriptive t...
     limit : int
         Maximum results to return (default: 20).
+    offset : int
+        Zero-based offset over gene-resolvable symbol suggestions. Continue with meta...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -39,7 +42,11 @@ def Harmonizome_search_genes(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"query": query, "limit": limit}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {"query": query, "limit": limit, "offset": offset}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "Harmonizome_search_genes",

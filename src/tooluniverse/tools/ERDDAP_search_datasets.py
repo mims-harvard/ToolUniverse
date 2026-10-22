@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def ERDDAP_search_datasets(
     searchFor: str,
-    itemsPerPage: Optional[int] = None,
-    page: Optional[int] = None,
+    itemsPerPage: Optional[int] = 10,
+    page: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,9 +25,9 @@ def ERDDAP_search_datasets(
     searchFor : str
         Search keyword(s) for dataset discovery. Examples: 'sea surface temperature',...
     itemsPerPage : int
-        Number of results to return (1-100). Default: 10
+        Number of results per page (1-100). Defaults to 10. Use metadata.next_page wh...
     page : int
-        Page number for pagination. Default: 1
+        One-based result page. Defaults to 1. ERDDAP silently coerces page 0 to page ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

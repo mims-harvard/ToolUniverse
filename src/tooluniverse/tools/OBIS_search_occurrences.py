@@ -1,7 +1,7 @@
 """
 OBIS_search_occurrences
 
-Retrieve marine species occurrence records (with coordinates/time) from OBIS using flexible filte...
+Retrieve one cursor page of marine occurrence records from OBIS. The API ignores offset/from/page...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,14 @@ def OBIS_search_occurrences(
     scientificname: Optional[str] = None,
     areaid: Optional[str] = None,
     size: Optional[int] = 10,
+    after: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Retrieve marine species occurrence records (with coordinates/time) from OBIS using flexible filte...
+    Retrieve one cursor page of marine occurrence records from OBIS. The API ignores offset/from/page...
 
     Parameters
     ----------
@@ -27,7 +28,9 @@ def OBIS_search_occurrences(
     areaid : str
         Area identifier filter (per OBIS API).
     size : int
-        Number of records to return (1–100).
+        Number of records in this cursor page (1–100).
+    after : str
+        Cursor from metadata.next_after. Must be the internal UUID in result field id...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +51,7 @@ def OBIS_search_occurrences(
             "scientificname": scientificname,
             "areaid": areaid,
             "size": size,
+            "after": after,
         }.items()
         if v is not None
     }

@@ -13,6 +13,7 @@ No authentication required. Free public access.
 
 import requests
 from typing import Dict, Any
+from urllib.parse import parse_qs, urlparse
 from .base_tool import BaseTool
 
 
@@ -94,6 +95,20 @@ class InterProDomainArchTool(BaseTool):
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
+    @staticmethod
+    def _next_cursor(data: Dict[str, Any]):
+        next_url = data.get("next")
+        if not next_url:
+            return None
+        values = parse_qs(urlparse(next_url).query).get("cursor", [])
+        return values[0] if values else None
+
+    @staticmethod
+    def _add_cursor(params: Dict[str, Any], arguments: Dict[str, Any]) -> None:
+        cursor = arguments.get("cursor")
+        if cursor:
+            params["cursor"] = cursor
+
     def _get_protein_domain_architecture(
         self, arguments: Dict[str, Any]
     ) -> Dict[str, Any]:
@@ -105,14 +120,17 @@ class InterProDomainArchTool(BaseTool):
                 "error": "accession parameter is required (UniProt accession, e.g., 'P04637')",
             }
 
+        max_results = max(1, min(int(arguments.get("max_results") or 50), 200))
         url = f"{INTERPRO_BASE_URL}/entry/pfam/protein/uniprot/{accession}"
-        params = {"page_size": 50, "format": "json"}
+        params = {"page_size": max_results, "format": "json"}
+        self._add_cursor(params, arguments)
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
         # HTTP 204 / empty body == "this protein has no Pfam domains".
         data = _json_or_none(response) or {}
 
         results = data.get("results", [])
+        next_cursor = self._next_cursor(data)
         domains = []
         protein_length = None
 
@@ -151,6 +169,10 @@ class InterProDomainArchTool(BaseTool):
             "data": {
                 "accession": accession,
                 "protein_length": protein_length,
+                "total_entries": data.get("count", len(results)),
+                "returned_entries": len(results),
+                "has_more": next_cursor is not None,
+                "next_cursor": next_cursor,
                 "domain_count": len(domains),
                 "domains": domains,
             },
@@ -169,10 +191,11 @@ class InterProDomainArchTool(BaseTool):
                 "error": "pfam_accession parameter is required (e.g., 'PF00870')",
             }
 
-        max_results = min(arguments.get("max_results", 20), 200)
+        max_results = max(1, min(int(arguments.get("max_results") or 20), 200))
 
         url = f"{INTERPRO_BASE_URL}/structure/pdb/entry/pfam/{pfam_acc}"
         params = {"page_size": max_results, "format": "json"}
+        self._add_cursor(params, arguments)
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
         # HTTP 204 / empty body == "no PDB structure contains this domain".
@@ -180,6 +203,7 @@ class InterProDomainArchTool(BaseTool):
 
         total = data.get("count", 0)
         results = data.get("results", [])
+        next_cursor = self._next_cursor(data)
 
         structures = []
         for r in results:
@@ -199,6 +223,8 @@ class InterProDomainArchTool(BaseTool):
                 "pfam_accession": pfam_acc,
                 "total_structures": total,
                 "returned": len(structures),
+                "has_more": next_cursor is not None,
+                "next_cursor": next_cursor,
                 "structures": structures,
             },
             "metadata": {
@@ -216,7 +242,8 @@ class InterProDomainArchTool(BaseTool):
                 "error": "clan_accession parameter is required (e.g., 'CL0016')",
             }
 
-        max_results = min(arguments.get("max_results", 50), 200)
+        max_results = max(1, min(int(arguments.get("max_results") or 50), 200))
+        member_offset = max(int(arguments.get("member_offset") or 0), 0)
 
         # First get clan metadata
         url = f"{INTERPRO_BASE_URL}/set/pfam/{clan_acc}"
@@ -240,7 +267,7 @@ class InterProDomainArchTool(BaseTool):
         nodes = relationships.get("nodes", [])
 
         members = []
-        for node in nodes[:max_results]:
+        for node in nodes:
             members.append(
                 {
                     "accession": node.get("accession", ""),
@@ -253,6 +280,11 @@ class InterProDomainArchTool(BaseTool):
 
         # Sort by accession
         members.sort(key=lambda m: m.get("accession", ""))
+        member_total = len(members)
+        member_page = members[member_offset : member_offset + max_results]
+        next_member_offset = member_offset + len(member_page)
+        if next_member_offset >= member_total:
+            next_member_offset = None
 
         return {
             "status": "success",
@@ -260,8 +292,11 @@ class InterProDomainArchTool(BaseTool):
                 "clan_accession": clan_acc,
                 "clan_name": clan_name,
                 "description": metadata.get("description"),
-                "member_count": len(members),
-                "members": members,
+                "member_count": member_total,
+                "returned": len(member_page),
+                "members_truncated": next_member_offset is not None,
+                "next_member_offset": next_member_offset,
+                "members": member_page,
             },
             "metadata": {
                 "source": "InterPro API (Pfam clan members)",

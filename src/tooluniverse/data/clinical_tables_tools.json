@@ -1,7 +1,7 @@
 [
   {
     "name": "RxTerms_search_drugs",
-    "description": "Drug-name autocomplete via the NLM Clinical Table Search Service (RxTerms). Given a partial or full drug name, returns matching prescribable drug display names along with their available strengths and dose forms (e.g. '500 mg Tab') and the corresponding RxNorm RxCUI identifiers. RxTerms is the consumer-/prescriber-friendly drug terminology derived from RxNorm. Use for medication entry, dose-form lookup, and resolving a drug name to RxCUIs for downstream RxNorm/interaction queries. No API key required.",
+    "description": "Search NLM RxTerms drug names with official count+offset pagination. Returns prescribable display names, strengths/forms, and RxNorm RxCUIs. Response metadata exposes total_results, accessible_results, has_more, and next_offset; NLM caps retrieval at 7,500 matches.",
     "type": "ClinicalTablesTool",
     "parameter": {
       "type": "object",
@@ -12,8 +12,17 @@
         },
         "max_results": {
           "type": "integer",
-          "description": "Maximum number of matches to return (default 20, max 500).",
-          "default": 20
+          "description": "Page size (default 20, range 1-500).",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 500
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based first match. Continue with metadata.next_offset; offset + max_results cannot exceed 7,500.",
+          "default": 0,
+          "minimum": 0,
+          "maximum": 7499
         }
       },
       "required": [
@@ -87,13 +96,14 @@
     "test_examples": [
       {
         "terms": "metformin",
-        "max_results": 5
+        "max_results": 5,
+        "offset": 5
       }
     ]
   },
   {
     "name": "HealthConditions_search",
-    "description": "Health-condition / problem-list autocomplete via the NLM Clinical Table Search Service (conditions table). Given a partial or full condition name, returns matching clinical conditions with their formal primary name, a consumer-friendly name, and a crosswalk to ICD-10-CM and ICD-9-CM codes. Use to map free-text symptoms or problems to standardized conditions and billing codes, or to build a patient problem list. No API key required.",
+    "description": "Search the NLM conditions table with official count+offset pagination. Returns primary and consumer condition names plus ICD-10-CM/ICD-9 crosswalks. Response metadata exposes total_results, accessible_results, has_more, and next_offset; NLM caps retrieval at 7,500 matches.",
     "type": "ClinicalTablesTool",
     "parameter": {
       "type": "object",
@@ -104,8 +114,17 @@
         },
         "max_results": {
           "type": "integer",
-          "description": "Maximum number of matches to return (default 20, max 500).",
-          "default": 20
+          "description": "Page size (default 20, range 1-500).",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 500
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based first match. Continue with metadata.next_offset; offset + max_results cannot exceed 7,500.",
+          "default": 0,
+          "minimum": 0,
+          "maximum": 7499
         }
       },
       "required": [
@@ -142,10 +161,16 @@
                     "type": "string"
                   },
                   "icd10cm_codes": {
-                    "type": "string"
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "term_icd9_code": {
-                    "type": "string"
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
@@ -174,13 +199,14 @@
     "test_examples": [
       {
         "terms": "diabetes",
-        "max_results": 5
+        "max_results": 5,
+        "offset": 5
       }
     ]
   },
   {
     "name": "DiseaseNames_search",
-    "description": "Disease-name autocomplete via the NLM Clinical Table Search Service (disease_names table). Given a partial or full disease name, returns matching disease names with their UMLS Concept Unique Identifier (CUI) in the code field. Sourced from UMLS/MedlinePlus disease vocabulary. Use to normalize a free-text disease mention to a canonical disease name and UMLS CUI for cross-vocabulary linking. No API key required.",
+    "description": "Search NLM disease names with official count+offset pagination. Returns canonical disease names with UMLS CUIs in the code field. Response metadata exposes total_results, accessible_results, has_more, and next_offset; NLM caps retrieval at 7,500 matches.",
     "type": "ClinicalTablesTool",
     "parameter": {
       "type": "object",
@@ -191,8 +217,17 @@
         },
         "max_results": {
           "type": "integer",
-          "description": "Maximum number of matches to return (default 20, max 500).",
-          "default": 20
+          "description": "Page size (default 20, range 1-500).",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 500
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based first match. Continue with metadata.next_offset; offset + max_results cannot exceed 7,500.",
+          "default": 0,
+          "minimum": 0,
+          "maximum": 7499
         }
       },
       "required": [
@@ -252,7 +287,8 @@
     "test_examples": [
       {
         "terms": "cystic fibrosis",
-        "max_results": 5
+        "max_results": 5,
+        "offset": 5
       }
     ]
   },

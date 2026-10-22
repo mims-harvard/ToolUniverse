@@ -1,7 +1,7 @@
 [
   {
     "name": "Anaconda_search_packages",
-    "description": "Search Anaconda.org for conda packages across all channels (conda-forge, bioconda, defaults, etc.). Returns matching packages with name, owner/channel, summary, versions, platforms, and download counts. Anaconda.org hosts conda packages for Python, R, and other languages used in scientific computing, data science, and bioinformatics. Bioconda alone has 9,000+ bioinformatics packages.",
+    "description": "Search Anaconda.org packages with explicit limit/offset pagination. The upstream default silently returns only 100 records and reports no total. ToolUniverse uses a one-record lookahead; continue with metadata.next_offset while metadata.has_more is true. Exact total_results is available only on the final short page; otherwise matches_lower_bound is reported.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -15,6 +15,19 @@
             "null"
           ],
           "description": "Package type filter: 'conda' (default), 'pypi', or 'standard_python'"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 20,
+          "description": "Packages per page (default 20, max 100)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based package offset. Continue with metadata.next_offset."
         }
       },
       "required": [
@@ -22,7 +35,8 @@
       ]
     },
     "fields": {
-      "endpoint": "https://api.anaconda.org/search"
+      "endpoint": "https://api.anaconda.org/search",
+      "pagination": "anaconda_offset_lookahead"
     },
     "type": "BaseRESTTool",
     "test_examples": [

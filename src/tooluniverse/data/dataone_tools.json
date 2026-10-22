@@ -10,24 +10,21 @@
           "description": "Search query using Solr query syntax. Examples: 'climate change', 'author:Smith', 'keywords:marine ecology', 'title:biodiversity', 'formatId:text/csv', '*:*' (all)"
         },
         "fl": {
-          "type": [
-            "string",
-            "null"
-          ],
+          "type": "string",
+          "default": "id,title,author,dateUploaded,keywords",
           "description": "Comma-separated list of fields to return. Default: 'id,title,author,dateUploaded,keywords'. Available: id,title,author,dateUploaded,dateModified,keywords,formatId,size,origin,abstract,geohash_1"
         },
         "rows": {
-          "type": [
-            "integer",
-            "null"
-          ],
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 10,
           "description": "Number of results to return (default 10, max 1000)"
         },
         "start": {
-          "type": [
-            "integer",
-            "null"
-          ],
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
           "description": "Offset for pagination (default 0)"
         },
         "sort": {
@@ -46,7 +43,8 @@
       "endpoint": "https://cn.dataone.org/cn/v2/query/solr/",
       "params": {
         "wt": "json"
-      }
+      },
+      "pagination": "dataone_solr"
     },
     "type": "BaseRESTTool",
     "test_examples": [

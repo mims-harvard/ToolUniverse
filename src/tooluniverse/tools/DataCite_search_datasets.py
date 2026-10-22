@@ -1,7 +1,7 @@
 """
 DataCite_search_datasets
 
-Search for research datasets with DOIs across all repositories worldwide (Zenodo, Figshare, Dryad...
+Search DataCite for datasets across repositories. Defaults to resource type Dataset and returns e...
 """
 
 from typing import Any, Optional, Callable
@@ -14,14 +14,14 @@ def DataCite_search_datasets(
     publisher: Optional[str] = None,
     year: Optional[int] = None,
     page_size: Optional[int] = 10,
-    page_number: Optional[int] = None,
+    page_number: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search for research datasets with DOIs across all repositories worldwide (Zenodo, Figshare, Dryad...
+    Search DataCite for datasets across repositories. Defaults to resource type Dataset and returns e...
 
     Parameters
     ----------
@@ -34,9 +34,9 @@ def DataCite_search_datasets(
     year : int
         Filter by publication year (e.g., 2024, 2023). Returns datasets published in ...
     page_size : int
-        Number of results per page (default 10, max 100)
+        Number of results per page (1-1000; default 10)
     page_number : int
-        Page number for pagination (default 1)
+        One-based page number. Continue with metadata.next_page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

@@ -12,16 +12,22 @@
         },
         "page": {
           "type": "integer",
+          "minimum": 1,
           "default": 1,
           "description": "Page number for paginated results (1-based). Default: 1."
         },
         "size": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
           "default": 10,
-          "description": "Number of results per page (1-50). Default: 10."
+          "description": "Number of results per page (1-100). Mapped to bio.tools' real per_page parameter."
         },
         "format": {
           "type": "string",
+          "enum": [
+            "json"
+          ],
           "default": "json",
           "description": "Response format. Must be 'json'."
         }
@@ -35,6 +41,10 @@
       "return_format": "JSON",
       "params": {
         "sort": "score"
+      },
+      "pagination": "biotools_page",
+      "param_mapping": {
+        "size": "per_page"
       }
     },
     "return_schema": {
@@ -274,16 +284,22 @@
         },
         "page": {
           "type": "integer",
+          "minimum": 1,
           "default": 1,
           "description": "Page number (1-based). Default: 1."
         },
         "size": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
           "default": 10,
-          "description": "Results per page (1-50). Default: 10."
+          "description": "Results per page (1-100). Mapped to per_page."
         },
         "format": {
           "type": "string",
+          "enum": [
+            "json"
+          ],
           "default": "json",
           "description": "Response format. Must be 'json'."
         }
@@ -294,7 +310,11 @@
     },
     "fields": {
       "endpoint": "https://bio.tools/api/t/",
-      "return_format": "JSON"
+      "return_format": "JSON",
+      "pagination": "biotools_page",
+      "param_mapping": {
+        "size": "per_page"
+      }
     },
     "return_schema": {
       "oneOf": [
@@ -387,16 +407,22 @@
         },
         "page": {
           "type": "integer",
+          "minimum": 1,
           "default": 1,
           "description": "Page number (1-based). Default: 1."
         },
         "size": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
           "default": 10,
-          "description": "Results per page (1-50). Default: 10."
+          "description": "Results per page (1-100). Mapped to per_page."
         },
         "format": {
           "type": "string",
+          "enum": [
+            "json"
+          ],
           "default": "json",
           "description": "Response format. Must be 'json'."
         }
@@ -406,7 +432,11 @@
     "fields": {
       "endpoint": "https://bio.tools/api/t/",
       "return_format": "JSON",
-      "operation": "Sequence alignment"
+      "operation": "Sequence alignment",
+      "pagination": "biotools_page",
+      "param_mapping": {
+        "size": "per_page"
+      }
     },
     "return_schema": {
       "oneOf": [
@@ -505,16 +535,22 @@
         },
         "page": {
           "type": "integer",
+          "minimum": 1,
           "default": 1,
           "description": "Page number (1-based). Default: 1."
         },
         "size": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
           "default": 10,
-          "description": "Results per page (1-50). Default: 10."
+          "description": "Results per page (1-100). Mapped to per_page."
         },
         "format": {
           "type": "string",
+          "enum": [
+            "json"
+          ],
           "default": "json",
           "description": "Response format. Must be 'json'."
         }
@@ -528,6 +564,10 @@
       "return_format": "JSON",
       "params": {
         "sort": "score"
+      },
+      "pagination": "biotools_page",
+      "param_mapping": {
+        "size": "per_page"
       }
     },
     "return_schema": {

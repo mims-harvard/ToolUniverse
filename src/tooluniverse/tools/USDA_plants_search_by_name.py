@@ -1,7 +1,7 @@
 """
 USDA_plants_search_by_name
 
-Resolve a plant scientific name, common name, or genus to USDA PLANTS symbol(s). The other USDA P...
+Resolve a plant scientific name, common name, or genus to USDA PLANTS symbol(s). Returns exact to...
 """
 
 from typing import Any, Optional, Callable
@@ -11,13 +11,14 @@ from ._shared_client import get_shared_client
 def USDA_plants_search_by_name(
     searchText: str,
     limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Resolve a plant scientific name, common name, or genus to USDA PLANTS symbol(s). The other USDA P...
+    Resolve a plant scientific name, common name, or genus to USDA PLANTS symbol(s). Returns exact to...
 
     Parameters
     ----------
@@ -25,6 +26,8 @@ def USDA_plants_search_by_name(
         Plant scientific name, common name, or genus to search. Examples: 'white oak'...
     limit : int
         Maximum number of matches to return (default 25, max 200).
+    offset : int
+        Zero-based offset in the complete USDA match list. Continue with metadata.nex...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +44,7 @@ def USDA_plants_search_by_name(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"searchText": searchText, "limit": limit}.items()
+        for k, v in {"searchText": searchText, "limit": limit, "offset": offset}.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

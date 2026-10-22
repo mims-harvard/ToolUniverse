@@ -47,6 +47,8 @@ def test_exact_match_ranked_first_and_capped_at_default():
     assert data["match_count"] == 50
     assert data["total_matches"] == 8441
     assert data["truncated"] is True
+    assert data["has_more"] is True
+    assert data["next_offset"] == 50
 
 
 def test_max_results_override_returns_more():
@@ -72,3 +74,21 @@ def test_small_result_set_is_not_marked_truncated():
     assert data["total_matches"] == 3
     assert data["truncated"] is False
     assert data["genes"][0]["gene_name"] == "BRCA1"
+
+
+def test_offset_exposes_later_matches_and_tail_terminates():
+    tool = _tool()
+    raw = _many_genes("INS", 5)
+
+    with patch.object(tool, "_make_api_request", return_value=raw):
+        middle = tool.run({"search_query": "INS", "max_results": 2, "offset": 2})
+        tail = tool.run({"search_query": "INS", "max_results": 2, "offset": 4})
+
+    assert [g["gene_name"] for g in middle["data"]["genes"]] == [
+        "NOISE1",
+        "NOISE2",
+    ]
+    assert middle["data"]["next_offset"] == 4
+    assert [g["gene_name"] for g in tail["data"]["genes"]] == ["NOISE3"]
+    assert tail["data"]["has_more"] is False
+    assert tail["data"]["next_offset"] is None

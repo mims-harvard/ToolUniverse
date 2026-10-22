@@ -1,7 +1,7 @@
 """
 miRBase_get_mirna_publications
 
-Retrieve publications associated with a microRNA from RNAcentral. Returns publication titles, aut...
+Retrieve publications associated with a microRNA from RNAcentral with explicit page pagination. m...
 """
 
 from typing import Any, Optional, Callable
@@ -10,21 +10,24 @@ from ._shared_client import get_shared_client
 
 def miRBase_get_mirna_publications(
     rnacentral_id: str,
-    page_size: Optional[int] = None,
+    page_size: Optional[int] = 10,
+    page: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Retrieve publications associated with a microRNA from RNAcentral. Returns publication titles, aut...
+    Retrieve publications associated with a microRNA from RNAcentral with explicit page pagination. m...
 
     Parameters
     ----------
     rnacentral_id : str
         RNAcentral URS identifier (e.g., 'URS000039ED8D' for hsa-miR-21-5p). Use base...
     page_size : int
-        Number of publications to return (1-50). Default: 10.
+        Number of publications per page (1-50).
+    page : int
+        One-based RNAcentral page number. Continue with next_page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +44,11 @@ def miRBase_get_mirna_publications(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"rnacentral_id": rnacentral_id, "page_size": page_size}.items()
+        for k, v in {
+            "rnacentral_id": rnacentral_id,
+            "page_size": page_size,
+            "page": page,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

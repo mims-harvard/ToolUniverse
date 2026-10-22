@@ -2,13 +2,22 @@
   {
     "name": "ProtVar_map_variant",
     "type": "ProtVarTool",
-    "description": "Map a human protein variant to genomic coordinates and get pathogenicity predictions (AlphaMissense, EVE, ESM, conservation). Accepts three input formats: (1) protein 'ACCESSION CHANGE' e.g. 'P04637 R175H'; (2) dbSNP rsID e.g. 'rs1799966'; (3) VCF-style genomic 'chr17 43057065 . T G'. Returns isoform mappings, consequence type, and variant effect scores.",
+    "description": "Map a human protein variant to genomic coordinates and retrieve computational variant-effect predictions. AlphaMissense/EVE/ESM/PopEVE/CADD outputs are explicitly labeled as model predictions, not clinical classifications, and AlphaMissense class thresholds are returned with each prediction.",
     "parameter": {
       "type": "object",
       "properties": {
         "variant": {
           "type": "string",
           "description": "Variant identifier in one of three formats: (1) 'UniProtAccession SingleLetterChange' e.g. 'P04637 R175H' (TP53 R175H); (2) dbSNP rsID e.g. 'rs1799966'; (3) VCF genomic 'chr17 43057065 . REF ALT'. Note: colon-separated 'chr:pos:ref:alt' is auto-converted to VCF format."
+        },
+        "assembly": {
+          "type": "string",
+          "enum": [
+            "GRCh38",
+            "GRCh37"
+          ],
+          "default": "GRCh38",
+          "description": "Genome assembly used for genomic input and output coordinates."
         }
       },
       "required": ["variant"]
@@ -48,20 +57,48 @@
                 "type": ["object", "null"],
                 "properties": {
                   "score": {"type": ["number", "null"]},
-                  "class": {"type": ["string", "null"]}
+                  "class": {"type": ["string", "null"]},
+                  "classification_scope": {
+                    "type": "string"
+                  },
+                  "is_clinical_classification": {
+                    "type": "boolean"
+                  },
+                  "class_thresholds": {
+                    "type": "object"
+                  }
                 }
               },
-              "eve": {
-                "type": ["object", "null"],
-                "properties": {
-                  "score": {"type": ["number", "null"]},
-                  "class": {"type": ["string", "null"]}
-                }
+              "cadd_score": {
+                "type": [
+                  "number",
+                  "null"
+                ]
               },
-              "esm_score": {"type": ["number", "null"]},
-              "conservation_score": {"type": ["number", "null"]}
+              "eve_score": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "esm1v_score": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "popeve_score": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
             }
           }
+        },
+        "prediction_context": {
+          "type": "object",
+          "description": "Provenance and non-clinical interpretation warning for computational scores."
         }
       }
     },
@@ -78,7 +115,7 @@
   {
     "name": "ProtVar_get_function",
     "type": "ProtVarFunctionTool",
-    "description": "Get functional annotations at a specific amino acid position from ProtVar. Returns annotated UniProt features overlapping that position (domains, active sites, binding sites, PTMs), the protein's function description, and structural context. Use to understand the biological importance of a variant site before interpreting pathogenicity scores. Example: P04637 position 175 returns DNA-binding domain overlap and TP53 tumor suppressor function.",
+    "description": "Get the functional, structural, interaction, and predictive annotations returned by ProtVar at a specific amino acid position. Includes UniProt features/comments, gene and database references, predicted pockets and protein interactions, conservation/ESM/EVE/PopEVE scores, FoldX predictions, and M3D predictions when available. Example: P04637 position 175 returns DNA-binding annotations and structural/predictive context.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -92,7 +129,8 @@
         },
         "variant_aa": {
           "type": "string",
-          "description": "Single-letter code for the variant amino acid (e.g. 'H' for histidine). Optional but recommended."
+          "pattern": "^[A-Za-z]$",
+          "description": "Single-letter code for the variant amino acid (e.g. 'H' for histidine). Supply this to retrieve mutation-specific ESM, EVE, PopEVE, FoldX, and M3D predictions; without it ProtVar returns only position-level context."
         }
       },
       "required": ["accession", "position"]
@@ -102,12 +140,85 @@
       "properties": {
         "accession": {"type": ["string", "null"]},
         "position": {"type": ["integer", "null"]},
+        "variant_aa": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "protein_name": {"type": ["string", "null"]},
         "gene_names": {
           "type": "array",
           "items": {"type": "object"}
         },
         "protein_existence": {"type": ["string", "null"]},
+        "alternative_names": {
+          "type": "array",
+          "items": {}
+        },
+        "database_references": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "pockets": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Predicted structural pockets involving the queried position."
+        },
+        "interactions": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Predicted protein-protein interaction models involving the queried position."
+        },
+        "conservation_score": {
+          "type": [
+            "object",
+            "number",
+            "null"
+          ]
+        },
+        "esm_score": {
+          "type": [
+            "object",
+            "number",
+            "null"
+          ]
+        },
+        "eve_score": {
+          "type": [
+            "object",
+            "number",
+            "null"
+          ]
+        },
+        "population_eve_score": {
+          "type": [
+            "object",
+            "number",
+            "null"
+          ]
+        },
+        "foldx_predictions": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "m3d_predictions": {
+          "type": [
+            "object",
+            "array",
+            "number",
+            "string",
+            "null"
+          ]
+        },
         "features": {
           "type": "array",
           "items": {

@@ -60,7 +60,8 @@ def test_explicit_text_is_kept_and_result_limit_applies_after_filtering():
     result, sent = _run({"mineral": "calcite", "text": "carbonate", "results": 1})
     assert sent == {"text": "carbonate"}
     assert [r["file"] for r in result["data"]] == ["1"]
-    assert result["total_before_limit"] == 2
+    assert result["metadata"]["total_results"] == 2
+    assert result["metadata"]["next_offset"] == 1
 
 
 def test_no_name_filter_leaves_results_untouched():

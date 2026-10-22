@@ -1,7 +1,7 @@
 """
 Wikidata_search_entities
 
-Search Wikidata for entities (items, properties, or lexemes) by label or description using the Me...
+Search Wikidata entities with explicit continuation pagination. Continue with metadata.next_conti...
 """
 
 from typing import Any, Optional, Callable
@@ -12,14 +12,15 @@ def Wikidata_search_entities(
     search: str,
     language: Optional[str] = "en",
     type_: Optional[str] = None,
-    limit: Optional[int] = None,
+    limit: Optional[int] = 7,
+    continue_: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search Wikidata for entities (items, properties, or lexemes) by label or description using the Me...
+    Search Wikidata entities with explicit continuation pagination. Continue with metadata.next_conti...
 
     Parameters
     ----------
@@ -30,7 +31,9 @@ def Wikidata_search_entities(
     type_ : str
         Entity type to search. Values: 'item' (Q-numbers, default), 'property' (P-num...
     limit : int
-        Number of results to return (default 7, max 50)
+        Results per page (default 7, max 50)
+    continue_ : int
+        Continuation offset from the prior response's metadata.next_continue. Use 0 f...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def Wikidata_search_entities(
             "language": language,
             "type": type_,
             "limit": limit,
+            "continue": continue_,
         }.items()
         if v is not None
     }

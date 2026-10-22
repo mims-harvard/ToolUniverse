@@ -2,7 +2,7 @@
   {
     "type": "SemanticScholarTool",
     "name": "SemanticScholar_search_papers",
-    "description": "Search for papers on Semantic Scholar including abstracts and AI-generated TLDR summaries. This tool queries the Semantic Scholar API using natural language keywords and returns papers with details such as title, abstract, TLDR summary, fields of study, publication year, journal (venue), and URL. Returns only one page of results: `metadata.returned` is how many papers are in `data`, `metadata.total` is Semantic Scholar's approximate count of ALL papers matching the query in the corpus (null when the API does not report it, see `metadata.total_source`), and the top-level `truncated` flag plus `truncation_note` say when more matches exist than were returned. Do not treat `metadata.returned` as the size of the literature. Anonymous traffic uses a shared upstream pool and may be throttled dynamically; authenticated traffic uses the request-scoped SEMANTIC_SCHOLAR_API_KEY and an isolated upstream quota (new keys currently start at 1 request/second).",
+    "description": "Search for papers on Semantic Scholar including abstracts and AI-generated TLDR summaries. This tool queries the Semantic Scholar API using natural language keywords and returns papers with details such as title, abstract, TLDR summary, fields of study, publication year, journal (venue), and URL. Returns one page of results: `metadata.returned` is how many papers are in `data`, `metadata.total` is Semantic Scholar's approximate count of ALL papers matching the query in the corpus (null when the API does not report it, see `metadata.total_source`), and the top-level `truncated` flag plus `truncation_note` say when more matches exist than were returned. Do not treat `metadata.returned` as the size of the literature. Unsorted relevance search uses offset pagination (up to Semantic Scholar's first 10,000 results). Sorted search uses the bulk API: consume each upstream page with `metadata.next_offset`, then switch to `metadata.next_token` at offset 0. Metadata also reports has_more and whether the database result set is fully retrievable. Anonymous traffic uses a shared upstream pool and may be throttled dynamically; authenticated traffic uses the request-scoped SEMANTIC_SCHOLAR_API_KEY and an isolated upstream quota (new keys currently start at 1 request/second).",
     "optional_api_keys": [
       "SEMANTIC_SCHOLAR_API_KEY"
     ],
@@ -15,7 +15,9 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum number of papers to return from Semantic Scholar.",
+          "minimum": 0,
+          "maximum": 1000,
+          "description": "Maximum papers to return. Regular search allows up to 100; sorted bulk search allows up to 1000. A value of 0 returns no records without querying.",
           "default": 5
         },
         "year": {
@@ -25,6 +27,16 @@
         "sort": {
           "type": "string",
           "description": "Sort results. Options: 'citationCount:desc', 'citationCount:asc', 'publicationDate:desc', 'publicationDate:asc'."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9999,
+          "description": "Regular search: server result offset (0-9999). Sorted search: local offset within the current bulk page (0-999); reuse the same token until next_offset is null."
+        },
+        "token": {
+          "type": "string",
+          "description": "Opaque bulk-page token, valid only with sort. Omit for the first upstream page; use metadata.next_token at offset 0 after the current page is exhausted."
         },
         "include_abstract": {
           "type": "boolean",

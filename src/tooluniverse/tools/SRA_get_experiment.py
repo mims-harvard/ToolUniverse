@@ -1,7 +1,7 @@
 """
 SRA_get_experiment
 
-Get detailed metadata for a specific SRA experiment by accession number. Returns experiment title...
+Get detailed metadata for the first NCBI SRA record matching an accession. Returns the complete r...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def SRA_get_experiment(
     validate: bool = True,
 ) -> Any:
     """
-    Get detailed metadata for a specific SRA experiment by accession number. Returns experiment title...
+    Get detailed metadata for the first NCBI SRA record matching an accession. Returns the complete r...
 
     Parameters
     ----------

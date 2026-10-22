@@ -1,7 +1,7 @@
 """
 SIMBAD_advanced_query
 
-Execute advanced ADQL (Astronomical Data Query Language) queries on SIMBAD using TAP (Table Acces...
+Execute ADQL against SIMBAD TAP with explicit truncation detection. JSON requests use a MAXREC+1 ...
 """
 
 from typing import Any, Optional, Callable
@@ -18,14 +18,14 @@ def SIMBAD_advanced_query(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Execute advanced ADQL (Astronomical Data Query Language) queries on SIMBAD using TAP (Table Acces...
+    Execute ADQL against SIMBAD TAP with explicit truncation detection. JSON requests use a MAXREC+1 ...
 
     Parameters
     ----------
     adql_query : str
         ADQL query string. Example: 'SELECT TOP 10 main_id, ra, dec, otype FROM basic...
     max_results : int
-        Maximum number of results to return
+        Maximum rows to return; overflow is reported in metadata
     format : str
         Output format. Options: 'json' or 'votable'
     stream_callback : Callable, optional

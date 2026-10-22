@@ -1,7 +1,7 @@
 """
 OMA_get_hog
 
-Get Hierarchical Orthologous Group (HOG) information from OMA. HOGs represent groups of genes tha...
+Get complete Hierarchical Orthologous Group (HOG) information from OMA. Returns all child HOGs an...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def OMA_get_hog(
     validate: bool = True,
 ) -> Any:
     """
-    Get Hierarchical Orthologous Group (HOG) information from OMA. HOGs represent groups of genes tha...
+    Get complete Hierarchical Orthologous Group (HOG) information from OMA. Returns all child HOGs an...
 
     Parameters
     ----------

@@ -11,6 +11,7 @@ from ._shared_client import get_shared_client
 def NCBIDatasets_list_genomes_by_taxon(
     taxon: str,
     limit: Optional[int] = None,
+    page_token: Optional[str] = None,
     reference_only: Optional[bool] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -25,7 +26,9 @@ def NCBIDatasets_list_genomes_by_taxon(
     taxon : str
         NCBI tax id or scientific name, e.g. '562', 'Escherichia coli', 'Saccharomyce...
     limit : int
-        Max assemblies to return (default 20, max 100).
+        Assemblies per page (default 20, maximum reliable upstream size 1000).
+    page_token : str
+        Opaque continuation token from metadata.next_page_token. Omit for the first p...
     reference_only : bool
         If true, return only reference/representative genomes.
     stream_callback : Callable, optional
@@ -47,6 +50,7 @@ def NCBIDatasets_list_genomes_by_taxon(
         for k, v in {
             "taxon": taxon,
             "limit": limit,
+            "page_token": page_token,
             "reference_only": reference_only,
         }.items()
         if v is not None

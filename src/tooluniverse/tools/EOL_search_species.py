@@ -1,7 +1,7 @@
 """
 EOL_search_species
 
-Search the Encyclopedia of Life (EOL) for species and taxa by name. Returns matching EOL page IDs...
+Search the Encyclopedia of Life (EOL) for species and taxa by name using verified TLS. Returns ma...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def EOL_search_species(
     validate: bool = True,
 ) -> Any:
     """
-    Search the Encyclopedia of Life (EOL) for species and taxa by name. Returns matching EOL page IDs...
+    Search the Encyclopedia of Life (EOL) for species and taxa by name using verified TLS. Returns ma...
 
     Parameters
     ----------
@@ -27,7 +27,7 @@ def EOL_search_species(
     page : int
         Page number for paginated results (1-based).
     exact : bool
-        If true, only return exact name matches.
+        Pass EOL's upstream exact=true search flag. This is not strict string equalit...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

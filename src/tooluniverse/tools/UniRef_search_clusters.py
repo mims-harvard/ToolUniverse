@@ -1,7 +1,7 @@
 """
 UniRef_search_clusters
 
-Search UniProt UniRef protein sequence clusters by protein name, gene, organism, or keyword. UniR...
+Search UniProt UniRef protein sequence clusters with official cursor pagination. Metadata reports...
 """
 
 from typing import Any, Optional, Callable
@@ -10,15 +10,16 @@ from ._shared_client import get_shared_client
 
 def UniRef_search_clusters(
     query: str,
-    cluster_type: Optional[str] = None,
+    cluster_type: Optional[str] = "UniRef90",
     size: Optional[int] = None,
+    cursor: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search UniProt UniRef protein sequence clusters by protein name, gene, organism, or keyword. UniR...
+    Search UniProt UniRef protein sequence clusters with official cursor pagination. Metadata reports...
 
     Parameters
     ----------
@@ -27,7 +28,9 @@ def UniRef_search_clusters(
     cluster_type : str
         Cluster identity level: 'UniRef100' (identical), 'UniRef90' (90% identity, de...
     size : int
-        Maximum number of results to return (default: 10, max: 25).
+        Results per cursor page (default 10, official API maximum 500). Invalid value...
+    cursor : str
+        Opaque cursor from metadata.next_cursor. Omit for the first page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,12 @@ def UniRef_search_clusters(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"query": query, "cluster_type": cluster_type, "size": size}.items()
+        for k, v in {
+            "query": query,
+            "cluster_type": cluster_type,
+            "size": size,
+            "cursor": cursor,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

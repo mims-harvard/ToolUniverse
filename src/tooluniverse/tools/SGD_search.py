@@ -1,7 +1,7 @@
 """
 SGD_search
 
-Search SGD across all data types (genes, GO terms, phenotypes, references, alleles, diseases, com...
+Search SGD across genes, GO terms, phenotypes, references, alleles, diseases, complexes, pathways...
 """
 
 from typing import Any, Optional, Callable
@@ -11,15 +11,15 @@ from ._shared_client import get_shared_client
 def SGD_search(
     query: str,
     category: Optional[str] = None,
-    limit: Optional[int] = None,
-    offset: Optional[int] = None,
+    limit: Optional[int] = 10,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search SGD across all data types (genes, GO terms, phenotypes, references, alleles, diseases, com...
+    Search SGD across genes, GO terms, phenotypes, references, alleles, diseases, complexes, pathways...
 
     Parameters
     ----------
@@ -28,9 +28,9 @@ def SGD_search(
     category : str
         Filter by category. Options: 'locus', 'reference', 'biological_process', 'mol...
     limit : int
-        Maximum results to return (default 10, max 50).
+        Number of results per page (default 10, max 50).
     offset : int
-        Pagination offset (default 0).
+        Zero-based pagination offset; use next_offset for the following page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

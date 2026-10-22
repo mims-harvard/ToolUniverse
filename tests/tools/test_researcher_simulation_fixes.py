@@ -1399,21 +1399,20 @@ class TestGTExExpressionSummaryNote(unittest.TestCase):
     @patch("tooluniverse.gtex_tool._http_get")
     @patch("tooluniverse.gtex_tool._resolve_gene_id")
     def test_note_when_resolution_fails(self, mock_resolve, mock_http):
-        """When gene ID resolution fails, include helpful note."""
+        """An unresolved gene is an error and never reaches expression lookup."""
+        from tooluniverse.gtex_v2_tool import GTExGeneResolutionError
+
         tool = self._make_tool()
 
-        # Resolution fails - returns input as-is
-        mock_resolve.return_value = "COL5A1"
-
-        # Feature-80A: clusteredMedianGeneExpression returns under 'medianGeneExpression' key
-        mock_http.return_value = {"medianGeneExpression": []}
+        mock_resolve.side_effect = GTExGeneResolutionError(
+            "GTEx could not resolve gene 'COL5A1' in gtex_v8"
+        )
 
         result = tool.run({"gene_symbol": "COL5A1"})
 
-        self.assertEqual(result["status"], "success")
-        self.assertEqual(result["data"]["geneExpression"], [])
-        self.assertIn("note", result)
-        self.assertIn("Could not resolve", result["note"])
+        self.assertEqual(result["status"], "error")
+        self.assertIn("could not resolve", result["error"])
+        mock_http.assert_not_called()
 
     @patch("tooluniverse.gtex_tool._http_get")
     @patch("tooluniverse.gtex_tool._resolve_gene_id")
@@ -1557,7 +1556,7 @@ class TestGDCMutationFrequency(unittest.TestCase):
 # COSMIC dedup and placeholder filtering
 # ---------------------------------------------------------------------------
 class TestCOSMICDedup(unittest.TestCase):
-    """COSMIC search should skip placeholder entries and deduplicate properly."""
+    """COSMIC search should retain uncertain variants and aggregate contexts."""
 
     def _make_tool(self):
         from tooluniverse.cosmic_tool import COSMICTool
@@ -1574,8 +1573,8 @@ class TestCOSMICDedup(unittest.TestCase):
         return COSMICTool(config)
 
     @patch("tooluniverse.cosmic_tool.requests.get")
-    def test_placeholder_entries_skipped(self, mock_get):
-        """Entries with c.? and p.? should be skipped."""
+    def test_placeholder_entries_retained(self, mock_get):
+        """Uncertain c.?/p.? records remain visible instead of being silently dropped."""
         tool = self._make_tool()
 
         mock_resp = MagicMock()
@@ -1600,10 +1599,9 @@ class TestCOSMICDedup(unittest.TestCase):
         result = tool.run({"terms": "KRAS"})
 
         mutations = result["data"]["results"]
-        # Entries 2 and 4 (c.?/p.?) should be skipped
-        self.assertEqual(len(mutations), 3)
+        self.assertEqual(len(mutations), 5)
         aa_changes = [m["mutation_aa"] for m in mutations]
-        self.assertNotIn("p.?", aa_changes)
+        self.assertIn("p.?", aa_changes)
         self.assertIn("p.G12C", aa_changes)
         self.assertIn("p.G12D", aa_changes)
         self.assertIn("p.G12R", aa_changes)
@@ -1640,6 +1638,8 @@ class TestCOSMICDedup(unittest.TestCase):
         cds_changes = [m["mutation_cds"] for m in mutations]
         self.assertIn("c.1799T>A", cds_changes)
         self.assertIn("c.1798_1799GT>AA", cds_changes)
+        first = next(m for m in mutations if m["mutation_cds"] == "c.1799T>A")
+        self.assertEqual(len(first["cancer_contexts"]), 2)
 
 
 # ---------------------------------------------------------------------------
@@ -1766,7 +1766,7 @@ class TestHumanBaseEntrezIdHandling(unittest.TestCase):
 # HumanBase JSON schema: interaction and string_mode not required
 # ---------------------------------------------------------------------------
 class TestHumanBaseSchemaOptionalParams(unittest.TestCase):
-    """HumanBase schema should not require interaction or string_mode."""
+    """HumanBase schema should require either gene_list or its genes alias."""
 
     def test_nothing_required_gene_list_or_genes_alias_accepted(self):
         """Since 4641138a nothing is required: gene_list or its alias genes
@@ -1787,6 +1787,10 @@ class TestHumanBaseSchemaOptionalParams(unittest.TestCase):
         self.assertNotIn("string_mode", required)
         self.assertNotIn("tissue", required)
         self.assertNotIn("max_node", required)
+        self.assertEqual(
+            tool["parameter"]["anyOf"],
+            [{"required": ["gene_list"]}, {"required": ["genes"]}],
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -2711,6 +2715,16 @@ class TestGTExV2MedianExpressionEndpoint(unittest.TestCase):
         }
         return GTExV2Tool(config)
 
+    @staticmethod
+    def _resolution_response():
+        """GTEx now resolves the gene against the dataset's GENCODE release first."""
+        resp = MagicMock()
+        resp.status_code = 200
+        resp.json.return_value = {
+            "data": [{"gencodeId": "ENSG00000012048.20", "geneSymbol": "BRCA1"}]
+        }
+        return resp
+
     @patch("tooluniverse.gtex_v2_tool.requests.get")
     def test_no_tissue_uses_clustered(self, mock_get):
         """Without tissue, should use clusteredMedianGeneExpression endpoint."""
@@ -2721,7 +2735,7 @@ class TestGTExV2MedianExpressionEndpoint(unittest.TestCase):
                 {"tissueSiteDetailId": "Brain_Cortex", "median": 1.5}
             ]
         }
-        mock_get.return_value = mock_resp
+        mock_get.side_effect = [self._resolution_response(), mock_resp]
 
         tool = self._make_tool()
         result = tool._get_median_gene_expression({
@@ -2743,7 +2757,7 @@ class TestGTExV2MedianExpressionEndpoint(unittest.TestCase):
             "data": [{"tissueSiteDetailId": "Breast_Mammary_Tissue", "median": 1.3}],
             "paging_info": {},
         }
-        mock_get.return_value = mock_resp
+        mock_get.side_effect = [self._resolution_response(), mock_resp]
 
         tool = self._make_tool()
         result = tool._get_median_gene_expression({
@@ -3488,6 +3502,7 @@ class TestPDBTextSearchMetadata(unittest.TestCase):
         self.assertEqual(results[0]["title"], "KRAS G12C inhibitor")
         self.assertEqual(results[0]["resolution"], 1.56)
         self.assertEqual(results[0]["method"], "X-ray")
+        self.assertTrue(result["data"]["metadata_enrichment"]["complete"])
 
 
 if __name__ == "__main__":

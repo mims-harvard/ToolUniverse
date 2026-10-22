@@ -1,7 +1,7 @@
 [
   {
     "name": "Orphanet_search_diseases",
-    "description": "Search Orphanet for rare diseases by keyword. Orphanet is the reference portal for rare diseases and orphan drugs. Returns disease names, ORPHA codes, and synonyms. No authentication required. Supports multiple languages (en, fr, de, es, it, pt, pl, nl).",
+    "description": "Search Orphanet rare diseases by keyword. Fuzzy searches can return thousands of matches, so results are recoverably paginated: start with offset=0 and continue with data.next_offset while data.has_more is true. data.total_count is the complete match count.",
     "type": "OrphanetTool",
     "parameter": {
       "type": "object",
@@ -20,6 +20,12 @@
           "type": "integer",
           "description": "Maximum number of results to return (default: 20, max: 200). The API may return thousands of fuzzy matches; use this to control output size.",
           "default": 20
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based fuzzy-match offset. Continue with data.next_offset.",
+          "default": 0,
+          "minimum": 0
         },
         "lang": {
           "type": "string",
@@ -55,6 +61,18 @@
             "total_count": {
               "type": "integer",
               "description": "Total matches before truncation"
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
             },
             "query": {
               "type": "string"
@@ -326,7 +344,7 @@
   },
   {
     "name": "Orphanet_search_by_name",
-    "description": "Search for rare diseases by exact or partial name match in Orphanet. More precise than keyword search. Returns ORPHA codes and disease names. Supports exact matching mode for disambiguation.",
+    "description": "Search rare diseases by exact or partial name match in Orphanet. Partial matches are recoverably paginated: start with offset=0 and continue with data.next_offset while data.has_more is true.",
     "type": "OrphanetTool",
     "parameter": {
       "type": "object",
@@ -353,7 +371,14 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum number of results to return (default: 20, max: 200)"
+          "description": "Maximum number of results to return (default: 20, max: 200)",
+          "default": 20
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based name-match offset. Continue with data.next_offset.",
+          "default": 0,
+          "minimum": 0
         },
         "query": {
           "type": "string",
@@ -376,6 +401,18 @@
             },
             "count": {
               "type": "integer"
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
             },
             "exact_match": {
               "type": "boolean"

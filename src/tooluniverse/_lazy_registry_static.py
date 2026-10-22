@@ -324,6 +324,7 @@ STATIC_LAZY_REGISTRY = {
     "GTDBTool": "gtdb_tool",
     "GTExEQTLTool": "gtex_tool",
     "GTExExpressionTool": "gtex_tool",
+    "GTExGeneResolutionError": "gtex_v2_tool",
     "GTExV2Tool": "gtex_v2_tool",
     "GWASAssociationByID": "gwas_tool",
     "GWASAssociationSearch": "gwas_tool",

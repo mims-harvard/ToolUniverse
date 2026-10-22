@@ -1,7 +1,7 @@
 [
   {
     "name": "ArtIC_search_artworks",
-    "description": "Search the Art Institute of Chicago's collection of over 100,000 artworks using its public API. Returns artwork titles, artists, dates, mediums, and collection links. No authentication required. The collection includes Impressionist paintings (Seurat, Monet, Picasso), ancient art, photography, prints, and decorative arts. Useful for art research, museum data analysis, and cultural heritage studies.",
+    "description": "Search the Art Institute of Chicago collection with explicit page pagination. Continue with metadata.next_page while metadata.has_more is true. The API ranks the full searchable catalog, so pagination.total and metadata.total_results are candidate counts, not counts of exact keyword matches; use _score and the returned fields to judge relevance.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -14,7 +14,16 @@
             "integer",
             "null"
           ],
-          "description": "Number of results (1-100). Default: 10"
+          "minimum": 1,
+          "maximum": 100,
+          "default": 10,
+          "description": "Ranked records per page (1-100, default 10)"
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "One-based result page. Continue with metadata.next_page."
         },
         "fields": {
           "type": [
@@ -30,7 +39,8 @@
     },
     "fields": {
       "endpoint": "https://api.artic.edu/api/v1/artworks/search",
-      "params": {}
+      "params": {},
+      "pagination": "artic_page"
     },
     "type": "BaseRESTTool",
     "test_examples": [

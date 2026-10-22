@@ -1,7 +1,7 @@
 """
 TogoID_convert
 
-Convert biological identifiers between databases using TogoID (DBCLS), which links 117 ID types (...
+Convert up to 50 biological identifiers between directly related TogoID datasets. Unlike TogoID's...
 """
 
 from typing import Any, Optional, Callable
@@ -18,12 +18,12 @@ def TogoID_convert(
     validate: bool = True,
 ) -> Any:
     """
-    Convert biological identifiers between databases using TogoID (DBCLS), which links 117 ID types (...
+    Convert up to 50 biological identifiers between directly related TogoID datasets. Unlike TogoID's...
 
     Parameters
     ----------
     ids : str
-        Source identifier(s), comma-separated, in the source dataset's native format ...
+        One to 50 unique source identifiers, comma-separated, in the source dataset's...
     source : str
         Source TogoID dataset name, e.g. 'ensembl_gene', 'ncbigene', 'uniprot', 'pubc...
     target : str

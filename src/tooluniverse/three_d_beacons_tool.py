@@ -124,6 +124,22 @@ class ThreeDBeaconsTool(BaseTool):
         category_filter = arguments.get("category", None)
         provider_filter = arguments.get("provider", None)
         max_results = arguments.get("max_results", 20)
+        offset = arguments.get("offset", 0)
+
+        if (
+            isinstance(max_results, bool)
+            or not isinstance(max_results, int)
+            or max_results < 1
+        ):
+            return {
+                "status": "error",
+                "error": "max_results must be a positive integer",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+            }
 
         url = f"{BEACONS_BASE_URL}/uniprot/summary/{accession}.json"
         response = requests.get(url, timeout=self.timeout)
@@ -150,7 +166,7 @@ class ThreeDBeaconsTool(BaseTool):
             ]
 
         total_matched = len(structures)
-        structures = structures[:max_results]
+        structures = structures[offset : offset + max_results]
 
         # Format results
         result_structures = []
@@ -182,6 +198,8 @@ class ThreeDBeaconsTool(BaseTool):
 
             result_structures.append(entry)
 
+        next_offset = offset + len(result_structures)
+        has_more = next_offset < total_matched
         return {
             "status": "success",
             "data": {
@@ -189,6 +207,12 @@ class ThreeDBeaconsTool(BaseTool):
                 "sequence_length": uniprot_entry.get("sequence_length"),
                 "total_matched": total_matched,
                 "returned": len(result_structures),
+                "offset": offset,
+                "max_results": max_results,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
+                "result_set_complete": offset == 0
+                and len(result_structures) == total_matched,
                 "structures": result_structures,
             },
             "metadata": {

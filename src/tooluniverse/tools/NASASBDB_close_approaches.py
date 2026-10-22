@@ -1,7 +1,7 @@
 """
 NASASBDB_close_approaches
 
-Query NASA's Close Approach Data (CAD) API for asteroids and comets making close approaches to Ea...
+Query NASA/JPL Close Approach Data with explicit zero-based offset pagination and exact total met...
 """
 
 from typing import Any, Optional, Callable
@@ -14,14 +14,16 @@ def NASASBDB_close_approaches(
     date_max: Optional[str] = None,
     h_max: Optional[float] = None,
     des: Optional[str] = None,
-    limit: Optional[int] = None,
+    limit: Optional[int] = 50,
+    offset: Optional[int] = 0,
+    sort: Optional[str] = "date",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Query NASA's Close Approach Data (CAD) API for asteroids and comets making close approaches to Ea...
+    Query NASA/JPL Close Approach Data with explicit zero-based offset pagination and exact total met...
 
     Parameters
     ----------
@@ -36,7 +38,11 @@ def NASASBDB_close_approaches(
     des : str
         Filter by specific body designation (e.g., '99942' for Apophis, '2020 SO')
     limit : int
-        Maximum number of results (default 50, max 10000)
+        Close approaches per page (default 50, max 10000)
+    offset : int
+        Zero-based result offset, mapped to JPL's limit-from. Continue with metadata....
+    sort : str
+        JPL CAD sort expression. Default 'date' for chronological traversal.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -60,6 +66,8 @@ def NASASBDB_close_approaches(
             "h-max": h_max,
             "des": des,
             "limit": limit,
+            "offset": offset,
+            "sort": sort,
         }.items()
         if v is not None
     }

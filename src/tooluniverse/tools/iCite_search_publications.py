@@ -1,7 +1,7 @@
 """
 iCite_search_publications
 
-Search PubMed publications by query and get citation metrics from NIH's iCite API. Returns papers...
+Search PubMed by relevance and enrich one recoverable result page with NIH iCite citation metrics...
 """
 
 from typing import Any, Optional, Callable
@@ -18,16 +18,16 @@ def iCite_search_publications(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search PubMed publications by query and get citation metrics from NIH's iCite API. Returns papers...
+    Search PubMed by relevance and enrich one recoverable result page with NIH iCite citation metrics...
 
     Parameters
     ----------
     query : str
         Search query for PubMed (e.g., 'BRCA1 cancer', 'COVID-19 vaccine efficacy', '...
     limit : int
-        Maximum number of results (default 10, max 1000)
+        Maximum number of PubMed records to enrich on this page (default 10, max 1000)
     offset : int
-        Offset for pagination (default 0)
+        Zero-based PubMed relevance offset. Continue with metadata.next_offset while ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

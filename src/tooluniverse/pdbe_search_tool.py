@@ -20,6 +20,23 @@ PDBE_SEARCH_URL = "https://www.ebi.ac.uk/pdbe/search/pdb/select"
 PDBE_API_URL = "https://www.ebi.ac.uk/pdbe/api/pdb"
 
 
+def _integer_in_range(
+    value: Any, *, name: str, minimum: int, maximum: int | None = None
+) -> tuple[int | None, str | None]:
+    if isinstance(value, bool):
+        return None, f"{name} must be an integer"
+    try:
+        parsed = int(value)
+    except (TypeError, ValueError):
+        return None, f"{name} must be an integer"
+    if isinstance(value, float) and not value.is_integer():
+        return None, f"{name} must be an integer"
+    if parsed < minimum or (maximum is not None and parsed > maximum):
+        bounds = f"{minimum}-{maximum}" if maximum is not None else f">= {minimum}"
+        return None, f"{name} must be in the range {bounds}"
+    return parsed, None
+
+
 @register_tool("PDBeSearchTool")
 class PDBeSearchTool(BaseTool):
     """
@@ -86,16 +103,45 @@ class PDBeSearchTool(BaseTool):
                 "error": "query parameter is required (e.g., 'insulin', 'kinase', 'BRCA1')",
             }
 
-        limit = min(arguments.get("limit", 10), 50)
+        raw_limit = arguments.get("limit")
+        limit, limit_error = _integer_in_range(
+            10 if raw_limit is None else raw_limit,
+            name="limit",
+            minimum=1,
+            maximum=1000,
+        )
+        if limit_error:
+            return {"status": "error", "error": limit_error}
+        raw_offset = arguments.get("offset")
+        offset, offset_error = _integer_in_range(
+            0 if raw_offset is None else raw_offset, name="offset", minimum=0
+        )
+        if offset_error:
+            return {"status": "error", "error": offset_error}
+        assert limit is not None and offset is not None
+
+        raw_scan_budget = arguments.get("max_rows_scanned")
+        default_scan_budget = min(max((offset + limit + 1) * 20, 500), 200_000)
+        max_rows_scanned, scan_error = _integer_in_range(
+            default_scan_budget if raw_scan_budget is None else raw_scan_budget,
+            name="max_rows_scanned",
+            minimum=1,
+            maximum=200_000,
+        )
+        if scan_error:
+            return {"status": "error", "error": scan_error}
+        assert max_rows_scanned is not None
 
         # Ordering: relevance first (best text match), resolution as the tie-breaker.
         # Sorting purely by resolution put the best-resolved structure that merely
         # *mentions* the query first -- "insulin" returned human heart fatty-acid-binding
         # proteins, not insulin. sort_by="resolution" keeps the old behavior.
+        # A final pdb_id tiebreaker keeps the order deterministic, so offset
+        # pages neither repeat nor skip entries with equal score/resolution.
         if arguments.get("sort_by", "relevance") == "resolution":
-            solr_sort = "resolution asc"
+            solr_sort = "resolution asc,pdb_id asc"
         else:
-            solr_sort = "score desc,resolution asc"
+            solr_sort = "score desc,resolution asc,pdb_id asc"
 
         # PDBe's Solr index is entity-level, not deduplicated by PDB entry --
         # a single structure with multiple matching chains/entities can
@@ -106,16 +152,18 @@ class PDBeSearchTool(BaseTool):
         # of one entry's docs together. Page through Solr with `start`,
         # accumulating unique entries, until `limit` is reached or the
         # safety cap on rows scanned is hit.
-        max_rows_scanned = max(limit * 20, 500)
-        page_size = 100
+        page_size = 1000
+        target_unique_count = offset + limit + 1
         total = 0
         structures = []
         seen_pdb_ids = set()
         start = 0
-        while len(structures) < limit and start < max_rows_scanned:
+        docs_exhausted = False
+        while len(structures) < target_unique_count and start < max_rows_scanned:
+            requested_rows = min(page_size, max_rows_scanned - start)
             params = {
                 "q": query,
-                "rows": page_size,
+                "rows": requested_rows,
                 "start": start,
                 "fl": "pdb_id,title,resolution,experimental_method,deposition_date,number_of_entities,organism_scientific_name",
                 "wt": "json",
@@ -146,17 +194,32 @@ class PDBeSearchTool(BaseTool):
                     "organism": doc.get("organism_scientific_name", []),
                 }
                 structures.append(entry)
-                if len(structures) >= limit:
+                if len(structures) >= target_unique_count:
                     break
 
-            start += page_size
-            if len(docs) < page_size:
+            start += len(docs)
+            if len(docs) < requested_rows or start >= total:
                 # Exhausted all matching docs before filling `limit`.
+                docs_exhausted = True
                 break
+
+        page = structures[offset : offset + limit]
+        has_more = bool(
+            len(structures) > offset + limit or (not docs_exhausted and start < total)
+        )
+        page_complete = len(page) == limit or docs_exhausted
+        scan_limit_reached = bool(not page_complete and start >= max_rows_scanned)
+        warning = None
+        if scan_limit_reached:
+            warning = (
+                "The entity-level scan budget was exhausted before the requested "
+                "unique-PDB page was filled. Increase max_rows_scanned and rerun "
+                "the same offset; the partial page is not complete."
+            )
 
         return {
             "status": "success",
-            "data": structures,
+            "data": page,
             "metadata": {
                 "source": "PDBe Search",
                 "total_found": total,
@@ -165,7 +228,20 @@ class PDBeSearchTool(BaseTool):
                     "a single structure can contribute many matching chains/"
                     "entities, so this is typically far larger than `returned`."
                 ),
-                "returned": len(structures),
+                "returned": len(page),
+                "limit": limit,
+                "offset": offset,
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_offset": offset + len(page)
+                if has_more and len(page) > 0
+                else None,
+                "page_complete": page_complete,
+                "rows_scanned": start,
+                "unique_pdb_ids_scanned": len(structures),
+                "max_rows_scanned": max_rows_scanned,
+                "scan_limit_reached": scan_limit_reached,
+                "warning": warning,
                 "query": query,
                 "endpoint": "search_structures",
             },
@@ -235,7 +311,22 @@ class PDBeSearchTool(BaseTool):
         """Search PDB structures filtered by organism."""
         organism = arguments.get("organism", "")
         query = arguments.get("query", "*:*")
-        limit = min(arguments.get("limit", 10), 50)
+        raw_limit = arguments.get("limit")
+        limit, limit_error = _integer_in_range(
+            10 if raw_limit is None else raw_limit,
+            name="limit",
+            minimum=1,
+            maximum=10_000,
+        )
+        if limit_error:
+            return {"status": "error", "error": limit_error}
+        raw_start = arguments.get("start")
+        start, start_error = _integer_in_range(
+            0 if raw_start is None else raw_start, name="start", minimum=0
+        )
+        if start_error:
+            return {"status": "error", "error": start_error}
+        assert limit is not None and start is not None
 
         if not organism:
             return {
@@ -249,6 +340,7 @@ class PDBeSearchTool(BaseTool):
         params = {
             "q": full_query,
             "rows": limit,
+            "start": start,
             "fl": "pdb_id,title,resolution,experimental_method,deposition_date,organism_scientific_name",
             "wt": "json",
             "sort": "resolution asc",
@@ -280,6 +372,12 @@ class PDBeSearchTool(BaseTool):
                 "source": "PDBe Search",
                 "total_found": total,
                 "returned": len(structures),
+                "start": start,
+                "has_more": start + len(structures) < total,
+                "truncated": start + len(structures) < total,
+                "next_start": (
+                    start + len(structures) if start + len(structures) < total else None
+                ),
                 "query": query,
                 "organism_filter": organism,
                 "endpoint": "search_by_organism",

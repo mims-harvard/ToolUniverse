@@ -47,7 +47,7 @@ def _compounds_payload(include_inchikey=True):
     }
     if include_inchikey:
         compound["standardInchiKey"] = INCHIKEY
-    return {"compounds": [compound]}
+    return {"response": "Success", "totalCompounds": "1", "compounds": [compound]}
 
 
 def _mock_post(payload):
@@ -64,7 +64,7 @@ def test_source_id_search_returns_inchikey_from_response():
     tool = _make_tool()
     with _mock_post(_compounds_payload()):
         result = tool.run(
-            {"compound": "CHEMBL25", "type": "sourceID", "sourceID": "1"}
+            {"compound": "CHEMBL25", "type": "sourceID", "sourceID": 1}
         )
 
     assert result["status"] == "success"
@@ -81,7 +81,7 @@ def test_uci_is_surfaced_from_response():
     tool = _make_tool()
     with _mock_post(_compounds_payload()):
         result = tool.run(
-            {"compound": "CHEMBL25", "type": "sourceID", "sourceID": "1"}
+            {"compound": "CHEMBL25", "type": "sourceID", "sourceID": 1}
         )
 
     assert result["data"]["uci"] == 161671
@@ -104,7 +104,7 @@ def test_non_inchikey_search_without_field_stays_none():
     tool = _make_tool()
     with _mock_post(_compounds_payload(include_inchikey=False)):
         result = tool.run(
-            {"compound": "CHEMBL25", "type": "sourceID", "sourceID": "1"}
+            {"compound": "CHEMBL25", "type": "sourceID", "sourceID": 1}
         )
 
     assert result["data"]["inchikey"] is None
@@ -113,7 +113,8 @@ def test_non_inchikey_search_without_field_stays_none():
 @pytest.mark.unit
 def test_empty_compounds_response_includes_uci_key():
     tool = _make_tool()
-    with _mock_post({"compounds": []}):
+    # UniChem answers an unmatched query with response "Not found".
+    with _mock_post({"compounds": [], "response": "Not found"}):
         result = tool.run({"compound": "NOPE", "type": "inchikey"})
 
     assert result["status"] == "success"

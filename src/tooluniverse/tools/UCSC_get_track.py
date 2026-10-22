@@ -1,7 +1,7 @@
 """
 UCSC_get_track
 
-Get annotation track data from the UCSC Genome Browser for a specified genomic region. Retrieves ...
+Get annotation track data for a genomic region. If UCSC reports maxItemsLimit=true, the response ...
 """
 
 from typing import Any, Optional, Callable
@@ -21,7 +21,7 @@ def UCSC_get_track(
     validate: bool = True,
 ) -> Any:
     """
-    Get annotation track data from the UCSC Genome Browser for a specified genomic region. Retrieves ...
+    Get annotation track data for a genomic region. If UCSC reports maxItemsLimit=true, the response ...
 
     Parameters
     ----------

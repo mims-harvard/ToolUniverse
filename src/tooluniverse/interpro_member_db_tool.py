@@ -34,6 +34,7 @@ No authentication required. Free public access.
 
 import requests
 from typing import Dict, Any
+from urllib.parse import parse_qs, urlparse
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
@@ -199,6 +200,20 @@ class InterProMemberDBTool(BaseTool):
             }
         return resp.json(), None
 
+    @staticmethod
+    def _next_cursor(payload: Dict[str, Any]):
+        next_url = payload.get("next")
+        if not next_url:
+            return None
+        values = parse_qs(urlparse(next_url).query).get("cursor", [])
+        return values[0] if values else None
+
+    @staticmethod
+    def _add_cursor(params: Dict[str, Any], arguments: Dict[str, Any]) -> None:
+        cursor = arguments.get("cursor")
+        if cursor:
+            params["cursor"] = cursor
+
     # ------------------------------------------------------------------ #
     # Endpoint: get_member_entry
     # ------------------------------------------------------------------ #
@@ -265,6 +280,7 @@ class InterProMemberDBTool(BaseTool):
         page_size = self._clamp_page_size(arguments.get("page_size", 20))
 
         params = {"page_size": page_size}
+        self._add_cursor(params, arguments)
         entry_type = arguments.get("entry_type")
         if entry_type:
             params["type"] = str(entry_type).strip().lower()
@@ -289,6 +305,8 @@ class InterProMemberDBTool(BaseTool):
             "member_database": db,
             "total_count": payload.get("count"),
             "returned": len(entries),
+            "has_more": self._next_cursor(payload) is not None,
+            "next_cursor": self._next_cursor(payload),
             "entries": entries,
         }
         if payload.get("_empty_204"):
@@ -317,7 +335,9 @@ class InterProMemberDBTool(BaseTool):
         page_size = self._clamp_page_size(arguments.get("page_size", 20))
 
         url = f"{INTERPRO_BASE_URL}/structure/pdb/entry/interpro/{interpro_id}/"
-        payload, err = self._get(url, {"page_size": page_size}, empty_ok=True)
+        params = {"page_size": page_size}
+        self._add_cursor(params, arguments)
+        payload, err = self._get(url, params, empty_ok=True)
         if err:
             return err
 
@@ -336,6 +356,8 @@ class InterProMemberDBTool(BaseTool):
             "interpro_id": interpro_id,
             "total_structures": payload.get("count"),
             "returned": len(structures),
+            "has_more": self._next_cursor(payload) is not None,
+            "next_cursor": self._next_cursor(payload),
             "structures": structures,
         }
         if payload.get("_empty_204"):

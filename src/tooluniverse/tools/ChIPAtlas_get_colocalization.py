@@ -1,7 +1,7 @@
 """
 ChIPAtlas_get_colocalization
 
-ChIP-Atlas Colocalization: for a given antigen/transcription factor in a specific tissue class, r...
+ChIP-Atlas colocalization partners ranked by genome-wide overlap score. Results are recoverably p...
 """
 
 from typing import Any, Optional, Callable
@@ -14,13 +14,14 @@ def ChIPAtlas_get_colocalization(
     operation: Optional[str] = "get_colocalization",
     genome: Optional[str] = "hg38",
     limit: Optional[int] = 50,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    ChIP-Atlas Colocalization: for a given antigen/transcription factor in a specific tissue class, r...
+    ChIP-Atlas colocalization partners ranked by genome-wide overlap score. Results are recoverably p...
 
     Parameters
     ----------
@@ -34,6 +35,8 @@ def ChIPAtlas_get_colocalization(
         Genome assembly.
     limit : int
         Maximum number of ranked partner proteins to return.
+    offset : int
+        Zero-based ranked-partner offset. Continue with data.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def ChIPAtlas_get_colocalization(
             "cell_type_class": cell_type_class,
             "genome": genome,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

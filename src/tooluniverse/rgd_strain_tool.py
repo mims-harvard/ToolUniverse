@@ -137,6 +137,10 @@ class RGDStrainTool(BaseTool):
         except (TypeError, ValueError):
             limit = 25
         limit = max(1, min(limit, 200))
+        try:
+            offset = max(0, int(arguments.get("offset", 0)))
+        except (TypeError, ValueError):
+            offset = 0
 
         if not query and not strain_type:
             return {
@@ -158,14 +162,20 @@ class RGDStrainTool(BaseTool):
                     continue
             matches.append(self._slim_strain(rec))
 
+        page = matches[offset : offset + limit]
+        next_offset = offset + len(page)
+        has_more = next_offset < len(matches)
         return {
             "status": "success",
-            "data": matches[:limit],
+            "data": page,
             "metadata": {
                 "query": arguments.get("query"),
                 "strain_type": arguments.get("strain_type"),
                 "total_matches": len(matches),
-                "returned": min(len(matches), limit),
+                "returned": len(page),
+                "offset": offset,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
                 "source": "RGD /strains/all",
             },
         }

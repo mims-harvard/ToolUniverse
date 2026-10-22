@@ -1,7 +1,7 @@
 """
 MonarchV3_search
 
-Search the Monarch Initiative knowledge graph for biomedical entities by name or keyword. Returns...
+Search the Monarch knowledge graph for biomedical entities with exact offset pagination. Metadata...
 """
 
 from typing import Any, Optional, Callable
@@ -10,7 +10,8 @@ from ._shared_client import get_shared_client
 
 def MonarchV3_search(
     query: Optional[str] = None,
-    limit: Optional[int] = None,
+    limit: Optional[int] = 10,
+    offset: Optional[int] = 0,
     category: Optional[str] = None,
     q: Optional[str] = None,
     *,
@@ -19,14 +20,16 @@ def MonarchV3_search(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Search the Monarch Initiative knowledge graph for biomedical entities by name or keyword. Returns...
+    Search the Monarch knowledge graph for biomedical entities with exact offset pagination. Metadata...
 
     Parameters
     ----------
     query : str
         Search query. Can be gene names, disease names, phenotype terms, etc. Example...
     limit : int
-        Maximum results to return (default: 10, max: 50).
+        Results per page (1-50).
+    offset : int
+        Zero-based offset. Continue with metadata.next_offset.
     category : str
         Filter by entity category. Options: 'biolink:Gene', 'biolink:Disease', 'bioli...
     q : str
@@ -50,6 +53,7 @@ def MonarchV3_search(
         for k, v in {
             "query": query,
             "limit": limit,
+            "offset": offset,
             "category": category,
             "q": q,
         }.items()

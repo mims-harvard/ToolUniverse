@@ -1,13 +1,26 @@
 [
   {
     "name": "EBIProteins_get_domains_sites",
-    "description": "Get domain and site features for a protein from the EBI Proteins API. Returns binding sites, DNA-binding regions, active sites, motifs, regions of interest, and zinc finger domains annotated in UniProtKB. Complements InterPro domain annotations by providing more granular functional site information. Example: P04637 (TP53) returns 31 features including DNA-binding domain (residues 102-292), interaction regions with MDM2/CCAR2/HRMT1L2, zinc binding sites, and p53 transactivation motifs.",
+    "description": "Get and page through domain/site features for a protein from the EBI Proteins API. Returns true counts and continuation metadata and preserves every evidence record (plus its original payload), rather than silently limiting each feature to three evidence links.",
     "parameter": {
       "type": "object",
       "properties": {
         "accession": {
           "type": "string",
           "description": "UniProt accession. Examples: 'P04637' (TP53/p53), 'P00533' (EGFR), 'P01308' (Insulin), 'P31749' (AKT1)."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 100,
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Maximum features to return on this page."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based offset into category features."
         }
       },
       "required": [
@@ -119,13 +132,26 @@
   },
   {
     "name": "EBIProteins_get_molecule_processing",
-    "description": "Get molecule processing features for a protein from the EBI Proteins API. Returns signal peptides, transit peptides, mature protein chains, propeptides, and initiator methionine annotations. Essential for understanding how a protein precursor is processed into its functional form. Example: P01308 (Insulin) returns signal peptide (1-24), B chain (25-54), C peptide (57-87), and A chain (90-110) showing the complete insulin processing pathway.",
+    "description": "Get and page through molecule-processing features for a protein from the EBI Proteins API. Returns true counts, continuation metadata, and every evidence record for signal peptides, chains, propeptides, transit peptides, and related processing annotations.",
     "parameter": {
       "type": "object",
       "properties": {
         "accession": {
           "type": "string",
           "description": "UniProt accession. Examples: 'P01308' (Insulin - classic example), 'P01375' (TNF-alpha), 'P01189' (POMC - multiple peptides), 'P06213' (Insulin receptor)."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 100,
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Maximum features to return on this page."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based offset into category features."
         }
       },
       "required": [
@@ -237,13 +263,26 @@
   },
   {
     "name": "EBIProteins_get_structural_features",
-    "description": "Get secondary structure annotations for a protein from the EBI Proteins API. Returns helix, beta strand, and turn assignments mapped to the UniProt protein sequence. These are derived from experimental 3D structures and mapped to the canonical sequence, providing a comprehensive secondary structure profile. Example: P04637 (TP53) returns 40 structural features including helices (residues 19-29, 165-172, etc.), strands (residues 112-114, 141-143, etc.), and turns.",
+    "description": "Get and page through secondary-structure annotations for a protein from the EBI Proteins API. Returns true counts and continuation metadata plus complete evidence for helices, beta strands, and turns; feature-rich proteins do not silently stop at 100.",
     "parameter": {
       "type": "object",
       "properties": {
         "accession": {
           "type": "string",
           "description": "UniProt accession. Examples: 'P04637' (TP53/p53), 'P69905' (Hemoglobin alpha), 'P00533' (EGFR), 'P38398' (BRCA1)."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 100,
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Maximum features to return on this page."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based offset into category features."
         }
       },
       "required": [

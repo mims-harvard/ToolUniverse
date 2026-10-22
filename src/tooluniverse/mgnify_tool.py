@@ -43,6 +43,7 @@ def _http_get(
                     "minimum": 1,
                     "maximum": 100,
                 },
+                "page": {"type": "integer", "default": 1, "minimum": 1},
             },
         },
         "settings": {
@@ -73,6 +74,7 @@ class MGnifyStudiesTool:
             query["search"] = arguments["search"]
         size = arguments.get("size")
         query["page_size"] = int(size) if size is not None else 10
+        query["page"] = max(int(arguments.get("page", 1)), 1)
 
         url = f"{base}/studies?{urlencode(query)}"
         try:
@@ -87,12 +89,31 @@ class MGnifyStudiesTool:
                 # Fallback if response format is unexpected
                 data_array = api_response if isinstance(api_response, list) else []
 
+            pagination = (
+                api_response.get("meta", {}).get("pagination", {})
+                if isinstance(api_response, dict)
+                else {}
+            )
+            links = (
+                api_response.get("links", {}) if isinstance(api_response, dict) else {}
+            )
             return {
                 "status": "success",
                 "source": "MGnify",
                 "endpoint": "studies",
                 "query": query,
                 "data": data_array,
+                "metadata": {
+                    "total_results": pagination.get("count"),
+                    "returned": len(data_array),
+                    "page": pagination.get("page", query["page"]),
+                    "total_pages": pagination.get("pages"),
+                    "page_size": query["page_size"],
+                    "has_more": bool(links.get("next")),
+                    "truncated": bool(links.get("next")),
+                    "next_page": query["page"] + 1 if links.get("next") else None,
+                    "links": links,
+                },
                 "success": True,
             }
         except Exception as e:
@@ -124,6 +145,7 @@ class MGnifyStudiesTool:
                     "minimum": 1,
                     "maximum": 100,
                 },
+                "page": {"type": "integer", "default": 1, "minimum": 1},
             },
             "required": ["study_accession"],
         },
@@ -149,6 +171,7 @@ class MGnifyAnalysesTool:
         }
         size = arguments.get("size")
         query["page_size"] = int(size) if size is not None else 10
+        query["page"] = max(int(arguments.get("page", 1)), 1)
 
         url = f"{base}/analyses?{urlencode(query)}"
         try:
@@ -163,12 +186,31 @@ class MGnifyAnalysesTool:
                 # Fallback if response format is unexpected
                 data_array = api_response if isinstance(api_response, list) else []
 
+            pagination = (
+                api_response.get("meta", {}).get("pagination", {})
+                if isinstance(api_response, dict)
+                else {}
+            )
+            links = (
+                api_response.get("links", {}) if isinstance(api_response, dict) else {}
+            )
             return {
                 "status": "success",
                 "source": "MGnify",
                 "endpoint": "analyses",
                 "query": query,
                 "data": data_array,
+                "metadata": {
+                    "total_results": pagination.get("count"),
+                    "returned": len(data_array),
+                    "page": pagination.get("page", query["page"]),
+                    "total_pages": pagination.get("pages"),
+                    "page_size": query["page_size"],
+                    "has_more": bool(links.get("next")),
+                    "truncated": bool(links.get("next")),
+                    "next_page": query["page"] + 1 if links.get("next") else None,
+                    "links": links,
+                },
                 "success": True,
             }
         except Exception as e:

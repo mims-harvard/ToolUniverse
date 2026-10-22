@@ -966,7 +966,7 @@
   {
     "type": "SIGNSearchGuidelinesTool",
     "name": "SIGN_search_guidelines",
-    "description": "Search SIGN (Scottish Intercollegiate Guidelines Network) clinical guidelines by keyword. Fetches the complete SIGN guidelines table and filters by keyword match in title or clinical topic. Returns guideline number, title, topic, publication year, and URL.",
+    "description": "Search SIGN (Scottish Intercollegiate Guidelines Network) clinical guidelines by keyword. Fetches the complete SIGN guidelines table and filters by keyword match in title or clinical topic. Returns guideline number, title, topic, publication year, and URL. Each array item includes search_pagination with exact total_count, has_more, and next_offset; continue with offset while has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -976,8 +976,15 @@
         },
         "limit": {
           "type": "integer",
+          "minimum": 1,
           "description": "Maximum number of guidelines to return (default: 10)",
           "default": 10
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Zero-based offset after keyword filtering. Continue with each item's search_pagination.next_offset.",
+          "default": 0
         }
       },
       "required": [
@@ -1011,6 +1018,10 @@
               "url": {
                 "type": "string",
                 "description": "Full URL to the guideline on sign.ac.uk"
+              },
+              "search_pagination": {
+                "type": "object",
+                "description": "Exact page metadata shared by all records in this page"
               }
             },
             "required": [
@@ -1046,7 +1057,7 @@
   {
     "type": "SIGNListGuidelinesTool",
     "name": "SIGN_list_guidelines",
-    "description": "List all SIGN (Scottish Intercollegiate Guidelines Network) clinical guidelines, optionally filtered by clinical topic/specialty. Returns up to `limit` guidelines from the full SIGN table covering cardiovascular, oncology, mental health, and other specialties.",
+    "description": "List the current official SIGN guidelines, optionally filtered by topic. Each array item includes search_pagination with exact total_count, has_more, and next_offset; continue with offset while has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1056,8 +1067,15 @@
         },
         "limit": {
           "type": "integer",
+          "minimum": 1,
           "description": "Maximum number of guidelines to return (default: 20)",
           "default": 20
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Zero-based offset after topic filtering. Continue with each item's search_pagination.next_offset.",
+          "default": 0
         }
       },
       "required": []
@@ -1089,6 +1107,10 @@
               "url": {
                 "type": "string",
                 "description": "Full URL to the guideline on sign.ac.uk"
+              },
+              "search_pagination": {
+                "type": "object",
+                "description": "Exact page metadata shared by all records in this page"
               }
             },
             "required": [
@@ -1124,14 +1146,21 @@
   {
     "type": "CTFPHCListGuidelinesTool",
     "name": "CTFPHC_list_guidelines",
-    "description": "List all published guidelines from the Canadian Task Force on Preventive Health Care (CTFPHC). Fetches the official index of 27 published preventive health guidelines covering cancer screening, cardiovascular risk, diabetes, mental health, and other primary care topics.",
+    "description": "List the current official Canadian Task Force on Preventive Health Care published-guideline index. Each array item includes search_pagination with exact total_count, has_more, and next_offset; continue with offset while has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
         "limit": {
           "type": "integer",
+          "minimum": 1,
           "description": "Maximum number of guidelines to return (default: 30)",
           "default": 30
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Zero-based offset in the official guideline index. Continue with each item's search_pagination.next_offset.",
+          "default": 0
         }
       },
       "required": []
@@ -1158,6 +1187,10 @@
                   "null"
                 ],
                 "description": "Publication year extracted from the title (e.g., '2024'), or null if not present"
+              },
+              "search_pagination": {
+                "type": "object",
+                "description": "Exact page metadata shared by all records in this page"
               }
             },
             "required": [
@@ -1190,7 +1223,7 @@
   {
     "type": "CTFPHCSearchGuidelinesTool",
     "name": "CTFPHC_search_guidelines",
-    "description": "Search published guidelines from the Canadian Task Force on Preventive Health Care (CTFPHC) by keyword. Covers preventive health topics including breast cancer, colorectal cancer, diabetes, depression, cognitive impairment, thyroid dysfunction, and more.",
+    "description": "Search the current Canadian Task Force on Preventive Health Care guideline index by title. Each array item includes search_pagination with exact total_count, has_more, and next_offset; continue with offset while has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1200,8 +1233,15 @@
         },
         "limit": {
           "type": "integer",
+          "minimum": 1,
           "description": "Maximum number of guidelines to return (default: 10)",
           "default": 10
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Zero-based offset after keyword filtering. Continue with each item's search_pagination.next_offset.",
+          "default": 0
         }
       },
       "required": [
@@ -1230,6 +1270,10 @@
                   "null"
                 ],
                 "description": "Publication year extracted from the title, or null if not present"
+              },
+              "search_pagination": {
+                "type": "object",
+                "description": "Exact page metadata shared by all records in this page"
               }
             },
             "required": [

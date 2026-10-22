@@ -1,7 +1,7 @@
 """
 OrthoDB_get_orthologs
 
-Get orthologous genes from an OrthoDB group, optionally filtered by species. Returns gene IDs, or...
+Get orthologous genes from an OrthoDB group, optionally filtered by species, with local offset pa...
 """
 
 from typing import Any, Optional, Callable
@@ -11,13 +11,15 @@ from ._shared_client import get_shared_client
 def OrthoDB_get_orthologs(
     group_id: str,
     species: Optional[str] = None,
+    limit: Optional[int] = 100,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get orthologous genes from an OrthoDB group, optionally filtered by species. Returns gene IDs, or...
+    Get orthologous genes from an OrthoDB group, optionally filtered by species, with local offset pa...
 
     Parameters
     ----------
@@ -25,6 +27,10 @@ def OrthoDB_get_orthologs(
         OrthoDB group ID. Format: 'numberATtaxid'. Get IDs from OrthoDB_search_groups.
     species : str
         Comma-separated NCBI taxonomy IDs to filter. Examples: '9606' (human only), '...
+    limit : int
+        Maximum ortholog records per page (default 100, max 1000).
+    offset : int
+        Zero-based offset in the fetched ortholog list. Continue with next_offset whi...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +47,12 @@ def OrthoDB_get_orthologs(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"group_id": group_id, "species": species}.items()
+        for k, v in {
+            "group_id": group_id,
+            "species": species,
+            "limit": limit,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

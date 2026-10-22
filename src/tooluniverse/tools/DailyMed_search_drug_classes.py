@@ -25,9 +25,9 @@ def DailyMed_search_drug_classes(
     drug_class_name : str
         Search term for drug class name (e.g., 'anti', 'kinase inhibitor', 'antibacte...
     pagesize : int
-        Number of results per page (default: 100)
+        Number of matching classes per page (1-100; default: 100).
     page : int
-        Page number for pagination (default: 1)
+        One-based page number of the matches (default: 1).
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

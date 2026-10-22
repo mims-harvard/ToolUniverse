@@ -83,11 +83,59 @@ class AllenBrainTool(BaseTool):
         response.raise_for_status()
         return response.json()
 
+    @staticmethod
+    def _pagination_controls(arguments: Dict[str, Any]):
+        num_rows = arguments.get("num_rows", 50)
+        if (
+            isinstance(num_rows, bool)
+            or not isinstance(num_rows, int)
+            or not 1 <= num_rows <= 2000
+        ):
+            return {
+                "status": "error",
+                "error": "num_rows must be an integer between 1 and 2000",
+                "parameter": "num_rows",
+            }
+        start_row = arguments.get("start_row", 0)
+        if (
+            isinstance(start_row, bool)
+            or not isinstance(start_row, int)
+            or start_row < 0
+        ):
+            return {
+                "status": "error",
+                "error": "start_row must be a non-negative integer",
+                "parameter": "start_row",
+            }
+        return num_rows, start_row
+
+    @staticmethod
+    def _page_metadata(result, returned, num_rows, start_row):
+        total = result.get("total_rows", returned)
+        upstream_returned = result.get("num_rows", returned)
+        has_more = start_row + upstream_returned < total
+        truncated = start_row > 0 or has_more
+        return {
+            "total_results": total,
+            "total_results_is_exact": True,
+            "returned": returned,
+            "upstream_rows_returned": upstream_returned,
+            "num_rows": num_rows,
+            "start_row": start_row,
+            "has_more": has_more,
+            "next_start_row": start_row + upstream_returned if has_more else None,
+            "truncated": truncated,
+            "result_set_complete": not truncated,
+        }
+
     def _search_genes(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search for genes by acronym or name."""
         gene_acronym = arguments.get("gene_acronym", "")
         gene_name = arguments.get("gene_name", "")
-        num_rows = arguments.get("num_rows", 50)
+        controls = self._pagination_controls(arguments)
+        if isinstance(controls, dict):
+            return controls
+        num_rows, start_row = controls
 
         if gene_acronym:
             criteria = f"model::Gene,rma::criteria,[acronym$eq'{gene_acronym}']"
@@ -99,7 +147,7 @@ class AllenBrainTool(BaseTool):
                 "error": "Either gene_acronym or gene_name is required",
             }
 
-        result = self._make_rma_query(criteria, num_rows=num_rows)
+        result = self._make_rma_query(criteria, num_rows=num_rows, start_row=start_row)
         if not result.get("success"):
             return {"status": "error", "error": "Allen Brain Atlas query failed"}
 
@@ -107,18 +155,17 @@ class AllenBrainTool(BaseTool):
         return {
             "status": "success",
             "data": records,
-            "metadata": {
-                "total_results": result.get("total_rows", len(records)),
-                "num_rows": result.get("num_rows", num_rows),
-                "start_row": result.get("start_row", 0),
-            },
+            "metadata": self._page_metadata(result, len(records), num_rows, start_row),
         }
 
     def _search_structures(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search for brain structures by acronym or name."""
         acronym = arguments.get("acronym", "")
         name = arguments.get("name", "")
-        num_rows = arguments.get("num_rows", 50)
+        controls = self._pagination_controls(arguments)
+        if isinstance(controls, dict):
+            return controls
+        num_rows, start_row = controls
 
         if acronym:
             criteria = f"model::Structure,rma::criteria,[acronym$eq'{acronym}']"
@@ -127,7 +174,7 @@ class AllenBrainTool(BaseTool):
         else:
             return {"status": "error", "error": "Either acronym or name is required"}
 
-        result = self._make_rma_query(criteria, num_rows=num_rows)
+        result = self._make_rma_query(criteria, num_rows=num_rows, start_row=start_row)
         if not result.get("success"):
             return {"status": "error", "error": "Allen Brain Atlas query failed"}
 
@@ -135,17 +182,17 @@ class AllenBrainTool(BaseTool):
         return {
             "status": "success",
             "data": records,
-            "metadata": {
-                "total_results": result.get("total_rows", len(records)),
-                "num_rows": result.get("num_rows", num_rows),
-            },
+            "metadata": self._page_metadata(result, len(records), num_rows, start_row),
         }
 
     def _get_expression_data(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get gene expression data sets for a gene."""
         gene_acronym = arguments.get("gene_acronym", "")
         product_id = arguments.get("product_id", 1)  # 1=Mouse Brain ISH
-        num_rows = arguments.get("num_rows", 50)
+        controls = self._pagination_controls(arguments)
+        if isinstance(controls, dict):
+            return controls
+        num_rows, start_row = controls
 
         if not gene_acronym:
             return {"status": "error", "error": "gene_acronym is required"}
@@ -157,7 +204,12 @@ class AllenBrainTool(BaseTool):
             f"products[id$eq{product_id}]"
         )
 
-        result = self._make_rma_query(criteria, num_rows=num_rows, include="genes")
+        result = self._make_rma_query(
+            criteria,
+            num_rows=num_rows,
+            start_row=start_row,
+            include="genes",
+        )
         if not result.get("success"):
             return {"status": "error", "error": "Allen Brain Atlas query failed"}
 
@@ -168,8 +220,14 @@ class AllenBrainTool(BaseTool):
             "status": "success",
             "data": records,
             "metadata": {
-                "total_results": len(records),
-                "total_including_failed": len(all_records),
+                **self._page_metadata(result, len(records), num_rows, start_row),
+                "total_results": None,
+                "total_results_is_exact": False,
+                "total_results_including_failed": result.get(
+                    "total_rows", len(all_records)
+                ),
+                "failed_rows_on_page": len(all_records) - len(records),
+                "usable_total_is_unknown": True,
                 "gene_acronym": gene_acronym,
                 "product_id": product_id,
             },
@@ -190,7 +248,10 @@ class AllenBrainTool(BaseTool):
                 "error": "section_data_set_id is required",
             }
 
-        num_rows = arguments.get("num_rows", 50)
+        controls = self._pagination_controls(arguments)
+        if isinstance(controls, dict):
+            return controls
+        num_rows, start_row = controls
         include_structure = arguments.get("include_structure", True)
 
         criteria = (
@@ -200,7 +261,12 @@ class AllenBrainTool(BaseTool):
         )
         include = "structure" if include_structure else None
 
-        result = self._make_rma_query(criteria, num_rows=num_rows, include=include)
+        result = self._make_rma_query(
+            criteria,
+            num_rows=num_rows,
+            start_row=start_row,
+            include=include,
+        )
         if not result.get("success"):
             return {"status": "error", "error": "Allen Brain Atlas query failed"}
 
@@ -209,9 +275,7 @@ class AllenBrainTool(BaseTool):
             "status": "success",
             "data": records,
             "metadata": {
-                "total_results": result.get("total_rows", len(records)),
-                "num_rows": result.get("num_rows", num_rows),
-                "start_row": result.get("start_row", 0),
+                **self._page_metadata(result, len(records), num_rows, start_row),
                 "section_data_set_id": section_data_set_id,
             },
         }

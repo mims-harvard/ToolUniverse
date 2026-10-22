@@ -1,7 +1,7 @@
 """
 MeSH_search_terms
 
-Search MeSH terms (entry terms/synonyms) by label. MeSH terms include the preferred descriptor na...
+Search MeSH terms (entry terms/synonyms) by label. MeSH terms include preferred descriptor names,...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def MeSH_search_terms(
     validate: bool = True,
 ) -> Any:
     """
-    Search MeSH terms (entry terms/synonyms) by label. MeSH terms include the preferred descriptor na...
+    Search MeSH terms (entry terms/synonyms) by label. MeSH terms include preferred descriptor names,...
 
     Parameters
     ----------

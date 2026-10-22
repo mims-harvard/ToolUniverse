@@ -2,7 +2,7 @@
   {
     "name": "Addgene_search_plasmids",
     "type": "AddgeneTool",
-    "description": "Search Addgene's plasmid catalog by name, gene, species, or vector type. Addgene is a nonprofit global plasmid repository with 100,000+ plasmids. Returns plasmid name, ID, purpose, depositor, genes, species, vector types, and expression systems. Requires ADDGENE_API_KEY environment variable. Use for: finding CRISPR plasmids, AAV vectors, expression constructs, shRNA libraries.",
+    "description": "Search Addgene's plasmid catalog by name, gene, species, or vector type with explicit page pagination. Returns exact total-count and continuation metadata in addition to plasmid fields. Requires ADDGENE_API_KEY environment variable. Use for: finding CRISPR plasmids, AAV vectors, expression constructs, shRNA libraries.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -34,8 +34,16 @@
         },
         "limit": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
           "default": 10,
           "description": "Maximum number of results to return (default 10, max 100)"
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "One-based Addgene result page. Use metadata.next_page_number to continue."
         }
       },
       "required": [
@@ -241,7 +249,7 @@
   {
     "name": "Addgene_search_depositors",
     "type": "AddgeneTool",
-    "description": "Search for Addgene depositors (PIs / principal investigators) by name or institution. Returns unique depositor names with their plasmid counts and example plasmids. At least one of name or institution is required. Requires ADDGENE_API_KEY environment variable. Use for: finding plasmids from a specific lab, browsing depositor contributions.",
+    "description": "Search for Addgene depositors (PIs / principal investigators) by name. The Developers API has no reliable institution filter, so institution input returns an explicit error rather than being misapplied to article authors. Depositor plasmid counts are derived from the current plasmid page only; use page continuation to scan all matching plasmids. Requires ADDGENE_API_KEY.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -265,10 +273,25 @@
             "string",
             "null"
           ],
-          "description": "Institution name to search (e.g., 'MIT', 'Broad Institute')"
+          "description": "Unsupported by the Addgene Developers API. Supplying this field returns an explicit error instead of an unreliable result."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 50,
+          "description": "Number of matching plasmids to scan for depositor information on this page."
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "One-based plasmid result page. Use metadata.next_page to continue scanning depositor matches."
         }
       },
-      "required": []
+      "required": [
+        "name"
+      ]
     },
     "return_schema": {
       "oneOf": [

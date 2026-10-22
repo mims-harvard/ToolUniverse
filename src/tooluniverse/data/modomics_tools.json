@@ -1,13 +1,22 @@
 [
   {
     "name": "MODOMICS_list_modifications",
-    "description": "List all known RNA modifications from the MODOMICS database. Returns modification names, chemical formulas, molecular masses, SMILES structures, and reference moieties (which standard nucleoside the modification derives from: A, C, G, U). MODOMICS catalogs 430+ distinct RNA modifications found across all domains of life. Use limit parameter to control the number of results returned.",
+    "description": "List known RNA modifications from MODOMICS with chemical properties. The complete catalog is recoverably paginated: start at offset=0 and continue with data.next_offset while data.has_more is true; data.total is the complete count.",
     "parameter": {
       "type": "object",
       "properties": {
         "limit": {
           "type": "integer",
-          "description": "Maximum number of modifications to return (default: 50, max: 500)"
+          "description": "Maximum number of modifications to return (default: 50, max: 500)",
+          "default": 50,
+          "minimum": 1,
+          "maximum": 500
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based catalog offset. Continue with data.next_offset.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": []
@@ -38,19 +47,35 @@
           }
         },
         "total": {"type": "integer"},
-        "returned": {"type": "integer"}
+        "returned": {"type": "integer"},
+        "offset": {
+          "type": "integer"
+        },
+        "has_more": {
+          "type": "boolean"
+        },
+        "next_offset": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "result_set_complete": {
+          "type": "boolean"
+        }
       }
     }
   },
   {
     "name": "MODOMICS_get_modification",
-    "description": "Get detailed information about a specific RNA modification from MODOMICS by its numeric ID. Returns the full chemical structure (SMILES), molecular formula, average and monoisotopic masses, protonated mass (for mass spectrometry), reference moiety, abbreviation, product ions, and LC elution data. Useful for identifying RNA modifications in mass spectrometry experiments.",
+    "description": "Get one RNA modification by exact numeric ID from the complete MODOMICS catalog. The apparent /modifications/{id} route currently ignores the ID and returns all 433 records, so this wrapper deliberately fetches the complete catalog, validates every catalog-key/embedded-ID pair, and selects only the exact key. Unknown IDs are explicit errors rather than silently returning the first catalog entry. Returns chemical structure, formula, masses, reference moiety, abbreviations, product ions, and LC elution data.",
     "parameter": {
       "type": "object",
       "properties": {
         "modification_id": {
           "type": "integer",
-          "description": "MODOMICS modification numeric ID. Examples: 78 (pseudouridine), 2 (5,2'-O-dimethylcytidine), 58 (N6-methyladenosine/m6A), 22 (5-methylcytidine/m5C)"
+          "minimum": 1,
+          "description": "Current MODOMICS modification numeric ID. Live catalog examples: 118 (pseudouridine/Y), 96 (N6-methyladenosine/m6A), 18 (5-methylcytidine/m5C), 2 (5,2'-O-dimethylcytidine/m5Cm). IDs 78 and 58 represent different modifications and must not be used as aliases for these compounds."
         }
       },
       "required": ["modification_id"]
@@ -60,8 +85,12 @@
     },
     "type": "MODOMICSTool",
     "test_examples": [
-      {"modification_id": 78},
-      {"modification_id": 58}
+      {
+        "modification_id": 118
+      },
+      {
+        "modification_id": 96
+      }
     ],
     "return_schema": {
       "type": "object",
@@ -84,7 +113,7 @@
   },
   {
     "name": "MODOMICS_search_modifications",
-    "description": "Search MODOMICS RNA modifications by name, short name, or chemical formula. Searches across the full MODOMICS database of 430+ RNA modifications. Query matches against modification name (e.g., 'pseudouridine', 'methyladenosine'), short name (e.g., 'm6A', 'm5C'), or formula. Returns matching modifications with their chemical details.",
+    "description": "Search the full MODOMICS catalog by name, short name, or chemical formula. Matches are recoverably paginated: start at offset=0 and continue with data.next_offset while data.has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -94,7 +123,16 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum number of results to return (default: 20)"
+          "description": "Maximum number of results to return (default: 20)",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 500
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based match offset. Continue with data.next_offset.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": ["query"]
@@ -124,7 +162,22 @@
           }
         },
         "total_matches": {"type": "integer"},
-        "returned": {"type": "integer"}
+        "returned": {"type": "integer"},
+        "offset": {
+          "type": "integer"
+        },
+        "has_more": {
+          "type": "boolean"
+        },
+        "next_offset": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "result_set_complete": {
+          "type": "boolean"
+        }
       }
     }
   }

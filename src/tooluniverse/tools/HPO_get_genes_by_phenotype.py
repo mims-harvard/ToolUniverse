@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def HPO_get_genes_by_phenotype(
     term_id: str,
-    limit: Optional[int] = None,
-    offset: Optional[int] = None,
+    limit: Optional[int] = 50,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

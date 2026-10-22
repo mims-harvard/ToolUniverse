@@ -1,7 +1,7 @@
 """
 MGnify_search_studies
 
-Search MGnify metagenomics/microbiome studies by biome or keyword. Returns study accessions (MGYS...
+Search MGnify studies with explicit page pagination. Preserves upstream JSON:API links and pagina...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,14 @@ def MGnify_search_studies(
     biome: Optional[str] = None,
     search: Optional[str] = None,
     size: Optional[int] = 10,
+    page: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> list[Any]:
     """
-    Search MGnify metagenomics/microbiome studies by biome or keyword. Returns study accessions (MGYS...
+    Search MGnify studies with explicit page pagination. Preserves upstream JSON:API links and pagina...
 
     Parameters
     ----------
@@ -28,6 +29,8 @@ def MGnify_search_studies(
         Keyword to search in study titles/descriptions.
     size : int
         Number of records per page (1–100).
+    page : int
+        One-based page number. Continue with metadata.next_page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,12 @@ def MGnify_search_studies(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"biome": biome, "search": search, "size": size}.items()
+        for k, v in {
+            "biome": biome,
+            "search": search,
+            "size": size,
+            "page": page,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

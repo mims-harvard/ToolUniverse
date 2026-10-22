@@ -14,6 +14,7 @@ def OpenFDA_search_drug_approvals(
     sponsor: Optional[str] = None,
     application_number: Optional[str] = None,
     limit: Optional[int] = 5,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -33,7 +34,9 @@ def OpenFDA_search_drug_approvals(
     application_number : str
         FDA application number (e.g., 'NDA021457', 'ANDA078372', 'BLA125554')
     limit : int
-        Maximum number of results (default: 5, max: 20)
+        Maximum applications on this page (default: 5, max: 100)
+    offset : int
+        openFDA skip offset; continue with metadata.next_offset
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def OpenFDA_search_drug_approvals(
             "sponsor": sponsor,
             "application_number": application_number,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

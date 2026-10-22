@@ -92,7 +92,8 @@ class EBIProteinsInteractionsTool(BaseTool):
                 "status": "error",
                 "error": "accession is required (e.g., 'P04637').",
             }
-        limit = int(arguments.get("limit", 50))
+        limit = min(max(int(arguments.get("limit") or 50), 1), 500)
+        offset = max(int(arguments.get("offset") or 0), 0)
 
         url = f"{EBI_PROTEINS_BASE_URL}/proteins/interaction/{accession}"
         response = requests.get(
@@ -140,18 +141,29 @@ class EBIProteinsInteractionsTool(BaseTool):
         unique_interactions = sorted(
             seen.values(), key=lambda x: x["experiments"], reverse=True
         )
-        truncated = unique_interactions[:limit]
+        interaction_page = unique_interactions[offset : offset + limit]
+        interactions_truncated = offset + len(interaction_page) < len(
+            unique_interactions
+        )
 
         return {
             "status": "success",
             "data": {
                 "query_accession": accession,
-                "interactions": truncated,
+                "interactions": interaction_page,
+                "total_interactions": len(unique_interactions),
+                "offset": offset,
+                "interactions_returned": len(interaction_page),
+                "interactions_truncated": interactions_truncated,
+                "next_offset": (
+                    offset + len(interaction_page) if interactions_truncated else None
+                ),
             },
             "metadata": {
                 "source": "EBI Proteins API / IntAct (ebi.ac.uk/proteins)",
                 "total_interactions": len(unique_interactions),
-                "returned": len(truncated),
+                "returned": len(interaction_page),
+                "offset": offset,
             },
         }
 
@@ -163,6 +175,8 @@ class EBIProteinsInteractionsTool(BaseTool):
                 "status": "error",
                 "error": "accession is required (e.g., 'P04637').",
             }
+        limit = min(max(int(arguments.get("limit") or 50), 1), 500)
+        offset = max(int(arguments.get("offset") or 0), 0)
 
         url = f"{EBI_PROTEINS_BASE_URL}/proteins/interaction/{accession}"
         response = requests.get(
@@ -243,9 +257,13 @@ class EBIProteinsInteractionsTool(BaseTool):
                 or interaction["experiments"] > seen[partner]["experiments"]
             ):
                 seen[partner] = interaction
-        top_interactions = sorted(
+        sorted_interactions = sorted(
             seen.values(), key=lambda x: x["experiments"], reverse=True
-        )[:50]
+        )
+        interaction_page = sorted_interactions[offset : offset + limit]
+        interactions_truncated = offset + len(interaction_page) < len(
+            sorted_interactions
+        )
 
         return {
             "status": "success",
@@ -255,12 +273,21 @@ class EBIProteinsInteractionsTool(BaseTool):
                 "protein_existence": protein_existence,
                 "organism": organism,
                 "total_interaction_entries": len(data),
-                "top_interactions": top_interactions,
+                "top_interactions": interaction_page,
+                "total_interactions": len(sorted_interactions),
+                "offset": offset,
+                "interactions_returned": len(interaction_page),
+                "interactions_truncated": interactions_truncated,
+                "next_offset": (
+                    offset + len(interaction_page) if interactions_truncated else None
+                ),
                 "diseases": sorted(diseases),
                 "subcellular_locations": sorted(locations),
             },
             "metadata": {
                 "source": "EBI Proteins API / IntAct (ebi.ac.uk/proteins)",
                 "total_interactions": len(seen),
+                "returned": len(interaction_page),
+                "offset": offset,
             },
         }

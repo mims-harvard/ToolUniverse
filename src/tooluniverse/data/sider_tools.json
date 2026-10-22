@@ -85,7 +85,7 @@
   {
     "name": "SIDER_get_drug_side_effects",
     "type": "SiderTool",
-    "description": "Get the list of known side effects for a drug from SIDER, including frequency data when available. Side effects are extracted from drug labels and include MedDRA codes, the frequency reported for the drug (e.g., '21% - 57.5%', '6%', or qualitative terms such as 'postmarketing' or 'rare'), and the placebo-arm rate when the label reports one. Most SIDER labels have no placebo arm, so placebo_frequency is null for the majority of side effects; null means SIDER has no placebo rate, not that the placebo rate is zero or equal to the drug's rate. Provide either a drug name (will auto-search) or a SIDER drug ID from SIDER_search_drug. Returns adverse reactions recorded in official drug labels.",
+    "description": "Get the list of known side effects for a drug from SIDER, including frequency data when available. Side effects are extracted from drug labels and include MedDRA codes, the frequency reported for the drug (e.g., '21% - 57.5%', '6%', or qualitative terms such as 'postmarketing' or 'rare'), and the placebo-arm rate when the label reports one. Most SIDER labels have no placebo arm, so placebo_frequency is null for the majority of side effects; null means SIDER has no placebo rate, not that the placebo rate is zero or equal to the drug's rate. Frequency values are label-derived, not incidence estimates for an unselected population. Results use exact, recoverable local pagination over the complete parsed drug page: metadata.total_matches is exact when source_parse_complete is true; continue with next_offset while has_more is true. Provide exactly one of drug_name (will auto-search) or a SIDER drug ID from SIDER_search_drug. Returns adverse reactions recorded in official drug labels.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -116,7 +116,13 @@
           "minimum": 1,
           "maximum": 500,
           "default": 50,
-          "description": "Maximum number of side effects to return (default: 50)"
+          "description": "Maximum side effects on this page (default: 50)"
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset into the exact parsed side-effect set; continue with metadata.next_offset"
         }
       },
       "required": []
@@ -179,7 +185,8 @@
       {
         "operation": "get_side_effects",
         "drug_name": "ibuprofen",
-        "limit": 10
+        "limit": 10,
+        "offset": 0
       },
       {
         "operation": "get_side_effects",
@@ -280,7 +287,7 @@
   {
     "name": "SIDER_get_drugs_for_side_effect",
     "type": "SiderTool",
-    "description": "Find all drugs associated with a specific side effect in SIDER. Returns drugs known to cause the given adverse reaction, with frequency information when available (e.g., '7%', '5% - 18%', 'postmarketing', 'common'). Provide either a MedDRA code (e.g., C0018681 for headache) or a side effect name (will auto-search). Useful for drug safety comparisons and adverse event analysis.",
+    "description": "Find unique drugs associated with one SIDER side effect using exact, recoverable local pagination over the complete side-effect page. Duplicate source rows for one drug ID are merged without discarding distinct frequency strings; metadata exposes source_association_rows and duplicate_source_rows. Continue with next_offset while has_more is true. Provide exactly one of meddra_code or side_effect_name.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -311,7 +318,13 @@
           "minimum": 1,
           "maximum": 2000,
           "default": 50,
-          "description": "Maximum number of drugs to return (default: 50)"
+          "description": "Maximum drugs on this page (default: 50)"
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset into the exact drug association set; continue with metadata.next_offset"
         }
       },
       "required": []
@@ -329,7 +342,7 @@
         },
         "total_drugs": {
           "type": "integer",
-          "description": "Total number of drugs associated with this side effect"
+          "description": "Exact number of unique SIDER drug IDs associated with this side effect"
         },
         "drugs": {
           "type": "array",
@@ -350,6 +363,17 @@
                   "null"
                 ],
                 "description": "Frequency information (e.g., '7%', '5% - 18%', 'postmarketing', 'common', 'rare')"
+              },
+              "frequency_values": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "All distinct non-empty frequency strings across duplicate source rows for this drug"
+              },
+              "source_row_count": {
+                "type": "integer",
+                "description": "Number of SIDER detail-page rows merged into this unique drug record"
               }
             }
           }
@@ -360,7 +384,8 @@
       {
         "operation": "get_drugs_for_side_effect",
         "meddra_code": "C0018681",
-        "limit": 10
+        "limit": 10,
+        "offset": 0
       },
       {
         "operation": "get_drugs_for_side_effect",
@@ -375,7 +400,7 @@
   {
     "name": "SIDER_search_side_effect",
     "type": "SiderTool",
-    "description": "Search for a side effect by name in SIDER. Returns matching side effects with their MedDRA codes (UMLS CUIs). Use this to find the correct MedDRA code for a side effect before querying SIDER_get_drugs_for_side_effect. SIDER uses MedDRA (Medical Dictionary for Regulatory Activities) terminology for standardized adverse event reporting.",
+    "description": "Search for a side effect by name in SIDER and return matching MedDRA/UMLS codes. drug_count is only the upstream search suggestion's reported count and is explicitly marked non-exact because it can disagree with unique drug IDs on the detail page; call SIDER_get_drugs_for_side_effect for an exact unique count and pagination.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -422,6 +447,14 @@
                   "null"
                 ],
                 "description": "Number of drugs associated with this side effect"
+              },
+              "drug_count_is_upstream_reported": {
+                "type": "boolean",
+                "description": "True when drug_count came from the SIDER search suggestion"
+              },
+              "drug_count_is_exact": {
+                "type": "boolean",
+                "description": "False because SIDER search counts can disagree with unique IDs on the detail page"
               }
             }
           }

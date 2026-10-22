@@ -14,6 +14,7 @@ def EnsemblLD_get_ld_variants(
     r2_threshold: Optional[float] = None,
     d_prime_threshold: Optional[float] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -33,7 +34,9 @@ def EnsemblLD_get_ld_variants(
     d_prime_threshold : float
         Minimum D' threshold. Default: none. Set e.g., 0.8 for high D' only.
     limit : int
-        Maximum number of LD partners to return, strongest r2 first. Default: 200. In...
+        Maximum number of LD partners to return, strongest r2 first. Default: 200.
+    offset : int
+        Zero-based LD-partner offset. Continue with data.next_offset while has_more i...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def EnsemblLD_get_ld_variants(
             "r2_threshold": r2_threshold,
             "d_prime_threshold": d_prime_threshold,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

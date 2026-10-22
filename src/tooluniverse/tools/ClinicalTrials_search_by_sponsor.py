@@ -14,6 +14,7 @@ def ClinicalTrials_search_by_sponsor(
     filter_status: Optional[str] = None,
     filter_phase: Optional[str] = None,
     page_size: Optional[int] = 10,
+    next_page_token: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -34,6 +35,8 @@ def ClinicalTrials_search_by_sponsor(
         Filter by phase: 'PHASE1', 'PHASE2', 'PHASE3', 'PHASE4'. Comma-separate multi...
     page_size : int
         Number of results per page (default 10, max 1000).
+    next_page_token : str
+        Opaque token from metadata.next_page_token. Omit for the first page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def ClinicalTrials_search_by_sponsor(
             "filter_status": filter_status,
             "filter_phase": filter_phase,
             "page_size": page_size,
+            "next_page_token": next_page_token,
         }.items()
         if v is not None
     }

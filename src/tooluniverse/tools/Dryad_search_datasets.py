@@ -1,7 +1,7 @@
 """
 Dryad_search_datasets
 
-Search the Dryad open research data repository for published datasets. Dryad is a curated, genera...
+Search the Dryad open research data repository for published datasets using its real `/api/v2/sea...
 """
 
 from typing import Any, Optional, Callable
@@ -10,15 +10,15 @@ from ._shared_client import get_shared_client
 
 def Dryad_search_datasets(
     q: str,
-    per_page: Optional[int] = None,
-    page: Optional[int] = None,
+    per_page: Optional[int] = 10,
+    page: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search the Dryad open research data repository for published datasets. Dryad is a curated, genera...
+    Search the Dryad open research data repository for published datasets using its real `/api/v2/sea...
 
     Parameters
     ----------

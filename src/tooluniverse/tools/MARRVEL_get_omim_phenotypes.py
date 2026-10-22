@@ -1,7 +1,7 @@
 """
 MARRVEL_get_omim_phenotypes
 
-Get OMIM phenotype/disease associations for a human gene by symbol via MARRVEL: each association'...
+Get the complete OMIM phenotype association list for a human gene via MARRVEL, including phenotyp...
 """
 
 from typing import Any, Optional, Callable
@@ -18,16 +18,16 @@ def MARRVEL_get_omim_phenotypes(
     validate: bool = True,
 ) -> Any:
     """
-    Get OMIM phenotype/disease associations for a human gene by symbol via MARRVEL: each association'...
+    Get the complete OMIM phenotype association list for a human gene via MARRVEL, including phenotyp...
 
     Parameters
     ----------
     symbol : str
-        HGNC gene symbol, e.g. 'CFTR', 'BRCA1'.
+        HGNC gene symbol, e.g. 'CFTR', 'BRCA1'. Input is normalized to uppercase for ...
     gene_symbol : str
-        Alias for symbol.
+        Alias for symbol. Multiple supplied aliases must agree.
     gene : str
-        Alias for symbol.
+        Alias for symbol. Multiple supplied aliases must agree.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

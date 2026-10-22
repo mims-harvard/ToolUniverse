@@ -4,6 +4,7 @@ import requests
 import tempfile
 import time
 import xml.etree.ElementTree as ET
+from datetime import date
 from .base_tool import BaseTool
 from .extras import install_hint
 from .tool_registry import register_tool
@@ -26,7 +27,7 @@ class ArXivTool(BaseTool):
     def __init__(
         self,
         tool_config,
-        base_url="http://export.arxiv.org/api/query",
+        base_url="https://export.arxiv.org/api/query",
     ):
         super().__init__(tool_config)
         self.base_url = base_url
@@ -40,21 +41,52 @@ class ArXivTool(BaseTool):
 
     def run(self, arguments):
         query = arguments.get("query")
-        limit = int(arguments.get("limit", 10))
+        limit = arguments.get("limit", 10)
         # sort_by: relevance | lastUpdatedDate | submittedDate
         sort_by = arguments.get("sort_by", "relevance")
         # sort_order: ascending | descending
         sort_order = arguments.get("sort_order", "descending")
         date_from = arguments.get("date_from")
         date_to = arguments.get("date_to")
+        start = arguments.get("start", 0)
 
         if not query:
             return {"status": "error", "error": "`query` parameter is required."}
 
-        if limit <= 0:
-            return []
+        if (
+            isinstance(limit, bool)
+            or not isinstance(limit, int)
+            or not 1 <= limit <= 200
+        ):
+            return {
+                "status": "error",
+                "error": "limit must be an integer from 1 to 200",
+            }
+        if isinstance(start, bool) or not isinstance(start, int) or start < 0:
+            return {"status": "error", "error": "start must be a non-negative integer"}
+        if sort_order not in {"ascending", "descending"}:
+            return {
+                "status": "error",
+                "error": "sort_order must be 'ascending' or 'descending'",
+            }
+        parsed_dates = {}
+        for key, value in (("date_from", date_from), ("date_to", date_to)):
+            if value is None:
+                continue
+            try:
+                parsed_dates[key] = date.fromisoformat(value)
+            except (TypeError, ValueError):
+                return {"status": "error", "error": f"{key} must use YYYY-MM-DD"}
+        if (
+            parsed_dates.get("date_from")
+            and parsed_dates.get("date_to")
+            and parsed_dates["date_from"] > parsed_dates["date_to"]
+        ):
+            return {"status": "error", "error": "date_from must not exceed date_to"}
 
-        return self._search(query, limit, sort_by, sort_order, date_from, date_to)
+        return self._search(
+            query, limit, sort_by, sort_order, date_from, date_to, start=start
+        )
 
     _VALID_SORT_BY = {"relevance", "lastUpdatedDate", "submittedDate"}
 
@@ -105,7 +137,16 @@ class ArXivTool(BaseTool):
             return f"all:{query}"
         return " AND ".join(f"all:{t}" for t in tokens)
 
-    def _search(self, query, limit, sort_by, sort_order, date_from=None, date_to=None):
+    def _search(
+        self,
+        query,
+        limit,
+        sort_by,
+        sort_order,
+        date_from=None,
+        date_to=None,
+        start=0,
+    ):
         if sort_by not in self._VALID_SORT_BY:
             return {
                 "status": "error",
@@ -120,14 +161,14 @@ class ArXivTool(BaseTool):
             # missing date_from defaults to 19910101 (arXiv launch),
             # missing date_to defaults to 29991231 (far future).
             # arXiv submittedDate expects YYYYMMDDHHMMSS (14-char) timestamps
-            start = (date_from or "1991-01-01").replace("-", "") + "000000"
-            end = (date_to or "2999-12-31").replace("-", "") + "235959"
-            date_clause = f"submittedDate:[{start} TO {end}]"
+            date_start = (date_from or "1991-01-01").replace("-", "") + "000000"
+            date_end = (date_to or "2999-12-31").replace("-", "") + "235959"
+            date_clause = f"submittedDate:[{date_start} TO {date_end}]"
             search_query = f"{search_query} AND {date_clause}"
 
         params = {
             "search_query": search_query,
-            "start": 0,
+            "start": start,
             "max_results": max(1, min(limit, 200)),
             "sortBy": sort_by,
             "sortOrder": sort_order,
@@ -168,7 +209,10 @@ class ArXivTool(BaseTool):
                 "reason": str(e),
             }
 
-        ns = {"atom": "http://www.w3.org/2005/Atom"}
+        ns = {
+            "atom": "http://www.w3.org/2005/Atom",
+            "opensearch": "http://a9.com/-/spec/opensearch/1.1/",
+        }
         entries = []
         for entry in root.findall("atom:entry", ns):
             title_text = entry.findtext(
@@ -211,7 +255,47 @@ class ArXivTool(BaseTool):
                 }
             )
 
-        return entries
+        def integer_value(path, default=None):
+            try:
+                return int(root.findtext(path, namespaces=ns))
+            except (TypeError, ValueError):
+                return default
+
+        total = integer_value("opensearch:totalResults")
+        response_start = integer_value("opensearch:startIndex", start)
+        items_per_page = integer_value("opensearch:itemsPerPage", limit)
+        returned = len(entries)
+        total_is_exact = isinstance(total, int)
+        next_start = response_start + returned
+        stalled = bool(total_is_exact and not entries and response_start < total)
+        has_more = bool(total_is_exact and entries and next_start < total)
+        return {
+            "status": "success",
+            "data": entries,
+            # Compatibility for older direct callers that consumed
+            # ``result`` while ToolUniverse's schema layer unwraps ``data``.
+            "result": entries,
+            "metadata": {
+                "returned": returned,
+                "total_results": total if total_is_exact else None,
+                "total_results_is_exact": total_is_exact,
+                "start": response_start,
+                "requested_limit": limit,
+                "upstream_items_per_page": items_per_page,
+                "has_more": has_more,
+                "next_start": next_start if has_more else None,
+                "truncated": response_start > 0 or has_more,
+                "result_set_complete": bool(
+                    total_is_exact and response_start == 0 and returned == total
+                ),
+                "pagination_stalled": stalled,
+                "warning": (
+                    "arXiv reported additional results but returned an empty page at this start offset."
+                    if stalled
+                    else None
+                ),
+            },
+        }
 
     def _respect_rate_limit(self):
         """arXiv asks clients to avoid rapid-fire requests; keep a 3s gap."""

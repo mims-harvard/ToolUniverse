@@ -1,7 +1,7 @@
 """
 ClinVar_search_variants
 
-Search for variants in ClinVar database by gene name, condition, variant ID, or variant name (pro...
+Search ClinVar variants with explicit offset pagination. Returns the true total plus returned, tr...
 """
 
 from typing import Any, Optional, Callable
@@ -15,6 +15,7 @@ def ClinVar_search_variants(
     variant_name: Optional[str | list[Any]] = None,
     max_results: Optional[int] = 20,
     limit: Optional[int] = None,
+    offset: Optional[int] = 0,
     clinical_significance: Optional[str] = None,
     gene_symbol: Optional[str] = None,
     significance: Optional[str] = None,
@@ -25,7 +26,7 @@ def ClinVar_search_variants(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search for variants in ClinVar database by gene name, condition, variant ID, or variant name (pro...
+    Search ClinVar variants with explicit offset pagination. Returns the true total plus returned, tr...
 
     Parameters
     ----------
@@ -41,6 +42,8 @@ def ClinVar_search_variants(
         Maximum number of results to return (default: 20). Alias: limit.
     limit : int
         Alias for max_results: maximum number of results to return.
+    offset : int
+        Zero-based result offset, mapped to NCBI ESearch retstart. Continue with data...
     clinical_significance : str
         Filter by clinical significance. Must be one of the classes ClinVar's index a...
     gene_symbol : str
@@ -72,6 +75,7 @@ def ClinVar_search_variants(
             "variant_name": variant_name,
             "max_results": max_results,
             "limit": limit,
+            "offset": offset,
             "clinical_significance": clinical_significance,
             "gene_symbol": gene_symbol,
             "significance": significance,

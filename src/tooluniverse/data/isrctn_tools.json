@@ -1,7 +1,7 @@
 [
     {
         "name": "ISRCTN_search_trials",
-        "description": "Search the ISRCTN clinical trial registry \u2014 a WHO-primary registry (UK-based, international scope) \u2014 by free text. Returns matching trials with ISRCTN id, title, scientific title, acronym, study hypothesis, primary study design, end date, and cross-reference ids (DOI, EudraCT, ClinicalTrials.gov). A third trial source alongside ClinicalTrials.gov and EU CTIS. No API key required.",
+        "description": "Search the ISRCTN clinical trial registry by free text. The official XML API has no pagination and returns at most 100 matches; metadata explicitly reports truncation, unreachable_results, and whether increasing limit can retrieve more. No API key required.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -10,16 +10,17 @@
                     "description": "Free-text search, e.g. 'cystic fibrosis', 'diabetes prevention'."
                 },
                 "limit": {
-                    "type": [
-                        "integer",
-                        "null"
-                    ],
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100,
+                    "default": 10,
                     "description": "Max trials to return (default 10, max 100)."
                 }
             },
             "required": [
                 "query"
-            ]
+            ],
+            "additionalProperties": false
         },
         "fields": {
             "timeout": 30
@@ -63,7 +64,7 @@
     },
     {
         "name": "ISRCTN_search_trials_fielded",
-        "description": "Field-scoped (fielded) search of the ISRCTN clinical trial registry using its boolean query DSL. Unlike the free-text ISRCTN_search_trials, this lets you scope a query to specific registry fields so results are precise. Pass a raw 'q' DSL string such as 'condition:diabetes', 'phase:\"Phase III\"', or combine fields with AND/OR: 'gender:Female AND condition:asthma'. Alternatively pass field helpers (condition, phase, gender, intervention, sponsor, funder, country, drug_name) which are joined with AND. Returns detailed trial records (interventions, primary/secondary outcomes, inclusion/exclusion eligibility, sponsors, funders, recruitment countries and dates, drug names, enrolment, IPD-sharing, plain-English summary). No API key required.",
+        "description": "Field-scoped ISRCTN search using its boolean query DSL. The official XML API has no pagination and returns at most 100 matches; metadata explicitly reports truncation, unreachable_results, and whether increasing limit can retrieve more.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -138,14 +139,15 @@
                     "description": "Drug name field helper (compiled to drugName:VALUE)."
                 },
                 "limit": {
-                    "type": [
-                        "integer",
-                        "null"
-                    ],
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100,
+                    "default": 10,
                     "description": "Max trials to return (default 10, max 100)."
                 }
             },
-            "required": []
+            "required": [],
+            "additionalProperties": false
         },
         "fields": {
             "timeout": 30

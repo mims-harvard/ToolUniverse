@@ -19,6 +19,7 @@ No authentication required (optional API key for higher rate limits).
 Reference: https://open.fda.gov/apis/drug/drugsfda/
 """
 
+import os
 import re
 import requests
 from typing import Dict, Any, Optional
@@ -101,15 +102,10 @@ def _strength_sort_key(strength: str):
     return (1, 0.0, strength)
 
 
-def collect_names(result: Dict):
-    """Brand and generic names for an application, as ``(brand, generic)``.
+def collect_name_lists(result: Dict):
+    """Every brand and generic name for an application, as sorted lists.
 
-    Both are the union of the *resolved* `openfda` block and the authoritative
-    per-product fields, because `openfda` is empty for NDA215256 (Wegovy) and
-    NDA209637 (Ozempic injection) -- reading it alone reported
-    ``brand_name: null`` for records whose products are plainly named WEGOVY /
-    WEGOVY FLEXTOUCH / WEGOVY HD. Every name is returned; the previous ``[:3]``
-    cuts bought nothing on lists this size while hiding real presentations.
+    See `collect_names` for why the per-product fields are included.
     """
     openfda = result.get("openfda", {})
     brands = set(openfda.get("brand_name") or [])
@@ -120,9 +116,23 @@ def collect_names(result: Dict):
         for ing in prod.get("active_ingredients", []):
             if ing.get("name"):
                 generics.add(ing["name"])
+    return sorted(brands), sorted(generics)
+
+
+def collect_names(result: Dict):
+    """Brand and generic names for an application, as ``(brand, generic)``.
+
+    Both are the union of the *resolved* `openfda` block and the authoritative
+    per-product fields, because `openfda` is empty for NDA215256 (Wegovy) and
+    NDA209637 (Ozempic injection) -- reading it alone reported
+    ``brand_name: null`` for records whose products are plainly named WEGOVY /
+    WEGOVY FLEXTOUCH / WEGOVY HD. Every name is returned; the previous ``[:3]``
+    cuts bought nothing on lists this size while hiding real presentations.
+    """
+    brands, generics = collect_name_lists(result)
     return (
-        ", ".join(sorted(brands)) if brands else None,
-        ", ".join(sorted(generics)) if generics else None,
+        ", ".join(brands) if brands else None,
+        ", ".join(generics) if generics else None,
     )
 
 
@@ -148,7 +158,9 @@ class OpenFDAApprovalTool(BaseTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the OpenFDA Drug Approvals tool with given arguments."""
-        operation = arguments.get("operation")
+        operation = arguments.get("operation") or (
+            self.tool_config.get("fields") or {}
+        ).get("operation")
         if not operation:
             return {"status": "error", "error": "Missing required parameter: operation"}
 
@@ -178,16 +190,58 @@ class OpenFDAApprovalTool(BaseTool):
                 "error": "openFDA operation failed: {}".format(str(e)),
             }
 
-    def _make_request(self, search: str, limit: int = 5) -> Optional[Dict[str, Any]]:
+    def _make_request(
+        self, search: str, limit: int = 5, offset: int = 0
+    ) -> Dict[str, Any]:
         """Make GET request to openFDA drugsfda endpoint."""
-        params = {"search": search, "limit": min(limit, 100)}
+        params = {"search": search, "limit": limit, "skip": offset}
+        api_key = self.credential("FDA_API_KEY")
+        if api_key:
+            params["api_key"] = api_key
         response = requests.get(FDA_DRUGSFDA_URL, params=params, timeout=self.timeout)
-        if response.status_code == 200:
-            return response.json()
-        elif response.status_code == 404:
-            return None
-        else:
-            return None
+        if response.status_code == 404:
+            return {"status": "not_found", "status_code": 404}
+        if response.status_code != 200:
+            return {
+                "status": "error",
+                "status_code": response.status_code,
+                "error": "openFDA Drugs@FDA returned HTTP {}".format(
+                    response.status_code
+                ),
+                "detail": (response.text or "")[:500],
+            }
+        try:
+            payload = response.json()
+        except ValueError:
+            return {
+                "status": "error",
+                "status_code": 200,
+                "error": "openFDA Drugs@FDA returned invalid JSON",
+            }
+        if not isinstance(payload, dict):
+            return {
+                "status": "error",
+                "status_code": 200,
+                "error": "openFDA Drugs@FDA returned an unexpected payload",
+            }
+        return {"status": "success", "payload": payload}
+
+    @staticmethod
+    def _quoted(value: str) -> str:
+        """Escape a value embedded in an openFDA/Lucene quoted expression."""
+        return value.replace("\\", "\\\\").replace('"', '\\"')
+
+    @staticmethod
+    def _validate_optional_text(arguments: Dict[str, Any], name: str):
+        value = arguments.get(name)
+        if value is None:
+            return None, None
+        if not isinstance(value, str) or not value.strip():
+            return None, {
+                "status": "error",
+                "error": "{} must be a non-empty string".format(name),
+            }
+        return value.strip(), None
 
     def _format_date(self, date_str: Optional[str]) -> Optional[str]:
         """Format YYYYMMDD date to YYYY-MM-DD."""
@@ -210,8 +264,23 @@ class OpenFDAApprovalTool(BaseTool):
         and ``error_response`` is set. ``header`` identifies the application
         chosen and discloses the ones that matched but are not described.
         """
-        drug_name = arguments.get("drug_name")
-        application_number = arguments.get("application_number")
+        drug_name, error = self._validate_optional_text(arguments, "drug_name")
+        if error:
+            return None, None, error
+        application_number, error = self._validate_optional_text(
+            arguments, "application_number"
+        )
+        if error:
+            return None, None, error
+        if drug_name and application_number:
+            return (
+                None,
+                None,
+                {
+                    "status": "error",
+                    "error": "Provide either drug_name or application_number, not both",
+                },
+            )
         if not drug_name and not application_number:
             return (
                 None,
@@ -223,14 +292,17 @@ class OpenFDAApprovalTool(BaseTool):
             )
 
         if application_number:
-            search = 'application_number:"{}"'.format(application_number)
+            search = 'application_number:"{}"'.format(self._quoted(application_number))
             limit = 1
         else:
-            search = build_drug_name_query(drug_name)
+            search = build_drug_name_query(self._quoted(drug_name))
             limit = self.NAME_CANDIDATE_LIMIT
 
-        data = self._make_request(search, limit)
-        if not data or not data.get("results"):
+        requested = self._make_request(search, limit)
+        if requested["status"] == "error":
+            return None, None, requested
+        data = requested.get("payload") or {}
+        if not data.get("results"):
             return (
                 None,
                 None,
@@ -243,12 +315,27 @@ class OpenFDAApprovalTool(BaseTool):
 
         results = data["results"]
         total = data.get("meta", {}).get("results", {}).get("total", len(results))
+        if application_number and total != 1:
+            return (
+                None,
+                None,
+                {
+                    "status": "error",
+                    "error": (
+                        "Exact application_number query returned {} records; "
+                        "cannot select a trustworthy application"
+                    ).format(total),
+                    "total_applications": total,
+                    "query": search,
+                },
+            )
         # Only NAME_CANDIDATE_LIMIT records are fetched, so a name matching more
         # applications than that cannot list them all. Say so rather than
         # repeat the defect this module just removed from `strengths`: a list
         # cut short beside a count that implies it is complete.
         others = [r.get("application_number") for r in results[1:]]
         brand_name, generic_name = collect_names(results[0])
+        brand_names, generic_names = collect_name_lists(results[0])
         header = {
             "query": search,
             "matching_applications": total,
@@ -258,6 +345,8 @@ class OpenFDAApprovalTool(BaseTool):
             "sponsor_name": results[0].get("sponsor_name"),
             "brand_name": brand_name,
             "generic_name": generic_name,
+            "brand_names": brand_names,
+            "generic_names": generic_names,
         }
         return results[0], header, None
 
@@ -271,15 +360,17 @@ class OpenFDAApprovalTool(BaseTool):
             reverse=True,
         )
 
-        # Find original approval
-        original_approval = None
-        for sub in submissions:
-            if (
-                sub.get("submission_type") == "ORIG"
-                and sub.get("submission_status") == "AP"
-            ):
-                original_approval = sub
-                break
+        approved_originals = [
+            sub
+            for sub in submissions
+            if sub.get("submission_type") == "ORIG"
+            and sub.get("submission_status") == "AP"
+        ]
+        original_approval = min(
+            approved_originals,
+            key=lambda sub: sub.get("submission_status_date", "99999999"),
+            default=None,
+        )
 
         # Get products info
         products = result.get("products", [])
@@ -304,11 +395,14 @@ class OpenFDAApprovalTool(BaseTool):
                 routes.add(rt)
 
         brand_name, generic_name = collect_names(result)
+        brand_names, generic_names = collect_name_lists(result)
         return {
             "application_number": result.get("application_number"),
             "sponsor_name": result.get("sponsor_name"),
             "brand_name": brand_name,
             "generic_name": generic_name,
+            "brand_names": brand_names,
+            "generic_names": generic_names,
             "active_ingredients": sorted(active_ingredients)
             if active_ingredients
             else None,
@@ -339,10 +433,41 @@ class OpenFDAApprovalTool(BaseTool):
 
     def _search_approvals(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search drug approvals by name, sponsor, or application number."""
-        drug_name = arguments.get("drug_name")
-        sponsor = arguments.get("sponsor")
-        application_number = arguments.get("application_number")
+        drug_name, error = self._validate_optional_text(arguments, "drug_name")
+        if error:
+            return error
+        sponsor, error = self._validate_optional_text(arguments, "sponsor")
+        if error:
+            return error
+        application_number, error = self._validate_optional_text(
+            arguments, "application_number"
+        )
+        if error:
+            return error
         limit = arguments.get("limit", 5)
+        offset = arguments.get("offset", 0)
+        if limit is None:
+            limit = 5
+        if offset is None:
+            offset = 0
+        if (
+            isinstance(limit, bool)
+            or not isinstance(limit, int)
+            or not 1 <= limit <= 100
+        ):
+            return {
+                "status": "error",
+                "error": "limit must be an integer from 1 to 100",
+            }
+        if (
+            isinstance(offset, bool)
+            or not isinstance(offset, int)
+            or not 0 <= offset <= 26000
+        ):
+            return {
+                "status": "error",
+                "error": "offset must be an integer from 0 to 26000",
+            }
 
         if not drug_name and not sponsor and not application_number:
             return {
@@ -353,15 +478,19 @@ class OpenFDAApprovalTool(BaseTool):
         # Build search query
         parts = []
         if drug_name:
-            parts.append(build_drug_name_query(drug_name))
+            parts.append(build_drug_name_query(self._quoted(drug_name)))
         if sponsor:
-            parts.append('sponsor_name:"{}"'.format(sponsor))
+            parts.append('sponsor_name:"{}"'.format(self._quoted(sponsor)))
         if application_number:
-            parts.append('application_number:"{}"'.format(application_number))
+            parts.append(
+                'application_number:"{}"'.format(self._quoted(application_number))
+            )
         search = " AND ".join(parts)
 
-        data = self._make_request(search, limit)
-        if not data or "results" not in data:
+        requested = self._make_request(search, limit, offset)
+        if requested["status"] == "error":
+            return requested
+        if requested["status"] == "not_found":
             return {
                 "status": "success",
                 "data": {
@@ -370,10 +499,48 @@ class OpenFDAApprovalTool(BaseTool):
                     "approvals": [],
                     "message": "No FDA drug approvals found",
                 },
+                "metadata": {
+                    "total_matches": 0,
+                    "total_matches_is_exact": True,
+                    "returned": 0,
+                    "limit": limit,
+                    "offset": offset,
+                    "has_more": False,
+                    "next_offset": None,
+                    "result_set_complete": offset == 0,
+                },
             }
 
-        total = data.get("meta", {}).get("results", {}).get("total", 0)
-        approvals = [self._extract_approval_summary(r) for r in data["results"]]
+        data = requested["payload"]
+        results = data.get("results")
+        meta_results = (data.get("meta") or {}).get("results") or {}
+        total = meta_results.get("total")
+        upstream_skip = meta_results.get("skip")
+        upstream_limit = meta_results.get("limit")
+        if (
+            not isinstance(results, list)
+            or isinstance(total, bool)
+            or not isinstance(total, int)
+            or upstream_skip != offset
+            or upstream_limit != limit
+        ):
+            return {
+                "status": "error",
+                "error": "openFDA Drugs@FDA returned invalid or conflicting pagination metadata",
+            }
+        approvals = [
+            self._extract_approval_summary(result)
+            for result in results
+            if isinstance(result, dict)
+        ]
+        if len(approvals) != len(results):
+            return {
+                "status": "error",
+                "error": "openFDA Drugs@FDA returned a malformed approval record",
+            }
+        next_offset = offset + len(approvals)
+        more_results_exist = next_offset < total
+        has_more = more_results_exist and next_offset <= 26000
 
         return {
             "status": "success",
@@ -381,6 +548,18 @@ class OpenFDAApprovalTool(BaseTool):
                 "query": search,
                 "total": total,
                 "approvals": approvals,
+            },
+            "metadata": {
+                "total_matches": total,
+                "total_matches_is_exact": True,
+                "returned": len(approvals),
+                "limit": limit,
+                "offset": offset,
+                "more_results_exist": more_results_exist,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
+                "upstream_window_exhausted": more_results_exist and not has_more,
+                "result_set_complete": offset == 0 and not more_results_exist,
             },
         }
 
@@ -423,7 +602,7 @@ class OpenFDAApprovalTool(BaseTool):
                         "title": doc.get("title"),
                         "url": doc.get("url"),
                     }
-                    for doc in app_docs[:5]
+                    for doc in app_docs
                 ]
             history.append(entry)
 
@@ -434,6 +613,17 @@ class OpenFDAApprovalTool(BaseTool):
                 total_submissions=len(history),
                 submission_history=history,
             ),
+            "metadata": {
+                "application_selection": (
+                    "exact_application_number"
+                    if header["query"].startswith("application_number:")
+                    else "first_name_match"
+                ),
+                "matched_applications": header["matching_applications"],
+                "search": header["query"],
+                "all_submission_documents_included": True,
+                "result_set_complete": True,
+            },
         }
 
     def _get_approved_products(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -475,4 +665,14 @@ class OpenFDAApprovalTool(BaseTool):
                 total_products=len(formatted_products),
                 products=formatted_products,
             ),
+            "metadata": {
+                "application_selection": (
+                    "exact_application_number"
+                    if header["query"].startswith("application_number:")
+                    else "first_name_match"
+                ),
+                "matched_applications": header["matching_applications"],
+                "search": header["query"],
+                "result_set_complete": True,
+            },
         }

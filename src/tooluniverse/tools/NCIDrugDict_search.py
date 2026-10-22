@@ -12,6 +12,7 @@ def NCIDrugDict_search(
     query: str,
     matchType: Optional[str] = "Begins",
     size: Optional[int] = 10,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -27,7 +28,9 @@ def NCIDrugDict_search(
     matchType : str
         Match type: 'Begins' (starts with) or 'Contains' (default: Begins)
     size : int
-        Number of results to return (default 10)
+        Number of results in this page (default 10)
+    offset : int
+        Zero-based result offset. Continue with metadata.next_offset while metadata.h...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,12 @@ def NCIDrugDict_search(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"query": query, "matchType": matchType, "size": size}.items()
+        for k, v in {
+            "query": query,
+            "matchType": matchType,
+            "size": size,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

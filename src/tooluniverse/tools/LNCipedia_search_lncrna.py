@@ -1,7 +1,7 @@
 """
 LNCipedia_search_lncrna
 
-Search for long non-coding RNAs (lncRNAs) by name, accession, or keyword using EBI Search over RN...
+Search long non-coding RNAs by name, accession, or keyword using EBI Search over RNAcentral. Resu...
 """
 
 from typing import Any, Optional, Callable
@@ -11,14 +11,15 @@ from ._shared_client import get_shared_client
 def LNCipedia_search_lncrna(
     query: str,
     species: Optional[str] = None,
-    size: Optional[int] = None,
+    size: Optional[int] = 10,
+    start: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search for long non-coding RNAs (lncRNAs) by name, accession, or keyword using EBI Search over RN...
+    Search long non-coding RNAs by name, accession, or keyword using EBI Search over RNAcentral. Resu...
 
     Parameters
     ----------
@@ -27,7 +28,9 @@ def LNCipedia_search_lncrna(
     species : str
         Species name filter (e.g., 'Homo sapiens', 'Mus musculus'). Leave empty for a...
     size : int
-        Number of results to return (1-100). Default: 10.
+        Number of results per page (1-100).
+    start : int
+        Zero-based EBI Search result offset. Continue with next_start.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,12 @@ def LNCipedia_search_lncrna(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"query": query, "species": species, "size": size}.items()
+        for k, v in {
+            "query": query,
+            "species": species,
+            "size": size,
+            "start": start,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

@@ -2,7 +2,7 @@
   {
     "type": "PMCTool",
     "name": "PMC_search_papers",
-    "description": "Search for full-text biomedical literature using the PMC (PubMed Central) API. PMC is the free full-text archive of biomedical and life sciences journal literature at the U.S. National Institutes of Health's National Library of Medicine. Uses `limit` (default 10); accepts `retmax` as an alias for `limit`.",
+    "description": "Search full-text biomedical literature in PMC by relevance. Uses limit (default 10; retmax is an alias) and zero-based offset. The historical return type remains a paper list; every returned paper includes the identical search_pagination envelope with PMC's exact total_results, has_more, and next_offset.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -22,6 +22,13 @@
           "description": "Alias for limit (NCBI eutils naming). If both retmax and limit are provided, limit is used.",
           "minimum": 1,
           "maximum": 100
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9998,
+          "default": 0,
+          "description": "Zero-based PMC relevance offset within NCBI's 9,999-record retrieval window (0-9998). Continue with search_pagination.next_offset while has_more is true. If total_results exceeds retrievable_results, narrow the query or add date filters."
         },
         "date_from": {
           "type": "string",
@@ -147,6 +154,51 @@
           "citations": {
             "type": "integer",
             "description": "Number of citations"
+          },
+          "search_pagination": {
+            "type": "object",
+            "description": "Page metadata repeated on each paper to preserve the historical list response type.",
+            "properties": {
+              "total_results": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "retrievable_results": {
+                "type": "integer"
+              },
+              "returned": {
+                "type": "integer"
+              },
+              "offset": {
+                "type": "integer"
+              },
+              "limit": {
+                "type": "integer"
+              },
+              "has_more": {
+                "type": "boolean"
+              },
+              "next_offset": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "result_set_complete": {
+                "type": "boolean"
+              },
+              "database_result_complete": {
+                "type": "boolean"
+              },
+              "retrieval_limit_reached": {
+                "type": "boolean"
+              },
+              "retrieval_limit_note": {
+                "type": "string"
+              }
+            }
           }
         }
       }

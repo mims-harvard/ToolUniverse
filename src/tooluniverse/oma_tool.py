@@ -47,6 +47,22 @@ def _page_size(value: Any, default: int, maximum: Any = 100) -> int:
     return value if maximum is None else min(value, maximum)
 
 
+def _pagination_integer(
+    value: Any, *, name: str, minimum: int, maximum: int
+) -> tuple[int | None, str | None]:
+    if isinstance(value, bool):
+        return None, f"{name} must be an integer from {minimum} to {maximum}"
+    try:
+        parsed = int(value)
+    except (TypeError, ValueError):
+        return None, f"{name} must be an integer from {minimum} to {maximum}"
+    if isinstance(value, float) and not value.is_integer():
+        return None, f"{name} must be an integer from {minimum} to {maximum}"
+    if not minimum <= parsed <= maximum:
+        return None, f"{name} must be an integer from {minimum} to {maximum}"
+    return parsed, None
+
+
 @register_tool("OMATool")
 class OMATool(BaseTool):
     """
@@ -163,17 +179,33 @@ class OMATool(BaseTool):
             }
 
         rel_type = arguments.get("rel_type")
-        # No `maximum`: /protein/{id}/orthologs/ has no server-side paging, so the
-        # full set is already in hand and any cap here would make the tail of it
-        # unreachable rather than merely unrequested.
-        per_page = _page_size(arguments.get("per_page"), 20, maximum=None)
+        raw_per_page = arguments.get("per_page")
+        per_page, page_error = _pagination_integer(
+            20 if raw_per_page is None else raw_per_page,
+            name="per_page",
+            minimum=1,
+            maximum=1000,
+        )
+        if page_error:
+            return {"status": "error", "error": page_error}
+        raw_offset = arguments.get("offset")
+        offset, offset_error = _pagination_integer(
+            0 if raw_offset is None else raw_offset,
+            name="offset",
+            minimum=0,
+            maximum=10_000_000,
+        )
+        if offset_error:
+            return {"status": "error", "error": offset_error}
+        assert per_page is not None and offset is not None
 
         url = f"{OMA_BASE_URL}/protein/{protein_id}/orthologs/"
         # `per_page` is deliberately not forwarded. This endpoint accepts it,
         # returns HTTP 200, and ignores it: measured against P04637, per_page=3,
         # 20 and 100 each returned all 157 orthologs, and the response carries no
         # Link, X-Total-Count or content-range header to page with. Sending it
-        # only implied a limit that was never applied, so the limit is applied here.
+        # only implied a limit that was never applied, so per_page/offset are
+        # applied here as stable local pagination over the complete list.
         params = {}
         if rel_type:
             params["rel_type"] = rel_type
@@ -201,8 +233,9 @@ class OMATool(BaseTool):
             )
 
         total_count = len(results)
-        results = results[:per_page]
-        truncated = len(results) < total_count
+        page = results[offset : offset + per_page]
+        has_more = offset + len(page) < total_count
+        truncated = len(page) < total_count
 
         metadata = {
             "source": "OMA Browser",
@@ -212,21 +245,27 @@ class OMATool(BaseTool):
             # a synonym for `total_count`, because it used to mean "rows returned"
             # (the two coincided only while nothing was ever sliced) and a key
             # that silently changes meaning is worse than a key that is absent.
-            "count": len(results),
+            "count": len(page),
             "total_count": total_count,
             "truncated": truncated,
+            "per_page": per_page,
+            "offset": offset,
+            "has_more": has_more,
+            "next_offset": offset + len(page) if has_more else None,
+            "pagination_mode": "local_complete_response",
         }
         if truncated:
             metadata["truncation_note"] = (
-                f"Showing {len(results)} of {total_count} orthologs. OMA returns "
-                f"the complete set in one response and does not paginate this "
-                f"endpoint, so raise 'per_page' (e.g. per_page={total_count}) to "
-                f"see the rest; there is no next page to fetch."
+                f"Showing {len(page)} of {total_count} orthologs (offset {offset}). "
+                f"OMA returns the complete set in one response and does not "
+                f"paginate this endpoint, so the slice is applied locally: pass "
+                f"'offset' for another slice, or raise 'per_page' (e.g. "
+                f"per_page={total_count}) to see them all."
             )
 
         return {
             "status": "success",
-            "data": results,
+            "data": page,
             "metadata": metadata,
         }
 
@@ -260,13 +299,16 @@ class OMATool(BaseTool):
         for hog in data:
             children = []
             for child in hog.get("children_hogs", []):
+                child_alternative_levels = child.get("alternative_levels", [])
                 children.append(
                     {
                         "hog_id": child.get("hog_id"),
-                        "alternative_levels": child.get("alternative_levels", [])[:5],
+                        "alternative_levels_count": len(child_alternative_levels),
+                        "alternative_levels": child_alternative_levels,
                     }
                 )
 
+            alternative_levels = hog.get("alternative_levels", [])
             results.append(
                 {
                     "hog_id": hog.get("hog_id"),
@@ -275,8 +317,10 @@ class OMATool(BaseTool):
                     "completeness_score": hog.get("completeness_score"),
                     "description": hog.get("description"),
                     "parent_hogs": hog.get("parent_hogs", []),
-                    "children_hogs": children[:10],
-                    "alternative_levels": hog.get("alternative_levels", [])[:10],
+                    "children_hogs_count": len(children),
+                    "children_hogs": children,
+                    "alternative_levels_count": len(alternative_levels),
+                    "alternative_levels": alternative_levels,
                 }
             )
 
@@ -304,8 +348,12 @@ class OMATool(BaseTool):
         response.raise_for_status()
         data = response.json()
 
+        limit = _page_size(arguments.get("limit"), 30, maximum=1000)
+        offset = max(int(arguments.get("offset") or 0), 0)
+        all_members = data.get("members", [])
+        member_page = all_members[offset : offset + limit]
         members = []
-        for m in data.get("members", [])[:30]:  # Limit members
+        for m in member_page:
             species = m.get("species", {})
             members.append(
                 {
@@ -332,8 +380,17 @@ class OMATool(BaseTool):
             "metadata": {
                 "source": "OMA Browser",
                 "query": str(group_id),
-                "total_members": len(data.get("members", [])),
+                "total_members": len(all_members),
                 "returned_members": len(members),
+                "limit": limit,
+                "offset": offset,
+                "has_more": offset + len(members) < len(all_members),
+                "truncated": len(members) < len(all_members),
+                "next_offset": (
+                    offset + len(members)
+                    if offset + len(members) < len(all_members)
+                    else None
+                ),
             },
         }
 
@@ -349,7 +406,8 @@ class OMATool(BaseTool):
                 ),
             }
 
-        limit = _page_size(arguments.get("limit"), 25)
+        limit = _page_size(arguments.get("limit"), 25, maximum=1000)
+        offset = max(int(arguments.get("offset") or 0), 0)
 
         url = f"{OMA_BASE_URL}/xref/"
         response = requests.get(url, params={"search": search}, timeout=self.timeout)
@@ -358,7 +416,8 @@ class OMATool(BaseTool):
 
         results = []
         # /xref/?search= returns a flat list of cross-reference matches.
-        for x in data[:limit] if isinstance(data, list) else []:
+        all_matches = data if isinstance(data, list) else []
+        for x in all_matches[offset : offset + limit]:
             genome = x.get("genome") or {}
             results.append(
                 {
@@ -379,8 +438,17 @@ class OMATool(BaseTool):
             "metadata": {
                 "source": "OMA Browser",
                 "query": search,
-                "total_matches": len(data) if isinstance(data, list) else 0,
+                "total_matches": len(all_matches),
                 "returned_matches": len(results),
+                "limit": limit,
+                "offset": offset,
+                "has_more": offset + len(results) < len(all_matches),
+                "truncated": len(results) < len(all_matches),
+                "next_offset": (
+                    offset + len(results)
+                    if offset + len(results) < len(all_matches)
+                    else None
+                ),
             },
         }
 
@@ -400,13 +468,28 @@ class OMATool(BaseTool):
         # Unlike /protein/{id}/orthologs/, this endpoint does honour per_page
         # (measured: per_page=3 returned 3 rows, per_page=20 returned 20, each
         # with a Link header), so the value is still forwarded upstream.
-        per_page = _page_size(arguments.get("per_page"), 20)
-        page = arguments.get("page")
+        raw_per_page = arguments.get("per_page")
+        per_page, per_page_error = _pagination_integer(
+            20 if raw_per_page is None else raw_per_page,
+            name="per_page",
+            minimum=1,
+            maximum=10_000,
+        )
+        if per_page_error:
+            return {"status": "error", "error": per_page_error}
+        raw_page = arguments.get("page")
+        page, page_error = _pagination_integer(
+            1 if raw_page is None else raw_page,
+            name="page",
+            minimum=1,
+            maximum=10_000_000,
+        )
+        if page_error:
+            return {"status": "error", "error": page_error}
+        assert per_page is not None and page is not None
 
         url = f"{OMA_BASE_URL}/pairs/{genome1}/{genome2}/"
-        params = {"per_page": per_page}
-        if page:
-            params["page"] = page
+        params = {"per_page": per_page, "page": page}
 
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
@@ -440,6 +523,21 @@ class OMATool(BaseTool):
                 }
             )
 
+        raw_total = response.headers.get("x-total-count")
+        try:
+            total_pairs = (
+                int(raw_total)
+                if isinstance(raw_total, (str, int)) and not isinstance(raw_total, bool)
+                else None
+            )
+        except (TypeError, ValueError):
+            total_pairs = None
+        link_header = response.headers.get("Link", "")
+        has_more = (
+            page * per_page < total_pairs
+            if isinstance(total_pairs, int)
+            else isinstance(link_header, str) and 'rel="next"' in link_header
+        )
         return {
             "status": "success",
             "data": results,
@@ -448,6 +546,12 @@ class OMATool(BaseTool):
                 "genome1": genome1,
                 "genome2": genome2,
                 "returned_pairs": len(results),
+                "total_pairs": total_pairs,
+                "per_page": per_page,
+                "page": page,
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_page": page + 1 if has_more else None,
             },
         }
 

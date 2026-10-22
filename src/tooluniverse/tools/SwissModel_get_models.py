@@ -1,7 +1,7 @@
 """
 SwissModel_get_models
 
-Get protein structure models from SWISS-MODEL Repository for a UniProt accession. Returns pre-com...
+Get a paginated list of protein structures from SWISS-MODEL Repository for a UniProt accession. R...
 """
 
 from typing import Any, Optional, Callable
@@ -13,13 +13,15 @@ def SwissModel_get_models(
     range: Optional[str] = None,
     provider: Optional[str] = None,
     template: Optional[str] = None,
+    limit: Optional[int] = 30,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get protein structure models from SWISS-MODEL Repository for a UniProt accession. Returns pre-com...
+    Get a paginated list of protein structures from SWISS-MODEL Repository for a UniProt accession. R...
 
     Parameters
     ----------
@@ -31,6 +33,10 @@ def SwissModel_get_models(
         Optional model-provider filter. 'swissmodel' returns only SWISS-MODEL homolog...
     template : str
         Optional template filter; restrict results to models built from this template...
+    limit : int
+        Maximum models to return in this page.
+    offset : int
+        Zero-based model offset. Continue with next_offset while has_more is true.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +58,8 @@ def SwissModel_get_models(
             "range": range,
             "provider": provider,
             "template": template,
+            "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

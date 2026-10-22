@@ -1,7 +1,7 @@
 """
 Progenetix_search_individuals
 
-Search individuals (patients) in the Progenetix cancer CNV database by NCIt disease ontology code...
+Search individuals (patients) in the Progenetix cancer CNV database by NCIt disease code. Returns...
 """
 
 from typing import Any, Optional, Callable
@@ -11,13 +11,14 @@ from ._shared_client import get_shared_client
 def Progenetix_search_individuals(
     filters: str,
     limit: Optional[int] = 10,
+    skip: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search individuals (patients) in the Progenetix cancer CNV database by NCIt disease ontology code...
+    Search individuals (patients) in the Progenetix cancer CNV database by NCIt disease code. Returns...
 
     Parameters
     ----------
@@ -25,6 +26,8 @@ def Progenetix_search_individuals(
         NCIt ontology code to filter individuals by cancer type. Examples: 'NCIT:C914...
     limit : int
         Maximum number of individuals to return (default: 10).
+    skip : int
+        Number of matching individuals to skip. Use next_skip from the preceding resp...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,7 +43,9 @@ def Progenetix_search_individuals(
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
-        k: v for k, v in {"filters": filters, "limit": limit}.items() if v is not None
+        k: v
+        for k, v in {"filters": filters, "limit": limit, "skip": skip}.items()
+        if v is not None
     }
     return get_shared_client().run_one_function(
         {

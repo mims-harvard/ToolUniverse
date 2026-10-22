@@ -12,6 +12,8 @@ def EuroPMCAnnot_get_annotations_by_type(
     article_ids: str,
     annotation_type: str,
     page_size: Optional[int] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,6 +30,10 @@ def EuroPMCAnnot_get_annotations_by_type(
         Annotation type to retrieve. Note 'Gene_Proteins' is spelled with an undersco...
     page_size : int
         Maximum annotations returned per article. Default: 100. The Europe PMC endpoi...
+    limit : int
+        Alias for page_size, used when page_size is not given.
+    offset : int
+        Zero-based annotation offset applied independently within each returned artic...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +54,8 @@ def EuroPMCAnnot_get_annotations_by_type(
             "article_ids": article_ids,
             "annotation_type": annotation_type,
             "page_size": page_size,
+            "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

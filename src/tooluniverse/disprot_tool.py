@@ -93,30 +93,64 @@ class DisProtTool(BaseTool):
 
     def _search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search DisProt for disordered proteins."""
-        query = (arguments.get("query") or "").strip()
-        if not query:
+        query = arguments.get("query")
+        if not isinstance(query, str) or not query.strip():
             return {
                 "status": "error",
-                "error": "query is required (e.g., 'TP53', 'kinase', 'amyloid').",
+                "error": "query must be a non-empty string",
+                "parameter": "query",
             }
+        page_size = arguments.get("page_size", 10)
+        if (
+            isinstance(page_size, bool)
+            or not isinstance(page_size, int)
+            or not 1 <= page_size <= 500
+        ):
+            return {
+                "status": "error",
+                "error": "page_size must be an integer between 1 and 500",
+                "parameter": "page_size",
+            }
+        page = arguments.get("page", 0)
+        if isinstance(page, bool) or not isinstance(page, int) or page < 0:
+            return {
+                "status": "error",
+                "error": "page must be a non-negative integer",
+                "parameter": "page",
+            }
+        query = query.strip()
 
-        page_size = min(arguments.get("page_size") or 10, 20)
         url = f"{DISPROT_BASE_URL}/search"
         entries: List[Dict[str, Any]] = []
         seen = set()
         matches: Dict[str, int] = {}
+        has_more = False
+        page_start = page * page_size
         for field in self._search_fields(query):
             # The organism filter is only a fallback for queries that name no
             # gene or protein; it would otherwise flood the list with a proteome.
-            if field == "organism" and entries:
+            # Decided on match totals, not this page's rows, so later pages
+            # take the same branch as page 0.
+            if field == "organism" and any(matches.values()):
                 break
             value = query.upper() if field in ("disprot_id", "acc") else query
-            params = {field: value, "release": "current", "page_size": page_size}
+            params = {
+                field: value,
+                "release": "current",
+                "page_size": page_size,
+                "page": page,
+            }
             response = requests.get(url, params=params, timeout=self.timeout)
             response.raise_for_status()
             data = response.json()
-            matches[field] = data.get("size", len(data.get("data", [])))
-            for entry in data.get("data", []):
+            results = data.get("data", [])
+            try:
+                matches[field] = int(data.get("size", len(results)))
+            except (TypeError, ValueError):
+                matches[field] = len(results)
+            if results and page_start + len(results) < matches[field]:
+                has_more = True
+            for entry in results:
                 key = entry.get("acc") or entry.get("disprot_id")
                 if key in seen:
                     continue
@@ -138,6 +172,15 @@ class DisProtTool(BaseTool):
                     }
                 )
 
+        # Gene and name hits are merged into one page_size page; the count the
+        # merge pushed past page_size is reported (raise page_size to see them)
+        # rather than silently dropped.
+        merged_overflow = max(0, len(entries) - page_size)
+        # Each filter is paged upstream; with more than one filter queried the
+        # totals can overlap, so their sum is only an upper bound.
+        total = sum(matches.values())
+        total_is_exact = len(matches) == 1
+        complete = page == 0 and not has_more and merged_overflow == 0
         return {
             "status": "success",
             "data": entries[:page_size],
@@ -146,16 +189,50 @@ class DisProtTool(BaseTool):
                 "query": query,
                 "returned": len(entries[:page_size]),
                 "total_matches_by_filter": matches,
+                "total_results": total,
+                "total_results_is_exact": total_is_exact,
+                "page": page,
+                "page_size": page_size,
+                "page_start": page_start,
+                "has_more": has_more,
+                "truncated": not complete,
+                "result_set_complete": complete,
+                "next_page": page + 1 if has_more else None,
+                "merged_overflow": merged_overflow,
             },
         }
 
     def _get_entry(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get detailed disorder regions for a DisProt entry."""
-        accession = arguments.get("accession", "")
-        if not accession:
+        accession = arguments.get("accession")
+        if not isinstance(accession, str) or not accession.strip():
             return {
                 "status": "error",
-                "error": "accession is required. Use DisProt ID (e.g., 'DP00086') or UniProt accession (e.g., 'P04637').",
+                "error": "accession must be a non-empty string",
+                "parameter": "accession",
+            }
+        accession = accession.strip()
+        region_offset = arguments.get("region_offset", 0)
+        if (
+            isinstance(region_offset, bool)
+            or not isinstance(region_offset, int)
+            or region_offset < 0
+        ):
+            return {
+                "status": "error",
+                "error": "region_offset must be a non-negative integer",
+                "parameter": "region_offset",
+            }
+        region_limit = arguments.get("region_limit", 30)
+        if (
+            isinstance(region_limit, bool)
+            or not isinstance(region_limit, int)
+            or not 1 <= region_limit <= 500
+        ):
+            return {
+                "status": "error",
+                "error": "region_limit must be an integer between 1 and 500",
+                "parameter": "region_limit",
             }
 
         # Determine whether it's a DisProt ID (DP*) or UniProt accession
@@ -177,7 +254,9 @@ class DisProtTool(BaseTool):
             }
         data = results[0]
 
-        # Extract regions
+        # Extract every region first, then expose explicit local pagination.
+        # The old hard slice at 30 contradicted regions_counter without any
+        # warning or way to fetch the omitted annotations.
         regions = []
         for region in data.get("regions", []):
             cross_refs = []
@@ -197,13 +276,17 @@ class DisProtTool(BaseTool):
                     "term_namespace": region.get("term_namespace"),
                     "evidence_code": region.get("ec_name"),
                     "method": region.get("method_name"),
-                    "cross_refs": cross_refs[:5],  # Limit refs
+                    "cross_refs": cross_refs,
                 }
             )
 
         genes = data.get("genes", [])
         gene_name = genes[0].get("name", {}).get("value", "") if genes else ""
 
+        returned_regions = regions[region_offset : region_offset + region_limit]
+        has_more_regions = bool(returned_regions) and (
+            region_offset + len(returned_regions) < len(regions)
+        )
         return {
             "status": "success",
             "data": {
@@ -216,10 +299,19 @@ class DisProtTool(BaseTool):
                 "disorder_content": data.get("disorder_content"),
                 "regions_counter": data.get("regions_counter"),
                 "dataset": data.get("dataset", []),
-                "regions": regions[:30],  # Limit to 30 regions
+                "regions": returned_regions,
             },
             "metadata": {
                 "source": "DisProt (disprot.org)",
-                "total_regions": data.get("regions_counter", len(regions)),
+                "total_regions": len(regions),
+                "reported_regions_counter": data.get("regions_counter"),
+                "returned_regions": len(returned_regions),
+                "region_offset": region_offset,
+                "region_limit": region_limit,
+                "has_more_regions": has_more_regions,
+                "regions_truncated": len(returned_regions) < len(regions),
+                "next_region_offset": (
+                    region_offset + len(returned_regions) if has_more_regions else None
+                ),
             },
         }

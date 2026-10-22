@@ -2,7 +2,7 @@
   {
     "type": "HumanBaseTool",
     "name": "humanbase_ppi_analysis",
-    "description": "Retrieve tissue-specific protein-protein interactions and biological processes from HumanBase. Returns a NetworkX graph of tissue specific protein-protein interactions and a list of associated biological processes involved by the given genes from Gene Ontology.",
+    "description": "Retrieve a tissue-specific HumanBase gene interaction network and associated Gene Ontology biological processes. Each edge includes datatype weights, the underlying HumanBase evidence-dataset records, their returned count, and an explicit completeness/error indicator. Top-level metadata distinguishes requested_scope_complete from globally exhaustive complete: HumanBase does not report whether more neighbors exist when the requested neighbor count is filled.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -24,17 +24,18 @@
         },
         "max_node": {
           "type": "integer",
-          "description": "Number of interaction partners to retrieve per query gene. The network also contains the query genes themselves, so it holds max_node + len(gene_list) proteins. Warning: the more nodes, the longer the retrieval. Default is 10 (~30 seconds).",
-          "default": 10,
+          "description": "Legacy alias for neighbor_count: the number of interaction partners (additional neighboring genes) to retrieve, not the maximum total nodes. The network also contains the resolved query genes themselves, so it holds up to max_node + len(gene_list) proteins. Warning: the more nodes, the longer the retrieval.",
           "minimum": 1,
           "maximum": 100
         },
         "interaction": {
           "type": "string",
-          "description": "Specific interaction type to filter by. Available types: 'co-expression', 'interaction', 'tf-binding', 'gsea-microrna-targets', 'gsea-perturbations'. If not specified, all types will be included.",
+          "description": "Specific HumanBase datatype to use for network ranking/weights. If omitted, all seven upstream datatypes are requested, including protein-domain and sequence-similarity, which older wrapper versions silently omitted.",
           "enum": [
             "co-expression",
             "interaction",
+            "protein-domain",
+            "sequence-similarity",
             "tf-binding",
             "gsea-microrna-targets",
             "gsea-perturbations"
@@ -42,7 +43,7 @@
         },
         "string_mode": {
           "type": "boolean",
-          "description": "Whether to return the result in string mode. If True, the result will be a string of the network graph and the biological processes. If False, the result will be a NetworkX graph and a list of biological processes.",
+          "description": "If true, return a formatted network summary with evidence dataset counts; full dataset records remain available only in structured mode. If false, return a NetworkX graph whose edge attributes include evidence_datasets, evidence_dataset_count, evidence_datasets_complete, and evidence_error.",
           "default": true
         },
         "genes": {
@@ -53,16 +54,35 @@
           "items": {
             "type": "string"
           },
-          "description": "Alias for gene_list. A list of gene symbols or a comma-separated string."
+          "description": "Alias for gene_list. A list of gene symbols or a comma-separated string.",
+          "minItems": 1
         },
         "top_n": {
           "type": "integer",
-          "description": "Alias for max_node. Number of interaction partners to retrieve per query gene.",
+          "description": "Legacy alias for neighbor_count. It requests this many interaction partners (additional neighboring genes), not this many total nodes.",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "neighbor_count": {
+          "type": "integer",
+          "description": "Number of additional neighboring genes requested from HumanBase. Total returned nodes may be up to the unique resolved seed genes plus neighbor_count. The service provides no total or continuation token, so metadata.network_has_more is unknown when this count is filled. Defaults to 10 when no alias is supplied.",
           "minimum": 1,
           "maximum": 100
         }
       },
-      "required": []
+      "required": [],
+      "anyOf": [
+        {
+          "required": [
+            "gene_list"
+          ]
+        },
+        {
+          "required": [
+            "genes"
+          ]
+        }
+      ]
     },
     "test_examples": [
       {
@@ -71,14 +91,37 @@
           "BRCA1"
         ],
         "tissue": "brain",
-        "max_node": 3,
+        "neighbor_count": 3,
         "interaction": "co-expression",
         "string_mode": true
       }
     ],
     "return_schema": {
-      "type": "string",
-      "description": "Formatted string representation of the protein-protein interaction network, including network summary, protein nodes with descriptions, interaction details with evidence types, associated biological processes from Gene Ontology, and network analysis metrics."
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "graph": {},
+            "biological_processes": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "graph",
+            "biological_processes"
+          ]
+        }
+      ],
+      "description": "When string_mode is true, a formatted network summary including evidence dataset counts and visible retrieval warnings. When false, an object containing a NetworkX graph with full returned evidence-dataset records and a biological-process list. The tool response also includes top-level retrieval-completeness metadata."
     }
   }
 ]

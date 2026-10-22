@@ -2,7 +2,7 @@
   {
     "type": "LOINCTool",
     "name": "LOINC_search_tests",
-    "description": "Search LOINC (Logical Observation Identifiers Names and Codes) lab tests and clinical observations by name or keywords. Returns standardized codes for laboratory tests, vital signs, and clinical measurements. Essential for standardizing lab test names across healthcare systems and research studies.",
+    "description": "Search LOINC lab tests and clinical observations with the NLM Clinical Tables count+offset pagination API. Returns standardized codes and display fields. Response metadata exposes total_results, accessible_results, has_more, and next_offset; NLM limits retrieval to the first 7,500 matches and upstream_truncated explicitly reports when refinement is required.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -12,8 +12,17 @@
         },
         "max_results": {
           "type": "integer",
-          "description": "Maximum number of results to return (default: 20, max: 500)",
-          "default": 20
+          "description": "Page size (default 20, range 1-500). Sent as count; maxList does not support pagination.",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 500
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based first result. Continue with metadata.next_offset; offset + max_results cannot exceed 7,500.",
+          "default": 0,
+          "minimum": 0,
+          "maximum": 7499
         },
         "exclude_copyrighted": {
           "type": "boolean",
@@ -46,7 +55,9 @@
         "max_results": 5
       },
       {
-        "terms": "blood pressure"
+        "terms": "blood pressure",
+        "max_results": 10,
+        "offset": 10
       }
     ],
     "return_schema": {
@@ -347,7 +358,7 @@
   {
     "type": "LOINCTool",
     "name": "LOINC_search_forms",
-    "description": "Search LOINC clinical forms, panels and survey instruments -- whole instruments, not their individual questions. Examples include PHQ-9 (depression), GAD-7 (anxiety), MMSE (cognitive), pain assessment panels and laboratory panels such as the comprehensive metabolic panel. Returns the LOINC code of each matching instrument, for use in electronic health records. A single question or lab test will not be returned here even when its wording matches the search terms -- use LOINC_search_tests for those.",
+    "description": "Search LOINC clinical forms, panels and survey instruments -- whole instruments, not their individual questions -- using NLM's type=form endpoint. Examples include PHQ-9 (depression), GAD-7 (anxiety), MMSE (cognitive), pain assessment panels and laboratory panels such as the comprehensive metabolic panel. Returns the LOINC code of each matching instrument, for use in electronic health records. A single question or lab test will not be returned here even when its wording matches the search terms -- use LOINC_search_tests for those. Uses count+offset pagination; response metadata exposes exact continuation and the upstream 7,500-result retrieval window.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -357,8 +368,17 @@
         },
         "max_results": {
           "type": "integer",
-          "description": "Maximum number of results to return (default: 20, max: 200)",
-          "default": 20
+          "description": "Page size (default 20, range 1-500).",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 500
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based first form. Continue with metadata.next_offset; offset + max_results cannot exceed 7,500.",
+          "default": 0,
+          "minimum": 0,
+          "maximum": 7499
         }
       },
       "required": [
@@ -385,7 +405,9 @@
         "terms": "depression"
       },
       {
-        "terms": "pain scale"
+        "terms": "pain scale",
+        "max_results": 10,
+        "offset": 10
       }
     ],
     "return_schema": {

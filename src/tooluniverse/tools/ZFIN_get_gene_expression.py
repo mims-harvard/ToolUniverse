@@ -11,6 +11,7 @@ from ._shared_client import get_shared_client
 def ZFIN_get_gene_expression(
     gene_id: str,
     limit: Optional[int] = 50,
+    page: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,6 +26,8 @@ def ZFIN_get_gene_expression(
         ZFIN gene ID, with or without the 'ZFIN:' prefix. Examples: 'ZFIN:ZDB-GENE-99...
     limit : int
         Max annotations to return (default 50, max 100).
+    page : int
+        One-based annotation page. Continue with next_page while has_more is true.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,7 +43,9 @@ def ZFIN_get_gene_expression(
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
-        k: v for k, v in {"gene_id": gene_id, "limit": limit}.items() if v is not None
+        k: v
+        for k, v in {"gene_id": gene_id, "limit": limit, "page": page}.items()
+        if v is not None
     }
     return get_shared_client().run_one_function(
         {

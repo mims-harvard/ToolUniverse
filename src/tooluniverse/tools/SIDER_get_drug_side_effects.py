@@ -13,6 +13,7 @@ def SIDER_get_drug_side_effects(
     drug_name: Optional[str] = None,
     sider_drug_id: Optional[str] = None,
     limit: Optional[int] = 50,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -30,7 +31,9 @@ def SIDER_get_drug_side_effects(
     sider_drug_id : str
         SIDER drug ID (PubChem CID) from SIDER_search_drug results (e.g., '3672' for ...
     limit : int
-        Maximum number of side effects to return (default: 50)
+        Maximum side effects on this page (default: 50)
+    offset : int
+        Zero-based offset into the exact parsed side-effect set; continue with metada...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def SIDER_get_drug_side_effects(
             "drug_name": drug_name,
             "sider_drug_id": sider_drug_id,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

@@ -6,6 +6,7 @@ from urllib.request import Request, urlopen
 from tooluniverse.gtex_v2_tool import (
     DATASET_GENCODE_VERSION,
     DEFAULT_GENCODE_VERSION,
+    GTExGeneResolutionError,
 )
 from tooluniverse.tool_registry import register_tool
 
@@ -45,6 +46,9 @@ def _resolve_gene_id(
     HTTP 200 response, which reads as "no data for this gene" rather than as an
     ID mismatch, so the dataset drives the version rather than a fixed v26.
     """
+    if not isinstance(gene_input, str) or not gene_input.strip():
+        raise GTExGeneResolutionError("gene identifier must be a non-empty string")
+    gene_input = gene_input.strip()
     gencode_version = DATASET_GENCODE_VERSION.get(dataset_id, DEFAULT_GENCODE_VERSION)
     # Try resolving the input (versioned or not) via the reference API
     query_id = gene_input.split(".")[0] if gene_input.startswith("ENS") else gene_input
@@ -53,12 +57,29 @@ def _resolve_gene_id(
     )
     try:
         data = _http_get(url, headers={"Accept": "application/json"}, timeout=timeout)
-        genes = data.get("data", [])
-        if isinstance(genes, list) and genes:
-            return genes[0].get("gencodeId", gene_input)
-    except Exception:
-        pass
-    return gene_input
+    except Exception as exc:
+        raise GTExGeneResolutionError(
+            f"GTEx gene resolution request failed for '{gene_input}': {exc}"
+        ) from exc
+    genes = data.get("data", []) if isinstance(data, dict) else []
+    if not isinstance(genes, list) or not genes:
+        raise GTExGeneResolutionError(
+            f"GTEx could not resolve gene '{gene_input}' in {dataset_id} "
+            f"(GENCODE {gencode_version})"
+        )
+    resolved = genes[0].get("gencodeId") if isinstance(genes[0], dict) else None
+    if not isinstance(resolved, str) or not resolved:
+        raise GTExGeneResolutionError(
+            f"GTEx gene resolution omitted gencodeId for '{gene_input}'"
+        )
+    if query_id.upper().startswith("ENSG") and (
+        resolved.split(".")[0].upper() != query_id.upper()
+    ):
+        raise GTExGeneResolutionError(
+            "GTEx returned a different gene identity during resolution: "
+            f"requested {query_id}, returned {resolved}"
+        )
+    return resolved
 
 
 @register_tool(
@@ -103,7 +124,15 @@ class GTExExpressionTool:
                 "status": "error",
                 "error": "Provide gene_symbol (e.g., 'TP53') or ensembl_gene_id (e.g., 'ENSG00000141510').",
             }
-        gencode_id = _resolve_gene_id(gene_input, base, timeout)
+        try:
+            gencode_id = _resolve_gene_id(gene_input, base, timeout)
+        except GTExGeneResolutionError as exc:
+            return {
+                "status": "error",
+                "error": str(exc),
+                "source": "GTEx",
+                "endpoint": "reference/gene",
+            }
 
         # Feature-80A: /expression/medianGeneExpression now requires tissueSiteDetailId.
         # Use /expression/clusteredMedianGeneExpression which returns all tissues.
@@ -129,15 +158,7 @@ class GTExExpressionTool:
                 "query": query,
                 "data": {"geneExpression": expression_data},
             }
-            # Provide hint when results are empty due to GENCODE version mismatch
-            if not expression_data and gencode_id == gene_input:
-                result["note"] = (
-                    f"No expression data found. Could not resolve '{gene_input}' to a "
-                    "versioned GENCODE ID. Try providing an Ensembl gene ID "
-                    "(e.g., 'ENSG00000141510') or use GTEx_get_median_gene_expression "
-                    "with a versioned ID (e.g., 'ENSG00000141510.16')."
-                )
-            elif not expression_data:
+            if not expression_data:
                 result["note"] = (
                     f"No expression data found for '{gencode_id}'. The GENCODE version "
                     "may not match gtex_v8 (GENCODE v26). Try GTEx_get_median_gene_expression "
@@ -216,7 +237,15 @@ class GTExEQTLTool:
                 ),
             }
         dataset_id = arguments.get("dataset_id", "gtex_v8")
-        gencode_id = _resolve_gene_id(gene_input, base, timeout, dataset_id)
+        try:
+            gencode_id = _resolve_gene_id(gene_input, base, timeout, dataset_id)
+        except GTExGeneResolutionError as exc:
+            return {
+                "status": "error",
+                "error": str(exc),
+                "source": "GTEx",
+                "endpoint": "reference/gene",
+            }
 
         query: Dict[str, Any] = {
             "gencodeId": gencode_id,

@@ -175,7 +175,7 @@
   },
   {
     "name": "PANTHER_enrichment",
-    "description": "Perform gene set enrichment (overrepresentation) analysis using PANTHER. Given a gene list, identifies statistically enriched GO terms, PANTHER pathways, Reactome pathways, or protein classes using Fisher's exact test with FDR correction. PANTHER is one of the most widely used tools for functional enrichment in bioinformatics. Example: gene list 'TP53,BRCA1,EGFR,KRAS,PTEN' enriched for GO biological_process returns 'regulation of mitotic cell cycle phase transition' (FDR=0.003).",
+    "description": "Perform gene set enrichment (overrepresentation) analysis using PANTHER. Returns only statistically significant terms (FDR < 0.05), sorted by FDR with explicit offset pagination. Continue with next_offset while has_more is true. Supports GO terms, PANTHER pathways, Reactome pathways, and protein classes.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -196,6 +196,19 @@
             "null"
           ],
           "description": "Annotation dataset for enrichment. Options: 'GO:0008150' (biological_process, default), 'GO:0003674' (molecular_function), 'GO:0005575' (cellular_component), 'ANNOT_TYPE_ID_PANTHER_PATHWAY' (PANTHER pathway), 'ANNOT_TYPE_ID_REACTOME_PATHWAY' (Reactome pathway), 'ANNOT_TYPE_ID_PANTHER_PC' (protein class)."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum significant terms per page (default 50, max 1000).",
+          "default": 50,
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based offset in the FDR-sorted significant terms. Continue with next_offset while has_more is true.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": [
@@ -234,6 +247,24 @@
             },
             "result_count": {
               "type": "integer"
+            },
+            "total_enriched_terms": {
+              "type": "integer"
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
             },
             "enriched_terms": {
               "type": "array",

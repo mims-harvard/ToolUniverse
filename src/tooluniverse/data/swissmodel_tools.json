@@ -1,7 +1,7 @@
 [
   {
     "name": "SwissModel_get_models",
-    "description": "Get protein structure models from SWISS-MODEL Repository for a UniProt accession. Returns pre-computed 3D models (homology models plus experimental PDB structures) with template information, sequence coverage, QMEAN quality scores, creation dates, a coordinates download URL, and complex partner information. Optional filters: 'range' returns only models covering a given residue range (e.g. '94-312'); 'provider' restricts to 'swissmodel' (homology models) or 'pdb' (experimental structures); 'template' restricts to a specific template. Example: P04637 (human p53) returns ~316 structures unfiltered, 218 with range=94-312; P00533 (EGFR) with provider=swissmodel isolates homology models. Up to 30 models are returned (use SwissModel_get_summary for the single best model).",
+    "description": "Get a paginated list of protein structures from SWISS-MODEL Repository for a UniProt accession. Results include homology models and experimental PDB structures, template, coverage, quality scores, coordinates URL, and complete complex-partner lists. Use next_offset while has_more is true; total_models is the total after optional range/provider/template filters and model_count counts the models on this page.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -34,6 +34,19 @@
             "null"
           ],
           "description": "Optional template filter; restrict results to models built from this template (PDB ID, optionally with chain, e.g. '2j6m.1.A')."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 30,
+          "description": "Maximum models to return in this page."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based model offset. Continue with next_offset while has_more is true."
         }
       },
       "required": [
@@ -79,6 +92,27 @@
             },
             "model_count": {
               "type": "integer"
+            },
+            "total_models": {
+              "type": "integer"
+            },
+            "returned": {
+              "type": "integer"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
             },
             "filters_applied": {
               "type": "object"
@@ -382,7 +416,7 @@
   },
   {
     "name": "SwissModel_get_models_batch",
-    "description": "Batch SWISS-MODEL Repository lookup for up to 250 UniProt accessions in a single call. The single-accession tools (SwissModel_get_models / SwissModel_get_summary) accept only one uniprot_id, requiring N separate calls for a gene or protein list; this tool resolves a whole list at once. Pass 'uniprot_ids' as a list (or comma-separated string). Returns one result block per accession with sequence length, model count, and up to 30 flattened models (template, coverage, QMEAN, provider, coordinates URL). Example: ['P04637','P00533','P38398'] returns 3 result blocks (P04637=316 structures, P00533=390, P38398=35).",
+    "description": "Batch SWISS-MODEL Repository lookup for up to 250 UniProt accessions in a single call. Each result exposes model_count, models_returned, has_more, and next_model_offset, so model lists beyond the default first 30 are recoverable using model_offset. The same offset window is applied independently to every requested accession. Example: P04637 has hundreds of structures that can be paged through without silent truncation.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -395,6 +429,19 @@
             "type": "string"
           },
           "description": "List of up to 250 UniProt accessions, e.g. ['P04637', 'P00533', 'P38398']. A comma-separated string is also accepted."
+        },
+        "model_limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 30,
+          "description": "Maximum models returned per accession (1-500; default 30)."
+        },
+        "model_offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based model offset applied independently to each accession."
         }
       },
       "required": [
@@ -450,6 +497,24 @@
                   },
                   "model_count": {
                     "type": "integer"
+                  },
+                  "model_offset": {
+                    "type": "integer"
+                  },
+                  "model_limit": {
+                    "type": "integer"
+                  },
+                  "models_returned": {
+                    "type": "integer"
+                  },
+                  "has_more": {
+                    "type": "boolean"
+                  },
+                  "next_model_offset": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
                   },
                   "models": {
                     "type": "array",

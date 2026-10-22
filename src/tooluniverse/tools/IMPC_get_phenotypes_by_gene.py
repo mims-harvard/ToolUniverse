@@ -1,7 +1,7 @@
 """
 IMPC_get_phenotypes_by_gene
 
-Get all phenotype annotations for a mouse gene from IMPC knockout screens. Returns MP ontology te...
+Get IMPC phenotype calls for a mouse gene with exact Solr offset pagination. total_phenotype_call...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,14 @@ def IMPC_get_phenotypes_by_gene(
     gene_symbol: Optional[str] = None,
     mgi_id: Optional[str] = None,
     limit: Optional[int] = 100,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get all phenotype annotations for a mouse gene from IMPC knockout screens. Returns MP ontology te...
+    Get IMPC phenotype calls for a mouse gene with exact Solr offset pagination. total_phenotype_call...
 
     Parameters
     ----------
@@ -28,6 +29,8 @@ def IMPC_get_phenotypes_by_gene(
         MGI accession ID (e.g., 'MGI:98834')
     limit : int
         Maximum phenotype records to return (default: 100)
+    offset : int
+        Zero-based raw phenotype-call offset. Continue with data.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +51,7 @@ def IMPC_get_phenotypes_by_gene(
             "gene_symbol": gene_symbol,
             "mgi_id": mgi_id,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

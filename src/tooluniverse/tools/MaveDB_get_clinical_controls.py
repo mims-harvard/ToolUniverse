@@ -1,7 +1,7 @@
 """
 MaveDB_get_clinical_controls
 
-Get clinical-control variants (ClinVar pathogenic/benign/VUS) that overlap a MaveDB score set, us...
+Get ClinVar clinical-control variants overlapping a MaveDB score set for functional-score calibra...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,14 @@ def MaveDB_get_clinical_controls(
     urn: str,
     clinical_significance: Optional[str] = None,
     limit: Optional[int] = 0,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get clinical-control variants (ClinVar pathogenic/benign/VUS) that overlap a MaveDB score set, us...
+    Get ClinVar clinical-control variants overlapping a MaveDB score set for functional-score calibra...
 
     Parameters
     ----------
@@ -27,7 +28,9 @@ def MaveDB_get_clinical_controls(
     clinical_significance : str
         Optional exact-match filter on ClinVar clinical significance (case-insensitiv...
     limit : int
-        Maximum number of clinical controls to return (client-side truncation). Set t...
+        Maximum clinical controls on this page. Set to 0 or null to return everything...
+    offset : int
+        Zero-based offset after the optional significance filter. Continue with data....
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +51,7 @@ def MaveDB_get_clinical_controls(
             "urn": urn,
             "clinical_significance": clinical_significance,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

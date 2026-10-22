@@ -1,7 +1,7 @@
 """
 ols_search_ontologies
 
-Search for ontologies in OLS
+Search for ontologies in OLS with zero-based page pagination. Continue with pagination.next_page ...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def ols_search_ontologies(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search for ontologies in OLS
+    Search for ontologies in OLS with zero-based page pagination. Continue with pagination.next_page ...
 
     Parameters
     ----------

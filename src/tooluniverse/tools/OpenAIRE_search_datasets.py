@@ -1,7 +1,7 @@
 """
 OpenAIRE_search_datasets
 
-Search OpenAIRE for research datasets from the European open science ecosystem. Covers datasets f...
+Search OpenAIRE research datasets with exact totals and explicit page navigation. Continue with m...
 """
 
 from typing import Any, Optional, Callable
@@ -13,13 +13,14 @@ def OpenAIRE_search_datasets(
     funder: Optional[str] = None,
     country: Optional[str] = None,
     size: Optional[int] = 10,
+    page: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search OpenAIRE for research datasets from the European open science ecosystem. Covers datasets f...
+    Search OpenAIRE research datasets with exact totals and explicit page navigation. Continue with m...
 
     Parameters
     ----------
@@ -31,6 +32,8 @@ def OpenAIRE_search_datasets(
         Optional ISO 3166-1 alpha-2 country code to filter by. Examples: 'DE' (German...
     size : int
         Number of results to return. Default 10, maximum 100.
+    page : int
+        One-based result page. Continue with metadata.next_page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def OpenAIRE_search_datasets(
             "funder": funder,
             "country": country,
             "size": size,
+            "page": page,
         }.items()
         if v is not None
     }

@@ -22,8 +22,28 @@ EUROPEPMC_ANNOTATIONS_URL = "https://www.ebi.ac.uk/europepmc/annotations_api"
 # are capped here to keep them usable.
 DEFAULT_ANNOTATION_CAP = 100
 
-# Single-article responses are not caller-capped; this bounds them instead.
+# Default page size for single-article responses; callers page with
+# limit/offset.
 ARTICLE_ANNOTATION_CAP = 200
+
+
+def _paginate(items, limit: int, offset: Any):
+    """Slice one article's annotations and report what was left out."""
+    try:
+        offset = max(int(offset or 0), 0)
+    except (TypeError, ValueError):
+        offset = 0
+    page = items[offset : offset + limit]
+    next_offset = offset + len(page)
+    has_more = next_offset < len(items)
+    return page, {
+        "returned": len(page),
+        "limit": limit,
+        "offset": offset,
+        "has_more": has_more,
+        "truncated": has_more,
+        "next_offset": next_offset if has_more else None,
+    }
 
 
 @register_tool("EuroPMCAnnotationsTool")
@@ -117,7 +137,7 @@ class EuroPMCAnnotationsTool(BaseTool):
         return response.json()
 
     @staticmethod
-    def _annotation_cap(page_size: Any) -> int:
+    def _annotation_cap(page_size: Any, default: int = DEFAULT_ANNOTATION_CAP) -> int:
         """Resolve the per-article annotation cap, defaulting to 100.
 
         A non-positive cap would return an empty list beside a non-zero
@@ -126,12 +146,12 @@ class EuroPMCAnnotationsTool(BaseTool):
         default rather than silently emptying the response.
         """
         if page_size is None:
-            return DEFAULT_ANNOTATION_CAP
+            return default
         try:
             cap = int(page_size)
         except (TypeError, ValueError):
-            return DEFAULT_ANNOTATION_CAP
-        return cap if cap > 0 else DEFAULT_ANNOTATION_CAP
+            return default
+        return cap if cap > 0 else default
 
     @staticmethod
     def _unmatched_ids(requested, raw):
@@ -223,8 +243,13 @@ class EuroPMCAnnotationsTool(BaseTool):
         article = raw[0]
         annotations_raw = article.get("annotations", [])
 
+        page, paging = _paginate(
+            annotations_raw,
+            self._annotation_cap(arguments.get("limit"), ARTICLE_ANNOTATION_CAP),
+            arguments.get("offset"),
+        )
         annotations = []
-        for ann in annotations_raw:
+        for ann in page:
             tags = []
             for tag in ann.get("tags", []):
                 tags.append(
@@ -251,9 +276,10 @@ class EuroPMCAnnotationsTool(BaseTool):
                 "article_id": article_id,
                 "pmcid": article.get("pmcid"),
                 "source": article.get("source"),
-                "annotation_count": len(annotations[:ARTICLE_ANNOTATION_CAP]),
-                "total_annotations": len(annotations),
-                "annotations": annotations[:ARTICLE_ANNOTATION_CAP],
+                "annotation_count": len(annotations),
+                "total_annotations": len(annotations_raw),
+                "annotations": annotations,
+                **paging,
             },
             "metadata": {
                 "source": "Europe PMC Annotations API",
@@ -265,7 +291,12 @@ class EuroPMCAnnotationsTool(BaseTool):
         """Get annotations of a specific type from multiple articles."""
         raw_ids = arguments.get("article_ids", "")
         annotation_type = arguments.get("annotation_type", "")
-        page_size = self._annotation_cap(arguments.get("page_size"))
+        # limit is accepted as an alias for page_size, the per-article cap.
+        page_size = self._annotation_cap(
+            arguments.get("page_size")
+            if arguments.get("page_size") is not None
+            else arguments.get("limit")
+        )
 
         if not str(raw_ids).strip():
             return {
@@ -305,8 +336,11 @@ class EuroPMCAnnotationsTool(BaseTool):
             annotations_raw = article.get("annotations", [])
             total_annotations += len(annotations_raw)
 
+            page, paging = _paginate(
+                annotations_raw, page_size, arguments.get("offset")
+            )
             annotations = []
-            for ann in annotations_raw:
+            for ann in page:
                 annotations.append(
                     {
                         "exact": ann.get("exact", ""),
@@ -315,7 +349,6 @@ class EuroPMCAnnotationsTool(BaseTool):
                     }
                 )
 
-            returned = annotations[:page_size]
             articles.append(
                 {
                     "article_id": f"{article.get('source', '')}:{article.get('extId', '')}",
@@ -324,9 +357,10 @@ class EuroPMCAnnotationsTool(BaseTool):
                     # total_annotations what exists, so a capped article says
                     # so itself instead of leaving the shortfall to be inferred
                     # from a batch-wide sum.
-                    "annotation_count": len(returned),
-                    "total_annotations": len(annotations),
-                    "annotations": returned,
+                    "annotation_count": len(annotations),
+                    "total_annotations": len(annotations_raw),
+                    "annotations": annotations,
+                    **paging,
                 }
             )
 
@@ -334,6 +368,7 @@ class EuroPMCAnnotationsTool(BaseTool):
             "status": "success",
             "data": {
                 "article_count": len(articles),
+                "articles_requested": len(requested),
                 "annotation_type": annotation_type,
                 "total_annotations": total_annotations,
                 # Europe PMC omits unknown identifiers rather than reporting
@@ -382,8 +417,13 @@ class EuroPMCAnnotationsTool(BaseTool):
         article = raw[0]
         annotations_raw = article.get("annotations", [])
 
+        page, paging = _paginate(
+            annotations_raw,
+            self._annotation_cap(arguments.get("limit"), ARTICLE_ANNOTATION_CAP),
+            arguments.get("offset"),
+        )
         chemicals = []
-        for ann in annotations_raw:
+        for ann in page:
             tags = ann.get("tags", [])
             chebi_uri = None
             chebi_name = None
@@ -411,9 +451,10 @@ class EuroPMCAnnotationsTool(BaseTool):
             "status": "success",
             "data": {
                 "article_id": article_id,
-                "chemical_count": len(chemicals[:ARTICLE_ANNOTATION_CAP]),
-                "total_chemicals": len(chemicals),
-                "chemicals": chemicals[:ARTICLE_ANNOTATION_CAP],
+                "chemical_count": len(chemicals),
+                "total_chemicals": len(annotations_raw),
+                "chemicals": chemicals,
+                **paging,
             },
             "metadata": {
                 "source": "Europe PMC Annotations API",

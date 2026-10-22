@@ -10,7 +10,8 @@ from ._shared_client import get_shared_client
 
 def WorldBank_search_indicators(
     query: str,
-    per_page: Optional[int] = None,
+    per_page: Optional[int] = 10,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,7 +25,9 @@ def WorldBank_search_indicators(
     query : str
         Search words; all must occur in the indicator name, code or description (e.g....
     per_page : int
-        Number of results to return (default 10, max 1000)
+        Matching indicators per local page (default 10, max 1000)
+    offset : int
+        Zero-based offset within the ranked matches. Continue with metadata.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,7 +43,9 @@ def WorldBank_search_indicators(
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
-        k: v for k, v in {"query": query, "per_page": per_page}.items() if v is not None
+        k: v
+        for k, v in {"query": query, "per_page": per_page, "offset": offset}.items()
+        if v is not None
     }
     return get_shared_client().run_one_function(
         {

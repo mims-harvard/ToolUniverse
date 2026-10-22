@@ -2,7 +2,7 @@
   {
     "name": "ORCID_get_profile",
     "type": "ORCIDTool",
-    "description": "Get a researcher's full ORCID profile by ORCID iD. Returns name, biography, email, keywords, researcher URLs, and summary counts of works and employments. ORCID iDs have format XXXX-XXXX-XXXX-XXXX (e.g., 0000-0002-1825-0097). Use for: identifying researchers, getting affiliation info, finding publication counts.",
+    "description": "Get the complete public ORCID record after format and ISO 7064 checksum validation. Returns the raw person and activities-summary objects plus convenience fields. Legacy works_count/employments_count are explicitly group counts; separate group and summary counts prevent grouped assertions from being mistaken for individual works or employments.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -16,6 +16,7 @@
         },
         "orcid": {
           "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{3}[0-9Xx]$",
           "description": "ORCID iD in format XXXX-XXXX-XXXX-XXXX (e.g., '0000-0002-1825-0097')"
         }
       },
@@ -34,10 +35,31 @@
         "emails": {},
         "keywords": {},
         "urls": {},
+        "external_identifiers": {},
+        "other_names": {},
+        "addresses": {},
+        "person": {
+          "type": "object"
+        },
+        "activities_summary": {
+          "type": "object"
+        },
         "works_count": {
           "type": "integer"
         },
         "employments_count": {
+          "type": "integer"
+        },
+        "works_group_count": {
+          "type": "integer"
+        },
+        "works_summary_count": {
+          "type": "integer"
+        },
+        "employment_group_count": {
+          "type": "integer"
+        },
+        "employment_summary_count": {
           "type": "integer"
         }
       }
@@ -55,7 +77,7 @@
   {
     "name": "ORCID_get_works",
     "type": "ORCIDTool",
-    "description": "Get list of publications and works for an ORCID researcher. Returns titles, publication types, dates, journal names, and external identifiers (DOI, PubMed ID). Use for: finding researcher's publication history, getting DOIs, assessing research output.",
+    "description": "Get every public work-summary assertion for an ORCID researcher. ORCID groups equivalent works from multiple sources; this wrapper returns every summary in every group (not only the first), with group/summary indexes and group external IDs. Metadata distinguishes work_group_count from work_summary_count and confirms all summaries were returned.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -69,6 +91,7 @@
         },
         "orcid": {
           "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{3}[0-9Xx]$",
           "description": "ORCID iD in format XXXX-XXXX-XXXX-XXXX"
         }
       },
@@ -95,7 +118,7 @@
   {
     "name": "ORCID_search_researchers",
     "type": "ORCIDTool",
-    "description": "Search ORCID registry for researchers by keyword query. Returns each match's ORCID iD along with given/family/credit names, other names, and institution affiliations, so same-named candidates can be disambiguated without a separate profile lookup. Supports full-text search across names, affiliations, publications, and keywords. Use for: finding researchers working on specific topics, identifying collaborators, disambiguating authors.",
+    "description": "Search ORCID expanded-search with strict start/rows controls. Returns names, other names, institutions, and checksum-validated ORCID iDs. Metadata exposes total_found, returned, has_more, next_start, and page_complete; continue with next_start while has_more is true. Live family-name:Smith currently has over 24,000 records.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -109,6 +132,7 @@
         },
         "query": {
           "type": "string",
+          "minLength": 1,
           "description": "Search query (e.g., 'BRCA1 cancer genetics', 'Harvard genomics')"
         },
         "start": {
@@ -163,6 +187,7 @@
         },
         "orcid": {
           "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{3}[0-9Xx]$",
           "description": "ORCID iD in format XXXX-XXXX-XXXX-XXXX"
         }
       },
@@ -189,7 +214,7 @@
   {
     "name": "ORCID_get_fundings",
     "type": "ORCIDTool",
-    "description": "Get the funding/grant records attached to an ORCID researcher's profile. Returns each grant's title, funder organization (with country), award/funding type, start/end dates, external identifiers, and URL. Use for: profiling a researcher's grant history, identifying funders, linking grants to a person. ORCID iDs have format XXXX-XXXX-XXXX-XXXX (e.g., 0000-0001-5109-3700).",
+    "description": "Get every public funding-summary assertion in every ORCID funding group, including group/summary indexes, group and summary external IDs, title, funder, type, dates, and URL. Metadata distinguishes funding groups from summaries and confirms no grouped source assertion was silently dropped.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -203,6 +228,7 @@
         },
         "orcid": {
           "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{3}[0-9Xx]$",
           "description": "ORCID iD in format XXXX-XXXX-XXXX-XXXX (e.g., '0000-0001-5109-3700')"
         }
       },
@@ -298,7 +324,7 @@
   {
     "name": "ORCID_get_peer_reviews",
     "type": "ORCIDTool",
-    "description": "Get the peer-review activity attached to an ORCID researcher's profile. Peer review is a recognized research-contribution type. Returns each review's reviewer role, review type, convening organization (the venue/journal/funder the review was done for, with country), review-group id, completion date, and URL. Use for: assessing reviewing/editorial service, profiling a researcher's contributions. ORCID iDs have format XXXX-XXXX-XXXX-XXXX (e.g., 0000-0001-5109-3700).",
+    "description": "Get every public peer-review-summary assertion across all ORCID groups and subgroups. Returns group/subgroup/summary indexes, role, review type, group ID, convening organization, completion date, and URL. Metadata reports all three hierarchy counts and confirms all summaries were returned.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -312,6 +338,7 @@
         },
         "orcid": {
           "type": "string",
+          "pattern": "^[0-9]{4}-[0-9]{4}-[0-9]{4}-[0-9]{3}[0-9Xx]$",
           "description": "ORCID iD in format XXXX-XXXX-XXXX-XXXX (e.g., '0000-0001-5109-3700')"
         }
       },

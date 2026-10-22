@@ -1,7 +1,7 @@
 """
 OncoTree_search
 
-Search the OncoTree cancer type ontology by name, code, main type, or tissue. OncoTree is a hiera...
+Search the OncoTree cancer type ontology by name, code, main type, or tissue. Returns every upstr...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def OncoTree_search(
     validate: bool = True,
 ) -> Any:
     """
-    Search the OncoTree cancer type ontology by name, code, main type, or tissue. OncoTree is a hiera...
+    Search the OncoTree cancer type ontology by name, code, main type, or tissue. Returns every upstr...
 
     Parameters
     ----------

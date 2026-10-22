@@ -2,7 +2,7 @@
   {
     "type": "UniBindRESTTool",
     "name": "UniBind_search_datasets",
-    "description": "Search the UniBind catalog of curated, experimentally derived direct transcription factor (TF)-DNA binding-site datasets (one dataset = one ChIP-seq experiment for one TF in one cell type/condition). Filter by TF gene symbol (tf_name), species scientific name (species, e.g. 'Homo sapiens'), cell type/tissue (cell_line), and collection ('Robust' or 'Permissive'). All filters are optional and compose. Returns a paginated list of matching datasets with their TF name, total peak count, and dataset_id (use UniBind_get_dataset for full binding-site detail). UniBind provides motif-anchored, base-pair-resolution direct binding sites derived from ChIP-seq via the DAMO/ChIP-eat pipeline with JASPAR motifs - distinct from JASPAR/HOCOMOCO motif matrices and from ReMap raw ChIP-seq peaks. Public, no API key.",
+    "description": "Search the UniBind catalog of curated direct transcription factor (TF)-DNA binding-site datasets. Filter by TF symbol, species, cell type/tissue, and Robust or Permissive collection. Results use one-based server pagination; metadata exposes total_count, next_page, previous_page, truncation, and completeness. Returns TF name, peak count, and dataset_id for UniBind_get_dataset. Public, no API key.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -19,6 +19,7 @@
             "string",
             "null"
           ],
+          "minLength": 1,
           "description": "Transcription factor gene symbol to filter by, e.g. 'CTCF', 'SMAD3', 'ESR1'. Exact match on UniBind's TF name. Optional."
         },
         "species": {
@@ -26,6 +27,7 @@
             "string",
             "null"
           ],
+          "minLength": 1,
           "description": "Species scientific name to filter by, e.g. 'Homo sapiens', 'Mus musculus', 'Drosophila melanogaster'. Optional."
         },
         "cell_line": {
@@ -33,6 +35,7 @@
             "string",
             "null"
           ],
+          "minLength": 1,
           "description": "Cell type / tissue / condition name to filter by, e.g. 'neural stem cells', 'MCF7'. Optional."
         },
         "collection": {
@@ -320,7 +323,7 @@
   {
     "type": "UniBindRESTTool",
     "name": "UniBind_list_tfs",
-    "description": "List the catalog of transcription factors (TFs) profiled in the UniBind database of direct TF-DNA binding sites. Optionally filter by a case-insensitive substring of the TF gene symbol via 'search' (e.g. 'SMAD' returns SMAD2, SMAD3, SMAD4...). Returns a sorted, de-duplicated list of TF gene symbols. Use this to discover valid tf_name values for UniBind_search_datasets. Public, no API key.",
+    "description": "List the complete catalog of transcription factors profiled in UniBind direct TF-DNA binding datasets. The wrapper exhausts every upstream catalog page before applying optional case-insensitive substring filtering and exact local offset pagination. Metadata reports upstream pages/records, total_matches, and next_offset.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -337,6 +340,7 @@
             "string",
             "null"
           ],
+          "minLength": 1,
           "description": "Case-insensitive substring filter applied client-side to TF gene symbols, e.g. 'SMAD', 'FOX', 'GATA'. Optional; omit to list all TFs."
         },
         "limit": {
@@ -345,6 +349,12 @@
           "minimum": 1,
           "maximum": 1000,
           "description": "Maximum number of TF names to return after filtering."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based offset after optional TF-symbol filtering. Continue with metadata.next_offset."
         }
       },
       "required": []

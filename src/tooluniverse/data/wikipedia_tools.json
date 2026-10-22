@@ -68,7 +68,7 @@
   {
     "type": "WikipediaContentTool",
     "name": "Wikipedia_get_content",
-    "description": "Extract content from a Wikipedia article. Can extract introduction, summary, or full article content. No API key required.",
+    "description": "Extract content and one explicit page of linked article titles from a Wikipedia article. Continue links with next_links_continue while links_has_more is true. No API key required.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -92,6 +92,17 @@
           "description": "Maximum characters to return for intro/summary (ignored for 'full'). Default: 2000",
           "default": 2000,
           "minimum": 100
+        },
+        "link_limit": {
+          "type": "integer",
+          "description": "Linked article titles per page (default 20, max 500).",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 500
+        },
+        "links_continue": {
+          "type": "string",
+          "description": "Opaque MediaWiki link continuation token. Pass next_links_continue from the previous response."
         }
       },
       "required": ["title"]
@@ -108,8 +119,20 @@
         "extract_type": {"type": "string", "description": "Type of extraction performed"},
         "links": {
           "type": "array",
-          "description": "List of linked article titles (first 20)",
+          "description": "Linked article titles in the requested page",
           "items": {"type": "string"}
+        },
+        "links_returned": {
+          "type": "integer"
+        },
+        "links_has_more": {
+          "type": "boolean"
+        },
+        "next_links_continue": {
+          "type": [
+            "string",
+            "null"
+          ]
         }
       }
     },

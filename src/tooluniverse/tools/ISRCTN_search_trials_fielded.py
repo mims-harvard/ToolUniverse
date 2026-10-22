@@ -1,7 +1,7 @@
 """
 ISRCTN_search_trials_fielded
 
-Field-scoped (fielded) search of the ISRCTN clinical trial registry using its boolean query DSL. ...
+Field-scoped ISRCTN search using its boolean query DSL. The official XML API has no pagination an...
 """
 
 from typing import Any, Optional, Callable
@@ -19,14 +19,14 @@ def ISRCTN_search_trials_fielded(
     funder: Optional[str] = None,
     country: Optional[str] = None,
     drug_name: Optional[str] = None,
-    limit: Optional[int] = None,
+    limit: Optional[int] = 10,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Field-scoped (fielded) search of the ISRCTN clinical trial registry using its boolean query DSL. ...
+    Field-scoped ISRCTN search using its boolean query DSL. The official XML API has no pagination an...
 
     Parameters
     ----------

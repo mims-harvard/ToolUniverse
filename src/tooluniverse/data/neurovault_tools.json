@@ -10,14 +10,19 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of collections to return per page (default 10, max 100). Example: 10"
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 10,
+          "description": "Maximum number of collections to return per page (default 10, validated max 1000). Example: 10"
         },
         "offset": {
           "type": [
             "integer",
             "null"
           ],
-          "description": "Number of collections to skip for pagination (default 0). Example: 20 to get page 3 with limit=10"
+          "minimum": 0,
+          "default": 0,
+          "description": "Number of collections to skip for pagination (default 0). Continue with metadata.next_offset."
         },
         "format": {
           "type": [
@@ -31,6 +36,7 @@
     },
     "fields": {
       "endpoint": "https://neurovault.org/api/collections/",
+      "pagination": "drf_limit_offset",
       "params": {
         "format": "json"
       }
@@ -334,14 +340,19 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of images to return (default 10, max 100)"
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 10,
+          "description": "Maximum number of images to return (default 10, validated max 1000)"
         },
         "offset": {
           "type": [
             "integer",
             "null"
           ],
-          "description": "Number of images to skip for pagination (default 0)"
+          "minimum": 0,
+          "default": 0,
+          "description": "Number of images to skip for pagination (default 0). Continue with metadata.next_offset."
         }
       },
       "required": [
@@ -350,6 +361,7 @@
     },
     "fields": {
       "endpoint": "https://neurovault.org/api/collections/{collection_id}/images/",
+      "pagination": "drf_limit_offset",
       "params": {
         "format": "json"
       }
@@ -617,14 +629,19 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of atlases to return per page (default 10, max 100). Example: 10"
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 10,
+          "description": "Maximum number of atlases to return per page (default 10, validated max 1000). Example: 10"
         },
         "offset": {
           "type": [
             "integer",
             "null"
           ],
-          "description": "Number of atlases to skip for pagination (default 0)."
+          "minimum": 0,
+          "default": 0,
+          "description": "Number of atlases to skip for pagination (default 0). Continue with metadata.next_offset."
         },
         "format": {
           "type": [
@@ -638,6 +655,7 @@
     },
     "fields": {
       "endpoint": "https://neurovault.org/api/atlases/",
+      "pagination": "drf_limit_offset",
       "params": {
         "format": "json"
       }

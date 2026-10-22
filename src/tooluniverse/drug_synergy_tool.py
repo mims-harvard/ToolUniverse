@@ -157,14 +157,13 @@ class DrugSynergyTool(BaseTool):
 
         expected = ea + eb - ea * eb
         synergy_score = ec - expected  # Fractional units (same scale as inputs)
-        # Use raw (unrounded) score for interpretation to avoid boundary
-        # misclassification. round(-0.099, 2) = -0.1, and -0.1 > -0.10 is False, so
-        # the rounded score would label -0.099 as "Strong antagonism" instead of
-        # "Antagonism". The display value is still rounded for readability.
+        # Use the raw score for interpretation. Classifying a two-decimal display
+        # value silently moves near-boundary scores across the ±0.10 threshold
+        # (e.g. 0.096 rounds to 0.10 but is not a strong effect).
         # Add 0.0 to eliminate IEEE-754 negative zero (-0.0 + 0.0 = 0.0).
         # round(-0.004, 2) returns -0.0 in Python; json.dumps serializes it as "-0.0",
         # which looks contradictory alongside interpretation="Additivity".
-        synergy_score_rounded = round(synergy_score, 2) + 0.0
+        synergy_score_display = round(synergy_score, 4) + 0.0
 
         return {
             "status": "success",
@@ -174,11 +173,23 @@ class DrugSynergyTool(BaseTool):
                 "effect_b": eb,
                 "effect_combination_observed": ec,
                 "effect_combination_expected": round(expected, 4),
-                "bliss_synergy_score": synergy_score_rounded,
+                "bliss_synergy_score": synergy_score_display,
                 "interpretation": self._interpret_synergy_score(
-                    synergy_score_rounded,
-                    "bliss",  # rounded (displayed) score keeps label consistent with value
+                    synergy_score,
+                    "bliss",
                 ),
+                "interpretation_criteria": {
+                    "derived": True,
+                    "derived_by": "ToolUniverse",
+                    "metric": "raw_bliss_synergy_score",
+                    "metric_value": synergy_score,
+                    "units": "fractional inhibition",
+                    "strong_synergy_rule": "score >= 0.10",
+                    "synergy_rule": "0 < score < 0.10",
+                    "additivity_rule": "score == 0",
+                    "antagonism_rule": "-0.10 < score < 0",
+                    "strong_antagonism_rule": "score <= -0.10",
+                },
                 "note": "Scores in fractional units (0-1 scale, same as inputs). Positive = synergy; Negative = antagonism. |score| ≥ 0.1 = strong effect. Based on Bliss (1939).",
             },
         }
@@ -231,17 +242,17 @@ class DrugSynergyTool(BaseTool):
 
         hsa = np.maximum(ea, eb)
         synergy_matrix = ec - hsa  # Fractional units (same scale as inputs)
-        # Use raw mean score for interpretation to avoid boundary
-        # misclassification at round-to-threshold values (same as Bliss fix).
+        # Use the raw mean score for interpretation to avoid moving values
+        # across the ±0.10 boundary during display rounding.
         # Add 0.0 to eliminate IEEE-754 negative zero.
         _mean_raw = float(np.mean(synergy_matrix))
-        mean_score_rounded = round(_mean_raw, 2) + 0.0
+        mean_score_display = round(_mean_raw, 4) + 0.0
 
         return {
             "status": "success",
             "data": {
                 "model": "Highest Single Agent (HSA)",
-                "mean_hsa_synergy_score": mean_score_rounded,
+                "mean_hsa_synergy_score": mean_score_display,
                 "max_hsa_synergy_score": round(float(np.max(synergy_matrix)), 2) + 0.0,
                 "min_hsa_synergy_score": round(float(np.min(synergy_matrix)), 2) + 0.0,
                 "synergy_scores_per_point": [
@@ -249,9 +260,21 @@ class DrugSynergyTool(BaseTool):
                 ],
                 "hsa_expected": [round(float(h), 4) for h in hsa],
                 "interpretation": self._interpret_synergy_score(
-                    mean_score_rounded,
-                    "hsa",  # rounded (displayed) score keeps label consistent with value
+                    _mean_raw,
+                    "hsa",
                 ),
+                "interpretation_criteria": {
+                    "derived": True,
+                    "derived_by": "ToolUniverse",
+                    "metric": "raw_mean_hsa_synergy_score",
+                    "metric_value": _mean_raw,
+                    "units": "fractional inhibition",
+                    "strong_synergy_rule": "score >= 0.10",
+                    "synergy_rule": "0 < score < 0.10",
+                    "additivity_rule": "score == 0",
+                    "antagonism_rule": "-0.10 < score < 0",
+                    "strong_antagonism_rule": "score <= -0.10",
+                },
                 "note": "Scores in fractional units (0-1 scale, same as inputs). Positive = synergy over best single agent; Negative = antagonism. |score| ≥ 0.1 = strong effect.",
             },
         }

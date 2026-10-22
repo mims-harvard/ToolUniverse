@@ -1,7 +1,7 @@
 [
   {
     "name": "MyDisease_get_disease",
-    "description": "Get comprehensive disease annotations from MyDisease.info, a BioThings disease aggregator that integrates data from MONDO, Disease Ontology, CTD (chemicals and pathways related to disease), HPO (phenotypes), and DisGeNET (gene-disease associations). Returns standardized disease identifiers, definitions, cross-references, associated chemicals, pathways, and phenotypes. Example: MONDO:0005148 (type 2 diabetes) returns 160 CTD chemicals, 984 related pathways, and 3 HPO phenotypes including late onset and autosomal dominant inheritance.",
+    "description": "Get disease annotations from MyDisease.info. Large CTD chemical/pathway and HPO phenotype arrays are locally paginated with annotation_limit/annotation_offset; each section reports total, returned, has_more, and next_offset so all upstream annotations are reachable.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -12,6 +12,19 @@
         "fields": {
           "type": "string",
           "description": "Comma-separated list of data fields to return. Options: 'mondo', 'disease_ontology', 'ctd', 'hpo', 'disgenet', 'all'. Default: 'mondo,disease_ontology,ctd,hpo'. Use 'all' for complete data."
+        },
+        "annotation_limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 20,
+          "description": "Maximum entries returned from each CTD/HPO annotation array."
+        },
+        "annotation_offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset applied to CTD/HPO annotation arrays; follow each section's next_offset."
         }
       },
       "required": [
@@ -93,7 +106,7 @@
   },
   {
     "name": "MyDisease_search_diseases",
-    "description": "Search for diseases by keyword in MyDisease.info, a BioThings aggregator combining data from MONDO, Disease Ontology, CTD, HPO, and DisGeNET. Returns matching disease identifiers with names and basic annotations. Useful for finding disease IDs from free-text names. Example: searching 'breast cancer' returns 45 hits including MONDO:0004438 (sporadic breast cancer), MONDO:0006512 (ER+ breast cancer), MONDO:0006513 (ER- breast cancer). Searching 'melanoma' returns 104 hits.",
+    "description": "Search diseases in MyDisease.info. Use the zero-based start offset and next_start while has_more is true to retrieve all BioThings hits.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -105,6 +118,12 @@
           "type": "integer",
           "description": "Maximum number of results to return (default 10, max 100).",
           "default": 10
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based search offset, forwarded to BioThings as from."
         },
         "fields": {
           "type": "string",
@@ -141,6 +160,18 @@
             "returned": {
               "type": "integer",
               "description": "Number of results returned"
+            },
+            "start": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_start": {
+              "type": [
+                "integer",
+                "null"
+              ]
             },
             "diseases": {
               "type": "array",

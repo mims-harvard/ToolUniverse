@@ -1,7 +1,7 @@
 """
 OMA_get_group
 
-Get OMA Group details including member proteins. OMA Groups contain sets of strict 1:1 orthologs ...
+Get OMA Group details and page through all member proteins. OMA Groups contain sets of strict 1:1...
 """
 
 from typing import Any, Optional, Callable
@@ -10,18 +10,24 @@ from ._shared_client import get_shared_client
 
 def OMA_get_group(
     group_id: str,
+    limit: Optional[int] = 30,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get OMA Group details including member proteins. OMA Groups contain sets of strict 1:1 orthologs ...
+    Get OMA Group details and page through all member proteins. OMA Groups contain sets of strict 1:1...
 
     Parameters
     ----------
     group_id : str
         OMA Group number (numeric ID). Verified example: '1458663' (p53 group). Use O...
+    limit : int
+        Maximum group members to return.
+    offset : int
+        Zero-based offset into all OMA group members.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +42,11 @@ def OMA_get_group(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"group_id": group_id}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {"group_id": group_id, "limit": limit, "offset": offset}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "OMA_get_group",

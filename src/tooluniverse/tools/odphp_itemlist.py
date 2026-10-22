@@ -1,7 +1,7 @@
 """
 odphp_itemlist
 
-This tools browses and returns available topics and categories and it is helpful to help narrow a...
+List ODPHP MyHealthfinder v4 topics or categories. The response exposes the upstream total, retur...
 """
 
 from typing import Any, Optional, Callable
@@ -9,15 +9,15 @@ from ._shared_client import get_shared_client
 
 
 def odphp_itemlist(
-    lang: str,
     type_: str,
+    lang: Optional[str] = "en",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    This tools browses and returns available topics and categories and it is helpful to help narrow a...
+    List ODPHP MyHealthfinder v4 topics or categories. The response exposes the upstream total, retur...
 
     Parameters
     ----------

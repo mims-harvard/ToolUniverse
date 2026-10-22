@@ -64,9 +64,9 @@ def CTIS_search_trials_filtered(
     sort_by : str
         Optional CTIS sort key (e.g. by decision date).
     limit : int
-        Results per page (default 10, max 100).
+        Results per page, 1-100. Defaults to 10; invalid values are rejected rather t...
     page : int
-        Page number (default 1).
+        One-based CTIS page number. Defaults to 1; use metadata.next_page while metad...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

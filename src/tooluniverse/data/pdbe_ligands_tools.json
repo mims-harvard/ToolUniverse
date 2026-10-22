@@ -1,13 +1,39 @@
 [
     {
         "name": "PDBe_get_structure_ligands",
-        "description": "Get all ligands (drug-like molecules, cofactors, ions) bound in a PDB crystal structure. Returns chemical component IDs, names, molecular weights, chain assignments, and drug-likeness annotations with interacting protein entity information. Essential for studying protein-ligand interactions, identifying bound drugs/inhibitors, or analyzing binding site occupancy. Example: '4hhb' returns 6 HEM (heme) ligands bound to hemoglobin alpha and beta chains; '3ert' returns 4-hydroxytamoxifen (OHT, 387 Da) bound to estrogen receptor alpha; '1m17' returns erlotinib bound to EGFR kinase domain.",
+        "description": "Get ligands (drug-like molecules, cofactors, ions) bound in a PDB structure. Ligands and annotations within each ligand are independently paginated. Inspect total/returned/truncated/next-offset fields at both levels; large structures can contain hundreds or thousands of ligand instances.",
         "parameter": {
             "type": "object",
             "properties": {
                 "pdb_id": {
                     "type": "string",
                     "description": "PDB entry ID (4-character code). Examples: '4hhb' (hemoglobin), '3ert' (estrogen receptor + tamoxifen), '1m17' (EGFR + erlotinib), '6lu7' (SARS-CoV-2 main protease + inhibitor). Case-insensitive."
+                },
+                "ligand_offset": {
+                    "type": "integer",
+                    "description": "Zero-based ligand offset.",
+                    "default": 0,
+                    "minimum": 0
+                },
+                "ligand_limit": {
+                    "type": "integer",
+                    "description": "Ligands returned per page (default 50, maximum 500).",
+                    "default": 50,
+                    "minimum": 1,
+                    "maximum": 500
+                },
+                "annotation_offset": {
+                    "type": "integer",
+                    "description": "Zero-based annotation offset applied within every returned ligand.",
+                    "default": 0,
+                    "minimum": 0
+                },
+                "annotation_limit": {
+                    "type": "integer",
+                    "description": "Annotations returned per ligand (default 5, maximum 500).",
+                    "default": 5,
+                    "minimum": 1,
+                    "maximum": 500
                 }
             },
             "required": ["pdb_id"]
@@ -48,15 +74,51 @@
                                             "type": "object",
                                             "properties": {
                                                 "type": {"type": ["string", "null"]},
+                                                "interacting_entity_id": {
+                                                    "type": [
+                                                        "integer",
+                                                        "null"
+                                                    ]
+                                                },
                                                 "interacting_chain": {"type": ["string", "null"]},
                                                 "interacting_uniprot": {"type": ["string", "null"]}
                                             }
                                         }
+                                    },
+                                    "annotations_total": {
+                                        "type": "integer"
+                                    },
+                                    "annotations_returned": {
+                                        "type": "integer"
+                                    },
+                                    "annotations_truncated": {
+                                        "type": "boolean"
+                                    },
+                                    "next_annotation_offset": {
+                                        "type": [
+                                            "integer",
+                                            "null"
+                                        ]
                                     }
                                 }
                             }
                         },
-                        "total_ligands": {"type": "integer"}
+                        "total_ligands": {"type": "integer"},
+                        "ligand_offset": {
+                            "type": "integer"
+                        },
+                        "ligands_returned": {
+                            "type": "integer"
+                        },
+                        "ligands_truncated": {
+                            "type": "boolean"
+                        },
+                        "next_ligand_offset": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        }
                     }
                 },
                 {
@@ -71,7 +133,7 @@
     },
     {
         "name": "PDBe_get_residue_listing",
-        "description": "Get per-residue information for a PDB structure, optionally filtered by chain. Returns residue numbers (both PDB sequential and author-assigned), residue names (3-letter amino acid codes), and observed ratio (fraction of models where this residue has electron density). Useful for analyzing protein chain composition, identifying disordered/missing regions (observed_ratio < 1.0), or mapping between PDB and author numbering schemes. Example: '4hhb' chain A returns 141 residues (alpha globin) all with 1.0 observed ratio; '3ert' chain A returns 261 residues (estrogen receptor) starting at author residue 294.",
+        "description": "Get per-residue information for a PDB structure, optionally filtered by chain. Molecules, chains within each molecule, and residues within each chain are independently paginated. Inspect total/returned/truncated/next-offset fields at every level to avoid silently missing residues.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -82,6 +144,45 @@
                 "chain_id": {
                     "type": ["string", "null"],
                     "description": "Optional chain ID to filter (e.g., 'A', 'B'). If not provided, all chains are returned."
+                },
+                "molecule_offset": {
+                    "type": "integer",
+                    "description": "Zero-based molecule offset.",
+                    "default": 0,
+                    "minimum": 0
+                },
+                "molecule_limit": {
+                    "type": "integer",
+                    "description": "Molecules returned per page (default 10, maximum 500).",
+                    "default": 10,
+                    "minimum": 1,
+                    "maximum": 500
+                },
+                "chain_offset": {
+                    "type": "integer",
+                    "description": "Zero-based chain offset applied within every returned molecule.",
+                    "default": 0,
+                    "minimum": 0
+                },
+                "chain_limit": {
+                    "type": "integer",
+                    "description": "Chains returned per molecule (default 5, maximum 500).",
+                    "default": 5,
+                    "minimum": 1,
+                    "maximum": 500
+                },
+                "residue_offset": {
+                    "type": "integer",
+                    "description": "Zero-based residue offset applied within every returned chain.",
+                    "default": 0,
+                    "minimum": 0
+                },
+                "residue_limit": {
+                    "type": "integer",
+                    "description": "Residues returned per chain (default 30, maximum 5000).",
+                    "default": 30,
+                    "minimum": 1,
+                    "maximum": 5000
                 }
             },
             "required": ["pdb_id"]
@@ -117,7 +218,25 @@
                                             "type": "object",
                                             "properties": {
                                                 "chain_id": {"type": "string"},
+                                                "struct_asym_id": {
+                                                    "type": "string"
+                                                },
                                                 "total_residues": {"type": "integer"},
+                                                "residue_offset": {
+                                                    "type": "integer"
+                                                },
+                                                "residues_returned": {
+                                                    "type": "integer"
+                                                },
+                                                "residues_truncated": {
+                                                    "type": "boolean"
+                                                },
+                                                "next_residue_offset": {
+                                                    "type": [
+                                                        "integer",
+                                                        "null"
+                                                    ]
+                                                },
                                                 "residues": {
                                                     "type": "array",
                                                     "items": {
@@ -132,11 +251,44 @@
                                                 }
                                             }
                                         }
+                                    },
+                                    "total_chains": {
+                                        "type": "integer"
+                                    },
+                                    "chain_offset": {
+                                        "type": "integer"
+                                    },
+                                    "chains_returned": {
+                                        "type": "integer"
+                                    },
+                                    "chains_truncated": {
+                                        "type": "boolean"
+                                    },
+                                    "next_chain_offset": {
+                                        "type": [
+                                            "integer",
+                                            "null"
+                                        ]
                                     }
                                 }
                             }
                         },
-                        "total_molecules": {"type": "integer"}
+                        "total_molecules": {"type": "integer"},
+                        "molecule_offset": {
+                            "type": "integer"
+                        },
+                        "molecules_returned": {
+                            "type": "integer"
+                        },
+                        "molecules_truncated": {
+                            "type": "boolean"
+                        },
+                        "next_molecule_offset": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        }
                     }
                 },
                 {

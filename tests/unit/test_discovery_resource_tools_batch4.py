@@ -55,8 +55,8 @@ def test_npatlas_get_curates_with_reference():
 def test_npatlas_get_404_empty():
     with patch("tooluniverse.npatlas_tool.requests.get", return_value=_resp(404)):
         out = NPAtlasCompoundTool(_cfg("NPAtlas_get_compound", "NPAtlasCompoundTool")).run({"npaid": "NPA999999"})
-    assert out["status"] == "success"
-    assert out["data"] == {}
+    assert out["status"] == "error"
+    assert "not found" in out["error"]
 
 
 # --------------------------- ISRCTN --------------------------- #

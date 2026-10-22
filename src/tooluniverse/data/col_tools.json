@@ -17,17 +17,17 @@
           "description": "Filter by taxonomic rank: 'species', 'genus', 'family', 'order', 'class', 'phylum', 'kingdom'"
         },
         "limit": {
-          "type": [
-            "integer",
-            "null"
-          ],
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 10,
           "description": "Maximum number of results to return (default 10, max 1000)"
         },
         "offset": {
-          "type": [
-            "integer",
-            "null"
-          ],
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000,
+          "default": 0,
           "description": "Offset for pagination"
         }
       },
@@ -36,7 +36,8 @@
       ]
     },
     "fields": {
-      "endpoint": "https://api.catalogueoflife.org/dataset/3LR/nameusage/search"
+      "endpoint": "https://api.catalogueoflife.org/dataset/3LR/nameusage/search",
+      "pagination": "col_offset"
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -233,7 +234,7 @@
   },
   {
     "name": "CoL_get_children",
-    "description": "Get child taxa (immediate subtaxa) of a given taxon in the Catalogue of Life. For example, get all species within a genus, or all genera within a family. Uses the parentId parameter to list direct descendants. Returns child taxon names, ranks, IDs, and status. Use CoL_search_species or CoL_get_taxon to find the parent taxon ID first.",
+    "description": "Get immediate child taxa of a Catalogue of Life taxon through the official tree/{id}/children endpoint. The previous nameusage?parentId form silently ignored the parent and returned the whole Catalogue. Supports exact offset/limit continuation on non-empty pages.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -242,17 +243,17 @@
           "description": "CoL ID of the parent taxon whose children to retrieve (e.g., '636X2' for genus Homo, '623RM' for family Felidae). Obtain from CoL_search_species or CoL_get_taxon."
         },
         "limit": {
-          "type": [
-            "integer",
-            "null"
-          ],
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 10,
           "description": "Maximum number of children to return (default 10, max 1000)"
         },
         "offset": {
-          "type": [
-            "integer",
-            "null"
-          ],
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100000,
+          "default": 0,
           "description": "Offset for pagination"
         }
       },
@@ -261,7 +262,8 @@
       ]
     },
     "fields": {
-      "endpoint": "https://api.catalogueoflife.org/dataset/3LR/nameusage"
+      "endpoint": "https://api.catalogueoflife.org/dataset/3LR/tree/{parentId}/children",
+      "pagination": "col_offset"
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -301,18 +303,16 @@
                     "description": "CoL taxon ID of the child"
                   },
                   "name": {
-                    "type": "object",
-                    "properties": {
-                      "scientificName": {
-                        "type": "string"
-                      },
-                      "rank": {
-                        "type": "string"
-                      },
-                      "authorship": {
-                        "type": "string"
-                      }
-                    }
+                    "type": "string"
+                  },
+                  "rank": {
+                    "type": "string"
+                  },
+                  "authorship": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "status": {
                     "type": "string",
@@ -325,6 +325,9 @@
                   "parentId": {
                     "type": "string",
                     "description": "Parent taxon ID"
+                  },
+                  "childCount": {
+                    "type": "integer"
                   }
                 }
               }

@@ -77,17 +77,62 @@ class UniChemTool(BaseTool):
                 "error": f"Unknown endpoint_type: {self.endpoint_type}",
             }
 
-    def _search_compound(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Search UniChem for a compound by InChIKey, sourceID, or UCI."""
+    @staticmethod
+    def _search_arguments(arguments):
         compound = arguments.get("compound", "")
         search_type = arguments.get("type", "inchikey")
-        source_id = arguments.get("sourceID", None)
-
-        if not compound:
+        source_id = arguments.get("sourceID")
+        if not isinstance(compound, str) or not compound.strip():
+            return {"status": "error", "error": "compound must be a non-empty string"}
+        if search_type not in {"inchi", "inchikey", "sourceID", "uci"}:
             return {
                 "status": "error",
-                "error": "compound parameter is required (e.g., InChIKey 'BSYNRYMUTXBXSQ-UHFFFAOYSA-N')",
+                "error": "type must be one of inchi, inchikey, sourceID, or uci",
             }
+        if search_type == "sourceID":
+            if (
+                isinstance(source_id, bool)
+                or not isinstance(source_id, int)
+                or source_id < 1
+            ):
+                return {
+                    "status": "error",
+                    "error": "sourceID must be a positive integer when type is sourceID",
+                }
+        elif source_id is not None:
+            return {
+                "status": "error",
+                "error": "sourceID is only valid when type is sourceID",
+            }
+        return compound.strip(), search_type, source_id
+
+    @staticmethod
+    def _nonnegative_count(value, field):
+        if isinstance(value, str) and value.isdigit():
+            value = int(value)
+        if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+            return {
+                "status": "error",
+                "error": f"UniChem {field} was not a valid count",
+            }
+        return value
+
+    @staticmethod
+    def _source_record(source):
+        return {
+            "source_id": source.get("id"),
+            "source_name": source.get("shortName", ""),
+            "source_long_name": source.get("longName", ""),
+            "compound_id": source.get("compoundId", ""),
+            "url": source.get("url"),
+        }
+
+    def _search_compound(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        """Search UniChem for a compound by InChIKey, sourceID, or UCI."""
+        controls = self._search_arguments(arguments)
+        if isinstance(controls, dict):
+            return controls
+        compound, search_type, source_id = controls
 
         payload = {
             "compound": compound,
@@ -105,13 +150,20 @@ class UniChemTool(BaseTool):
         )
         response.raise_for_status()
         raw = response.json()
-
-        # Extract compound info
-        compounds = raw.get("compounds", [])
-        if not compounds:
+        if not isinstance(raw, dict):
+            return {"status": "error", "error": "UniChem response was not an object"}
+        # UniChem answers a query that matches nothing with response
+        # 'Not found' and an empty list: an empty result, not a failure.
+        if raw.get("response") == "Not found" and not raw.get("compounds"):
             return {
                 "status": "success",
                 "data": {
+                    "query": compound,
+                    "query_type": search_type,
+                    "total_compounds": 0,
+                    "returned_compounds": 0,
+                    "result_set_complete": True,
+                    "compounds": [],
                     "inchi": None,
                     "inchikey": None,
                     "formula": None,
@@ -125,44 +177,76 @@ class UniChemTool(BaseTool):
                     "endpoint": "compounds",
                 },
             }
+        if raw.get("response") != "Success":
+            return {
+                "status": "error",
+                "error": f"UniChem application response was {raw.get('response')!r}",
+                "not_found": raw.get("notFound"),
+            }
+        total = self._nonnegative_count(raw.get("totalCompounds"), "totalCompounds")
+        if isinstance(total, dict):
+            return total
 
-        first = compounds[0]
-        inchi_data = first.get("inchi", {})
-        inchi_str = (
-            inchi_data.get("inchi", None) if isinstance(inchi_data, dict) else None
-        )
-        formula = (
-            inchi_data.get("formula", None) if isinstance(inchi_data, dict) else None
-        )
-
-        sources_raw = first.get("sources", [])
-        sources = []
-        for s in sources_raw:
-            sources.append(
+        compounds = raw.get("compounds", [])
+        if not isinstance(compounds, list) or len(compounds) != total:
+            return {
+                "status": "error",
+                "error": "UniChem compounds length conflicts with totalCompounds",
+                "reported_total": total,
+                "returned_compounds": len(compounds)
+                if isinstance(compounds, list)
+                else None,
+            }
+        parsed_compounds = []
+        for entry in compounds:
+            if not isinstance(entry, dict) or not isinstance(entry.get("inchi"), dict):
+                return {
+                    "status": "error",
+                    "error": "UniChem returned a malformed compound",
+                }
+            sources_raw = entry.get("sources")
+            if not isinstance(sources_raw, list) or any(
+                not isinstance(source, dict) for source in sources_raw
+            ):
+                return {
+                    "status": "error",
+                    "error": "UniChem returned malformed sources",
+                }
+            sources = [self._source_record(source) for source in sources_raw]
+            unique_source_ids = {source["source_id"] for source in sources}
+            inchi_data = entry["inchi"]
+            parsed_compounds.append(
                 {
-                    "source_name": s.get("shortName", ""),
-                    "source_long_name": s.get("longName", ""),
-                    "compound_id": s.get("compoundId", ""),
-                    "url": s.get("url", None),
+                    "inchi": inchi_data.get("inchi"),
+                    # The /compounds response carries the standard InChIKey
+                    # at the top level (same field ``_connectivity_search``
+                    # reads).
+                    "inchikey": entry.get("standardInchiKey"),
+                    "formula": inchi_data.get("formula"),
+                    "uci": entry.get("uci"),
+                    "source_record_count": len(sources),
+                    "unique_source_count": len(unique_source_ids),
+                    "duplicate_source_records": len(sources) - len(unique_source_ids),
+                    "sources": sources,
                 }
             )
 
-        # The /compounds response carries the standard InChIKey at the top
-        # level (same field ``_connectivity_search`` reads). Fall back to
-        # echoing the query only when the API omits it, so callers that
-        # searched by InChIKey never lose the value they had before.
-        inchikey = first.get("standardInchiKey")
-        if not inchikey:
-            inchikey = compound if search_type == "inchikey" else None
-
         result = {
-            "inchi": inchi_str,
-            "inchikey": inchikey,
-            "formula": formula,
-            "uci": first.get("uci"),
-            "source_count": len(sources),
-            "sources": sources,
+            "query": compound,
+            "query_type": search_type,
+            "total_compounds": total,
+            "returned_compounds": len(parsed_compounds),
+            "result_set_complete": True,
+            "compounds": parsed_compounds,
+            "not_found": raw.get("notFound"),
         }
+        if len(parsed_compounds) == 1:
+            result.update(parsed_compounds[0])
+            # Fall back to echoing the query only when the API omits the
+            # InChIKey, so callers that searched by InChIKey never lose it.
+            if not result["inchikey"]:
+                result["inchikey"] = compound if search_type == "inchikey" else None
+            result["source_count"] = parsed_compounds[0]["source_record_count"]
 
         return {
             "status": "success",
@@ -184,17 +268,12 @@ class UniChemTool(BaseTool):
         describing how that match differs from the query (charge, stereo
         double bond, isotope, protonation, heavy atoms, etc.).
         """
-        compound = arguments.get("compound", "")
-        search_type = arguments.get("type", "inchikey")
-
-        if not compound:
-            return {
-                "status": "error",
-                "error": "compound parameter is required (e.g., InChIKey 'BSYNRYMUTXBXSQ-UHFFFAOYSA-N')",
-            }
+        controls = self._search_arguments(arguments)
+        if isinstance(controls, dict):
+            return controls
+        compound, search_type, source_id = controls
 
         payload = {"compound": compound, "type": search_type}
-        source_id = arguments.get("sourceID", None)
         if source_id is not None:
             payload["sourceID"] = source_id
 
@@ -207,6 +286,25 @@ class UniChemTool(BaseTool):
         )
         response.raise_for_status()
         raw = response.json()
+        if not isinstance(raw, dict) or raw.get("response") != "Success":
+            return {
+                "status": "error",
+                "error": "UniChem connectivity response was not a successful object",
+            }
+        total_compounds = self._nonnegative_count(
+            raw.get("totalCompounds"), "totalCompounds"
+        )
+        total_sources = self._nonnegative_count(raw.get("totalSources"), "totalSources")
+        if isinstance(total_compounds, dict):
+            return total_compounds
+        if isinstance(total_sources, dict):
+            return total_sources
+        sources_raw = raw.get("sources")
+        if not isinstance(sources_raw, list) or len(sources_raw) != total_sources:
+            return {
+                "status": "error",
+                "error": "UniChem connectivity sources length conflicts with totalSources",
+            }
 
         searched = raw.get("searchedCompound", {})
         searched_info = {
@@ -218,7 +316,7 @@ class UniChemTool(BaseTool):
         }
 
         matches = []
-        for s in raw.get("sources", []):
+        for s in sources_raw:
             matches.append(
                 {
                     "source_id": s.get("id"),
@@ -234,8 +332,8 @@ class UniChemTool(BaseTool):
         result = {
             "response": raw.get("response"),
             "searched_compound": searched_info,
-            "total_compounds": raw.get("totalCompounds"),
-            "total_sources": raw.get("totalSources"),
+            "total_compounds": total_compounds,
+            "total_sources": total_sources,
             "match_count": len(matches),
             "matches": matches,
         }
@@ -260,8 +358,21 @@ class UniChemTool(BaseTool):
         )
         response.raise_for_status()
         raw = response.json()
+        if not isinstance(raw, dict):
+            return {
+                "status": "error",
+                "error": "UniChem sources response was not an object",
+            }
+        total = self._nonnegative_count(raw.get("totalSources"), "totalSources")
+        if isinstance(total, dict):
+            return total
 
         sources_raw = raw.get("sources", [])
+        if not isinstance(sources_raw, list) or len(sources_raw) != total:
+            return {
+                "status": "error",
+                "error": "UniChem sources length conflicts with totalSources",
+            }
         sources = []
         for s in sources_raw:
             sources.append(
@@ -278,6 +389,8 @@ class UniChemTool(BaseTool):
         result = {
             "source_count": len(sources),
             "sources": sources,
+            "reported_total_sources": total,
+            "result_set_complete": True,
         }
 
         return {

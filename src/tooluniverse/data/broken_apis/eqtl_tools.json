@@ -7,8 +7,16 @@
       "properties": {
         "size": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 999,
           "default": 20,
-          "description": "Number of datasets to return (default 20)"
+          "description": "Page size from 1 to 999 (default 20; one upstream slot is reserved for lookahead)"
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based dataset offset. Continue with metadata.next_start while metadata.has_more is true."
         },
         "quant_method": {
           "type": [
@@ -25,10 +33,12 @@
           "description": "Filter by tissue ontology ID (e.g., 'CL_0000235' for macrophage, 'UBERON_0002107' for liver)"
         }
       },
-      "required": []
+      "required": [],
+      "additionalProperties": false
     },
     "fields": {
-      "endpoint": "https://www.ebi.ac.uk/eqtl/api/v2/datasets"
+      "endpoint": "https://www.ebi.ac.uk/eqtl/api/v2/datasets",
+      "pagination": "ebi_start_lookahead"
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -113,8 +123,16 @@
         },
         "size": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 999,
           "default": 20,
-          "description": "Number of associations to return (default 20)"
+          "description": "Page size from 1 to 999 (default 20; one upstream slot is reserved for lookahead)"
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based association offset. Continue with metadata.next_start while metadata.has_more is true."
         },
         "gene_id": {
           "type": [
@@ -140,10 +158,12 @@
       },
       "required": [
         "dataset_id"
-      ]
+      ],
+      "additionalProperties": false
     },
     "fields": {
-      "endpoint": "https://www.ebi.ac.uk/eqtl/api/v2/datasets/{dataset_id}/associations"
+      "endpoint": "https://www.ebi.ac.uk/eqtl/api/v2/datasets/{dataset_id}/associations",
+      "pagination": "ebi_start_lookahead"
     },
     "type": "BaseRESTTool",
     "test_examples": [

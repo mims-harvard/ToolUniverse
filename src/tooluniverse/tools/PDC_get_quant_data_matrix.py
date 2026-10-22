@@ -1,7 +1,7 @@
 """
 PDC_get_quant_data_matrix
 
-Get the quantitative protein abundance matrix (gene x aliquot/case) for a CPTAC/PDC study - the c...
+Get a recoverable gene-row page from a PDC quantitative protein abundance matrix. The full aliquo...
 """
 
 from typing import Any, Optional, Callable
@@ -13,13 +13,14 @@ def PDC_get_quant_data_matrix(
     operation: Optional[str] = "get_quant_data_matrix",
     data_type: Optional[str] = "log2_ratio",
     max_genes: Optional[int] = 50,
+    gene_offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get the quantitative protein abundance matrix (gene x aliquot/case) for a CPTAC/PDC study - the c...
+    Get a recoverable gene-row page from a PDC quantitative protein abundance matrix. The full aliquo...
 
     Parameters
     ----------
@@ -31,6 +32,8 @@ def PDC_get_quant_data_matrix(
         Quantitation data type. Common values: 'log2_ratio' (default), 'unshared_log2...
     max_genes : int
         Maximum number of gene rows to return (the aliquot column header is always re...
+    gene_offset : int
+        Zero-based gene-row offset. Continue with next_gene_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def PDC_get_quant_data_matrix(
             "pdc_study_id": pdc_study_id,
             "data_type": data_type,
             "max_genes": max_genes,
+            "gene_offset": gene_offset,
         }.items()
         if v is not None
     }

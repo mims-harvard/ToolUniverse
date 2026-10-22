@@ -30,6 +30,10 @@ class PRIDERESTTool(BaseTool):
             page_size = args.get("page_size", 20)
             separator = "&" if "?" in url else "?"
             url = f"{url}{separator}pageSize={page_size}"
+        if "page" in self.tool_config.get("parameter", {}).get("properties", {}):
+            page = max(int(args.get("page", 0)), 0)
+            separator = "&" if "?" in url else "?"
+            url = f"{url}{separator}page={page}"
         return url
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -61,7 +65,29 @@ class PRIDERESTTool(BaseTool):
                     "detail": (response.text or "")[:500],
                 }
             data = response.json()
-            return {"status": "success", "data": data, "url": url}
+            returned = len(data) if isinstance(data, list) else 0
+            raw_total = getattr(response, "headers", {}).get("total_records")
+            try:
+                total = int(raw_total) if raw_total is not None else None
+            except (TypeError, ValueError):
+                total = None
+            page = max(int(arguments.get("page", 0)), 0)
+            page_size = int(arguments.get("page_size", 20))
+            has_more = total is not None and (page + 1) * page_size < total
+            return {
+                "status": "success",
+                "data": data,
+                "url": url,
+                "metadata": {
+                    "total_results": total,
+                    "returned": returned,
+                    "page": page,
+                    "page_size": page_size,
+                    "has_more": has_more,
+                    "truncated": has_more,
+                    "next_page": page + 1 if has_more else None,
+                },
+            }
         except Exception as e:
             return {
                 "status": "error",

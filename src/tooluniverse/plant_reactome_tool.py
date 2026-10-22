@@ -136,13 +136,35 @@ class PlantReactomeTool(BaseTool):
                     }
                 )
 
+        total = data.get("numberOfMatches")
+        total_is_exact = isinstance(total, int) and not isinstance(total, bool)
+        if not total_is_exact:
+            total = None
+        returned = len(results)
+        truncated = total_is_exact and returned < total
+
         return {
             "status": "success",
             "data": results,
             "metadata": {
                 "source": "Plant Reactome (Gramene)",
-                "total_results": data.get("numberOfMatches", len(results)),
+                "total_results": total,
+                "total_results_is_exact": total_is_exact,
+                "returned": returned,
+                "upstream_row_count": data.get("rowCount"),
                 "total_groups": data.get("numberOfGroups", len(groups)),
+                "has_more": False,
+                "next_page": None,
+                "truncated": truncated or not total_is_exact,
+                "upstream_truncated": truncated,
+                "unreachable_results": total - returned if truncated else 0,
+                "result_set_complete": total_is_exact and not truncated,
+                "pagination_supported": False,
+                "pagination_note": (
+                    "Plant Reactome reports numberOfMatches but its search endpoint "
+                    "does not honor page, pageSize, start, rows, or limit controls. "
+                    "Only the upstream rowCount records are retrievable."
+                ),
                 "query": query,
             },
         }

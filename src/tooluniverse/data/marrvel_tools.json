@@ -1,23 +1,175 @@
 [
     {
         "name": "MARRVEL_get_gene",
-        "description": "Get aggregated identity and annotation for a human gene by symbol from MARRVEL: cross-references (HGNC, Ensembl, Entrez, UniProt), chromosome/cytogenetic location, gene type, aliases, previous symbols, and the Entrez gene summary. Use as a one-call gene-identity resolver in rare-disease / Mendelian variant triage workflows. Does NOT include an OMIM ID -- MARRVEL's own gene-lookup endpoint returns an unreliable placeholder value for it (confirmed live), use MARRVEL_get_omim_phenotypes for OMIM associations instead. MARRVEL indexes only current approved HGNC symbols, so a retired symbol or alias (e.g. 'RP20'/'LCA2' for RPE65) is resolved once via HGNC and re-queried; when that happens the substitution is disclosed in metadata.resolved_symbol and metadata.resolved_note, and metadata.query_symbol keeps the symbol you asked for. No API key required.",
-        "parameter": {"type": "object", "properties": {
-            "symbol": {"type": ["string", "null"], "description": "HGNC gene symbol, e.g. 'CFTR', 'BRCA1'."},
-            "gene_symbol": {"type": ["string", "null"], "description": "Alias for symbol."},
-            "gene": {"type": ["string", "null"], "description": "Alias for symbol."}
-        }, "required": [], "anyOf": [
+        "description": "Get a complete normalized MARRVEL human-gene record by symbol: HGNC/Ensembl/Entrez/UniProt cross-references, GRCh38 and hg19 coordinates, cytogenetic location, aliases, status/update date, summaries, and Pharos ligand/target IDs. The wrapper verifies the returned symbol and duplicate HGNC/Pharos fields before success. It intentionally excludes the upstream xref.omimId because that field is a confirmed invalid placeholder; use MARRVEL_get_omim_phenotypes for the verified gene MIM number. MARRVEL indexes only current approved HGNC symbols, so a retired symbol or alias (e.g. 'RP20'/'LCA2' for RPE65) is resolved once via HGNC and re-queried; when that happens the substitution is disclosed in metadata.resolved_symbol and metadata.resolved_note, and metadata.query_symbol keeps the symbol you asked for. MARRVEL currently serves this API only over unencrypted HTTP because its HTTPS certificate does not match api.marrvel.org; metadata makes that transport limitation explicit. No API key required.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "symbol": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "HGNC gene symbol, e.g. 'CFTR', 'BRCA1'. Input is normalized to uppercase because the MARRVEL gene endpoint is case-sensitive and otherwise returns a silent empty object."
+                },
+                "gene_symbol": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Alias for symbol. If multiple aliases are supplied, all must identify the same symbol."
+                },
+                "gene": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Alias for symbol. If multiple aliases are supplied, all must identify the same symbol."
+                }
+            },
+            "required": [],
+            "anyOf": [
             {"required": ["symbol"]}, {"required": ["gene_symbol"]}, {"required": ["gene"]}
-        ]},
+        ]
+        },
         "fields": {"timeout": 30},
         "type": "MARRVELGeneTool",
         "test_examples": [{"symbol": "CFTR"}, {"symbol": "BRCA1"}, {"symbol": "TP53"}],
         "return_schema": {
-          "oneOf": [
-            {
-              "type": "object"
-            },
-            {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "symbol": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "name": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "description": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "entrez_id": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        },
+                        "hgnc_id": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "ensembl_id": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "uniprot_id": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "taxon_id": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        },
+                        "chromosome": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "location": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "grch38_start": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        },
+                        "grch38_stop": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        },
+                        "grch39_stop_upstream": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "description": "Field named grch39Stop by MARRVEL; preserved verbatim but not presented as a validated assembly coordinate."
+                        },
+                        "hg19_chromosome": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "hg19_start": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        },
+                        "hg19_stop": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
+                        },
+                        "type": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "aliases": {
+                            "type": "array"
+                        },
+                        "prev_symbols": {
+                            "type": "array"
+                        },
+                        "summary": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "status": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "last_modified": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "pharos_ligand_ids": {
+                            "type": "array"
+                        },
+                        "pharos_target_ids": {
+                            "type": "array"
+                        }
+                    }
+                },
+                {
               "type": "object",
               "properties": {
                 "error": {
@@ -28,31 +180,86 @@
                 "error"
               ]
             }
-          ]
+            ]
         }
     },
     {
         "name": "MARRVEL_get_omim_phenotypes",
-        "description": "Get OMIM phenotype/disease associations for a human gene by symbol via MARRVEL: each association's phenotype name, gene and phenotype MIM numbers, mode of inheritance, and phenotypic series. Use to enumerate the Mendelian diseases linked to a gene and their inheritance patterns. MARRVEL indexes only current approved HGNC symbols, so a retired symbol or alias (e.g. 'RP20'/'LCA2' for RPE65) is resolved once via HGNC and re-queried; when that happens the substitution is disclosed in metadata.resolved_symbol and metadata.resolved_note. No API key required.",
-        "parameter": {"type": "object", "properties": {
-            "symbol": {"type": ["string", "null"], "description": "HGNC gene symbol, e.g. 'CFTR', 'BRCA1'."},
-            "gene_symbol": {"type": ["string", "null"], "description": "Alias for symbol."},
-            "gene": {"type": ["string", "null"], "description": "Alias for symbol."}
-        }, "required": [], "anyOf": [
+        "description": "Get the complete OMIM phenotype association list for a human gene via MARRVEL, including phenotype name, verified gene/phenotype MIM numbers, inheritance, mapping key, and phenotypic series. Use to enumerate the Mendelian diseases linked to a gene and their inheritance patterns. Metadata preserves the OMIM title, description, status, update time, phenotype count, and the count of adjacent allelic-variant records. Allelic-variant narratives are not returned by this phenotype-focused tool, and metadata states that limitation explicitly. MARRVEL indexes only current approved HGNC symbols, so a retired symbol or alias (e.g. 'RP20'/'LCA2' for RPE65) is resolved once via HGNC and re-queried; when that happens the substitution is disclosed in metadata.resolved_symbol and metadata.resolved_note. The upstream API currently uses unencrypted HTTP. No API key required.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "symbol": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "HGNC gene symbol, e.g. 'CFTR', 'BRCA1'. Input is normalized to uppercase for consistent MARRVEL lookup semantics."
+                },
+                "gene_symbol": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Alias for symbol. Multiple supplied aliases must agree."
+                },
+                "gene": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Alias for symbol. Multiple supplied aliases must agree."
+                }
+            },
+            "required": [],
+            "anyOf": [
             {"required": ["symbol"]}, {"required": ["gene_symbol"]}, {"required": ["gene"]}
-        ]},
+        ]
+        },
         "fields": {"timeout": 30},
         "type": "MARRVELOmimTool",
         "test_examples": [{"symbol": "CFTR"}, {"symbol": "FBN1"}, {"symbol": "LMNA"}],
         "return_schema": {
-          "oneOf": [
-            {
-              "type": "array",
-              "items": {
-                "type": "object"
-              }
-            },
-            {
+            "oneOf": [
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "gene_mim_number": {
+                                "type": [
+                                    "integer",
+                                    "null"
+                                ]
+                            },
+                            "phenotype": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "phenotype_mim_number": {
+                                "type": [
+                                    "integer",
+                                    "null"
+                                ]
+                            },
+                            "inheritance": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "phenotype_mapping_key": {
+                                "type": [
+                                    "integer",
+                                    "null"
+                                ]
+                            },
+                            "phenotypic_series": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            }
+                        }
+                    }
+                },
+                {
               "type": "object",
               "properties": {
                 "error": {
@@ -63,7 +270,7 @@
                 "error"
               ]
             }
-          ]
+            ]
         }
     }
 ]

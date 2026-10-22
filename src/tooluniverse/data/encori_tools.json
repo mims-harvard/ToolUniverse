@@ -28,6 +28,12 @@
         "limit": {
           "type": ["integer", "null"],
           "description": "Maximum interactions to return (1-500, default 50)."
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based ranked interaction offset. Continue with metadata.next_offset while metadata.has_more is true.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": []
@@ -99,6 +105,12 @@
         "limit": {
           "type": ["integer", "null"],
           "description": "Maximum binding rows to return (1-500, default 100)."
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based ranked row offset. Continue with metadata.next_offset while metadata.has_more is true.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": []
@@ -168,6 +180,12 @@
         "limit": {
           "type": ["integer", "null"],
           "description": "Maximum ceRNA partner rows to return (1-500, default 100)."
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based ranked row offset. Continue with metadata.next_offset while metadata.has_more is true.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": []
@@ -234,6 +252,12 @@
         "limit": {
           "type": ["integer", "null"],
           "description": "Maximum interaction rows to return (1-500, default 100)."
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based ranked row offset. Continue with metadata.next_offset while metadata.has_more is true.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": []
@@ -304,6 +328,12 @@
         "limit": {
           "type": ["integer", "null"],
           "description": "Maximum cleavage rows to return (1-500, default 100)."
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based ranked row offset. Continue with metadata.next_offset while metadata.has_more is true.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": []
@@ -366,6 +396,12 @@
         "limit": {
           "type": ["integer", "null"],
           "description": "Maximum association rows to return (1-500, default 100)."
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based ranked row offset. Continue with metadata.next_offset while metadata.has_more is true.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": []
@@ -429,6 +465,12 @@
         "limit": {
           "type": ["integer", "null"],
           "description": "Maximum motif rows to return (1-500, default 100)."
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based ranked row offset. Continue with metadata.next_offset while metadata.has_more is true.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": []

@@ -1,7 +1,7 @@
 [
   {
     "name": "FinnGen_list_phenotypes",
-    "description": "Search and list FinnGen disease endpoints (phenotypes). FinnGen is a Finnish population genomics study with 486,367 participants and 2,470 phenotypes. Search by keyword (e.g., 'diabetes', 'asthma', 'cancer') or browse by category. Returns phenotype codes, case/control counts, and number of genome-wide significant loci. Use phenocode values from results with FinnGen_get_phenotype and FinnGen_get_region_associations.",
+    "description": "Search and list FinnGen disease endpoints (phenotypes). FinnGen is a Finnish population genomics study with 486,367 participants and 2,470 phenotypes. Search by keyword (e.g., 'diabetes', 'asthma', 'cancer') or browse by category. Returns phenotype codes, case/control counts, and number of genome-wide significant loci. Metadata exposes total_matching and next_offset so every matching phenotype is reachable. Use phenocode values from results with FinnGen_get_phenotype and FinnGen_get_region_associations.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -20,6 +20,12 @@
         "limit": {
           "type": ["integer", "null"],
           "description": "Maximum number of results to return (default 50)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based result offset. Continue with metadata.next_offset while has_more is true."
         }
       },
       "required": []

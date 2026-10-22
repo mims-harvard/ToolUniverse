@@ -123,12 +123,28 @@ class AntibodyRegistryTool(BaseTool):
                 "error": "Parameter 'query' is required (e.g. a target like 'GFAP' or 'anti-CD3').",
             }
         try:
-            size = max(1, min(int(arguments.get("size", 10)), 100))
-            page = max(1, int(arguments.get("page", 1)))  # pages start at 1
+            raw_size = arguments.get("size", 10)
+            raw_page = arguments.get("page", 1)
+            if isinstance(raw_size, bool) or isinstance(raw_page, bool):
+                raise ValueError
+            size = int(raw_size)
+            page = int(raw_page)  # pages start at 1
+            if (
+                isinstance(raw_size, float)
+                and not raw_size.is_integer()
+                or isinstance(raw_page, float)
+                and not raw_page.is_integer()
+                or not 1 <= size <= 500
+                or page < 1
+            ):
+                raise ValueError
         except (TypeError, ValueError):
             return {
                 "status": "error",
-                "error": "Parameters 'size' and 'page' must be integers.",
+                "error": (
+                    "Parameter 'size' must be an integer from 1 to 500 and "
+                    "'page' must be an integer starting at 1."
+                ),
             }
 
         body, err = self._request(
@@ -140,17 +156,32 @@ class AntibodyRegistryTool(BaseTool):
         items: List[Dict[str, Any]] = (
             body.get("items", []) if isinstance(body, dict) else []
         )
+        total_matches = body.get("totalElements") if isinstance(body, dict) else None
+        current_page = body.get("page", page) if isinstance(body, dict) else page
+        total_pages = (
+            (total_matches + size - 1) // size
+            if isinstance(total_matches, int)
+            else None
+        )
+        has_more = (
+            current_page < total_pages
+            if isinstance(current_page, int) and isinstance(total_pages, int)
+            else len(items) >= size
+        )
         return {
             "status": "success",
             "data": [_normalize(it) for it in items],
             "metadata": {
                 "source": "Antibody Registry (antibodyregistry.org)",
                 "query": str(query),
-                "total_matches": body.get("totalElements")
-                if isinstance(body, dict)
-                else None,
+                "total_matches": total_matches,
+                "total_pages": total_pages,
                 "returned": len(items),
-                "page": page,
+                "size": size,
+                "page": current_page,
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_page": current_page + 1 if has_more else None,
             },
         }
 

@@ -1,7 +1,7 @@
 """
 ISRCTN_search_trials
 
-Search the ISRCTN clinical trial registry — a WHO-primary registry (UK-based, international scope...
+Search the ISRCTN clinical trial registry by free text. The official XML API has no pagination an...
 """
 
 from typing import Any, Optional, Callable
@@ -10,14 +10,14 @@ from ._shared_client import get_shared_client
 
 def ISRCTN_search_trials(
     query: str,
-    limit: Optional[int] = None,
+    limit: Optional[int] = 10,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search the ISRCTN clinical trial registry — a WHO-primary registry (UK-based, international scope...
+    Search the ISRCTN clinical trial registry by free text. The official XML API has no pagination an...
 
     Parameters
     ----------

@@ -1,7 +1,7 @@
 """
 OncoTree_get_type
 
-Get detailed information about a specific OncoTree cancer type by its exact code (e.g. 'BRCA', 'L...
+Get complete information about one OncoTree cancer type by exact code (e.g. 'BRCA', 'LUAD', 'GBM'...
 """
 
 from typing import Any, Optional, Callable
@@ -17,7 +17,7 @@ def OncoTree_get_type(
     validate: bool = True,
 ) -> Any:
     """
-    Get detailed information about a specific OncoTree cancer type by its exact code (e.g. 'BRCA', 'L...
+    Get complete information about one OncoTree cancer type by exact code (e.g. 'BRCA', 'LUAD', 'GBM'...
 
     Parameters
     ----------

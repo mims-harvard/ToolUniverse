@@ -1,7 +1,7 @@
 """
 MyGene_query_genes
 
-Search for genes by keyword, symbol, name, or other identifiers. Returns gene annotations from 30...
+Search MyGene.info with explicit offset pagination. Pages may contain up to 1000 records. BioThin...
 """
 
 from typing import Any, Optional, Callable
@@ -13,13 +13,15 @@ def MyGene_query_genes(
     species: Optional[str] = "human",
     fields: Optional[str] = "symbol,name,entrezgene,ensembl.gene,summary",
     size: Optional[int] = 10,
+    offset: Optional[int] = 0,
+    sort: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search for genes by keyword, symbol, name, or other identifiers. Returns gene annotations from 30...
+    Search MyGene.info with explicit offset pagination. Pages may contain up to 1000 records. BioThin...
 
     Parameters
     ----------
@@ -30,7 +32,11 @@ def MyGene_query_genes(
     fields : str
         Comma-separated list of fields to return. Common fields: symbol, name, entrez...
     size : int
-        Maximum number of results to return (1-100).
+        Maximum number of results to return (1-1000). offset + size may not exceed 10...
+    offset : int
+        Zero-based result offset within BioThings' first-10,000 window. Continue with...
+    sort : str
+        Optional upstream sort field. Use 'entrezgene' for stable exhaustive paginati...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +58,8 @@ def MyGene_query_genes(
             "species": species,
             "fields": fields,
             "size": size,
+            "offset": offset,
+            "sort": sort,
         }.items()
         if v is not None
     }

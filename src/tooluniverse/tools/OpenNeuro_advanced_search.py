@@ -24,7 +24,8 @@ def OpenNeuro_advanced_search(
     bidsDatasetType: Optional[str] = None,
     ageRange: Optional[list[Any]] = None,
     subjectCountRange: Optional[list[Any]] = None,
-    first: Optional[int] = None,
+    first: Optional[int] = 10,
+    after: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -67,6 +68,8 @@ def OpenNeuro_advanced_search(
         Subject-count range as [min, max]
     first : int
         Number of matching datasets to return (default 10, max 25)
+    after : str
+        Opaque continuation cursor from metadata.next_cursor.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -100,6 +103,7 @@ def OpenNeuro_advanced_search(
             "ageRange": ageRange,
             "subjectCountRange": subjectCountRange,
             "first": first,
+            "after": after,
         }.items()
         if v is not None
     }

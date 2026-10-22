@@ -1,13 +1,26 @@
 [
   {
     "name": "Alliance_get_gene",
-    "description": "Get detailed gene information from the Alliance of Genome Resources, which integrates data from 7 model organism databases (SGD, FlyBase, WormBase, ZFIN, RGD, MGI, Xenbase) plus human. Returns gene symbol, name, species, synopsis, synonyms, genomic location, and cross-references. Example: 'HGNC:6081' returns insulin gene info.",
+    "description": "Get detailed gene information from the Alliance of Genome Resources, including species, synopsis, synonyms, genomic location, and paginated cross-references. Use xref_offset/xref_limit and inspect cross_references_total, cross_references_truncated, and next_xref_offset; well-studied genes can have hundreds of cross-references.",
     "parameter": {
       "type": "object",
       "properties": {
         "gene_id": {
           "type": "string",
           "description": "Alliance gene ID with source prefix. Examples: 'HGNC:6081' (human INS), 'MGI:98834' (mouse Trp53), 'FB:FBgn0003996' (fly w), 'SGD:S000000259' (yeast GAL4), 'ZFIN:ZDB-GENE-990415-8' (zebrafish pax2a), 'WB:WBGene00006763' (worm unc-13)."
+        },
+        "xref_offset": {
+          "type": "integer",
+          "description": "Zero-based cross-reference offset.",
+          "default": 0,
+          "minimum": 0
+        },
+        "xref_limit": {
+          "type": "integer",
+          "description": "Cross-references returned per page (default 10, maximum 500).",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 500
         }
       },
       "required": [
@@ -148,6 +161,12 @@
                       "null"
                     ]
                   },
+                  "curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
                   "url": {
                     "type": [
                       "string",
@@ -156,6 +175,24 @@
                   }
                 }
               }
+            },
+            "cross_references_total": {
+              "type": "integer"
+            },
+            "xref_offset": {
+              "type": "integer"
+            },
+            "cross_references_returned": {
+              "type": "integer"
+            },
+            "cross_references_truncated": {
+              "type": "boolean"
+            },
+            "next_xref_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
             }
           }
         },
@@ -175,7 +212,7 @@
   },
   {
     "name": "Alliance_search_genes",
-    "description": "Search for genes across all model organisms in the Alliance of Genome Resources. Matches by gene symbol or synonym (type-ahead) and returns genes from human, mouse, rat, zebrafish, fly, worm, yeast, and frog databases. Use the official gene symbol rather than a descriptive name: 'INS' returns INS (human), Ins1/Ins2 (rat), ins (zebrafish), whereas 'insulin' matches GO terms/diseases, not genes.",
+    "description": "Search genes across all Alliance of Genome Resources species by symbol, synonym, name, or keyword. Returns exact total_results and recoverable offset pagination; continue with next_offset while has_more is true. Results include human, mouse, rat, zebrafish, fly, worm, yeast, and frog genes. Example: 'TP53' has more than 100 cross-species and related gene matches.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -185,7 +222,14 @@
         },
         "limit": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 50,
           "description": "Maximum number of results to return (1-50). Default: 10."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Zero-based offset in the complete matching gene list. Continue with metadata.next_offset. Default: 0."
         }
       },
       "required": [
@@ -241,6 +285,18 @@
                   "string",
                   "null"
                 ]
+              },
+              "gene_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "species": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
           }
@@ -261,7 +317,7 @@
   },
   {
     "name": "Alliance_get_gene_phenotypes",
-    "description": "Get phenotype annotations for a gene from the Alliance of Genome Resources. Returns phenotypes observed when the gene is mutated or knocked out, aggregated from model organism databases. Supports all model organisms (yeast, fly, worm, zebrafish, mouse, rat, frog). Example: 'HGNC:6081' (INS) returns phenotypes like 'Abnormal circulating insulin concentration'.",
+    "description": "Get phenotype annotations for a gene from the Alliance of Genome Resources. Results are recoverably paginated: start with page=1 and continue with metadata.next_page while metadata.has_more is true; metadata.total_results and total_pages are exact.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -283,7 +339,8 @@
       ]
     },
     "fields": {
-      "endpoint_type": "gene_phenotypes"
+      "endpoint_type": "gene_phenotypes",
+      "pagination": "alliance_page"
     },
     "type": "AllianceGenomeTool",
     "test_examples": [
@@ -339,7 +396,7 @@
   },
   {
     "name": "Alliance_get_disease_genes",
-    "description": "Get genes associated with a disease across all model organisms from the Alliance of Genome Resources. Uses Disease Ontology (DO) IDs to find genes linked to a disease from human, mouse, rat, zebrafish, fly, worm, and other organisms. Includes both direct annotations and inferred associations from model organism phenotypes. Example: 'DOID:162' (cancer) returns TP53, BRCA1, and thousands more.",
+    "description": "Get genes associated with a Disease Ontology term across model organisms. Results are recoverably paginated: start with page=1 and continue with metadata.next_page while metadata.has_more is true; metadata.total_results and total_pages are exact.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -361,7 +418,8 @@
       ]
     },
     "fields": {
-      "endpoint_type": "disease_genes"
+      "endpoint_type": "disease_genes",
+      "pagination": "alliance_page"
     },
     "type": "AllianceGenomeTool",
     "test_examples": [
@@ -514,7 +572,7 @@
   },
   {
     "name": "Alliance_get_gene_orthologs",
-    "description": "Get orthologs and paralogs of a gene across model organisms via the Alliance of Genome Resources (used by MGI, Xenbase, and other members). Returns the stringent ortholog set with per-ortholog disease/expression annotation flags and prediction methods, plus the paralog set. Gene IDs use member prefixes (MGI:, HGNC:, RGD:, ZFIN:, FB:, WB:, SGD:, Xenbase:); bare WBGene/FBgn/MGI numeric IDs are auto-prefixed. Example: MGI:97490 (Pax6) returns gene_to_gene_orthology orthologs (e.g. Drosophila ey) and paralogs.",
+    "description": "Get orthologs and paralogs of a gene across model organisms via the Alliance of Genome Resources (used by MGI, Xenbase, and other members). Returns one page of each category with true totals and explicit continuation metadata; while metadata.has_more is true, pass metadata.next_page as page with the same filters. Returns the stringent ortholog set with per-ortholog disease/expression annotation flags and prediction methods, plus the paralog set. Gene IDs use member prefixes (MGI:, HGNC:, RGD:, ZFIN:, FB:, WB:, SGD:, Xenbase:); bare WBGene/FBgn/MGI numeric IDs are auto-prefixed.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -535,6 +593,12 @@
             "null"
           ],
           "description": "Max results per category (default 20, max 100)."
+        },
+        "page": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 1,
+          "description": "One-based page number shared by the ortholog and paralog queries. Continue with metadata.next_page while metadata.has_more is true."
         }
       },
       "required": [
@@ -636,7 +700,7 @@
   },
   {
     "name": "Alliance_get_molecular_interactions",
-    "description": "Get molecular (physical) interactions for a gene via the Alliance of Genome Resources (mouse/MGI, frog/Xenbase, and other members). Returns interactor gene IDs/symbols/species, interaction type, and supporting evidence references (PubMed / member curie). Gene IDs use member prefixes. Example: MGI:97490 (Pax6) returns gene_molecular_interaction records with evidence references such as MGI:6822438 (PMID:22863532).",
+    "description": "Get molecular (physical) interactions for a gene via the Alliance of Genome Resources, including evidence references. Results are recoverably paginated: start with page=1 and continue with metadata.next_page while metadata.has_more is true; metadata.total_results and total_pages are exact.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -664,7 +728,8 @@
       ]
     },
     "fields": {
-      "endpoint_type": "gene_molecular_interactions"
+      "endpoint_type": "gene_molecular_interactions",
+      "pagination": "alliance_page"
     },
     "type": "AllianceGenomeTool",
     "timeout": 30,
@@ -742,7 +807,7 @@
   },
   {
     "name": "Alliance_get_alleles_and_models",
-    "description": "Get alleles/variants and affected genomic models (mutant strains) for a gene via the Alliance of Genome Resources (mouse/MGI, frog/Xenbase, and other members). Returns allele/variant records with HGVS genomic locations and disease/phenotype flags, plus affected genomic models (genotypes/strains). Example: MGI:97490 (Pax6) returns variant_summary records such as rs231853465 (NC_000068.8:g.105516528T>C) and models such as AffectedGenomicModel MGI:2680573.",
+    "description": "Get alleles/variants and affected genomic models (mutant strains) for a gene via the Alliance of Genome Resources (mouse/MGI, frog/Xenbase, and other members). Returns one page of each category with true totals and explicit continuation metadata; while metadata.has_more is true, pass metadata.next_page as page with the same filters. Returns allele/variant records with HGVS genomic locations and disease/phenotype flags, plus affected genomic models (genotypes/strains).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -756,6 +821,12 @@
             "null"
           ],
           "description": "Max results per category (default 20, max 100)."
+        },
+        "page": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 1,
+          "description": "One-based page number shared by the allele and model queries. Continue with metadata.next_page while metadata.has_more is true."
         }
       },
       "required": [

@@ -1,7 +1,7 @@
 """
 Figshare_search_articles
 
-Search Figshare for research outputs (datasets, figures, code, posters, papers, theses, presentat...
+Search Figshare research outputs by keyword through the official article search endpoint. Results...
 """
 
 from typing import Any, Optional, Callable
@@ -11,7 +11,8 @@ from ._shared_client import get_shared_client
 def Figshare_search_articles(
     search_for: str,
     item_type: Optional[int] = None,
-    page_size: Optional[int] = None,
+    page_size: Optional[int] = 10,
+    page: Optional[int] = 1,
     published_since: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -19,7 +20,7 @@ def Figshare_search_articles(
     validate: bool = True,
 ) -> Any:
     """
-    Search Figshare for research outputs (datasets, figures, code, posters, papers, theses, presentat...
+    Search Figshare research outputs by keyword through the official article search endpoint. Results...
 
     Parameters
     ----------
@@ -29,6 +30,8 @@ def Figshare_search_articles(
         Filter by item type: 3=dataset, 2=media, 1=figure, 9=code, 7=thesis, 6=book, ...
     page_size : int
         Number of results (default 10, max 1000)
+    page : int
+        One-based result page. Continue with metadata.next_page.
     published_since : str
         Filter to articles published after this date in format 'YYYY-MM-DD' (e.g., '2...
     stream_callback : Callable, optional
@@ -51,6 +54,7 @@ def Figshare_search_articles(
             "search_for": search_for,
             "item_type": item_type,
             "page_size": page_size,
+            "page": page,
             "published_since": published_since,
         }.items()
         if v is not None

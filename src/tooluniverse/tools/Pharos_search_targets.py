@@ -1,7 +1,7 @@
 """
 Pharos_search_targets
 
-Search drug targets in Pharos database by keyword. Supports filtering by Target Development Level...
+Search drug targets in Pharos by keyword with optional Target Development Level filtering. Pharos...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def Pharos_search_targets(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search drug targets in Pharos database by keyword. Supports filtering by Target Development Level...
+    Search drug targets in Pharos by keyword with optional Target Development Level filtering. Pharos...
 
     Parameters
     ----------
@@ -27,7 +27,7 @@ def Pharos_search_targets(
     tdl : str
         Filter by Target Development Level. Tdark=understudied, Tbio=biological annot...
     top : int
-        Maximum number of results (1-100). Pharos' API currently returns at most 10 t...
+        Number of records to return from Pharos' fixed first-10 ranked window (1-10);...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

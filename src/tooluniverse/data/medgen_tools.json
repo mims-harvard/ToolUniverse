@@ -1,7 +1,7 @@
 [
   {
     "name": "MedGen_search_conditions",
-    "description": "Search NCBI MedGen for genetic conditions, diseases, or syndromes by keyword. Returns condition names, definitions, OMIM IDs, and associated genes. MedGen aggregates data from OMIM, Orphanet, ClinVar, HPO, GTR, and GeneReviews. Example: query='cystic fibrosis' returns CF entry with CFTR gene, OMIM 219700.",
+    "description": "Search NCBI MedGen for genetic conditions, diseases, or syndromes by keyword. Use the zero-based start offset and next_start while has_more is true to retrieve all matches. Returns condition names, definitions, OMIM IDs, and associated genes.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -13,6 +13,12 @@
           "type": "integer",
           "description": "Maximum number of results (default 10, max 50).",
           "default": 10
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based result offset. Continue with next_start while has_more is true."
         }
       },
       "required": [
@@ -91,6 +97,21 @@
             },
             "total_count": {
               "type": "integer"
+            },
+            "returned": {
+              "type": "integer"
+            },
+            "start": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_start": {
+              "type": [
+                "integer",
+                "null"
+              ]
             }
           },
           "required": [
@@ -114,7 +135,7 @@
   },
   {
     "name": "MedGen_get_condition",
-    "description": "Get detailed information about a specific genetic condition from NCBI MedGen by UID or UMLS CUI. Returns full definition, associated genes, OMIM IDs, synonyms, modes of inheritance, and clinical features (HPO phenotypes). Example: uid='41393' returns cystic fibrosis with CFTR/TGFB1/FCGR2A genes, autosomal recessive inheritance, 30+ clinical features.",
+    "description": "Get detailed information about a specific genetic condition from NCBI MedGen by UID or UMLS CUI. Returns the complete synonym and clinical-feature arrays present in MedGen, with explicit synonym_count and clinical_feature_count; no fixed 20/30-item truncation is applied.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -192,6 +213,9 @@
                 "type": "string"
               }
             },
+            "synonym_count": {
+              "type": "integer"
+            },
             "modes_of_inheritance": {
               "type": "array",
               "items": {
@@ -200,6 +224,9 @@
             },
             "clinical_features": {
               "type": "array"
+            },
+            "clinical_feature_count": {
+              "type": "integer"
             }
           },
           "required": [

@@ -141,20 +141,81 @@ class NeuroMorphoTool(BaseTool):
             return text
         return f'"{text}"' if any(c.isspace() for c in text) else text
 
+    @staticmethod
+    def _page_controls(arguments: Dict[str, Any], default_size: int):
+        page = arguments.get("page", 0)
+        if isinstance(page, bool) or not isinstance(page, int) or page < 0:
+            return {
+                "status": "error",
+                "error": "page must be a non-negative integer",
+                "parameter": "page",
+            }
+        size = arguments.get("size", default_size)
+        if isinstance(size, bool) or not isinstance(size, int) or not 1 <= size <= 500:
+            return {
+                "status": "error",
+                "error": "size must be an integer between 1 and 500",
+                "parameter": "size",
+            }
+        return page, size
+
+    @staticmethod
+    def _page_metadata(page_info, page, size, returned):
+        total = page_info.get("totalElements", returned)
+        total_pages = page_info.get("totalPages", 1)
+        current = page_info.get("number", page)
+        actual_size = page_info.get("size", size)
+        has_more = current + 1 < total_pages
+        truncated = current > 0 or has_more
+        return {
+            "total_results": total,
+            "total_pages": total_pages,
+            "current_page": current,
+            "page_size": actual_size,
+            "returned": returned,
+            "has_more": has_more,
+            "next_page": current + 1 if has_more else None,
+            "truncated": truncated,
+            "result_set_complete": not truncated,
+        }
+
     def _search_neurons(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search neurons by field criteria."""
         query_field = arguments.get("query_field", "species")
         query_value = arguments.get("query_value", "")
         filter_field = arguments.get("filter_field")
         filter_value = arguments.get("filter_value")
-        page = arguments.get("page", 0)
-        size = arguments.get("size", 20)
+        controls = self._page_controls(arguments, default_size=20)
+        if isinstance(controls, dict):
+            return controls
+        page, size = controls
 
-        if not query_value:
-            return {"status": "error", "error": "query_value parameter is required"}
+        if not isinstance(query_value, str) or not query_value.strip():
+            return {
+                "status": "error",
+                "error": "query_value must be a non-empty string",
+                "parameter": "query_value",
+            }
+        query_value = query_value.strip()
 
-        # Clamp size to API max
-        size = min(size, 500)
+        if bool(filter_field) != bool(filter_value):
+            missing = "filter_value" if filter_field else "filter_field"
+            return {
+                "status": "error",
+                "error": "filter_field and filter_value must be provided together",
+                "parameter": missing,
+            }
+        if filter_field is not None and (
+            not isinstance(filter_field, str)
+            or not isinstance(filter_value, str)
+            or not filter_field.strip()
+            or not filter_value.strip()
+        ):
+            return {
+                "status": "error",
+                "error": "filter_field and filter_value must be non-empty strings",
+                "parameter": "filter_field",
+            }
 
         url = f"{NEUROMORPHO_BASE_URL}/neuron/select"
         params = {
@@ -177,12 +238,7 @@ class NeuroMorphoTool(BaseTool):
         return {
             "status": "success",
             "data": neurons,
-            "metadata": {
-                "total_results": page_info.get("totalElements", len(neurons)),
-                "total_pages": page_info.get("totalPages", 1),
-                "current_page": page_info.get("number", page),
-                "page_size": page_info.get("size", size),
-            },
+            "metadata": self._page_metadata(page_info, page, size, len(neurons)),
         }
 
     def _get_morphometry(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -218,14 +274,18 @@ class NeuroMorphoTool(BaseTool):
         """
         query_field = arguments.get("query_field", "brainRegion")
         query_value = arguments.get("query_value", "")
-        page = arguments.get("page", 0)
-        size = arguments.get("size", 20)
+        controls = self._page_controls(arguments, default_size=20)
+        if isinstance(controls, dict):
+            return controls
+        page, size = controls
 
-        if not query_value:
-            return {"status": "error", "error": "query_value parameter is required"}
-
-        # Clamp size to API max
-        size = min(size, 500)
+        if not isinstance(query_value, str) or not query_value.strip():
+            return {
+                "status": "error",
+                "error": "query_value must be a non-empty string",
+                "parameter": "query_value",
+            }
+        query_value = query_value.strip()
 
         url = f"{NEUROMORPHO_BASE_URL}/literature/select"
         params = {
@@ -244,12 +304,7 @@ class NeuroMorphoTool(BaseTool):
         return {
             "status": "success",
             "data": articles,
-            "metadata": {
-                "total_results": page_info.get("totalElements", len(articles)),
-                "total_pages": page_info.get("totalPages", 1),
-                "current_page": page_info.get("number", page),
-                "page_size": page_info.get("size", size),
-            },
+            "metadata": self._page_metadata(page_info, page, size, len(articles)),
         }
 
     def _get_literature_by_id(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -299,8 +354,17 @@ class NeuroMorphoTool(BaseTool):
     def _get_field_values(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get available values for a neuron metadata field."""
         field_name = arguments.get("field_name", "species")
-        page = arguments.get("page", 0)
-        size = arguments.get("size", 500)
+        if not isinstance(field_name, str) or not field_name.strip():
+            return {
+                "status": "error",
+                "error": "field_name must be a non-empty string",
+                "parameter": "field_name",
+            }
+        controls = self._page_controls(arguments, default_size=500)
+        if isinstance(controls, dict):
+            return controls
+        page, size = controls
+        field_name = field_name.strip()
 
         url = f"{NEUROMORPHO_BASE_URL}/neuron/fields/{field_name}"
         params = {"page": page, "size": size}
@@ -317,8 +381,6 @@ class NeuroMorphoTool(BaseTool):
             "data": fields,
             "metadata": {
                 "field_name": field_name,
-                "total_results": page_info.get("totalElements", len(fields)),
-                "total_pages": page_info.get("totalPages", 1),
-                "current_page": page_info.get("number", page),
+                **self._page_metadata(page_info, page, size, len(fields)),
             },
         }

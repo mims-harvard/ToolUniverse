@@ -1,7 +1,7 @@
 """
 Enamine_search_smiles
 
-Search Enamine by chemical structure (SMILES). Supports exact match, substructure, and similarity...
+Search Enamine by chemical structure (SMILES) when the Enamine Store API is available. Returns an...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,15 @@ def Enamine_search_smiles(
     smiles: str,
     operation: Optional[str] = "search_smiles",
     search_type: Optional[str] = "similarity",
+    limit: Optional[int] = 20,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search Enamine by chemical structure (SMILES). Supports exact match, substructure, and similarity...
+    Search Enamine by chemical structure (SMILES) when the Enamine Store API is available. Returns an...
 
     Parameters
     ----------
@@ -28,6 +30,10 @@ def Enamine_search_smiles(
         SMILES string for the query compound
     search_type : str
         Search type: exact, substructure, similarity (default: similarity)
+    limit : int
+        Maximum records from the returned API payload.
+    offset : int
+        Zero-based offset within the returned API payload.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +54,8 @@ def Enamine_search_smiles(
             "operation": operation,
             "smiles": smiles,
             "search_type": search_type,
+            "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

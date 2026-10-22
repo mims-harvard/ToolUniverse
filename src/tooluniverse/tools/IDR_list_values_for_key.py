@@ -12,6 +12,7 @@ def IDR_list_values_for_key(
     key: str,
     resource: Optional[str] = None,
     max_results: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -27,7 +28,9 @@ def IDR_list_values_for_key(
     resource : str
         Resource type. Default 'image'.
     max_results : int
-        Optional client-side cap on the number of values returned.
+        Maximum number of distinct values to return. If omitted, all values are retur...
+    offset : int
+        Zero-based offset in the complete distinct-value list. Use next_offset to con...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +51,7 @@ def IDR_list_values_for_key(
             "key": key,
             "resource": resource,
             "max_results": max_results,
+            "offset": offset,
         }.items()
         if v is not None
     }

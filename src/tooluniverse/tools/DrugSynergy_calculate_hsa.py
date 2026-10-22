@@ -1,7 +1,7 @@
 """
 DrugSynergy_calculate_hsa
 
-Calculate Highest Single Agent (HSA) synergy score for drug combinations across dose points. HSA ...
+Calculate Highest Single Agent (HSA) synergy scores across dose points. HSA expected = max(E_a, E...
 """
 
 from typing import Any, Optional, Callable
@@ -19,14 +19,14 @@ def DrugSynergy_calculate_hsa(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Calculate Highest Single Agent (HSA) synergy score for drug combinations across dose points. HSA ...
+    Calculate Highest Single Agent (HSA) synergy scores across dose points. HSA expected = max(E_a, E...
 
     Parameters
     ----------
     operation : str
         Operation type
     effects_a : list[Any]
-        Array of drug A inhibition effects at each dose point (0-1 or 0-100)
+        Array of drug A fractional inhibition effects at each dose point (0-1; percen...
     effects_b : list[Any]
         Array of drug B inhibition effects at each dose point (same length as effects_a)
     effects_combo : list[Any]

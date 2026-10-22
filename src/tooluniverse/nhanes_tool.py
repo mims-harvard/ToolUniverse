@@ -117,6 +117,23 @@ class NHANESTool(BaseTool):
         search_term = arguments.get("search_term", "").lower()
         year = arguments.get("year")
         limit = arguments.get("limit", 20)
+        offset = arguments.get("offset", 0)
+
+        if year and year not in self._CYCLES:
+            return {
+                "status": "error",
+                "error": (
+                    f"Unknown NHANES cycle '{year}'. Valid cycles: "
+                    f"{', '.join(self._CYCLES)}."
+                ),
+            }
+        if isinstance(limit, bool) or not isinstance(limit, int) or limit < 1:
+            return {"status": "error", "error": "limit must be a positive integer"}
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+            }
 
         # Omitting `year` used to silently restrict the search to a single
         # hardcoded cycle (2017-2018), which reported a false "no results"
@@ -139,17 +156,25 @@ class NHANESTool(BaseTool):
         cycles_searched: list = []
         for cycle in cycles:
             cycles_searched.append(cycle)
-            self._search_cycle(cycle, components, search_term, limit, datasets, seen_files)
-            if len(datasets) >= limit:
-                break
+            self._search_cycle(cycle, components, search_term, datasets, seen_files)
+
+        total = len(datasets)
+        page = datasets[offset : offset + limit]
+        has_more = offset + len(page) < total
 
         return {
             "status": "success",
             "data": {
-                "datasets": datasets,
-                "count": len(datasets),
+                "datasets": page,
+                "count": len(page),
+                "total_count": total,
                 "search_term": search_term,
                 "cycles_searched": cycles_searched,
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "next_offset": offset + len(page) if has_more else None,
+                "result_set_complete": offset == 0 and len(page) == total,
             },
             "metadata": {
                 "source": "NHANES Variable List (wwwn.cdc.gov)",
@@ -162,7 +187,6 @@ class NHANESTool(BaseTool):
         cycle: str,
         components: list,
         search_term: str,
-        limit: int,
         datasets: list,
         seen_files: set,
     ) -> None:
@@ -208,12 +232,8 @@ class NHANESTool(BaseTool):
                                 ),
                             }
                         )
-                    if len(datasets) >= limit:
-                        return
             except Exception:
                 continue
-            if len(datasets) >= limit:
-                return
 
     # Cycle suffix mapping: cycle -> letter suffix for NHANES filenames
     _CYCLE_SUFFIX = {

@@ -254,7 +254,7 @@
   },
   {
     "name": "WorldBank_search_indicators",
-    "description": "Search the World Development Indicators (WDI, ~1,500 indicators covering health, education, economy, environment, infrastructure, poverty and more) by keyword. Every word of the query must appear in the indicator's name, code or description; name matches rank first. Returns indicator codes, names, descriptions, units and the source database, as [metadata, indicators] with metadata.total = number of matches. Use it to discover indicator codes for WorldBank_get_indicator. Only the WDI database is searched, not the other ~29,000 indicators in World Bank's other databases.",
+    "description": "Search the World Development Indicators (WDI, ~1,500 indicators covering health, education, economy, environment, infrastructure, poverty and more) by keyword. Every word of the query must appear in the indicator's name, code or description; name matches rank first. Returns indicator codes, names, descriptions, units and the source database, as [metadata, indicators] with metadata.total = number of matches. Results are paginated locally over the ranked matches: begin with offset=0 and continue with metadata.next_offset while metadata.has_more is true. Use it to discover indicator codes for WorldBank_get_indicator. Only the WDI database is searched, not the other ~29,000 indicators in World Bank's other databases.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -267,7 +267,16 @@
             "integer",
             "null"
           ],
-          "description": "Number of results to return (default 10, max 1000)"
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 10,
+          "description": "Matching indicators per local page (default 10, max 1000)"
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset within the ranked matches. Continue with metadata.next_offset."
         }
       },
       "required": [

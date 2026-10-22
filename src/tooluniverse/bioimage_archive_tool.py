@@ -18,6 +18,64 @@ from .tool_registry import register_tool
 BIOSTUDIES_BASE_URL = "https://www.ebi.ac.uk/biostudies/api/v1"
 
 
+def _positive_int(value: Any, *, name: str, maximum: int | None = None) -> int:
+    """Parse a positive integer without silently rounding or clamping it."""
+    if isinstance(value, bool):
+        raise ValueError(f"{name} must be a positive integer")
+    try:
+        parsed = int(value)
+    except (TypeError, ValueError):
+        raise ValueError(f"{name} must be a positive integer") from None
+    if isinstance(value, float) and not value.is_integer():
+        raise ValueError(f"{name} must be a positive integer")
+    if parsed < 1:
+        raise ValueError(f"{name} must be a positive integer")
+    if maximum is not None and parsed > maximum:
+        raise ValueError(f"{name} must be at most {maximum}")
+    return parsed
+
+
+def _search_page_metadata(
+    data: Dict[str, Any], *, page: int, page_size: int, returned: int
+) -> Dict[str, Any]:
+    """Preserve BioStudies' exact-vs-lower-bound total qualifier."""
+    total_hits = data.get("totalHits")
+    total_hits_exact = data.get("isTotalHitsExact")
+    relation = (
+        "exact"
+        if total_hits_exact is True
+        else "lower_bound"
+        if total_hits_exact is False
+        else "unknown"
+    )
+    page_end = (page - 1) * page_size + returned
+    if total_hits_exact is True and isinstance(total_hits, int):
+        has_more = page_end < total_hits
+    else:
+        has_more = bool(
+            (isinstance(total_hits, int) and page_end < total_hits)
+            or returned >= page_size
+        )
+    warning = None
+    if total_hits_exact is False:
+        warning = (
+            "BioStudies reports totalHits as a lower bound, not an exact count; "
+            "continue through next_page until a short or empty page is returned."
+        )
+    return {
+        "total_hits": total_hits,
+        "total_hits_exact": total_hits_exact,
+        "total_hits_relation": relation,
+        "returned": returned,
+        "page": page,
+        "page_size": page_size,
+        "has_more": has_more,
+        "truncated": has_more,
+        "next_page": page + 1 if has_more else None,
+        "warning": warning,
+    }
+
+
 @register_tool("BioImageArchiveTool")
 class BioImageArchiveTool(BaseTool):
     """
@@ -80,8 +138,17 @@ class BioImageArchiveTool(BaseTool):
         if not query:
             return {"status": "error", "error": "query parameter is required"}
 
-        page_size = min(arguments.get("page_size") or 10, 100)
-        page = arguments.get("page") or 1
+        try:
+            page_size_value = arguments.get("page_size")
+            page_value = arguments.get("page")
+            page_size = _positive_int(
+                10 if page_size_value is None else page_size_value,
+                name="page_size",
+                maximum=100,
+            )
+            page = _positive_int(1 if page_value is None else page_value, name="page")
+        except (TypeError, ValueError) as exc:
+            return {"status": "error", "error": str(exc)}
 
         params = {
             "query": query,
@@ -110,16 +177,19 @@ class BioImageArchiveTool(BaseTool):
                 }
             )
 
+        metadata = _search_page_metadata(
+            data, page=page, page_size=page_size, returned=len(results)
+        )
+        metadata.update(
+            {
+                "source": "BioImage Archive (EBI BioStudies)",
+                "query": query,
+            }
+        )
         return {
             "status": "success",
             "data": results,
-            "metadata": {
-                "source": "BioImage Archive (EBI BioStudies)",
-                "total_hits": data.get("totalHits", 0),
-                "page": page,
-                "page_size": page_size,
-                "query": query,
-            },
+            "metadata": metadata,
         }
 
     def _get_study(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -191,11 +261,22 @@ class BioImageArchiveTool(BaseTool):
         if not query:
             return {"status": "error", "error": "query parameter is required"}
 
-        page_size = min(arguments.get("page_size") or 10, 100)
+        try:
+            page_size_value = arguments.get("page_size")
+            page_value = arguments.get("page")
+            page_size = _positive_int(
+                10 if page_size_value is None else page_size_value,
+                name="page_size",
+                maximum=100,
+            )
+            page = _positive_int(1 if page_value is None else page_value, name="page")
+        except (TypeError, ValueError) as exc:
+            return {"status": "error", "error": str(exc)}
 
         params = {
             "query": query,
             "pageSize": page_size,
+            "page": page,
         }
 
         url = f"{BIOSTUDIES_BASE_URL}/BioImages/search"
@@ -217,14 +298,19 @@ class BioImageArchiveTool(BaseTool):
                 }
             )
 
+        metadata = _search_page_metadata(
+            data, page=page, page_size=page_size, returned=len(results)
+        )
+        metadata.update(
+            {
+                "source": "BioImage Archive (EBI BioStudies - BioImages collection)",
+                "query": query,
+            }
+        )
         return {
             "status": "success",
             "data": results,
-            "metadata": {
-                "source": "BioImage Archive (EBI BioStudies - BioImages collection)",
-                "total_hits": data.get("totalHits", 0),
-                "query": query,
-            },
+            "metadata": metadata,
         }
 
     def _list_study_files(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -239,8 +325,24 @@ class BioImageArchiveTool(BaseTool):
             return {"status": "error", "error": "accession parameter is required"}
 
         # DataTables-style pagination: the files endpoint uses start/length.
-        length = min(int(arguments.get("limit") or 25), 500)
-        start = int(arguments.get("offset") or 0)
+        try:
+            limit_value = arguments.get("limit")
+            length = _positive_int(
+                25 if limit_value is None else limit_value,
+                name="limit",
+                maximum=500,
+            )
+            raw_start = arguments.get("offset")
+            raw_start = 0 if raw_start is None else raw_start
+            if isinstance(raw_start, bool):
+                raise ValueError("offset must be a non-negative integer")
+            start = int(raw_start)
+            if isinstance(raw_start, float) and not raw_start.is_integer():
+                raise ValueError("offset must be a non-negative integer")
+            if start < 0:
+                raise ValueError("offset must be a non-negative integer")
+        except (TypeError, ValueError) as exc:
+            return {"status": "error", "error": str(exc)}
 
         params = {"start": start, "length": length}
         url = f"{BIOSTUDIES_BASE_URL}/files/{accession}"
@@ -273,17 +375,31 @@ class BioImageArchiveTool(BaseTool):
                 }
             )
 
+        records_total = data.get("recordsTotal") if isinstance(data, dict) else None
+        records_filtered = (
+            data.get("recordsFiltered") if isinstance(data, dict) else None
+        )
+        paging_total = (
+            records_filtered if isinstance(records_filtered, int) else records_total
+        )
+        has_more = bool(
+            isinstance(paging_total, int) and start + len(results) < paging_total
+        )
+        next_offset = start + len(results) if has_more and results else None
+
         return {
             "status": "success",
             "data": results,
             "metadata": {
                 "source": "BioImage Archive (EBI BioStudies)",
                 "accession": accession,
-                "records_total": data.get("recordsTotal")
-                if isinstance(data, dict)
-                else None,
+                "records_total": records_total,
+                "records_filtered": records_filtered,
                 "returned": len(results),
                 "offset": start,
                 "limit": length,
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_offset": next_offset,
             },
         }

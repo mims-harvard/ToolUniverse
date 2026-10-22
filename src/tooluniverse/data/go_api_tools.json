@@ -98,7 +98,7 @@
   },
   {
     "name": "GOAPI_get_gene_functions",
-    "description": "Get Gene Ontology (GO) annotations for a specific gene, showing its known biological processes, molecular functions, and cellular components. Returns GO terms with evidence types (IDA=direct assay, IMP=mutant phenotype, ISS=sequence similarity, etc.) and literature references. Input is a gene CURIE identifier. Example: HGNC:11998 (TP53) returns annotations like 'apoptotic process', 'DNA binding', 'nucleus'.",
+    "description": "Get Gene Ontology annotations for a specific gene with explicit start/rows pagination. The GO API omits a total count, so ToolUniverse uses one-record look-ahead to report exact has_more and next_start; total_results is populated only on the final page and total_results_exact states whether it is known.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -108,7 +108,15 @@
         },
         "rows": {
           "type": "integer",
-          "description": "Maximum number of annotations to return (default: 20, max: 100)."
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Annotations per page (default 20, verified upstream through 1000). ToolUniverse requests one extra association internally to determine has_more."
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based association offset. Continue with metadata.next_start while has_more is true."
         },
         "aspect": {
           "type": "string",
@@ -207,7 +215,7 @@
   },
   {
     "name": "GOAPI_get_genes_by_function",
-    "description": "Get genes annotated with a specific Gene Ontology (GO) term. Find all genes/proteins that have been experimentally or computationally associated with a biological process, molecular function, or cellular component. Optionally filter by taxon. Example: GO:0006915 (apoptotic process) returns genes like TP53, BAX, BCL2 that function in apoptosis.",
+    "description": "Get unique genes annotated with a GO term. The upstream /genes route actually returns repeated association rows, so ToolUniverse deduplicates by gene ID, preserves the encountered GO/evidence/provider rows under each gene, and applies offset after deduplication. Metadata reports unique-gene navigation and scan completeness; each gene's associations_complete flag states whether its nested association list is proven complete.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -217,7 +225,21 @@
         },
         "rows": {
           "type": "integer",
-          "description": "Maximum number of gene annotations to return (default: 20, max: 100)."
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Unique genes per locally deduplicated page (default 20, max 1000)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset after deduplication by gene ID. Continue with metadata.next_offset while has_more is true."
+        },
+        "max_associations_scanned": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200000,
+          "description": "Optional upstream association-row scan budget. Increase and rerun the same offset if metadata.scan_limit_reached is true or complete nested associations are required."
         },
         "taxon": {
           "type": "string",
@@ -291,6 +313,21 @@
                   "type": "string"
                 },
                 "description": "Literature references"
+              },
+              "associations_returned": {
+                "type": "integer",
+                "description": "Number of association rows preserved for this unique gene in the scanned upstream window"
+              },
+              "associations_complete": {
+                "type": "boolean",
+                "description": "True only when the upstream association result was exhausted, proving no later row can mention this gene"
+              },
+              "associations": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                },
+                "description": "GO term, evidence, provider, and reference details for association rows encountered for this gene"
               }
             }
           }

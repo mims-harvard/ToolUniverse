@@ -1,7 +1,7 @@
 """
 BioPortal_search_ontology_terms
 
-Search across 900+ biomedical ontologies in BioPortal (NCBO) for concepts matching a query. BioPo...
+Search across 900+ biomedical ontologies in BioPortal (NCBO) for concepts matching a query. Retur...
 """
 
 from typing import Any, Optional, Callable
@@ -11,7 +11,8 @@ from ._shared_client import get_shared_client
 def BioPortal_search_ontology_terms(
     query: str,
     ontologies: Optional[str] = None,
-    page_size: Optional[int] = None,
+    page_size: Optional[int] = 10,
+    page: Optional[int] = 1,
     exact_match: Optional[bool] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -19,7 +20,7 @@ def BioPortal_search_ontology_terms(
     validate: bool = True,
 ) -> Any:
     """
-    Search across 900+ biomedical ontologies in BioPortal (NCBO) for concepts matching a query. BioPo...
+    Search across 900+ biomedical ontologies in BioPortal (NCBO) for concepts matching a query. Retur...
 
     Parameters
     ----------
@@ -29,6 +30,8 @@ def BioPortal_search_ontology_terms(
         Comma-separated list of ontology acronyms to search within. If null, searches...
     page_size : int
         Number of results to return (default: 10, max: 50).
+    page : int
+        One-based result page number (default: 1). Continue with metadata.next_page w...
     exact_match : bool
         If true, only return exact matches (default: false).
     stream_callback : Callable, optional
@@ -51,6 +54,7 @@ def BioPortal_search_ontology_terms(
             "query": query,
             "ontologies": ontologies,
             "page_size": page_size,
+            "page": page,
             "exact_match": exact_match,
         }.items()
         if v is not None

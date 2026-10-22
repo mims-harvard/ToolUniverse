@@ -12,6 +12,7 @@ def DataGov_search_datasets(
     query: str,
     organization: Optional[str] = None,
     rows: Optional[int] = 10,
+    after: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,6 +29,8 @@ def DataGov_search_datasets(
         Optional organization slug to filter by agency. Examples: 'epa', 'noaa', 'nas...
     rows : int
         Number of results to return. Default 10, maximum 100.
+    after : str
+        Opaque cursor returned as next_after by the previous response. Omit for the f...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,12 @@ def DataGov_search_datasets(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"query": query, "organization": organization, "rows": rows}.items()
+        for k, v in {
+            "query": query,
+            "organization": organization,
+            "rows": rows,
+            "after": after,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

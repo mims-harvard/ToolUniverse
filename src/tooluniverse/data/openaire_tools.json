@@ -2,7 +2,7 @@
   {
     "type": "OpenAIRETool",
     "name": "OpenAIRE_search_publications",
-    "description": "Search OpenAIRE Explore for research products including publications, datasets, and software. OpenAIRE is the European open science platform that provides access to research outputs from EU-funded projects.",
+    "description": "Search OpenAIRE publications, datasets, or software with recoverable one-based pagination. Page size is 1-1000 and page * max_results must be <=10000. total_results is exact; accessible_results and upstream_truncated disclose the API's 10,000-result window.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -12,10 +12,16 @@
         },
         "max_results": {
           "type": "integer",
-          "description": "Maximum number of results to return. Default is 10, maximum is 100.",
+          "description": "Results per page (1-1000). Out-of-range values are rejected rather than silently clamped.",
           "default": 10,
           "minimum": 1,
-          "maximum": 100
+          "maximum": 1000
+        },
+        "page": {
+          "type": "integer",
+          "description": "One-based page. OpenAIRE requires page * max_results <= 10000; continue with next_page while has_more is true.",
+          "default": 1,
+          "minimum": 1
         },
         "type": {
           "type": "string",
@@ -100,7 +106,7 @@
   {
     "type": "OpenAIRETool",
     "name": "OpenAIRE_search_projects",
-    "description": "Search OpenAIRE for funded research projects / grants (EU Horizon 2020, Horizon Europe, ERC, and many national funders such as NHMRC, NSF, Wellcome). Returns per-project: grant code, acronym, title, funder name/shortname, funding stream (e.g. 'Project Grants', 'H2020-EU.1.1.'), start/end dates, funded amount, total cost, currency, and website. Use for: grant discovery, funder/portfolio analysis, mapping topics to funded projects. Searches across project titles, acronyms, and keywords.",
+    "description": "Search OpenAIRE funded projects/grants with recoverable one-based pagination. Page size is 1-1000, page * max_results must be <=10000, and metadata distinguishes exact total_results from the first 10,000 accessible matches. Returns grant code, title, funder, funding stream, dates, amounts, currency, and website.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -110,10 +116,16 @@
         },
         "max_results": {
           "type": "integer",
-          "description": "Maximum number of projects to return on this page. Default 10, maximum 100. (total_results reports the full match count across all pages.)",
+          "description": "Projects per page (1-1000). OpenAIRE exposes at most the first 10,000 matches.",
           "default": 10,
           "minimum": 1,
-          "maximum": 100
+          "maximum": 1000
+        },
+        "page": {
+          "type": "integer",
+          "description": "One-based page. page * max_results must not exceed 10000.",
+          "default": 1,
+          "minimum": 1
         },
         "type": {
           "type": "string",

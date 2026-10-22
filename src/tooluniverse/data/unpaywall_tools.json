@@ -2,16 +2,18 @@
   {
     "type": "UnpaywallTool",
     "name": "Unpaywall_check_oa_status",
-    "description": "Query Unpaywall by DOI to check open-access status and OA locations. Requires a contact email for API access.",
+    "description": "Query a DOI in Unpaywall with DOI normalization and returned-identity verification. Returns the complete source record plus convenience OA status fields, all current and embargoed OA locations, evidence, licenses, repository institutions, authors, journal flags, and explicit location counts. Requires a valid contact email.",
     "parameter": {
       "type": "object",
       "properties": {
         "doi": {
           "type": "string",
+          "pattern": "^(?:(?:https?://(?:dx\\.)?doi\\.org/)|(?:[Dd][Oo][Ii]:))?10\\.[0-9]{4,9}/\\S+$",
           "description": "DOI (Digital Object Identifier) of the article to check for open access status."
         },
         "email": {
           "type": "string",
+          "format": "email",
           "description": "Contact email address required by Unpaywall API for polite usage tracking."
         }
       },
@@ -40,6 +42,9 @@
         },
         "title": {
           "type": "string"
+        },
+        "record": {
+          "type": "object"
         }
       },
       "required": [
@@ -56,16 +61,18 @@
   {
     "type": "UnpaywallTool",
     "name": "Unpaywall_get_full_text_url",
-    "description": "Retrieve full-text PDF and landing page URLs for a scholarly article via its DOI. Returns the best open-access PDF link, landing page URL, all available OA locations with their host types (publisher, repository, etc.), plus basic article metadata (title, journal, publisher). Use this tool when you need to access the full text of a paper.",
+    "description": "Retrieve full-text and landing-page URLs from Unpaywall after normalizing and verifying the DOI. Returns the best location plus every full 13-field OA location record (including evidence, OA date, endpoint/PMH IDs, repository institution, update date, license and version), embargoed locations, and the complete source record. No location qualifiers are silently projected away.",
     "parameter": {
       "type": "object",
       "properties": {
         "doi": {
           "type": "string",
+          "pattern": "^(?:(?:https?://(?:dx\\.)?doi\\.org/)|(?:[Dd][Oo][Ii]:))?10\\.[0-9]{4,9}/\\S+$",
           "description": "DOI (Digital Object Identifier) of the article, e.g. '10.1038/nature12373'."
         },
         "email": {
           "type": "string",
+          "format": "email",
           "description": "Contact email for Unpaywall API polite pool. Defaults to 'tools@tooluniverse.org' if not provided.",
           "default": "tools@tooluniverse.org"
         }
@@ -109,6 +116,12 @@
         },
         "all_oa_locations": {
           "type": "array"
+        },
+        "embargoed_oa_locations": {
+          "type": "array"
+        },
+        "record": {
+          "type": "object"
         }
       },
       "required": [

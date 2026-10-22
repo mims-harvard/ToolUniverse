@@ -1,7 +1,7 @@
 """
 IPD_search_hla_alleles
 
-Search the IPD-IMGT/HLA database for human HLA alleles by allele name prefix or substring (e.g. '...
+Search the IPD-IMGT/HLA database for human HLA alleles by allele name prefix or substring with co...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,14 @@ def IPD_search_hla_alleles(
     name: str,
     match_: Optional[str] = "startsWith",
     limit: Optional[int] = 10,
+    cursor: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search the IPD-IMGT/HLA database for human HLA alleles by allele name prefix or substring (e.g. '...
+    Search the IPD-IMGT/HLA database for human HLA alleles by allele name prefix or substring with co...
 
     Parameters
     ----------
@@ -28,6 +29,8 @@ def IPD_search_hla_alleles(
         How to match the name: 'startsWith' (default, prefix match), 'contains' (subs...
     limit : int
         Maximum number of alleles to return (default 10, max 100).
+    cursor : str
+        Opaque continuation token from data.next_cursor. Repeat the same name, match,...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,12 @@ def IPD_search_hla_alleles(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"name": name, "match": match_, "limit": limit}.items()
+        for k, v in {
+            "name": name,
+            "match": match_,
+            "limit": limit,
+            "cursor": cursor,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

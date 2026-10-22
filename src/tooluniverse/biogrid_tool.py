@@ -111,6 +111,8 @@ class BioGRIDRESTTool(BaseTool):
 
         if "limit" in arguments:
             params["max"] = arguments["limit"]
+        if "offset" in arguments:
+            params["start"] = arguments["offset"]
 
         params["searchNames"] = "true"
 
@@ -148,6 +150,21 @@ class BioGRIDRESTTool(BaseTool):
                     "error": error_msg,
                 }
 
+        properties = self.tool_config.get("parameter", {}).get("properties", {})
+        default_limit = properties.get("limit", {}).get("default", 100)
+        limit = arguments.get("limit", default_limit)
+        offset = arguments.get("offset", 0)
+        if (
+            isinstance(limit, bool)
+            or not isinstance(limit, int)
+            or not 1 <= limit <= 9999
+        ):
+            error_msg = "limit must be an integer between 1 and 9999"
+            return {"status": "error", "data": {"error": error_msg}, "error": error_msg}
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            error_msg = "offset must be a non-negative integer"
+            return {"status": "error", "data": {"error": error_msg}, "error": error_msg}
+
         # BioGRID REST API v4.x /interactions/ silently ignores chemicalList —
         # it always returns protein-protein interactions regardless.  Warn the
         # user early so they don't get misleading PPI results.
@@ -180,7 +197,11 @@ class BioGRIDRESTTool(BaseTool):
         url = self._build_url()
 
         try:
-            params = self._build_params(arguments)
+            # BioGRID supports start/max but does not return a total in JSON.
+            # Fetch one lookahead record so a full page cannot masquerade as a
+            # complete result set. The public API caps max at 10,000.
+            request_arguments = dict(arguments, limit=limit + 1, offset=offset)
+            params = self._build_params(request_arguments)
         except ValueError as e:
             error_msg = f"Authentication failed: {e}"
             return {"status": "error", "data": {"error": error_msg}, "error": error_msg}
@@ -193,6 +214,12 @@ class BioGRIDRESTTool(BaseTool):
                 "data": api_response,
                 "error": api_response.get("error"),
             }
+
+        upstream_count = len(api_response) if isinstance(api_response, dict) else 0
+        has_more = upstream_count > limit
+        if isinstance(api_response, dict) and has_more:
+            api_response = dict(list(api_response.items())[:limit])
+        upstream_returned = len(api_response) if isinstance(api_response, dict) else 0
 
         # interaction_type is declared as a physical/genetic/both filter, but
         # BioGRID's REST API can't filter on it server-side -- it must be applied
@@ -228,6 +255,17 @@ class BioGRIDRESTTool(BaseTool):
             "interaction_count": len(api_response)
             if isinstance(api_response, dict)
             else 0,
+            "upstream_returned": upstream_returned,
+            "offset": offset,
+            "limit": limit,
+            "has_more": has_more,
+            "next_offset": offset + upstream_returned if has_more else None,
+            "upstream_total_lower_bound": (
+                offset + upstream_returned + 1
+                if has_more
+                else offset + upstream_returned
+            ),
+            "result_set_complete": offset == 0 and not has_more,
             "note": (
                 "BioGRID chemicalList filter is not supported by the REST API; "
                 "results reflect all protein interactions for the queried gene(s), "
@@ -235,6 +273,13 @@ class BioGRIDRESTTool(BaseTool):
                 "DGIdb_get_drug_gene_interactions for drug-protein interaction data."
             ),
         }
+        if not has_more:
+            metadata["upstream_total"] = offset + upstream_returned
+        else:
+            metadata["pagination_warning"] = (
+                f"Returned the upstream records at offset {offset}; continue with "
+                "metadata.next_offset while metadata.has_more is true."
+            )
         if interaction_type_note:
             metadata["interaction_type_filter"] = interaction_type_note
         return {

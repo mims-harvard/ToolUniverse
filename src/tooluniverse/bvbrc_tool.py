@@ -101,6 +101,7 @@ class BVBRCTool(BaseTool):
         self,
         conditions: List[str],
         limit: int = 25,
+        offset: int = 0,
         select_fields: Optional[List[str]] = None,
     ) -> str:
         """Build BV-BRC SOLR-like query string."""
@@ -110,7 +111,9 @@ class BVBRCTool(BaseTool):
         elif len(conditions) > 1:
             parts.append(f"and({','.join(conditions)})")
 
-        parts.append(f"limit({limit})")
+        # BV-BRC RQL uses limit(COUNT,START), where START is the zero-based
+        # offset.  Always include START so callers can retrieve every page.
+        parts.append(f"limit({limit},{offset})")
 
         if select_fields:
             parts.append(f"select({','.join(select_fields)})")
@@ -173,27 +176,33 @@ class BVBRCTool(BaseTool):
         results: List[Any],
         limit: int,
         upstream_total: Optional[int],
+        offset: int = 0,
         **query_fields: Any,
     ) -> Dict[str, Any]:
         """Build the metadata block shared by every BV-BRC search operation.
 
         Distinguishes the rows on this page (``returned_results``) from the
         number of records matching the query upstream (``total_results``), and
-        states plainly when the response was truncated.
+        states plainly when the response was truncated.  ``offset`` is the
+        zero-based start of this page; ``next_offset`` is where the next page
+        starts when more records remain.
         """
         returned = len(results)
+        seen = offset + returned
 
-        if isinstance(upstream_total, int) and upstream_total >= returned:
+        if isinstance(upstream_total, int) and upstream_total >= seen:
             total = upstream_total
             total_known = True
         else:
-            total = returned
+            total = seen
             total_known = False
 
         metadata: Dict[str, Any] = {
             "source": "BV-BRC",
             "returned_results": returned,
+            "returned": returned,
             "total_results": total,
+            "offset": offset,
             "limit": limit,
         }
 
@@ -206,22 +215,26 @@ class BVBRCTool(BaseTool):
                 "returned and may undercount the true number of matches"
             )
 
-        if total_known and total > returned:
+        if total_known and total > seen:
             metadata["truncated"] = True
             metadata["truncation_note"] = (
                 f"Showing {returned} of {total} matching records. "
-                f"Raise 'limit' (maximum 100) to retrieve more."
+                f"Raise 'limit' (maximum 100) or pass offset={seen} "
+                f"to retrieve more."
             )
         elif not total_known and returned >= limit:
             metadata["truncated"] = True
             metadata["truncation_note"] = (
                 f"BV-BRC did not report a total and this page is full at the "
                 f"requested limit of {limit}, so more matching records may exist. "
-                f"Raise 'limit' (maximum 100) to retrieve more."
+                f"Raise 'limit' (maximum 100) or pass offset={seen} "
+                f"to retrieve more."
             )
         else:
             metadata["truncated"] = False
 
+        metadata["has_more"] = metadata["truncated"]
+        metadata["next_offset"] = seen if metadata["truncated"] else None
         metadata.update(query_fields)
         return metadata
 
@@ -231,29 +244,13 @@ class BVBRCTool(BaseTool):
         if not genome_id:
             return {"status": "error", "error": "genome_id parameter is required"}
 
-        select_fields = [
-            "genome_id",
-            "genome_name",
-            "organism_name",
-            "taxon_id",
-            "genome_length",
-            "gc_content",
-            "contigs",
-            "genome_status",
-            "isolation_country",
-            "host_name",
-            "disease",
-            "collection_date",
-            "completion_date",
-            "chromosomes",
-            "plasmids",
-            "sequences",
-        ]
-
+        # Do not use select(...): the genome collection currently exposes 80+
+        # fields, including quality/assembly metrics (CheckM, N50, reference
+        # status, accessions, and sequencing metadata).  Selecting a small
+        # hand-written subset silently discarded most of the record.
         query = self._build_query_string(
             [f"eq(genome_id,{genome_id})"],
             limit=1,
-            select_fields=select_fields,
         )
 
         data = self._make_request("genome", query)
@@ -265,10 +262,54 @@ class BVBRCTool(BaseTool):
                 "metadata": {"source": "BV-BRC", "query_genome_id": genome_id},
             }
 
+        record = dict(data[0] if isinstance(data, list) else data)
+        metadata = {
+            "source": "BV-BRC",
+            "query_genome_id": genome_id,
+            "related_data": {
+                "amr": "Use BVBRC_search_amr with this genome_id.",
+                "specialty_genes": (
+                    "Use BVBRC_search_specialty_genes with this genome_id."
+                ),
+            },
+        }
+
+        include_related_default = (
+            self.tool_config.get("parameter", {})
+            .get("properties", {})
+            .get("include_related", {})
+            .get("default", False)
+        )
+        if arguments.get("include_related", include_related_default):
+            related_limit = min(max(arguments.get("related_limit", 25), 1), 100)
+            related_offset = max(arguments.get("related_offset", 0), 0)
+            amr = self._search_amr(
+                {
+                    "genome_id": genome_id,
+                    "limit": related_limit,
+                    "offset": related_offset,
+                }
+            )
+            specialty = self._search_specialty_genes(
+                {
+                    "genome_id": genome_id,
+                    "limit": related_limit,
+                    "offset": related_offset,
+                }
+            )
+            record["related_records"] = {
+                "amr": amr.get("data", []),
+                "specialty_genes": specialty.get("data", []),
+            }
+            metadata["related_pagination"] = {
+                "amr": amr.get("metadata", {}),
+                "specialty_genes": specialty.get("metadata", {}),
+            }
+
         return {
             "status": "success",
-            "data": data[0] if isinstance(data, list) else data,
-            "metadata": {"source": "BV-BRC", "query_genome_id": genome_id},
+            "data": record,
+            "metadata": metadata,
         }
 
     def _search_genomes(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -278,6 +319,33 @@ class BVBRCTool(BaseTool):
             return {"status": "error", "error": "keyword parameter is required"}
 
         limit = min(arguments.get("limit") or 10, 100)
+        offset = max(arguments.get("offset") or 0, 0)
+
+        conditions = [f"keyword({keyword})"]
+        for argument, field in (
+            ("genome_status", "genome_status"),
+            ("genome_quality", "genome_quality"),
+        ):
+            value = arguments.get(argument)
+            if value:
+                conditions.append(f"eq({field},{value})")
+
+        numeric_filters = (
+            ("min_checkm_completeness", "ge", "checkm_completeness"),
+            ("max_checkm_contamination", "le", "checkm_contamination"),
+        )
+        for argument, operator, field in numeric_filters:
+            value = arguments.get(argument)
+            if value is not None:
+                conditions.append(f"{operator}({field},{value})")
+
+        for argument, operator, field in (
+            ("collection_date_start", "ge", "collection_date"),
+            ("collection_date_end", "le", "collection_date"),
+        ):
+            value = arguments.get(argument)
+            if value:
+                conditions.append(f"{operator}({field},{value})")
 
         select_fields = [
             "genome_id",
@@ -287,14 +355,21 @@ class BVBRCTool(BaseTool):
             "genome_length",
             "gc_content",
             "genome_status",
+            "genome_quality",
+            "checkm_completeness",
+            "checkm_contamination",
+            "reference_genome",
             "host_name",
             "disease",
             "isolation_country",
+            "collection_date",
+            "assembly_accession",
         ]
 
         query = self._build_query_string(
-            [f"keyword({keyword})"],
+            conditions,
             limit=limit,
+            offset=offset,
             select_fields=select_fields,
         )
 
@@ -308,6 +383,7 @@ class BVBRCTool(BaseTool):
                 results,
                 limit,
                 upstream_total,
+                offset=offset,
                 query=keyword,
             ),
         }
@@ -334,6 +410,7 @@ class BVBRCTool(BaseTool):
             }
 
         limit = min(arguments.get("limit") or 25, 100)
+        offset = max(arguments.get("offset") or 0, 0)
 
         select_fields = [
             "genome_id",
@@ -350,7 +427,7 @@ class BVBRCTool(BaseTool):
         ]
 
         query = self._build_query_string(
-            conditions, limit=limit, select_fields=select_fields
+            conditions, limit=limit, offset=offset, select_fields=select_fields
         )
         data, upstream_total = self._make_request_with_total("genome_amr", query)
 
@@ -362,6 +439,7 @@ class BVBRCTool(BaseTool):
                 results,
                 limit,
                 upstream_total,
+                offset=offset,
                 query_antibiotic=antibiotic,
                 query_genome_id=genome_id,
             ),
@@ -392,6 +470,7 @@ class BVBRCTool(BaseTool):
             }
 
         limit = min(arguments.get("limit") or 10, 100)
+        offset = max(arguments.get("offset") or 0, 0)
 
         select_fields = [
             "patric_id",
@@ -408,7 +487,7 @@ class BVBRCTool(BaseTool):
         ]
 
         query = self._build_query_string(
-            conditions, limit=limit, select_fields=select_fields
+            conditions, limit=limit, offset=offset, select_fields=select_fields
         )
         data, upstream_total = self._make_request_with_total("genome_feature", query)
 
@@ -420,6 +499,7 @@ class BVBRCTool(BaseTool):
                 results,
                 limit,
                 upstream_total,
+                offset=offset,
                 query_gene=gene,
                 query_product=product,
             ),
@@ -450,6 +530,7 @@ class BVBRCTool(BaseTool):
             }
 
         limit = min(arguments.get("limit") or 25, 100)
+        offset = max(arguments.get("offset") or 0, 0)
 
         select_fields = [
             "epitope_id",
@@ -466,7 +547,7 @@ class BVBRCTool(BaseTool):
         ]
 
         query = self._build_query_string(
-            conditions, limit=limit, select_fields=select_fields
+            conditions, limit=limit, offset=offset, select_fields=select_fields
         )
         data, upstream_total = self._make_request_with_total("epitope", query)
 
@@ -478,6 +559,7 @@ class BVBRCTool(BaseTool):
                 results,
                 limit,
                 upstream_total,
+                offset=offset,
                 query_taxon_id=taxon_id,
                 query_protein_name=protein_name,
             ),
@@ -508,6 +590,7 @@ class BVBRCTool(BaseTool):
             }
 
         limit = min(arguments.get("limit") or 25, 100)
+        offset = max(arguments.get("offset") or 0, 0)
 
         # Fix-11C-1: BV-BRC's surveillance collection commonly holds multiple
         # distinct records (e.g. separate lab submissions/panels) that share
@@ -531,7 +614,7 @@ class BVBRCTool(BaseTool):
         ]
 
         query = self._build_query_string(
-            conditions, limit=limit, select_fields=select_fields
+            conditions, limit=limit, offset=offset, select_fields=select_fields
         )
         data, upstream_total = self._make_request_with_total("surveillance", query)
 
@@ -543,6 +626,7 @@ class BVBRCTool(BaseTool):
                 results,
                 limit,
                 upstream_total,
+                offset=offset,
                 query_subtype=subtype,
                 query_geographic_group=geographic_group,
             ),
@@ -556,6 +640,7 @@ class BVBRCTool(BaseTool):
         prop = arguments.get("property")
         source = arguments.get("source")
         taxon_id = arguments.get("taxon_id")
+        genome_id = arguments.get("genome_id")
 
         if gene:
             conditions.append(f"eq(gene,{gene})")
@@ -567,14 +652,17 @@ class BVBRCTool(BaseTool):
             conditions.append(f"eq(source,{source})")
         if taxon_id:
             conditions.append(f"eq(taxon_id,{taxon_id})")
+        if genome_id:
+            conditions.append(f"eq(genome_id,{genome_id})")
 
         if not conditions:
             return {
                 "status": "error",
-                "error": "At least one of gene, property, source, or taxon_id is required",
+                "error": "At least one of gene, property, source, taxon_id, or genome_id is required",
             }
 
         limit = min(arguments.get("limit") or 25, 100)
+        offset = max(arguments.get("offset") or 0, 0)
 
         select_fields = [
             "feature_id",
@@ -601,7 +689,7 @@ class BVBRCTool(BaseTool):
         ]
 
         query = self._build_query_string(
-            conditions, limit=limit, select_fields=select_fields
+            conditions, limit=limit, offset=offset, select_fields=select_fields
         )
         data, upstream_total = self._make_request_with_total("sp_gene", query)
 
@@ -613,8 +701,10 @@ class BVBRCTool(BaseTool):
                 results,
                 limit,
                 upstream_total,
+                offset=offset,
                 query_gene=gene,
                 query_property=prop,
+                query_genome_id=genome_id,
             ),
         }
 
@@ -665,6 +755,7 @@ class BVBRCTool(BaseTool):
             }
 
         limit = min(arguments.get("limit") or 10, 100)
+        offset = max(arguments.get("offset") or 0, 0)
 
         select_fields = [
             "pdb_id",
@@ -679,7 +770,7 @@ class BVBRCTool(BaseTool):
         ]
 
         query = self._build_query_string(
-            conditions, limit=limit, select_fields=select_fields
+            conditions, limit=limit, offset=offset, select_fields=select_fields
         )
         data, upstream_total = self._make_request_with_total("protein_structure", query)
 
@@ -691,6 +782,7 @@ class BVBRCTool(BaseTool):
                 results,
                 limit,
                 upstream_total,
+                offset=offset,
                 query_taxon_id=taxon_id,
                 query_gene=gene,
             ),
@@ -743,6 +835,7 @@ class BVBRCTool(BaseTool):
             return {"status": "error", "error": "keyword parameter is required"}
 
         limit = min(arguments.get("limit") or 10, 100)
+        offset = max(arguments.get("offset") or 0, 0)
 
         select_fields = [
             "taxon_id",
@@ -756,6 +849,7 @@ class BVBRCTool(BaseTool):
         query = self._build_query_string(
             [f"keyword({keyword})"],
             limit=limit,
+            offset=offset,
             select_fields=select_fields,
         )
         data, upstream_total = self._make_request_with_total("taxonomy", query)
@@ -768,6 +862,7 @@ class BVBRCTool(BaseTool):
                 results,
                 limit,
                 upstream_total,
+                offset=offset,
                 query=keyword,
             ),
         }
@@ -797,6 +892,7 @@ class BVBRCTool(BaseTool):
             }
 
         limit = min(arguments.get("limit") or 25, 100)
+        offset = max(arguments.get("offset") or 0, 0)
 
         select_fields = [
             "pathway_id",
@@ -822,7 +918,7 @@ class BVBRCTool(BaseTool):
         ]
 
         query = self._build_query_string(
-            conditions, limit=limit, select_fields=select_fields
+            conditions, limit=limit, offset=offset, select_fields=select_fields
         )
         data, upstream_total = self._make_request_with_total("pathway", query)
 
@@ -834,6 +930,7 @@ class BVBRCTool(BaseTool):
                 results,
                 limit,
                 upstream_total,
+                offset=offset,
                 query_taxon_id=taxon_id,
                 query_pathway_name=pathway_name,
             ),
@@ -869,6 +966,7 @@ class BVBRCTool(BaseTool):
             }
 
         limit = min(arguments.get("limit") or 25, 100)
+        offset = max(arguments.get("offset") or 0, 0)
 
         select_fields = [
             "subsystem_id",
@@ -883,7 +981,7 @@ class BVBRCTool(BaseTool):
         ]
 
         query = self._build_query_string(
-            conditions, limit=limit, select_fields=select_fields
+            conditions, limit=limit, offset=offset, select_fields=select_fields
         )
         data, upstream_total = self._make_request_with_total("subsystem", query)
 
@@ -895,6 +993,7 @@ class BVBRCTool(BaseTool):
                 results,
                 limit,
                 upstream_total,
+                offset=offset,
                 query_taxon_id=taxon_id,
                 query_subsystem_name=subsystem_name,
             ),

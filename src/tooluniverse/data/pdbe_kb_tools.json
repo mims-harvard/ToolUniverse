@@ -88,7 +88,7 @@
   },
   {
     "name": "PDBe_KB_get_ligand_sites",
-    "description": "Get ligand binding site residues for a UniProt protein from PDBe-KB. Returns all known ligands that bind the protein, with the specific residue positions (UniProt numbering) involved in binding, the PDB structures where binding was observed, and ligand metadata (scaffold, cofactor status, drug associations). Essential for understanding protein function, drug binding, and designing mutagenesis experiments. Example: P04637 (TP53) shows NAD binding at residue 382, zinc coordination at the DNA-binding domain. Proteins with many known ligands (e.g. well-studied drug targets) are truncated to `max_ligands` entries by default -- check the response's `truncated` flag and raise `max_ligands` if a specific ligand of interest is missing.",
+    "description": "Get ligand binding site residues for a UniProt protein from PDBe-KB, including PDB structures and ligand metadata. Results are independently paginated at the ligand, residue, and PDB-entry levels. Always inspect total/returned/truncated/next-offset fields at every level and continue until the relevant level is complete; the API does not order ligands by clinical relevance.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -98,7 +98,41 @@
         },
         "max_ligands": {
           "type": "integer",
-          "description": "Maximum number of ligands to return (default 100). The underlying API does not guarantee ordering by clinical relevance, so pass a value >= total_ligands (from a prior call, or from the response's truncation_note) to guarantee a specific ligand isn't cut off."
+          "description": "Number of ligand records to return from ligand_offset (default 100).",
+          "default": 100,
+          "minimum": 1
+        },
+        "ligand_offset": {
+          "type": "integer",
+          "description": "Zero-based ligand offset for the next ligand page.",
+          "default": 0,
+          "minimum": 0
+        },
+        "residue_offset": {
+          "type": "integer",
+          "description": "Zero-based binding-residue offset applied within every returned ligand.",
+          "default": 0,
+          "minimum": 0
+        },
+        "residue_limit": {
+          "type": "integer",
+          "description": "Binding residues returned per ligand (default 20, maximum 500).",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 500
+        },
+        "pdb_entry_offset": {
+          "type": "integer",
+          "description": "Zero-based PDB-entry offset applied within every returned residue.",
+          "default": 0,
+          "minimum": 0
+        },
+        "pdb_entry_limit": {
+          "type": "integer",
+          "description": "PDB entries returned per residue (default 10, maximum 500).",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 500
         }
       },
       "required": [
@@ -177,10 +211,40 @@
                             "type": "string"
                           },
                           "description": "PDB IDs where this binding observed"
+                        },
+                        "pdb_entries_total": {
+                          "type": "integer"
+                        },
+                        "pdb_entries_returned": {
+                          "type": "integer"
+                        },
+                        "pdb_entries_truncated": {
+                          "type": "boolean"
+                        },
+                        "next_pdb_entry_offset": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
                         }
                       }
                     },
                     "description": "Residues involved in ligand binding"
+                  },
+                  "binding_residues_total": {
+                    "type": "integer"
+                  },
+                  "binding_residues_returned": {
+                    "type": "integer"
+                  },
+                  "binding_residues_truncated": {
+                    "type": "boolean"
+                  },
+                  "next_residue_offset": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
                   },
                   "is_cofactor": {
                     "type": [
@@ -218,6 +282,18 @@
               "type": "integer",
               "description": "Total number of unique ligands"
             },
+            "ligand_offset": {
+              "type": "integer"
+            },
+            "ligands_returned": {
+              "type": "integer"
+            },
+            "next_ligand_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
             "truncated": {
               "type": "boolean",
               "description": "True if fewer ligands were returned than total_ligands"
@@ -244,7 +320,7 @@
   },
   {
     "name": "PDBe_KB_get_interface_residues",
-    "description": "Get protein-protein interaction interface residues for a UniProt protein from PDBe-KB. Returns residue positions (UniProt numbering) at interaction interfaces with other proteins, the identity of interaction partners, and PDB structures where each interface was observed. Essential for understanding protein complex formation, designing interface-disrupting mutations, and identifying functional hotspots. Example: P04637 (TP53) shows interaction interfaces with MDM2, p53BP2, and DNA. Proteins with many known partners are truncated to `max_partners` entries by default -- check the response's `truncated` flag if a specific partner of interest is missing.",
+    "description": "Get protein-protein interaction interface residues for a UniProt protein from PDBe-KB. Results are independently paginated at the partner, residue, and PDB-entry levels. Inspect total/returned/truncated/next-offset fields at every level and continue until the relevant level is complete.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -254,7 +330,41 @@
         },
         "max_partners": {
           "type": "integer",
-          "description": "Maximum number of interaction partners to return (default 60). Pass a value >= total_partners (from a prior call) to guarantee a specific partner isn't cut off."
+          "description": "Number of interaction partners to return from partner_offset (default 60).",
+          "default": 60,
+          "minimum": 1
+        },
+        "partner_offset": {
+          "type": "integer",
+          "description": "Zero-based interaction-partner offset.",
+          "default": 0,
+          "minimum": 0
+        },
+        "residue_offset": {
+          "type": "integer",
+          "description": "Zero-based interface-residue offset applied within every returned partner.",
+          "default": 0,
+          "minimum": 0
+        },
+        "residue_limit": {
+          "type": "integer",
+          "description": "Interface residues returned per partner (default 30, maximum 500).",
+          "default": 30,
+          "minimum": 1,
+          "maximum": 500
+        },
+        "pdb_entry_offset": {
+          "type": "integer",
+          "description": "Zero-based PDB-entry offset applied within every returned residue.",
+          "default": 0,
+          "minimum": 0
+        },
+        "pdb_entry_limit": {
+          "type": "integer",
+          "description": "PDB entries returned per residue (default 10, maximum 500).",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 500
         }
       },
       "required": [
@@ -333,10 +443,40 @@
                             "type": "string"
                           },
                           "description": "PDB IDs with this interface"
+                        },
+                        "pdb_entries_total": {
+                          "type": "integer"
+                        },
+                        "pdb_entries_returned": {
+                          "type": "integer"
+                        },
+                        "pdb_entries_truncated": {
+                          "type": "boolean"
+                        },
+                        "next_pdb_entry_offset": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
                         }
                       }
                     },
                     "description": "Residues at the interaction interface"
+                  },
+                  "interface_residues_total": {
+                    "type": "integer"
+                  },
+                  "interface_residues_returned": {
+                    "type": "integer"
+                  },
+                  "interface_residues_truncated": {
+                    "type": "boolean"
+                  },
+                  "next_residue_offset": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
                   }
                 }
               },
@@ -345,6 +485,18 @@
             "total_partners": {
               "type": "integer",
               "description": "Total number of interaction partners"
+            },
+            "partner_offset": {
+              "type": "integer"
+            },
+            "partners_returned": {
+              "type": "integer"
+            },
+            "next_partner_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
             },
             "truncated": {
               "type": "boolean",
@@ -372,13 +524,52 @@
   },
   {
     "name": "PDBe_KB_get_superposition_clusters",
-    "description": "Get structural superposition clusters for a UniProt protein from PDBe-KB. Returns protein segments with structurally aligned PDB chains grouped into clusters based on 3D structural similarity. Each cluster has a representative structure and aligned member structures. Useful for understanding structural coverage across different conformational states, identifying the best representative structure for each domain, and comparing structural fragments from different crystal structures. Example: P04637 (TP53) shows clusters covering residues 1-93 (transactivation domain) and 94-312 (DNA-binding domain); P00533 (EGFR) has 5 segments with multiple clusters covering the extracellular and kinase domains.",
+    "description": "Get structural superposition clusters for a UniProt protein from PDBe-KB. Segments, clusters within each returned segment, and members within each returned cluster are independently paginated. Inspect total/returned/truncated/next-offset fields at each level to avoid silently missing structures.",
     "parameter": {
       "type": "object",
       "properties": {
         "uniprot_accession": {
           "type": "string",
           "description": "UniProt accession ID for the protein. Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P38398' (BRCA1)."
+        },
+        "segment_offset": {
+          "type": "integer",
+          "description": "Zero-based segment offset.",
+          "default": 0,
+          "minimum": 0
+        },
+        "segment_limit": {
+          "type": "integer",
+          "description": "Segments to return (default 10, maximum 100).",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "cluster_offset": {
+          "type": "integer",
+          "description": "Zero-based cluster offset applied within every returned segment.",
+          "default": 0,
+          "minimum": 0
+        },
+        "cluster_limit": {
+          "type": "integer",
+          "description": "Clusters returned per segment (default 10, maximum 100).",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "member_offset": {
+          "type": "integer",
+          "description": "Zero-based member offset applied within every returned cluster.",
+          "default": 0,
+          "minimum": 0
+        },
+        "member_limit": {
+          "type": "integer",
+          "description": "Members returned per cluster (default 20, maximum 500).",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 500
         }
       },
       "required": [
@@ -422,6 +613,21 @@
                     "type": "integer",
                     "description": "Number of structural clusters"
                   },
+                  "cluster_offset": {
+                    "type": "integer"
+                  },
+                  "clusters_returned": {
+                    "type": "integer"
+                  },
+                  "clusters_truncated": {
+                    "type": "boolean"
+                  },
+                  "next_cluster_offset": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
                   "clusters": {
                     "type": "array",
                     "items": {
@@ -447,6 +653,21 @@
                         },
                         "total_members": {
                           "type": "integer"
+                        },
+                        "member_offset": {
+                          "type": "integer"
+                        },
+                        "members_returned": {
+                          "type": "integer"
+                        },
+                        "members_truncated": {
+                          "type": "boolean"
+                        },
+                        "next_member_offset": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
                         },
                         "members": {
                           "type": "array",
@@ -476,6 +697,21 @@
             },
             "total_segments": {
               "type": "integer"
+            },
+            "segment_offset": {
+              "type": "integer"
+            },
+            "segments_returned": {
+              "type": "integer"
+            },
+            "segments_truncated": {
+              "type": "boolean"
+            },
+            "next_segment_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
             }
           }
         },

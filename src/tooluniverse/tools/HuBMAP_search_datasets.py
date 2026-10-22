@@ -1,7 +1,7 @@
 """
 HuBMAP_search_datasets
 
-Search HuBMAP (Human BioMolecular Atlas Program) published datasets by organ, assay type, or free...
+Search HuBMAP published datasets by organ, assay type, or free text. Supports Elasticsearch-style...
 """
 
 from typing import Any, Optional, Callable
@@ -14,13 +14,14 @@ def HuBMAP_search_datasets(
     query: Optional[str] = None,
     status: Optional[str] = "Published",
     limit: Optional[int] = 10,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search HuBMAP (Human BioMolecular Atlas Program) published datasets by organ, assay type, or free...
+    Search HuBMAP published datasets by organ, assay type, or free text. Supports Elasticsearch-style...
 
     Parameters
     ----------
@@ -34,6 +35,8 @@ def HuBMAP_search_datasets(
         Dataset status filter. Default: 'Published'
     limit : int
         Maximum number of results (1-50, default 10)
+    offset : int
+        Zero-based result offset. Omit for the first page; use next_offset for subseq...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def HuBMAP_search_datasets(
             "query": query,
             "status": status,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

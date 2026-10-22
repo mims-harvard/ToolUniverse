@@ -120,6 +120,33 @@ class PubChemToxTool(BaseTool):
             return ""
         return re.sub(r"<[^>]+>", "", text).strip()
 
+    @staticmethod
+    def _paginate(
+        arguments: Dict[str, Any], values: List[Any], default_limit: int
+    ) -> tuple[List[Any], Dict[str, Any]]:
+        """Page locally extracted PUG View statements without hiding the remainder."""
+        limit = arguments.get("limit", default_limit)
+        if limit is None:
+            limit = default_limit
+        offset = arguments.get("offset", 0)
+        if offset is None:
+            offset = 0
+        if isinstance(limit, bool) or not isinstance(limit, int) or limit <= 0:
+            raise ValueError("limit must be a positive integer")
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            raise ValueError("offset must be a non-negative integer")
+
+        page = values[offset : offset + limit]
+        has_more = offset + len(page) < len(values)
+        return page, {
+            "total_results": len(values),
+            "returned": len(page),
+            "offset": offset,
+            "limit": limit,
+            "has_more": has_more,
+            "next_offset": offset + len(page) if has_more else None,
+        }
+
     def _find_sections_recursive(
         self, sections: List[Dict], heading: str
     ) -> List[Dict]:
@@ -208,19 +235,21 @@ class PubChemToxTool(BaseTool):
             sections, "Non-Human Toxicity Values"
         )
         tox_values = [item["value"] for item in raw_info if item.get("value")]
+        page, pagination = self._paginate(arguments, tox_values, 30)
 
         return {
             "status": "success",
             "data": {
                 "cid": cid,
                 "compound_name": title,
-                "toxicity_values_count": len(tox_values[:30]),
+                "toxicity_values_count": len(page),
                 "total_toxicity_values": len(tox_values),
-                "toxicity_values": tox_values[:30],
+                "toxicity_values": page,
             },
             "metadata": {
                 "source": "PubChem PUG View (Non-Human Toxicity Values)",
                 "cid": cid,
+                **pagination,
             },
         }
 
@@ -236,19 +265,21 @@ class PubChemToxTool(BaseTool):
         sections = record.get("Section", [])
         raw_info = self._extract_info_from_sections(sections, "Ecotoxicity Values")
         eco_values = [item["value"] for item in raw_info if item.get("value")]
+        page, pagination = self._paginate(arguments, eco_values, 30)
 
         return {
             "status": "success",
             "data": {
                 "cid": cid,
                 "compound_name": title,
-                "ecotoxicity_values_count": len(eco_values[:30]),
+                "ecotoxicity_values_count": len(page),
                 "total_ecotoxicity_values": len(eco_values),
-                "ecotoxicity_values": eco_values[:30],
+                "ecotoxicity_values": page,
             },
             "metadata": {
                 "source": "PubChem PUG View (Ecotoxicity Values)",
                 "cid": cid,
+                **pagination,
             },
         }
 
@@ -265,19 +296,21 @@ class PubChemToxTool(BaseTool):
         sections = record.get("Section", [])
         raw_info = self._extract_info_from_sections(sections, "Human Toxicity Values")
         human_values = [item["value"] for item in raw_info if item.get("value")]
+        page, pagination = self._paginate(arguments, human_values, 30)
 
         return {
             "status": "success",
             "data": {
                 "cid": cid,
                 "compound_name": title,
-                "human_toxicity_values_count": len(human_values[:30]),
+                "human_toxicity_values_count": len(page),
                 "total_human_toxicity_values": len(human_values),
-                "human_toxicity_values": human_values[:30],
+                "human_toxicity_values": page,
             },
             "metadata": {
                 "source": "PubChem PUG View (Human Toxicity Values)",
                 "cid": cid,
+                **pagination,
             },
         }
 
@@ -383,18 +416,20 @@ class PubChemToxTool(BaseTool):
             except Exception:
                 continue
 
+        page, pagination = self._paginate(arguments, effects, 20)
         return {
             "status": "success",
             "data": {
                 "cid": cid,
                 "compound_name": title,
-                "effects_count": len(effects[:20]),
+                "effects_count": len(page),
                 "total_acute_effects": len(effects),
-                "acute_effects": effects[:20],
+                "acute_effects": page,
             },
             "metadata": {
                 "source": "PubChem PUG View (Acute Effects / Signs and Symptoms)",
                 "cid": cid,
+                **pagination,
             },
         }
 

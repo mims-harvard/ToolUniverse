@@ -17,6 +17,9 @@ def ClinVar_search_by_region(
     clinical_significance: Optional[str] = None,
     margin: Optional[int] = 2000000,
     max_results: Optional[int] = 50,
+    result_offset: Optional[int] = 0,
+    candidate_limit: Optional[int] = 500,
+    candidate_offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -42,7 +45,13 @@ def ClinVar_search_by_region(
     margin : int
         How far upstream to look for variants that start before the region and span i...
     max_results : int
-        Maximum overlapping variants to return; the full number found is reported as ...
+        Maximum overlapping variants to return from this candidate page; the full num...
+    result_offset : int
+        Offset within overlaps found in the current candidate page. Follow next_resul...
+    candidate_limit : int
+        Number of Entrez candidates to inspect in this page.
+    candidate_offset : int
+        Entrez candidate offset. Advance to next_candidate_offset after exhausting re...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -68,6 +77,9 @@ def ClinVar_search_by_region(
             "clinical_significance": clinical_significance,
             "margin": margin,
             "max_results": max_results,
+            "result_offset": result_offset,
+            "candidate_limit": candidate_limit,
+            "candidate_offset": candidate_offset,
         }.items()
         if v is not None
     }

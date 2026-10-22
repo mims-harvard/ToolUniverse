@@ -1,29 +1,43 @@
 [
   {
     "name": "NASAEONET_get_events",
-    "description": "Get natural event data from NASA Earth Observatory Natural Event Tracker (EONET). EONET tracks ongoing and historical natural events including wildfires, storms, volcanoes, floods, sea ice changes, landslides, earthquakes, and more. Returns event details with geographic coordinates, time series, and source references. Useful for disaster monitoring, environmental research, and geospatial analysis.",
+    "description": "Get a filtered top-N set of NASA EONET natural events with geographic time series and source references. EONET exposes limit but no offset/cursor or total; this wrapper uses one-record lookahead to distinguish a complete short result from a truncated top-N result and validates filters that EONET would otherwise silently ignore.",
     "parameter": {
       "type": "object",
       "properties": {
         "status": {
-          "type": [
-            "string",
-            "null"
+          "type": "string",
+          "enum": [
+            "open",
+            "closed",
+            "all"
           ],
           "description": "Event status: 'open' (ongoing events) or 'closed' (past events). Default: both"
         },
         "category": {
-          "type": [
-            "string",
-            "null"
+          "type": "string",
+          "enum": [
+            "drought",
+            "dustHaze",
+            "earthquakes",
+            "floods",
+            "landslides",
+            "manmade",
+            "seaLakeIce",
+            "severeStorms",
+            "snow",
+            "tempExtremes",
+            "volcanoes",
+            "waterColor",
+            "wildfires"
           ],
           "description": "Filter by event category. Values: 'wildfires', 'severeStorms', 'volcanoes', 'seaLakeIce', 'earthquakes', 'floods', 'landslides', 'manmade', 'snow'. Use the exact slug."
         },
         "limit": {
-          "type": [
-            "integer",
-            "null"
-          ],
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 10,
           "description": "Maximum number of events to return (default 10, max 1000)"
         },
         "days": {
@@ -65,7 +79,8 @@
       "required": []
     },
     "fields": {
-      "endpoint": "https://eonet.gsfc.nasa.gov/api/v3/events"
+      "endpoint": "https://eonet.gsfc.nasa.gov/api/v3/events",
+      "pagination": "eonet_top_n"
     },
     "type": "BaseRESTTool",
     "test_examples": [

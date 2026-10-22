@@ -1,7 +1,7 @@
 """
 RGD_get_qtls_in_region
 
-Get QTLs (Quantitative Trait Loci) overlapping a genomic region from the Rat Genome Database (RGD...
+Get QTLs (Quantitative Trait Loci) overlapping a genomic region from RGD with limit/offset pagina...
 """
 
 from typing import Any, Optional, Callable
@@ -13,13 +13,15 @@ def RGD_get_qtls_in_region(
     start: int,
     stop: int,
     map_key: int,
+    limit: Optional[int] = 100,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get QTLs (Quantitative Trait Loci) overlapping a genomic region from the Rat Genome Database (RGD...
+    Get QTLs (Quantitative Trait Loci) overlapping a genomic region from RGD with limit/offset pagina...
 
     Parameters
     ----------
@@ -31,6 +33,10 @@ def RGD_get_qtls_in_region(
         Region stop coordinate.
     map_key : int
         Assembly map key. 360=rat rn7/GRCr8, 372=rat mRatBN7.2, 38=human GRCh38, 17=h...
+    limit : int
+        Maximum number of overlapping QTLs to return in this page.
+    offset : int
+        Zero-based QTL offset. Use metadata.next_offset for the next page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +58,8 @@ def RGD_get_qtls_in_region(
             "start": start,
             "stop": stop,
             "map_key": map_key,
+            "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

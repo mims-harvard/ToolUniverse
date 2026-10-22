@@ -1,7 +1,7 @@
 """
 EMPIAR_search_entries
 
-Search the EMPIAR (Electron Microscopy Public Image Archive) for raw EM image datasets by keyword...
+Search the EMPIAR raw electron-microscopy archive by keyword with exact EBI offset pagination. Me...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def EMPIAR_search_entries(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Search the EMPIAR (Electron Microscopy Public Image Archive) for raw EM image datasets by keyword...
+    Search the EMPIAR raw electron-microscopy archive by keyword with exact EBI offset pagination. Me...
 
     Parameters
     ----------
@@ -27,7 +27,7 @@ def EMPIAR_search_entries(
     page_size : int
         Number of results to return (default: 10, max: 100)
     start : int
-        Starting offset for pagination (default: 0)
+        Zero-based offset. Continue with metadata.next_start.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

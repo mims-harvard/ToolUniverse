@@ -16,6 +16,7 @@ def IDR_search_images(
     study: Optional[str] = None,
     resource: Optional[str] = None,
     max_results: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -39,7 +40,9 @@ def IDR_search_images(
     resource : str
         Resource type to search. Default 'image'. Other values: 'screen', 'project', ...
     max_results : int
-        Optional client-side cap on the number of image rows returned (the API return...
+        Maximum number of image rows to return. Defaults to 1000. Requests can span m...
+    offset : int
+        Zero-based offset in the complete matching image set. Use next_offset to cont...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -64,6 +67,7 @@ def IDR_search_images(
             "study": study,
             "resource": resource,
             "max_results": max_results,
+            "offset": offset,
         }.items()
         if v is not None
     }

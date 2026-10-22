@@ -15,6 +15,7 @@ def ENCORI_scan_RBP_motifs(
     length: Optional[str] = None,
     rank_limit: Optional[int] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -37,6 +38,8 @@ def ENCORI_scan_RBP_motifs(
         Per-dataset motif rank cutoff sent to ENCORI (1-100, default 10).
     limit : int
         Maximum motif rows to return (1-500, default 100).
+    offset : int
+        Zero-based ranked row offset. Continue with metadata.next_offset while metada...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -60,6 +63,7 @@ def ENCORI_scan_RBP_motifs(
             "length": length,
             "rank_limit": rank_limit,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

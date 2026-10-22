@@ -1,13 +1,26 @@
 [
   {
     "name": "MobiDB_get_protein",
-    "description": "Get comprehensive protein disorder data from MobiDB for a UniProt accession. MobiDB integrates curated disorder from DisProt, predicted disorder from MobiDB-lite, structural data from PDB, PTM annotations, and binding mode information to provide a complete picture of protein intrinsic disorder. Returns predicted disordered regions with residue-level scores, curated disorder regions, linear interacting peptides (LIPs), PTM summary, and subcellular localization. Example: P04637 (TP53) shows predicted disorder at N-terminus (1-90) and C-terminus (360-393), curated disorder from DisProt, 28+ PTM types including phosphoserine and acetyllysine, localized to cytoplasm/nucleus/mitochondria.",
+    "description": "Get comprehensive protein disorder data from MobiDB for a UniProt accession. Returns predicted and curated disorder, linear interacting peptides, localization, and PTM names paired with residue positions. PTMs are independently paginated: follow ptm_summary.next_offset using ptm_offset until it is null.",
     "parameter": {
       "type": "object",
       "properties": {
         "accession": {
           "type": "string",
           "description": "UniProt accession (e.g., 'P04637' for TP53, 'P00533' for EGFR, 'P38398' for BRCA1)."
+        },
+        "ptm_offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset into the PTM annotation list (default 0)."
+        },
+        "ptm_limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 10,
+          "description": "Maximum PTM annotations to return (default 10, max 500)."
         }
       },
       "required": [
@@ -123,10 +136,54 @@
                 "count": {
                   "type": "integer"
                 },
+                "returned": {
+                  "type": "integer"
+                },
+                "truncated": {
+                  "type": "boolean"
+                },
+                "next_offset": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
                 "types": {
                   "type": "array",
                   "items": {
-                    "type": "string"
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "positions": {
+                  "type": "array",
+                  "items": {
+                    "type": [
+                      "array",
+                      "null"
+                    ]
+                  }
+                },
+                "entries": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "position": {
+                        "type": [
+                          "array",
+                          "null"
+                        ]
+                      }
+                    }
                   }
                 }
               },

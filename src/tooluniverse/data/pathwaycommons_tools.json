@@ -2,7 +2,7 @@
   {
     "name": "PathwayCommons_search",
     "type": "PathwayCommonsTool",
-    "description": "Search Pathway Commons for pathways, interactions, and molecular entities across 22 integrated databases (Reactome, KEGG, WikiPathways, PID, BioGRID, IntAct, HPRD, etc.). Search by gene symbol, protein name, or keyword. Optionally filter by BioPAX entity type (Pathway, Protein, SmallMolecule, Complex) and data source. Returns pathway URIs, names, data sources, and participant/process counts. Use PathwayCommons_get_pathway with returned URI for full pathway details.",
+    "description": "Search Pathway Commons for pathways, interactions, and molecular entities across 22 integrated databases (Reactome, KEGG, WikiPathways, PID, BioGRID, IntAct, HPRD, etc.). Results use the upstream fixed page size of 100: start with page=0 and continue with metadata.next_page while metadata.has_more is true. metadata.total_hits is exact. Optionally filter by BioPAX entity type and data source. Use PathwayCommons_get_pathway with a returned URI for full pathway details.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -48,7 +48,7 @@
             "null"
           ],
           "minimum": 0,
-          "description": "Page number for pagination (0-based, 100 results per page)"
+          "description": "Zero-based page number. Pathway Commons fixes the page size at 100; use metadata.next_page to retrieve all results."
         }
       },
       "required": [
@@ -115,7 +115,6 @@
     },
     "test_examples": [
       {
-        "operation": "search",
         "query": "BRCA1",
         "type": "Pathway",
         "datasource": "reactome"
@@ -197,7 +196,6 @@
     },
     "test_examples": [
       {
-        "operation": "get_pathway",
         "uri": "http://bioregistry.io/reactome:R-HSA-69473"
       }
     ],
@@ -208,13 +206,13 @@
   {
     "name": "PathwayCommons_get_neighborhood",
     "type": "PathwayCommonsTool",
-    "description": "Get the interaction neighborhood for a gene from Pathway Commons. Returns all known interactions (protein-protein, regulatory, catalytic, complex membership) for the query gene from 22 integrated databases. Each interaction includes the partner gene, interaction type (interacts-with, controls-state-change-of, controls-expression-of, in-complex-with, etc.), data source, and PubMed references. Useful for building gene interaction networks and finding functional partners.",
+    "description": "Get an interaction neighborhood from Pathway Commons. The API's extended TXT response contains both an interaction table and a separate participant-attribute table; only genuine interaction rows are returned. Large graphs are recoverably paginated: max_results is page size; start with offset=0 and continue with metadata.next_offset while metadata.has_more is true. metadata.total_interactions is the complete interaction-table size and metadata.complete_graph_retrieved confirms that local pagination uses the full upstream graph.",
     "parameter": {
       "type": "object",
       "properties": {
         "gene": {
           "type": "string",
-          "description": "Gene symbol (e.g., BRCA1, TP53, EGFR)"
+          "description": "Pathway Commons source identifier. A full BioPAX URI from PathwayCommons_search is precise; a bare gene symbol or other identifier is exploratory because the API performs search and ID mapping and may start from multiple entities. metadata.source_resolution records the mode."
         },
         "limit": {
           "type": [
@@ -233,6 +231,61 @@
           ],
           "description": "Filter by data source: reactome, kegg, biogrid, intact, hprd, pid, corum, ctd, drugbank"
         },
+        "organism": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional organism filter, preferably an NCBI taxonomy ID such as 9606."
+        },
+        "direction": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "upstream",
+            "downstream",
+            "bothstream",
+            "undirected",
+            null
+          ],
+          "description": "Graph traversal direction; default is undirected."
+        },
+        "pattern": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "enum": [
+              "controls-state-change-of",
+              "controls-transport-of",
+              "controls-phosphorylation-of",
+              "controls-expression-of",
+              "catalysis-precedes",
+              "in-complex-with",
+              "interacts-with",
+              "neighbor-of",
+              "consumption-controlled-by",
+              "controls-production-of",
+              "controls-transport-of-chemical",
+              "chemical-affects",
+              "reacts-with",
+              "used-to-produce"
+            ]
+          },
+          "minItems": 1,
+          "description": "Optional SIF interaction-type filters."
+        },
+        "subpw": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Whether graph traversal may enter sub-pathways. Omit to use the upstream default."
+        },
         "max_results": {
           "type": [
             "integer",
@@ -242,6 +295,12 @@
           "maximum": 500,
           "default": 100,
           "description": "Maximum number of interactions to return (default: 100)"
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based interaction offset. Continue with metadata.next_offset."
         }
       },
       "required": [
@@ -302,7 +361,6 @@
     },
     "test_examples": [
       {
-        "operation": "get_neighborhood",
         "gene": "CDK2",
         "datasource": "reactome",
         "max_results": 20
@@ -315,7 +373,7 @@
   {
     "name": "PathwayCommons_paths_between",
     "type": "PathwayCommonsTool",
-    "description": "Find mechanistic interaction paths connecting a set of genes/proteins in Pathway Commons (PC2 kind=PATHSBETWEEN across 22 integrated databases: Reactome, KEGG, WikiPathways, PID, BioGRID, IntAct, etc.). Given two or more gene symbols, returns the directed/undirected interaction edges that link them, parsed from SIF triples into {source, relation, target}. Relations include in-complex-with, controls-state-change-of, controls-phosphorylation-of, controls-expression-of, chemical-affects, used-to-produce. Use to reveal how a gene set is mechanistically connected (e.g. a DNA-repair module BRCA1/BRCA2/TP53). Requires at least 2 distinct genes. Note: an uncached query can be slow; if it times out, retry (results are cached server-side).",
+    "description": "Find mechanistic paths connecting genes in Pathway Commons. Edge results are recoverably paginated: max_results is page size; start with offset=0 and continue with metadata.next_offset while metadata.has_more is true. Uncached graph queries can be slow.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -324,11 +382,21 @@
             "array",
             "string"
           ],
-          "items": {
-            "type": "string"
-          },
-          "minItems": 2,
-          "description": "Two or more gene symbols / identifiers to connect, e.g. [\"BRCA1\", \"BRCA2\", \"TP53\"]. A comma-separated string is also accepted."
+          "description": "Two or more source identifiers, e.g. [\"BRCA1\", \"BRCA2\", \"TP53\"], or a comma-separated string. Full BioPAX URIs are precise; bare identifiers invoke exploratory search and ID mapping.",
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              },
+              "minItems": 2
+            },
+            {
+              "type": "string",
+              "minLength": 3
+            }
+          ]
         },
         "limit": {
           "type": [
@@ -356,6 +424,53 @@
           "maximum": 2000,
           "default": 200,
           "description": "Maximum number of edges to return (default: 200)"
+        },
+        "organism": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional organism filter, preferably an NCBI taxonomy ID such as 9606."
+        },
+        "pattern": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string",
+            "enum": [
+              "controls-state-change-of",
+              "controls-transport-of",
+              "controls-phosphorylation-of",
+              "controls-expression-of",
+              "catalysis-precedes",
+              "in-complex-with",
+              "interacts-with",
+              "neighbor-of",
+              "consumption-controlled-by",
+              "controls-production-of",
+              "controls-transport-of-chemical",
+              "chemical-affects",
+              "reacts-with",
+              "used-to-produce"
+            ]
+          },
+          "minItems": 1,
+          "description": "Optional SIF interaction-type filters."
+        },
+        "subpw": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Whether graph traversal may enter sub-pathways. Omit to use the upstream default."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based edge offset. Continue with metadata.next_offset."
         }
       },
       "required": [
@@ -430,7 +545,6 @@
     },
     "test_examples": [
       {
-        "operation": "paths_between",
         "genes": [
           "BRCA1",
           "BRCA2",

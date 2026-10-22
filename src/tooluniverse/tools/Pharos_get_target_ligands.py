@@ -1,7 +1,7 @@
 """
 Pharos_get_target_ligands
 
-Get per-target ligand and drug bioactivities from Pharos/TCRD for a drug target (by gene symbol o...
+Get per-target ligand and drug bioactivities from Pharos/TCRD by gene symbol or UniProt ID. Retur...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,14 @@ def Pharos_get_target_ligands(
     gene: Optional[str] = None,
     uniprot: Optional[str] = None,
     top: Optional[int] = 3,
+    skip: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get per-target ligand and drug bioactivities from Pharos/TCRD for a drug target (by gene symbol o...
+    Get per-target ligand and drug bioactivities from Pharos/TCRD by gene symbol or UniProt ID. Retur...
 
     Parameters
     ----------
@@ -28,6 +29,8 @@ def Pharos_get_target_ligands(
         UniProt accession (e.g., 'P14416'). Use either gene or uniprot.
     top : int
         Maximum number of ligands to return (1-50).
+    skip : int
+        Zero-based offset into the target's ligand list.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,7 @@ def Pharos_get_target_ligands(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"gene": gene, "uniprot": uniprot, "top": top}.items()
+        for k, v in {"gene": gene, "uniprot": uniprot, "top": top, "skip": skip}.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

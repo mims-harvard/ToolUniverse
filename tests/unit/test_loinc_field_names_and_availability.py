@@ -94,6 +94,8 @@ def test_the_disclosure_actually_reaches_every_operations_response():
         ("_search_forms", {"terms": "PHQ-9"}),
     ):
         result = getattr(tool, operation)(args)
+        # The search operations wrap the parsed rows in a status/data envelope.
+        result = result.get("data", result)
         requested = set(captured["df"].split(","))
         absent = requested & set(LOINCTool._FIELDS_ABSENT_FROM_V3_INDEX)
         assert absent, f"{operation} no longer requests any absent field"

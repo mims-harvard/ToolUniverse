@@ -2265,7 +2265,7 @@
   },
   {
     "name": "NCI_expand_drugs_by_letter",
-    "description": "Browse the NCI Drug Dictionary by first letter. Returns all cancer drugs and drug aliases starting with the specified letter. Each result includes the drug name, preferred name, type (DrugTerm or DrugAlias), and a pretty URL name for detailed lookups. Useful for discovering cancer drugs alphabetically or finding all drugs starting with a specific letter. Use NCI_get_drug_by_name with the prettyUrlName to get full details.",
+    "description": "Browse one page of the NCI Drug Dictionary by first letter. The response includes an exact total and offset navigation metadata; continue with metadata.next_offset, passing it as from/from_ in the generated wrapper, while metadata.has_more is true. Use NCI_get_drug_by_name with prettyUrlName for full details.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -2275,12 +2275,15 @@
         },
         "size": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 10000,
           "description": "Number of results per page (default: 100, max: 10000)",
           "default": 100
         },
         "from": {
           "type": "integer",
-          "description": "Offset for pagination (default: 0)",
+          "minimum": 0,
+          "description": "Zero-based record offset (generated Python wrapper name: from_). Continue with metadata.next_offset.",
           "default": 0
         }
       },
@@ -2289,7 +2292,9 @@
       ]
     },
     "fields": {
-      "endpoint": "https://webapis.cancer.gov/drugdictionary/v1/Drugs/expand/{letter}"
+      "endpoint": "https://webapis.cancer.gov/drugdictionary/v1/Drugs/expand/{letter}",
+      "pagination": "nci_drugdict_offset",
+      "offset_parameter": "from"
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -2384,7 +2389,7 @@
   },
   {
     "name": "DailyMed_search_drug_classes",
-    "description": "Search the DailyMed database for FDA Established Pharmacologic Classes (EPC). Returns drug class names and NDF-RT codes that categorize drugs by their mechanism of action or pharmacologic effect. Use this to find drug classes for a specific therapeutic area (e.g., 'antihypertensive', 'antibiotic', 'antineoplastic') or to look up specific pharmacologic class codes. The drug class codes can be used to search DailyMed_search_spls for all drugs in that class.",
+    "description": "Search the DailyMed database for FDA Established Pharmacologic Classes (EPC). Returns drug class names and NDF-RT codes that categorize drugs by their mechanism of action or pharmacologic effect. Use this to find drug classes for a specific therapeutic area (e.g., 'antihypertensive', 'antibiotic', 'antineoplastic') or to look up specific pharmacologic class codes. The drug class codes can be used to search DailyMed_search_spls for all drugs in that class. metadata.total_matches is the exact number of matching classes across the whole catalogue; request further pages with `page` while page * pagesize < total_matches.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -2394,12 +2399,15 @@
         },
         "pagesize": {
           "type": "integer",
-          "description": "Number of results per page (default: 100)",
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Number of matching classes per page (1-100; default: 100).",
           "default": 100
         },
         "page": {
           "type": "integer",
-          "description": "Page number for pagination (default: 1)",
+          "minimum": 1,
+          "description": "One-based page number of the matches (default: 1).",
           "default": 1
         }
       },
@@ -2408,7 +2416,8 @@
       ]
     },
     "fields": {
-      "endpoint": "https://dailymed.nlm.nih.gov/dailymed/services/v2/drugclasses.json"
+      "endpoint": "https://dailymed.nlm.nih.gov/dailymed/services/v2/drugclasses.json",
+      "pagination": "dailymed_page"
     },
     "type": "DailyMedDrugClassesTool",
     "test_examples": [

@@ -1,7 +1,7 @@
 [
     {
         "name": "BioPortal_search_ontology_terms",
-        "description": "Search across 900+ biomedical ontologies in BioPortal (NCBO) for concepts matching a query. BioPortal is the world's largest repository of biomedical ontologies including GO (gene function), HPO (phenotypes), DOID (diseases), CHEBI (chemicals), UBERON (anatomy), SNOMED, MeSH, and 900+ more. Returns matching concepts with labels, IDs, definitions, and synonyms. Optionally filter by specific ontologies. Example: search 'melanoma' to find disease terms across DOID, NCIT, MESH, SNOMED; search 'apoptosis' in GO ontology for programmed cell death terms.",
+        "description": "Search across 900+ biomedical ontologies in BioPortal (NCBO) for concepts matching a query. Returns every synonym supplied for each result, plus synonym_count, labels, IDs, definitions, and match metadata. Optionally filter by ontology and use the 1-based page parameter to retrieve every result page; metadata reports total_count, page_count, has_more, and next_page.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -21,7 +21,16 @@
                         "integer",
                         "null"
                     ],
-                    "description": "Number of results to return (default: 10, max: 50)."
+                    "description": "Number of results to return (default: 10, max: 50).",
+                    "minimum": 1,
+                    "maximum": 50,
+                    "default": 10
+                },
+                "page": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "description": "One-based result page number (default: 1). Continue with metadata.next_page while metadata.has_more is true.",
+                    "default": 1
                 },
                 "exact_match": {
                     "type": [
@@ -347,7 +356,7 @@
     },
     {
         "name": "BioPortal_get_hierarchy",
-        "description": "Get children, parents, or ancestors of a specific concept in a BioPortal ontology. Enables hierarchical browsing of ontology term relationships (is-a hierarchy). Use to explore narrower terms (children), broader terms (parents), or full ancestry path (ancestors). Example: get children of DOID:9351 (diabetes mellitus) to find type 1, type 2, gestational diabetes; get ancestors of HP:0001250 (Seizure) to see the full path to root.",
+        "description": "Get children, parents, or ancestors of a specific concept in a BioPortal ontology, including every synonym supplied for each returned concept and synonym_count. Use the 1-based page parameter to retrieve complete high-cardinality hierarchies; metadata reports total_count, page_count, has_more, and next_page.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -364,14 +373,28 @@
                         "string",
                         "null"
                     ],
-                    "description": "Direction of hierarchy traversal: 'children' (narrower terms, default), 'parents' (direct broader terms), or 'ancestors' (all broader terms to root)."
+                    "description": "Direction of hierarchy traversal: 'children' (narrower terms, default), 'parents' (direct broader terms), or 'ancestors' (all broader terms to root).",
+                    "enum": [
+                        "children",
+                        "parents",
+                        "ancestors"
+                    ]
                 },
                 "page_size": {
                     "type": [
                         "integer",
                         "null"
                     ],
-                    "description": "Number of results to return (default: 25, max: 100)."
+                    "description": "Number of results to return (default: 25, max: 100).",
+                    "minimum": 1,
+                    "maximum": 100,
+                    "default": 25
+                },
+                "page": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "description": "One-based result page number (default: 1). Continue with metadata.next_page while metadata.has_more is true.",
+                    "default": 1
                 }
             },
             "required": [

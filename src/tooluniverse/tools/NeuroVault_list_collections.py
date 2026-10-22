@@ -9,8 +9,8 @@ from ._shared_client import get_shared_client
 
 
 def NeuroVault_list_collections(
-    limit: Optional[int] = None,
-    offset: Optional[int] = None,
+    limit: Optional[int] = 10,
+    offset: Optional[int] = 0,
     format: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -23,9 +23,9 @@ def NeuroVault_list_collections(
     Parameters
     ----------
     limit : int
-        Maximum number of collections to return per page (default 10, max 100). Examp...
+        Maximum number of collections to return per page (default 10, validated max 1...
     offset : int
-        Number of collections to skip for pagination (default 0). Example: 20 to get ...
+        Number of collections to skip for pagination (default 0). Continue with metad...
     format : str
         Response format. Must be 'json'. Default: 'json'
     stream_callback : Callable, optional

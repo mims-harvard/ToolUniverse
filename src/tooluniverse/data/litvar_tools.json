@@ -1,13 +1,20 @@
 [
   {
     "name": "LitVar_search_variants",
-    "description": "Search for genetic variants in the NCBI LitVar2 database by rsID, gene name, or HGVS notation. LitVar2 links genetic variants to their mentions in PubMed literature. Returns variant identifiers, associated gene names, HGVS nomenclature, publication counts, and clinical significance when available. Useful for finding which variants have been studied for a gene or identifying literature-linked variants by rsID.",
+    "description": "Retrieve LitVar2 autocomplete top-N variant candidates by rsID, gene, or HGVS text. This is not an exhaustive paginated search: the endpoint honors limit up to 100 but ignores offset. If metadata.upstream_truncated is true, additional candidates may exist and the query must be narrowed or limit increased.",
     "parameter": {
       "type": "object",
       "properties": {
         "query": {
           "type": "string",
           "description": "Search query: rsID (e.g., 'rs328', 'rs7903146'), gene name (e.g., 'BRCA1', 'TP53'), or HGVS notation (e.g., 'p.V600E')"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 10,
+          "description": "Maximum autocomplete candidates (default 10, max 100). The endpoint does not support offset pagination."
         }
       },
       "required": [
@@ -15,7 +22,8 @@
       ]
     },
     "fields": {
-      "endpoint": "https://www.ncbi.nlm.nih.gov/research/litvar2-api/variant/autocomplete/"
+      "endpoint": "https://www.ncbi.nlm.nih.gov/research/litvar2-api/variant/autocomplete/",
+      "pagination": "litvar_top_n"
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -98,7 +106,7 @@
   },
   {
     "name": "LitVar_get_variant_publications",
-    "description": "Get PubMed publication IDs (PMIDs) that mention a specific genetic variant, from NCBI LitVar2. Requires the variant rsID. Returns a list of PubMed IDs and PMC IDs where the variant is mentioned. The max parameter controls the maximum number of PMIDs returned. Use LitVar_search_variants first to find variant rsIDs.",
+    "description": "Get PubMed and PubMed Central publication IDs that mention a variant in NCBI LitVar2. LitVar2 ignores max/limit/offset and returns complete ID lists, so this wrapper applies offset/max locally and reports exact PMID and PMCID totals plus next_offset. Use LitVar_search_variants first to find an rsID.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -108,13 +116,24 @@
         },
         "format": {
           "type": "string",
+          "enum": [
+            "json"
+          ],
           "default": "json",
-          "description": "Response format (default 'json')"
+          "description": "Compatibility option; LitVar2 returns JSON and only 'json' is accepted."
         },
         "max": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
           "default": 50,
-          "description": "Maximum number of PMIDs to return (default 50)"
+          "description": "Maximum IDs returned from each of the PMID and PMCID lists on this local page (default 50, max 1000)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based local offset into both complete ID lists. Use metadata.next_offset to continue."
         }
       },
       "required": [
@@ -122,7 +141,13 @@
       ]
     },
     "fields": {
-      "endpoint": "https://www.ncbi.nlm.nih.gov/research/litvar2-api/variant/get/litvar%40{rsid}%23%23/publications"
+      "endpoint": "https://www.ncbi.nlm.nih.gov/research/litvar2-api/variant/get/litvar%40{rsid}%23%23/publications",
+      "pagination": "litvar_publications_local",
+      "client_only_params": [
+        "format",
+        "max",
+        "offset"
+      ]
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -162,6 +187,10 @@
             "pmids_count": {
               "type": "integer",
               "description": "Total number of PubMed articles mentioning this variant"
+            },
+            "pmcids_count": {
+              "type": "integer",
+              "description": "Exact total number of PMC IDs in LitVar2, computed before local paging"
             }
           }
         },

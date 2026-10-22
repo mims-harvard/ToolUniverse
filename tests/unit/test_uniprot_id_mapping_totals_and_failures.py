@@ -171,3 +171,48 @@ def test_falls_back_to_the_status_payload_when_refetch_is_empty():
     data = result["data"]
     assert data["mapped_count"] == 25
     assert data["failed_ids"] == ["NOTAREALACC99"]
+
+
+def test_every_linked_page_is_fetched_and_windowed_locally():
+    """Rows beyond the first 500-row page follow UniProt's Link header."""
+    next_url = "https://rest.uniprot.org/idmapping/results/JOB1?cursor=abc&size=500"
+    pages = {
+        "first": (
+            {"results": _rows(500), "failedIds": ["NOTAREALACC99"]},
+            {"x-total-results": "520", "Link": f'<{next_url}>; rel="next"'},
+        ),
+        "second": ({"results": _rows(20), "failedIds": ["NOTAREALACC99"]}, {}),
+    }
+
+    def fake_get(url, **kwargs):
+        if "/status/" in url:
+            return _resp({"jobStatus": "FINISHED"})
+        body, headers = pages["second" if "cursor=" in url else "first"]
+        return _resp(body, headers)
+
+    with (
+        patch(
+            "tooluniverse.uniprot_tool.requests.post",
+            return_value=_resp({"jobId": "JOB1"}),
+        ),
+        patch("tooluniverse.uniprot_tool.requests.get", side_effect=fake_get),
+    ):
+        result = _tool().run(
+            {
+                "ids": ["Q9F663", "NOTAREALACC99"],
+                "from_db": "UniProtKB_AC-ID",
+                "to_db": "PDB",
+                "result_offset": 490,
+                "result_limit": 20,
+            }
+        )
+
+    data = result["data"]
+    assert data["mapped_count"] == 520
+    assert data["total_results"] == 520
+    assert data["returned"] == 20
+    assert data["has_more"] is True
+    assert data["next_result_offset"] == 510
+    assert data["truncated"] is True
+    assert "truncation_note" not in data
+    assert data["failed_ids"] == ["NOTAREALACC99"]

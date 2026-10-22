@@ -223,4 +223,10 @@ def test_single_record_get_metadata_is_untouched():
     )
 
     assert result["status"] == "success"
-    assert result["metadata"] == {"source": "BV-BRC", "query_genome_id": "562.85926"}
+    meta = result["metadata"]
+    assert meta["source"] == "BV-BRC"
+    assert meta["query_genome_id"] == "562.85926"
+    # A single-record get carries pointers to related tools, but no
+    # search/pagination fields.
+    assert "total_results" not in meta
+    assert "truncated" not in meta

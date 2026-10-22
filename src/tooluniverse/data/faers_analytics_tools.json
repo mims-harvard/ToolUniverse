@@ -217,7 +217,7 @@
   {
     "type": "FAERSAnalyticsTool",
     "name": "FAERS_filter_serious_events",
-    "description": "Filter for serious adverse events (death, hospitalization, disability, life-threatening). Returns top reactions meeting seriousness criteria. Example: fulvestrant serious events \u2192 Death: 150 cases, Hospitalization: 500 cases. Use for risk-benefit assessment.",
+    "description": "Filter for serious adverse events (death, hospitalization, disability, life-threatening). Returns ranked reactions with recoverable pagination: start at offset=0 and continue with next_offset while has_more is true. openFDA exposes at most its 1,000 most frequent reaction terms. Use for risk-benefit assessment.",
     "parameter": {
       "type": "object",
       "required": [],
@@ -254,6 +254,19 @@
         "adverse_event": {
           "type": "string",
           "description": "Specific adverse event to filter within serious events (e.g., 'Myocardial infarction', 'Death'). Must be a WHOLE MedDRA Preferred Term: it is matched against the complete term, not as a substring, so a term that is not a Preferred Term (e.g. \"bleeding\") matches nothing, rather than silently matching every Preferred Term containing the word. Capitalization does not matter; spelling does -- FAERS uses British forms (\"Haemorrhage\", not \"Hemorrhage\")."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum ranked reactions to return on this page.",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based ranked-reaction offset. Continue with next_offset while has_more is true.",
+          "default": 0,
+          "minimum": 0
         }
       }
     },
@@ -535,7 +548,7 @@
   {
     "type": "FAERSAnalyticsTool",
     "name": "FAERS_rollup_meddra_hierarchy",
-    "description": "Aggregate adverse events by MedDRA hierarchy (Preferred Term level). Returns the most-reported preferred terms with counts, ranked by descending report count, up to openFDA's per-request maximum (999 anonymous, 1000 with FDA_API_KEY set). openFDA does not report how many distinct terms exist, so 'unique_PTs_returned' is the number of rows returned, NOT a total: check 'truncated' and read 'truncation_note' before treating the list as the drug's full reaction profile. A PT absent from the list is not evidence it was never reported. Note: Full HLT/SOC hierarchy requires MedDRA license. Use for adverse event profile overview.",
+    "description": "Aggregate adverse events by MedDRA hierarchy (Preferred Term level). Returns the most-reported preferred terms with counts, ranked by descending report count, up to openFDA's per-request maximum (999 anonymous, 1000 with FDA_API_KEY set). openFDA does not report how many distinct terms exist, so 'unique_PTs_returned' is the number of rows returned, NOT a total: check 'truncated' and read 'truncation_note' before treating the list as the drug's full reaction profile. A PT absent from the list is not evidence it was never reported. By default every returned PT is listed; pass limit/offset to page through them and continue with next_offset while has_more is true. Note: Full HLT/SOC hierarchy requires MedDRA license. Use for adverse event profile overview.",
     "parameter": {
       "type": "object",
       "required": [],
@@ -552,6 +565,18 @@
         "drug": {
           "type": "string",
           "description": "Alias for drug_name. Generic drug name."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Maximum ranked Preferred Terms to return on this page. Defaults to every PT openFDA returned.",
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based Preferred Term offset. Continue with next_offset while has_more is true.",
+          "default": 0,
+          "minimum": 0
         }
       }
     },

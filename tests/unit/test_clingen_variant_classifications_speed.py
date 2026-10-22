@@ -340,3 +340,72 @@ class TestAbsentVariantIsNotBlamedOnTheGene:
         assert "VCEP" not in note
         assert "CA16020993" in note
         assert "genuinely uncurated" not in note
+
+
+class TestLimitOffsetPagination:
+    """Every matched row stays reachable: `limit`/`offset` page the full list."""
+
+    @staticmethod
+    def _many(n):
+        return {
+            "variantInterpretations": [
+                dict(_PAH_ITEM, caid=f"CAR:CA{i}", variationId=str(i)) for i in range(n)
+            ]
+        }
+
+    def test_arbitrary_offset_pages_the_matched_rows(self):
+        tool = _tool()
+        with patch(
+            "tooluniverse.clingen_tool.requests.get",
+            return_value=_resp(self._many(10)),
+        ):
+            result = tool.run({"gene": "PAH", "limit": 2, "offset": 5})
+
+        assert [row["ClinVar Variation Id"] for row in result["data"]] == ["5", "6"]
+        assert result["total"] == 10
+        assert result["offset"] == 5
+        assert result["has_more"] is True
+        assert result["next_offset"] == 7
+        assert "offset=7" in result["truncation_note"]
+
+    def test_last_page_has_no_next_offset(self):
+        tool = _tool()
+        with patch(
+            "tooluniverse.clingen_tool.requests.get",
+            return_value=_resp(self._many(10)),
+        ):
+            result = tool.run({"gene": "PAH", "limit": 5, "offset": 8})
+
+        assert result["returned"] == 2
+        assert result["has_more"] is False
+        assert result["next_offset"] is None
+
+    def test_offset_beyond_total_is_distinguished_from_no_matches(self):
+        tool = _tool()
+        with patch(
+            "tooluniverse.clingen_tool.requests.get",
+            return_value=_resp(self._many(10)),
+        ):
+            result = tool.run({"gene": "PAH", "offset": 10})
+
+        assert result["data"] == []
+        assert result["total"] == 10
+        assert "beyond" in result["note"]
+        assert "No variant classifications" not in result["note"]
+
+    def test_summary_rows_keep_criteria_and_evidence_summary(self):
+        row = {
+            "caId": "CA000001",
+            "cvId": "1001",
+            "gene": "BRCA1",
+            "classification": "Pathogenic",
+            "metCodes": ["PS3", "PM2"],
+            "summaryDesc": "Expert evidence summary",
+            "hgvs": ["NM_007294.4:c.1A>G"],
+        }
+        flat = ClinGenTool._flatten_summary_row(row)
+
+        assert flat["CAID"] == "CA000001"
+        assert flat["Met Criteria"] == ["PS3", "PM2"]
+        assert flat["Unmet Criteria"] == []
+        assert flat["Summary"] == "Expert evidence summary"

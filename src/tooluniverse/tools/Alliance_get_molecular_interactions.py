@@ -1,7 +1,7 @@
 """
 Alliance_get_molecular_interactions
 
-Get molecular (physical) interactions for a gene via the Alliance of Genome Resources (mouse/MGI,...
+Get molecular (physical) interactions for a gene via the Alliance of Genome Resources, including ...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def Alliance_get_molecular_interactions(
     validate: bool = True,
 ) -> Any:
     """
-    Get molecular (physical) interactions for a gene via the Alliance of Genome Resources (mouse/MGI,...
+    Get molecular (physical) interactions for a gene via the Alliance of Genome Resources, including ...
 
     Parameters
     ----------

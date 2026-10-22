@@ -1,7 +1,7 @@
 [
   {
     "name": "EBIProteins_get_interactions",
-    "description": "Get protein-protein interaction partners for a protein from the EBI Proteins API (sourced from IntAct). Returns experimentally validated binary interactions with partner accessions, gene names, number of supporting experiments, and whether the interacting proteins are from different organisms. Example: P04637 (TP53) returns 198 interaction partners including ABL1 (2 experiments), AIMP2 (6 experiments), EP300 (8 experiments). Useful for building interaction networks and identifying key binding partners.",
+    "description": "Get experimentally supported protein interaction partners from the EBI Proteins API/IntAct, sorted by supporting experiment count. Use limit and offset to page through all partners; inspect total_interactions, interactions_truncated, and next_offset. TP53 currently has well over 100 distinct partners.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -11,8 +11,16 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum number of interaction partners to return (default: 50, sorted by experiment count descending).",
-          "default": 50
+          "description": "Interaction partners returned per page (default 50, maximum 500).",
+          "default": 50,
+          "minimum": 1,
+          "maximum": 500
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based offset in the experiment-count-sorted interaction list.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": [
@@ -78,6 +86,24 @@
                 }
               },
               "description": "Binary protein-protein interactions"
+            },
+            "total_interactions": {
+              "type": "integer"
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "interactions_returned": {
+              "type": "integer"
+            },
+            "interactions_truncated": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
             }
           }
         },
@@ -97,13 +123,26 @@
   },
   {
     "name": "EBIProteins_get_interaction_details",
-    "description": "Get detailed protein information along with its interaction partners, disease associations, and subcellular localizations from the EBI Proteins API. Returns the full protein record including name, existence evidence, taxonomy, plus all binary interactions with partner details. Example: P04637 (TP53) returns 97 protein entries with interactions, diseases like Li-Fraumeni syndrome, and subcellular locations.",
+    "description": "Get protein metadata, disease associations, subcellular locations, and a paginated experiment-count-sorted interaction list from the EBI Proteins API. Use limit/offset and inspect total_interactions, interactions_truncated, and next_offset to retrieve every partner.",
     "parameter": {
       "type": "object",
       "properties": {
         "accession": {
           "type": "string",
           "description": "UniProt accession of the query protein. Examples: 'P04637' (TP53), 'P00533' (EGFR)."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Interaction partners returned per page (default 50, maximum 500).",
+          "default": 50,
+          "minimum": 1,
+          "maximum": 500
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based offset in the experiment-count-sorted interaction list.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": [
@@ -171,6 +210,24 @@
                 }
               },
               "description": "Top interaction partners sorted by experiment count"
+            },
+            "total_interactions": {
+              "type": "integer"
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "interactions_returned": {
+              "type": "integer"
+            },
+            "interactions_truncated": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
             },
             "diseases": {
               "type": "array",

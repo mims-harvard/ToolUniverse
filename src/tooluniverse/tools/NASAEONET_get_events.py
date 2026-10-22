@@ -1,7 +1,7 @@
 """
 NASAEONET_get_events
 
-Get natural event data from NASA Earth Observatory Natural Event Tracker (EONET). EONET tracks on...
+Get a filtered top-N set of NASA EONET natural events with geographic time series and source refe...
 """
 
 from typing import Any, Optional, Callable
@@ -11,7 +11,7 @@ from ._shared_client import get_shared_client
 def NASAEONET_get_events(
     status: Optional[str] = None,
     category: Optional[str] = None,
-    limit: Optional[int] = None,
+    limit: Optional[int] = 10,
     days: Optional[int] = None,
     start: Optional[str] = None,
     end: Optional[str] = None,
@@ -23,7 +23,7 @@ def NASAEONET_get_events(
     validate: bool = True,
 ) -> Any:
     """
-    Get natural event data from NASA Earth Observatory Natural Event Tracker (EONET). EONET tracks on...
+    Get a filtered top-N set of NASA EONET natural events with geographic time series and source refe...
 
     Parameters
     ----------

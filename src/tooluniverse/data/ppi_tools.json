@@ -2,7 +2,7 @@
   {
     "type": "STRINGRESTTool",
     "name": "STRING_get_protein_interactions",
-    "description": "Alternative method to retrieve protein interactions from STRING (Search Tool for Retrieval of Interacting Genes/Proteins). Provides similar functionality to STRING_get_network but may return different response format. **Recommend using STRING_get_network for most analyses** - more commonly used and better documented. No API key required. Use for: alternative interaction retrieval if get_network has issues, specific data format requirements, compatibility with legacy code.",
+    "description": "Alternative method to retrieve protein interactions from STRING (Search Tool for Retrieval of Interacting Genes/Proteins). STRING uses limit to expand network nodes and can return more pairwise edges than that value; this wrapper sorts all returned edges by confidence and exposes a recoverable local page. Start with interaction_offset=0 and continue with next_interaction_offset while has_more is true. **Recommend using STRING_get_network for most analyses**. No API key required.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -28,10 +28,16 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum number of interactions to return (default: 50)",
+          "description": "Maximum interactions in this returned page. STRING also uses this value for upstream network expansion, so total_interactions can exceed limit; use interaction_offset to retrieve the remaining edges from the same expanded network.",
           "minimum": 1,
           "maximum": 1000,
           "default": 50
+        },
+        "interaction_offset": {
+          "type": "integer",
+          "description": "Zero-based number of score-sorted interaction edges to skip. Start at 0 and continue with metadata.next_interaction_offset.",
+          "minimum": 0,
+          "default": 0
         },
         "network_type": {
           "type": "string",
@@ -53,53 +59,110 @@
       "return_format": "TSV"
     },
     "return_schema": {
-      "type": "array",
-      "description": "Array of interaction records parsed from the STRING TSV network response.",
-      "items": {
-        "type": "object",
-        "properties": {
-          "stringId_A": {
-            "type": "string"
-          },
-          "stringId_B": {
-            "type": "string"
-          },
-          "preferredName_A": {
-            "type": "string"
-          },
-          "preferredName_B": {
-            "type": "string"
-          },
-          "ncbiTaxonId": {
-            "type": "string"
-          },
-          "score": {
-            "type": "string"
-          },
-          "nscore": {
-            "type": "string"
-          },
-          "fscore": {
-            "type": "string"
-          },
-          "pscore": {
-            "type": "string"
-          },
-          "ascore": {
-            "type": "string"
-          },
-          "escore": {
-            "type": "string"
-          },
-          "dscore": {
-            "type": "string"
-          },
-          "tscore": {
-            "type": "string"
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "error"
+          ]
+        },
+        "data": {
+          "type": "array",
+          "description": "Current page of score-sorted interaction records parsed from the STRING TSV network response.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "stringId_A": {
+                "type": "string"
+              },
+              "stringId_B": {
+                "type": "string"
+              },
+              "preferredName_A": {
+                "type": "string"
+              },
+              "preferredName_B": {
+                "type": "string"
+              },
+              "ncbiTaxonId": {
+                "type": "string"
+              },
+              "score": {
+                "type": "string"
+              },
+              "nscore": {
+                "type": "string"
+              },
+              "fscore": {
+                "type": "string"
+              },
+              "pscore": {
+                "type": "string"
+              },
+              "ascore": {
+                "type": "string"
+              },
+              "escore": {
+                "type": "string"
+              },
+              "dscore": {
+                "type": "string"
+              },
+              "tscore": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": true
           }
         },
-        "additionalProperties": true
-      }
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "columns": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "total_interactions": {
+              "type": "integer"
+            },
+            "interaction_offset": {
+              "type": "integer"
+            },
+            "page_size": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_interaction_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "result_set_complete": {
+              "type": "boolean"
+            },
+            "truncated_to_limit": {
+              "type": "integer"
+            },
+            "partner_note": {
+              "type": "string"
+            }
+          }
+        },
+        "error": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "status",
+        "data"
+      ]
     },
     "implementation": {
       "language": "python",

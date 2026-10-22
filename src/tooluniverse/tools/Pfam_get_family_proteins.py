@@ -11,6 +11,7 @@ from ._shared_client import get_shared_client
 def Pfam_get_family_proteins(
     pfam_accession: str,
     max_results: Optional[int] = 20,
+    cursor: Optional[str] = None,
     reviewed_only: Optional[bool] = True,
     tax_id: Optional[str] = None,
     *,
@@ -27,6 +28,8 @@ def Pfam_get_family_proteins(
         Pfam family accession. Examples: 'PF00001' (7tm_1 GPCR), 'PF00076' (RRM_1), '...
     max_results : int
         Maximum number of proteins to return (default 20, max 100).
+    cursor : str
+        Opaque InterPro cursor returned as next_cursor by a previous call. Omit for t...
     reviewed_only : bool
         If true (default), return only SwissProt-reviewed proteins. Set false for all...
     tax_id : str
@@ -50,6 +53,7 @@ def Pfam_get_family_proteins(
         for k, v in {
             "pfam_accession": pfam_accession,
             "max_results": max_results,
+            "cursor": cursor,
             "reviewed_only": reviewed_only,
             "tax_id": tax_id,
         }.items()

@@ -1,7 +1,7 @@
 [
   {
     "name": "PlantReactome_search_pathways",
-    "description": "Search for plant biological pathways in Plant Reactome (Gramene). Plant Reactome is a curated resource for plant metabolic and regulatory pathways, covering model and crop species including rice (Oryza sativa), Arabidopsis thaliana, maize, wheat, and 140+ plant species. Returns pathways matching the query with their stable IDs and species. Example: 'photosynthesis' finds photosynthesis-related pathways.",
+    "description": "Search Plant Reactome pathways by keyword and optional species. The official endpoint can report more matches than it returns and ignores pagination controls; metadata exposes upstream_row_count, truncation, unreachable_results, and pagination_supported=false.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -19,7 +19,8 @@
       },
       "required": [
         "query"
-      ]
+      ],
+      "additionalProperties": false
     },
     "fields": {
       "action": "search"

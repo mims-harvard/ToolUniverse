@@ -1,7 +1,7 @@
 [
   {
     "name": "EVA_get_variants_by_gene",
-    "description": "Get genetic variants from the European Variation Archive (EVA) for a specific gene. EVA is hosted at EBI and aggregates variant data from multiple studies including ClinVar, dbSNP, and population sequencing projects. Returns variants with allele frequencies, study sources, and variant type. The gene name uses HGNC symbols (e.g., 'BRCA1', 'TP53', 'EGFR'). Species defaults to human GRCh38.",
+    "description": "Get genetic variants from the European Variation Archive (EVA) for a specific gene. Results use exact skip pagination: start with offset=0 and continue with metadata.next_offset while metadata.has_more is true, always keeping the same limit because EVA aligns skip to page boundaries. metadata.total_results is exact. Returns allele frequencies, study sources, and variant type. Species defaults to human GRCh38.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -16,16 +16,29 @@
         },
         "limit": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
           "default": 20,
-          "description": "Maximum number of variants to return (default 20, max ~1000)"
+          "description": "Variants per page (default 20, maximum 1000)"
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based variant offset. It must be a multiple of limit; continue with metadata.next_offset using the same limit."
         }
       },
       "required": [
         "gene"
-      ]
+      ],
+      "additionalProperties": false
     },
     "fields": {
-      "endpoint": "https://www.ebi.ac.uk/eva/webservices/rest/v1/genes/{gene}/variants"
+      "endpoint": "https://www.ebi.ac.uk/eva/webservices/rest/v1/genes/{gene}/variants",
+      "param_mapping": {
+        "offset": "skip"
+      },
+      "pagination": "eva_skip"
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -129,7 +142,7 @@
   },
   {
     "name": "EVA_get_variants_by_region",
-    "description": "Get genetic variants from the European Variation Archive (EVA) within a specific genomic region. Returns all known variants in the specified chromosomal coordinate range, including SNVs, indels, and structural variants with allele frequencies from multiple studies. Useful for scanning variant hotspots or checking variants in regulatory regions. The endpoint URL uses 'chromosome:start-end' format.",
+    "description": "Get genetic variants from EVA within a genomic region. Start with offset=0 and continue with metadata.next_offset while metadata.has_more is true, always keeping the same limit because EVA aligns skip to page boundaries. EVA can report numTotalResults=0 on non-empty region pages; ToolUniverse detects this conflict, exposes upstream_total_inconsistent, and uses full-page continuation until a short page establishes the exact total. Returns SNVs, indels, and structural variants.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -144,16 +157,29 @@
         },
         "limit": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
           "default": 20,
-          "description": "Maximum number of variants to return"
+          "description": "Variants per page (default 20, maximum 1000)"
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based variant offset. It must be a multiple of limit; continue with metadata.next_offset using the same limit."
         }
       },
       "required": [
         "region"
-      ]
+      ],
+      "additionalProperties": false
     },
     "fields": {
-      "endpoint": "https://www.ebi.ac.uk/eva/webservices/rest/v1/segments/{region}/variants"
+      "endpoint": "https://www.ebi.ac.uk/eva/webservices/rest/v1/segments/{region}/variants",
+      "param_mapping": {
+        "offset": "skip"
+      },
+      "pagination": "eva_skip"
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -252,7 +278,7 @@
   },
   {
     "name": "EVA_list_studies",
-    "description": "List all variant studies available in the European Variation Archive (EVA) for a given species. Returns study accessions (e.g., PRJEB84021) that have submitted variant data. Useful for discovering available datasets before querying variants. Each study typically corresponds to a population sequencing project or variant calling pipeline.",
+    "description": "List EVA variant studies with deterministic local limit/offset pagination. The upstream endpoint returns the complete study list, ignores pagination parameters, and can vary raw order between identical calls. ToolUniverse sorts by studyId before paging. Continue with metadata.next_offset while metadata.has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -260,12 +286,30 @@
           "type": "string",
           "default": "hsapiens_grch38",
           "description": "Species and assembly (e.g., 'hsapiens_grch38', 'hsapiens_grch37', 'mmusculus_grcm38')"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 20,
+          "description": "Studies per deterministic local page (default 20, max 1000)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset after sorting by studyId. Continue with metadata.next_offset."
         }
       },
       "required": []
     },
     "fields": {
-      "endpoint": "https://www.ebi.ac.uk/eva/webservices/rest/v1/meta/studies/list"
+      "endpoint": "https://www.ebi.ac.uk/eva/webservices/rest/v1/meta/studies/list",
+      "client_only_params": [
+        "limit",
+        "offset"
+      ],
+      "pagination": "eva_studies_client_sort"
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -301,7 +345,7 @@
                   },
                   "result": {
                     "type": "array",
-                    "description": "Array of study accession strings"
+                    "description": "Array of study objects with studyId, studyName, and filesCount"
                   }
                 }
               }

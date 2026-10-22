@@ -1,7 +1,7 @@
 """
 KEGG_search_disease
 
-Search the KEGG DISEASE database by keyword. KEGG DISEASE contains 2,600+ human disease entries w...
+Search the KEGG DISEASE database by keyword. Returns disease IDs and names plus the exact total a...
 """
 
 from typing import Any, Optional, Callable
@@ -11,6 +11,7 @@ from ._shared_client import get_shared_client
 def KEGG_search_disease(
     keyword: Optional[str] = None,
     max_results: Optional[int] = 25,
+    offset: Optional[int] = 0,
     query: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -18,7 +19,7 @@ def KEGG_search_disease(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Search the KEGG DISEASE database by keyword. KEGG DISEASE contains 2,600+ human disease entries w...
+    Search the KEGG DISEASE database by keyword. Returns disease IDs and names plus the exact total a...
 
     Parameters
     ----------
@@ -26,6 +27,8 @@ def KEGG_search_disease(
         Search keyword for disease name (e.g., 'leukemia', 'diabetes', 'breast cancer...
     max_results : int
         Maximum number of results to return (default: 25).
+    offset : int
+        Zero-based offset in the complete KEGG disease match list. Continue with meta...
     query : str
         Alias for keyword: search keyword for disease name (e.g., 'diabetes', 'leukem...
     stream_callback : Callable, optional
@@ -47,6 +50,7 @@ def KEGG_search_disease(
         for k, v in {
             "keyword": keyword,
             "max_results": max_results,
+            "offset": offset,
             "query": query,
         }.items()
         if v is not None

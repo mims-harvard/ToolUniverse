@@ -90,7 +90,7 @@
   },
   {
     "name": "PROSITE_search",
-    "description": "Search the PROSITE database for protein motifs, domains, and functional site patterns by keyword. Uses the EBI InterPro API which indexes all PROSITE entries. Returns accession numbers, names, types, and InterPro cross-references. Useful for finding PROSITE patterns related to a biological function (e.g., 'kinase', 'zinc finger', 'glycosylation'). Follow up with PROSITE_get_entry to get full details of any result.",
+    "description": "Search the PROSITE database for protein motifs, domains, and functional site patterns by keyword. Uses the EBI InterPro API with page sizes from 1 to 1000 and exposes its cursor pagination: when metadata.has_more is true, pass metadata.next_cursor unchanged in the next call. Metadata reports exact total_results, returned, and page_size. Returns accession numbers, names, types, and InterPro cross-references.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -100,7 +100,14 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum number of results to return (default: 10, max: 50)."
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 10,
+          "description": "Number of results per page (1-1000). Values outside this range are rejected rather than silently clamped."
+        },
+        "cursor": {
+          "type": "string",
+          "description": "Opaque InterPro pagination cursor. Omit for the first page; for later pages, pass metadata.next_cursor from the preceding response unchanged."
         }
       },
       "required": ["query"]

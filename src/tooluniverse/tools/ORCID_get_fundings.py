@@ -1,7 +1,7 @@
 """
 ORCID_get_fundings
 
-Get the funding/grant records attached to an ORCID researcher's profile. Returns each grant's tit...
+Get every public funding-summary assertion in every ORCID funding group, including group/summary ...
 """
 
 from typing import Any, Optional, Callable
@@ -17,7 +17,7 @@ def ORCID_get_fundings(
     validate: bool = True,
 ) -> Any:
     """
-    Get the funding/grant records attached to an ORCID researcher's profile. Returns each grant's tit...
+    Get every public funding-summary assertion in every ORCID funding group, including group/summary ...
 
     Parameters
     ----------

@@ -135,7 +135,7 @@
   },
   {
     "name": "STRING_get_interaction_partners",
-    "description": "Get interaction partners for a single protein from STRING database. Returns a ranked list of proteins that interact with the query protein, along with detailed confidence scores by evidence type (experimental, database, text-mining, etc.). Different from STRING_get_network which returns all edges in a network - this returns a simple partner list focused on one protein. Useful for finding what proteins a given protein interacts with.",
+    "description": "Get ranked interaction partners for one protein from STRING. STRING's limit=0 returns the complete partner list for this endpoint, so ToolUniverse requests all partners then applies exact client-side pagination: start with offset=0 and continue with metadata.next_offset while metadata.has_more is true. metadata.total_results is exact. Returns detailed confidence scores by evidence type.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -150,8 +150,15 @@
         },
         "limit": {
           "type": "integer",
+          "minimum": 1,
           "default": 10,
-          "description": "Maximum number of interaction partners to return"
+          "description": "Number of ranked partners in this client-side page (default 10)"
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based ranked-partner offset. Continue with metadata.next_offset while metadata.has_more is true."
         },
         "required_score": {
           "type": [
@@ -166,7 +173,12 @@
       ]
     },
     "fields": {
-      "endpoint": "https://string-db.org/api/json/interaction_partners"
+      "endpoint": "https://string-db.org/api/json/interaction_partners",
+      "params": {
+        "limit": 0
+      },
+      "client_side_limit": true,
+      "pagination": "client_side_offset"
     },
     "type": "BaseRESTTool",
     "test_examples": [

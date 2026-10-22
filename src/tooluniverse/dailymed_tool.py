@@ -44,12 +44,43 @@ class SearchSPLTool(BaseTool):
         if arguments.get("published_date_eq"):
             params["published_date[eq]"] = arguments["published_date_eq"]
 
+        if not params:
+            return {
+                "status": "error",
+                "error": (
+                    "At least one of drug_name, ndc, rxcui, setid, "
+                    "published_date_gte, or published_date_eq is required"
+                ),
+            }
+
         # Fix-R33A-1: "limit" is the dominant pagination param name across
         # ToolUniverse (CPIC, ClinVar, GWAS, ...), so a caller guessing it
         # here instead of DailyMed's own "pagesize" was silently ignored --
         # confirmed live (limit=3 still returned all 44 isoniazid labels).
-        params["pagesize"] = arguments.get("pagesize") or arguments.get("limit") or 100
-        params["page"] = arguments.get("page", 1)
+        pagesize = arguments.get("pagesize")
+        if pagesize is None:
+            pagesize = arguments.get("limit")
+        if pagesize is None:
+            pagesize = 100
+        page = arguments.get("page", 1)
+        if (
+            isinstance(pagesize, bool)
+            or not isinstance(pagesize, int)
+            or not 1 <= pagesize <= 100
+        ):
+            return {
+                "status": "error",
+                "error": "pagesize (or limit) must be an integer between 1 and 100",
+                "parameter": "pagesize",
+            }
+        if isinstance(page, bool) or not isinstance(page, int) or page < 1:
+            return {
+                "status": "error",
+                "error": "page must be an integer greater than or equal to 1",
+                "parameter": "page",
+            }
+        params["pagesize"] = pagesize
+        params["page"] = page
 
         try:
             resp = requests.get(self.endpoint, params=params, timeout=10)
@@ -84,11 +115,36 @@ class SearchSPLTool(BaseTool):
             k: (None if v == "null" else v)
             for k, v in result.get("metadata", {}).items()
         }
+        records = result.get("data", [])
+        if not isinstance(records, list):
+            records = []
+        total = metadata.get("total_elements")
+        total_is_exact = isinstance(total, int) and not isinstance(total, bool)
+        current_page = metadata.get("current_page", page)
+        effective_pagesize = metadata.get("elements_per_page", pagesize)
+        next_page = metadata.get("next_page")
+        has_more = isinstance(next_page, int) and not isinstance(next_page, bool)
+        metadata.update(
+            {
+                "returned": len(records),
+                "total_results": total if total_is_exact else None,
+                "total_results_is_exact": total_is_exact,
+                "page": current_page,
+                "pagesize": effective_pagesize,
+                "has_more": has_more,
+                "next_page": next_page if has_more else None,
+                "truncated": current_page > 1 or has_more,
+                "result_set_complete": bool(
+                    total_is_exact and current_page == 1 and len(records) == total
+                ),
+                "pagination_scope": "dailymed_exact_one_based_page",
+            }
+        )
 
         # Return with standard status envelope
         return {
             "status": "success",
-            "data": result.get("data", []),
+            "data": records,
             "metadata": metadata,
         }
 

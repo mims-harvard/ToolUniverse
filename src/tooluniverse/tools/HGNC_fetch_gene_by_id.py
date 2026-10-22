@@ -1,7 +1,7 @@
 """
 HGNC_fetch_gene_by_id
 
-Fetch gene information from HGNC by HGNC ID. Useful when you have a specific HGNC identifier and ...
+Fetch the complete HGNC gene record by numeric HGNC ID, with or without an HGNC: prefix. Prefix c...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def HGNC_fetch_gene_by_id(
     validate: bool = True,
 ) -> Any:
     """
-    Fetch gene information from HGNC by HGNC ID. Useful when you have a specific HGNC identifier and ...
+    Fetch the complete HGNC gene record by numeric HGNC ID, with or without an HGNC: prefix. Prefix c...
 
     Parameters
     ----------

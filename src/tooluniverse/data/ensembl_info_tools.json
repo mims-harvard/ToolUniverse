@@ -1,7 +1,7 @@
 [
   {
     "name": "Ensembl_get_assembly_info",
-    "description": "Get genome assembly metadata for a species from the Ensembl REST API. Returns assembly name, accession, version history, chromosome karyotype with sizes, genebuild date, golden path length, and available coordinate system versions. Essential for interpreting genomic coordinates and understanding assembly composition. Example: 'homo_sapiens' returns GRCh38.p14, assembly date 2013-12, genebuild May 2025, 194 top-level regions, karyotype chromosomes 1-22 plus X and Y.",
+    "description": "Get genome assembly metadata for a species from the Ensembl REST API. Returns assembly name, accession, version history, the complete chromosome karyotype with sizes, genebuild date, golden path length, and available coordinate system versions. Chromosomes are recognized from both Ensembl's coord_system and karyotype fields, including assemblies whose regions are labeled primary_assembly. Essential for interpreting genomic coordinates and understanding assembly composition.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -95,6 +95,10 @@
               "type": "integer",
               "description": "Total number of top-level regions"
             },
+            "total_chromosomes": {
+              "type": "integer",
+              "description": "Number of chromosome records returned without truncation"
+            },
             "chromosomes": {
               "type": "array",
               "items": {
@@ -110,7 +114,7 @@
                   }
                 }
               },
-              "description": "Chromosomes with lengths (max 30)"
+              "description": "Complete chromosome list with lengths"
             }
           }
         },
@@ -130,13 +134,26 @@
   },
   {
     "name": "Ensembl_get_species_info",
-    "description": "Search and list species available in the Ensembl database with their genome assembly information. Returns species name, common name, taxonomy ID, current assembly version, and Ensembl division. Supports filtering by species name, common name, or taxonomy ID. Useful for discovering which genomes are available and their assembly versions before querying other Ensembl endpoints. Example: searching 'mouse' returns Mus musculus (taxon 10090, assembly GRCm39) plus related species.",
+    "description": "Search and page through species available in the Ensembl database with their genome assembly information. Returns true total and filtered-match counts plus explicit pagination metadata, so broad queries do not silently stop at the first 50 species. Supports filtering by species name, common name, or taxonomy ID.",
     "parameter": {
       "type": "object",
       "properties": {
         "search": {
           "type": "string",
           "description": "Search term to filter species. Can be a species name ('mus_musculus'), common name ('mouse'), display name ('Mouse'), or taxonomy ID ('10090'). Leave empty to list all 348+ species."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 50,
+          "minimum": 1,
+          "maximum": 500,
+          "description": "Maximum matched species to return on this page."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based offset into the filtered species list."
         }
       },
       "required": []
@@ -164,7 +181,11 @@
             },
             "matched_species": {
               "type": "integer",
-              "description": "Number of species matching search"
+              "description": "True number of species matching the search before pagination"
+            },
+            "returned_species": {
+              "type": "integer",
+              "description": "Number of species returned on this page"
             },
             "search_term": {
               "type": [
@@ -243,7 +264,25 @@
                   }
                 }
               },
-              "description": "Matched species (max 50)"
+              "description": "Matched species on the requested page"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "truncated": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
             }
           }
         },

@@ -1,7 +1,7 @@
 """
 ExpressionAtlas_search_differential
 
-Search for differential expression EXPERIMENTS from EBI Expression Atlas by condition text and/or...
+Search differential-expression EXPERIMENTS from EBI Expression Atlas with recoverable offset pagi...
 """
 
 from typing import Any, Optional, Callable
@@ -20,7 +20,7 @@ def ExpressionAtlas_search_differential(
     validate: bool = True,
 ) -> Any:
     """
-    Search for differential expression EXPERIMENTS from EBI Expression Atlas by condition text and/or...
+    Search differential-expression EXPERIMENTS from EBI Expression Atlas with recoverable offset pagi...
 
     Parameters
     ----------

@@ -1,7 +1,7 @@
 """
 Dfam_search_families
 
-Search Dfam for transposable element (TE) / repeat element families by name prefix, taxonomic cla...
+Search Dfam repeat families with explicit offset pagination and pages up to 1000 records. Returns...
 """
 
 from typing import Any, Optional, Callable
@@ -13,13 +13,14 @@ def Dfam_search_families(
     clade: Optional[str] = None,
     repeat_type: Optional[str] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search Dfam for transposable element (TE) / repeat element families by name prefix, taxonomic cla...
+    Search Dfam repeat families with explicit offset pagination and pages up to 1000 records. Returns...
 
     Parameters
     ----------
@@ -30,7 +31,9 @@ def Dfam_search_families(
     repeat_type : str
         Repeat type filter. Options: 'SINE', 'LINE', 'LTR', 'DNA', 'Satellite', 'RC',...
     limit : int
-        Maximum number of results (default 20, max 50).
+        Maximum number of results (default 20, max 1000). Values above 1000 are rejec...
+    offset : int
+        Zero-based result offset, mapped to Dfam's official start parameter. Continue...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def Dfam_search_families(
             "clade": clade,
             "repeat_type": repeat_type,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

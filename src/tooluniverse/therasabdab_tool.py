@@ -79,6 +79,30 @@ class TheraSAbDabTool(BaseTool):
             return None
         return cleaned
 
+    @staticmethod
+    def _get_pagination(arguments: Dict[str, Any]) -> tuple[int, int]:
+        """Return a bounded page size and non-negative zero-based offset."""
+        try:
+            limit = max(1, min(int(arguments.get("limit", 100)), 500))
+            offset = max(0, int(arguments.get("offset", 0)))
+        except (TypeError, ValueError) as exc:
+            raise ValueError("limit and offset must be integers") from exc
+        return limit, offset
+
+    @staticmethod
+    def _page_metadata(
+        total: int, returned: int, limit: int, offset: int
+    ) -> Dict[str, Any]:
+        next_offset = offset + returned
+        has_more = next_offset < total
+        return {
+            "returned": returned,
+            "offset": offset,
+            "limit": limit,
+            "has_more": has_more,
+            "next_offset": next_offset if has_more else None,
+        }
+
     def _load_all_sequences(self) -> List[Dict[str, Any]]:
         """Load every therapeutic record (incl. VH/VL sequences) from Thera-SAbDab.
 
@@ -279,6 +303,11 @@ class TheraSAbDabTool(BaseTool):
             return {"status": "error", "error": "query parameter is required"}
 
         try:
+            limit, offset = self._get_pagination(arguments)
+        except ValueError as exc:
+            return {"status": "error", "error": str(exc)}
+
+        try:
             # Load all therapeutics and filter locally
             all_therapeutics = self._load_all_therapeutics()
 
@@ -294,13 +323,15 @@ class TheraSAbDabTool(BaseTool):
                 or query_lower in (t.get("target") or "").lower()
             ]
 
+            page = filtered[offset : offset + limit]
             return {
                 "status": "success",
                 "data": {
                     "query": query,
-                    "therapeutics": filtered[:20],  # Limit results
-                    "count": len(filtered[:20]),
+                    "therapeutics": page,
+                    "count": len(page),
                     "total_therapeutics": len(filtered),
+                    **self._page_metadata(len(filtered), len(page), limit, offset),
                     "source": "Thera-SAbDab (Oxford OPIG)",
                 },
             }
@@ -324,6 +355,11 @@ class TheraSAbDabTool(BaseTool):
         Returns count and sample of therapeutics by format and phase.
         """
         try:
+            limit, offset = self._get_pagination(arguments)
+        except ValueError as exc:
+            return {"status": "error", "error": str(exc)}
+
+        try:
             therapeutics = self._load_all_therapeutics()
 
             # Summarize by format
@@ -332,20 +368,28 @@ class TheraSAbDabTool(BaseTool):
 
             for t in therapeutics:
                 fmt = t.get("format") or "Unknown"
-                phase = t.get("phase") or "Unknown"
+                # The parsed table calls this column clinical_trial. Reading
+                # the nonexistent "phase" key silently classified every one
+                # of the 1,133 live records as Unknown.
+                phase = t.get("clinical_trial") or "Unknown"
 
                 formats[fmt] = formats.get(fmt, 0) + 1
                 phases[phase] = phases.get(phase, 0) + 1
 
+            page = therapeutics[offset : offset + limit]
             return {
                 "status": "success",
                 "data": {
                     "total_count": len(therapeutics),
                     "by_format": formats,
                     "by_phase": phases,
-                    "sample": therapeutics[:10],  # Sample of first 10
+                    # Keep the original preview for compatibility and make
+                    # every record reachable through the explicit page.
+                    "sample": therapeutics[:10],
+                    "therapeutics": page,
+                    **self._page_metadata(len(therapeutics), len(page), limit, offset),
                     "source": "Thera-SAbDab (Oxford OPIG)",
-                    "note": "Full data can be downloaded from the Thera-SAbDab website",
+                    "note": "Follow next_offset while has_more is true to retrieve every therapeutic.",
                 },
             }
         except requests.exceptions.Timeout:
@@ -371,6 +415,11 @@ class TheraSAbDabTool(BaseTool):
 
         if not target:
             return {"status": "error", "error": "target parameter is required"}
+
+        try:
+            limit, offset = self._get_pagination(arguments)
+        except ValueError as exc:
+            return {"status": "error", "error": str(exc)}
 
         try:
             # Load all therapeutics and filter by target
@@ -406,13 +455,15 @@ class TheraSAbDabTool(BaseTool):
                 if query_aliases & _target_aliases(t.get("target"))
             ]
 
+            page = filtered[offset : offset + limit]
             return {
                 "status": "success",
                 "data": {
                     "target": target,
-                    "therapeutics": filtered[:20],
-                    "count": len(filtered[:20]),
+                    "therapeutics": page,
+                    "count": len(page),
                     "total_therapeutics": len(filtered),
+                    **self._page_metadata(len(filtered), len(page), limit, offset),
                     "source": "Thera-SAbDab (Oxford OPIG)",
                 },
             }

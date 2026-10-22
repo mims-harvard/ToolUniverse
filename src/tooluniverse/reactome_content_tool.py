@@ -96,7 +96,6 @@ class ReactomeContentTool(BaseTool):
         species = arguments.get("species", "Homo sapiens")
         types = arguments.get("types", "Pathway")
         cluster = arguments.get("cluster", True)
-
         # Fix-R19-1: Reactome pages its search results and, when `rows` is not
         # sent, returns only its own default page of 10 -- so the tool could
         # never reach result 11 of a 455-hit query. Expose upstream's paging
@@ -107,8 +106,13 @@ class ReactomeContentTool(BaseTool):
         # `start=5` is silently ignored and re-serves page 0, while
         # `Start row=5` serves entries 6-10. Anything that "looks right" here
         # fails silently, so keep the odd upstream spelling.
+        # limit/offset are accepted as aliases of rows/start.
         rows = arguments.get("rows")
+        if rows is None:
+            rows = arguments.get("limit")
         start = arguments.get("start")
+        if start is None:
+            start = arguments.get("offset")
         if rows is not None and not (1 <= int(rows) <= 1000):
             return {
                 "status": "error",
@@ -119,6 +123,8 @@ class ReactomeContentTool(BaseTool):
                 "status": "error",
                 "error": f"start must be >= 0 (got {start})",
             }
+        limit = int(rows) if rows is not None else 30
+        offset = int(start) if start is not None else 0
 
         url = f"{REACTOME_CS_BASE_URL}/search/query"
         params = {
@@ -126,11 +132,10 @@ class ReactomeContentTool(BaseTool):
             "species": species,
             "types": types,
             "cluster": str(cluster).lower(),
+            # Reactome's documented offset key intentionally contains a space.
+            "Start row": offset,
+            "rows": limit,
         }
-        if rows is not None:
-            params["rows"] = int(rows)
-        if start is not None:
-            params["Start row"] = int(start)
         response = requests.get(
             url,
             params=params,
@@ -142,9 +147,22 @@ class ReactomeContentTool(BaseTool):
 
         results_groups = data.get("results", [])
         all_entries = []
+        result_groups = []
+        group_totals_known = bool(results_groups)
         for group in results_groups:
             type_name = group.get("typeName", "Unknown")
             entries = group.get("entries", [])
+            group_total = group.get("entriesCount")
+            if not isinstance(group_total, int):
+                group_totals_known = False
+                group_total = len(entries)
+            result_groups.append(
+                {
+                    "type": type_name,
+                    "total": group_total,
+                    "returned": len(entries),
+                }
+            )
             for entry in entries:
                 all_entries.append(
                     {
@@ -167,12 +185,19 @@ class ReactomeContentTool(BaseTool):
         # only 10 entries come back); it was parsed into `data` and thrown away.
         # Report the documented quantity, and say plainly how much of it the
         # caller is actually holding.
-        limit = int(rows) if rows is not None else 30
-        results = all_entries[:limit]
-        offset = int(start) if start is not None else 0
+        results = all_entries
         total_matches = data.get("numberOfMatches")
         if not isinstance(total_matches, int):
             total_matches = len(all_entries)
+        # With cluster=true, Reactome applies rows/start to each result group,
+        # not to the flattened result list.  Advance by the requested row
+        # count, otherwise summing all groups would skip records.
+        if group_totals_known:
+            has_more = any(
+                offset + group["returned"] < group["total"] for group in result_groups
+            )
+        else:
+            has_more = offset + len(results) < total_matches
 
         result = {
             "status": "success",
@@ -182,8 +207,13 @@ class ReactomeContentTool(BaseTool):
                 "types_searched": types,
                 "count": len(results),
                 "total_results": total_matches,
+                "returned": len(results),
+                "limit": limit,
                 "start": offset,
-                "has_more": (offset + len(results)) < total_matches,
+                "offset": offset,
+                "has_more": has_more,
+                "next_offset": offset + limit if has_more else None,
+                "result_groups": result_groups,
                 "results": results,
             },
             "metadata": {
@@ -194,12 +224,16 @@ class ReactomeContentTool(BaseTool):
 
         if result["data"]["has_more"]:
             result["truncated"] = True
+            result["data"]["truncated"] = True
             result["truncation_note"] = (
                 f"Returned {len(results)} of {total_matches} Reactome entries matching "
                 f"this query (starting at result {offset + 1}). This is a ranked slice, "
                 f"not the full result set -- an entry absent here may still match. Pass "
-                f"`rows` (up to 1000) to widen the page and `start` to move through it."
+                f"`rows` (up to 1000) to widen the page and `start` (next_offset) to "
+                f"move through it."
             )
+        else:
+            result["data"]["truncated"] = False
         return result
 
     def _get_contained_events(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -264,16 +298,28 @@ class ReactomeContentTool(BaseTool):
             else:
                 reactions.append(entry)
 
+        reaction_limit = min(max(int(arguments.get("reaction_limit", 50)), 1), 1000)
+        reaction_offset = max(int(arguments.get("reaction_offset", 0)), 0)
+        reaction_page = reactions[reaction_offset : reaction_offset + reaction_limit]
+        has_more_reactions = reaction_offset + len(reaction_page) < len(reactions)
         return {
             "status": "success",
             "data": {
                 "identifier": identifier,
                 "total_events": len(events),
                 "pathway_count": len(pathways),
-                "reaction_count": len(reactions[:50]),
+                "reaction_count": len(reaction_page),
                 "total_reactions": len(reactions),
                 "pathways": pathways,
-                "reactions": reactions[:50],
+                "reactions": reaction_page,
+                "reactions_returned": len(reaction_page),
+                "reaction_limit": reaction_limit,
+                "reaction_offset": reaction_offset,
+                "has_more_reactions": has_more_reactions,
+                "reactions_truncated": len(reaction_page) < len(reactions),
+                "next_reaction_offset": (
+                    reaction_offset + len(reaction_page) if has_more_reactions else None
+                ),
             },
             "metadata": {
                 "source": "Reactome Content Service - Contained Events",
@@ -354,10 +400,12 @@ class ReactomeContentTool(BaseTool):
                 "species": data.get("speciesName"),
                 "schemaClass": data.get("schemaClass"),
                 "is_disease": data.get("isInDisease", False),
-                "summation": summation[:2000] if summation else None,
+                "summation": summation if summation else None,
+                "summation_characters": len(summation),
                 "go_biological_process": go_terms if go_terms else None,
                 "sub_events": sub_events,
-                "literature": literature[:20],
+                "literature_count": len(literature),
+                "literature": literature,
             },
             "metadata": {
                 "source": "Reactome Content Service - Enhanced Pathway",

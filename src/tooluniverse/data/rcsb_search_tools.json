@@ -2,7 +2,7 @@
   {
     "type": "RCSBSearchTool",
     "name": "PDB_search_similar_structures",
-    "description": "Search for protein structures similar to a given PDB ID or sequence using RCSB PDB structure similarity search. Supports sequence-based, structure-based, and text-based search. Suitable for antibodies, proteins, and other biologics. Use text search to find PDB IDs by drug name, protein name, or keywords.",
+    "description": "Search RCSB PDB by protein sequence, strict structure-shape matching, or text. Results use exact offset pagination: continue with next_start while has_more is true. Sequence identity cutoff is applied only to sequence search; structure search explicitly reports similarity_threshold_applied=false because the official strict_shape_match request has no numeric threshold. Text-result GraphQL enrichment reports its own completeness and missing IDs.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -22,13 +22,23 @@
         },
         "similarity_threshold": {
           "type": "number",
+          "minimum": 0,
+          "maximum": 1,
           "default": 0.7,
-          "description": "Similarity threshold (0-1). Higher values return more similar structures. Values outside 0-1 will be clamped. For sequence search, this is the identity cutoff. For structure search, this is the structure similarity threshold. Not used for text search."
+          "description": "Sequence identity cutoff from 0 to 1. Applied only for sequence search. RCSB strict structure-shape search has no numeric threshold, so structure responses explicitly report similarity_threshold_applied=false."
         },
         "max_results": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
           "default": 20,
-          "description": "Maximum number of results to return (1-100). Values outside this range will be clamped."
+          "description": "Number of results per page (1-100). Invalid values are rejected rather than silently clamped."
+        },
+        "start": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based result offset using RCSB's official paginate.start parameter. Continue with data.next_start while data.has_more is true."
         }
       },
       "required": [
@@ -52,7 +62,69 @@
         },
         "total_found": {
           "type": "integer",
-          "description": "Number of similar structures found"
+          "description": "Total number of matching structures across all pages"
+        },
+        "start": {
+          "type": "integer",
+          "description": "Zero-based offset of this result page"
+        },
+        "returned": {
+          "type": "integer",
+          "description": "Number of results returned on this page"
+        },
+        "has_more": {
+          "type": "boolean",
+          "description": "Whether another result page is available"
+        },
+        "next_start": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Offset for the next page, or null when complete"
+        },
+        "requested_page_complete": {
+          "type": "boolean",
+          "description": "Whether the requested page was returned and parsed without an upstream count contradiction"
+        },
+        "result_set_complete": {
+          "type": "boolean",
+          "description": "Whether this page reaches the end of the complete RCSB result set"
+        },
+        "similarity_threshold_applied": {
+          "type": "boolean",
+          "description": "True only for sequence searches, where the value is sent as identity_cutoff"
+        },
+        "structure_operator": {
+          "type": "string",
+          "description": "Official RCSB structure operator used for structure searches"
+        },
+        "metadata_enrichment": {
+          "type": "object",
+          "description": "Completeness of optional title, resolution, and method enrichment for text results",
+          "properties": {
+            "requested_entries": {
+              "type": "integer"
+            },
+            "enriched_entries": {
+              "type": "integer"
+            },
+            "missing_entries": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "complete": {
+              "type": "boolean"
+            },
+            "error": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          }
         },
         "results": {
           "type": "array",

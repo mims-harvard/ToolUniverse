@@ -10,9 +10,10 @@ from ._shared_client import get_shared_client
 
 def ReactomeAnalysis_pathway_enrichment(
     identifiers: str | list[Any],
-    page_size: Optional[int] = None,
+    page_size: Optional[int] = 20,
     include_disease: Optional[bool] = None,
     projection: Optional[bool] = None,
+    page: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -31,6 +32,8 @@ def ReactomeAnalysis_pathway_enrichment(
         Include disease pathways in results (default true).
     projection : bool
         Project identifiers to human Reactome pathways for cross-species analysis (de...
+    page : int
+        One-based pathway result page. Continue with data.next_page while data.has_mo...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def ReactomeAnalysis_pathway_enrichment(
             "page_size": page_size,
             "include_disease": include_disease,
             "projection": projection,
+            "page": page,
         }.items()
         if v is not None
     }

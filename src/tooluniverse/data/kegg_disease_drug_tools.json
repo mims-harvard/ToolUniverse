@@ -2,7 +2,7 @@
   {
     "name": "KEGG_search_disease",
     "type": "KEGGExtTool",
-    "description": "Search the KEGG DISEASE database by keyword. KEGG DISEASE contains 2,600+ human disease entries with associated genes, pathways, drugs, and cross-references. Returns disease IDs (H#####) and names. Example: searching 'leukemia' returns H00001 B-cell acute lymphoblastic leukemia, H00002 T-cell acute lymphoblastic leukemia, etc. Use KEGG_get_disease for full details including genes and pathways.",
+    "description": "Search the KEGG DISEASE database by keyword. Returns disease IDs and names plus the exact total and recoverable offset pagination metadata. Continue with metadata.next_offset while metadata.has_more is true, then use KEGG_get_disease for full genes, pathways, drugs, and references.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -16,6 +16,12 @@
           "minimum": 1,
           "maximum": 100,
           "description": "Maximum number of results to return (default: 25)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset in the complete KEGG disease match list. Continue with metadata.next_offset."
         },
         "query": {
           "type": [

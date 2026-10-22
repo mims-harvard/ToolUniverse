@@ -10,6 +10,8 @@ from ._shared_client import get_shared_client
 
 def DisProt_get_entry(
     accession: str,
+    region_offset: Optional[int] = 0,
+    region_limit: Optional[int] = 30,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -22,6 +24,10 @@ def DisProt_get_entry(
     ----------
     accession : str
         DisProt ID (e.g., 'DP00086') or UniProt accession (e.g., 'P04637'). Both form...
+    region_offset : int
+        Zero-based offset within the entry's disorder regions. Default: 0.
+    region_limit : int
+        Maximum disorder regions returned per call. Default: 30. Use metadata.next_re...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +42,15 @@ def DisProt_get_entry(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"accession": accession}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {
+            "accession": accession,
+            "region_offset": region_offset,
+            "region_limit": region_limit,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "DisProt_get_entry",

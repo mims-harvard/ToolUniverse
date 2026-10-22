@@ -36,7 +36,7 @@ def Pathoplexus_get_sequence_details(
     limit : int
         Max sequence rows (default 50, max 1000).
     offset : int
-        Row offset for pagination (default 0).
+        Zero-based row offset for pagination (default 0). Continue with metadata.next...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

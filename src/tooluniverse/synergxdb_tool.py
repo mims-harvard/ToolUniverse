@@ -278,7 +278,21 @@ class SYNERGxDBTool(BaseTool):
         dataset = arguments.get("dataset")
         page = arguments.get("page", 1)
         # Feature-59A-008/59B-005: accept "limit" (ToolUniverse convention) as alias for "per_page"
-        per_page = arguments.get("limit") or arguments.get("per_page", 20)
+        limit_value = arguments.get("limit")
+        per_page = (
+            limit_value if limit_value is not None else arguments.get("per_page", 20)
+        )
+        if isinstance(page, bool) or not isinstance(page, int) or page < 1:
+            return {"status": "error", "error": "page must be a positive integer"}
+        if (
+            isinstance(per_page, bool)
+            or not isinstance(per_page, int)
+            or not 1 <= per_page <= 500
+        ):
+            return {
+                "status": "error",
+                "error": "per_page/limit must be an integer from 1 to 500",
+            }
 
         # Feature-43A-01/02: accept drug_name_1/drug_name_2 (and intuitive drug1/drug2 aliases)
         # that auto-resolve to integer drug IDs via the /drugs/ endpoint.
@@ -342,6 +356,12 @@ class SYNERGxDBTool(BaseTool):
             return {"status": "error", "error": result["error"]}
 
         data = result["data"]
+        if not isinstance(data, list) or any(not isinstance(row, dict) for row in data):
+            return {
+                "status": "error",
+                "error": "SYNERGxDB returned malformed combination records",
+            }
+        source_page_returned = len(data)
 
         # Feature-50A-003: filter self-combination entries (drugA==drugB) when only one
         # drug is specified. These occur when the same drug appears as both partners.
@@ -593,6 +613,20 @@ class SYNERGxDBTool(BaseTool):
             "status": "success",
             "data": data,
             "count": len(data),
+            "metadata": {
+                "page": page,
+                "per_page": per_page,
+                "source_page_returned": source_page_returned,
+                "returned_after_filtering": len(data),
+                "total_results": None,
+                "total_results_known": False,
+                "possibly_has_more": source_page_returned == per_page,
+                "next_page": page + 1 if source_page_returned == per_page else None,
+                "result_set_complete": source_page_returned < per_page,
+                "warning": "SYNERGxDB exposes no total count; continue with next_page while each source page reaches per_page."
+                if source_page_returned == per_page
+                else None,
+            },
         }
 
     def _get_combo_matrix(self, arguments: Dict[str, Any]) -> Dict[str, Any]:

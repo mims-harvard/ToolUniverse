@@ -12,6 +12,7 @@ def GO_get_genes_for_term(
     id: str,
     taxon: Optional[str] = None,
     rows: Optional[int] = 100,
+    start: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,6 +29,8 @@ def GO_get_genes_for_term(
         Optional species filter using an NCBI taxon ID, e.g. 'NCBITaxon:9606' (human)...
     rows : int
         Maximum number of annotation rows to scan. Distinct genes returned may be few...
+    start : int
+        Zero-based offset into GOlr annotation rows. Use metadata.next_start to conti...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,7 @@ def GO_get_genes_for_term(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"id": id, "taxon": taxon, "rows": rows}.items()
+        for k, v in {"id": id, "taxon": taxon, "rows": rows, "start": start}.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

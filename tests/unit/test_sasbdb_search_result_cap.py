@@ -62,6 +62,24 @@ def test_free_text_query_respects_custom_max_results():
     assert result["truncated"] is True
 
 
+def test_free_text_query_offset_reaches_later_catalog_entries():
+    tool = _tool()
+    all_entries = [{"code": f"SASD{i:04d}"} for i in range(10)]
+
+    with patch(
+        "tooluniverse.sasbdb_tool.request_with_retry",
+        return_value=_resp(200, all_entries),
+    ):
+        result = tool.run({"query": "lysozyme", "max_results": 2, "offset": 2})
+
+    assert [entry["code"] for entry in result["data"]] == ["SASD0002", "SASD0003"]
+    assert result["total_entries"] == 10
+    assert result["returned"] == 2
+    assert result["next_offset"] == 4
+    assert result["metadata"]["next_offset"] == 4
+    assert result["has_more"] is True
+
+
 def test_small_catalog_not_marked_truncated():
     tool = _tool()
     all_entries = [{"code": "SASD0001"}]

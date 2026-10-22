@@ -1,7 +1,7 @@
 [
   {
     "name": "BioImageArchive_search_studies",
-    "description": "Search the BioImage Archive (EBI BioStudies) for biological imaging datasets. The BioImage Archive hosts open microscopy, imaging, and visualization data from life sciences research. Search by imaging modality (cryo-EM, fluorescence, confocal), organism, technique, or scientific topic. Returns study accessions, titles, and metadata. Example: 'fluorescence microscopy cell' finds fluorescence imaging studies.",
+    "description": "Search the BioImage Archive (EBI BioStudies) for biological imaging datasets with explicit page navigation. The BioImage Archive hosts open microscopy, imaging, and visualization data from life sciences research. Search by imaging modality, organism, technique, or topic. Metadata preserves BioStudies' isTotalHitsExact qualifier: when total_hits_relation is lower_bound, total_hits must not be reported as the exact number of matches; continue through next_page until pagination ends.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -14,6 +14,8 @@
             "integer",
             "null"
           ],
+          "minimum": 1,
+          "maximum": 100,
           "description": "Number of results per page. Default: 10. Max: 100."
         },
         "page": {
@@ -21,7 +23,8 @@
             "integer",
             "null"
           ],
-          "description": "Page number (1-indexed). Default: 1."
+          "minimum": 1,
+          "description": "Page number (1-indexed). Default: 1. Continue with metadata.next_page."
         }
       },
       "required": [
@@ -213,7 +216,7 @@
   },
   {
     "name": "BioImageArchive_search_bioimages",
-    "description": "Search the BioImage Archive specifically for biological image datasets (BioImages collection). This targets the BioImages-specific collection at EBI, returning imaging studies with microscopy-specific metadata. Example: 'cell division' finds imaging datasets of cell division processes.",
+    "description": "Search the BioImages collection with explicit page pagination. Metadata reports next_page and preserves the upstream isTotalHitsExact qualifier. When total_hits_relation is lower_bound, total_hits is only a lower bound rather than the true total; continue until pagination ends.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -226,7 +229,15 @@
             "integer",
             "null"
           ],
+          "minimum": 1,
+          "maximum": 100,
           "description": "Number of results per page. Default: 10. Max: 100."
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "One-based result page. Continue with metadata.next_page."
         }
       },
       "required": [
@@ -300,7 +311,7 @@
   },
   {
     "name": "BioImageArchive_list_study_files",
-    "description": "List the file/image manifest of a BioImage Archive study, giving per-file download paths and per-image experimental annotations. Unlike BioImageArchive_get_study (which returns study-level metadata), this returns the actual files: image Name, relative download path (append to the study's FTP/HTTPS root), file size, and any annotation columns the submitters attached to each image (e.g. staining, cells, treatment, channels, timepoint). Use limit/offset to page through large manifests; metadata.records_total gives the full file count. Example: S-BIAD144 has 223 files; the first is 'experimentA_01_WT_PDMP.czi' (path experiments/experimentA_01_WT_PDMP.czi) with annotations staining='click chemistry and IF', cells='WT', treatment='20 uM PDMP', Channel_1='pacSph', Channel_2='Lamp1'.",
+    "description": "List the file/image manifest of a BioImage Archive study, giving per-file download paths and per-image experimental annotations. Unlike BioImageArchive_get_study (which returns study-level metadata), this returns the actual files: image Name, relative download path, size, and submitter annotations. Use limit/offset to page through large manifests; metadata preserves records_total and records_filtered and provides has_more and next_offset so every file is reachable.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -313,14 +324,17 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of files to return (default 25, max 500)."
+          "minimum": 1,
+          "maximum": 500,
+          "description": "Maximum number of files to return (default 25, max 500). Values outside this range return an error rather than being silently changed."
         },
         "offset": {
           "type": [
             "integer",
             "null"
           ],
-          "description": "Number of files to skip for pagination (default 0)."
+          "minimum": 0,
+          "description": "Number of files to skip for pagination (default 0). Continue with metadata.next_offset while metadata.has_more is true."
         }
       },
       "required": [

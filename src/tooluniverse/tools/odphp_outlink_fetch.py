@@ -1,7 +1,7 @@
 """
 odphp_outlink_fetch
 
-This tool retrieves readable text from ODPHP article links and information sources. This is helpf...
+Retrieve readable content from 1-3 ODPHP or related absolute URLs. HTML is cleaned, JSON is seria...
 """
 
 from typing import Any, Optional, Callable
@@ -11,14 +11,14 @@ from ._shared_client import get_shared_client
 def odphp_outlink_fetch(
     urls: list[str],
     max_chars: Optional[int] = None,
-    return_html: Optional[bool] = None,
+    return_html: Optional[bool] = False,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    This tool retrieves readable text from ODPHP article links and information sources. This is helpf...
+    Retrieve readable content from 1-3 ODPHP or related absolute URLs. HTML is cleaned, JSON is seria...
 
     Parameters
     ----------
@@ -27,7 +27,7 @@ def odphp_outlink_fetch(
     max_chars : int
         Optional hard cap on extracted text length (e.g., 5000)
     return_html : bool
-        If true, also return minimally cleaned HTML
+        If true, also return original HTML for HTML responses
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

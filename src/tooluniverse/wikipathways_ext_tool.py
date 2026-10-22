@@ -63,6 +63,26 @@ def _val(binding: Dict[str, Any], key: str) -> str:
     return (binding.get(key) or {}).get("value", "")
 
 
+def _sparql_literal(value: str) -> str:
+    return (
+        value.replace("\\", "\\\\")
+        .replace('"', '\\"')
+        .replace("\n", "\\n")
+        .replace("\r", "\\r")
+    )
+
+
+def _validated_int(arguments, name, default, minimum=0, maximum=None):
+    value = arguments.get(name, default)
+    if isinstance(value, bool) or not isinstance(value, int):
+        return None, f"{name} must be an integer"
+    if value < minimum:
+        return None, f"{name} must be at least {minimum}"
+    if maximum is not None and value > maximum:
+        return None, f"{name} must be at most {maximum}"
+    return value, None
+
+
 def _wpid_from_uri(uri: str) -> str:
     tail = uri.rstrip("/").rsplit("/", 1)[-1]
     return tail.split("_", 1)[0]
@@ -274,17 +294,34 @@ SELECT DISTINCT ?metabolite ?label ?identifier ?source WHERE {{
         }
 
     def _find_pathways_by_gene(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        gene = (arguments.get("gene") or "").replace('"', "")
-        if not gene:
+        raw_gene = arguments.get("gene")
+        if not isinstance(raw_gene, str) or not raw_gene.strip():
             return {
                 "status": "error",
                 "error": "gene parameter is required (e.g., 'TP53', 'BRCA1')",
             }
+        gene = raw_gene.strip()
 
         species = arguments.get("species", "Homo sapiens")
+        if species is not None and (
+            not isinstance(species, str) or not species.strip()
+        ):
+            return {"status": "error", "error": "species must be a non-empty string"}
+        if species is not None:
+            species = species.strip()
+        limit, error = _validated_int(arguments, "limit", 50, 1, 100)
+        if error:
+            return {"status": "error", "error": error}
+        offset, error = _validated_int(arguments, "offset", 0, 0)
+        if error:
+            return {"status": "error", "error": error}
+
         organism_filter = (
-            f'  FILTER(LCASE(STR(?organism)) = "{species.lower()}")' if species else ""
+            f'  FILTER(LCASE(STR(?organism)) = "{_sparql_literal(species.lower())}")'
+            if species
+            else ""
         )
+        escaped_gene = _sparql_literal(gene)
 
         sparql = f"""
 PREFIX wp: <http://vocabularies.wikipathways.org/wp#>
@@ -294,15 +331,46 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 SELECT DISTINCT ?pathway ?title ?organism WHERE {{
   ?gene dcterms:isPartOf ?pathway ;
         a wp:GeneProduct ;
-        rdfs:label "{gene}" .
+        rdfs:label "{escaped_gene}" .
   ?pathway a wp:Pathway ;
            dc:title ?title ;
            wp:organismName ?organism .
 {organism_filter}
-}} LIMIT 100
+}}
+ORDER BY LCASE(STR(?title)) STR(?pathway)
+LIMIT {limit + 1}
+OFFSET {offset}
+"""
+        count_sparql = f"""
+PREFIX wp: <http://vocabularies.wikipathways.org/wp#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT (COUNT(DISTINCT ?pathway) AS ?total) WHERE {{
+  ?gene dcterms:isPartOf ?pathway ;
+        a wp:GeneProduct ;
+        rdfs:label "{escaped_gene}" .
+  ?pathway a wp:Pathway ;
+           wp:organismName ?organism .
+{organism_filter}
+}}
 """
         data = _sparql(sparql, timeout=self.timeout)
-        bindings = data.get("results", {}).get("bindings", [])
+        counts = _sparql(count_sparql, timeout=self.timeout)
+        all_bindings = data.get("results", {}).get("bindings", [])
+        count_bindings = counts.get("results", {}).get("bindings", [])
+        if not count_bindings:
+            return {
+                "status": "error",
+                "error": "WikiPathways SPARQL did not return an exact pathway count",
+            }
+        try:
+            total = int(_val(count_bindings[0], "total"))
+        except (TypeError, ValueError):
+            return {
+                "status": "error",
+                "error": "WikiPathways SPARQL returned an invalid pathway count",
+            }
+        bindings = all_bindings[:limit]
         seen = set()
         pathways = []
         for b in bindings:
@@ -320,16 +388,31 @@ SELECT DISTINCT ?pathway ?title ?organism WHERE {{
                 }
             )
 
+        pagination_stalled = offset < total and not pathways
+        has_more = offset + len(pathways) < total and not pagination_stalled
+
         return {
             "status": "success",
             "data": {
                 "gene": gene,
-                "total_pathways": len(pathways),
+                "total_pathways": total,
+                "returned": len(pathways),
                 "pathways": pathways,
             },
             "metadata": {
                 "source": "WikiPathways SPARQL",
                 "gene": gene,
                 "species": species,
+                "total_pathways": total,
+                "total_pathways_is_exact": True,
+                "returned": len(pathways),
+                "limit": limit,
+                "offset": offset,
+                "has_more": has_more,
+                "next_offset": (
+                    offset + len(pathways) if has_more else None
+                ),
+                "pagination_stalled": pagination_stalled,
+                "complete": not has_more and not pagination_stalled,
             },
         }

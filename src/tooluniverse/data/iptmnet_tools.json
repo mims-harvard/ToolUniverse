@@ -2,7 +2,7 @@
   {
     "name": "iPTMnet_search",
     "type": "iPTMnetTool",
-    "description": "NOTE (checked 2026-10-08): iPTMnet's REST API (research.bioinformatics.udel.edu/iptmnet/api) has answered HTTP 503 for every request since at least 2026-09-20 while the iPTMnet website stays up, so this tool currently returns that error. For enzyme-substrate PTM relationships use OmniPath_get_enzyme_substrate (substrates='TP53' or enzymes='TP53'); for a protein's modified residues use UniProt_get_ptm_processing_by_accession. Original description: Search the iPTMnet database for proteins with post-translational modification (PTM) data. Find proteins by gene name, protein name, or keyword. Filter by role (Substrate = modified protein, Enzyme = modifier) and PTM type (Phosphorylation, Acetylation, Ubiquitination, Methylation, etc.). iPTMnet integrates data from PhosphoSitePlus, UniProt, PRO ontology, and text mining. Returns UniProt IDs, PTM site counts, enzyme/substrate roles, and isoform counts.",
+    "description": "NOTE (checked 2026-10-08): iPTMnet's REST API (research.bioinformatics.udel.edu/iptmnet/api) has answered HTTP 503 for every request since at least 2026-09-20 while the iPTMnet website stays up, so this tool currently returns that error. For enzyme-substrate PTM relationships use OmniPath_get_enzyme_substrate (substrates='TP53' or enzymes='TP53'); for a protein's modified residues use UniProt_get_ptm_processing_by_accession. Original description: Search the iPTMnet database for proteins with post-translational modification (PTM) data. Find proteins by gene name, protein name, or keyword. Filter by role (Substrate = modified protein, Enzyme = modifier) and PTM type (Phosphorylation, Acetylation, Ubiquitination, Methylation, etc.). iPTMnet integrates data from PhosphoSitePlus, UniProt, PRO ontology, and text mining. Returns UniProt IDs, PTM site counts, enzyme/substrate roles, and isoform counts. Results carry an exact total and recoverable local offset pagination: filters are applied before pagination, and later pages continue with metadata.next_offset while metadata.has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -53,6 +53,12 @@
           "maximum": 100,
           "default": 25,
           "description": "Maximum results to return (default: 25)"
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset in the complete filtered search response."
         },
         "query": {
           "type": "string",

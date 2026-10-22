@@ -13,6 +13,8 @@ def WoRMS_search_species(
     limit: Optional[int] = 20,
     offset: Optional[int] = 1,
     marine_only: Optional[bool] = True,
+    like: Optional[bool] = True,
+    extant_only: Optional[bool] = True,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,13 +26,17 @@ def WoRMS_search_species(
     Parameters
     ----------
     query : str
-        Species name or search term
+        Scientific name or name prefix to search.
     limit : int
-        Maximum number of taxon records to return (default 20). Pages larger than 50 ...
+        Maximum number of taxon records to return (default 20, range 1-1000). Pages l...
     offset : int
-        1-based index of the first record to return (default 1). Use with `limit` and...
+        1-based starting record number (default 1). Continue with the returned next_o...
     marine_only : bool
         Whether to restrict the search to marine taxa (default true, matching WoRMS's...
+    like : bool
+        When true, perform the official prefix/SQL-LIKE search; false requests an exa...
+    extant_only : bool
+        Limit results to extant taxa. Set false to include extinct records.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +58,8 @@ def WoRMS_search_species(
             "limit": limit,
             "offset": offset,
             "marine_only": marine_only,
+            "like": like,
+            "extant_only": extant_only,
         }.items()
         if v is not None
     }

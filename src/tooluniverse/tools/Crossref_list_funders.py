@@ -12,6 +12,7 @@ def Crossref_list_funders(
     query: Optional[str] = None,
     limit: Optional[int] = 20,
     offset: Optional[int] = None,
+    cursor: Optional[str] = "*",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,6 +29,8 @@ def Crossref_list_funders(
         Maximum number of funders to return in this page (default: 20, max: 100). It ...
     offset : int
         Skip this many matching funders before returning results. Use with 'limit' to...
+    cursor : str
+        Crossref deep-pagination cursor. Use '*' initially, then metadata.next_cursor.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,12 @@ def Crossref_list_funders(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"query": query, "limit": limit, "offset": offset}.items()
+        for k, v in {
+            "query": query,
+            "limit": limit,
+            "offset": offset,
+            "cursor": cursor,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

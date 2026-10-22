@@ -1,7 +1,7 @@
 [
   {
     "name": "COSMIC_search_mutations",
-    "description": "Search COSMIC database for somatic mutations in cancer. COSMIC is the world's largest expert-curated database of somatic mutations in human cancer. Search by gene name, mutation ID, or mutation description. Returns mutation IDs, gene names, CDS changes, and amino acid changes. No authentication required.",
+    "description": "Search COSMIC mutation records by gene, mutation ID, or mutation description through NLM Clinical Tables. Repeated source records are aggregated into unique mutations with all cancer contexts visible in the accessible window. COSMIC does not permit pagination: metadata explicitly reports the 500-record upstream window, truncation, and whether the server total may be capped at 10,000.",
     "type": "COSMICTool",
     "parameter": {
       "type": "object",
@@ -14,15 +14,12 @@
         },
         "terms": {
           "type": "string",
-          "description": "Search query - gene name (e.g., BRAF), mutation (e.g., V600E), or mutation ID (e.g., COSM476). Aliases: query or gene also accepted."
-        },
-        "query": {
-          "type": "string",
-          "description": "Alias for terms. Search query - gene name, mutation, or COSMIC ID."
+          "minLength": 1,
+          "description": "Search query: gene name (e.g. BRAF), mutation (e.g. V600E), or mutation ID."
         },
         "max_results": {
           "type": "integer",
-          "description": "Maximum number of results to return (default: 20, max: 500)",
+          "description": "Maximum unique mutations to return from the accessible 500-source-record window (default 20, range 1-500). Increase this value to expose more unique mutations in that one window; the upstream API does not support offsets.",
           "default": 20,
           "minimum": 1,
           "maximum": 500
@@ -37,14 +34,20 @@
           ]
         }
       },
-      "required": []
+      "required": [
+        "terms"
+      ]
     },
     "return_schema": {
       "type": "object",
       "properties": {
         "total_count": {
           "type": "integer",
-          "description": "Total number of matching mutations"
+          "description": "Server-reported matching source-record count, not a unique-mutation count. The server limits this value to 10,000."
+        },
+        "count": {
+          "type": "integer",
+          "description": "Number of unique aggregated mutations returned."
         },
         "results": {
           "type": "array",
@@ -53,43 +56,93 @@
             "properties": {
               "mutation_id": {
                 "type": "string",
-                "description": "COSMIC mutation ID (e.g., COSM476)"
+                "description": "COSMIC mutation ID."
               },
-              "display": {
+              "gene": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "mutation_cds": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "mutation_aa": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "genome_position": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "mutation_strand": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "fathmm_prediction": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "cancer_contexts": {
                 "type": "array",
-                "description": "Display array with mutation details [mutation_id, gene, CDS, AA]",
+                "description": "Distinct primary-site and histology contexts retained while aggregating repeated source records in the accessible window.",
                 "items": {
-                  "type": "string"
+                  "type": "object",
+                  "properties": {
+                    "primary_site": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "primary_histology": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "primary_site",
+                    "primary_histology"
+                  ]
                 }
-              },
-              "GeneName": {
-                "type": "string",
-                "description": "Gene symbol"
-              },
-              "MutationCDS": {
-                "type": "string",
-                "description": "CDS-level mutation notation"
-              },
-              "MutationAA": {
-                "type": "string",
-                "description": "Amino acid change notation"
-              },
-              "PrimarySite": {
-                "type": "string",
-                "description": "Primary tissue/organ site"
-              },
-              "PrimaryHistology": {
-                "type": "string",
-                "description": "Primary histology/cancer type"
               }
-            }
+            },
+            "required": [
+              "mutation_id",
+              "gene",
+              "mutation_cds",
+              "mutation_aa",
+              "genome_position",
+              "mutation_strand",
+              "fathmm_prediction",
+              "cancer_contexts"
+            ]
           }
         },
         "genome_build": {
           "type": "string",
           "description": "Genome build used (GRCh37 or GRCh38)"
         }
-      }
+      },
+      "required": [
+        "total_count",
+        "count",
+        "results",
+        "genome_build"
+      ]
     },
     "test_examples": [
       {
@@ -109,7 +162,7 @@
   },
   {
     "name": "COSMIC_get_mutations_by_gene",
-    "description": "Get all somatic mutations for a specific gene from COSMIC database. Returns comprehensive mutation data for a gene symbol including CDS changes, amino acid changes, cancer types, and genomic positions. Useful for exploring the mutational landscape of cancer genes like BRAF, TP53, EGFR, KRAS, etc.",
+    "description": "Retrieve COSMIC mutation records constrained to one gene symbol. Repeated source records are aggregated into unique mutations while retaining every distinct cancer context visible in the upstream 500-record window. COSMIC does not permit pagination; metadata explicitly reports truncation and a possibly capped server total.",
     "type": "COSMICTool",
     "parameter": {
       "type": "object",
@@ -122,15 +175,13 @@
         },
         "gene": {
           "type": "string",
-          "description": "Gene symbol (e.g., BRAF, TP53, EGFR, KRAS, PIK3CA). Alias: gene_name also accepted."
-        },
-        "gene_name": {
-          "type": "string",
-          "description": "Alias for gene parameter. Gene symbol (e.g., FLT3, BRAF, TP53)."
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$",
+          "description": "HGNC-style gene symbol, e.g. BRAF, TP53, HLA-DRA."
         },
         "max_results": {
           "type": "integer",
-          "description": "Maximum number of mutations to return (default: 100, max: 500)",
+          "description": "Maximum unique mutations to return from the accessible 500-source-record window (default 100, range 1-500). The upstream API does not support offsets.",
           "default": 100,
           "minimum": 1,
           "maximum": 500
@@ -145,7 +196,9 @@
           ]
         }
       },
-      "required": []
+      "required": [
+        "gene"
+      ]
     },
     "return_schema": {
       "type": "object",
@@ -156,7 +209,10 @@
         },
         "total_count": {
           "type": "integer",
-          "description": "Total number of mutations found"
+          "description": "Server-reported matching source-record count, not a unique-mutation count. The server limits this value to 10,000."
+        },
+        "count": {
+          "type": "integer"
         },
         "results": {
           "type": "array",
@@ -167,36 +223,91 @@
                 "type": "string",
                 "description": "COSMIC mutation ID"
               },
-              "GeneName": {
-                "type": "string"
+              "gene": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
-              "MutationCDS": {
-                "type": "string"
+              "mutation_cds": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
-              "MutationAA": {
-                "type": "string"
+              "mutation_aa": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
-              "MutationGenomePosition": {
-                "type": "string",
-                "description": "Genomic coordinates"
+              "genome_position": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Genomic coordinates."
               },
-              "PrimarySite": {
-                "type": "string"
+              "mutation_strand": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
-              "PrimaryHistology": {
-                "type": "string"
+              "fathmm_prediction": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               },
-              "Fathmm": {
-                "type": "string",
-                "description": "FATHMM pathogenicity prediction"
+              "cancer_contexts": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "primary_site": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "primary_histology": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "primary_site",
+                    "primary_histology"
+                  ]
+                }
               }
-            }
+            },
+            "required": [
+              "mutation_id",
+              "gene",
+              "mutation_cds",
+              "mutation_aa",
+              "genome_position",
+              "mutation_strand",
+              "fathmm_prediction",
+              "cancer_contexts"
+            ]
           }
         },
         "genome_build": {
           "type": "string"
         }
-      }
+      },
+      "required": [
+        "gene",
+        "total_count",
+        "count",
+        "results",
+        "genome_build"
+      ]
     },
     "test_examples": [
       {

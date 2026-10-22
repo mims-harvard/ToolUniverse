@@ -87,8 +87,7 @@ def _make_search_tool():
 
 @pytest.mark.unit
 def test_search_genes_filters_category_and_uses_curie():
-    """Feature-008: autocomplete no longer honours category=gene and ids moved
-    to `curie`; keep gene hits client-side and read the curie."""
+    """The full search endpoint requests gene results and reads IDs from curie."""
     tool = _make_search_tool()
     resp = MagicMock()
     resp.status_code = 200
@@ -108,8 +107,11 @@ def test_search_genes_filters_category_and_uses_curie():
     ) as mock_get:
         result = tool.run({"query": "TP53"})
 
-    # category=gene must NOT be sent (it now returns zero results upstream)
-    assert "category" not in mock_get.call_args.kwargs.get("params", {})
+    params = mock_get.call_args.kwargs["params"]
+    assert params["category"] == "gene_search_result"
+    assert params["limit"] == 10
+    assert params["offset"] == 0
+    assert mock_get.call_args.args[0].endswith("/search")
     data = result["data"]
     assert len(data) == 2  # disease hit filtered out
     assert data[0]["symbol"] == "TP53"

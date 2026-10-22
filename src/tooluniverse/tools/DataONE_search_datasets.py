@@ -10,9 +10,9 @@ from ._shared_client import get_shared_client
 
 def DataONE_search_datasets(
     q: str,
-    fl: Optional[str] = None,
-    rows: Optional[int] = None,
-    start: Optional[int] = None,
+    fl: Optional[str] = "id,title,author,dateUploaded,keywords",
+    rows: Optional[int] = 10,
+    start: Optional[int] = 0,
     sort: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,

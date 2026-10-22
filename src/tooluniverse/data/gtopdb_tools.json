@@ -1,7 +1,7 @@
 [
   {
     "name": "GtoPdb_search_targets",
-    "description": "Search the Guide to Pharmacology database (GtoPdb) for drug targets including GPCRs, ion channels, nuclear receptors, enzymes, transporters, and catalytic receptors. Returns target IDs, names, abbreviations, types, and family classifications. GtoPdb is the IUPHAR/BPS reference resource for pharmacological drug targets with 3000+ curated targets. No authentication required.",
+    "description": "Search the Guide to Pharmacology database (GtoPdb) for drug targets including GPCRs, ion channels, nuclear receptors, enzymes, transporters, and catalytic receptors. Returns target IDs, names, abbreviations, types, and family classifications. GtoPdb is the IUPHAR/BPS reference resource for pharmacological drug targets with 3000+ curated targets. No authentication required. Results are paged with limit/offset over the full set of matches: total_matches counts every match, and has_more/next_offset say how to fetch the rest.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -32,6 +32,19 @@
             "null"
           ],
           "description": "Name/keyword to search for. Alias for the \"name\" parameter."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200,
+          "default": 25,
+          "description": "Number of targets on this page (1-200; default 25)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based target offset. Continue with next_offset while has_more is true."
         }
       },
       "required": [],
@@ -64,11 +77,34 @@
         },
         "total_matches": {
           "type": "integer",
-          "description": "Records matching the filters, before the limit."
+          "description": "Records matching the filters, before limit/offset."
         },
         "returned": {
           "type": "integer",
           "description": "Records in this response."
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based offset of this page."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Page size applied."
+        },
+        "has_more": {
+          "type": "boolean",
+          "description": "True when more matches follow this page."
+        },
+        "next_offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Offset of the next page, or null when has_more is false."
+        },
+        "result_set_complete": {
+          "type": "boolean",
+          "description": "True when this single page holds every match."
         },
         "targets": {
           "type": "array",
@@ -136,7 +172,7 @@
   },
   {
     "name": "GtoPdb_search_ligands",
-    "description": "Search the Guide to Pharmacology database for pharmacological ligands (drugs, natural products, endogenous compounds). Returns ligand details including type, approval status, INN name, WHO essential medicine status, and whether it is an approved drug. GtoPdb covers 10,000+ curated ligands with pharmacological activity data. No authentication required.",
+    "description": "Search the Guide to Pharmacology database for pharmacological ligands (drugs, natural products, endogenous compounds). Returns ligand details including type, approval status, INN name, WHO essential medicine status, and whether it is an approved drug. GtoPdb covers 10,000+ curated ligands with pharmacological activity data. No authentication required. Results are paged with limit/offset over the full set of matches: total_matches counts every match, and has_more/next_offset say how to fetch the rest.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -167,6 +203,19 @@
             "null"
           ],
           "description": "Name/keyword to search for. Alias for the \"name\" parameter."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200,
+          "default": 25,
+          "description": "Number of ligands on this page (1-200; default 25)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based ligand offset. Continue with next_offset while has_more is true."
         }
       },
       "required": [],
@@ -204,11 +253,34 @@
         },
         "total_matches": {
           "type": "integer",
-          "description": "Records matching the filters, before the limit."
+          "description": "Records matching the filters, before limit/offset."
         },
         "returned": {
           "type": "integer",
           "description": "Records in this response."
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based offset of this page."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Page size applied."
+        },
+        "has_more": {
+          "type": "boolean",
+          "description": "True when more matches follow this page."
+        },
+        "next_offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Offset of the next page, or null when has_more is false."
+        },
+        "result_set_complete": {
+          "type": "boolean",
+          "description": "True when this single page holds every match."
         },
         "ligands": {
           "type": "array",
@@ -288,7 +360,7 @@
   },
   {
     "name": "GtoPdb_get_interactions",
-    "description": "Get pharmacological interactions between targets and ligands from the Guide to Pharmacology database. Provide gene_symbol (convenience, auto-resolves to targetId), targetId (from GtoPdb_search_targets), or ligandId (from GtoPdb_search_ligands) to filter interactions. Returns binding affinity (Ki, Kd, IC50, EC50), action type (agonist, antagonist, inhibitor, etc.), species, and assay information. NOTE: GtoPdb coverage focuses on GPCRs, ion channels, nuclear receptors, and enzymes; kinase inhibitors (EGFR, BRAF, ALK, VEGFR inhibitors) have limited interaction data — use ChEMBL_get_drug_mechanisms for those instead. No authentication required.",
+    "description": "Get pharmacological interactions between targets and ligands from the Guide to Pharmacology database. Provide gene_symbol (convenience, auto-resolves to targetId), targetId (from GtoPdb_search_targets), or ligandId (from GtoPdb_search_ligands) to filter interactions. Returns binding affinity (Ki, Kd, IC50, EC50), action type (agonist, antagonist, inhibitor, etc.), species, and assay information. NOTE: GtoPdb coverage focuses on GPCRs, ion channels, nuclear receptors, and enzymes; kinase inhibitors (EGFR, BRAF, ALK, VEGFR inhibitors) have limited interaction data — use ChEMBL_get_drug_mechanisms for those instead. No authentication required. Results are paged with limit/offset over the full set of matches: total_matches counts every match, and has_more/next_offset say how to fetch the rest.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -326,6 +398,19 @@
             "null"
           ],
           "description": "Filter by species. Examples: 'Human', 'Mouse', 'Rat'"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200,
+          "default": 25,
+          "description": "Number of interactions on this page (1-200; default 25)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based interaction offset. Continue with next_offset while has_more is true."
         }
       },
       "required": [],
@@ -362,11 +447,34 @@
         },
         "total_matches": {
           "type": "integer",
-          "description": "Records matching the filters, before the limit."
+          "description": "Records matching the filters, before limit/offset."
         },
         "returned": {
           "type": "integer",
           "description": "Records in this response."
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based offset of this page."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Page size applied."
+        },
+        "has_more": {
+          "type": "boolean",
+          "description": "True when more matches follow this page."
+        },
+        "next_offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Offset of the next page, or null when has_more is false."
+        },
+        "result_set_complete": {
+          "type": "boolean",
+          "description": "True when this single page holds every match."
         },
         "interactions": {
           "type": "array",

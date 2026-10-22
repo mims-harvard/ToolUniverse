@@ -56,6 +56,26 @@ def _to_num(value: Any) -> Any:
         return value
 
 
+def _page_rows(
+    rows: List[Dict[str, Any]], arguments: Dict[str, Any], default_limit: int
+) -> tuple[List[Dict[str, Any]], Dict[str, Any]]:
+    """Page a fully downloaded ENCORI result without losing later records."""
+    limit = max(
+        1, min(_to_int(arguments.get("limit", default_limit), default_limit), 500)
+    )
+    offset = max(0, _to_int(arguments.get("offset", 0), 0))
+    page = rows[offset : offset + limit]
+    next_offset = offset + len(page)
+    has_more = next_offset < len(rows)
+    return page, {
+        "total": len(rows),
+        "returned": len(page),
+        "offset": offset,
+        "has_more": has_more,
+        "next_offset": next_offset if has_more else None,
+    }
+
+
 @register_tool("ENCORITool")
 class ENCORITool(BaseTool):
     """ENCORI / starBase RNA-interactome lookups (config-selected module)."""
@@ -163,8 +183,6 @@ class ENCORITool(BaseTool):
 
         clip_min = _to_int(arguments.get("clip_min", 1), 1)
         program_min = _to_int(arguments.get("program_min", 1), 1)
-        limit = max(1, min(_to_int(arguments.get("limit", 50), 50), 500))
-
         params = {
             "assembly": arguments.get("assembly", "hg38"),
             "geneType": "mRNA",
@@ -204,15 +222,15 @@ class ENCORITool(BaseTool):
             )
 
         rows.sort(key=lambda r: (r["clip_experiments"], r["n_programs"]), reverse=True)
+        page, pagination = _page_rows(rows, arguments, 50)
         return {
             "status": "success",
-            "data": rows[:limit],
+            "data": page,
             "metadata": {
                 "source": "ENCORI (starBase)",
                 "query": mirna or gene,
                 "direction": "miRNA->targets" if mirna else "gene->miRNAs",
-                "total": len(rows),
-                "returned": min(len(rows), limit),
+                **pagination,
                 "interpretation": (
                     "clip_experiments = number of CLIP-seq experiments supporting the "
                     "site (experimental evidence; higher = stronger). predicted_by lists "
@@ -236,8 +254,6 @@ class ENCORITool(BaseTool):
             }
 
         clip_min = _to_int(arguments.get("clip_min", 1), 1)
-        limit = max(1, min(_to_int(arguments.get("limit", 100), 100), 500))
-
         params = {
             "assembly": arguments.get("assembly", "hg38"),
             "geneType": arguments.get("gene_type") or "mRNA",
@@ -277,15 +293,15 @@ class ENCORITool(BaseTool):
             key=lambda r: (r["total_clip_experiments"], r["total_clip_sites"]),
             reverse=True,
         )
+        page, pagination = _page_rows(rows, arguments, 100)
         return {
             "status": "success",
-            "data": rows[:limit],
+            "data": page,
             "metadata": {
                 "source": "ENCORI (starBase) RBPTarget",
                 "query": rbp or gene,
                 "direction": "RBP->targets" if rbp else "gene->RBPs",
-                "total": len(rows),
-                "returned": min(len(rows), limit),
+                **pagination,
                 "interpretation": (
                     "Each row is a CLIP-seq-supported binding cluster. "
                     "total_clip_experiments / total_clip_sites quantify how many "
@@ -309,8 +325,6 @@ class ENCORITool(BaseTool):
                 "status": "error",
                 "error": "Provide 'gene' (e.g. 'PTEN') to get its ceRNA / miRNA-sponge partners.",
             }
-
-        limit = max(1, min(_to_int(arguments.get("limit", 100), 100), 500))
 
         params = {
             "assembly": arguments.get("assembly", "hg38"),
@@ -341,14 +355,14 @@ class ENCORITool(BaseTool):
             )
 
         rows.sort(key=lambda r: r["shared_mirna_families"], reverse=True)
+        page, pagination = _page_rows(rows, arguments, 100)
         return {
             "status": "success",
-            "data": rows[:limit],
+            "data": page,
             "metadata": {
                 "source": "ENCORI (starBase) ceRNA",
                 "query": gene,
-                "total": len(rows),
-                "returned": min(len(rows), limit),
+                **pagination,
                 "interpretation": (
                     "Each partner shares miRNA-binding families with the query gene, "
                     "making it a candidate competing-endogenous RNA (miRNA sponge). "
@@ -370,8 +384,6 @@ class ENCORITool(BaseTool):
                 "status": "error",
                 "error": "Provide 'rna' (e.g. 'MALAT1') to get its RNA-RNA duplex partners.",
             }
-
-        limit = max(1, min(_to_int(arguments.get("limit", 100), 100), 500))
 
         params = {
             "assembly": arguments.get("assembly", "hg38"),
@@ -410,14 +422,14 @@ class ENCORITool(BaseTool):
         rows.sort(
             key=lambda r: (r["total_experiments"], r["total_reads"]), reverse=True
         )
+        page, pagination = _page_rows(rows, arguments, 100)
         return {
             "status": "success",
-            "data": rows[:limit],
+            "data": page,
             "metadata": {
                 "source": "ENCORI (starBase) RNARNA",
                 "query": rna,
-                "total": len(rows),
-                "returned": min(len(rows), limit),
+                **pagination,
                 "interpretation": (
                     "Each partner forms a base-pairing duplex with the query RNA, "
                     "detected by crosslinking (PARIS/LIGR/SPLASH). total_experiments / "
@@ -439,8 +451,6 @@ class ENCORITool(BaseTool):
                 "error": "Provide 'gene' (e.g. 'TP53') to get degradome-validated miRNA "
                 "cleavage of it, or 'mirna' for a specific miRNA's cleavage targets.",
             }
-
-        limit = max(1, min(_to_int(arguments.get("limit", 100), 100), 500))
 
         params = {
             # hg38 degradome data is not built; hg19 is the supported assembly.
@@ -477,15 +487,15 @@ class ENCORITool(BaseTool):
             key=lambda r: (r["degradome_experiments"], r["cleave_event_num"]),
             reverse=True,
         )
+        page, pagination = _page_rows(rows, arguments, 100)
         return {
             "status": "success",
-            "data": rows[:limit],
+            "data": page,
             "metadata": {
                 "source": "ENCORI (starBase) degradomeRNA",
                 "query": mirna or gene,
                 "assembly": params["assembly"],
-                "total": len(rows),
-                "returned": min(len(rows), limit),
+                **pagination,
                 "interpretation": (
                     "Each row is a degradome-seq (PARE)-validated slicer cleavage of "
                     "the target by the miRNA. cleave_event_num / degradome_experiments "
@@ -509,8 +519,6 @@ class ENCORITool(BaseTool):
                 "error": "Provide at least one of 'gene' (target, e.g. 'MYC'), 'rbp', "
                 "'tissue' (e.g. 'breast'), or 'disease' (e.g. 'carcinoma').",
             }
-
-        limit = max(1, min(_to_int(arguments.get("limit", 100), 100), 500))
 
         params = {
             "assembly": arguments.get("assembly", "hg38"),
@@ -544,14 +552,14 @@ class ENCORITool(BaseTool):
             )
 
         rows.sort(key=lambda r: (r["cosmic_num"], r["sample_num"]), reverse=True)
+        page, pagination = _page_rows(rows, arguments, 100)
         return {
             "status": "success",
-            "data": rows[:limit],
+            "data": page,
             "metadata": {
                 "source": "ENCORI (starBase) RBPDisease",
                 "query": gene or rbp or disease or tissue,
-                "total": len(rows),
-                "returned": min(len(rows), limit),
+                **pagination,
                 "interpretation": (
                     "Each row links an RBP binding site on a gene to somatic (COSMIC) "
                     "mutations in a tissue/disease. cosmic_num / sample_num quantify the "
@@ -574,8 +582,6 @@ class ENCORITool(BaseTool):
             }
 
         rank_limit = max(1, min(_to_int(arguments.get("rank_limit", 10), 10), 100))
-        limit = max(1, min(_to_int(arguments.get("limit", 100), 100), 500))
-
         params: Dict[str, Any] = {
             "assembly": arguments.get("assembly", "hg38"),
             "length": arguments.get("length") or "short",
@@ -611,14 +617,14 @@ class ENCORITool(BaseTool):
             )
 
         rows.sort(key=lambda r: r["target_peak_num"], reverse=True)
+        page, pagination = _page_rows(rows, arguments, 100)
         return {
             "status": "success",
-            "data": rows[:limit],
+            "data": page,
             "metadata": {
                 "source": "ENCORI (starBase) RBPMotifScan",
                 "query": motif or rbp,
-                "total": len(rows),
-                "returned": min(len(rows), limit),
+                **pagination,
                 "interpretation": (
                     "Each row is a sequence motif enriched in an RBP's CLIP peaks. "
                     "target_peak_num = number of peaks containing the motif; lower "

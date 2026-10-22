@@ -1,7 +1,7 @@
 """
 OpenFDA_get_approval_history
 
-Get the complete FDA submission and approval history for a specific drug. Returns chronological l...
+Get the complete FDA submission and approval history for one Drugs@FDA application. Returns chron...
 """
 
 from typing import Any, Optional, Callable
@@ -18,14 +18,14 @@ def OpenFDA_get_approval_history(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get the complete FDA submission and approval history for a specific drug. Returns chronological l...
+    Get the complete FDA submission and approval history for one Drugs@FDA application. Returns chron...
 
     Parameters
     ----------
     operation : str
         Operation type
     drug_name : str
-        Drug name (brand or generic, e.g., 'warfarin', 'Eliquis', 'pembrolizumab')
+        Drug name (brand or generic, e.g., 'warfarin', 'Eliquis', 'pembrolizumab'). P...
     application_number : str
         FDA application number (e.g., 'NDA021457'). More specific than drug_name.
     stream_callback : Callable, optional

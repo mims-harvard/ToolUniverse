@@ -74,15 +74,86 @@ class INaturalistTool(BaseTool):
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
+    @staticmethod
+    def _page_metadata(
+        total: int, page: int, per_page: int, returned: int
+    ) -> Dict[str, Any]:
+        accessible_pages = 10000 // per_page
+        accessible_total = min(total, accessible_pages * per_page)
+        has_more = bool(
+            returned and page < accessible_pages and page * per_page < total
+        )
+        return {
+            "returned": returned,
+            "total_results": total,
+            "total_results_is_exact": True,
+            "page": page,
+            "per_page": per_page,
+            "has_more": has_more,
+            "next_page": page + 1 if has_more else None,
+            "accessible_results": accessible_total,
+            "accessible_pages": min(
+                accessible_pages, (total + per_page - 1) // per_page
+            ),
+            "upstream_truncated": total > accessible_total,
+            "truncated": page > 1 or has_more or total > accessible_total,
+            "result_set_complete": page == 1 and returned == total,
+            "api_result_window_limit": 10000,
+            "pagination_scope": "inaturalist_page_10000_result_window",
+            "warning": (
+                "iNaturalist matched more records than this endpoint's page-based "
+                "10,000-result window exposes. Refine the query."
+                if total > accessible_total
+                else None
+            ),
+        }
+
+    @staticmethod
+    def _validate_page(
+        arguments: Dict[str, Any], default_per_page: int, maximum: int
+    ) -> tuple[int, int] | Dict[str, Any]:
+        per_page = arguments.get("per_page", default_per_page)
+        page = arguments.get("page", 1)
+        if per_page is None:
+            per_page = default_per_page
+        if page is None:
+            page = 1
+        if (
+            isinstance(per_page, bool)
+            or not isinstance(per_page, int)
+            or not 1 <= per_page <= maximum
+        ):
+            return {
+                "status": "error",
+                "error": f"per_page must be an integer between 1 and {maximum}",
+                "parameter": "per_page",
+            }
+        if isinstance(page, bool) or not isinstance(page, int) or page < 1:
+            return {
+                "status": "error",
+                "error": "page must be an integer greater than or equal to 1",
+                "parameter": "page",
+            }
+        if page * per_page > 10000:
+            return {
+                "status": "error",
+                "error": "iNaturalist requires page * per_page <= 10000",
+                "parameter": "page",
+            }
+        return page, per_page
+
     def _search_taxa(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search for taxa by name."""
         query = arguments.get("query", "")
         if not query:
             return {"status": "error", "error": "query parameter is required"}
 
-        per_page = arguments.get("per_page") or 10
+        pagination = self._validate_page(arguments, 10, 200)
+        if isinstance(pagination, dict):
+            return pagination
+        page, per_page = pagination
         url = f"{INAT_BASE_URL}/taxa"
-        params = {"q": query, "per_page": min(per_page, 200)}
+        params = {"q": query, "per_page": per_page, "page": page}
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
 
@@ -108,8 +179,13 @@ class INaturalistTool(BaseTool):
             "data": results,
             "metadata": {
                 "source": "iNaturalist",
-                "total_results": data.get("total_results", len(results)),
                 "query": query,
+                **self._page_metadata(
+                    data.get("total_results", len(results)),
+                    page,
+                    params["per_page"],
+                    len(results),
+                ),
             },
         }
 
@@ -162,6 +238,10 @@ class INaturalistTool(BaseTool):
 
     def _search_observations(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search for species observations."""
+        pagination = self._validate_page(arguments, 10, 200)
+        if isinstance(pagination, dict):
+            return pagination
+        page, per_page = pagination
         params = {}
         if arguments.get("taxon_id"):
             params["taxon_id"] = arguments["taxon_id"]
@@ -169,9 +249,35 @@ class INaturalistTool(BaseTool):
             params["taxon_name"] = arguments["query"]
         if arguments.get("place_id"):
             params["place_id"] = arguments["place_id"]
-        params["quality_grade"] = arguments.get("quality_grade") or "research"
-        params["per_page"] = min(arguments.get("per_page") or 10, 200)
-        params["order_by"] = "created_at"
+        quality_grade = arguments.get("quality_grade") or "research"
+        if quality_grade not in {"research", "needs_id", "casual"}:
+            return {
+                "status": "error",
+                "error": "quality_grade must be one of: research, needs_id, casual",
+                "parameter": "quality_grade",
+            }
+        id_below = arguments.get("id_below")
+        if id_below is not None and (
+            isinstance(id_below, bool) or not isinstance(id_below, int) or id_below < 1
+        ):
+            return {
+                "status": "error",
+                "error": "id_below must be a positive integer",
+                "parameter": "id_below",
+            }
+        if id_below is not None and page != 1:
+            return {
+                "status": "error",
+                "error": "page must be 1 when id_below cursor pagination is used",
+                "parameter": "page",
+            }
+        params["quality_grade"] = quality_grade
+        params["per_page"] = per_page
+        params["page"] = page
+        params["order_by"] = "id"
+        params["order"] = "desc"
+        if id_below is not None:
+            params["id_below"] = id_below
 
         if not params.get("taxon_id") and not params.get("taxon_name"):
             return {"status": "error", "error": "Either taxon_id or query is required"}
@@ -203,25 +309,74 @@ class INaturalistTool(BaseTool):
                 }
             )
 
+        total = data.get("total_results", len(results))
+        total_is_exact = isinstance(total, int) and not isinstance(total, bool)
+        returned = len(results)
+        page_has_more = bool(
+            total_is_exact
+            and returned
+            and page * per_page < total
+            and (page + 1) * per_page <= 10000
+        )
+        cursor_has_more = bool(total_is_exact and returned and page * per_page < total)
+        next_id_below = results[-1]["id"] if cursor_has_more else None
         return {
             "status": "success",
             "data": results,
             "metadata": {
                 "source": "iNaturalist",
-                "total_results": data.get("total_results", len(results)),
-                "per_page": params["per_page"],
+                "returned": returned,
+                "total_results": total if total_is_exact else None,
+                "total_results_is_exact": total_is_exact,
+                "total_results_scope": (
+                    "records_below_id_below" if id_below is not None else "all_matches"
+                ),
+                "page": page,
+                "per_page": per_page,
+                "page_has_more": page_has_more,
+                "next_page": page + 1 if page_has_more else None,
+                "has_more": cursor_has_more,
+                "id_below": id_below,
+                "next_id_below": next_id_below,
+                "truncated": page > 1 or cursor_has_more or id_below is not None,
+                "result_set_complete": bool(
+                    total_is_exact
+                    and id_below is None
+                    and page == 1
+                    and returned == total
+                ),
+                "api_result_window_limit": 10000,
+                "pagination_scope": "inaturalist_id_below_sliding_window",
+                "warning": (
+                    "Page-number pagination is limited to 10,000 results. Continue "
+                    "with page=1 and metadata.next_id_below to traverse beyond it."
+                    if total_is_exact and total > 10000
+                    else None
+                ),
             },
         }
 
     def _get_species_counts(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get species counts for a taxon group or location."""
+        pagination = self._validate_page(arguments, 20, 500)
+        if isinstance(pagination, dict):
+            return pagination
+        page, per_page = pagination
         params = {}
         if arguments.get("taxon_id"):
             params["taxon_id"] = arguments["taxon_id"]
         if arguments.get("place_id"):
             params["place_id"] = arguments["place_id"]
-        params["quality_grade"] = arguments.get("quality_grade") or "research"
-        params["per_page"] = min(arguments.get("per_page") or 20, 500)
+        quality_grade = arguments.get("quality_grade") or "research"
+        if quality_grade not in {"research", "needs_id", "casual"}:
+            return {
+                "status": "error",
+                "error": "quality_grade must be one of: research, needs_id, casual",
+                "parameter": "quality_grade",
+            }
+        params["quality_grade"] = quality_grade
+        params["per_page"] = per_page
+        params["page"] = page
 
         if not params.get("taxon_id") and not params.get("place_id"):
             return {
@@ -253,5 +408,11 @@ class INaturalistTool(BaseTool):
             "metadata": {
                 "source": "iNaturalist",
                 "total_species": data.get("total_results", len(results)),
+                **self._page_metadata(
+                    data.get("total_results", len(results)),
+                    params["page"],
+                    params["per_page"],
+                    len(results),
+                ),
             },
         }

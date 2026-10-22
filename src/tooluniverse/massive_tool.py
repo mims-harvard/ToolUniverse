@@ -109,11 +109,31 @@ class MassIVETool(BaseTool):
     def _search_datasets(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search MassIVE datasets."""
         page_size = arguments.get("page_size", 10)
+        page_number = arguments.get("page_number", 1)
+        if (
+            isinstance(page_size, bool)
+            or not isinstance(page_size, int)
+            or not 1 <= page_size <= 100
+        ):
+            return {
+                "status": "error",
+                "error": "page_size must be an integer between 1 and 100",
+            }
+        if (
+            isinstance(page_number, bool)
+            or not isinstance(page_number, int)
+            or page_number < 1
+        ):
+            return {
+                "status": "error",
+                "error": "page_number must be a positive integer (1-based)",
+            }
         species = arguments.get("species")
 
         params = {
             "resultType": "compact",
-            "pageSize": min(int(page_size), 100),
+            "pageSize": page_size,
+            "pageNumber": page_number,
         }
         if species:
             params["species"] = species
@@ -138,7 +158,26 @@ class MassIVETool(BaseTool):
             }
 
         datasets = [self._parse_dataset(item) for item in data]
-        return {"status": "success", "data": datasets}
+        returned = len(datasets)
+        possible_more = returned == page_size
+        records_through_page = (page_number - 1) * page_size + returned
+        metadata = {
+            "page_number": page_number,
+            "page_size": page_size,
+            "returned": returned,
+            "has_more": None if possible_more else False,
+            "possible_more": possible_more,
+            "next_page": page_number + 1 if possible_more else None,
+            "results_lower_bound": records_through_page,
+            "total_results": records_through_page if not possible_more else None,
+            "total_results_is_exact": not possible_more,
+        }
+        if possible_more:
+            metadata["warning"] = (
+                "MassIVE ProXI does not expose a total or next link. This full "
+                "page may have a successor; request next_page to continue."
+            )
+        return {"status": "success", "data": datasets, "metadata": metadata}
 
     def _get_dataset(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get details for a specific MassIVE dataset."""

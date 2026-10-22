@@ -1,7 +1,7 @@
 [
   {
     "name": "Bioconductor_search_packages",
-    "description": "Search Bioconductor bioinformatics R packages by keyword, topic, or analysis type. Bioconductor provides 2200+ open-source R packages for bioinformatics and computational biology covering RNA-seq, single-cell, proteomics, epigenomics, metabolomics, flow cytometry, imaging, and more. Returns matching packages with title, description, usage count, and relevance score. Powered by R-universe search index. Use this to find packages for specific bioinformatics workflows, then use Bioconductor_get_package for full details.",
+    "description": "Search Bioconductor bioinformatics R packages by keyword or analysis type. Results use exact r-universe skip pagination: start with offset=0 and continue with metadata.next_offset while metadata.has_more is true; metadata.total_results is exact. Returns matching packages with title, description, usage count, and relevance score.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -14,7 +14,16 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of results to return (default: 10, max: 100)"
+          "minimum": 1,
+          "maximum": 100,
+          "default": 10,
+          "description": "Packages per page (default 10, max 100)"
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based package offset. Continue with metadata.next_offset while metadata.has_more is true."
         }
       },
       "required": [
@@ -22,7 +31,11 @@
       ]
     },
     "fields": {
-      "endpoint": "https://bioc.r-universe.dev/api/search"
+      "endpoint": "https://bioc.r-universe.dev/api/search",
+      "param_mapping": {
+        "offset": "skip"
+      },
+      "pagination": "runiverse_skip"
     },
     "type": "BaseRESTTool",
     "test_examples": [

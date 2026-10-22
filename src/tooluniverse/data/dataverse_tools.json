@@ -1,7 +1,7 @@
 [
   {
     "name": "Dataverse_search_datasets",
-    "description": "Search the Harvard Dataverse repository for research datasets, files, and dataverses. Harvard Dataverse is one of the largest open-access research data repositories, hosting datasets from all academic disciplines including social sciences, natural sciences, medicine, and humanities. Returns dataset names, DOIs, descriptions, publication dates, publishers, citations, subjects, authors, and file counts. Supports filtering by type (dataset, file, dataverse) and pagination. Essential for finding research datasets with full metadata and citations.",
+    "description": "Search Harvard Dataverse for datasets, files, or dataverses. Returns one result page with an exact total and offset continuation metadata. Follow metadata.next_start while metadata.has_more is true. If Harvard's AWS WAF challenges the API client, the tool returns an explicit error instead of a false empty success.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -10,25 +10,26 @@
           "description": "Search query string for dataset title, description, or keyword (e.g., 'climate change', 'genomics', 'RNA-seq cancer')"
         },
         "type": {
-          "type": [
-            "string",
-            "null"
+          "type": "string",
+          "enum": [
+            "dataset",
+            "file",
+            "dataverse"
           ],
           "description": "Filter by type: 'dataset', 'file', or 'dataverse' (default: returns all types)"
         },
         "per_page": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "description": "Number of results per page (default 10)"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 10,
+          "description": "Number of results per page (1-1000; default 10). Dataverse silently replaces 0 with 10, so the wrapper rejects values below 1."
         },
         "start": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "description": "Result offset for pagination (0-based, e.g., 0, 10, 20)"
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based result offset. Use metadata.next_start rather than assuming every page is full."
         }
       },
       "required": [
@@ -36,7 +37,9 @@
       ]
     },
     "fields": {
-      "endpoint": "https://dataverse.harvard.edu/api/search"
+      "endpoint": "https://dataverse.harvard.edu/api/search",
+      "extract_path": "data",
+      "pagination": "dataverse_start"
     },
     "type": "BaseRESTTool",
     "test_examples": [

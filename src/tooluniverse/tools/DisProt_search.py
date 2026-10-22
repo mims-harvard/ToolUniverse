@@ -10,7 +10,8 @@ from ._shared_client import get_shared_client
 
 def DisProt_search(
     query: str,
-    page_size: Optional[int] = None,
+    page_size: Optional[int] = 10,
+    page: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -24,7 +25,9 @@ def DisProt_search(
     query : str
         Gene name (e.g., 'TP53'), protein-name fragment (e.g., 'kinase', 'amyloid'), ...
     page_size : int
-        Number of results to return (default 10, max 20).
+        Number of results per page (default 10, ToolUniverse safety maximum 500). The...
+    page : int
+        Zero-based result page. Use metadata.next_page to continue. Default: 0.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +44,7 @@ def DisProt_search(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"query": query, "page_size": page_size}.items()
+        for k, v in {"query": query, "page_size": page_size, "page": page}.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

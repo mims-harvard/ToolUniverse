@@ -100,13 +100,19 @@
   },
   {
     "name": "ROR_search_organizations",
-    "description": "Search the Research Organization Registry (ROR) for research institutions, universities, companies, and other organizations. ROR provides unique persistent identifiers for research organizations worldwide, similar to ORCID for researchers. Returns organization names, types, locations, external identifiers (GRID, ISNI, Wikidata), and ROR IDs. Use this to find organizations by name, identify affiliations, or get ROR IDs for detailed lookups with ROR_get_organization. Supports searching by name, acronym, or keyword.",
+    "description": "Search Research Organization Registry (ROR) v2 with explicit page pagination and exact total metadata. ROR fixes the page size at 20 and rejects page_size while silently ignoring limit, so this wrapper exposes only the supported page control. Continue with metadata.next_page while metadata.has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
         "query": {
           "type": "string",
           "description": "Search query for organization name, acronym, or keyword (e.g., 'MIT', 'Harvard University', 'Max Planck', 'CERN')"
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "One-based ROR result page. Each page contains up to 20 organizations. Continue with metadata.next_page."
         }
       },
       "required": [
@@ -115,7 +121,8 @@
     },
     "fields": {
       "endpoint": "https://api.ror.org/v2/organizations",
-      "params": {}
+      "params": {},
+      "pagination": "ror_page"
     },
     "type": "BaseRESTTool",
     "test_examples": [

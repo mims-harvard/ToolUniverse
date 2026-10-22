@@ -1,7 +1,7 @@
 [
   {
     "name": "QuickGO_annotations_by_gene",
-    "description": "Search Gene Ontology (GO) annotations for a specific gene product using the EBI QuickGO browser. Returns GO terms annotated to the protein/gene with evidence codes, qualifiers, and annotation sources. Accepts UniProtKB accessions (e.g., 'UniProtKB:P04637' for TP53). Provides more detailed annotation data than the standard GO API, including evidence provenance and assigned-by information. Useful for understanding gene function, localization, and biological processes.",
+    "description": "Search Gene Ontology (GO) annotations for a specific gene product using the EBI QuickGO browser. Returns GO terms annotated to the protein/gene with both GO evidence abbreviations and ECO accessions, qualifiers, and annotation sources. Results are pageable and can be filtered by an exact ECO evidence code. Accepts UniProtKB accessions (e.g., 'UniProtKB:P04637' for TP53).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -25,8 +25,21 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum number of annotations to return. Default: 25, max: 100.",
+          "description": "Number of annotations per page. Default: 25, max: 100.",
           "default": 25
+        },
+        "page": {
+          "type": "integer",
+          "description": "One-based result page. Use metadata.next_page while metadata.has_more is true.",
+          "default": 1,
+          "minimum": 1
+        },
+        "evidence_code": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Exact Evidence and Conclusion Ontology (ECO) accession filter, such as 'ECO:0000314' for direct assay evidence. This is distinct from the returned GO evidence abbreviation such as IDA."
         }
       },
       "required": [
@@ -104,6 +117,13 @@
                 ],
                 "description": "Evidence code (IDA, IMP, ISS, etc.)"
               },
+              "evidence_code": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Evidence and Conclusion Ontology accession (for example ECO:0000314)"
+              },
               "assigned_by": {
                 "type": [
                   "string",
@@ -137,7 +157,7 @@
   },
   {
     "name": "QuickGO_annotations_by_goterm",
-    "description": "Search for all gene products annotated with a specific Gene Ontology (GO) term using the EBI QuickGO browser. Returns the proteins/genes associated with the GO term, their evidence codes, and annotation sources. Can be filtered by species (taxon_id). Useful for finding all genes involved in a biological process, molecular function, or cellular component. Example: GO:0006915 (apoptotic process) returns 6800+ human annotations.",
+    "description": "Search for all gene products annotated with a specific Gene Ontology (GO) term using the EBI QuickGO browser. Returns the proteins/genes, GO evidence abbreviations, ECO accessions, and annotation sources. Results are pageable and can be filtered by species or an exact ECO evidence code. Example: GO:0006915 (apoptotic process) returns thousands of human annotations.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -154,8 +174,21 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum number of annotations to return. Default: 25, max: 100.",
+          "description": "Number of annotations per page. Default: 25, max: 100.",
           "default": 25
+        },
+        "page": {
+          "type": "integer",
+          "description": "One-based result page. Use metadata.next_page while metadata.has_more is true.",
+          "default": 1,
+          "minimum": 1
+        },
+        "evidence_code": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Exact Evidence and Conclusion Ontology (ECO) accession filter, such as 'ECO:0000314' for direct assay evidence."
         }
       },
       "required": [
@@ -233,6 +266,13 @@
                   "null"
                 ],
                 "description": "Evidence code"
+              },
+              "evidence_code": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Evidence and Conclusion Ontology accession"
               },
               "taxon_id": {
                 "type": [

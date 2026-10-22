@@ -2,7 +2,7 @@
   {
     "name": "GTEx_get_expression_summary",
     "type": "GTExExpressionTool",
-    "description": "Summarize tissue-specific expression (e.g., median TPM) for a gene across GTEx tissues. Accepts gene symbols (TP53, BRCA1) or Ensembl IDs. Use to profile baseline expression patterns for targets/biomarkers.",
+    "description": "Summarize tissue-specific expression (e.g., median TPM) for a gene across GTEx tissues. Accepts gene symbols (TP53, BRCA1) or Ensembl IDs and verifies their mapping to the dataset-compatible versioned GENCODE ID before querying expression. An unknown gene or resolver failure returns an error rather than an empty successful expression profile. Use to profile baseline expression patterns for targets/biomarkers.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -98,7 +98,7 @@
   {
     "name": "GTEx_query_eqtl",
     "type": "GTExEQTLTool",
-    "description": "Query GTEx single-tissue eQTL associations for a gene. Accepts gene symbols (TP53, BRCA1) or Ensembl IDs. Use to identify regulatory variants (variantId, pValue, slope) relevant to expression regulation.",
+    "description": "Query GTEx single-tissue eQTL associations for a gene. Accepts gene symbols (TP53, BRCA1) or Ensembl IDs and verifies their mapping to the dataset-compatible versioned GENCODE ID before querying associations. An unknown gene or resolver failure returns an error rather than an empty successful eQTL result. Use to identify regulatory variants (variantId, pValue, slope) relevant to expression regulation.",
     "parameter": {
       "type": "object",
       "properties": {

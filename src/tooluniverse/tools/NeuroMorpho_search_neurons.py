@@ -1,7 +1,7 @@
 """
 NeuroMorpho_search_neurons
 
-Search for neurons in NeuroMorpho.Org by species, brain region, cell type, or other attributes. S...
+Search NeuroMorpho neurons by species, brain region, cell type or other attributes. Results use z...
 """
 
 from typing import Any, Optional, Callable
@@ -21,7 +21,7 @@ def NeuroMorpho_search_neurons(
     validate: bool = True,
 ) -> Any:
     """
-    Search for neurons in NeuroMorpho.Org by species, brain region, cell type, or other attributes. S...
+    Search NeuroMorpho neurons by species, brain region, cell type or other attributes. Results use z...
 
     Parameters
     ----------

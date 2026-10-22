@@ -21,7 +21,8 @@ class OpenAIRETool(BaseTool):
     def run(self, arguments=None):
         arguments = arguments or {}
         query = arguments.get("query")
-        max_results = int(arguments.get("max_results", 10))
+        max_results = arguments.get("max_results", 10)
+        page = arguments.get("page", 1)
         # This class backs both OpenAIRE_search_publications and
         # OpenAIRE_search_projects with the same "type" param. Read the
         # per-instance declared default instead of hardcoding
@@ -35,6 +36,46 @@ class OpenAIRETool(BaseTool):
             .get("default", "publications")
         )
         prod_type = arguments.get("type", declared_default)
+        if (
+            isinstance(max_results, bool)
+            or not isinstance(max_results, int)
+            or not 1 <= max_results <= 1000
+        ):
+            return {
+                "status": "success",
+                "data": {
+                    "status": "error",
+                    "error": "max_results must be an integer between 1 and 1000",
+                    "query": query or "",
+                    "type": prod_type,
+                    "total_results": 0,
+                    "results": [],
+                },
+            }
+        if isinstance(page, bool) or not isinstance(page, int) or page < 1:
+            return {
+                "status": "success",
+                "data": {
+                    "status": "error",
+                    "error": "page must be a positive integer (1-based)",
+                    "query": query or "",
+                    "type": prod_type,
+                    "total_results": 0,
+                    "results": [],
+                },
+            }
+        if page * max_results > 10_000:
+            return {
+                "status": "success",
+                "data": {
+                    "status": "error",
+                    "error": "OpenAIRE requires page * max_results <= 10000",
+                    "query": query or "",
+                    "type": prod_type,
+                    "total_results": 0,
+                    "results": [],
+                },
+            }
 
         if not query:
             return {
@@ -76,7 +117,8 @@ class OpenAIRETool(BaseTool):
         # `keywords` for free-text search.
         params = {
             "format": "json",
-            "size": max(1, min(max_results, 100)),
+            "size": max_results,
+            "page": page,
             "keywords": query,
         }
         try:
@@ -127,17 +169,43 @@ class OpenAIRETool(BaseTool):
         if total_results is None:
             total_results = len(results)
 
-        return {
+        header = data.get("response", {}).get("header", {})
+
+        def _header_int(name, default):
+            value = header.get(name, default)
+            if isinstance(value, dict):
+                value = value.get("$", default)
+            try:
+                return int(value)
+            except (TypeError, ValueError):
+                return default
+
+        actual_size = _header_int("size", max_results)
+        actual_page = _header_int("page", page)
+        accessible_results = min(total_results, 10_000)
+        page_end = (actual_page - 1) * actual_size + len(results)
+        has_more = page_end < accessible_results
+        result_data = {
             "status": "success",
-            "data": {
-                "status": "success",
-                "query": query,
-                "type": prod_type,
-                "total_results": total_results,
-                "returned": len(results),
-                "results": results,
-            },
+            "query": query,
+            "type": prod_type,
+            "total_results": total_results,
+            "total_results_is_exact": True,
+            "accessible_results": accessible_results,
+            "returned": len(results),
+            "page": actual_page,
+            "page_size": actual_size,
+            "has_more": has_more,
+            "next_page": actual_page + 1 if has_more else None,
+            "upstream_truncated": total_results > accessible_results,
+            "results": results,
         }
+        if total_results > accessible_results:
+            result_data["warning"] = (
+                "OpenAIRE reports more than 10,000 matches, but its API only "
+                "allows the first 10,000 results for a query."
+            )
+        return {"status": "success", "data": result_data}
 
     def _endpoint_for_type(self, prod_type):
         if prod_type == "publications":
@@ -232,57 +300,85 @@ class OpenAIRETool(BaseTool):
 
     def _normalize(self, data, prod_type):
         results = []
-        # OpenAIRE JSON has a root 'response' with 'results' → 'result' list
         try:
             items = data.get("response", {}).get("results", {}).get("result", [])
         except Exception:
             items = []
+        if isinstance(items, dict):
+            items = [items]
 
-        for it in items:
-            # header may contain identifiers, not used presently
-            _ = it.get("header", {}) if isinstance(it.get("header"), dict) else {}
-            metadata = (
-                it.get("metadata", {}) if isinstance(it.get("metadata"), dict) else {}
+        def _as_list(value):
+            if value is None:
+                return []
+            return value if isinstance(value, list) else [value]
+
+        def _result_url(result_obj):
+            children = result_obj.get("children", {})
+            if not isinstance(children, dict):
+                return None
+            instances = _as_list(children.get("instance"))
+            for child in _as_list(children.get("result")):
+                if isinstance(child, dict):
+                    instances.extend(_as_list(child.get("instance")))
+            for instance in instances:
+                if not isinstance(instance, dict):
+                    continue
+                for field in ("fulltext", "url"):
+                    candidate = self._scalar(instance.get(field))
+                    if candidate:
+                        return str(candidate).replace("&amp;", "&")
+                for webresource in _as_list(instance.get("webresource")):
+                    if not isinstance(webresource, dict):
+                        continue
+                    candidate = self._scalar(webresource.get("url"))
+                    if candidate:
+                        return str(candidate).replace("&amp;", "&")
+            return None
+
+        for item in items:
+            if not isinstance(item, dict):
+                continue
+            metadata = item.get("metadata", {})
+            if not isinstance(metadata, dict):
+                metadata = {}
+            entity = metadata.get("oaf:entity", {})
+            result_obj = (
+                entity.get("oaf:result", {}) if isinstance(entity, dict) else {}
             )
-            title = None
+            # Retain compatibility with older OpenAIRE responses that placed
+            # oaf:result directly below metadata.
+            if not isinstance(result_obj, dict) or not result_obj:
+                result_obj = metadata.get("oaf:result", {})
+            if not isinstance(result_obj, dict):
+                result_obj = {}
+
+            title = self._scalar(result_obj.get("title"))
             authors = []
+            for creator in _as_list(result_obj.get("creator")):
+                name = self._scalar(creator)
+                if name is not None and str(name) not in authors:
+                    authors.append(str(name))
+
+            date_obj = result_obj.get("dateofacceptance") or result_obj.get("date")
+            if isinstance(date_obj, dict) and date_obj.get("year") is not None:
+                date_value = self._scalar(date_obj.get("year"))
+            else:
+                date_value = self._scalar(date_obj)
             year = None
+            if date_value is not None:
+                year_text = str(date_value)
+                year = int(year_text[:4]) if year_text[:4].isdigit() else date_value
+
             doi = None
-            url = None
+            for pid in _as_list(result_obj.get("pid")):
+                if isinstance(pid, dict) and pid.get("@classid") == "doi":
+                    doi = self._scalar(pid)
+                    if doi:
+                        break
 
-            # Titles can be nested in 'oaf:result' structure
-            result_obj = metadata.get("oaf:result", {})
-            if isinstance(result_obj, dict):
-                t = result_obj.get("title")
-                if isinstance(t, list) and t:
-                    title = t[0].get("$")
-                elif isinstance(t, dict):
-                    title = t.get("$")
-
-                # Authors
-                creators = result_obj.get("creator", [])
-                if isinstance(creators, list):
-                    for c in creators:
-                        name = c.get("$")
-                        if name:
-                            authors.append(name)
-
-                # Year
-                date_obj = result_obj.get("dateofacceptance") or result_obj.get("date")
-                if isinstance(date_obj, dict):
-                    year = date_obj.get("year") or date_obj.get("$")
-
-                # DOI and URL
-                pid = result_obj.get("pid", [])
-                if isinstance(pid, list):
-                    for p in pid:
-                        if p.get("@classid") == "doi":
-                            doi = p.get("$")
-                bestaccessright = result_obj.get("bestaccessright", {})
-                if isinstance(bestaccessright, dict):
-                    url_value = bestaccessright.get("$")
-                    if url_value:
-                        url = url_value
+            url = _result_url(result_obj)
+            if not url and doi:
+                url = f"https://doi.org/{doi}"
 
             results.append(
                 {

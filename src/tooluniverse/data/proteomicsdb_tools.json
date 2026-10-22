@@ -143,7 +143,7 @@
   {
     "name": "ProteomicsDB_search_proteins",
     "type": "ProteomicsDBTool",
-    "description": "Search ProteomicsDB for proteins by gene symbol, UniProt accession, or protein name. ProteomicsDB contains mass spectrometry-based proteomics data for human (and other organisms) proteins. Returns matching protein entries with UniProt IDs, gene names, protein names, entry names, and molecular masses. Useful for finding the correct UniProt accession before querying expression data with ProteomicsDB_get_protein_expression. Searches across gene name, UniProt ID, and protein name fields simultaneously.",
+    "description": "Search ProteomicsDB proteins by gene symbol, UniProt accession, or protein name with OData offset pagination. Continue with metadata.next_offset while metadata.has_more is true. Metadata distinguishes exact matching raw rows from unique proteins returned after per-page deduplication.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -165,12 +165,22 @@
         },
         "max_results": {
           "type": "integer",
-          "description": "Maximum number of results to return (default: 20, max: 100)"
+          "description": "Maximum raw OData rows to request (default: 20, max: 100)",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Number of raw matching rows to skip. Continue with metadata.next_offset.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": [
         "query"
-      ]
+      ],
+      "additionalProperties": false
     },
     "return_schema": {
       "type": "object",

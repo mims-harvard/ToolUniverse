@@ -13,6 +13,8 @@ def GtoPdb_search_targets(
     gene_symbol: Optional[str] = None,
     type_: Optional[str] = None,
     query: Optional[str] = None,
+    limit: Optional[int] = 25,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -31,6 +33,10 @@ def GtoPdb_search_targets(
         Target type filter, enforced by ToolUniverse against each returned record (Gt...
     query : str
         Name/keyword to search for. Alias for the "name" parameter.
+    limit : int
+        Number of targets on this page (1-200; default 25).
+    offset : int
+        Zero-based target offset. Continue with next_offset while has_more is true.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +58,8 @@ def GtoPdb_search_targets(
             "gene_symbol": gene_symbol,
             "type": type_,
             "query": query,
+            "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

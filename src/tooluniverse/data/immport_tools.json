@@ -1,7 +1,7 @@
 [
   {
     "name": "ImmPort_search_studies",
-    "description": "Search the ImmPort immunology database for studies by keyword, disease condition, assay method, or research focus. ImmPort is a NIAID-funded repository with 900+ open studies covering vaccine trials, flow cytometry, ELISPOT, RNA-seq, and clinical immunology data. Assay methods include: Flow Cytometry, ELISPOT, ELISA, RNA sequencing, Transcription profiling by array, Hemagglutination Inhibition, Luminex xMAP, Q-PCR, CyTOF, and more. Research focuses include: Vaccine Response, Infection Response, Immune Response, Transplantation, Autoimmune, Allergy, Preterm Birth. The species filter is applied server-side; condition_or_disease, assay_method, and research_focus filters are applied client-side.",
+    "description": "Search ImmPort studies by keyword with optional species and client-side substring filters. Results use the official raw-hit fromRecord pagination: pass metadata.next_from_record as from_record while metadata.has_more is true. This is especially important with client-side filters, because a window may contain fewer filtered studies than limit.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -29,6 +29,12 @@
           "type": "integer",
           "description": "Maximum number of studies to return (1-100, default 10)",
           "default": 10
+        },
+        "from_record": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based ImmPort raw search-hit offset (official fromRecord parameter)."
         }
       },
       "required": ["query"]

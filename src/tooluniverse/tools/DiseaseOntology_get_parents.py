@@ -1,7 +1,7 @@
 """
 DiseaseOntology_get_parents
 
-Get the parent disease terms for a Disease Ontology term, enabling navigation of the disease hier...
+Get direct parents for a Disease Ontology term and expand each parent by one additional level. Th...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def DiseaseOntology_get_parents(
     validate: bool = True,
 ) -> Any:
     """
-    Get the parent disease terms for a Disease Ontology term, enabling navigation of the disease hier...
+    Get direct parents for a Disease Ontology term and expand each parent by one additional level. Th...
 
     Parameters
     ----------

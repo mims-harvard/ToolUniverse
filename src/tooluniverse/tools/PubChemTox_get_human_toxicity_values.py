@@ -11,6 +11,8 @@ from ._shared_client import get_shared_client
 def PubChemTox_get_human_toxicity_values(
     cid: Optional[int] = None,
     compound_name: Optional[str] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,6 +27,10 @@ def PubChemTox_get_human_toxicity_values(
         PubChem Compound ID. Examples: 241 (benzene), 887 (methanol), 702 (ethanol), ...
     compound_name : str
         Compound name (used if cid is not provided). Examples: 'benzene', 'methanol',...
+    limit : int
+        Page size for human toxicity values. Default 30. Continue with metadata.next_...
+    offset : int
+        Zero-based human-toxicity-value offset. Default 0.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +47,12 @@ def PubChemTox_get_human_toxicity_values(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"cid": cid, "compound_name": compound_name}.items()
+        for k, v in {
+            "cid": cid,
+            "compound_name": compound_name,
+            "limit": limit,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

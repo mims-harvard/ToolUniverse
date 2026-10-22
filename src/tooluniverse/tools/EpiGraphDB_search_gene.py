@@ -27,7 +27,7 @@ def EpiGraphDB_search_gene(
     gene_id : str
         Ensembl gene ID (e.g., 'ENSG00000012048'). Either gene_name or gene_id required.
     limit : int
-        Maximum results to return (default 10, max 50).
+        Maximum results to return (default 10, upstream max 200). A full fuzzy-name p...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

@@ -1,7 +1,7 @@
 [
   {
     "name": "MassBank_search_by_compound",
-    "description": "Search MassBank Europe mass spectrometry spectral library by compound name. MassBank is an open-access mass spectrometry reference spectral library for metabolomics, exposomics, and environmental chemistry. Returns MS/MS spectra records with compound information (SMILES, InChI, formula, exact mass), acquisition parameters (instrument type, MS level, ionization mode, collision energy), and spectral peaks. Useful for identifying unknown metabolites or environmental contaminants.",
+    "description": "Search MassBank Europe spectra by compound name. MassBank returns the full matching array and ignores limit, so ToolUniverse applies exact client-side pagination: start with offset=0 and continue with metadata.next_offset while metadata.has_more is true. metadata.total_results is exact. Returns compound structures, acquisition parameters, and spectral peaks.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -14,9 +14,15 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of spectra to return (default 10)",
+          "description": "Number of spectra in this client-side page (default 10)",
           "default": 10,
           "minimum": 1
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based spectrum offset. Continue with metadata.next_offset while metadata.has_more is true."
         }
       },
       "required": [
@@ -25,7 +31,8 @@
     },
     "fields": {
       "endpoint": "https://massbank.eu/MassBank-api/records",
-      "client_side_limit": true
+      "client_side_limit": true,
+      "pagination": "client_side_offset"
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -143,7 +150,7 @@
   },
   {
     "name": "MassBank_search_by_formula",
-    "description": "Search MassBank Europe spectral library by molecular formula. Returns all mass spectra records for compounds with the specified molecular formula. Useful when you know the formula of an unknown compound and want to find candidate matches in the MS spectral library.",
+    "description": "Search MassBank Europe spectra by molecular formula. MassBank returns the full matching array and ignores limit, so ToolUniverse applies exact client-side pagination: start with offset=0 and continue with metadata.next_offset while metadata.has_more is true. metadata.total_results is exact.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -156,9 +163,15 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of spectra to return (default 10)",
+          "description": "Number of spectra in this client-side page (default 10)",
           "default": 10,
           "minimum": 1
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based spectrum offset. Continue with metadata.next_offset while metadata.has_more is true."
         }
       },
       "required": [
@@ -167,7 +180,8 @@
     },
     "fields": {
       "endpoint": "https://massbank.eu/MassBank-api/records",
-      "client_side_limit": true
+      "client_side_limit": true,
+      "pagination": "client_side_offset"
     },
     "type": "BaseRESTTool",
     "test_examples": [

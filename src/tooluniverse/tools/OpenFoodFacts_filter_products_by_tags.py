@@ -1,7 +1,7 @@
 """
 OpenFoodFacts_filter_products_by_tags
 
-Structured / faceted product search of the Open Food Facts database via the v2 search API. Filter...
+Structured Open Food Facts v2 tag search. Multiple controlled-vocabulary filters combine with AND...
 """
 
 from typing import Any, Optional, Callable
@@ -17,15 +17,15 @@ def OpenFoodFacts_filter_products_by_tags(
     labels_tags: Optional[str] = None,
     countries_tags: Optional[str] = None,
     fields: Optional[str] = None,
-    page_size: Optional[int] = None,
-    page: Optional[int] = None,
+    page_size: Optional[int] = 20,
+    page: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Structured / faceted product search of the Open Food Facts database via the v2 search API. Filter...
+    Structured Open Food Facts v2 tag search. Multiple controlled-vocabulary filters combine with AND...
 
     Parameters
     ----------

@@ -1,7 +1,7 @@
 """
 InterPro_list_member_signatures
 
-Browse / paginate the signature catalog of a single InterPro member database. Returns a page of m...
+Browse the signature catalog of one InterPro member database. Results are cursor-paginated: when ...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,14 @@ def InterPro_list_member_signatures(
     member_database: str,
     entry_type: Optional[str] = None,
     page_size: Optional[int] = None,
+    cursor: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Browse / paginate the signature catalog of a single InterPro member database. Returns a page of m...
+    Browse the signature catalog of one InterPro member database. Results are cursor-paginated: when ...
 
     Parameters
     ----------
@@ -28,6 +29,8 @@ def InterPro_list_member_signatures(
         Optional filter by entry type: family, domain, homologous_superfamily, or site.
     page_size : int
         Number of signatures to return per page (1-100, default 20).
+    cursor : str
+        Opaque InterPro cursor returned as next_cursor by a previous call.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +51,7 @@ def InterPro_list_member_signatures(
             "member_database": member_database,
             "entry_type": entry_type,
             "page_size": page_size,
+            "cursor": cursor,
         }.items()
         if v is not None
     }

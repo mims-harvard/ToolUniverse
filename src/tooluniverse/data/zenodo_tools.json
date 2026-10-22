@@ -2,7 +2,7 @@
   {
     "type": "ZenodoRESTTool",
     "name": "Zenodo_search_records",
-    "description": "Search Zenodo for research data, publications, and datasets. Zenodo is an open-access repository that hosts research outputs from all fields of science, including papers, datasets, software, and more. Returns records with title, authors, DOI, and file information. Use this to discover datasets for your research topic, find citable DOIs, or explore community repositories. Find record IDs to use with Zenodo_get_record for complete metadata.",
+    "description": "Search Zenodo for research data, publications, and datasets with exact totals and explicit page navigation. Continue with metadata.next_page while metadata.has_more is true. Returns records with title, authors, DOI, and file information.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -17,6 +17,12 @@
           "minimum": 1,
           "maximum": 200
         },
+        "page": {
+          "type": "integer",
+          "description": "One-based result page. Continue with metadata.next_page.",
+          "default": 1,
+          "minimum": 1
+        },
         "community": {
           "type": "string",
           "description": "Optional community slug to filter results by specific research community (e.g., 'zenodo', 'ecfunded')."
@@ -24,7 +30,8 @@
       },
       "required": [
         "query"
-      ]
+      ],
+      "additionalProperties": false
     },
     "fields": {
       "endpoint": "https://zenodo.org/api/records",
@@ -87,6 +94,44 @@
         "error": {
           "type": ["string", "null"],
           "description": "Error message if status is error"
+        },
+        "metadata": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "page": {
+              "type": "integer"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "returned": {
+              "type": "integer"
+            },
+            "total_results": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "total_results_is_exact": {
+              "type": "boolean"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_page": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "result_set_complete": {
+              "type": "boolean"
+            }
+          }
         }
       }
     },

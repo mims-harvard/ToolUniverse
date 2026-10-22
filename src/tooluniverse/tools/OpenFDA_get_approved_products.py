@@ -1,7 +1,7 @@
 """
 OpenFDA_get_approved_products
 
-Get FDA-approved product details for a drug including all marketed formulations, active ingredien...
+Get FDA-approved product details for one Drugs@FDA application including all marketed formulation...
 """
 
 from typing import Any, Optional, Callable
@@ -18,14 +18,14 @@ def OpenFDA_get_approved_products(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get FDA-approved product details for a drug including all marketed formulations, active ingredien...
+    Get FDA-approved product details for one Drugs@FDA application including all marketed formulation...
 
     Parameters
     ----------
     operation : str
         Operation type
     drug_name : str
-        Drug name (brand or generic, e.g., 'atorvastatin', 'Lipitor')
+        Drug name (brand or generic, e.g., 'atorvastatin', 'Lipitor'). Provide either...
     application_number : str
         FDA application number (e.g., 'NDA020702')
     stream_callback : Callable, optional

@@ -1,7 +1,7 @@
 [
   {
     "name": "NASACMR_search_collections",
-    "description": "Search NASA's Common Metadata Repository (CMR) for Earth observation datasets and satellite collections. CMR is NASA's centralized metadata repository hosting 40,000+ collections from NASA's Earth Observing System (EOS) missions. Search for climate, atmospheric, ocean, land surface, cryosphere, and space weather datasets from satellites like MODIS, Landsat, GOES, Sentinel, GRACE, ICESat, and more. Returns dataset titles, summaries, temporal coverage, data centers, processing levels, and access links.",
+    "description": "Search NASA CMR for Earth-observation collections. Results use exact one-based CMR pagination: start with page=1 and continue with metadata.next_page while metadata.has_more is true; metadata.total_results comes from the CMR-Hits response header. Returns titles, summaries, temporal coverage, data centers, processing levels, and links.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -14,7 +14,16 @@
             "integer",
             "null"
           ],
-          "description": "Number of results to return (default 10, max 2000)"
+          "minimum": 1,
+          "maximum": 2000,
+          "default": 10,
+          "description": "Collections per page (default 10, max 2000)"
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "One-based CMR page number. Continue with metadata.next_page."
         },
         "data_center": {
           "type": [
@@ -36,7 +45,11 @@
       ]
     },
     "fields": {
-      "endpoint": "https://cmr.earthdata.nasa.gov/search/collections.json"
+      "endpoint": "https://cmr.earthdata.nasa.gov/search/collections.json",
+      "param_mapping": {
+        "page": "page_num"
+      },
+      "pagination": "cmr_page"
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -190,7 +203,7 @@
   },
   {
     "name": "NASACMR_search_granules",
-    "description": "Search NASA CMR for individual granules (data files/scenes) within Earth observation collections. Granules are the individual data files (e.g., a single day's MODIS image, one Landsat scene). Search by collection concept ID, bounding box, time range, or keyword. Returns file metadata including download links, spatial coverage, and temporal information. Useful for finding specific satellite data files to download.",
+    "description": "Search NASA CMR for individual granules. Results use exact one-based CMR pagination: start with page=1 and continue with metadata.next_page while metadata.has_more is true; metadata.total_results comes from the CMR-Hits header. Filter by collection, time, or bounding box and retrieve download/spatial metadata.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -227,13 +240,26 @@
             "integer",
             "null"
           ],
-          "description": "Number of results (default 10, max 2000)"
+          "minimum": 1,
+          "maximum": 2000,
+          "default": 10,
+          "description": "Granules per page (default 10, max 2000)"
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "One-based CMR page number. Continue with metadata.next_page."
         }
       },
       "required": []
     },
     "fields": {
-      "endpoint": "https://cmr.earthdata.nasa.gov/search/granules.json"
+      "endpoint": "https://cmr.earthdata.nasa.gov/search/granules.json",
+      "param_mapping": {
+        "page": "page_num"
+      },
+      "pagination": "cmr_page"
     },
     "type": "BaseRESTTool",
     "test_examples": [

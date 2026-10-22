@@ -2,7 +2,7 @@
   {
     "name": "Xenbase_search_genes",
     "type": "XenbaseTool",
-    "description": "Search for Xenopus (frog) genes in Xenbase via the Alliance of Genome Resources API. Returns gene IDs, symbols, names, and species for both Xenopus tropicalis and Xenopus laevis. Xenbase is the primary database for Xenopus genetics and developmental biology. Optionally filter by species (tropicalis or laevis). Useful for finding amphibian homologs of human disease genes.",
+    "description": "Search for Xenopus (frog) genes in Xenbase via the Alliance of Genome Resources API. Returns gene IDs, symbols, names, species, every upstream synonym, and synonyms_count for both Xenopus tropicalis and Xenopus laevis; aliases are not limited to the former five-item prefix. Optionally filter by species (tropicalis or laevis). Useful for finding and disambiguating amphibian homologs of human disease genes.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -42,6 +42,10 @@
           "synonyms": {
             "type": "array",
             "items": {"type": "string"}
+          },
+          "synonyms_count": {
+            "type": "integer",
+            "description": "Number of complete upstream synonyms returned"
           }
         }
       }

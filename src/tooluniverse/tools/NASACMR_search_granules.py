@@ -1,7 +1,7 @@
 """
 NASACMR_search_granules
 
-Search NASA CMR for individual granules (data files/scenes) within Earth observation collections....
+Search NASA CMR for individual granules. Results use exact one-based CMR pagination: start with p...
 """
 
 from typing import Any, Optional, Callable
@@ -13,14 +13,15 @@ def NASACMR_search_granules(
     short_name: Optional[str] = None,
     temporal: Optional[str] = None,
     bounding_box: Optional[str] = None,
-    page_size: Optional[int] = None,
+    page_size: Optional[int] = 10,
+    page: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search NASA CMR for individual granules (data files/scenes) within Earth observation collections....
+    Search NASA CMR for individual granules. Results use exact one-based CMR pagination: start with p...
 
     Parameters
     ----------
@@ -33,7 +34,9 @@ def NASACMR_search_granules(
     bounding_box : str
         Spatial bounding box: 'west,south,east,north' in decimal degrees. Example: '-...
     page_size : int
-        Number of results (default 10, max 2000)
+        Granules per page (default 10, max 2000)
+    page : int
+        One-based CMR page number. Continue with metadata.next_page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def NASACMR_search_granules(
             "temporal": temporal,
             "bounding_box": bounding_box,
             "page_size": page_size,
+            "page": page,
         }.items()
         if v is not None
     }

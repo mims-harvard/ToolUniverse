@@ -10,6 +10,8 @@ from ._shared_client import get_shared_client
 
 def HOCOMOCO_search_motifs(
     query: str,
+    offset: Optional[int] = 0,
+    limit: Optional[int] = 10,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -22,6 +24,10 @@ def HOCOMOCO_search_motifs(
     ----------
     query : str
         Gene symbol or protein name to search for TF binding motifs. Examples: 'TP53'...
+    offset : int
+        Zero-based offset into all matching HOCOMOCO motif IDs. Use metadata.next_off...
+    limit : int
+        Number of motif details to retrieve for this page. Each item requires a separ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +42,11 @@ def HOCOMOCO_search_motifs(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"query": query}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {"query": query, "offset": offset, "limit": limit}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "HOCOMOCO_search_motifs",

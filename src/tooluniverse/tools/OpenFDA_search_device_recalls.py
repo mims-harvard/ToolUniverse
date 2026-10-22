@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def OpenFDA_search_device_recalls(
     search: str,
-    limit: Optional[int] = None,
-    skip: Optional[int] = None,
+    limit: Optional[int] = 5,
+    skip: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -27,7 +27,7 @@ def OpenFDA_search_device_recalls(
     limit : int
         Maximum number of results (default 5, max 100)
     skip : int
-        Number of results to skip for pagination (max 25000)
+        Number of results to skip; continue with metadata.next_skip (max 25000)
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

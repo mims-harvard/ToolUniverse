@@ -42,12 +42,30 @@ class GEORESTTool(NCBIEUtilsTool):
         url_path = self.endpoint_template
         return self.base_url + url_path
 
+    @staticmethod
+    def _dataset_type_clause(arguments: Dict[str, Any]) -> str:
+        """Restrict db=gds searches to actual datasets, not samples/platforms."""
+        record_type = arguments.get("record_type", "both")
+        if record_type == "series":
+            return "gse[ETYP]"
+        if record_type == "curated_dataset":
+            return "gds[ETYP]"
+        return "(gse[ETYP] OR gds[ETYP])"
+
     def _build_params(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Build parameters for GEO API request."""
-        params = {"db": "gds", "retmode": "json", "retmax": 50}
+        params = {
+            "db": "gds",
+            "retmode": "json",
+            "retmax": arguments.get("limit", 50),
+            "retstart": arguments.get("offset", 0),
+        }
 
-        # Build search query
-        query_parts = []
+        # db=gds also indexes GSM samples and GPL platforms. This tool promises
+        # datasets, so apply an upstream entry-type filter rather than fetching
+        # a mixed page and dropping non-datasets client-side (which would make
+        # count and pagination incorrect).
+        query_parts = [self._dataset_type_clause(arguments)]
         if "query" in arguments:
             query_parts.append(arguments["query"])
 
@@ -76,9 +94,6 @@ class GEORESTTool(NCBIEUtilsTool):
 
         if query_parts:
             params["term"] = " AND ".join(query_parts)
-
-        if "limit" in arguments:
-            params["retmax"] = min(arguments["limit"], 500)
 
         if "sort" in arguments:
             sort = arguments["sort"]
@@ -126,12 +141,63 @@ class GEORESTTool(NCBIEUtilsTool):
         if self.mode == "supplementary_files":
             return self._list_supplementary_files(arguments)
 
+        if self.endpoint_template == "/esearch.fcgi":
+            limit = arguments.get("limit", 50)
+            offset = arguments.get("offset", 0)
+            record_type = arguments.get("record_type", "both")
+            if (
+                isinstance(limit, bool)
+                or not isinstance(limit, int)
+                or not 1 <= limit <= 500
+            ):
+                return {
+                    "status": "error",
+                    "error": "limit must be an integer between 1 and 500",
+                    "parameter": "limit",
+                }
+            if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+                return {
+                    "status": "error",
+                    "error": "offset must be a non-negative integer",
+                    "parameter": "offset",
+                }
+            if record_type not in {"series", "curated_dataset", "both"}:
+                return {
+                    "status": "error",
+                    "error": (
+                        "record_type must be 'series', 'curated_dataset', or 'both'"
+                    ),
+                    "parameter": "record_type",
+                }
+
         # Set endpoint for the base class
         self.endpoint = self.endpoint_template
         params = self._build_params(arguments)
 
         # Use the parent class's _make_request with rate limiting
-        return self._make_request(self.endpoint, params)
+        result = self._make_request(self.endpoint, params)
+        if (
+            result.get("status") == "success"
+            and self.endpoint_template == "/esearch.fcgi"
+        ):
+            data = result.get("data", {})
+            esearch = data.get("esearchresult", {}) if isinstance(data, dict) else {}
+            ids = esearch.get("idlist", []) if isinstance(esearch, dict) else []
+            total = int(esearch.get("count", 0)) if isinstance(esearch, dict) else 0
+            offset = arguments.get("offset", 0)
+            returned = len(ids)
+            has_more = offset + returned < total
+            result["metadata"] = {
+                "total_results": total,
+                "returned": returned,
+                "offset": offset,
+                "limit": arguments.get("limit", 50),
+                "record_type": arguments.get("record_type", "both"),
+                "has_more": has_more,
+                "next_offset": offset + returned if returned and has_more else None,
+                "truncated": has_more,
+            }
+        return result
 
     @staticmethod
     def _geo_bucket(accession: str) -> str:
@@ -303,10 +369,15 @@ class GEOSearchDatasets(GEORESTTool):
 
     def _build_params(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Build parameters for GEO dataset search."""
-        params = {"db": "gds", "retmode": "json", "retmax": 50}
+        params = {
+            "db": "gds",
+            "retmode": "json",
+            "retmax": arguments.get("limit", 50),
+            "retstart": arguments.get("offset", 0),
+        }
 
-        # Build search query
-        query_parts = []
+        # Keep the count/offset space restricted to real GEO datasets.
+        query_parts = [self._dataset_type_clause(arguments)]
         if "query" in arguments:
             query_parts.append(arguments["query"])
 
@@ -324,9 +395,6 @@ class GEOSearchDatasets(GEORESTTool):
 
         if query_parts:
             params["term"] = " AND ".join(query_parts)
-
-        if "limit" in arguments:
-            params["retmax"] = min(arguments["limit"], 500)
 
         return params
 

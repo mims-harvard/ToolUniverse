@@ -1,7 +1,7 @@
 """
 FDA_get_drug_names_by_indication_stats
 
-Retrieve and aggregate drug names by indication using FDA count API. This tool uses count mechani...
+Retrieve generic-name and brand-name frequency distributions for an indication using the openFDA ...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def FDA_get_drug_names_by_indication_stats(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve and aggregate drug names by indication using FDA count API. This tool uses count mechani...
+    Retrieve generic-name and brand-name frequency distributions for an indication using the openFDA ...
 
     Parameters
     ----------

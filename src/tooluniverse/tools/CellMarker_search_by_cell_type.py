@@ -1,7 +1,7 @@
 """
 CellMarker_search_by_cell_type
 
-Search the CellMarker 2.0 database for marker genes of a specific cell type. Returns curated list...
+Search the CellMarker 2.0 database for marker genes of a cell-type phrase. Matching respects phra...
 """
 
 from typing import Any, Optional, Callable
@@ -20,7 +20,7 @@ def CellMarker_search_by_cell_type(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search the CellMarker 2.0 database for marker genes of a specific cell type. Returns curated list...
+    Search the CellMarker 2.0 database for marker genes of a cell-type phrase. Matching respects phra...
 
     Parameters
     ----------
@@ -33,7 +33,7 @@ def CellMarker_search_by_cell_type(
     limit : int
         Maximum records to return. Default 200; total_records reports how many matche...
     offset : int
-        Records to skip before returning, for paging through total_records.
+        Records to skip before returning, for paging through total_records. Use data....
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

@@ -1,7 +1,7 @@
 [
   {
     "name": "PubChemBioAssay_get_assay",
-    "description": "Get detailed description of a PubChem BioAssay by its AID (Assay ID). PubChem BioAssay stores over 1.3 million biological screening results from drug discovery, toxicology, and biological pathway research. Returns assay name, description, protocol, targets, and source information. Example: AID 1234 returns 'NIH Compound Library Profiling: Compound and DTT Dependent Redox Cycling H2O2 Generation' from University of Pittsburgh MLSC.",
+    "description": "Get the complete detailed description of a PubChem BioAssay by its AID (Assay ID), including every description, protocol, and comment paragraph plus explicit counts. PubChem BioAssay stores over 1.3 million biological screening results from drug discovery, toxicology, and biological pathway research. Example: AID 1234 returns 'NIH Compound Library Profiling: Compound and DTT Dependent Redox Cycling H2O2 Generation' from University of Pittsburgh MLSC.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -73,6 +73,15 @@
               },
               "description": "Additional comments"
             },
+            "description_count": {
+              "type": "integer"
+            },
+            "protocol_count": {
+              "type": "integer"
+            },
+            "comment_count": {
+              "type": "integer"
+            },
             "targets": {
               "type": "array",
               "items": {
@@ -118,13 +127,26 @@
   },
   {
     "name": "PubChemBioAssay_search_by_gene",
-    "description": "Search for PubChem BioAssays that target a specific gene. Returns the list of assay IDs targeting the gene along with summaries for the top results. Useful for finding screening data, drug discovery efforts, and toxicology studies targeting a particular gene product. Example: searching for 'TP53' returns assays for p53 activation, p53-mediated apoptosis, and Tox21 genotoxicity screens; 'TSHR' returns thyroid stimulating hormone receptor assays.",
+    "description": "Search for PubChem BioAssays that target a specific gene with recoverable offset pagination. Returns a summary for every assay on the requested page plus total_assays, has_more, and next_offset. Useful for finding screening data, drug discovery efforts, and toxicology studies targeting a particular gene product. Example: searching for 'TP53' returns hundreds of assays for p53 activation, apoptosis, and Tox21 genotoxicity screens.",
     "parameter": {
       "type": "object",
       "properties": {
         "gene_symbol": {
           "type": "string",
           "description": "Human gene symbol. Examples: 'TP53' (tumor protein p53), 'EGFR' (epidermal growth factor receptor), 'TSHR' (thyroid stimulating hormone receptor), 'ESR1' (estrogen receptor alpha)."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 20,
+          "description": "Number of assay summaries per page (1-100; default 20)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset into all assay IDs for the gene. Continue with next_offset while has_more is true."
         }
       },
       "required": [
@@ -151,6 +173,24 @@
             "total_assays": {
               "type": "integer",
               "description": "Total number of assays targeting this gene"
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "returned": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
             },
             "assays": {
               "type": "array",
@@ -356,7 +396,7 @@
   },
   {
     "name": "PubChemBioAssay_get_concise_activity_table",
-    "description": "Get the assay-wide concise bioactivity table for a PubChem BioAssay (AID). Returns ONE row per tested compound across ALL compounds screened in the assay (not just the active CID list, and not SID-limited like dose-response data), with per-compound columns including SID, CID, Activity Outcome (Active/Inactive/Inconclusive), Activity Value [uM] / potency, Activity Name, Target Accession, and Target GeneID. Useful for retrieving the full screening matrix of a high-throughput assay. Example: AID 504832 (malaria qHTS) returns 305,803 rows (e.g. SID 842131 / CID 6602565 'Active' at 6.5733 uM). Large assays can return hundreds of thousands of rows; the response always reports total_rows and caps the row payload at max_rows (default 1000).",
+    "description": "Get the assay-wide concise bioactivity table for a PubChem BioAssay, one row per tested compound with SID/CID, outcome, activity value/name, and target identifiers. Large assays can contain hundreds of thousands of rows; use max_rows/row_offset and continue with next_row_offset while has_more is true. total_rows is exact because PubChem returns the full table in one call.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -370,6 +410,12 @@
             "null"
           ],
           "description": "Maximum number of compound rows to return in the payload (default 1000, max 100000). total_rows always reports the true full count regardless of this cap."
+        },
+        "row_offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset in the complete assay table. Continue with data.next_row_offset."
         }
       },
       "required": [
@@ -416,6 +462,24 @@
             "returned_rows": {
               "type": "integer",
               "description": "Number of rows actually returned in this payload"
+            },
+            "row_offset": {
+              "type": "integer"
+            },
+            "max_rows": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_row_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "result_set_complete": {
+              "type": "boolean"
             },
             "rows": {
               "type": "array",

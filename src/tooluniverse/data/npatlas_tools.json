@@ -1,14 +1,31 @@
 [
     {
         "name": "NPAtlas_search_compounds",
-        "description": "Search the Natural Products Atlas (NPAtlas) for microbial (bacterial/fungal) natural products by compound name, InChIKey, molecular formula, or SMILES. Returns matching compounds with NPAID, name, molecular formula/weight, exact mass, InChIKey, SMILES, and source organism. Use to find characterized microbial natural products and their producing organisms. No API key required.",
-        "parameter": {"type": "object", "properties": {
-            "name": {"type": ["string", "null"], "description": "Compound name substring, e.g. 'penicillin'."},
-            "inchikey": {"type": ["string", "null"], "description": "Full or partial InChIKey."},
-            "formula": {"type": ["string", "null"], "description": "Molecular formula, e.g. 'C19H37NO5'."},
-            "smiles": {"type": ["string", "null"], "description": "SMILES for structure search."},
-            "limit": {"type": ["integer", "null"], "description": "Max results (default 10, max 100)."}
-        }, "required": []},
+        "description": "Search NPAtlas microbial natural products with exact skip pagination. Metadata uses a one-record lookahead to report has_more and next_skip without falsely treating the page length as the total.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "name": {"type": ["string", "null"], "description": "Compound name substring, e.g. 'penicillin'."},
+                "inchikey": {"type": ["string", "null"], "description": "Full or partial InChIKey."},
+                "formula": {"type": ["string", "null"], "description": "Molecular formula, e.g. 'C19H37NO5'."},
+                "smiles": {"type": ["string", "null"], "description": "SMILES for structure search."},
+                "limit": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100,
+                    "default": 10,
+                    "description": "Results per page (1-100)."
+                },
+                "skip": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "default": 0,
+                    "description": "Zero-based result offset. Continue with metadata.next_skip."
+                }
+            },
+            "required": [],
+            "additionalProperties": false
+        },
         "fields": {"timeout": 30},
         "type": "NPAtlasSearchTool",
         "test_examples": [{"name": "penicillin", "limit": 3}, {"formula": "C19H37NO5"}, {"name": "curvularide"}],
@@ -36,19 +53,106 @@
     },
     {
         "name": "NPAtlas_get_compound",
-        "description": "Get the full NPAtlas record for a microbial natural product by its NPAID (e.g. 'NPA000001'): name, molecular formula/weight, exact mass, InChIKey/InChI, SMILES, source organism, the originating literature reference (title/DOI/journal/year), synonyms, and external database ids. No API key required.",
-        "parameter": {"type": "object", "properties": {
-            "npaid": {"type": "string", "description": "NPAtlas compound id, e.g. 'NPA000001'."}
-        }, "required": ["npaid"]},
+        "description": "Get a lossless NPAtlas compound record by NPAID. data includes a convenient normalized projection (name, formula/weight, exact mass, structure identifiers, organism, reference, synonyms, and external IDs) plus source_record containing every field returned by the official API, including structures, ion masses, exclusions, reassignments, syntheses, and internal identifiers when present. metadata lists the exact source fields and confirms source_record completeness; response identity is checked against the requested NPAID.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "npaid": {
+                    "type": "string",
+                    "pattern": "^NPA[0-9]{6}$",
+                    "description": "NPAtlas compound id, e.g. 'NPA000001'."
+                }
+            },
+            "required": ["npaid"],
+            "additionalProperties": false
+        },
         "fields": {"timeout": 30},
         "type": "NPAtlasCompoundTool",
         "test_examples": [{"npaid": "NPA000001"}, {"npaid": "NPA019568"}, {"npaid": "NPA020973"}],
         "return_schema": {
-          "oneOf": [
-            {
-              "type": "object"
-            },
-            {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "npaid": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "name": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "molecular_formula": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "molecular_weight": {
+                            "type": [
+                                "string",
+                                "number",
+                                "null"
+                            ]
+                        },
+                        "exact_mass": {
+                            "type": [
+                                "string",
+                                "number",
+                                "null"
+                            ]
+                        },
+                        "inchikey": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "smiles": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "inchi": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "origin_organism": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "origin_reference": {
+                            "type": [
+                                "object",
+                                "null"
+                            ]
+                        },
+                        "synonyms": {
+                            "type": "array"
+                        },
+                        "external_ids": {
+                            "type": "array"
+                        },
+                        "source_record": {
+                            "type": "object",
+                            "description": "Lossless official NPAtlas API object with every source field"
+                        }
+                    },
+                    "required": [
+                        "npaid",
+                        "source_record"
+                    ]
+                },
+                {
               "type": "object",
               "properties": {
                 "error": {
@@ -59,7 +163,7 @@
                 "error"
               ]
             }
-          ]
+            ]
         }
     }
 ]

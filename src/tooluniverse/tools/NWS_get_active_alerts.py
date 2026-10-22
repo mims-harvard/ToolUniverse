@@ -1,7 +1,7 @@
 """
 NWS_get_active_alerts
 
-Get active weather alerts from the National Weather Service. Can be filtered by US state/territor...
+Get active National Weather Service alerts with exact local offset pagination. NWS does not recog...
 """
 
 from typing import Any, Optional, Callable
@@ -11,14 +11,15 @@ from ._shared_client import get_shared_client
 def NWS_get_active_alerts(
     area: Optional[str] = None,
     severity: Optional[str] = None,
-    limit: Optional[int] = None,
+    limit: Optional[int] = 50,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get active weather alerts from the National Weather Service. Can be filtered by US state/territor...
+    Get active National Weather Service alerts with exact local offset pagination. NWS does not recog...
 
     Parameters
     ----------
@@ -27,7 +28,9 @@ def NWS_get_active_alerts(
     severity : str
         Filter by severity: Extreme, Severe, Moderate, Minor, Unknown
     limit : int
-        Maximum number of alerts to return (default: 50)
+        Alerts per local page (default 50, max 500). Not sent to NWS.
+    offset : int
+        Zero-based offset within the complete filtered active-alert set. Continue wit...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,12 @@ def NWS_get_active_alerts(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"area": area, "severity": severity, "limit": limit}.items()
+        for k, v in {
+            "area": area,
+            "severity": severity,
+            "limit": limit,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

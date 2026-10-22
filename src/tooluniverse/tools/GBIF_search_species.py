@@ -1,7 +1,7 @@
 """
 GBIF_search_species
 
-Find taxa by keyword (scientific/common names) in GBIF. Use to resolve organism names to stable t...
+Find taxa by scientific/common-name keyword in GBIF with exact total and offset continuation. Con...
 """
 
 from typing import Any, Optional, Callable
@@ -18,16 +18,16 @@ def GBIF_search_species(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Find taxa by keyword (scientific/common names) in GBIF. Use to resolve organism names to stable t...
+    Find taxa by scientific/common-name keyword in GBIF with exact total and offset continuation. Con...
 
     Parameters
     ----------
     query : str
         Search string for species/taxa (supports scientific/common names), e.g., 'Hom...
     limit : int
-        Maximum number of results to return (1–300).
+        Maximum number of results to return (1–1000). GBIF silently clamps larger val...
     offset : int
-        Result offset for pagination (0-based).
+        Result offset for pagination. The wrapper enforces offset + limit <= 100000.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

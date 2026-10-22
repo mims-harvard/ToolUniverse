@@ -16,6 +16,7 @@ import requests
 from typing import Dict, Any
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+from .uniprot_pagination import pagination_metadata
 
 UNIPARC_BASE_URL = "https://rest.uniprot.org/uniparc"
 
@@ -120,6 +121,21 @@ class UniParcTool(BaseTool):
             )
 
         seq = data.get("sequence", {})
+        cross_reference_offset = max(arguments.get("cross_reference_offset") or 0, 0)
+        cross_reference_limit = min(
+            max(arguments.get("cross_reference_limit") or 100, 1), 500
+        )
+        feature_offset = max(arguments.get("feature_offset") or 0, 0)
+        feature_limit = min(max(arguments.get("feature_limit") or 100, 1), 500)
+        cross_reference_page = cross_refs[
+            cross_reference_offset : cross_reference_offset + cross_reference_limit
+        ]
+        feature_page = seq_features[feature_offset : feature_offset + feature_limit]
+        cross_reference_has_more = cross_reference_offset + len(
+            cross_reference_page
+        ) < len(cross_refs)
+        feature_has_more = feature_offset + len(feature_page) < len(seq_features)
+
         return {
             "status": "success",
             "data": {
@@ -131,13 +147,28 @@ class UniParcTool(BaseTool):
                     "crc64": seq.get("crc64"),
                     "md5": seq.get("md5"),
                 },
-                "cross_references": cross_refs[:30],
-                "sequence_features": seq_features[:20],
+                "cross_references": cross_reference_page,
+                "sequence_features": feature_page,
             },
             "metadata": {
                 "source": "UniProt UniParc (uniprot.org/uniparc)",
                 "total_cross_references": len(data.get("uniParcCrossReferences", [])),
                 "active_cross_references": len(cross_refs),
+                "cross_references_returned": len(cross_reference_page),
+                "cross_reference_offset": cross_reference_offset,
+                "cross_references_truncated": cross_reference_has_more,
+                "next_cross_reference_offset": (
+                    cross_reference_offset + len(cross_reference_page)
+                    if cross_reference_has_more
+                    else None
+                ),
+                "total_sequence_features": len(seq_features),
+                "sequence_features_returned": len(feature_page),
+                "feature_offset": feature_offset,
+                "sequence_features_truncated": feature_has_more,
+                "next_feature_offset": (
+                    feature_offset + len(feature_page) if feature_has_more else None
+                ),
             },
         }
 
@@ -150,12 +181,28 @@ class UniParcTool(BaseTool):
                 "error": "query is required (e.g., 'gene:TP53 AND organism_id:9606').",
             }
 
-        size = min(arguments.get("size", 5), 10)
+        raw_size = arguments.get("size")
+        raw_size = 5 if raw_size is None else raw_size
+        try:
+            if isinstance(raw_size, bool):
+                raise ValueError
+            size = int(raw_size)
+            if isinstance(raw_size, float) and not raw_size.is_integer():
+                raise ValueError
+            if not 1 <= size <= 500:
+                raise ValueError
+        except (TypeError, ValueError):
+            return {
+                "status": "error",
+                "error": "size must be an integer from 1 to 500",
+            }
         params = {
             "query": query,
             "size": size,
             "fields": "upi,accession,organism,gene",
         }
+        if arguments.get("cursor"):
+            params["cursor"] = arguments["cursor"]
 
         url = f"{UNIPARC_BASE_URL}/search"
         headers = {"Accept": "application/json"}
@@ -166,10 +213,24 @@ class UniParcTool(BaseTool):
         data = response.json()
 
         results = data.get("results", [])
+        organism_offset = max(int(arguments.get("organism_offset") or 0), 0)
+        organism_limit = min(max(int(arguments.get("organism_limit") or 100), 1), 500)
+        gene_name_offset = max(int(arguments.get("gene_name_offset") or 0), 0)
+        gene_name_limit = min(max(int(arguments.get("gene_name_limit") or 100), 1), 500)
         entries = []
         for entry in results:
             organisms = entry.get("organisms", [])
             gene_names = entry.get("geneNames", [])
+            organism_page = organisms[
+                organism_offset : organism_offset + organism_limit
+            ]
+            gene_name_page = gene_names[
+                gene_name_offset : gene_name_offset + gene_name_limit
+            ]
+            organisms_truncated = organism_offset + len(organism_page) < len(organisms)
+            gene_names_truncated = gene_name_offset + len(gene_name_page) < len(
+                gene_names
+            )
             entries.append(
                 {
                     "uniparc_id": entry.get("uniParcId"),
@@ -179,9 +240,25 @@ class UniParcTool(BaseTool):
                             "name": org.get("scientificName"),
                             "taxon_id": org.get("taxonId"),
                         }
-                        for org in organisms[:5]
+                        for org in organism_page
                     ],
-                    "gene_names": gene_names[:5],
+                    "organisms_total": len(organisms),
+                    "organisms_returned": len(organism_page),
+                    "organisms_truncated": organisms_truncated,
+                    "next_organism_offset": (
+                        organism_offset + len(organism_page)
+                        if organisms_truncated
+                        else None
+                    ),
+                    "gene_names": gene_name_page,
+                    "gene_names_total": len(gene_names),
+                    "gene_names_returned": len(gene_name_page),
+                    "gene_names_truncated": gene_names_truncated,
+                    "next_gene_name_offset": (
+                        gene_name_offset + len(gene_name_page)
+                        if gene_names_truncated
+                        else None
+                    ),
                     "oldest_created": entry.get("oldestCrossRefCreated"),
                     "most_recent_updated": entry.get("mostRecentCrossRefUpdated"),
                 }
@@ -193,6 +270,6 @@ class UniParcTool(BaseTool):
             "metadata": {
                 "source": "UniProt UniParc (uniprot.org/uniparc)",
                 "query": query,
-                "returned": len(entries),
+                **pagination_metadata(response, len(entries)),
             },
         }

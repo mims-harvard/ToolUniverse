@@ -14,6 +14,7 @@ def PanglaoDB_markers_for_cell_type(
     organ: Optional[str] = None,
     canonical_only: Optional[bool] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -33,7 +34,9 @@ def PanglaoDB_markers_for_cell_type(
     canonical_only : bool
         If true, return only canonical marker genes. Default false.
     limit : int
-        Maximum number of marker genes to return. Default 50.
+        Page size for marker genes. Default 50. If metadata.has_more is true, continu...
+    offset : int
+        Zero-based result offset. Default 0. Use metadata.next_offset to retrieve the...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def PanglaoDB_markers_for_cell_type(
             "organ": organ,
             "canonical_only": canonical_only,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

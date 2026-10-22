@@ -33,7 +33,7 @@ def PathwayCommons_search(
     organism : str
         Organism filter: taxonomy ID (9606 for human, 10090 for mouse) or organism name
     page : int
-        Page number for pagination (0-based, 100 results per page)
+        Zero-based page number. Pathway Commons fixes the page size at 100; use metad...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

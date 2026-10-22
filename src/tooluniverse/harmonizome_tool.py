@@ -12,6 +12,7 @@ No authentication required.
 
 import requests
 from typing import Dict, Any
+from urllib.parse import quote
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
@@ -153,6 +154,30 @@ class HarmonizomeTool(BaseTool):
                 "status": "error",
                 "error": "dataset_name is required (e.g., 'CTD Gene-Disease Associations'). Use Harmonizome_list_datasets to find names.",
             }
+        gene_set_limit = arguments.get("gene_set_limit", 50)
+        gene_set_offset = arguments.get("gene_set_offset", 0)
+        if gene_set_limit is None:
+            gene_set_limit = 50
+        if gene_set_offset is None:
+            gene_set_offset = 0
+        if (
+            isinstance(gene_set_limit, bool)
+            or not isinstance(gene_set_limit, int)
+            or not 1 <= gene_set_limit <= 1000
+        ):
+            return {
+                "status": "error",
+                "error": "gene_set_limit must be an integer between 1 and 1000",
+            }
+        if (
+            isinstance(gene_set_offset, bool)
+            or not isinstance(gene_set_offset, int)
+            or gene_set_offset < 0
+        ):
+            return {
+                "status": "error",
+                "error": "gene_set_offset must be a non-negative integer",
+            }
 
         # URL-encode: spaces become + in Harmonizome API
         encoded_name = dataset_name.replace(" ", "+")
@@ -167,13 +192,15 @@ class HarmonizomeTool(BaseTool):
                 "error": f"Dataset not found: {data.get('message', dataset_name)}",
             }
 
-        # Extract gene set names (can be large, limit to first 50)
+        # Extract a recoverable page of gene-set names (some datasets have
+        # thousands, e.g. CTD disease associations).
         gene_sets_raw = data.get("geneSets", [])
-        gene_set_limit = arguments.get("gene_set_limit") or 50
         gene_sets = [
             {"name": gs.get("name", "").split("/")[0]}
-            for gs in gene_sets_raw[:gene_set_limit]
+            for gs in gene_sets_raw[gene_set_offset : gene_set_offset + gene_set_limit]
         ]
+        next_gene_set_offset = gene_set_offset + len(gene_sets)
+        has_more_gene_sets = next_gene_set_offset < len(gene_sets_raw)
 
         return {
             "status": "success",
@@ -188,10 +215,25 @@ class HarmonizomeTool(BaseTool):
                 "pubmed_ids": data.get("pubMedIds", []),
                 "gene_sets": gene_sets,
                 "total_gene_sets": len(gene_sets_raw),
+                "gene_sets_returned": len(gene_sets),
+                "gene_set_limit": gene_set_limit,
+                "gene_set_offset": gene_set_offset,
+                "has_more_gene_sets": has_more_gene_sets,
+                "next_gene_set_offset": (
+                    next_gene_set_offset if has_more_gene_sets else None
+                ),
             },
             "metadata": {
                 "source": "Harmonizome (maayanlab.cloud/Harmonizome)",
                 "dataset_name": dataset_name,
+                "total_gene_sets": len(gene_sets_raw),
+                "gene_sets_returned": len(gene_sets),
+                "gene_set_limit": gene_set_limit,
+                "gene_set_offset": gene_set_offset,
+                "has_more_gene_sets": has_more_gene_sets,
+                "next_gene_set_offset": (
+                    next_gene_set_offset if has_more_gene_sets else None
+                ),
             },
         }
 
@@ -208,17 +250,43 @@ class HarmonizomeTool(BaseTool):
                 "error": f"entity_type must be 'gene', 'dataset', or 'attribute', got '{entity_type}'",
             }
 
-        limit = arguments.get("limit") or 20
+        limit = arguments.get("limit", 20)
+        offset = arguments.get("offset", 0)
+        if (
+            isinstance(limit, bool)
+            or not isinstance(limit, int)
+            or not 1 <= limit <= 100
+        ):
+            return {
+                "status": "error",
+                "error": "limit must be an integer from 1 to 100",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {"status": "error", "error": "offset must be a non-negative integer"}
 
         if entity_type == "gene":
             # For gene search, try exact lookup first, then suggest API
             results = []
             try:
-                gene_url = f"{HARMONIZOME_BASE_URL}/gene/{query}"
+                gene_url = f"{HARMONIZOME_BASE_URL}/gene/{quote(query, safe='')}"
                 gene_resp = requests.get(gene_url, timeout=self.timeout)
                 if gene_resp.status_code == 200:
                     g = gene_resp.json()
-                    if "symbol" in g:
+                    if (
+                        isinstance(g, dict)
+                        and g.get("status") in (400, 404)
+                        and not g.get("symbol")
+                    ):
+                        g = None
+                    if g is None:
+                        pass
+                    elif not isinstance(g, dict) or not g.get("symbol"):
+                        return {
+                            "status": "error",
+                            "error": "Harmonizome exact gene lookup returned malformed data",
+                            "search_stage": "exact_gene_lookup",
+                        }
+                    else:
                         results.append(
                             {
                                 "symbol": g.get("symbol"),
@@ -226,49 +294,133 @@ class HarmonizomeTool(BaseTool):
                                 "ncbi_entrez_gene_id": g.get("ncbiEntrezGeneId"),
                             }
                         )
-            except Exception:
-                pass
+                elif gene_resp.status_code != 404:
+                    return {
+                        "status": "error",
+                        "error": f"Harmonizome exact gene lookup returned HTTP {gene_resp.status_code}",
+                        "search_stage": "exact_gene_lookup",
+                    }
+            except Exception as exc:
+                return {
+                    "status": "error",
+                    "error": f"Harmonizome exact gene lookup failed: {exc}",
+                    "search_stage": "exact_gene_lookup",
+                }
             # Also get suggestions
             try:
                 suggest_url = f"{HARMONIZOME_BASE_URL}/suggest"
                 suggest_resp = requests.get(
                     suggest_url, params={"q": query}, timeout=self.timeout
                 )
-                if suggest_resp.status_code == 200:
-                    suggestions = suggest_resp.json()
-                    if isinstance(suggestions, list):
-                        # Try top suggestions as gene symbols
-                        for s in suggestions[:10]:
-                            if len(results) >= limit:
-                                break
-                            if any(r.get("symbol") == s for r in results):
-                                continue
-                            try:
-                                g_url = f"{HARMONIZOME_BASE_URL}/gene/{s}"
-                                g_resp = requests.get(g_url, timeout=self.timeout)
-                                if g_resp.status_code == 200:
-                                    g = g_resp.json()
-                                    if "symbol" in g:
-                                        results.append(
-                                            {
-                                                "symbol": g.get("symbol"),
-                                                "name": g.get("name"),
-                                                "ncbi_entrez_gene_id": g.get(
-                                                    "ncbiEntrezGeneId"
-                                                ),
-                                            }
-                                        )
-                            except Exception:
-                                continue
-            except Exception:
-                pass
+                if suggest_resp.status_code != 200:
+                    return {
+                        "status": "error",
+                        "error": f"Harmonizome suggestion lookup returned HTTP {suggest_resp.status_code}",
+                        "search_stage": "suggestion_lookup",
+                    }
+                suggestions = suggest_resp.json()
+                if not isinstance(suggestions, list) or not all(
+                    isinstance(item, str) for item in suggestions
+                ):
+                    return {
+                        "status": "error",
+                        "error": "Harmonizome suggestion lookup returned malformed data",
+                        "search_stage": "suggestion_lookup",
+                    }
+            except Exception as exc:
+                return {
+                    "status": "error",
+                    "error": f"Harmonizome suggestion lookup failed: {exc}",
+                    "search_stage": "suggestion_lookup",
+                }
+
+            suggestions_examined = 0
+            rejected_non_gene_suggestions = 0
+            # /suggest is a mixed-entity endpoint. Resolve enough candidates
+            # to fill the requested page plus one real-gene lookahead.
+            for suggestion in suggestions:
+                if len(results) >= offset + limit + 1:
+                    break
+                suggestions_examined += 1
+                if any(r.get("symbol") == suggestion for r in results):
+                    continue
+                g_url = f"{HARMONIZOME_BASE_URL}/gene/{quote(suggestion, safe='')}"
+                try:
+                    g_resp = requests.get(g_url, timeout=self.timeout)
+                    if g_resp.status_code == 404:
+                        rejected_non_gene_suggestions += 1
+                        continue
+                    if g_resp.status_code != 200:
+                        return {
+                            "status": "error",
+                            "error": (
+                                "Harmonizome suggestion resolution returned "
+                                f"HTTP {g_resp.status_code} for {suggestion!r}"
+                            ),
+                            "search_stage": "suggestion_gene_resolution",
+                            "candidate": suggestion,
+                        }
+                    g = g_resp.json()
+                except Exception as exc:
+                    return {
+                        "status": "error",
+                        "error": f"Harmonizome suggestion resolution failed for {suggestion!r}: {exc}",
+                        "search_stage": "suggestion_gene_resolution",
+                        "candidate": suggestion,
+                    }
+                if (
+                    isinstance(g, dict)
+                    and g.get("status") in (400, 404)
+                    and not g.get("symbol")
+                ):
+                    rejected_non_gene_suggestions += 1
+                    continue
+                if not isinstance(g, dict) or not g.get("symbol"):
+                    return {
+                        "status": "error",
+                        "error": f"Harmonizome returned malformed gene data for {suggestion!r}",
+                        "search_stage": "suggestion_gene_resolution",
+                        "candidate": suggestion,
+                    }
+                if any(r.get("symbol") == g["symbol"] for r in results):
+                    continue
+                results.append(
+                    {
+                        "symbol": g.get("symbol"),
+                        "name": g.get("name"),
+                        "ncbi_entrez_gene_id": g.get("ncbiEntrezGeneId"),
+                    }
+                )
+
+            page = results[offset : offset + limit]
+            has_more = len(results) > offset + limit
+            suggestions_exhausted = suggestions_examined == len(suggestions)
             return {
                 "status": "success",
-                "data": results[:limit],
+                "data": page,
                 "metadata": {
                     "source": "Harmonizome (maayanlab.cloud/Harmonizome)",
                     "entity_type": "gene",
                     "query": query,
+                    "returned": len(page),
+                    "offset": offset,
+                    "limit": limit,
+                    "has_more": has_more,
+                    "next_offset": offset + len(page) if has_more else None,
+                    "total_results": len(results) if suggestions_exhausted else None,
+                    "total_results_known": suggestions_exhausted,
+                    "suggestions_total": len(suggestions),
+                    "suggestions_examined": suggestions_examined,
+                    "rejected_non_gene_suggestions": rejected_non_gene_suggestions,
+                    "suggestions_exhausted": suggestions_exhausted,
+                    "result_set_complete": bool(
+                        offset == 0
+                        and suggestions_exhausted
+                        and len(page) == len(results)
+                    ),
+                    "query_semantics": (
+                        "exact symbol plus mixed suggestions that resolve to Harmonizome genes"
+                    ),
                 },
             }
 
@@ -284,14 +436,21 @@ class HarmonizomeTool(BaseTool):
                 for e in ds_data.get("entities", [])
                 if query_lower in (e.get("name") or "").lower()
             ]
+            page = matches[offset : offset + limit]
+            next_offset = offset + len(page)
+            has_more = next_offset < len(matches)
             return {
                 "status": "success",
-                "data": matches[:limit],
+                "data": page,
                 "metadata": {
                     "source": "Harmonizome (maayanlab.cloud/Harmonizome)",
                     "entity_type": "dataset",
                     "query": query,
                     "total_matches": len(matches),
+                    "returned": len(page),
+                    "offset": offset,
+                    "has_more": has_more,
+                    "next_offset": next_offset if has_more else None,
                 },
             }
 
@@ -304,14 +463,21 @@ class HarmonizomeTool(BaseTool):
         suggestions = suggest_resp.json()
         if not isinstance(suggestions, list):
             suggestions = []
+        page = suggestions[offset : offset + limit]
+        next_offset = offset + len(page)
+        has_more = next_offset < len(suggestions)
         return {
             "status": "success",
-            "data": suggestions[:limit],
+            "data": page,
             "metadata": {
                 "source": "Harmonizome (maayanlab.cloud/Harmonizome)",
                 "entity_type": "attribute",
                 "query": query,
                 "total_suggestions": len(suggestions),
+                "returned": len(page),
+                "offset": offset,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
             },
         }
 
@@ -326,7 +492,8 @@ class HarmonizomeTool(BaseTool):
           Requires `gene_symbol`. Endpoint: /gene/{symbol}?showAssociations=true
         """
         mode = arguments.get("mode", "gene_set")
-        limit = arguments.get("limit") or 100
+        limit = max(1, int(arguments.get("limit") or 100))
+        offset = max(0, int(arguments.get("offset", 0)))
 
         def _encode(value: str) -> str:
             # Harmonizome path encoding: spaces -> '+'. Other reserved chars are
@@ -359,8 +526,10 @@ class HarmonizomeTool(BaseTool):
                     "threshold_value": a.get("thresholdValue"),
                     "standardized_value": a.get("standardizedValue"),
                 }
-                for a in associations_raw[:limit]
+                for a in associations_raw[offset : offset + limit]
             ]
+            next_offset = offset + len(associations)
+            has_more = next_offset < len(associations_raw)
             return {
                 "status": "success",
                 "data": {
@@ -375,6 +544,9 @@ class HarmonizomeTool(BaseTool):
                     "gene_symbol": gene_symbol,
                     "total_associations": len(associations_raw),
                     "returned": len(associations),
+                    "offset": offset,
+                    "has_more": has_more,
+                    "next_offset": next_offset if has_more else None,
                 },
             }
 
@@ -404,8 +576,10 @@ class HarmonizomeTool(BaseTool):
                 "threshold_value": a.get("thresholdValue"),
                 "standardized_value": a.get("standardizedValue"),
             }
-            for a in associations_raw[:limit]
+            for a in associations_raw[offset : offset + limit]
         ]
+        next_offset = offset + len(members)
+        has_more = next_offset < len(associations_raw)
         return {
             "status": "success",
             "data": {
@@ -420,11 +594,14 @@ class HarmonizomeTool(BaseTool):
                 "dataset": dataset,
                 "total_associations": len(associations_raw),
                 "returned": len(members),
+                "offset": offset,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
             },
         }
 
     def _search_genes(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """Search for genes by keyword in Harmonizome."""
+        """Resolve gene symbols without using the API's ignored search param."""
         query = arguments.get("query", "")
         if not query:
             return {
@@ -432,25 +609,20 @@ class HarmonizomeTool(BaseTool):
                 "error": "query is required (e.g., 'kinase', 'tumor suppressor')",
             }
 
-        limit = arguments.get("limit") or 20
-        url = f"{HARMONIZOME_BASE_URL}/gene"
-        params = {"search": query}
-
-        response = requests.get(url, params=params, timeout=self.timeout)
-        response.raise_for_status()
-        data = response.json()
-
-        entities = data.get("entities", [])
-        genes = [
-            {"symbol": e.get("symbol"), "href": e.get("href")} for e in entities[:limit]
-        ]
-
-        return {
-            "status": "success",
-            "data": genes,
-            "metadata": {
-                "source": "Harmonizome (maayanlab.cloud/Harmonizome)",
-                "query": query,
-                "total_results": data.get("count", len(genes)),
-            },
-        }
+        result = self._search({**arguments, "entity_type": "gene"})
+        if result.get("status") == "success":
+            result["metadata"].update(
+                {
+                    "query_semantics": "exact gene symbol and symbol-like suggestions",
+                    "total_results_known": result["metadata"].get(
+                        "total_results_known", False
+                    ),
+                    "note": (
+                        "Harmonizome's /gene collection endpoint ignores text-search "
+                        "parameters, so this tool deliberately uses exact symbol lookup "
+                        "plus gene-resolvable suggestions. Descriptive terms such as "
+                        "'kinase' may return no genes instead of unrelated catalog rows."
+                    ),
+                }
+            )
+        return result

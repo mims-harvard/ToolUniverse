@@ -1,7 +1,7 @@
 """
 ELIXIRTeSS_search_materials
 
-Search ELIXIR TeSS (Training eSupport System) for bioinformatics and life science training materi...
+Search ELIXIR TeSS for bioinformatics training materials. Results use one-based page pagination: ...
 """
 
 from typing import Any, Optional, Callable
@@ -14,15 +14,15 @@ def ELIXIRTeSS_search_materials(
     target_audience: Optional[str] = None,
     difficulty_level: Optional[str] = None,
     licence: Optional[str] = None,
-    page_size: Optional[int] = None,
-    page: Optional[int] = None,
+    page_size: Optional[int] = 10,
+    page: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search ELIXIR TeSS (Training eSupport System) for bioinformatics and life science training materi...
+    Search ELIXIR TeSS for bioinformatics training materials. Results use one-based page pagination: ...
 
     Parameters
     ----------
@@ -37,9 +37,9 @@ def ELIXIRTeSS_search_materials(
     licence : str
         Filter by license type. Example: 'CC-BY'
     page_size : int
-        Number of results to return (default 10, max 100)
+        Results per page (default 10, max 100)
     page : int
-        Page number for pagination
+        One-based page number. Continue with metadata.next_page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

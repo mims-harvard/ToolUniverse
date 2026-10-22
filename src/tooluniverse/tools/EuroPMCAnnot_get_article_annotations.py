@@ -11,6 +11,8 @@ from ._shared_client import get_shared_client
 def EuroPMCAnnot_get_article_annotations(
     article_id: str,
     annotation_type: Optional[str] = None,
+    limit: Optional[int] = 200,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,6 +27,10 @@ def EuroPMCAnnot_get_article_annotations(
         Article identifier in format 'PMC:PMCXXXXXXX' or 'MED:PMID'. Examples: 'PMC:P...
     annotation_type : str
         Filter by annotation type. Note 'Gene_Proteins' is spelled with an underscore...
+    limit : int
+        Maximum number of annotations to return in this page.
+    offset : int
+        Zero-based annotation offset. Use data.next_offset for the next page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,6 +50,8 @@ def EuroPMCAnnot_get_article_annotations(
         for k, v in {
             "article_id": article_id,
             "annotation_type": annotation_type,
+            "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

@@ -461,7 +461,7 @@
   },
   {
     "name": "PharmGKB_get_drug_label_annotations",
-    "description": "Get regulatory drug-label pharmacogenomic annotations from PharmGKB/ClinPGx. By default lists FDA label annotations (id + name), capped by 'limit'. Pass drug_name to filter the listing to a specific drug (e.g. 'imatinib') instead of browsing unfiltered. Pass source to switch agency (FDA, EMA, HCSC, PMDA). Pass label_id (e.g., 'PA166114907' for bosutinib) for one full annotation including biomarkerStatus, alternateDrugAvailable, dosingInformation, cancerGenome, and source literature. Keyless.",
+    "description": "Get PharmGKB/ClinPGx regulatory drug-label annotations. Listing mode has exact total and recoverable offset pagination; continue with metadata.next_offset. label_id returns one full annotation.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -486,6 +486,12 @@
         "limit": {
           "type": "integer",
           "description": "Maximum number of label annotations to return in listing mode (default 50, max 500)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based listing offset. Ignored for label_id lookup."
         },
         "id": {
           "type": "string",
@@ -664,7 +670,7 @@
   },
   {
     "name": "PharmGKB_get_variant_annotations",
-    "description": "Get variant-level literature annotations from PharmGKB/ClinPGx, filtered by gene or chemical PharmGKB Accession ID. Provide gene_id (e.g., 'PA126' for CYP2C9) OR chemical_id (e.g., 'PA451906' for warfarin). Each annotation gives allele/genotype, phenotype category, drug context, significance, and source literature. Results are capped by 'limit'. Keyless. Resolve gene/drug names to PA IDs first via PharmGKB_search_genes / PharmGKB_search_drugs.",
+    "description": "Get variant-level literature annotations from PharmGKB/ClinPGx, filtered by gene or chemical accession. Returns exact total and recoverable offset pagination; continue with metadata.next_offset.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -683,6 +689,12 @@
         "limit": {
           "type": "integer",
           "description": "Maximum number of variant annotations to return (default 50, max 500). CYP2C9 alone has over 1000 annotations."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based variant-annotation offset."
         }
       },
       "required": []

@@ -1,7 +1,7 @@
 """
 Dataverse_search_datasets
 
-Search the Harvard Dataverse repository for research datasets, files, and dataverses. Harvard Dat...
+Search Harvard Dataverse for datasets, files, or dataverses. Returns one result page with an exac...
 """
 
 from typing import Any, Optional, Callable
@@ -11,15 +11,15 @@ from ._shared_client import get_shared_client
 def Dataverse_search_datasets(
     q: str,
     type_: Optional[str] = None,
-    per_page: Optional[int] = None,
-    start: Optional[int] = None,
+    per_page: Optional[int] = 10,
+    start: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search the Harvard Dataverse repository for research datasets, files, and dataverses. Harvard Dat...
+    Search Harvard Dataverse for datasets, files, or dataverses. Returns one result page with an exac...
 
     Parameters
     ----------
@@ -28,9 +28,9 @@ def Dataverse_search_datasets(
     type_ : str
         Filter by type: 'dataset', 'file', or 'dataverse' (default: returns all types)
     per_page : int
-        Number of results per page (default 10)
+        Number of results per page (1-1000; default 10). Dataverse silently replaces ...
     start : int
-        Result offset for pagination (0-based, e.g., 0, 10, 20)
+        Zero-based result offset. Use metadata.next_start rather than assuming every ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

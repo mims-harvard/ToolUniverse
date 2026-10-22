@@ -1,7 +1,7 @@
 """
 PubChemBioAssay_get_concise_activity_table
 
-Get the assay-wide concise bioactivity table for a PubChem BioAssay (AID). Returns ONE row per te...
+Get the assay-wide concise bioactivity table for a PubChem BioAssay, one row per tested compound ...
 """
 
 from typing import Any, Optional, Callable
@@ -11,13 +11,14 @@ from ._shared_client import get_shared_client
 def PubChemBioAssay_get_concise_activity_table(
     aid: int,
     max_rows: Optional[int] = None,
+    row_offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get the assay-wide concise bioactivity table for a PubChem BioAssay (AID). Returns ONE row per te...
+    Get the assay-wide concise bioactivity table for a PubChem BioAssay, one row per tested compound ...
 
     Parameters
     ----------
@@ -25,6 +26,8 @@ def PubChemBioAssay_get_concise_activity_table(
         PubChem BioAssay ID (AID). Examples: 504832 (malaria qHTS, 305803 rows), 1259...
     max_rows : int
         Maximum number of compound rows to return in the payload (default 1000, max 1...
+    row_offset : int
+        Zero-based offset in the complete assay table. Continue with data.next_row_of...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,7 +43,9 @@ def PubChemBioAssay_get_concise_activity_table(
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
-        k: v for k, v in {"aid": aid, "max_rows": max_rows}.items() if v is not None
+        k: v
+        for k, v in {"aid": aid, "max_rows": max_rows, "row_offset": row_offset}.items()
+        if v is not None
     }
     return get_shared_client().run_one_function(
         {

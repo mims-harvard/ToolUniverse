@@ -1,7 +1,7 @@
 """
 ExpressionAtlas_search_experiments
 
-Search all EBI Expression Atlas experiments (baseline + differential) by condition text and/or a ...
+Search all EBI Expression Atlas experiments (baseline + differential) with recoverable offset pag...
 """
 
 from typing import Any, Optional, Callable
@@ -20,7 +20,7 @@ def ExpressionAtlas_search_experiments(
     validate: bool = True,
 ) -> Any:
     """
-    Search all EBI Expression Atlas experiments (baseline + differential) by condition text and/or a ...
+    Search all EBI Expression Atlas experiments (baseline + differential) with recoverable offset pag...
 
     Parameters
     ----------

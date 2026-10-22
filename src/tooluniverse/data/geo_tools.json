@@ -2,7 +2,7 @@
   {
     "type": "GEOSearchDatasets",
     "name": "geo_search_datasets",
-    "description": "Search GEO datasets by query terms, organism, study type, or platform. Returns dataset IDs and basic information.",
+    "description": "Search GEO datasets by query, organism, study type, or platform with exact NCBI ESearch offset pagination. The response metadata reports total_results, returned, has_more, and next_offset; continue with offset=next_offset until has_more is false instead of treating the first ID page as the complete GEO result set.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -25,12 +25,28 @@
           "description": "Platform used (e.g., 'GPL570', 'GPL96')",
           "default": ""
         },
+        "record_type": {
+          "type": "string",
+          "enum": [
+            "series",
+            "curated_dataset",
+            "both"
+          ],
+          "description": "GEO dataset record type. 'series' restricts to GSE records, 'curated_dataset' to curated GDS records, and 'both' returns their union. GSM samples and GPL platforms are always excluded upstream so total_results and pagination describe actual datasets.",
+          "default": "both"
+        },
         "limit": {
           "type": "integer",
-          "description": "Maximum number of results to return",
+          "description": "Page size (1-500). Values outside this range are rejected rather than silently clamped.",
           "default": 50,
           "minimum": 1,
           "maximum": 500
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based NCBI ESearch result offset. Continue with metadata.next_offset.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": []
@@ -41,27 +57,76 @@
     },
     "return_schema": {
       "type": "object",
-      "description": "GEO dataset search results",
+      "description": "Tool response envelope containing the raw GEO ESearch page and explicit pagination metadata.",
       "properties": {
-        "esearchresult": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
           "type": "object",
           "properties": {
-            "count": {
-              "type": "string",
-              "description": "Number of datasets found"
-            },
-            "idlist": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "description": "List of GEO dataset IDs"
-            },
-            "querytranslation": {
-              "type": "string",
-              "description": "Translated search query"
+            "esearchresult": {
+              "type": "object",
+              "properties": {
+                "count": {
+                  "type": "string",
+                  "description": "Exact number of datasets found."
+                },
+                "retmax": {
+                  "type": "string"
+                },
+                "retstart": {
+                  "type": "string"
+                },
+                "idlist": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "GEO dataset UIDs on this page."
+                },
+                "querytranslation": {
+                  "type": "string",
+                  "description": "Translated search query."
+                }
+              }
             }
           }
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "total_results": {
+              "type": "integer"
+            },
+            "returned": {
+              "type": "integer"
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "record_type": {
+              "type": "string"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "truncated": {
+              "type": "boolean"
+            }
+          }
+        },
+        "url": {
+          "type": "string"
         }
       }
     },
@@ -69,12 +134,14 @@
       {
         "query": "cancer",
         "organism": "Homo sapiens",
+        "record_type": "series",
         "limit": 10
       },
       {
         "query": "diabetes",
         "study_type": "Expression profiling by array",
-        "limit": 5
+        "limit": 5,
+        "offset": 5
       }
     ],
     "label": [

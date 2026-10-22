@@ -1,7 +1,7 @@
 """
 OpenGenes_search_genes
 
-Browse the Open Genes catalog of human aging/longevity genes (paginated). Returns a page of aging...
+Browse the complete Open Genes catalog of human aging/longevity genes with one-based page paginat...
 """
 
 from typing import Any, Optional, Callable
@@ -17,14 +17,14 @@ def OpenGenes_search_genes(
     validate: bool = True,
 ) -> Any:
     """
-    Browse the Open Genes catalog of human aging/longevity genes (paginated). Returns a page of aging...
+    Browse the complete Open Genes catalog of human aging/longevity genes with one-based page paginat...
 
     Parameters
     ----------
     limit : int
-        Genes per page (default 20, max 100).
+        Genes per page (default 20, max 1000).
     page : int
-        Page number (default 1).
+        One-based page number (default 1). Continue with metadata.next_page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

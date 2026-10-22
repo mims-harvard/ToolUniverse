@@ -105,7 +105,7 @@
   },
   {
     "name": "WikiPathways_find_pathways_by_gene",
-    "description": "Find all WikiPathways pathways containing a specific gene. Takes a gene identifier (HGNC symbol, Entrez ID, or Ensembl ID) and returns all pathways in which that gene appears. Useful for understanding the biological context of a gene across curated pathway databases. Example: searching for 'TP53' returns multiple pathways including WP254 (Apoptosis), WP179 (Cell Cycle), and others. Supports multiple species.",
+    "description": "Find WikiPathways pathways containing an exact gene label. Results use stable limit/offset pagination and an exact SPARQL count: start with offset=0 and continue with metadata.next_offset while metadata.has_more is true. data.total_pathways is the exact total, not the current-page length. Human AKT1 currently matches more than 100 pathways, so complete retrieval requires multiple pages.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -117,6 +117,19 @@
           "type": "string",
           "description": "Species to filter results. Default: 'Homo sapiens'. Other options: 'Mus musculus', 'Rattus norvegicus', 'Danio rerio'.",
           "default": "Homo sapiens"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 50,
+          "description": "Number of pathways per page."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based result offset; continue with metadata.next_offset."
         }
       },
       "required": [
@@ -129,7 +142,9 @@
     "type": "WikiPathwaysExtTool",
     "test_examples": [
       {
-        "gene": "TP53"
+        "gene": "TP53",
+        "limit": 50,
+        "offset": 0
       },
       {
         "gene": "BRCA1",
@@ -148,6 +163,10 @@
             "total_pathways": {
               "type": "integer",
               "description": "Number of pathways containing this gene"
+            },
+            "returned": {
+              "type": "integer",
+              "description": "Number of pathways on this page"
             },
             "pathways": {
               "type": "array",

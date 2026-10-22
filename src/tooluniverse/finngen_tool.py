@@ -78,7 +78,14 @@ class FinnGenTool(BaseTool):
         query = (arguments.get("query") or "").lower()
         category = (arguments.get("category") or "").lower()
         min_cases = arguments.get("min_cases")
-        limit = arguments.get("limit", 50)
+        try:
+            limit = max(1, int(arguments.get("limit") or 50))
+            offset = max(0, int(arguments.get("offset", 0)))
+        except (TypeError, ValueError):
+            return {
+                "status": "error",
+                "error": "Parameters 'limit' and 'offset' must be integers.",
+            }
 
         url = f"{FINNGEN_BASE_URL}/phenos"
         resp = requests.get(url, timeout=self.timeout)
@@ -113,7 +120,8 @@ class FinnGenTool(BaseTool):
 
         results.sort(key=lambda x: x.get("num_cases", 0), reverse=True)
         total = len(results)
-        results = results[:limit]
+        results = results[offset : offset + limit]
+        has_more = offset + len(results) < total
 
         return {
             "status": "success",
@@ -123,6 +131,11 @@ class FinnGenTool(BaseTool):
                 "total_matching": total,
                 "returned": len(results),
                 "total_phenotypes": len(all_phenos),
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_offset": offset + len(results) if has_more else None,
             },
         }
 

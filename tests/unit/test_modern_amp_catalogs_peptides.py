@@ -111,11 +111,31 @@ def test_search_amps_success():
     assert result["data"][0]["accession"] == "AMP10.000_000"
     assert result["metadata"]["total_item"] == 111946
     assert result["metadata"]["returned_count"] == 1
+    assert result["metadata"]["has_more"] is True
+    assert result["metadata"]["next_page"] == 1
     assert result["metadata"]["filters"] == {"habitat": "human gut"}
     # filter + pagination params reach the API
     sent = get.call_args.kwargs["params"]
     assert sent["habitat"] == "human gut"
     assert sent["page_size"] == 2 and sent["page"] == 0
+
+
+def test_search_amps_rejects_silently_coerced_pagination_and_filters():
+    tool = AMPSphereSearchAmpsTool({})
+    with patch("tooluniverse.ampsphere_tool.requests.get") as get:
+        for arguments in (
+            {"page_size": "2"},
+            {"page_size": 0},
+            {"page_size": False},
+            {"page": "1"},
+            {"page": -1},
+            {"page": False},
+            {"list_options": "true"},
+            {"habitat": 123},
+        ):
+            result = tool.run(arguments)
+            assert result["status"] == "error", arguments
+    get.assert_not_called()
 
 
 def test_search_amps_list_options_success():

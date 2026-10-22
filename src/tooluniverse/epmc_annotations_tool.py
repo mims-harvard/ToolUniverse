@@ -152,7 +152,7 @@ class EPMCAnnotationsTool(BaseRESTTool):
         annotation_counts = {}
         for ann_type, entities in by_type.items():
             sorted_entities = sorted(entities.values(), key=lambda x: -x["count"])
-            annotation_groups[ann_type] = sorted_entities[:30]
+            annotation_groups[ann_type] = sorted_entities
             annotation_counts[ann_type] = len(entities)
 
         return {
@@ -185,7 +185,12 @@ class EPMCAnnotationsTool(BaseRESTTool):
             all_annotations = result["data"].get("annotations", {})
             type_annotations = all_annotations.get(entity_type, [])
             result["data"]["annotations"] = type_annotations
-            result["data"]["total_entities"] = len(type_annotations)
+            result["data"]["total_entities"] = (
+                result["data"]
+                .get("annotation_counts", {})
+                .get(entity_type, len(type_annotations))
+            )
+            result["data"]["returned_entities"] = len(type_annotations)
             result["data"]["entity_type"] = entity_type
 
         return result

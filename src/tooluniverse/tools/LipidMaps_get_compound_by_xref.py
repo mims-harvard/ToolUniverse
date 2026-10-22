@@ -1,7 +1,7 @@
 """
 LipidMaps_get_compound_by_xref
 
-Look up a LIPID MAPS Structure Database (LMSD) record from an external cross-reference identifier...
+Resolve a KEGG, HMDB, ChEBI, PubChem, InChIKey, or chain-resolved abbreviation to every matching ...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def LipidMaps_get_compound_by_xref(
     validate: bool = True,
 ) -> Any:
     """
-    Look up a LIPID MAPS Structure Database (LMSD) record from an external cross-reference identifier...
+    Resolve a KEGG, HMDB, ChEBI, PubChem, InChIKey, or chain-resolved abbreviation to every matching ...
 
     Parameters
     ----------

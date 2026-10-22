@@ -1,7 +1,7 @@
 """
 IPD_search_cells
 
-Search IPD cell lines (HLA reference cells with their HLA typing) by a field value. By default se...
+Search IPD cell lines (HLA reference cells with their HLA typing) by a field value with complete ...
 """
 
 from typing import Any, Optional, Callable
@@ -13,13 +13,14 @@ def IPD_search_cells(
     field: Optional[str] = "primary_name",
     match_: Optional[str] = "contains",
     limit: Optional[int] = 10,
+    cursor: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search IPD cell lines (HLA reference cells with their HLA typing) by a field value. By default se...
+    Search IPD cell lines (HLA reference cells with their HLA typing) by a field value with complete ...
 
     Parameters
     ----------
@@ -31,6 +32,8 @@ def IPD_search_cells(
         How to match: 'contains' (default, substring), 'startsWith' (prefix), or 'eq'...
     limit : int
         Maximum number of cells to return (default 10, max 100).
+    cursor : str
+        Opaque continuation token from data.next_cursor. Repeat the same search contr...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def IPD_search_cells(
             "field": field,
             "match": match_,
             "limit": limit,
+            "cursor": cursor,
         }.items()
         if v is not None
     }
