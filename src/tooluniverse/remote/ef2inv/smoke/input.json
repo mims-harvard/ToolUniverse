@@ -1,0 +1,9 @@
+{
+  "_what": "The smallest thing that exercises ef2inv's GRADIENT path end to end: the kit's own warm work at 135 tokens. Loads the six models, folds the case once per inversion model, then runs ONE design-step-shaped grad pass per inversion model -- the fold under grad, the structure loss's backward with respect to the binder logits, and the ESMC-6B pseudo-perplexity term's forward and backward.",
+  "_why_not_a_design": "The design loop's length is the cookbook's own module constant STEPS = 150 and the kit REFUSES a changed loop constant (settings.check_shipped), so there is no step count to make small. A 150-step design plus four hero-critic folds (3 loops, 200 sampling steps each) is 2-3.5 min on an H100 and unmeasured on this card; smoke/input-design.json is that run, for a free card and a human.",
+  "_case": "pd-l1 is the cookbook's own 115-residue built-in target (TARGET_SEQUENCES, l.167); a 20-residue binder is the smallest sensible one and gives 135 tokens, the smallest row of the VRAM ladder in provider.toml.",
+  "pass": "warm",
+  "target_name": "pd-l1",
+  "binder_len": 20,
+  "seed": 0
+}

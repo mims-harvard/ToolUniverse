@@ -1,0 +1,165 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "colabfold_predict",
+    "description": "Predict a protein (or protein-complex) structure with ColabFold 1.6.1 on the public AlphaFold2-Multimer v3 parameters, FROM A PRECOMPUTED ALIGNMENT. Give 'a3m' -- the text of an a3m, either a plain one for a single chain or ColabFold's complex dialect ('#<len1>,<len2>\\t<card1>,<card2>' on the first line) -- or 'sequences', a list of chains which is run MSA-FREE. No alignment is built here, no MMseqs2 server is contacted, and templates are not available. Returns per-model confidence scores ranked best-first; the PDB text itself is opt-in.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "a3m": {
+          "type": "string",
+          "description": "The text of an a3m carrying your own alignment. A plain a3m is one chain and the whole file is its unpaired MSA. A first line of '#<len1>,<len2>\\t<card1>,<card2>' is ColabFold's complex dialect: the aligned length of each unique chain and how many copies of it, with the concatenated query on line 3 and each later row split by aligned columns into paired and unpaired halves. Mutually exclusive with 'sequences'."
+        },
+        "sequences": {
+          "type": "array",
+          "description": "The chains of one complex, run MSA-FREE: this server writes the a3m for you. Mutually exclusive with 'a3m'. An MSA-free AlphaFold2 prediction is markedly less accurate -- pLDDT near 35 is normal for a single sequence.",
+          "minItems": 1,
+          "maxItems": 16,
+          "items": {
+            "type": "object",
+            "properties": {
+              "sequence": {
+                "type": "string",
+                "description": "One-letter protein sequence.",
+                "minLength": 1
+              },
+              "copies": {
+                "type": "integer",
+                "description": "How many identical copies of this chain the complex has (a homo-oligomer).",
+                "default": 1,
+                "minimum": 1,
+                "maximum": 16
+              }
+            },
+            "required": [
+              "sequence"
+            ]
+          }
+        },
+        "name": {
+          "type": "string",
+          "description": "A job name; it prefixes the output files.",
+          "default": "query"
+        },
+        "seed": {
+          "type": "integer",
+          "description": "Random seed (upstream's --random-seed). The same seed reproduces the prediction.",
+          "default": 0,
+          "minimum": 0
+        },
+        "num_models": {
+          "type": "integer",
+          "description": "How many of the five parameter sets to run (upstream's default is 5). Each is scored separately and they are ranked, which is the point of running more than one. Changing this rebuilds the held model.",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "num_recycles": {
+          "type": "integer",
+          "description": "Trunk recycling iterations. Upstream's default is the model config's 20 with early stop at tolerance 0.5; fewer is faster and less accurate. Changing this rebuilds the held model and recompiles.",
+          "minimum": 1,
+          "maximum": 48
+        },
+        "num_seeds": {
+          "type": "integer",
+          "description": "How many consecutive seeds to run, starting at 'seed'. Each seed runs every model, so the cost multiplies.",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "return_structures": {
+          "type": "boolean",
+          "description": "Return the PDB text (default false: a few hundred kilobytes per model). The scores come back either way.",
+          "default": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "model_type": {
+          "type": "string"
+        },
+        "n_structures": {
+          "type": "integer"
+        },
+        "structures": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "structures_note": {
+          "type": "string"
+        },
+        "scores": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "best": {
+          "type": "string"
+        },
+        "query_length": {
+          "type": "integer"
+        },
+        "chains": {
+          "type": "integer"
+        },
+        "msa_rows": {
+          "type": "integer"
+        },
+        "msa_source": {
+          "type": "string"
+        },
+        "num_models": {
+          "type": "integer"
+        },
+        "num_recycles": {
+          "type": "integer"
+        },
+        "engine_rebuilt": {
+          "type": "boolean"
+        },
+        "timing": {
+          "type": "object"
+        },
+        "peak_reserved_gib": {
+          "type": "number"
+        },
+        "weights_held_by": {
+          "type": "string"
+        },
+        "kit_mode": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "ColabFoldPredictTool",
+      "url": "https://github.com/anthropics/uplifting-biomolecular-modeling",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/colabfold",
+      "mcp_tool_name": "colabfold_predict"
+    },
+    "test_examples": [
+      {
+        "a3m": "#21,30\t1,1\n>101\t102\nGIVEQCCTSICSLYQLENYCNFVNQHLCGSHLVEALYLVCGERGFFYTPKT\n>101\nGIVEQCCTSICSLYQLENYCN------------------------------\n>102\n---------------------FVNQHLCGSHLVEALYLVCGERGFFYTPKT\n",
+        "name": "insulin",
+        "num_models": 1,
+        "num_recycles": 1,
+        "seed": 0
+      }
+    ]
+  }
+]

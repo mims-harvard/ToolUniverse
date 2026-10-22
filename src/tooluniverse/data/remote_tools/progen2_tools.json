@@ -1,0 +1,232 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "run_progen2_score",
+    "description": "Score one protein sequence with the ProGen2 protein language model: the log-likelihood it assigns to the sequence, as a sum over residues (ll_sum), a per-residue mean (ll_mean) and the corresponding perplexity. Both are the average of the left-to-right and right-to-left readings, which is what ProGen2's own likelihood.py reports. Use it to rank designed sequences, compare variants of one protein, or judge how protein-like a sequence is. Higher (less negative) ll_mean means the model finds the sequence more likely. Per-residue log-probabilities are opt-in and bounded, because a long sequence is a long array; the whole array can be written to a .npy file instead.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "One protein sequence in single-letter amino-acid code, or a single-record FASTA. ProGen2's own terminal markers are accepted: '1<seq>2' reads N to C and '2<seq>1' reads C to N. Given amino acids alone the sequence is wrapped '1<seq>2'. At most 2046 residues (progen2-base's context window is 2048 tokens).",
+          "minLength": 1
+        },
+        "per_token_log_prob": {
+          "type": "boolean",
+          "description": "Return the log-probability of every scored token, left to right, one number per position. Refused, not clipped, above 2048 positions -- ask for 'per_token_file' instead.",
+          "default": false
+        },
+        "per_token_file": {
+          "type": "boolean",
+          "description": "Write the per-token log-probabilities to a float32 .npy file on the provider host and return its path, shape and size instead of its contents.",
+          "default": false
+        },
+        "decimals": {
+          "type": "integer",
+          "description": "Decimal places for returned floats (default 6).",
+          "default": 6,
+          "minimum": 1,
+          "maximum": 8
+        }
+      },
+      "required": [
+        "sequence"
+      ],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "checkpoint": {
+          "type": "string"
+        },
+        "sequence_length": {
+          "type": "integer"
+        },
+        "context_tokens": {
+          "type": "integer"
+        },
+        "ll_sum": {
+          "type": "number"
+        },
+        "ll_mean": {
+          "type": "number"
+        },
+        "ll_left_to_right_sum": {
+          "type": "number"
+        },
+        "ll_right_to_left_sum": {
+          "type": "number"
+        },
+        "ll_left_to_right_mean": {
+          "type": "number"
+        },
+        "ll_right_to_left_mean": {
+          "type": "number"
+        },
+        "perplexity": {
+          "type": "number"
+        },
+        "per_token_log_prob": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "per_token_file": {
+          "type": "object"
+        },
+        "timing": {
+          "type": "object"
+        },
+        "weights_held_by": {
+          "type": "string"
+        },
+        "kit_mode": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "Progen2ScoreTool",
+      "url": "https://github.com/anthropics/uplifting-biomolecular-modeling",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/progen2",
+      "mcp_tool_name": "run_progen2_score"
+    },
+    "test_examples": [
+      {
+        "sequence": "1MGHGVSRPPVVTLRPAVLDDCPVLWRWRNDPETRQASVDEREIPVDTHTRWFEETLKRFDRKLFIVSADGVDAGMVRLDIQDRDAAVSVNIAPEWRGRGVGPRALGCLSREAFGPLALLRMSAVVKRENAASRIAFERAGFTVVDTGGPLLHSSKARLHVVAAIQARMGSTRLPGKVLVSIAGRPTIQRIAERLAVCQELDAVAVSTSVENRDDAIADLAAHLGLVCVRGSETDLIERLGRTAARTGADALVRITADCPLVDPALVDRVVGVWRRSAGRLEYVSNVFPPTFPDGLDVEVLSRTVLERLDREVSDPFFRESLTAYVREHPAAFEIANVEHPEDLSRLRWTMDYPEDLAFVEAVYRRLGNQGEIFGMDDLLRLLEWSPELRDLNRCREDVTVERGIRGTGYHAALRARGQAP2"
+      }
+    ]
+  },
+  {
+    "type": "RemoteTool",
+    "name": "run_progen2_generate",
+    "description": "Generate new protein sequences with the ProGen2 protein language model by nucleus sampling, optionally continuing a prompt. Use it to propose candidate sequences, extend a partial design, or sample a family's neighbourhood. Give 'prompt' an N-terminal fragment to condition on, or leave it out for an unconditioned sample. Output is bounded on purpose: at most 16 sequences of at most 1024 tokens each, which is what the provider's VRAM budget is declared at. Results are reproducible for a given 'seed'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "prompt": {
+          "type": "string",
+          "description": "An N-terminal fragment to continue, in single-letter amino-acid code, or a single-record FASTA. Omit it (or give '1') to sample without conditioning. The prompt is NOT closed with a C-terminus marker, because generation continues it."
+        },
+        "num_samples": {
+          "type": "integer",
+          "description": "How many sequences to sample (1-16). Peak GPU memory is roughly linear in num_samples x max_length.",
+          "default": 1,
+          "minimum": 1,
+          "maximum": 16
+        },
+        "max_length": {
+          "type": "integer",
+          "description": "Total token budget per sequence INCLUDING the prompt (ProGen2's own --max-length). At most 1024. Sampling stops early at a terminus marker.",
+          "default": 256,
+          "minimum": 2,
+          "maximum": 1024
+        },
+        "temperature": {
+          "type": "number",
+          "description": "Sampling temperature (ProGen2's --t; its default is 0.2, which samples conservatively). Higher is more diverse and less protein-like.",
+          "default": 0.2,
+          "minimum": 0.01,
+          "maximum": 2.0
+        },
+        "top_p": {
+          "type": "number",
+          "description": "Nucleus sampling threshold (ProGen2's --p, default 0.95).",
+          "default": 0.95,
+          "minimum": 0.01,
+          "maximum": 1.0
+        },
+        "seed": {
+          "type": "integer",
+          "description": "Random seed (ProGen2's --rng-seed, default 42). The same seed and the same arguments give the same sequences.",
+          "default": 42,
+          "minimum": 0
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "checkpoint": {
+          "type": "string"
+        },
+        "prompt": {
+          "type": "string"
+        },
+        "num_samples": {
+          "type": "integer"
+        },
+        "max_length": {
+          "type": "integer"
+        },
+        "temperature": {
+          "type": "number"
+        },
+        "top_p": {
+          "type": "number"
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "sequences": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "index": {
+                "type": "integer"
+              },
+              "sequence": {
+                "type": "string"
+              },
+              "context_and_completion": {
+                "type": "string"
+              },
+              "length": {
+                "type": "integer"
+              },
+              "terminated": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "timing": {
+          "type": "object"
+        },
+        "weights_held_by": {
+          "type": "string"
+        },
+        "kit_mode": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "Progen2GenerateTool",
+      "url": "https://github.com/anthropics/uplifting-biomolecular-modeling",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/progen2",
+      "mcp_tool_name": "run_progen2_generate"
+    }
+  }
+]

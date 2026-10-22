@@ -1,0 +1,207 @@
+# RFdiffusion3 — protein backbone design, held resident.
+#
+# The fourth provider on the standard and the first GENERATIVE one. The three
+# before it predict: one input, one answer. This one designs: one
+# specification, N backbones, and N is a parameter of the request rather than a
+# property of the input. That changes the request and the reply shape (see
+# [runtime] below) and it changes what residency buys, because the cost the
+# kit's own README names -- "each process pays about 25 s of start-up, and
+# `fast` spends roughly a minute per process in torch.compile tracing before
+# sampling starts, even with the compile cache filled" -- is per PROCESS, not
+# per design. A held engine pays it once for every request that follows, and
+# the kit's CUDA-graph sampler captures the denoiser step on one roll-out and
+# replays it on the next, which a process that exits cannot collect.
+#
+# Residency is worth more here than for any predictor on the standard: measured
+# below, the second and later requests of a held worker return in 1.6 s against
+# the first request's 19.4 s, because the compile trace and the CUDA-graph
+# capture are paid once per PROCESS and every design after the first replays
+# them. That is 12x, against Boltz-2's 2.0x and Chai-1's 2.6x.
+
+[provider]
+slug = "rfdiffusion3"
+description = "RFdiffusion3 protein backbone design from a design specification"
+operations = ["rfdiffusion3_design"]
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver 580.173.02),
+venv route, kit mode fast, overlay applied. Three unconditional 60-mers in one
+held worker: 19.4 s, 1.6 s, 1.6 s. The VRAM ladder under [gpu] was measured in
+one further held worker on the same card.
+
+ACCEPTANCE 2026-10-17: 12/12 answered, every one produced=yes, and the worker
+survived the whole run. That was the specific risk: the kit's attention
+preflight refuses by raising KernelsRefused, which subclasses SystemExit, and
+the shared serve loop catches Exception -- so a refusal would not fail a
+request, it would take the worker down with exit 5. The ladder is held at or
+under the measured 400 residues for exactly that reason.
+
+LENGTH ALONE REBUILDS NOTHING HERE. _build_key is
+{diffusion_batch_size, inference_sampler}; length, n_batches, seed and the
+specification are all free. So each rung also nudges
+inference_sampler.num_timesteps by +1 (201..204, sitting on upstream's
+default of 200) to make every rung a distinct build key -- a loop bound, not
+a shape, so it moves the key without moving the peak.
+
+Rungs 100/200/300/400 residues: peak 1.79 / 3.35 / 6.06 / 9.28 GiB, below the
+declared 12.49, which therefore stands.
+
+ITS peak_reserved_gib IS A SESSION HIGH-WATER MARK, NOT A PER-REQUEST FIGURE,
+and this run shows it plainly: a 100-residue request reads 1.79 on the
+ascending ladder and 6.80 / 8.54 for the identical input later, after the
+400-residue rung has set a higher mark. Only the ascending ladder values are
+real per-size numbers. This is why the suite insists the ladder runs first
+and ascending, and a differently ordered run would have recorded nonsense.
+
+The previously recorded ladder (2.62 / 2.92 / 7.47 / 12.49) did NOT
+reproduce -- measured lower at three of four points. The likely cause is a
+different diffusion_batch_size (the worker defaults to 1; upstream's config
+default is 8). Recorded rather than acted on: the declared budget sits above
+every observation, and lowering a budget on one run is the dangerous
+direction.
+"""
+
+[runtime]
+mode = "resident"
+worker = "resident/rfdiffusion3_resident_worker.py"
+launch = "tooluniverse.remote_resident.kit_launch:build_command"
+worker_args = ["--socket", "{socket}", "--slug", "{slug}"]
+# The 2.7 GB checkpoint, the hydra/atomworks import graph and the engine build.
+# The kit's own `warm` verb exists for exactly this and calls it the checkpoint
+# load; upstream's `initialize()` is what a resident worker runs once.
+start_timeout_s = 1800.0
+# A design request is a batch: n_batches roll-outs of diffusion_batch_size
+# designs each, 200 denoiser steps apiece. Under `fast` the first request in a
+# process also pays the compile trace.
+request_timeout_s = 7200.0
+idle_timeout_s = 900.0
+# What a run that actually worked leaves behind; the smoke step refuses if no
+# file matched. Upstream gzips its backbones, hence the compound extension --
+# a glob of "*.cif" would match nothing here.
+outputs = ["*.cif.gz"]
+# The smallest thing that exercises the design path: one unconditional 60-mer,
+# one design, one roll-out, 20 steps. See smoke/input.json.
+smoke = "smoke/input.json"
+smoke_timeout_s = 3600.0
+
+[gpu]
+policy = "required"
+# MEASURED, and unlike the three predictors before it this number needs an
+# envelope stated with it. A predictor's smoke is roughly its working size; a
+# generative model takes the size AND the count as request parameters, so a
+# budget quoted from the smoke (1 design, 60 residues, 2.12 GiB steady) would
+# under-budget a real request by 6x. Ladder, one held worker, steady state:
+#
+#     length  designs   peak reserved
+#        100        1      2.62 GiB
+#        200        1      2.92 GiB
+#        200        4      4.11 GiB
+#        300        4      7.47 GiB
+#        400        4     12.49 GiB   <- the reference this budget declares
+#        400        8     13.06 GiB
+#
+# Peak is driven by length, not by count: 400 residues costs 4.8x what 100
+# costs at the same count, while doubling the count at 400 adds 5%. The figure
+# below is the 400-residue, 4-design reference -- a request larger than that
+# exceeds this budget, and a host that accepts longer chains re-measures.
+vram_budget_gb = 12.49
+driver_min = 580
+driver_min_reason = "its pinned stack is CUDA 13.0 (torch 2.13.0+cu130)"
+shareable = true
+isolation = "process"
+
+[env]
+kind = "venv"
+python = "$TOOLUNIVERSE_RFDIFFUSION3_PYTHON"
+lock = "environment/requirements.lock"
+# rfd3 is upstream's package; rfdiffusion3_opt is the kit; apex is the one
+# addition the kit's pinned stack makes to upstream's install line, and it is
+# not optional under a kit mode -- upstream binds apex.FusedRMSNorm for every
+# RMSNorm of the network when it imports (layer_utils.py:13-23), and the kit's
+# KERNELS census REQUIRES that binding: a pass on torch.nn.RMSNorm is refused,
+# exit 5. So a stack without apex installs and then refuses at run time, which
+# is precisely what [env] verify exists to catch first.
+verify = "import torch, rfd3, apex, rfdiffusion3_opt; import importlib.metadata as m; assert m.version('rc-foundry') == '0.2.1.dev13+g4010e3e2e'"
+
+[weights]
+# Upstream's own checkpoint search path. `FOUNDRY_CHECKPOINT_DIRS` is
+# colon-separated for upstream (checkpoint_registry.py:25-41) and setup writes
+# a single directory into it, which is a valid value; `~/.foundry/checkpoints`
+# is upstream's default and is always searched even when the variable is unset.
+root_env = "FOUNDRY_CHECKPOINT_DIRS"
+root_default = "~/.foundry/checkpoints"
+# The kit's own weights module -- the one `run.sh install --weights DIR` calls.
+# It asks upstream's own installer for upstream's own registry entry and then
+# checks what arrived against stock/PINS.json, so no URL is restated in
+# ToolUniverse and nothing is fetched at request time: the worker is handed a
+# file this step verified. The kit step below already passes `--weights`, so in
+# the ordinary run this command has nothing to do; it is what repairs a
+# weights directory that was emptied after the kit was installed.
+#
+# It names no {kit}: `tu remote setup`'s weights step substitutes only
+# {python} and {weights_root}, and a third field would raise a KeyError here
+# rather than print a refusal.
+fetch = "{python} -m rfdiffusion3_opt.weights {weights_root}"
+
+# Generated from the kit's stock/PINS.json `checkpoint` object, not transcribed.
+# That kit declares no weights LIST -- upstream resolves its checkpoint through
+# a registry entry, and upstream registers no checksum for it
+# (RegisteredCheckpoint.sha256 = None) -- so the digest below is the kit's, and
+# the kit is the only party in this chain that has one.
+[[weights.files]]
+name = "rfd3_latest.ckpt"
+size = 2690316669
+sha256 = "9b3f85923e0d51e9453e15cdd2f8c666e7ce096a60577f57d11bbc54ae6d67c1"
+
+[kit]
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "rfdiffusion3"
+sparse = ["rfdiffusion3", "common"]
+package = "rfdiffusion3_opt"
+# `fast` is the kit's own default and the mode its speed claims are made for.
+# `exact` gives designs identical to stock under --det 1 and is the mode to
+# pick when outputs must not move; `off` runs stock, and for THIS kit that is
+# not a mode of this interpreter at all (see below).
+mode = "fast"
+# Two steps, and the second is what makes this kit unlike the other three.
+#
+# `run.sh install` is the usual one: the shared core and the kit installed
+# editable, then the kit's pin check.
+#
+# `install apply` is not. This kit is a FILE OVERLAY on the installed rfd3
+# package -- ten files under site-packages/rfd3/model/, eight replaced and two
+# added -- rather than a runtime monkeypatch, and `stack.activate()` refuses
+# the mode outright when this interpreter's rfd3 tree is not in the `patched`
+# state. It is idempotent: a second run finds the overlay applied and changes
+# nothing. Route C in the kit's README is the only route that types it, and a
+# venv provider is route C.
+#
+# Both lines are the kit's own, typed as its README types them. `tu remote
+# setup` runs them from the kit's directory with the model interpreter's bin
+# first on PATH, which is what `run.sh install` looks for.
+install = "bash run.sh install --weights {weights_root} && python -m rfdiffusion3_opt.install apply"
+# Nothing is declined and nothing is switched off. This kit carries no prebuilt
+# host objects at all -- the first of the four whose levers are pure Python and
+# Triton, so an aarch64 host loses none of them -- and none of its seven
+# switches races the process the way chai1's allocator lever does: every one is
+# read at the import of a patched module, and kit_launch puts the whole delta
+# in the environment before the interpreter starts.
+levers_declined = []
+levers_off = []
+
+# What this provider cannot serve, stated rather than discovered. Under `exact`
+# and `fast` the kit refuses four things BY NAME, before anything runs, and
+# `--mode off` is upstream's answer to all four:
+#
+#   inference_sampler.use_classifier_free_guidance = true
+#   low_memory_mode = true
+#   inference_sampler.kind = "symmetry"
+#   compile_model = true          (the kit compiles the same targets itself)
+#
+# `off` is not reachable from this provider as configured, and that is the
+# honest reading of the kit rather than an omission. `--mode off` runs in a
+# SECOND, pristine interpreter that the kit names with RFDIFFUSION3_STOCK_PYTHON
+# and that must never have had the overlay applied to it; this provider builds
+# one environment, and the one it builds is the patched one. A deployment that
+# needs those four computations builds the pristine environment the kit's
+# STOCK.md §Stack describes and points a second provider at it.

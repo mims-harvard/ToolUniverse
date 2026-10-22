@@ -1,0 +1,15 @@
+# The smallest input that exercises ProGen2's documented scoring path, and it is
+# not an arbitrary protein: this is likelihood.py's OWN --context default, the
+# 422-character string the stock CLI scores when given no sequence
+# (stock/src/progen2/likelihood.py L127; stock/PINS.json records its length, head
+# and tail as cli_defaults.likelihood.py.--context). PINS.json's note identifies it
+# as "'1' + the GenBank TMF32756.1 protein + '2'", and the kit's own README prints
+# the same string as its `score` example (X=...).
+#
+# Using the stock's own default rather than a protein of our choosing means the
+# smoke scores exactly what `bash run.sh score --mode off --model progen2-base`
+# scores, so a difference between the two is a difference in this provider and not
+# in the input. '1' and '2' are the N- and C-terminus markers; the worker scores
+# the string in both directions and reports their mean as ll_sum / ll_mean, which
+# is what [runtime] output_keys names.
+1MGHGVSRPPVVTLRPAVLDDCPVLWRWRNDPETRQASVDEREIPVDTHTRWFEETLKRFDRKLFIVSADGVDAGMVRLDIQDRDAAVSVNIAPEWRGRGVGPRALGCLSREAFGPLALLRMSAVVKRENAASRIAFERAGFTVVDTGGPLLHSSKARLHVVAAIQARMGSTRLPGKVLVSIAGRPTIQRIAERLAVCQELDAVAVSTSVENRDDAIADLAAHLGLVCVRGSETDLIERLGRTAARTGADALVRITADCPLVDPALVDRVVGVWRRSAGRLEYVSNVFPPTFPDGLDVEVLSRTVLERLDREVSDPFFRESLTAYVREHPAAFEIANVEHPEDLSRLRWTMDYPEDLAFVEAVYRRLGNQGEIFGMDDLLRLLEWSPELRDLNRCREDVTVERGIRGTGYHAALRARGQAP2

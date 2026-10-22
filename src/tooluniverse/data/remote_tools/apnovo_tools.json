@@ -1,0 +1,459 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "apnovo_validate_motif",
+    "description": "Validate an AlphaProtein Novo design manifest and parse its catalytic motif specification, without running the model. Reports which atoms and ligand chains are fixed, whether motif conditioning is indexed or unindexed, whether partial diffusion is configured, and the folding states and evaluation suite the manifest declares. Run this before generating: a malformed motif_str is otherwise only visible after the generation stage has spent GPU-hours. Needs no weights and no GPU.",
+    "parameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "manifest": {
+          "type": "string",
+          "description": "AP Novo design manifest as a JSON string (a JSON object is also accepted). Minimally {\"designs\": [{\"input_file\": \"motif.cif\", \"motif_str\": \"A1,A2|10-100,{},2-80,{},10-100/B1\", \"motif_atoms\": \"A1:OE2,OE1,CD,CG A2:OG,CB,CA\", \"is_author_naming\": false, \"num_designs\": 2}]}. In motif_str, 'A1' fixes input chain A residue 1, '10-100' is a generated segment whose length is sampled once per design, '/B1' is a fixed ligand chain, and a leading '|' randomises segment order."
+        },
+        "files": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Each filename the manifest names, mapped to that file's text. The motif CIF is required; a partial-diffusion parent CIF is needed only if the manifest asks for one."
+        }
+      },
+      "required": [
+        "manifest",
+        "files"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        },
+        "designs": {
+          "type": "array",
+          "description": "One entry per design job: its name, resolved motif_str, fixed atoms, ligand chains, whether conditioning is indexed, and whether partial diffusion is configured.",
+          "items": {
+            "type": "object"
+          }
+        },
+        "folding_states": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evaluation_suite": {
+          "type": "string",
+          "description": "The reaction-specific metric suite, or absent. Upstream ships kemp_eliminase, serine_esterase, dehp_esterase, carbene_transfer and nitrene_transfer."
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "ApNovoValidateMotifTool",
+      "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/remote/apnovo.html",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/apnovo",
+      "mcp_tool_name": "apnovo_validate_motif"
+    },
+    "test_examples": [
+      {
+        "manifest": "{\"defaults\": {\"num_designs\": 1, \"seed_start\": 0, \"num_sampling_steps\": 1000}, \"designs\": [{\"name\": \"kemp_eliminase\", \"output_prefix\": \"kemp\", \"input_file\": \"motif.cif\", \"motif_str\": \"A1,A2|10-100,{},2-80,{},10-100/B1\", \"motif_atoms\": \"A1:OE2,OE1,CD,CG A2:OG,CB,CA\", \"seq_length\": \"120-160\", \"is_author_naming\": false}]}",
+        "files": {
+          "motif.cif": "data_H5J_DefaultName_DefaultName_4BS0\n#\n_entry.id H5J_DefaultName_DefaultName_4BS0\n#\nloop_\n_chem_comp.formula\n_chem_comp.formula_weight\n_chem_comp.id\n_chem_comp.mon_nstd_flag\n_chem_comp.name\n_chem_comp.pdbx_synonyms\n_chem_comp.type\n\"C6 H4 N4 O2\"    164.122 6NT . 6-NITROBENZOTRIAZOLE    ? non-polymer         \n\"C3 H7 N O2\"     89.093  ALA y ALANINE                 ? \"L-peptide linking\" \n\"C6 H15 N4 O2 1\" 175.209 ARG y ARGININE                ? \"L-peptide linking\" \n\"C4 H8 N2 O3\"    132.118 ASN y ASPARAGINE              ? \"L-peptide linking\" \n\"C4 H7 N O4\"     133.103 ASP y \"ASPARTIC ACID\"         ? \"L-peptide linking\" \n\"C3 H7 N O2 S\"   121.158 CYS y CYSTEINE                ? \"L-peptide linking\" \n\"C5 H10 N2 O3\"   146.144 GLN y GLUTAMINE               ? \"L-peptide linking\" \n\"C5 H9 N O4\"     147.129 GLU y \"GLUTAMIC ACID\"         ? \"L-peptide linking\" \n\"C2 H5 N O2\"     75.067  GLY y GLYCINE                 ? \"peptide linking\"   \n\"C7 H4 N2 O3\"    164.118 H5J . 5-nitro-1,2-benzoxazole ? NON-POLYMER         \n\"C6 H10 N3 O2 1\" 156.162 HIS y HISTIDINE               ? \"L-peptide linking\" \n\"H2 O\"           18.015  HOH . WATER                   ? non-polymer         \n\"C6 H13 N O2\"    131.173 ILE y ISOLEUCINE              ? \"L-peptide linking\" \n\"C6 H13 N O2\"    131.173 LEU y LEUCINE                 ? \"L-peptide linking\" \n\"C6 H15 N2 O2 1\" 147.195 LYS y LYSINE                  ? \"L-peptide linking\" \n\"C5 H11 N O2 S\"  149.211 MET y METHIONINE              ? \"L-peptide linking\" \n\"C9 H11 N O2\"    165.189 PHE y PHENYLALANINE           ? \"L-peptide linking\" \n\"C5 H9 N O2\"     115.130 PRO y PROLINE                 ? \"L-peptide linking\" \n\"C3 H7 N O3\"     105.093 SER y SERINE                  ? \"L-peptide linking\" \n\"O4 S -2\"        96.063  SO4 . \"SULFATE ION\"           ? non-polymer         \n\"C4 H9 N O3\"     119.119 THR y THREONINE               ? \"L-peptide linking\" \n\"C11 H12 N2 O2\"  204.225 TRP y TRYPTOPHAN              ? \"L-peptide linking\" \n\"C9 H11 N O3\"    181.189 TYR y TYROSINE                ? \"L-peptide linking\" \n\"C5 H11 N O2\"    117.146 VAL y VALINE                  ? \"L-peptide linking\" \n#\nloop_\n_entity.id\n_entity.pdbx_description\n_entity.type\n1 \"Protein chain\" polymer     \n2 Ligand          non-polymer \n#\n_entity_poly.entity_id      1\n_entity_poly.pdbx_strand_id A\n_entity_poly.type           polypeptide(L)\n#\nloop_\n_entity_poly_seq.entity_id\n_entity_poly_seq.hetero\n_entity_poly_seq.mon_id\n_entity_poly_seq.num\n1 n GLU 1 \n1 n SER 2 \n#\n_pdbx_nonpoly_scheme.asym_id       B\n_pdbx_nonpoly_scheme.auth_seq_num  1\n_pdbx_nonpoly_scheme.entity_id     2\n_pdbx_nonpoly_scheme.mon_id        6NT\n_pdbx_nonpoly_scheme.pdb_ins_code  .\n_pdbx_nonpoly_scheme.pdb_seq_num   1\n_pdbx_nonpoly_scheme.pdb_strand_id B\n#\nloop_\n_pdbx_poly_seq_scheme.asym_id\n_pdbx_poly_seq_scheme.auth_seq_num\n_pdbx_poly_seq_scheme.entity_id\n_pdbx_poly_seq_scheme.hetero\n_pdbx_poly_seq_scheme.mon_id\n_pdbx_poly_seq_scheme.pdb_ins_code\n_pdbx_poly_seq_scheme.pdb_seq_num\n_pdbx_poly_seq_scheme.pdb_strand_id\n_pdbx_poly_seq_scheme.seq_id\nA 1 1 n GLU . 1 A 1 \nA 2 1 n SER . 2 A 2 \n#\n_software.classification other\n_software.name           \"DeepMind Structure Class\"\n_software.pdbx_ordinal   1\n_software.version        2.0.0\n#\nloop_\n_struct_asym.entity_id\n_struct_asym.id\n1 A \n2 B \n#\nloop_\n_atom_site.group_PDB\n_atom_site.id\n_atom_site.type_symbol\n_atom_site.label_atom_id\n_atom_site.label_alt_id\n_atom_site.label_comp_id\n_atom_site.label_asym_id\n_atom_site.label_entity_id\n_atom_site.label_seq_id\n_atom_site.pdbx_PDB_ins_code\n_atom_site.Cartn_x\n_atom_site.Cartn_y\n_atom_site.Cartn_z\n_atom_site.occupancy\n_atom_site.B_iso_or_equiv\n_atom_site.auth_seq_id\n_atom_site.auth_asym_id\n_atom_site.pdbx_PDB_model_num\nATOM   1  N N   . GLU A 1 1 ? 0.675  -16.752 36.190 1.00 1.00 1 A 1 \nATOM   2  C CA  . GLU A 1 1 ? 0.019  -16.691 34.901 1.00 1.00 1 A 1 \nATOM   3  C C   . GLU A 1 1 ? 0.794  -15.778 33.958 1.00 1.00 1 A 1 \nATOM   4  C CB  . GLU A 1 1 ? -1.415 -16.202 35.007 1.00 1.00 1 A 1 \nATOM   5  O O   . GLU A 1 1 ? 0.746  -16.008 32.750 1.00 1.00 1 A 1 \nATOM   6  C CG  . GLU A 1 1 ? -2.346 -17.127 35.772 1.00 1.00 1 A 1 \nATOM   7  C CD  . GLU A 1 1 ? -3.744 -16.555 35.985 1.00 1.00 1 A 1 \nATOM   8  O OE1 . GLU A 1 1 ? -3.853 -15.437 36.541 1.00 1.00 1 A 1 \nATOM   9  O OE2 . GLU A 1 1 ? -4.724 -17.215 35.576 1.00 1.00 1 A 1 \nATOM   10 N N   . SER A 1 2 ? 0.590  -24.767 30.732 1.00 1.00 2 A 1 \nATOM   11 C CA  . SER A 1 2 ? 0.811  -23.422 31.237 1.00 1.00 2 A 1 \nATOM   12 C C   . SER A 1 2 ? 1.744  -23.418 32.441 1.00 1.00 2 A 1 \nATOM   13 C CB  . SER A 1 2 ? -0.460 -22.666 31.508 1.00 1.00 2 A 1 \nATOM   14 O O   . SER A 1 2 ? 2.559  -22.510 32.534 1.00 1.00 2 A 1 \nATOM   15 O OG  . SER A 1 2 ? -1.185 -23.278 32.555 1.00 1.00 2 A 1 \nHETATM 16 O O21 . 6NT B 2 . ? -9.557 -19.804 34.150 1.00 1.00 1 B 1 \nHETATM 17 N NO1 . 6NT B 2 . ? -9.103 -20.870 33.482 1.00 1.00 1 B 1 \nHETATM 18 O O11 . 6NT B 2 . ? -9.936 -21.749 33.080 1.00 1.00 1 B 1 \nHETATM 19 C C5  . 6NT B 2 . ? -7.698 -21.130 33.346 1.00 1.00 1 B 1 \nHETATM 20 C C6  . 6NT B 2 . ? -7.314 -22.333 32.781 1.00 1.00 1 B 1 \nHETATM 21 C C7  . 6NT B 2 . ? -6.006 -22.632 32.713 1.00 1.00 1 B 1 \nHETATM 22 C C7A . 6NT B 2 . ? -5.058 -21.736 33.321 1.00 1.00 1 B 1 \nHETATM 23 N N1  . 6NT B 2 . ? -3.694 -21.696 33.378 1.00 1.00 1 B 1 \nHETATM 24 C C3A . 6NT B 2 . ? -5.509 -20.531 33.840 1.00 1.00 1 B 1 \nHETATM 25 C C4  . 6NT B 2 . ? -6.864 -20.186 33.892 1.00 1.00 1 B 1 \nHETATM 26 N N3  . 6NT B 2 . ? -4.376 -19.847 34.299 1.00 1.00 1 B 1 \nHETATM 27 N N2  . 6NT B 2 . ? -3.314 -20.563 34.002 1.00 1.00 1 B 1 \n#\n"
+        }
+      }
+    ]
+  },
+  {
+    "type": "RemoteTool",
+    "name": "apnovo_generate_designs",
+    "description": "Generate de novo enzyme designs with AlphaProtein Novo: a joint sequence\u2013structure diffusion model co-generates backbones and sequences conditioned on a fixed catalytic motif and fixed ligand atoms. Returns the designs as mmCIF plus a server-side run directory that apnovo_evaluate_designs reads. This runs the generation stage only \u2014 neither LigandMPNN resequencing nor AlphaFold 3 folding is part of this provider, so a manifest's 'resequence' and 'folding' sections are recorded but not acted on. Validate the motif first with apnovo_validate_motif.",
+    "parameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "manifest": {
+          "type": "string",
+          "description": "AP Novo design manifest as a JSON string (a JSON object is also accepted). Minimally {\"designs\": [{\"input_file\": \"motif.cif\", \"motif_str\": \"A1,A2|10-100,{},2-80,{},10-100/B1\", \"motif_atoms\": \"A1:OE2,OE1,CD,CG A2:OG,CB,CA\", \"is_author_naming\": false, \"num_designs\": 2}]}. In motif_str, 'A1' fixes input chain A residue 1, '10-100' is a generated segment whose length is sampled once per design, '/B1' is a fixed ligand chain, and a leading '|' randomises segment order."
+        },
+        "files": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Each filename the manifest names, mapped to that file's text. The motif CIF is required; a partial-diffusion parent CIF is needed only if the manifest asks for one."
+        },
+        "num_designs": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 256,
+          "description": "Override the manifest's per-job design count for this request. The published campaigns run hundreds per motif because many samples are needed to find one that passes filters."
+        },
+        "num_sampling_steps": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Denoising steps. Upstream's campaigns used 1000; 50 produces fast but poor designs and is for checking a configuration, not for results."
+        },
+        "seed_start": {
+          "type": "integer",
+          "description": "First RNG seed."
+        },
+        "return_designs": {
+          "type": "boolean",
+          "description": "Return design mmCIF text inline, up to 32. The run directory always holds all of them."
+        }
+      },
+      "required": [
+        "manifest",
+        "files"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        },
+        "run_dir": {
+          "type": "string",
+          "description": "Server-side campaign directory. Pass it to apnovo_evaluate_designs."
+        },
+        "n_designs": {
+          "type": "integer"
+        },
+        "designs": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Per design: name, sequence, and mmCIF text when return_designs was set. The mmCIF carries upstream's AP Novo Output Terms of Use notice; keep it."
+        },
+        "timing": {
+          "type": "object"
+        },
+        "peak_bytes_in_use": {
+          "type": "integer",
+          "description": "JAX's own high-water mark for this worker. On this unified-memory card nvidia-smi reports no figure, and a JAX budget is not comparable with a torch one."
+        },
+        "weights_held_by": {
+          "type": "string"
+        },
+        "output_terms_of_use": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "ApNovoGenerateDesignsTool",
+      "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/remote/apnovo.html",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/apnovo",
+      "mcp_tool_name": "apnovo_generate_designs"
+    },
+    "test_examples": [
+      {
+        "manifest": "{\"defaults\": {\"num_designs\": 1, \"seed_start\": 0, \"num_sampling_steps\": 1000}, \"designs\": [{\"name\": \"kemp_eliminase\", \"output_prefix\": \"kemp\", \"input_file\": \"motif.cif\", \"motif_str\": \"A1,A2|10-100,{},2-80,{},10-100/B1\", \"motif_atoms\": \"A1:OE2,OE1,CD,CG A2:OG,CB,CA\", \"seq_length\": \"120-160\", \"is_author_naming\": false}]}",
+        "files": {
+          "motif.cif": "data_H5J_DefaultName_DefaultName_4BS0\n#\n_entry.id H5J_DefaultName_DefaultName_4BS0\n#\nloop_\n_chem_comp.formula\n_chem_comp.formula_weight\n_chem_comp.id\n_chem_comp.mon_nstd_flag\n_chem_comp.name\n_chem_comp.pdbx_synonyms\n_chem_comp.type\n\"C6 H4 N4 O2\"    164.122 6NT . 6-NITROBENZOTRIAZOLE    ? non-polymer         \n\"C3 H7 N O2\"     89.093  ALA y ALANINE                 ? \"L-peptide linking\" \n\"C6 H15 N4 O2 1\" 175.209 ARG y ARGININE                ? \"L-peptide linking\" \n\"C4 H8 N2 O3\"    132.118 ASN y ASPARAGINE              ? \"L-peptide linking\" \n\"C4 H7 N O4\"     133.103 ASP y \"ASPARTIC ACID\"         ? \"L-peptide linking\" \n\"C3 H7 N O2 S\"   121.158 CYS y CYSTEINE                ? \"L-peptide linking\" \n\"C5 H10 N2 O3\"   146.144 GLN y GLUTAMINE               ? \"L-peptide linking\" \n\"C5 H9 N O4\"     147.129 GLU y \"GLUTAMIC ACID\"         ? \"L-peptide linking\" \n\"C2 H5 N O2\"     75.067  GLY y GLYCINE                 ? \"peptide linking\"   \n\"C7 H4 N2 O3\"    164.118 H5J . 5-nitro-1,2-benzoxazole ? NON-POLYMER         \n\"C6 H10 N3 O2 1\" 156.162 HIS y HISTIDINE               ? \"L-peptide linking\" \n\"H2 O\"           18.015  HOH . WATER                   ? non-polymer         \n\"C6 H13 N O2\"    131.173 ILE y ISOLEUCINE              ? \"L-peptide linking\" \n\"C6 H13 N O2\"    131.173 LEU y LEUCINE                 ? \"L-peptide linking\" \n\"C6 H15 N2 O2 1\" 147.195 LYS y LYSINE                  ? \"L-peptide linking\" \n\"C5 H11 N O2 S\"  149.211 MET y METHIONINE              ? \"L-peptide linking\" \n\"C9 H11 N O2\"    165.189 PHE y PHENYLALANINE           ? \"L-peptide linking\" \n\"C5 H9 N O2\"     115.130 PRO y PROLINE                 ? \"L-peptide linking\" \n\"C3 H7 N O3\"     105.093 SER y SERINE                  ? \"L-peptide linking\" \n\"O4 S -2\"        96.063  SO4 . \"SULFATE ION\"           ? non-polymer         \n\"C4 H9 N O3\"     119.119 THR y THREONINE               ? \"L-peptide linking\" \n\"C11 H12 N2 O2\"  204.225 TRP y TRYPTOPHAN              ? \"L-peptide linking\" \n\"C9 H11 N O3\"    181.189 TYR y TYROSINE                ? \"L-peptide linking\" \n\"C5 H11 N O2\"    117.146 VAL y VALINE                  ? \"L-peptide linking\" \n#\nloop_\n_entity.id\n_entity.pdbx_description\n_entity.type\n1 \"Protein chain\" polymer     \n2 Ligand          non-polymer \n#\n_entity_poly.entity_id      1\n_entity_poly.pdbx_strand_id A\n_entity_poly.type           polypeptide(L)\n#\nloop_\n_entity_poly_seq.entity_id\n_entity_poly_seq.hetero\n_entity_poly_seq.mon_id\n_entity_poly_seq.num\n1 n GLU 1 \n1 n SER 2 \n#\n_pdbx_nonpoly_scheme.asym_id       B\n_pdbx_nonpoly_scheme.auth_seq_num  1\n_pdbx_nonpoly_scheme.entity_id     2\n_pdbx_nonpoly_scheme.mon_id        6NT\n_pdbx_nonpoly_scheme.pdb_ins_code  .\n_pdbx_nonpoly_scheme.pdb_seq_num   1\n_pdbx_nonpoly_scheme.pdb_strand_id B\n#\nloop_\n_pdbx_poly_seq_scheme.asym_id\n_pdbx_poly_seq_scheme.auth_seq_num\n_pdbx_poly_seq_scheme.entity_id\n_pdbx_poly_seq_scheme.hetero\n_pdbx_poly_seq_scheme.mon_id\n_pdbx_poly_seq_scheme.pdb_ins_code\n_pdbx_poly_seq_scheme.pdb_seq_num\n_pdbx_poly_seq_scheme.pdb_strand_id\n_pdbx_poly_seq_scheme.seq_id\nA 1 1 n GLU . 1 A 1 \nA 2 1 n SER . 2 A 2 \n#\n_software.classification other\n_software.name           \"DeepMind Structure Class\"\n_software.pdbx_ordinal   1\n_software.version        2.0.0\n#\nloop_\n_struct_asym.entity_id\n_struct_asym.id\n1 A \n2 B \n#\nloop_\n_atom_site.group_PDB\n_atom_site.id\n_atom_site.type_symbol\n_atom_site.label_atom_id\n_atom_site.label_alt_id\n_atom_site.label_comp_id\n_atom_site.label_asym_id\n_atom_site.label_entity_id\n_atom_site.label_seq_id\n_atom_site.pdbx_PDB_ins_code\n_atom_site.Cartn_x\n_atom_site.Cartn_y\n_atom_site.Cartn_z\n_atom_site.occupancy\n_atom_site.B_iso_or_equiv\n_atom_site.auth_seq_id\n_atom_site.auth_asym_id\n_atom_site.pdbx_PDB_model_num\nATOM   1  N N   . GLU A 1 1 ? 0.675  -16.752 36.190 1.00 1.00 1 A 1 \nATOM   2  C CA  . GLU A 1 1 ? 0.019  -16.691 34.901 1.00 1.00 1 A 1 \nATOM   3  C C   . GLU A 1 1 ? 0.794  -15.778 33.958 1.00 1.00 1 A 1 \nATOM   4  C CB  . GLU A 1 1 ? -1.415 -16.202 35.007 1.00 1.00 1 A 1 \nATOM   5  O O   . GLU A 1 1 ? 0.746  -16.008 32.750 1.00 1.00 1 A 1 \nATOM   6  C CG  . GLU A 1 1 ? -2.346 -17.127 35.772 1.00 1.00 1 A 1 \nATOM   7  C CD  . GLU A 1 1 ? -3.744 -16.555 35.985 1.00 1.00 1 A 1 \nATOM   8  O OE1 . GLU A 1 1 ? -3.853 -15.437 36.541 1.00 1.00 1 A 1 \nATOM   9  O OE2 . GLU A 1 1 ? -4.724 -17.215 35.576 1.00 1.00 1 A 1 \nATOM   10 N N   . SER A 1 2 ? 0.590  -24.767 30.732 1.00 1.00 2 A 1 \nATOM   11 C CA  . SER A 1 2 ? 0.811  -23.422 31.237 1.00 1.00 2 A 1 \nATOM   12 C C   . SER A 1 2 ? 1.744  -23.418 32.441 1.00 1.00 2 A 1 \nATOM   13 C CB  . SER A 1 2 ? -0.460 -22.666 31.508 1.00 1.00 2 A 1 \nATOM   14 O O   . SER A 1 2 ? 2.559  -22.510 32.534 1.00 1.00 2 A 1 \nATOM   15 O OG  . SER A 1 2 ? -1.185 -23.278 32.555 1.00 1.00 2 A 1 \nHETATM 16 O O21 . 6NT B 2 . ? -9.557 -19.804 34.150 1.00 1.00 1 B 1 \nHETATM 17 N NO1 . 6NT B 2 . ? -9.103 -20.870 33.482 1.00 1.00 1 B 1 \nHETATM 18 O O11 . 6NT B 2 . ? -9.936 -21.749 33.080 1.00 1.00 1 B 1 \nHETATM 19 C C5  . 6NT B 2 . ? -7.698 -21.130 33.346 1.00 1.00 1 B 1 \nHETATM 20 C C6  . 6NT B 2 . ? -7.314 -22.333 32.781 1.00 1.00 1 B 1 \nHETATM 21 C C7  . 6NT B 2 . ? -6.006 -22.632 32.713 1.00 1.00 1 B 1 \nHETATM 22 C C7A . 6NT B 2 . ? -5.058 -21.736 33.321 1.00 1.00 1 B 1 \nHETATM 23 N N1  . 6NT B 2 . ? -3.694 -21.696 33.378 1.00 1.00 1 B 1 \nHETATM 24 C C3A . 6NT B 2 . ? -5.509 -20.531 33.840 1.00 1.00 1 B 1 \nHETATM 25 C C4  . 6NT B 2 . ? -6.864 -20.186 33.892 1.00 1.00 1 B 1 \nHETATM 26 N N3  . 6NT B 2 . ? -4.376 -19.847 34.299 1.00 1.00 1 B 1 \nHETATM 27 N N2  . 6NT B 2 . ? -3.314 -20.563 34.002 1.00 1.00 1 B 1 \n#\n"
+        },
+        "num_designs": 1,
+        "num_sampling_steps": 50,
+        "return_designs": false
+      }
+    ]
+  },
+  {
+    "type": "RemoteTool",
+    "name": "apnovo_resequence_designs",
+    "description": "Redesign the sequences of an AlphaProtein Novo campaign's backbones with LigandMPNN, keeping the backbone and the ligand context fixed. Takes the run_dir that apnovo_generate_designs returned and writes a 02_resequence stage beside the generated one. Runs on the CPU in its own interpreter, so it does not compete with the generator for the GPU. Beyond producing an alternative sequence, this is the input to the strongest filter in the AP Novo paper: generate N sequences for one backbone and score the BACKBONE by how many of them pass your filter set (multi-resequence scoring, worth 2.5x to 5.4x hit-rate enrichment at 50% recall). Set num_sequences to 7-10 for that; the default pipeline uses 1.",
+    "parameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "run_dir": {
+          "type": "string",
+          "description": "The server-side campaign directory returned by apnovo_generate_designs."
+        },
+        "num_sequences": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32,
+          "description": "Sequences per backbone. 1 is the published default pipeline; 7-10 is what multi-resequence backbone scoring needs (the paper used 7 for Kemp eliminase, pass >= 6/7 then 7/7, and 10 for serine esterase, pass 10/10)."
+        },
+        "temperature": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0,
+          "description": "Sampling temperature. The published campaigns used 0.1."
+        },
+        "model_type": {
+          "type": "string",
+          "enum": [
+            "ligand_mpnn",
+            "protein_mpnn"
+          ],
+          "description": "LigandMPNN conditions on the ligand; ProteinMPNN does not. For enzyme design the ligand is the point."
+        },
+        "use_side_chain_context": {
+          "type": "boolean",
+          "description": "Condition on the fixed residues' side chains as well as their backbones."
+        }
+      },
+      "required": [
+        "run_dir"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        },
+        "n_designs": {
+          "type": "integer"
+        },
+        "designs": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Per resequenced design: name, sequence, LigandMPNN's own overall_confidence / ligand_confidence / seq_rec, and the path of the resequenced mmCIF."
+        },
+        "device": {
+          "type": "string",
+          "description": "Always cpu on a card whose compute capability LigandMPNN's pinned torch does not target."
+        },
+        "run_dir": {
+          "type": "string"
+        },
+        "timing": {
+          "type": "object"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "ApNovoResequenceDesignsTool",
+      "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/remote/apnovo.html",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/apnovo",
+      "mcp_tool_name": "apnovo_resequence_designs"
+    },
+    "test_examples": [
+      {
+        "run_dir": "/path/to/campaign/returned/by/apnovo_generate_designs",
+        "num_sequences": 10,
+        "temperature": 0.1,
+        "model_type": "ligand_mpnn"
+      }
+    ]
+  },
+  {
+    "type": "RemoteTool",
+    "name": "apnovo_ingest_folded",
+    "description": "Lay externally predicted structures into a campaign as upstream's folded stage, so apnovo_evaluate_designs can score it. This provider has no folding operation \u2014 AlphaFold 3 weights carry terms separate from AP Novo's \u2014 but upstream's evaluation does not require THIS provider to have folded anything: it requires a directory shaped like run_alphafold.py output. Fold each design's states with any structure predictor that has settled its own weights question (openfold3, protenix_v1, esmfold2, chai1 and rosettafold3 are siblings on this standard), then send the mmCIF text here. Whatever confidence fields the predictor reported ride along into the metric rows; only the seed and the designed-structure filename are load-bearing.",
+    "parameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "run_dir": {
+          "type": "string",
+          "description": "The server-side campaign directory returned by apnovo_generate_designs."
+        },
+        "states": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 512,
+          "description": "One entry per (design, state, seed) that was folded. Seeds must start at 0 and be contiguous: upstream counts up from 0 and stops at the first gap, so a missing seed silently truncates the rest.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "sample_name",
+              "state",
+              "folded_cif"
+            ],
+            "properties": {
+              "sample_name": {
+                "type": "string",
+                "description": "The design's name, as apnovo_generate_designs reported it."
+              },
+              "state": {
+                "type": "string",
+                "description": "The folding state's name, from the manifest's folding.states."
+              },
+              "seed": {
+                "type": "integer",
+                "minimum": 0,
+                "default": 0,
+                "description": "Prediction seed index."
+              },
+              "folded_cif": {
+                "type": "string",
+                "description": "Predicted structure as mmCIF text."
+              },
+              "confidences": {
+                "type": "object",
+                "description": "The predictor's own confidence record. Every key becomes a prefixed metric on the evaluation row."
+              },
+              "designed_cif": {
+                "type": "string",
+                "description": "Filename of the generated structure this prediction is scored against, as it appears in 01_generation. Required on the first state of each design; upstream refuses a design whose first confidence record does not name one."
+              }
+            }
+          }
+        }
+      },
+      "required": [
+        "run_dir",
+        "states"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        },
+        "folded_dir": {
+          "type": "string"
+        },
+        "n_states_written": {
+          "type": "integer"
+        },
+        "states": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "designed_cifs_missing": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Named designed structures that were not found in 01_generation; evaluation will refuse these designs."
+        },
+        "seed_gaps": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Designs whose seeds are not contiguous from 0, with how far upstream will actually read."
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "ApNovoIngestFoldedTool",
+      "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/remote/apnovo.html",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/apnovo",
+      "mcp_tool_name": "apnovo_ingest_folded"
+    },
+    "test_examples": [
+      {
+        "run_dir": "/path/to/campaign/returned/by/apnovo_generate_designs",
+        "states": [
+          {
+            "sample_name": "design_0000",
+            "state": "apo",
+            "seed": 0,
+            "folded_cif": "data_design\n_entry.id design\n# mmCIF text from a structure predictor\n",
+            "designed_cif": "design_0000.cif"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "RemoteTool",
+    "name": "apnovo_evaluate_designs",
+    "description": "Score an AlphaProtein Novo campaign with upstream's own metrics and return one row per design. REQUIRES A FOLDED CAMPAIGN: upstream's evaluation reads each design's folding seeds and refuses an unfolded campaign outright \u2014 it does not fall back to the metrics that need no structure prediction. This provider has no folding operation (AlphaFold 3 weights carry terms separate from AP Novo's), so the structures have to come from elsewhere: fold each design's states with any structure predictor that has settled its own weights question, send them to apnovo_ingest_folded, then call this. On a campaign with no folded stage this returns a named error saying so.",
+    "parameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "run_dir": {
+          "type": "string",
+          "description": "The server-side campaign directory returned by apnovo_generate_designs."
+        },
+        "eval_suite": {
+          "type": "string",
+          "enum": [
+            "kemp_eliminase",
+            "serine_esterase",
+            "dehp_esterase",
+            "carbene_transfer",
+            "nitrene_transfer"
+          ],
+          "description": "Reaction-specific metric suite. Omit for generic metrics only. A suite whose metrics need folded states cannot produce them here."
+        }
+      },
+      "required": [
+        "run_dir"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        },
+        "n_designs": {
+          "type": "integer"
+        },
+        "metric_families": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "The metric families present in the rows, e.g. ['apo', 'complex', 'sampled', 'sequence'] \u2014 the state-prefixed ones exist only for states that were folded."
+        },
+        "metrics": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "One row per design."
+        },
+        "summary_csv_path": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "ApNovoEvaluateDesignsTool",
+      "url": "https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/remote/apnovo.html",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/apnovo",
+      "mcp_tool_name": "apnovo_evaluate_designs"
+    },
+    "test_examples": [
+      {
+        "run_dir": "/path/to/campaign/returned/by/apnovo_generate_designs",
+        "eval_suite": "kemp_eliminase"
+      }
+    ]
+  }
+]

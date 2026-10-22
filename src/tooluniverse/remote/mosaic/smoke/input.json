@@ -1,0 +1,8 @@
+{
+  "target_sequence": "KKAVINGEQIRSISDLHQTLKKELALPEYYGENLDALWDALTGWVEYPLVLEWRQFEQSKQLTENGAESVLQVFREAKAEGADITIILS",
+  "binder_length": 80,
+  "target_copies": 1,
+  "steps1": 3,
+  "steps2": 2,
+  "seed": 0
+}

@@ -1,0 +1,99 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "run_enformer_deepmind_predict",
+    "description": "Predict genomic tracks from DNA sequence with the OFFICIAL DeepMind Enformer release (the TF-Hub SavedModel deepmind/enformer/1), byte-pinned and verified. Returns the centre-bin value across every track, plus the full 896-bin profile of any track named. Use this when published Enformer numbers must reproduce; use run_enformer_predict (the enformer-pytorch port, GPU) when throughput matters more than matching the authors' artifact. One window costs about three minutes: this release has no GPU-capable build for this machine's architecture and runs on the CPU.",
+    "parameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "DNA sequence (A, C, G, T, N). Centre-cropped or N-padded to 393,216 bases, of which the model reads the central 196,608. The cost does not depend on the length you send.",
+          "minLength": 1,
+          "maxLength": 786432,
+          "pattern": "^[ACGTNacgtn]+$"
+        },
+        "organism": {
+          "type": "string",
+          "description": "Which head to read: 'human' has 5,313 tracks, 'mouse' 1,643.",
+          "enum": [
+            "human",
+            "mouse"
+          ],
+          "default": "human"
+        },
+        "tracks": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "maxItems": 32,
+          "description": "Track indices whose full 896-bin profile to return, at most 32. The centre bin of every track is returned regardless."
+        }
+      },
+      "required": [
+        "sequence"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "implementation": {
+          "type": "string"
+        },
+        "organism": {
+          "type": "string"
+        },
+        "n_bins": {
+          "type": "integer"
+        },
+        "n_tracks": {
+          "type": "integer"
+        },
+        "input_length": {
+          "type": "integer"
+        },
+        "receptive_length": {
+          "type": "integer"
+        },
+        "centre": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "description": "Centre-bin value for every track of the chosen head."
+        },
+        "profiles": {
+          "type": "object",
+          "description": "Full 896-bin profile per requested track index."
+        },
+        "timing": {
+          "type": "object"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "SMCP",
+      "transport": "http",
+      "original_type": "EnformerDeepMindPredictTool",
+      "url": "https://tfhub.dev/deepmind/enformer/1",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/enformer_deepmind",
+      "mcp_tool_name": "run_enformer_deepmind_predict"
+    },
+    "test_examples": [
+      {
+        "sequence": "ACGTACGTACGTACGTACGTGGGCCCAAATTTACGTACGTACGT",
+        "organism": "human",
+        "tracks": [
+          0,
+          4100
+        ]
+      }
+    ]
+  }
+]

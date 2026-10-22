@@ -1,0 +1,137 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "openfold3_fold",
+    "description": "Predict an all-atom biomolecular structure with OpenFold3. The query is a list of chains, each with a molecule_type (protein, dna, rna or ligand) and a sequence -- SMILES for a ligand. Returns the structure file paths and timings; the mmCIF text itself is opt-in.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "chains": {
+          "type": "array",
+          "description": "The chains of one complex.",
+          "minItems": 1,
+          "maxItems": 16,
+          "items": {
+            "type": "object",
+            "properties": {
+              "molecule_type": {
+                "type": "string",
+                "enum": [
+                  "protein",
+                  "dna",
+                  "rna",
+                  "ligand"
+                ],
+                "default": "protein"
+              },
+              "sequence": {
+                "type": "string",
+                "description": "Residue sequence, or SMILES when molecule_type is 'ligand'.",
+                "minLength": 1
+              },
+              "chain_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Chain labels; defaults to A, B, C... Give several to place identical copies."
+              }
+            },
+            "required": [
+              "sequence"
+            ]
+          }
+        },
+        "seed": {
+          "type": "integer",
+          "description": "Random seed; the same seed reproduces the fold.",
+          "default": 0,
+          "minimum": 0
+        },
+        "num_diffusion_samples": {
+          "type": "integer",
+          "description": "Structures to sample per seed (upstream's default is 5). Each is scored separately, so this is how to compare conformations; rank them on `scores`.",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "num_model_seeds": {
+          "type": "integer",
+          "description": "How many model seeds to run (default 1). Total structures is this times num_diffusion_samples.",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "return_structures": {
+          "type": "boolean",
+          "description": "Return the mmCIF text (default false: megabytes). The confidence scores come back either way.",
+          "default": false
+        }
+      },
+      "required": [
+        "chains"
+      ],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "n_structures": {
+          "type": "integer"
+        },
+        "structures": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "structures_note": {
+          "type": "string"
+        },
+        "seeds": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "scores": {
+          "type": "object"
+        },
+        "note": {
+          "type": "string"
+        },
+        "timing": {
+          "type": "object"
+        },
+        "weights_held_by": {
+          "type": "string"
+        },
+        "kit_mode": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "OpenFold3FoldTool",
+      "url": "https://github.com/anthropics/uplifting-biomolecular-modeling",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/openfold3",
+      "mcp_tool_name": "openfold3_fold"
+    },
+    "test_examples": [
+      {
+        "chains": [
+          {
+            "molecule_type": "protein",
+            "sequence": "LSDEDFKAVFGMTRSAFANLPLWKQQNLKKEKGLF"
+          }
+        ]
+      }
+    ]
+  }
+]

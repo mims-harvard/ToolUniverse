@@ -1,0 +1,329 @@
+# proteinmpnn -- ProteinMPNN / SolubleMPNN fixed-backbone sequence design
+# (inverse folding), held resident.
+#
+# The twenty-eighth provider on the standard and the SECOND that runs on the
+# CPU, after esm_if1. It is also the second whose input is a STRUCTURE and
+# whose output is a SEQUENCE, and the natural companion to esm_if1: both design
+# a sequence for a backbone, one by an autoregressive decode over a
+# message-passing graph (1.66M parameters), the other by a GVP-Transformer
+# (142M).
+#
+# WHY A CPU PROVIDER IS WORTH BUILDING, which is the whole case for this one.
+# Its `vram_budget_gb` is absent, and `remote_resident/admission.py` SKIPS a
+# provider with no declared budget -- so this one never competes for the card,
+# can be resident while every folding model is resident, and is admitted while
+# the host is full. On a box whose point is running several models at once that
+# is the most useful shape a provider can have. Building it also found the bug
+# that made it untrue: a CPU provider's absent budget was being read as
+# UNKNOWN rather than zero, so a held proteinmpnn worker refused every GPU
+# provider on the host. See verified_on.
+#
+# THE KIT'S OPTIMISED LINE RUNS HERE AND WAS DECLINED ON THE CLOCK. This is the
+# part to read before changing [kit] mode. The kit ships `mpnn_worker2.py`, a
+# persistent sampler built for exactly this job, and `--mode exact` COMPLETED
+# on this CPU host with its `.fa` files and `parsed.jsonl` byte-identical to
+# stock's -- on a device whose name does not appear in the kit's STOCK.md. It
+# was still declined:
+#
+#     off (stock)   42.78 s wall   30.45 s generation   772 MB maxrss
+#     exact (kit)   43.07 s wall   38.53 s t_run_s      852 MB maxrss
+#
+# `mpnn_worker2.py:1192` switches off three of eleven levers without a CUDA
+# device (`graph_rng`, `single_graph`, `fused_draw`) and runs the other eight,
+# and all eight are ways of filling a GPU: sixteen backbones per forward, a
+# low-memory featuriser that recomputes rather than materialises, GEMM chunking
+# to pick a particular cuBLAS kernel. On a CPU there is nothing to fill, so
+# they cost 8 s per pass and buy nothing. The kit's own driver reaches the same
+# verdict in its own vocabulary and refuses to call such a run activated:
+# `NOT ACTIVE: partial activation -- graph_rng,single_graph,fused_draw`,
+# exit 3 (`--allow-partial` records and proceeds).
+#
+# Two general lessons came out of getting this wrong twice, and they are
+# mistakes 58 and 59 of the devtu-remote-provider skill. First: a kit's CPU
+# viability CANNOT be read off its CHANGES.md. A grep of all five remaining
+# kits for `triton|cuda graph|tf32` found them full of it and concluded every
+# one collapses to `off` on a CPU host -- false, and the kit says so in code,
+# with a `cpu_disabled_levers()` function whose only job is to read that one
+# guard back. Second: the correction was also useless. "Eight of eleven levers
+# survive" is true and is not a reason to use them. Availability is a property
+# of the control flow; value is a property of the clock.
+#
+# WHAT IS NOT DECLINED is the one lever with no device in it. `fast_parse`
+# (`cls = "datapath"`, tier 1) is the stock helper `parse_multiple_chains.py`
+# reading each PDB ONCE instead of re-reading it for all 352 candidate chain
+# letters: 1.32 s -> 0.47 s on the two example monomers, `parsed.jsonl`
+# byte-identical. It is a plain function, `parse_pdb(path)`, so the resident
+# worker calls it where stock's helper would run -- esm_if1's shape, the
+# easiest case the taxonomy of kit activation has met. `launch.py` refuses the
+# launch if that file is absent rather than silently falling back to the stock
+# helper, which is mistake 12.
+#
+# THE WORKER HOLDS STOCK'S OWN LOOP, and the claim that it reproduces stock is
+# not an argument. `resident/proteinmpnn_resident_worker.py` is a different
+# script in the position `protein_mpnn_run.py` occupies, calling stock's own
+# functions in stock's own order, each step citing the line it mirrors; nothing
+# in ProteinMPNN is patched, shadowed or copied. The acceptance suite then
+# parses the stock route's `.fa` and compares EVERY field of EVERY design --
+# native sequence, native score, global native score, and per design the
+# temperature, sample number, score, global_score, seq_recovery and sequence --
+# against the worker's reply, over five cases. See verified_on.
+#
+# ONE THING RESIDENCY CHANGES, and how it is kept exact. Stock calls
+# `torch.manual_seed(seed)` (`protein_mpnn_run.py:29`) BEFORE constructing
+# `ProteinMPNN`, and construction draws from the default generator (measured:
+# `torch.get_rng_state()` differs across it). A held model cannot inherit that
+# position for a seed it has not seen, so the worker replays it per request:
+# `manual_seed(seed)`, construct a throwaway `ProteinMPNN` with stock's own
+# arguments -- 16 ms, 1.66M parameters -- and discard it. Measured replayable,
+# and the byte comparison above is what proves it.
+
+[provider]
+slug = "proteinmpnn"
+description = "ProteinMPNN / SolubleMPNN inverse folding: designed sequences for a fixed backbone (stock 8907e667, held resident on the CPU)"
+operations = ["proteinmpnn_design"]
+status = "verified"
+verified_on = """NVIDIA GB10 host (aarch64, 20 cores -- 10 Cortex-X925 plus 10
+Cortex-A725 -- 121.6 GiB unified memory, cc 12.1, driver 580.173.02), **ON THE
+CPU**: `[gpu] policy = "none"` is this provider's declared device and the
+evidence is in [gpu]. venv route, Python 3.11.5, torch 2.5.1 (CPU-only), stock
+ProteinMPNN at 8907e6671bfbfc92303b5f79c4b5e6ce47cdef57, kit mode `off`
+(levers_kept = fast_parse).
+
+ALL FIVE SETUP STEPS GREEN, run one at a time with --only:
+
+    preflight    OK   host meets the declared prerequisites
+    environment  OK   17 pinned distributions
+    kit          OK   sparse set widened to include proteinmpnn;
+                      proteinmpnn_opt 0.4.2 + opt_core 0.5.228.0 editable;
+                      `WEIGHTS OK: 2/2 pinned files match stock/PINS.json`
+    weights      OK   2/2 entries at their pins (0.0 GiB -- 6.7 MB each)
+    smoke        OK   4 designs for a 40-residue backbone in 10 s
+
+THE EQUIVALENCE GATE, which is this provider's central claim and the reason it
+holds stock's loop rather than the kit's worker. Each case byte-compares the
+worker's reply against `run.sh design --mode off` on the SAME single structure,
+field by field -- native sequence, native score, global native score, and per
+design the temperature, sample number, score, global_score, seq_recovery and
+sequence. Run through the supervisor, so launch.py and the manifest are
+exercised too:
+
+    5L33 106res seed37 T0.1 8x8 vanilla     8 designs  IDENTICAL
+    6MRR  68res seed37                      8 designs  IDENTICAL
+    5L33 seed101                            8 designs  IDENTICAL
+    5L33 T0.2, 4 designs in 2 batches of 2  4 designs  IDENTICAL
+    5L33 SolubleMPNN weight set             8 designs  IDENTICAL
+
+That is two backbones, two seeds, two temperatures, two batch layouts and both
+weight sets: 36 designs, every field equal. Peak RSS 0.72-0.77 GiB across all
+five; the held worker idles at 0.217 GiB.
+
+ADMISSION, exercised on this provider rather than in a test: the supervisor
+started it in 2.0 s and reported the gate SKIPPED because no budget is
+declared, which is the path `ensure_started` takes for `vram_budget_gb is None`
+and which until now had only ever run against a stub.
+
+AND IT FOUND A REAL BUG IN THE GATE, which is the most useful thing this
+provider has done so far. With a proteinmpnn worker held, `tu remote room
+boltz` reported `held: {"proteinmpnn": null}` and REFUSED boltz --
+"proteinmpnn is already held without a declared budget, so what the card is
+carrying cannot be summed" -- on a card holding nothing at all. A CPU
+provider's absent `vram_budget_gb` is legal only under `policy = "none"` and
+means ZERO, not unknown; `admission._declared_budget` was returning it as None,
+so the one kind of provider that can safely be resident while the card is full
+was blocking every provider on the host. Fixed, with four tests, and verified
+live afterwards: `machine_holdings()` reads `{"proteinmpnn": 0.0}` and boltz
+fits -- "5.54 GiB on top of 0.0 GiB declared held". The bug has been latent
+since esm_if1, the first `policy = "none"` provider; it took a second one and a
+`room` check with a live worker to surface it.
+
+THE OWED QUIET-HOST PAIR, NOW PAID, AND IT CUT THE EXPECTATION IN HALF. The
+first pair ran while another session held this host at 681 % CPU, load 20.6 on
+20 cores, and read 43.91 s generation / 53.5 s wall for the stock route against
+28.70 s / 28.9 s resident -- 1.85x, which was not claimed, with 1.4x recorded
+as the honest expectation. Re-measured at load 3.25, same request (5L33 alone,
+8 designs, seed 37, batch 8), two runs each:
+
+    stock route      15.22 s and 14.40 s generation   22.05 s and 20.66 s wall
+    resident worker  18.3 s  and 19.2 s  design       18.4 s  and 19.5 s  wall
+
+Both of the first pair's numbers were inflated about 2.4x by contention, and
+the real ratio on wall is 21.36 / 18.95 = **1.13x**, not 1.85x and not 1.40x.
+The 1.40x estimate was arithmetic on a contended baseline: a fixed ~3 s of
+start-up removed from a 42.8 s request reads as 1.40x, and the same 3 s removed
+from a true 21 s request reads as 1.13x. Residency's saving is a constant, so
+quoting it as a ratio makes it a function of whatever the denominator was
+contending with.
+
+Note also what the contended pair hid completely: the resident's generation
+step is NOT faster than stock's here -- 18.3-19.2 s against 14.4-15.2 s -- and
+it should not be, since it is the same code producing byte-identical output.
+That gap is contention too (load climbed from 3.25 to 10.49 across these four
+runs; the stock runs got the quieter half), which is the remaining honest
+caveat: this pair bounds the claim from above rather than pinning it. It
+changes nothing about whether to deploy this provider: its value is
+`vram_budget_gb = None`, not its clock.
+
+What else is untested: public publication, cross-user isolation, concurrency,
+recovery, backbones above 400 residues (the declared ceiling is 3000 and has
+not been walked to it), multi-chain complexes, and design quality. Keep this
+deployment private.
+
+ACCEPTANCE 2026-10-17: 12/12 answered, every one produced=yes. Rungs
+106/200/400/800 residues: 39.8 / 54.1 / 109.2 / 220.4 s, linear above 200,
+which is the shape an autoregressive decode of L steps should have.
+
+800 RESIDUES RAN. The note above says backbones beyond 400 are untested; the
+measured envelope is now 800. The 3000-residue ceiling remains untested.
+
+This ladder is a COST TABLE, NOT A REBUILD TEST, and the shaper's docstring
+says so: the only cache in this worker is keyed on the weight set, there is
+no torch.compile and no CUDA graph, and upstream is dynamic-shape eager. What
+the mixed phase still earns is the demonstration that a second DIFFERENT
+input neither corrupts the held model nor breaks the seed replay.
+
+peak is None on every rung -- correct for policy "none", with no device
+memory to report.
+"""
+
+[runtime]
+mode = "resident"
+worker = "resident/proteinmpnn_resident_worker.py"
+launch = "tooluniverse.remote.proteinmpnn.launch:build_command"
+worker_args = [
+  "--socket", "{socket}",
+  "--slug", "{slug}",
+  "--kit", "{kit}",
+  "--mode", "{kit_mode}",
+]
+# No weights download and a 6.7 MB checkpoint: start-up is torch's import, not
+# the model's.
+start_timeout_s = 300.0
+request_timeout_s = 3600.0
+idle_timeout_s = 900.0
+outputs = []
+output_keys = ["structures", "n_designs"]
+smoke = "smoke/input.json"
+smoke_timeout_s = 900.0
+mode_reason = """What residency buys here is a constant, not a ratio, and it
+is recorded as one: torch's import 2.10 s, stock's modules 0.03 s, the
+checkpoint 0.01 s -- 2.83 s of process start-up -- plus the kit driver's own
+start-up and the stock parser's 352 re-reads per file (1.32 s against the kit
+parser's 0.47 s). Measured on a quiet host that constant is worth 1.13x on a
+one-structure 8-design request (21.36 s non-resident wall against 18.95 s
+resident), the bottom of this standard's 1.13x-26x range and expected to be: a
+1.66M-parameter model has almost no weights to hold, and a saving that is
+constant shrinks as a ratio with every residue added. An earlier 1.40x came
+from dividing the same constant into a contended 42.8 s baseline and is
+withdrawn. THE RATIO IS NOT THE POINT FOR THIS PROVIDER --
+`vram_budget_gb = None` is. It is the only kind of provider that can be
+resident while the card is full."""
+
+[gpu]
+# THE SECOND `none` ON THIS STANDARD, and like the first it is a measurement.
+# Three facts, each read off this machine:
+#
+#   1. The kit pins torch by DIRECT URL to
+#      `torch-2.5.1+cu124-cp311-cp311-linux_x86_64.whl`. On aarch64 that
+#      artifact cannot install at all -- the platform tag, before any question
+#      about CUDA. `triton==3.1.0`, which the kit's `--fused_draw` lever
+#      imports, publishes cp310/cp311/cp312 manylinux x86_64 wheels and nothing
+#      for aarch64 at any version of the 3.x line.
+#
+#   2. PyPI's `torch==2.5.1` for cp311 aarch64 is the SAME VERSION and is
+#      CPU-only. Read off the installed environment:
+#      `torch.version.cuda is None`, `torch.cuda.get_arch_list() == []`, the
+#      only libtorch objects are `libtorch.so`, `libtorch_cpu.so`,
+#      `libtorch_global_deps.so` and `libtorch_python.so`, and every `nvidia-*`
+#      requirement in the wheel's own metadata carries
+#      `platform_machine == "x86_64"`.
+#
+#   3. A CUDA 12.4 stack could not drive this card even if the wheel existed,
+#      and that is esm_if1's measurement rather than a repeat of it:
+#      `cuobjdump --list-elf` on `nvidia_cublas_cu12-12.4.5.8`'s
+#      `libcublas.so.12` lists sm_50 ... sm_90 and `--list-ptx` lists NOTHING,
+#      so on sm_121 every GEMM would raise `no kernel image is available for
+#      execution on the device` whatever torch itself carries. See
+#      esm_if1/environment/requirements.lock's header for the full transcript.
+#
+# The kit's own `check` reports `gpu=NVIDIA GB10(sm_121)` on this host, which is
+# worth noting as a trap rather than a contradiction: it reads the card through
+# NVML (`nvidia-ml-py`, a pure-Python wheel that installs anywhere) while torch
+# cannot use it. A kit naming the card is not a kit that can reach it -- the
+# mirror image of mistake 24, judging the card by torch.
+policy = "none"
+shareable = true
+isolation = "process"
+# No declared budget, and this is the one field in this file with a
+# consequence for other providers: `admission.room_for` is skipped entirely
+# when `vram_budget_gb` is absent, which the manifest layer guarantees is
+# legitimate only for `policy = "none"`. 0.76 GiB of peak RSS is host memory,
+# not device memory, and the gate's business is the card.
+
+[env]
+kind = "venv"
+python = "$TOOLUNIVERSE_PROTEINMPNN_PYTHON"
+lock = "environment/requirements.lock"
+verify = """import torch, numpy, Bio, pandas; assert torch.__version__ == '2.5.1', torch.__version__; assert torch.version.cuda is None, torch.version.cuda; assert torch.cuda.get_arch_list() == [], torch.cuda.get_arch_list(); import proteinmpnn_opt, opt_core"""
+
+[weights]
+# ProteinMPNN's weights ship INSIDE the clone -- the first provider on this
+# standard whose `weights_root` is a git checkout rather than a download
+# directory. `root_default` is where the kit's own `run.sh install` puts it and
+# what MPNN_DIR names; the kit refuses a repository weight file that is absent
+# or differs from its stock/PINS.json, and so does this manifest, from the same
+# digests.
+root_env = "TOOLUNIVERSE_PROTEINMPNN_WEIGHTS"
+root_default = "~/ProteinMPNN"
+fetch = "bash run.sh install --weights {weights_root}"
+
+[[weights.files]]
+name = "vanilla_model_weights/v_48_020.pt"
+size = 6681301
+sha256 = "c9cb4a671d79604111231f8dbfc7c590e06f1197453b7a6854ac6661a642f5bd"
+
+[[weights.files]]
+name = "soluble_model_weights/v_48_020.pt"
+size = 6681301
+sha256 = "7af52d090172c230c7f0e9d21e02203f6b3a38b16db58d3c7a3960e0a9a6e31a"
+
+[kit]
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "proteinmpnn"
+sparse = ["proteinmpnn", "common"]
+package = "proteinmpnn_opt"
+# Mode `off` -- the kit's own shipped route, chosen on the clock. The header has
+# the numbers; the short version is that every lever of `exact` that survives a
+# CPU host is a way of filling a GPU.
+mode = "off"
+# THERE IS NO MODE ROW TO READ, and that is a fact about this kit rather than a
+# gap in the probe. `modes.KIT_MODES["off"]` is `{"route": "stock"}` -- a dict
+# with no `env`, no `exports` and no `Resolution` object -- because mode `off`
+# is "the upstream command line in a clean subprocess; nothing from the kit on
+# the path". `DEFAULT_MODE` is `None` on purpose: this kit ships no `fast` tier,
+# so a command naming no mode is a usage error rather than a default. That is a
+# seventh `resolve()` shape for the record and the emptiest one.
+env_row = "none"
+env_row_reason = "KIT_MODES['off'] is {'route': 'stock'} -- no env, no exports, no Resolution; mode off is the stock command line with nothing of the kit on the path, and DEFAULT_MODE is None because this kit ships no fast tier"
+# The one lever this provider KEEPS, by name, because it is the one with no
+# device in it. The worker loads `kit/fast_parse.py` by path and calls
+# `parse_pdb`; `launch.py` refuses the launch if that file is absent rather
+# than quietly falling back to the stock helper, which is mistake 12.
+levers_kept = ["fast_parse"]
+# Declined by name (proteinmpnn_opt.registry.LEVERS, every flag of the `exact`
+# row plus its probe-gated and package levers), so a reviewer on another host
+# can see exactly what is given up and read the measurement above for why. On a
+# GPU host these are the right levers and this list should shrink to nothing.
+levers_declined = [
+    "--mode", "--bb_batch", "--sort_by_length", "--chunk_gemm", "--cache_enc_ctx",
+    "--analytic_offsets", "--stock_shape_enc", "--hybrid_gemm", "--x_all",
+    "--graph_rng", "--single_graph", "--fused_draw", "lowmem",
+]
+levers_off = []
+install = "bash run.sh install --weights {weights_root}"
+
+[kit.env]
+# The kit's `configs/<card>.env` files set MODEL_OPT, MODEL_OPT_STATE and
+# PYTHONDONTWRITEBYTECODE, which launch.py supplies, plus MODEL_OPT_TARGET_GPU,
+# which it deliberately does not: every shipped value names a card this is not
+# and the kit treats it as a report rather than a refusal.

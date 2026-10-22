@@ -1,0 +1,451 @@
+# AF3-torch -- AlphaFold 3 (the xfold PyTorch port) on OpenFold3 weights.
+#
+# STATUS: untested. Nothing in this file has been proved by a smoke run and
+# `status` below still says so. What HAS been proved, on an NVIDIA GB10
+# (aarch64, driver 580.173.02, compute capability 12.1), is everything up to the
+# first forward pass: all four non-GPU setup steps pass.
+#
+#     preflight    OK
+#     environment  present   (the model interpreter, [env] verify satisfied)
+#     kit          OK        ([af3-torch-opt] PINS ok torch_py=ok jax_py=ok)
+#     weights      OK        (1/1 entries at their pins, 1.3 GiB)
+#
+# The two things that were open when this file was first written are closed:
+#
+#  * THE SECOND INTERPRETER EXISTS. The sokrypton/alphafold3 fork's one C++
+#    extension -- the thing the kit's own recipe builds into a
+#    `...linux_x86_64.whl` and that nobody had built on aarch64 -- compiles
+#    clean, with no portability patch, and `build_data` runs. The full
+#    provenance, every pin and the one substitution, is in
+#    environment/requirements.lock deviation 5.
+#  * THE WEIGHTS EXIST AND ARE AT THEIR PIN, bit for bit: the public
+#    OpenFold3-preview2 checkpoint was reused from the openfold3 provider's copy
+#    (zero bytes fetched) and converted here to the exact sha256 declared under
+#    [[weights.files]] -- a digest measured on x86-64, reproduced on aarch64.
+#
+# So the prediction path has never executed, but no longer because it cannot:
+# it has not been run because one GPU is shared and model runs are serialised by
+# hand. Every number under [gpu] is still a derived reserve, labelled as one,
+# and the first smoke should be read as a first execution.
+#
+# WHAT THIS KIT IS. The upstream is not DeepMind's AlphaFold 3 program and not
+# DeepMind's parameters. It is xfold (github.com/Shenggan/xfold @22bdeed,
+# Apache-2.0), a PyTorch re-implementation of the AlphaFold 3 architecture, run
+# on the *public* OpenFold3-preview2 checkpoint (`of3-p2-155k.pt`, Apache-2.0,
+# github.com/aqlaboratory/openfold-3) converted into AlphaFold 3's
+# parameter-record layout. stock/PINS.json says so in
+# `variants.p2.checkpoint.license`, and the openfold3 provider in this
+# directory already pins the same file by the same digest. There is no licence
+# gate, no individual request to DeepMind and no credential: the bytes are on a
+# public bucket. What there IS is a conversion step, and it was the thing that
+# stopped this provider -- a file with no URL anywhere, produced by a converter
+# in a second pinned environment. It is built and the file is made; [weights]
+# records what that took.
+#
+# THE THREE THINGS THIS KIT DOES DIFFERENTLY FROM THE FIVE BEFORE IT. All three
+# are statements about the shared tooling, not about this manifest:
+#
+#  1. Its activation hook applies nothing, and is hostile to a worker that
+#     ignores that. af3_torch_opt/_autoload.py, first paragraph: "On this model
+#     the hook applies nothing: the levers are arguments of the kit's own
+#     build_model in a model process the wrapper launches (cli.py /
+#     forward.py), not an in-process patch of an import." With AF3_TORCH_OPT
+#     set to a non-off mode, the hook arms a meta-path finder on `xfold` and
+#     `af3_torch_api` and calls os._exit(3) the moment either is imported. Our
+#     worker must import both. So the mode variable must be ABSENT from the
+#     worker's environment -- which is exactly what the kit's own model process
+#     does (`stack.model_process_env` strips every AF3_TORCH_OPT* name, and
+#     forward.py's docstring says "Runs with no AF3_TORCH_OPT* variable in its
+#     environment"). The levers travel as argv to `build_model`.
+#
+#     `remote_resident/kit_launch.py` sets `env[mode_env] = mode` on its
+#     autoload path. For this kit that is not a no-op that fails to help; it is
+#     the one thing that guarantees the worker dies at import. Hence [runtime]
+#     launch below, which is this provider's own and sets no such variable.
+#
+#  2. The kit spells its mode variable `ENV_MODE`, not `ENV`. kit_launch's
+#     probe reads `modes.ENV` then `_autoload.ENV`; both are absent here
+#     (`af3_torch_opt.modes.ENV_MODE == "AF3_TORCH_OPT"`,
+#     `af3_torch_opt._autoload.ENV_MODE` likewise), so the probe returns no
+#     `mode_env` and build_command raises KitUnavailable.
+#
+#  3. `modes.resolve(mode)` is a fourth shape. It returns the lever
+#     COMPOSITION -- {mode, lever_set, levers, dtk, big, package_levers,
+#     padding, fastnn, levers_off} -- and carries neither `env` nor `exports`,
+#     because this kit's child environment lives in `stack.model_process_env()`
+#     instead. The probe's `resolve(mode)` call therefore succeeds and yields
+#     None, and its `resolve(mode, home)` fallback raises
+#     `FileNotFoundError: .../af3_torch/af3_torch/af3_torch_api.py` (the second
+#     positional argument is `kit`, a kit tree, not a home). No TypeError is
+#     raised; the probe reports `row_error` and an empty row. Left alone: the
+#     probe is not this provider's file. `[kit] env_row = "none"` below states
+#     the fact so the empty row is not mistaken for a failure to read one.
+#
+# ALL THREE RE-CHECKED AGAINST THE SHARED LAYER AS IT STANDS, in the model
+# interpreter, with af3_torch_opt installed from the kit at the pin:
+#
+#     modes.ENV = None          _autoload.ENV = None
+#     modes.ENV_MODE = "AF3_TORCH_OPT"    (likewise _autoload.ENV_MODE)
+#     modes.resolve("fast") -> dict keys {big, dtk, fastnn, lever_set, levers,
+#         levers_off, mode, package_levers, padding}; no env, no exports
+#     modes.resolve("fast", <kit tree>) -> FileNotFoundError .../af3_torch/
+#         af3_torch/af3_torch_api.py
+#     stack.model_process_env() -> 52 names, zero of them AF3_TORCH_OPT*
+#
+# and `kit_launch.build_command` still ends its autoload path with
+# `env[mode_env] = manifest.kit.get("mode", "fast")`, unconditionally. So
+# launch.py is still load-bearing and cannot be dropped. For the record, it
+# would take THREE changes to the shared launcher, not one, before this
+# provider could use it:
+#
+#   a. the probe would have to find a mode variable spelled ENV_MODE (it reads
+#      only ENV), or build_command's `if not mode_env: raise KitUnavailable`
+#      fires first and nothing else matters;
+#   b. `_row_of` would have to tolerate a resolution with neither `env` nor
+#      `exports` -- or `env_row = "none"` would have to be enough, which it now
+#      is, so (b) is already satisfied by the manifest key alone;
+#   c. and the fatal one: `env[mode_env] = mode` would have to become
+#      conditional, because for THIS kit setting that variable is not an inert
+#      mistake -- the .pth arms a meta-path finder and calls os._exit(3) at
+#      `import xfold`, which the worker cannot avoid doing. (a) without (c) is
+#      strictly worse than today: it would find the name and then use it to kill
+#      the worker at import, turning a clean KitUnavailable into a start that
+#      dies after the supervisor has committed to it.
+#
+# A fourth kind of change would do instead of all three: a manifest key saying
+# "this kit's mode does not travel in a variable" (the natural spelling is a
+# `mode_env = "none"` beside `env_row = "none"`), which would make kit_launch
+# skip (a) and (c) together. That is the shared fix worth making if a second
+# kit of this shape arrives. One kit in ten does not justify it, and it is not
+# this provider's file to change.
+#
+# TWO SHARED FIXES THIS PROVIDER DEPENDS ON ARE IN PLACE, verified here rather
+# than assumed, because both were failures of reporting rather than of work:
+#
+#   * a declared fetch exiting 3 is reported REFUSED, not FAILED
+#     (`setup.py step_weights`, `if out.returncode == 3`, reason
+#     `weights_fetch_refused`). This provider's [weights] fetch refuses by name
+#     when the second interpreter is unset, and that is a correct answer.
+#   * `[kit] install` and `[weights] fetch` both run under `bash -c`, not
+#     `bash -lc`. A login shell re-reads the operator's profile and can put
+#     another python ahead of the one setup.py carefully prepends; this kit's
+#     run.sh finds its interpreter on PATH, so that reordering would have run
+#     the install against the wrong environment and reported success.
+#
+# WHO HOLDS THE WEIGHTS: the worker. `af3_torch_api.build_model()` reads the
+# converted parameter records itself, and the kit replaces no loader anywhere
+# -- under every mode, `off` included, the load path is the port's own
+# `xfold.params.import_jax_weights_`. The kit contributes lever arguments to
+# the constructor and nothing else. The worker's ready line and every reply say
+# `weights_held_by = "worker"` for that reason, and would say so under any
+# mode.
+
+[provider]
+slug = "af3_torch"
+description = "AlphaFold 3 (xfold PyTorch port) on OpenFold3-preview2 weights: all-atom structure prediction from an AlphaFold 3 fold-input JSON"
+operations = ["af3_torch_predict"]
+# Untested, and stated as such: no prediction has ever run through this
+# provider. See the header, and `verified_on` is deliberately absent.
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver
+580.173.02), venv route, kit mode fast, through this provider's own
+`launch.py` rather than kit_launch (see [kit]).
+
+This provider was expected not to run here at all and does. The load-bearing
+uncertainty was the sokrypton/alphafold3 fork's one C++ extension, which the
+kit's recipe builds as a linux_x86_64 wheel and which nobody had built on
+aarch64: `uv build --wheel` exited 0 over 236 targets with no error and no
+portability patch, and upstream's own pyproject already lists
+`platform_machine == 'aarch64'` among its declared environments. One pin was
+substituted of 85. The converted weights file is bit-exact against the digest
+the kit measured on x86-64 -- a sha256 reproduced across architectures.
+
+VERIFIED ON 4 CONSECUTIVE IDENTICAL REQUESTS plus a mixed-shape sequence and an
+ascending ladder, one held worker per run, every request asserted to have
+written a structure:
+
+    repeats  4 x the 35-residue smoke   4/4, forward 3.51 -> 1.46 s
+    mixed    100, 100, 200, 100         4/4
+    ladder   100 / 200 / 400 / 800      1.75 / 2.37 / 4.04 / 9.21 GiB
+
+Note `featurise_s` holds at 8-11 s across all of them and is CPU work in the
+SECOND interpreter -- residency does not help it, and it dominates a small
+request's wall time. The smoke alone took 54 s."""
+
+[runtime]
+mode = "resident"
+worker = "resident/af3_torch_resident_worker.py"
+# NOT tooluniverse.remote_resident.kit_launch:build_command. Three reasons, in
+# the header: that launcher cannot find this kit's mode variable, would set it
+# if it could, and setting it kills the worker at `import xfold`. This module
+# is this provider's own and lives beside the worker.
+launch = "tooluniverse.remote.af3_torch.launch:build_command"
+worker_args = [
+    "--socket", "{socket}",
+    "--slug", "{slug}",
+    "--mode", "{kit_mode}",
+    "--kit", "{kit}",
+    "--params-dir", "{weights_root}",
+]
+# The build reads 1.37 GB of zstd-compressed parameter records, constructs the
+# port and moves it to the device; under `fast` the first request additionally
+# compiles the kit's Triton kernels and torch.compile's the sampler. The kit's
+# own README puts a first run from a cold cache at "about a minute to a minute
+# and a half per mode on an H100". Generous on purpose: a deadline that fires
+# during a first-run compile reports a stall that is not one.
+start_timeout_s = 1800.0
+request_timeout_s = 3600.0
+idle_timeout_s = 900.0
+smoke = "smoke/input.json"
+smoke_timeout_s = 1800.0
+# What a run that actually ran leaves behind. The fork's own writers name them:
+# postprocess.py writes <job>_model.cif and <job>_confidences.json (the
+# best-ranked copies) beside the per-sample directories. An exit code is not
+# evidence that a model ran, and this kit's chain can end 0 with a withdrawn
+# item, so the smoke step is told what to look for.
+outputs = ["*_model.cif", "*_confidences.json"]
+output_keys = ["structures"]
+
+[gpu]
+policy = "required"
+# MEASURED, and the derived reserve this replaces was 9x high -- the largest
+# over-estimate of the eleven providers, beating openfold3's 3.8x. Both erred
+# the same way: reasoning from a pair tensor's size rather than from what the
+# kit keeps resident.
+#
+# Ladder, one held worker, ascending, nothing larger run before it. This
+# worker DOES reset peak stats per request (`on_reset`), so each rung is that
+# input's own cost rather than a running high-water mark -- one of three
+# providers that do, beside boltz and enformer:
+#
+#     residues   peak reserved
+#          100       1.75 GiB
+#          200       2.37 GiB
+#          400       4.04 GiB
+#          800       9.21 GiB   <- the reference this budget declares
+#
+# 5.3x from 100 to 800: the steepest ladder on the standard, against
+# rosettafold3's 3.7x, openfold3's 3.6x, esmfold2's 1.8x and e1's 1.13x. The
+# AF3 architecture's pair track dominates and there is no large constant term
+# to flatten it, so a host capping chains at 400 residues holds this in 4 GiB
+# while one accepting 800 needs 9.2 -- and anything beyond 800 must be
+# re-measured rather than extrapolated, because 5.3x over 8x the length is
+# already super-quadratic in practice.
+vram_budget_gb = 9.21
+driver_min = 580
+driver_min_reason = "its model stack is CUDA 13.0 (torch 2.13.0+cu130)"
+shareable = true
+isolation = "process"
+
+[env]
+kind = "venv"
+# The MODEL interpreter -- the torch half only. It is NOT the whole environment
+# this kit needs: featurisation and the mmCIF writers run the
+# sokrypton/alphafold3 fork under a second, CPU-only interpreter that the kit
+# names AF3_TORCH_JAX_PY, with AF3_TORCH_JAX_REPO pointing at the fork
+# checkout. `[env]` has room for one interpreter, so those two are read from
+# the operator's environment and the worker refuses by name at start when
+# either is unset. That is a real gap in the standard for chained-process
+# kits, recorded here rather than worked around.
+#
+# The second interpreter is now built and the gap is unchanged by that: it is
+# still named by the operator rather than declared, so three exports stand
+# between a correct checkout and a working deployment where one should. What
+# closing it would take is `[env]` growing a second, named interpreter with its
+# own lock -- a change to the shared manifest, which this provider does not own,
+# and which is worth making for a second chained kit and not for the first.
+# Until then environment/requirements.lock deviation 5 is the recipe, and the
+# refusals name the variables.
+python = "$TOOLUNIVERSE_AF3_TORCH_PYTHON"
+lock = "environment/requirements.lock"
+# af3_torch_opt and opt_core are the kit, installed editable by [kit] install
+# on top of the lock and deliberately absent from it. `import af3_torch_opt`
+# is safe under an unset AF3_TORCH_OPT and pulls in neither torch nor jax.
+verify = "import torch, af3_torch_opt, opt_core; assert torch.__version__.startswith('2.13.0'), torch.__version__"
+
+[weights]
+# The kit's own variable and the directory it means: the one holding
+# `of3_ported_weights.bin.zst` itself (STOCK.md, section Variables).
+root_env = "AF3_TORCH_PARAMS_DIR"
+root_default = "~/.af3_torch"
+# The kit's own step, which fetches the public OpenFold3-preview2 checkpoint
+# into <dir>/checkpoint/, digest-checks it, and converts it with the reference
+# fork's `convert_of3_weights.py`. No URL is restated here.
+#
+# THIS COMMAND HAS NOW SUCCEEDED ON THIS MACHINE, and what it took is the
+# record worth keeping. The converter is not ours and not the model
+# environment's: it runs under AF3_TORCH_JAX_PY, inside the sokrypton/alphafold3
+# fork checkout at AF3_TORCH_JAX_REPO, and needs that fork built from source.
+# The blocker was never a licence -- the parameters are Apache-2.0 and public --
+# it was a C++ build nobody had tried on aarch64. It builds: see
+# environment/requirements.lock, deviation 5, for the whole provenance.
+#
+# Two results from the run, because they are what a future reader will want:
+#
+#   the checkpoint was REUSED, not downloaded. `fetch_and_convert` looks for
+#   <weights_root>/checkpoint/of3-p2-155k.pt and keeps a copy already there with
+#   the pinned digest; the openfold3 provider's ~/.openfold3/of3-p2-155k.pt is
+#   that same file at that same sha256 (3ae79a70…40b77, 2,287,928,519 bytes), so
+#   a hard link into ~/.af3_torch/checkpoint/ fetched zero bytes -- the move
+#   esmc made with esmfold2's snapshot. `FETCH kept file=... (already present
+#   with the pinned digest)`.
+#
+#   the conversion is BIT-EXACT against the pin below. 1,369,240,911 bytes,
+#   sha256 0c9a0060…3959cf, produced on aarch64 and matching a digest measured
+#   on x86-64. The converter is numpy plus zstd over a state dict, so this is
+#   the expected answer -- but the whole reason the digest is declared here is
+#   that "expected" was not the same as "known" until the file existed.
+#
+# HOW THE FILE IN THE WEIGHTS ROOT GOT THERE, stated because a weights file
+# whose provenance is assumed is the failure the standard's weights section
+# exists to prevent. of3_ported_weights.bin.zst was COMPUTED ON THIS HOST at
+# 2026-10-01 07:12 by the converter above, from the hard-linked public
+# checkpoint, in the second interpreter built for exactly that. It was not
+# downloaded and it could not have been: it has no URL anywhere, from anyone.
+# No other copy of it exists on this machine (`find ~ -name
+# of3_ported_weights.bin.zst` returns this one), and ~/.af3_torch and its
+# checkpoint/ were created 00:01:42 before it by the same run.
+#
+# That matters for one specific misreading. Anyone scanning providers' weight
+# roots will find this digest sitting in ~/.af3_torch and may conclude the file
+# was already present and the conversion unnecessary. It is the output of the
+# conversion, not an input to it, and the directory did not exist beforehand.
+# Nothing else on this machine declares or produces this file -- af3_torch is
+# the only provider in remote/ that names it, and the kit tree holds no other
+# af3_* kit -- so there is no sibling it could have come from.
+#
+# The guard below stays. It is what an operator who has not built the second
+# interpreter still gets, and it is still the only correct answer for them: the
+# file verifies, so the step passes; delete it and the fetch refuses by name
+# with the recipe. esmc has the same shape against esmfold2's snapshot, with
+# the one difference that esmc's was downloaded and this one is computed.
+# The guard is not decoration. Without it the step would run the kit's install
+# from the wrong directory (the weights step, unlike the kit step, passes no
+# cwd) and would report the kit's pin line rather than what an operator has to
+# do about it. With the JAX half present this is exactly `run.sh install
+# --weights DIR --fetch` and nothing else.
+fetch = """
+cd {kit}/af3_torch || exit 1
+if [ -z "$AF3_TORCH_JAX_PY" ] || [ -z "$AF3_TORCH_JAX_REPO" ]; then
+  echo "[af3_torch] NOT ACTIVE reason=weights_converter_unavailable" >&2
+  echo "  of3_ported_weights.bin.zst is PRODUCED, not downloaded: the public" >&2
+  echo "  OpenFold3-preview2 checkpoint (Apache-2.0, no licence gate) is" >&2
+  echo "  converted into AlphaFold 3 parameter records by the sokrypton/" >&2
+  echo "  alphafold3 fork convert_of3_weights.py, which runs under the kit s" >&2
+  echo "  SECOND, CPU-only interpreter. The fix: build that environment with" >&2
+  echo "  the kit s own recipe -- STOCK.md section Stack: a Python 3.12 venv" >&2
+  echo "  from environment/requirements-jax.lock, plus the fork at commit" >&2
+  echo "  bc32b22ff5902e3daffd5d1f7203d7f2ab6cb997 patched with" >&2
+  echo "  stock/patches/04_of3_empty_template_restype_gap.diff, built as a" >&2
+  echo "  wheel and then build_data-ed -- and export AF3_TORCH_JAX_PY and" >&2
+  echo "  AF3_TORCH_JAX_REPO before re-running this step." >&2
+  exit 3
+fi
+AF3_TORCH_PY={python} bash run.sh install --weights {weights_root} --fetch
+"""
+
+# GENERATED from the kit's stock/PINS.json `variants.p2.converted` record, not
+# transcribed. The converted file has no URL anywhere -- it does not exist
+# until the converter makes it -- so this digest is the only thing that can
+# tell a correct conversion from a plausible one. On this machine it did
+# exactly that: see the paragraph below the entry.
+[[weights.files]]
+# stock/PINS.json variants.p2.converted
+name = "of3_ported_weights.bin.zst"
+size = 1369240911
+sha256 = "0c9a00607352395486e33a98367810e1ad56c87459289f40974579525d3959cf"
+
+# NOT DECLARED: of3_conventions.json (stock/PINS.json variants.p2.conventions,
+# 151 bytes, sha256 cfe982d2...). An earlier revision of this file declared it
+# here on the reasoning that it is "written by the same converter run, so a
+# params dir without it is a conversion that did not finish". THAT WAS WRONG,
+# and a real conversion on this machine is what showed it. Three facts, each
+# checked against the pinned trees rather than inferred:
+#
+#  1. The converter does not write it. `convert_of3_weights.py` at the fork's
+#     pinned commit bc32b22f calls `save_af3_params`, which opens exactly one
+#     path -- `output_dir / 'of3_ported_weights.bin.zst'` -- and returns it.
+#     `grep -rn of3_conventions` over the fork checkout and over the installed
+#     alphafold3 package finds nothing. A completed conversion leaves one file.
+#  2. Nothing in the kit reads it. Its only occurrences outside the kit's own
+#     tests are PINS.json, STOCK.md ("the optional `of3_conventions.json`"),
+#     weights.py's docstring and check_pins.py `digest_report`, which reports
+#     it and says so: "The optional conventions record beside the checkpoint is
+#     reported, not judged."
+#  3. So declaring it made the shared weights step REFUSE (weights_off_pin,
+#     "of3_conventions.json: absent") on a conversion whose
+#     of3_ported_weights.bin.zst hashed to its pin bit for bit. The declaration
+#     turned the correct result into a failure, which is the one thing a pin is
+#     there to prevent.
+#
+# Where the pinned 151 bytes come from is not something this checkout can say:
+# the tested stack has them, no code at the pin produces them, and inventing a
+# plausible 151-byte JSON to satisfy a digest would be the exact failure mode
+# `[[weights.files]]` exists to catch. The honest record is the absence of a
+# declaration plus this paragraph. `[[weights.files]]` carries no `optional`
+# flag; adding one is a change to the shared manifest, which this provider does
+# not own, and it would buy little -- the kit judges the one file that matters
+# and so do we.
+
+[kit]
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "af3_torch"
+# common/opt_core is the shared core this checkout already carries for the
+# boltz2, enformer, chai1, rfdiffusion3, openfold3 and esmfold2 providers.
+sparse = ["af3_torch", "common"]
+package = "af3_torch_opt"
+# `fast` is the kit's own default and the mode residency is worth having for:
+# bf16 weights, the shared core's FlashPairformer kernels, the sample-batched
+# graphed sampler. It RESOLVES in this environment -- `modes.resolve("fast")`
+# returns 20 kit levers, 11 package levers, dtk on, padding kernel_tile -- but
+# which of them engage on an sm_121 card is a run-time fact and no run has
+# happened. The kit carries no prebuilt host object of its own (`find af3_torch
+# -name '*.so'` is empty), so `kit_foreign_objects` does not arise; its kernels
+# are Triton, compiled at first use.
+mode = "fast"
+# The kit's own install: `pip install -e ../common/opt_core -e opt`, then
+# xfold's pinned archive, then stock/check_pins.py.
+#
+# AF3_TORCH_PY is the kit's name for the interpreter `[env] python` already
+# declares, so it is handed over rather than left for the operator to export
+# twice -- enformer's `PYTHON={python} bash run.sh install` is the same move.
+#
+# THAT LAST STEP IS THE DEPLOYMENT'S OWN GATE, AND IT NOW PASSES HERE:
+# `[af3-torch-opt] PINS ok torch_py=ok jax_py=ok`. check_pins.py asks BOTH
+# interpreters for their pins, so this step is the one place that can say the
+# whole deployment is built rather than half of it -- and until the second
+# interpreter existed it said the other thing, by name:
+# `PINS NOT MET torch_py=ok jax_py=AF3_TORCH_JAX_PY not set`, rc 3, reported as
+# REFUSED. Both readings came from the same unmodified command, which is the
+# argument for it: a narrower command that skipped the kit's own gate would
+# install the same bytes and be unable to tell the two states apart.
+#
+# AF3_TORCH_JAX_PY is still not something this manifest can supply -- see [env]
+# -- so the step reads it from the operator's environment, and an operator who
+# has not built that half gets the refusal above rather than a green step.
+install = "AF3_TORCH_PY={python} bash run.sh install"
+
+# WHICH LAUNCHER THIS PROVIDER USES, and why the keys around `env_row` are moot
+# for it. [runtime] launch above is `tooluniverse.remote.af3_torch.launch:
+# build_command`, this provider's own module -- NOT
+# remote_resident.kit_launch:build_command, which reads `env_row` /
+# `env_row_reason`. Nothing in this provider's path ever calls the function
+# those keys gate, so they change nothing here whatever they say. They are set
+# anyway, to the honest values, so that a reader comparing providers does not
+# spend time working out whether this one's empty kit row is a bug:
+#
+#   env_row = "probe" (the default) would be a false claim -- the probe cannot
+#   read a row from this kit, and `kit_launch.build_command` would therefore
+#   REFUSE with "the kit returned no environment row". Measured, not assumed:
+#   `modes.resolve("fast")` returns a dict whose keys are mode, lever_set,
+#   levers, dtk, big, package_levers, padding, levers_off -- a composition of
+#   levers with neither `env` nor `exports`, so `_row_of` returns None; and the
+#   probe's `resolve(mode, home)` fallback raises `FileNotFoundError: .../
+#   af3_torch/af3_torch/af3_torch_api.py`, because that signature's second
+#   argument is a kit tree, not a home.
+#
+#   "none" is the truth: this kit keeps no row in `modes`, because it keeps the
+#   child process's environment somewhere else entirely.
+env_row = "none"
+env_row_reason = "the row lives in af3_torch_opt.stack.model_process_env(), not in modes.resolve(): this kit composes the model process's environment in a function (52 names on this host, every AF3_TORCH_OPT* name stripped) and hands the LEVERS to build_model as arguments instead. modes.resolve(mode) returns that lever composition and carries no env/exports key, so there is no row for a probe to read. The worker calls stack.model_process_env() itself, in process, which it can do because af3_torch_opt imports neither torch nor jax. Moot either way for this provider: [runtime] launch is tooluniverse.remote.af3_torch.launch:build_command, which never calls the build_command that reads this key."

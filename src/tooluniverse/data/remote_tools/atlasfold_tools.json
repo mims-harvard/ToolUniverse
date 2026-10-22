@@ -1,0 +1,156 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "atlasfold_predict",
+    "description": "Predict an all-atom protein structure with AtlasFold v1.0.0. Give one sequence in 'chains' for a monomer, or several for one complex (folded by the AtlasFold-M multimer head). Returns per-sample confidence scores (avg_plddt, pTM) and which sample ranked best; the mmCIF text itself is opt-in. Protein only -- this model has no ligand, DNA or RNA input.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "chains": {
+          "type": "array",
+          "description": "The amino-acid sequences of one target. One element folds through the monomer head; two or more are one complex folded through the multimer head.",
+          "minItems": 1,
+          "maxItems": 16,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "name": {
+          "type": "string",
+          "description": "A label for the target; appears in the output names.",
+          "default": "target"
+        },
+        "seeds": {
+          "type": "array",
+          "description": "Random seeds. Each seed produces num_samples structures, so total structures is seeds x num_samples. Upstream's default is the single seed 1.",
+          "items": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "minItems": 1,
+          "maxItems": 5
+        },
+        "num_samples": {
+          "type": "integer",
+          "description": "Diffusion samples per seed (upstream's default is 5). Each is scored separately, so this is how to compare conformations; rank them on `scores`.",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "num_recycles": {
+          "type": "integer",
+          "description": "Recycling iterations (upstream's default is 4 for a monomer, 10 for a multimer). More costs time, not memory.",
+          "minimum": 0,
+          "maximum": 20
+        },
+        "num_steps": {
+          "type": "integer",
+          "description": "Diffusion sampling steps. Omit for upstream's own length-dependent default (20 up to 512 tokens, 30 to 1024, 100 above; 200 for a multimer).",
+          "minimum": 1,
+          "maximum": 500
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "cif",
+            "pdb"
+          ],
+          "description": "Structure file format (default cif).",
+          "default": "cif"
+        },
+        "return_structures": {
+          "type": "boolean",
+          "description": "Return the structure text (default false: an all-atom file of a few hundred residues is megabytes). The confidence scores come back either way.",
+          "default": false
+        }
+      },
+      "required": [
+        "chains"
+      ],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "model_type": {
+          "type": "string"
+        },
+        "n_structures": {
+          "type": "integer"
+        },
+        "structures": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "structures_note": {
+          "type": "string"
+        },
+        "scores": {
+          "type": "object"
+        },
+        "ranked": {
+          "type": "object"
+        },
+        "seeds": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "kernel_backend": {
+          "type": "string"
+        },
+        "timing": {
+          "type": "object"
+        },
+        "peak_reserved_gib": {
+          "type": "number"
+        },
+        "weights_held_by": {
+          "type": "string"
+        },
+        "triton_usable": {
+          "type": "boolean"
+        },
+        "kit_mode": {
+          "type": "string"
+        },
+        "kit_levers_off": {
+          "type": "string"
+        },
+        "kit_gates_refused": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "note": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "AtlasFoldPredictTool",
+      "url": "https://github.com/anthropics/uplifting-biomolecular-modeling",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/atlasfold",
+      "mcp_tool_name": "atlasfold_predict"
+    },
+    "test_examples": [
+      {
+        "chains": [
+          "LSDEDFKAVFGMTRSAFANLPLWKQQNLKKEKGLF"
+        ]
+      }
+    ]
+  }
+]

@@ -1,0 +1,700 @@
+# AtlasFold — all-atom protein and complex structure prediction, held resident.
+#
+# The eleventh provider on the standard, and the first whose kit's SELLING POINT
+# is GPU memory rather than speed: AtlasFold v1.0.0's optimization kit ships
+# four modes (`off`, `exact`, `fast`, `big`) whose own README says `big` / `fast`
+# "reach 4,000 tokens on one GPU (stock 2,000)" and that the kit modes are
+# "faster than stock from mid-size inputs up, slower on small ones". So the
+# number that matters here is [gpu] vram_budget_gb and the ladder under it, and
+# a ladder that stopped at 400 residues would miss the whole point of the kit.
+#
+# WHAT RESIDENCY BUYS HERE, and it is not graphs. Stock AtlasFold's entry point
+# is `atlasfold monomer|multimer`, whose `run()` calls `load_model(...)` ->
+# `atlasfold.pretrained.load_model` INSIDE the call, every time. That reads
+# 6,128,042,331 bytes of AtlasLM-3B plus an 859,549,307-byte folding head from
+# disk and puts both on the card before the first residue is folded. The kit's
+# own README prices the per-run overhead at "≈11 s start-up and model load:
+# ≈15 s per Run example". A resident worker pays it once. Nothing in the kit
+# replaces that loader -- `registry.LEVERS` has no site on
+# `atlasfold.pretrained` -- so the WORKER is what memoises it, and the ready
+# line and every reply say `weights_held_by = "worker"`.
+#
+# THE FOOTPRINT IS CONSTANT-DOMINATED EVEN THOUGH THE ARCHITECTURE IS N^2.
+# This is the prediction this manifest makes before measurement, and it is the
+# interesting one. OpenFold3 and RoseTTAFold3 cost 3.6x and 3.7x going from 100
+# to 800 residues because an N^2 pair track is almost all of their footprint.
+# AtlasFold has the same N^2 pair track -- channel_z = 128 over 48 trunk blocks
+# -- but 6.51 GiB of it is a 3-billion-parameter language model that does not
+# grow with the input at all. So the expected shape is ESMFold2's (1.8x over
+# the same span, where ESMC-6B dominates), not OpenFold3's. The arithmetic is
+# written out under [gpu] precisely so that whichever term is wrong is
+# identifiable rather than absorbed.
+
+[provider]
+slug = "atlasfold"
+description = "AtlasFold v1.0.0 all-atom structure prediction for a protein monomer or a multimer complex"
+operations = ["atlasfold_predict"]
+# VERIFIED, and the word was earned twice over because the first attempt was
+# not. The first smoke died after a clean activation and a model load with
+# `LLVM ERROR: Cannot select: intrinsic %llvm.nvvm.shfl.sync.bfly.i32`, which
+# the supervisor reported as `smoke_protocolerror -- peer closed the connection
+# mid-message`: the worker aborted without speaking. The cause, the measurements
+# that found it and the configuration that answers it are under [kit].
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, driver 580.173.02), host zgx,
+venv route, Python 3.11.12, torch 2.7.1+cu128, triton 3.3.1, kit mode `big`
+with THIRTEEN levers ablated through the kit's MODEL_OPT_LEVERS_OFF door and
+the stock triangle backend forced to `--kernel torch` -- neither of which is a
+preference; see [kit] for the measurements that force both.
+
+VERIFIED ON TWELVE REQUESTS IN ONE HELD WORKER, not on one fold, following
+STANDARD.md section 12. Every request asserted to have produced structures:
+
+  * ladder, ascending, first:   100, 200, 400, 800 residues  -> 4/4
+  * mixed shapes:               100, 100, 400, 100           -> 4/4
+  * FOUR CONSECUTIVE IDENTICAL: the 35-residue smoke x4       -> 4/4
+                                3.6 / 3.5 / 3.5 / 3.5 s
+
+and then `tu remote setup atlasfold --only smoke` on its own: OK, one
+prediction, six mmCIF files (five diffusion samples plus upstream's ranked
+copy), peak reserved 12.06 GiB.
+
+RESIDENCY, measured here: the model load is 8.7-11.7 s and the 35-residue fold
+is 2.9-3.6 s, so a per-request process would spend about four fifths of its
+wall clock on the load this worker pays once. That is the whole of the gain --
+there are no CUDA graphs in `big` and the kit's compile caches are empty,
+because every lever that would have compiled anything is ablated.
+
+WALL TIMES HERE WERE TAKEN ON A CONTENDED CARD (one or two sibling jobs holding
+3-9 GiB throughout) and are upper bounds. Peaks are not: they are this process's
+own allocator bookkeeping and reproduce under contention, which is the standing
+rule in STANDARD.md section 12.
+
+WHAT THIS DOES NOT CLAIM. It does not claim the kit's optimizations work on this
+card -- twelve of the thirteen ablated levers are ablated precisely because they
+cannot run here, and what is verified is the provider's remaining memory half.
+It does not claim any configuration works on a host with a different Triton;
+such a host should delete twelve names from `levers_off`, let the worker's probe
+choose `--kernel auto`, and re-measure the ladder, which will be a different and
+better one."""
+
+[runtime]
+mode = "resident"
+worker = "resident/atlasfold_resident_worker.py"
+launch = "tooluniverse.remote_resident.kit_launch:build_command"
+worker_args = ["--socket", "{socket}", "--slug", "{slug}"]
+# The build imports the stack, activates the kit's mode and reads 6.51 GiB of
+# weights onto the card. The first REQUEST additionally compiles every
+# first-use Triton/NVRTC kernel of the mode and runs the shared core's one-time
+# numerical self-check of its fused kernels on this GPU, which the kit's own
+# README prices at "seconds on H100; up to ~30 s on A100" and which has never
+# been run on an sm121 card. Generous on purpose: a deadline that fires during
+# a first-run compile reports a stall that is not one.
+start_timeout_s = 1800.0
+request_timeout_s = 7200.0
+idle_timeout_s = 900.0
+# What a run that actually worked leaves behind, as `atlasfold.cli.monomer`'s
+# nested `write_outputs` writes it into `<out_dir>/<target>/`:
+#
+#   <target>_seed-<s>_sample-<i>_model.cif     one per (seed, sample)
+#   <target>_seed-<s>_sample-<i>_confidence.json
+#   <target>_ranked_model.cif                  a copy of the best sample
+#   <target>_ranked_confidence.json
+#   <target>_summary.csv                       seed,sample_index,avg_plddt,ptm
+#   done.txt                                   touched LAST, after everything
+#
+# An EXTENSION SET for the same reason openfold3's is one: the structure count
+# is a request option (upstream's default is 5 samples x 1 seed), so the only
+# count true of every request is "at least one", which a glob already asserts,
+# and an exact name would be a second copy of upstream's naming. `--format`
+# chooses between cif and pdb per request, so both are declared.
+#
+# What this separates a fold from: upstream writes the .cif FIRST inside
+# write_outputs, so a target that reached write_outputs at all has one. A
+# target that raised earlier leaves the output directory holding nothing with
+# either extension -- not even `done.txt`, which is touched last.
+outputs = ["*.cif", "*.pdb"]
+# And the reply-side half. The worker raises when its own structure list is
+# empty, so this is belt and braces; it costs nothing and it catches the other
+# direction, a worker that wrote files and reported none.
+output_keys = ["structures"]
+smoke = "smoke/input.fasta"
+# Raised from 2400 s for a reason specific to this card: the Triton finding
+# under [kit] forces `--kernel torch` for the triangle operations, and the torch
+# backend is where upstream's own speed was NOT measured. A 600-residue fold at
+# one sample and two steps takes 81 s here; at upstream's defaults (5 samples, 4
+# recycles, 20-30 steps) a long chain is tens of minutes rather than minutes. A
+# deadline that fires on a slow-but-working backend reports a stall that is not
+# one.
+smoke_timeout_s = 5400.0
+#
+# THERE IS NO DATA LOADER ON THIS PROVIDER'S PATH, which is worth stating
+# because `num_workers = 0` is otherwise unconditional on this standard (and is
+# what openfold3's first crash cost). Checked rather than assumed:
+# `torch.utils.data.DataLoader` appears nowhere under
+# `stock/src/src/atlasfold/` except `train/{monomer,multimer}/datamodule.py`,
+# which inference never imports; `atlasfold.cli.monomer.run` iterates
+# `FoldingRunner.fold_iter_batch` on the calling thread. So there is no
+# `num_workers` to force to zero.
+#
+# What this kit has INSTEAD, and both are handled:
+#
+#  1. `--gpu-ids` makes `atlasfold.cli.multigpu` `torch.multiprocessing.spawn`
+#     one interpreter per id -- on a one-GPU box included -- and the kit's
+#     `workers.py` rebinds `worker_entry` so each child activates the mode
+#     itself. The worker never passes `--gpu-ids` and refuses a request that
+#     asks for it: spawning model-sized children out of a process that already
+#     holds the card is the fork hazard with a different start method, and a
+#     resident worker has nothing to gain from it (it already owns the GPU).
+#
+#  2. The kit's `output_overlap` lever DOES start a child process -- and it
+#     does it correctly, which is why it is left alone. It is one
+#     `multiprocessing` SPAWN-context process started at activation with
+#     `CUDA_VISIBLE_DEVICES=""` and `ATLASFOLD_OPT` removed, niced +10, that
+#     does only host work (numba SASA, gemmi, the confidence dicts) on pickled
+#     copies of host arrays. Spawn, not fork, so the parent's CUDA context and
+#     kit threads are not copied; and the lever nulls `__main__.__spec__` and
+#     deletes `__main__.__file__` for the instant of the spawn so this worker
+#     script is not re-run as `__mp_main__`. Verified started on this host: its
+#     LEVER line reads `worker=process worker_start=started`. The lever serves
+#     only the MULTIMER runner; for a monomer request it steps aside by name
+#     (`runner:monomer`), which is in its expected set.
+
+[gpu]
+policy = "required"
+# MEASURED, on one held worker, ascending, upstream's defaults (5 diffusion
+# samples, 1 seed, 4 recycles, auto steps), `peak_reserved_gib` as this
+# process's own allocator reports it:
+#
+#     residues   peak reserved   fold
+#           35       12.06 GiB     2.9 s   (the smoke)
+#          100       12.06 GiB    12.5 s
+#          200       12.06 GiB    33.0 s
+#          400       13.84 GiB   122.3 s
+#          800       38.63 GiB   609.6 s   <- the figure declared
+#
+# THE ENVELOPE: 3.2x from 100 to 800 residues, and the shape of that curve is
+# the single most useful thing this provider measured. It is flat to 200
+# residues and then turns over hard, because 12.06 GiB of it is a floor --
+# AtlasLM-3B plus the folding head plus the CUDA context, none of which grows
+# with the input -- and above about 400 residues the triangle track overtakes
+# that floor completely.
+#
+# THE PREDICTION MADE BEFORE MEASURING WAS WRONG, AND THE WAY IT WAS WRONG IS
+# THE POINT. It read: "800 residues is expected to cost 1.4x what 100 does, not
+# 3.6x ... that makes this provider ESMFold2-shaped rather than OpenFold3-shaped,
+# and it is the one number in this file most worth checking: if the measured
+# ratio comes out near 3x, the pair working-set row is far too small." It came
+# out at 3.2x and the pair working-set row was far too small. Two separate
+# errors, in the same direction:
+#
+#   * the constant floor was estimated at 7.6 GiB and measures 12.06 -- 1.6x
+#     low, which is exactly ESMFold2's miss, repeated;
+#   * the N^2 row assumed the kit's FUSED pair kernels. They are all ablated
+#     here (see [kit]), and the triangle attention runs upstream's torch
+#     statement, which materialises what cuEquivariance's kernel never does.
+#     That is where the 25 GiB between 400 and 800 residues went.
+#
+# So the ladder measures a provider running on its SLOW path, and the number
+# below is honest for this host and pessimistic for any host whose Triton can
+# compile for its card. On such a host the kit's own fused kernels come back and
+# this should be re-measured rather than inherited; `tu remote setup` records
+# the per-host figure in ~/.cache/tooluniverse/measured/atlasfold.json and a
+# scheduler should read that one.
+#
+# ONE PROPERTY A HOST MUST KNOW: THIS RESERVE RATCHETS AND DOES NOT COME BACK.
+# Every rung after the 800-residue fold still reports 38.63 GiB -- a 100-residue
+# request taking 12.6 s and a 35-residue one taking 3.5 s both read 38.63 --
+# because the figure is `torch.cuda.max_memory_reserved` and the caching
+# allocator keeps the segments it grew. `alloc_expandable` is on (`effective=true`
+# on the kit's own LEVER line) and does not return them either. So a worker that
+# has served ONE long chain holds the long chain's reserve for the rest of its
+# life, until `idle_timeout_s` retires it. A host that folds mostly short chains
+# and occasionally a long one should budget the long one, or run with a shorter
+# idle timeout; a host that caps requests at 400 residues can hold this provider
+# in 14 GiB rather than 39.
+vram_budget_gb = 38.63
+driver_min = 570
+driver_min_reason = "its pinned stack is CUDA 12.8 (torch 2.7.1+cu128); the 580 floor belongs to the cu130 providers, not to this one"
+shareable = true
+isolation = "process"
+
+[env]
+kind = "venv"
+python = "$TOOLUNIVERSE_ATLASFOLD_PYTHON"
+lock = "environment/requirements.lock"
+# `atlasfold` carries no module-level __version__, so the installed
+# distribution is what is asked. atlasfold_opt is the kit and opt_core its
+# shared core: both are installed editable from the checkout on top of the
+# lock and are deliberately absent from it. opt_core is named here because this
+# kit's own `run.sh install` does NOT install it -- see [kit] install.
+verify = "import torch, atlasfold, atlasfold_opt, opt_core; from importlib.metadata import version; assert version('atlasfold') == '1.0.0'"
+
+[weights]
+# The kit's own variable (`atlasfold_opt.weights.ENV_DIR`), which every
+# `configs/<card>.env` sets with `${ATLASFOLD_WEIGHTS_DIR:-/weights/atlasfold}`
+# -- so exporting it, as the launcher does, wins over the kit's default without
+# editing anything. `/weights/atlasfold` is the kit's documented default and
+# not a path a user owns, so this provider's default follows the house
+# convention instead.
+root_env = "ATLASFOLD_WEIGHTS_DIR"
+root_default = "~/.atlasfold"
+# NOTHING IN THIS KIT FETCHES WEIGHTS. `run.sh install --weights DIR` only
+# compares what is on disk with stock/PINS.json and prints it: its own words
+# are "--weights: sha256-checks DIR only (read-only ok), no fetch", and
+# `atlasfold_opt.cli.cmd_install` returns 0 either way because "weights are
+# never pinned or gated". So the fetch is declared here -- and it is derived
+# from the kit's own PINS.json rather than restating a URL: the command reads
+# the pin file out of the checkout `{kit}` and asks huggingface_hub for each
+# (repo, file, revision) it names, into the <root>/<hf-repo>/<file> layout
+# `atlasfold_opt.weights.paths` requires. Add a file to PINS.json upstream and
+# this fetches it; move the hub and nothing here has to change.
+#
+# 7.33 GiB over three repositories, no credential and no licence acceptance:
+# MIT, as the three model cards and upstream's README both state.
+fetch = "{python} -c \"import json,sys;from huggingface_hub import hf_hub_download as d;p=json.load(open(sys.argv[1]));[d(repo_id=w['repo'],filename=w['file'],revision=w['revision'],local_dir=sys.argv[2]+'/'+w['repo'].split('/')[1]) for w in p['weights']]\" \"{kit}/atlasfold/stock/PINS.json\" \"{weights_root}\""
+
+# GENERATED from the kit's stock/PINS.json by a script, never transcribed --
+# see the report accompanying this provider. PINS.json's `weights` is a LIST of
+# {repo, file, revision, bytes, sha256, url, license}, a tenth distinct shape,
+# and `name` below is `<repo-basename>/<file>` because that is the layout
+# `atlasfold_opt.weights.FILES` resolves against the root. All nine files the
+# three repositories hold are declared, not just the three checkpoints the kit
+# itself compares: the three `config.json` files are three bytes each and share
+# a digest, which is correct and not a copy-paste.
+# 9 files, 7.33 GiB.
+
+[[weights.files]]
+name = "atlasfold-260703/README.md"
+size = 1598
+sha256 = "ac8a9aec091aadd688a9b4d6fcbf5771adde772cebbeb961eb1741cc567ab2af"
+
+[[weights.files]]
+name = "atlasfold-260703/config.json"
+size = 3
+sha256 = "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+
+[[weights.files]]
+name = "atlasfold-260703/weights/atlasfold-260703.pth"
+size = 859549307
+sha256 = "cbadb227d40e801a3d268d6e884e6ed3c6b9fb89d558739fcf5970492732e5ea"
+
+[[weights.files]]
+name = "atlasfold-m-260725/README.md"
+size = 1708
+sha256 = "bec6d986cca1c7ade9e7251dd447eda1783bb96f676a0c8f0b7c116e10923679"
+
+[[weights.files]]
+name = "atlasfold-m-260725/config.json"
+size = 3
+sha256 = "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+
+[[weights.files]]
+name = "atlasfold-m-260725/weights/atlasfold-m-260725.pth"
+size = 881306737
+sha256 = "210e3e9cfaac92d276ae44910d9b66d0673ecd5c225261e64dccf58c8dfe123a"
+
+[[weights.files]]
+name = "atlaslm-3b-base/README.md"
+size = 747
+sha256 = "7e494effb69b1eb665b9a3e5d6836681c3d0f71876c10f761533edb3750be055"
+
+[[weights.files]]
+name = "atlaslm-3b-base/config.json"
+size = 3
+sha256 = "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+
+[[weights.files]]
+name = "atlaslm-3b-base/weights/atlaslm_3b_base.pth"
+size = 6128042331
+sha256 = "8097cc4a234853f19ca97435844829d84fe7f13215c900e74659fa9682cc0ddb"
+
+[kit]
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "atlasfold"
+# The kit's kernels come from common/opt_core, which this checkout shares with
+# the boltz, enformer, chai1, openfold3, rosettafold3, esmfold2, esmc, boltzgen
+# and af3_torch providers; the sparse set is the union of what its providers
+# declare.
+sparse = ["atlasfold", "common"]
+package = "atlasfold_opt"
+#
+# ACTIVATION is the common form, shape 1 of the four: `opt/atlasfold_opt_autoload.pth`
+# imports `atlasfold_opt._autoload` at interpreter start, and with the mode
+# variable set a meta-path finder waits for the first import of
+# `atlasfold.model`, `atlasfold.runner`, `atlasfold.runner_multimer` or
+# `atlasfold.pretrained` and calls `atlasfold_opt.enable(word)` before letting
+# that module's body run. No `worker_launch`, no replacement entry script, no
+# patched tree on disk.
+#
+# THE MODE VARIABLE'S NAME IS READ, NOT DERIVED. `atlasfold_opt.modes` has no
+# module-level `ENV` (and no `resolve()` either -- see env_row), so
+# `kit_launch`'s probe falls through to `_autoload.ENV`, which is
+# "ATLASFOLD_OPT". The generated `.pth`'s own header line states the same three
+# facts for a reader: `package=atlasfold_opt env=ATLASFOLD_OPT tag=atlasfold-opt
+# exit=3`.
+#
+# `off` IS THIS KIT'S DOCUMENTED DEFAULT, which is unusual and is worth
+# understanding before choosing anything else. It is not a soft default: under
+# `--mode off` the kit runs `python -c "from atlasfold.cli import main;
+# main()"` in a CLEAN SUBPROCESS with no ATLASFOLD_OPT / AFO_ / FPF_ /
+# OPT_CORE_ variable in its environment and `opt/` off its PYTHONPATH
+# (`atlasfold_opt.stock_pred`, `PINS.json:stock_environment`), so that "off"
+# cannot accidentally mean "a kit mode that failed to engage". For a RESIDENT
+# provider that makes `off` the one mode that cannot be used at all: it is a
+# fresh process per prediction by construction, which is the opposite of
+# holding the model. A provider here either runs a kit mode or is not resident.
+#
+# WHY `big`, AND IT IS A MEASURED-CONTEXT DECISION RATHER THAN A PREFERENCE.
+# The kit's four modes are `off` (stock), `exact` (bit-identical outputs under
+# --det 1), `fast` (the fused pair kernels, bf16/TF32 in the LM and diffusion
+# module, and the denoiser replayed as a CUDA graph) and `big` (= `fast` minus
+# `denoiser_graph` and `graph_reuse`, same numerics, lowest peak memory). Both
+# `fast` and `big` resolve on this card: `run.sh check --config h100 --mode
+# <m>` returns rc 0 for all three kit modes, and a plain `import
+# atlasfold.model` under either word prints the kit's ACTIVE line with
+# `skipped=none`. `big` is what ships, for three reasons in descending order of
+# weight.
+#
+#  1. `alloc_expandable` is ON under `big` and OFF under `fast`, and the kit
+#     says so itself. Its rule is that beside a CUDA-graph lever in the row it
+#     steps aside by name, "the core does not compose its allocator policy with
+#     graph capture by default". Measured on this host, same process, same
+#     everything else:
+#
+#       ATLASFOLD_OPT=big   LEVER name=F7.expandable_segments state=on
+#                           via=runtime_api conf=expandable_segments:True
+#                           effective=true source=snapshot
+#       ATLASFOLD_OPT=fast  LEVER name=F7.expandable_segments state=skipped
+#                           reason=graph_lever_in_row:denoiser_graph
+#
+#     So `fast` pays the graph pool's reserved memory AND loses the allocator
+#     policy that would have offset it. For the provider whose declared budget
+#     is the headline number, that is the wrong side of the trade. (The kit
+#     offers `AFO_ALLOC_EXPANDABLE=graphs` to compose the two under `fast`; it
+#     is deliberately NOT set here, because the core's own note is that graph
+#     private pools are not returned under expandable segments, and composing
+#     them on an unmeasured card is not a thing to do blind.)
+#
+#  2. `graph_reuse` is designed for a BATCH run and a resident worker is not
+#     one. Under `fast` it keeps the last item's graph, its private pool, its
+#     static input buffers AND every tensor the captured kernels read by
+#     reference -- `pair_bias`, the `sampler_hoist` leaves, the batch dict --
+#     alive until an item of a DIFFERENT (B, L) arrives. Between two folds of
+#     one length that is exactly the win residency exists for. Between two
+#     REQUESTS it means an idle provider holds `kept_gib` of a shared card with
+#     nobody asking, for as long as the next caller takes, which is the one
+#     thing a `shareable = true` provider must not do quietly. The kit reports
+#     the amount (`kept_gib` / `kept_gib_max` on its LEVER line) and offers
+#     `AFO_GRAPH_REUSE=0`; `big` removes both levers by definition.
+#
+#  3. `denoiser_graph`'s one unexpected failure is unrecoverable IN A LONG-LIVED
+#     PROCESS, by its own account: on `capture_failed` "torch (2.7) keeps the
+#     CUDA RNG generator and the caching allocator in capture state after a
+#     failed stream capture, so the process cannot draw noise, empty its cache
+#     or capture again -- the item ends there, loudly". For a per-request
+#     subprocess that costs one prediction. For a worker held for hours it
+#     costs every prediction after it, and the standard's own section 12 is the
+#     story of a graph lever that passed a smoke and died on request two. The
+#     kit's dry run does report `KERNEL cuda_graph ok=True routed=True
+#     resolved=torch.cuda.graphs@2.7.1` on this card, so this is a
+#     tail-risk argument and not a known failure -- which is why it is third.
+#
+# WHAT `big` GIVES UP, stated plainly: the denoiser is issued as ~600 kernel
+# launches per step instead of one replayed graph, which is the kit's own
+# description of what `denoiser_graph` buys. Every other lever of the `fast`
+# line is still in the row -- `trimul_v4`, `flash_triattn`, `triatt_block`,
+# `triattn_core`, `lm_sdpa`, `pair_transition`, `pair_block_residual`,
+# `dit_apb`, `atom_tf32/kdedup/rows/bf16`, `diffusion_bf16`, `sampler_hoist`,
+# `sampler_hostsync` -- and `big`'s numerics are `fast`'s, not `exact`'s.
+# Changing this line to "fast" is a one-word change and the two should be
+# measured against each other on the ladder; the kit's own guidance is the
+# reverse of the usual ("Use `big` when `fast` runs out of memory"), and if
+# `fast` turns out to cost little more here it is the better default.
+mode = "big"
+#
+# THE ONE LEVER OF THE `big` LINE THAT CANNOT WIN ON THIS CARD, switched off
+# through the kits' own ablation door rather than patched. `atom_sdpa` routes
+# the denoiser's windowed atom attention through torch's fused SDPA kernels,
+# and on compute capability 12.1 under torch 2.7.1 no fused backend accepts the
+# call. The kit's own dry run says so before anything runs:
+#
+#   [atlasfold-opt] KERNEL sdpa_fused_fp32_window ok=False routed=False
+#   resolved=None reason=RuntimeError: No available kernel. Aborting execution.
+#
+# and torch's own warnings name each refusal in turn: "Mem Efficient Attention
+# only supports gpu architectures in the range [sm50, sm120]. Attempting to run
+# on a sm 12.1 gpu", "Flash Attention does not support non-null attn_mask",
+# "Expected query, key and value to all be of dtype: {Half, BFloat16}. Got
+# Query dtype: float". The operands are fp32 with an additive bias, so the
+# mem-efficient kernel is the only candidate and its architecture ceiling is
+# one minor version below this card.
+#
+# The lever DOES degrade -- its wrapper catches the RuntimeError and runs the
+# stock statement -- but `no_fused_backend` is deliberately NOT in its expected
+# set ("a torch whose fused kernels decline the call: stock statement, gate
+# refused"), so its gate would refuse at exit and `atlasfold_opt.cli.cmd_pred`
+# folds a refused gate into exit code 3. Left alone, this provider would
+# produce correct structures and report failure on every single request.
+#
+# `atom_sdpa` is THE ONLY lever of the row in that position, which was checked
+# rather than hoped: every other kernel lever treats a card it has no measured
+# row for as an EXPECTED fallback -- `arch:`, `no-cell:`, `no_row:`,
+# `stock_row:`, `refused:` are all in their expected prefixes
+# (`registry.LEVERS[*]["expected"]`) -- so `triatt_block` serving from
+# `cells=10.3|*;inherited_cc:unmeasured(12.1->10.3)` and `triattn_core` reading
+# `triattn_native=cc_12.1:_measured_on_9.0_/_8.0_only` are both fine and both
+# counted. This is the same inherited-cell situation that cost OpenFold3 its
+# first five folds, and it is harmless here for one reason: this kit has no
+# equivalent of `OPENFOLD3_OPT_PAIR_STRICT=1`. There is no STRICT knob anywhere
+# in `atlasfold_opt`, so a fallback is a fallback.
+#
+# The ablation is the kit's sanctioned move and it reads MODEL_OPT_LEVERS_OFF
+# itself (`atlasfold_opt.ablation.ENV`), unlike boltzgen's kit which ignores it.
+# Verified on this host, `ATLASFOLD_OPT=big MODEL_OPT_LEVERS_OFF=atom_sdpa`:
+#
+#   ACTIVE mode=big n_gpu=1 gpu=NVIDIA GB10(sm121) levers=<29 names>
+#   skipped=none ablated=atom_sdpa stock=atlasfold@992067e cueq=0.10.0
+#   torch=2.7.1+cu128 core=0.5.228.0 kit=0.2.44 det=0 fill=na
+#   EXIT ... gates_refused=none
+#   LEVER name=LOCAL.atlasfold.atom_sdpa state=off reason=levers_off
+#
+# Note what the ablation does NOT do here: it does not make the activation
+# PARTIAL. This kit's `stack.activate` computes `partial` from
+# `levers_skipped`, and an ablated lever is never installed, so it is not
+# skipped -- the ACTIVE line simply gains `ablated=atom_sdpa`. Nothing else
+# comes off with it: `ablation.reasons("big", ["atom_sdpa"])` returns exactly
+# `{'atom_sdpa': 'levers_off'}` because no lever of this kit `requires` it
+# (only `triattn_core`, `pair_block_residual` and `graph_reuse` have
+# requirements, and none names atom_sdpa).
+#
+# The alternative door, `AFO_ATOM_SDPA=0` in [kit.env], also works and is
+# arguably cheaper -- `disabled` IS in the lever's expected set, so the gate
+# passes and the mode's row stays intact. It is not what ships because
+# `levers_off` is a first-class field of this manifest that a reviewer reads,
+# and it puts the ablation on the kit's own ACTIVE line instead of leaving an
+# installed-but-inert wrapper in the call path.
+#
+# AND THEN THE REAL WALL: TRITON 3.3.1 CANNOT EMIT CODE FOR THIS CARD, so every
+# Triton-backed lever of the row comes off as well. The first smoke died here,
+# after a clean activation and a model load, at `Starting monomer inference`:
+#
+#   'sm_121a' is not a recognized processor for this target (ignoring processor)  [x12]
+#   LLVM ERROR: Cannot select: intrinsic %llvm.nvvm.shfl.sync.bfly.i32
+#
+# reported by the supervisor as `smoke_protocolerror -- peer closed the
+# connection mid-message`, which is the correct description of a worker that
+# died without speaking: `abort()` is not an exception.
+#
+# `triton==3.3.1` is in the KIT'S lock beside torch 2.7.1+cu128. Its bundled
+# LLVM does not know `sm_121a`; it ignores the processor, falls back to a default
+# subtarget, and cannot lower the warp shuffle every block reduction emits.
+# Measured on this machine, the same `tl.sum` kernel on the same card:
+#
+#   triton 3.3.1 (this provider)   LLVM ERROR: Cannot select: ... shfl.sync.bfly
+#   triton 3.6.0 (openfold3-venv)  OK
+#   triton 3.7.1 (esmfold2-venv)   OK
+#
+# Two fixes that do NOT work, measured so nobody repeats them:
+#
+#   * A newer ptxas. The failure is UPSTREAM of ptxas. A one-add kernel with no
+#     shuffle does reach ptxas and fails there
+#     (`ptxas-blackwell fatal : Value 'sm_121a' is not defined for option
+#     'gpu-name'`), and pointing Triton at a CUDA 12.9 ptxas fixes exactly that
+#     one -- `OK elementwise` -- while the shuffle kernel still aborts,
+#     identically, with and without it. Note also that triton 3.3.1 reads
+#     `TRITON_PTXAS-BLACKWELL_PATH`, not `TRITON_PTXAS_PATH`, for a card at
+#     cc >= 10.0, because `get_ptxas(arch)` picks the binary NAME first and
+#     `_path_to_binary` derives the variable from it. (For the 3.4-3.5 band a
+#     12.9 ptxas IS the whole fix; triton 3.6.0 ships a `ptxas-blackwell` at
+#     exactly release 12.9, so that workaround is the vendor's own answer one
+#     version early.)
+#   * `TRITON_OVERRIDE_ARCH`. It does reach `options.arch` (verified:
+#     `parse_options({}).arch == 'sm120'`), but the target string LLVM complains
+#     about is set on the MLIR module, and forcing `sm_arch_from_capability` to
+#     return `sm_120a` -- or even `sm_90a` -- leaves the abort in place.
+#
+# Raising triton above 3.3.1 would be a deviation from the kit's pinned stack,
+# which `stock/check_pins.py` and this provider's own lock both exist to
+# prevent. It is not done here.
+#
+# WHICH LEVERS, MEASURED RATHER THAN GUESSED. `triton.runtime.jit.JITFunction.run`
+# was trapped during a fold -- made to record and raise a Python error instead of
+# reaching LLVM -- so the process survived and named every Triton kernel the row
+# reaches. Under mode `big` at 35 residues, seven kit cells did:
+#
+#   trimul_v4         opt_core.kernels.fpf_trimul.kernels:_k_ln_rows
+#   flash_triattn     flash_triattn:_bias_prep, flash_triattn_k2:_bias_prep,
+#                     triatt_k2b:_bias_prep
+#   pair_transition   opt_core.kernels.fpf_transition_v2.kernel:_pair_transition_kernel
+#   transition_exact  fpf_transition.transition:_fused_transition_kernel
+#   exactln           opt_core.kernels.ln_proj:_ln_rows_kernel,
+#                     opt_core.kernels.lnl_fused:_fused_transition_kernel
+#   atom_rows         opt_core.kernels.dtk_kernels:_ln_mod_kernel
+#
+# The other five below are ablated as well, and that is the most important line
+# in this file: EVERY KERNEL LEVER OF THIS KIT IS GATED AT 512 TOKENS
+# (`min_tokens=512` on their own LEVER lines), so a 35-residue smoke exercises
+# NONE of them. A smaller ablation list passes the smoke and aborts on the first
+# real request. Measured exactly that way: the 13-name list below folds 35 AND
+# 600 residues with zero Triton launches, while stopping at the seven observed
+# names folds 35 and aborts at 600.
+#
+# WHAT IS LEFT IS STILL WORTH HAVING, and that was measured too rather than
+# asserted. 17 levers survive -- `pae_stream`, `pae_stream_m`,
+# `conf_transition_chunk`, `pair_transition_chunk`, `distogram_offload`,
+# `relpos_lazy`, `alloc_expandable`, `sampler_hoist`, `sampler_hostsync`,
+# `atom_kdedup`, `atom_tf32`, `atom_bf16`, `ln_bf16`, `diffusion_bf16`,
+# `lm_sdpa`, `output_overlap`, `lever_report` -- and they are precisely the
+# MEMORY levers, which is this kit's stated selling point. One target, 1 sample /
+# 1 recycle / 2 steps, `--kernel torch` throughout, peak reserved:
+#
+#                                   35 residues        600 residues
+#   stock AtlasFold, no kit         12.45 GiB          24.24 GiB
+#   this configuration              12.06 GiB          19.64 GiB
+#
+# 4.60 GiB (19%) less at 600 residues, with every fused kernel forgone. That is
+# the kit's memory half doing its job without its kernel half.
+levers_off = [
+    "atom_sdpa",
+    "trimul_v4",
+    "flash_triattn",
+    "triattn_exact",
+    "triatt_block_exact",
+    "triatt_block",
+    "triattn_core",
+    "transition_exact",
+    "pair_transition",
+    "pair_block_residual",
+    "exactln",
+    "dit_apb",
+    "atom_rows",
+]
+# The kit accepts all thirteen by name and reports them: the ACTIVE line reads
+# `levers=<17 names> skipped=none ablated=atom_sdpa,trimul_v4,flash_triattn,
+# triattn_exact,triatt_block_exact,triatt_block,triattn_core,transition_exact,
+# pair_transition,pair_block_residual,exactln,dit_apb,atom_rows` and the exit
+# census reads `gates_refused=none` -- so this is an ablation the kit records,
+# not a configuration it tolerates silently.
+#
+# A HOST WHOSE TRITON KNOWS ITS CARD SHOULD DELETE TWELVE OF THESE. Only
+# `atom_sdpa` is forced by the GPU itself (torch's fused SDPA architecture
+# ceiling); the other twelve are forced by triton 3.3.1 and nothing else. The
+# worker decides which case it is at start-up with a child-process probe -- it
+# compiles one `tl.sum` kernel, because that is the construct that emits the
+# shuffle -- and REFUSES TO START, by name, if the probe fails while a
+# Triton-backed lever is still in the row. An LLVM abort cannot be caught, so
+# the decision has to be made before the first compile; the alternative is a
+# worker that passes the smoke and dies on the first request past 512 tokens.
+#
+# ONE MORE THING THE KIT CANNOT BE BLAMED FOR, and it is the harshest finding
+# here: the PINNED STACK CANNOT FOLD A USEFUL SIZE ON THIS CARD EVEN WITH THE
+# KIT OFF. `atlasfold.utils.kernel.cuequiv_available` resolves upstream's default
+# `--kernel auto` to `cuequiv` whenever `cuequivariance_torch` merely imports,
+# and cuEquivariance 0.10.0 ships its own Triton kernels. Measured with no kit
+# word in the environment at all:
+#
+#   stock, --kernel auto,   35 residues   FOLD OK, 2 cif
+#   stock, --kernel auto,  200 residues   ABORT (cuequivariance_ops.triton.
+#   stock, --kernel auto,  400 residues   ABORT   fused_layer_norm_triton:
+#   stock, --kernel auto,  500 residues   ABORT   layer_norm_transpose_
+#   stock, --kernel auto,  600 residues   ABORT   forward_kernel)
+#   stock, --kernel torch, 600 residues   FOLD OK, 2 cif, 24.24 GiB
+#
+# So `--kernel torch` is not an optimization choice, it is the only backend that
+# folds. The worker passes it -- a stock CLI flag, not a lever -- whenever its
+# Triton probe fails, and passes upstream's `auto` when it succeeds. The cost is
+# the cuEquivariance triangle kernels, which are where upstream's own speed comes
+# from; the benefit is a provider that answers.
+#
+# And it means the 35-residue smoke is the ONE length that would have worked
+# under `auto`. A green smoke here would have been the most misleading result
+# this provider could produce.
+#
+# THIS KIT KEEPS NO ENVIRONMENT ROW, and the declaration is required because an
+# absence and a failed read look identical from the launcher.
+# `atlasfold_opt.modes` has no `resolve()` AT ALL -- it is 30 lines holding
+# `MODE_NAMES`, four literal lever rows, `PLANNED` and `levers_of(mode)` -- so
+# both shapes `kit_launch`'s probe tries raise AttributeError, `modes.MODES`
+# comes back as the four mode names, and `env` comes back empty. There is also
+# no `alloc.env_row()` (this kit's allocator lever is `hooks/alloc_expandable`,
+# which applies the policy to its own live allocator through
+# `torch.cuda.memory._set_allocator_settings` rather than handing a variable to
+# a child) and no `modes.jit_cache_key()`.
+env_row = "none"
+env_row_reason = """atlasfold_opt.modes has no resolve() and no ENV: it holds
+only MODE_NAMES, the four literal lever rows, PLANNED and levers_of(). This
+kit's deployment variables live in per-card `configs/<card>.env` files that
+`run.sh` sources -- h100, h200, a100 and b300 -- exactly as esmfold2's, esmc's
+and rosettafold3's do, and it ships none for sm121. Those files set only three
+things and all three are already supplied: ATLASFOLD_WEIGHTS_DIR by [weights]
+root_env, MODEL_OPT_JIT_ROOT by kit_launch, and AFO_TARGET_GPU / KMP_AFFINITY
+by [kit.env] below. The mode word itself is never in a config file -- every one
+of them says so in its first comment line, "Never the mode" -- so nothing about
+the mode is lost by having no row."""
+#
+# `run.sh install` is two editable installs plus the stock tree's digest check.
+# THE FIRST LINE IS NOT THE KIT'S and has to be here: unlike boltz2's and
+# chai1's, this kit's `run.sh install` does NOT install `common/opt_core` -- it
+# puts it on PYTHONPATH instead (`export PYTHONPATH="$HERE/opt:$HERE/stock/src/src:$HERE/../common/opt_core"`),
+# which reaches the processes run.sh starts and not a worker the launcher
+# starts directly. Without it the first `import atlasfold.model` refuses by
+# name, from the core pin gate that every kit entry runs first:
+#
+#   [atlasfold-opt] NOT ACTIVE: reason=core_missing:opt_core (pinned >=
+#   v0.5.134.2 at ../../common/opt_core; nothing importable as opt_core on
+#   sys.path)
+#
+# The kit's own README names this exact route: "For the `ATLASFOLD_OPT=` route
+# without `run.sh` (Run), `pip install -e ../common/opt_core` or export the same
+# PYTHONPATH first." The editable install is taken because it survives into any
+# interpreter invocation, where a PYTHONPATH does not. rosettafold3's install
+# line does the same thing for the same reason.
+#
+# ATLASFOLD_WEIGHTS_DIR is set on the command line because the kit step does
+# not export [weights] root_env (only the weights step does), and run.sh needs
+# it twice: `check_pins.py --weights` reads the variable, and the
+# `atlasfold_opt install --weights` line is guarded on it. Neither gates: the
+# kit's own words are that a weights comparison is "information; not a gate",
+# and exit 1 comes only from a modified `stock/src` tree.
+#
+# `python3` on PATH is what run.sh drives -- it reads no PYTHON variable -- and
+# `tu remote setup` puts the manifest's interpreter first on PATH for exactly
+# this step, so the plain form is the correct one.
+install = """
+{python} -m pip install -q --no-build-isolation --no-deps -e ../common/opt_core &&
+ATLASFOLD_WEIGHTS_DIR={weights_root} bash run.sh install --weights {weights_root}
+"""
+
+# The kit's own documented knobs, applied before the process starts. Both come
+# from `configs/<card>.env`, which a resident worker never sources because it
+# does not go through `run.sh`.
+[kit.env]
+# What the four shipped config files set for Intel OpenMP, verbatim and for the
+# same reason. There is no aarch64 config file to copy it from, and this value
+# is identical in h100.env, h200.env and a100.env.
+KMP_AFFINITY = "disabled"
+# The card a config targets, which the kit prints and uses for nothing else on
+# this path -- `AFO_TARGET_GPU` is a label, while every kernel route is chosen
+# per call from the live `torch.cuda.get_device_properties` (the ACTIVE line's
+# own `gpu=NVIDIA GB10(sm121)` is read, not configured). Set to the truth
+# rather than borrowed from h100.env, because borrowing "H100(sm90)" would put
+# a false card name in the kit's report for no gain.
+AFO_TARGET_GPU = "GB10(sm121)"
+#
+# NOT SET, and each omission is a decision:
+#   AFO_DENOISER_GRAPH_MAX_TOKENS -- `big` carries no graph lever; nothing to gate.
+#   AFO_GRAPH_REUSE=0             -- likewise.
+#   AFO_ALLOC_EXPANDABLE=graphs   -- only meaningful under `fast`; see mode above.
+#   AFO_DET=1                     -- upstream seeds its RNG per record itself and
+#                                    the deterministic recipe costs TF32 and pins
+#                                    the cuBLAS workspace. A caller who needs
+#                                    bit-reproducibility needs `exact --det 1`,
+#                                    which is a different provider configuration,
+#                                    not a request option.
+#   AFO_ALLOW_PARTIAL=1           -- deliberately absent. A partial activation is
+#                                    what this provider wants to hear about, not
+#                                    to proceed through; with `atom_sdpa` ablated
+#                                    the row activates whole and `skipped=none`.
+#

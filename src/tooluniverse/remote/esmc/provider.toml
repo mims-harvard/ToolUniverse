@@ -1,0 +1,302 @@
+# ESM C -- protein language-model embeddings and masked-LM logits, held resident.
+#
+# The sixth provider on the standard and the second that answers with arrays
+# rather than structure files (Enformer is the other). What it serves is one
+# forward pass of ESM Cambrian over one protein sequence: the per-residue
+# hidden states (the embedding) and the 64-way vocabulary logits.
+#
+# Two facts decided the shape of this provider.
+#
+# *The checkpoint is already on this machine.* ESMFold2 loads biohub/ESMC-6B as
+# its language model, and its kit pins the SAME snapshot commit that this kit
+# pins -- 45b0fa5d, with the same six shard digests. So [weights] points at the
+# cache ESMFold2 already filled instead of fetching 25.4 GiB a second time. See
+# [weights] for what a host without ESMFold2 does.
+#
+# *An embedding is a big array.* ESMC-6B's hidden size is 2560, so a
+# per-residue matrix for a 300-residue protein is 768,000 floats. The MCP
+# transport truncated Chai-1's oversized reply at exactly 100,000 characters,
+# which produced invalid JSON rather than an honest refusal, so this provider's
+# default reply is the mean-pooled vector and the full matrix is opt-in with an
+# explicit residue bound (esmc_tool.py).
+#
+# MEASURED on the card named in `verified_on`, and running `off` rather than
+# `exact` -- which is the one thing to understand about this provider before
+# reading its numbers. Under `exact` the kit refuses to load at all here
+# (flash-attn is not importable; see [kit]), and `off` costs 9.6 GiB of peak
+# because the lever that goes with it, `pipe`, IS the device-side weight
+# loader. So the derived reserve below was not wrong about `exact` -- it was
+# measuring a mode this machine cannot run.
+
+[provider]
+slug = "esmc"
+description = "ESM Cambrian protein language model: sequence embeddings and masked-LM logits"
+operations = ["run_esmc_embed", "run_esmc_logits"]
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver
+580.173.02), venv route, kit mode OFF -- stock ESM C, which is a supported mode
+of this kit and not a workaround. The ESMC-6B snapshot is esmfold2's, the same
+pin, so nothing was downloaded for this provider.
+
+VERIFIED ON 4 CONSECUTIVE IDENTICAL REQUESTS IN ONE HELD WORKER, not on one
+forward pass -- the standard's acceptance test since openfold3 passed a
+one-request smoke and then could not answer a repeat. The 75-residue smoke,
+four times, one worker held start to stop:
+
+    build 141.7 s, then 0.69 / 0.076 / 0.074 / 0.074 s
+    peak reserved 24.07 GiB, flat across all four
+
+This is the most extreme residency case of the ten providers and the arithmetic
+is worth stating: a per-request process would spend 141.7 s reading 23.7 GiB of
+weights to do 0.076 s of work. Held, it does the 0.076 s. Nothing here is a
+kernel optimisation; it is the difference between reading the model and not."""
+
+[runtime]
+mode = "resident"
+worker = "resident/esmc_resident_worker.py"
+launch = "tooluniverse.remote_resident.kit_launch:build_command"
+# --variant is the kit's own rule, not ours. esmc_opt/stack.py refuses a second
+# variant in the same process by name -- "one lever set per process" -- because
+# the levers are resolved per variant (registry.levers_for). The variant also
+# chooses the checkpoint, so it cannot come from the kit row; it is this
+# worker's own argument. 6b is the size whose weights [weights] declares.
+worker_args = ["--socket", "{socket}", "--slug", "{slug}", "--variant", "6b"]
+# Eleven files, 25.4 GiB, read once per process. ESMFold2 measured ~25 s of
+# start-up for the same checkpoint on this box; the ceiling is generous because
+# a cold page cache reads all of it from disk.
+start_timeout_s = 1800.0
+request_timeout_s = 900.0
+idle_timeout_s = 900.0
+smoke = "smoke/input.txt"
+smoke_timeout_s = 1800.0
+# This provider writes no files, so there is nothing for [runtime] outputs to
+# match. These are the keys a reply must carry for the smoke step to count as
+# a model having run: the pooled embedding and the length it was taken over.
+output_keys = ["mean_embedding", "sequence_length"]
+
+[gpu]
+policy = "required"
+# MEASURED, and high for a reason this manifest has to state rather than let a
+# scheduler discover: this provider runs `[kit] mode = "off"`, and the lever it
+# gives up, `pipe`, is the kit's device-side weight loader. Stock ESM C stages
+# the 25.4 GiB fp32 checkpoint before casting to bf16; the kit's loader does
+# not. That is the whole of the 9.6 GiB gap between the derived reserve this
+# line replaces (14.5, which was an honest estimate OF `exact`) and the 24.07
+# measured here. If flash-attn is ever built for this card and `exact` becomes
+# reachable, this number should drop by roughly that much -- re-measure, do not
+# assume.
+#
+# Ladder, one held worker, steady state, one sequence per request:
+#
+#     residues   peak reserved
+#          100      24.08 GiB
+#          200      24.43 GiB
+#          400      25.05 GiB
+#          800      26.29 GiB
+#         1600      28.75 GiB   <- the reference this budget declares
+#
+# NEARLY FLAT, exactly as predicted and for the predicted reason: 1600 residues
+# costs 1.19x what 100 does, because the constant 6B parameter term dominates
+# everything the input contributes. Contrast openfold3 (3.6x) and rosettafold3
+# (3.7x), where an N^2 pair track dominates instead. A host can treat this
+# provider as a fixed ~29 GiB tenant for any single sequence it is likely to
+# see, which is unusual and useful.
+#
+# A host that switches to the 300m or 600m variant is in a completely different
+# budget (0.6 / 1.1 GiB of parameters), must fetch those weights, and must
+# re-measure rather than scale this number.
+vram_budget_gb = 28.75
+driver_min = 580
+driver_min_reason = "its pinned stack is CUDA 13.0 (torch 2.11.0+cu130)"
+shareable = true
+isolation = "process"
+
+[env]
+kind = "venv"
+python = "$TOOLUNIVERSE_ESMC_PYTHON"
+lock = "environment/requirements.lock"
+# esm and the Biohub transformers fork are what the kit's own pin check reads,
+# at the versions stock/PINS.json names.
+verify = "import torch, esm, transformers, esmc_opt; assert esm.__version__ == '3.4.0' and transformers.__version__ == '4.57.6'"
+
+[weights]
+# Hugging Face's own cache in its own layout, which is what upstream's resolver
+# writes and reads: HF_HOME/hub/models--biohub--ESMC-6B/snapshots/<commit>/.
+#
+# THE DEFAULT IS ESMFOLD2'S CACHE, AND THAT IS DELIBERATE. This kit's
+# stock/PINS.json pins biohub/ESMC-6B at snapshot 45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a;
+# so does esmfold2's, with byte-identical digests for all six shards. The
+# 25.4 GiB is therefore already on a host that has ESMFold2 set up, and
+# pointing at it costs nothing and downloads nothing. A host without ESMFold2
+# sets HF_HOME wherever it likes and the fetch below fills it. The two
+# providers share one variable because they want one directory; if that ever
+# stops being true, the pins will differ and the digest check will say so.
+root_env = "HF_HOME"
+root_default = "~/.esmfold2"
+# Upstream's own resolver -- the exact call the kit's downloader makes
+# (opt/esmc_opt/weights.py: upstream_route -> esm.models.hub.resolve_model_dir,
+# which runs huggingface_hub.snapshot_download for the repo's *.json and
+# *.safetensors). No URL is restated in ToolUniverse. The kit's own
+# `python -m esmc_opt.weights DIR VARIANT` is NOT used here because its DIR is
+# the parent of the HF cache (it appends /hf), and HF_HOME is the variable the
+# worker and every route actually read.
+fetch = "HF_HUB_OFFLINE=0 {python} -c \"from esm.models.hub import resolve_model_dir; print(resolve_model_dir('biohub/ESMC-6B'))\""
+
+# The eleven entries below are GENERATED from the kit's own stock/PINS.json
+# "weights"["biohub/ESMC-6B"] by a script, not transcribed. The six shards
+# carry a sha256 in PINS itself. The five .json files carry only a git
+# blob_oid; for those the generator verified the blob_oid against the file on
+# disk and emitted the sha256 it then read -- the same route ESMFold2's
+# manifest took, and the five digests it produced match ESMFold2's line for
+# line. README.md and images/contact_pal.png are in PINS but are NOT declared:
+# resolve_model_dir fetches only *.json and *.safetensors, so declaring them
+# would refuse a cache that upstream's own downloader had just filled
+# correctly.
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/model-00001-of-00006.safetensors"
+size = 4864457920
+sha256 = "bd90149ff223e6ac1a0cac6147a5ae0df20d3a21df4f65356a1f19cd14f4aa8a"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/model-00002-of-00006.safetensors"
+size = 4971211344
+sha256 = "f75e2144d8269fe2eb4b3e0823fb089b94f176d8024153e85b8fb573a42294fa"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/model-00003-of-00006.safetensors"
+size = 4863752992
+sha256 = "f699f01ecc9691d9c6470492765fe54b8b5d2e9f277c139e89427433ffdfe0b2"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/model-00004-of-00006.safetensors"
+size = 4971211344
+sha256 = "46add1b7be098bbfdc3073884851ba3057f1b33ea23a158b650a37007dabd13d"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/model-00005-of-00006.safetensors"
+size = 4863752992
+sha256 = "1e1cb62f060a34e18f54a31a76683ef888b8cec59e73315f5b31d25d45a1f88c"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/model-00006-of-00006.safetensors"
+size = 873762296
+sha256 = "56c73e13ae96e777ce65eee99364056069ef93b646470f352f83c5f1037b1b18"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/config.json"
+size = 341
+sha256 = "c5566fab6a17fd674141331fe75de917b7904d99fb7a410d2b1593c21e576913"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/model.safetensors.index.json"
+size = 97349
+sha256 = "6846456e20e6ee2c37461f7bfc21d316d69bdaf165b925691afcb39e583244da"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/special_tokens_map.json"
+size = 171
+sha256 = "0b7245ec86c8c3aeaf61523ba70dfa79be137e6283f127bd651adc30b4f15c74"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/tokenizer.json"
+size = 2879
+sha256 = "8d3447b278176e65fb3ef0224472927bf5fee3be46ea2bd77fad0111423cee1f"
+
+[[weights.files]]
+name = "hub/models--biohub--ESMC-6B/snapshots/45b0fa5d7fb06faefbd5e3b89bdcef35d564e79a/tokenizer_config.json"
+size = 1392
+sha256 = "e8d8e40c9f92b334f0272e80bb65ed4043cb9836523cbae899e9859e8cbb8833"
+
+[kit]
+# No mode environment row: `modes.resolve(mode, variant, regime)` takes a
+# required variant, so the probe's two shapes cannot call it -- and calling it
+# correctly returns {mode, variant, regime, levers, levers_out} with no `env`
+# key, so nothing is lost. Same shape as esmfold2.
+env_row = "none"
+env_row_reason = "modes.resolve(mode, variant, regime) returns no env key; a correct call would yield nothing either"
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "esmc"
+# esmc/opt declares no dependency on common/ at all (opt/pyproject.toml:
+# dependencies = []), so this kit needs only its own directory. The checkout is
+# shared with every provider pinning this commit and the sparse set is the
+# union of what its providers declare, so "common" is named here as the others
+# name it.
+sparse = ["esmc", "common"]
+package = "esmc_opt"
+# Activation is the common form -- the mode variable ESMC_OPT plus the kit's
+# own esmc_opt_autoload.pth -- not boltz2's worker_launch. The variable's name
+# is read off the kit by kit_launch's probe: _autoload.ENV = "ESMC_OPT". This
+# kit's modes.py defines no ENV at all, so a probe that looked only there would
+# have found nothing; nothing about the form is declared here.
+#
+# The modes are off | exact. THERE IS NO `fast` MODE FOR THIS MODEL and the
+# kit says so in its README -- "no tier-2 composition". `exact` is two levers,
+# pipe (device-side weight loading and an exact single-sequence tokenizer path)
+# and fused (a fused residual+LayerNorm CUDA extension and a q/k-LayerNorm +
+# rotary Triton kernel), and its outputs are byte-identical to stock.
+# "off", not "exact", and the manifest's own paragraph below called this shot
+# before the smoke ran. Under `exact` the kit refuses to load at all on this
+# machine:
+#
+#   NOT ACTIVE: partial activation -- fused: PatchRefused: fused/_patch:
+#   flash_attn is not importable (ModuleNotFoundError); r1 targets the
+#   flash-attn (SDK) route; a mode is all of its levers: the load is refused
+#
+# flash-attn 2.7.4.post1 publishes no aarch64 wheel and predates this card. A
+# single-architecture source build is running and, if it lands, `exact` becomes
+# reachable and this line should go back -- the kit's speed claims are made for
+# it. Until then `off` runs stock ESM C, which is a supported mode of this kit
+# and not a workaround, and residency still holds the 6B model across requests,
+# which is where most of this provider's cost is.
+mode = "off"
+# run.sh install does three things: pip install -e opt, the pin check
+# (stock/check_pins.py), and one nvcc build of the fused residual+LayerNorm
+# extension into ~/.cache/esmc_sdkfused for the visible GPU. No --weights here:
+# the weights step owns that, and the kit's downloader wants a different root.
+install = "bash run.sh install"
+#
+# WHAT HAS BEEN RUN HERE, AND WHAT IT IS AND IS NOT EVIDENCE FOR.
+# `bash run.sh check --variant 6b --mode exact` on this GB10 exits 0 and prints
+#
+#   [esmc-opt] DRY-RUN mode=exact variant=6b regime=b1 levers=pipe,fused
+#     levers_out=none esm=3.4.0 torch=2.11.0 flash_attn=None
+#     transformer_engine=2.15.0 gpu=NVIDIA_GB10(sm121) package=0.4.0
+#     drift=flash_attn:absent(pin_2.7.4.post1)
+#
+# so both levers of `exact` resolve on this card and none is out. The kit step
+# also compiled the `fused` lever's CUDA extension here, natively rather than
+# by PTX forward-compilation:
+#
+#   [residual_ln] extension torch2.11.0+cu130__cuda13.0__sm121__py3.12:
+#     built from kernels.cu in 23.5s (cached at ~/.cache/esmc_sdkfused/...)
+#
+# THAT IS STILL A DRY RUN PLUS A COMPILE. It loads no model and launches no
+# kernel, so it is not the smoke step and it is not evidence that the levers
+# produce correct output on sm121 -- the Boltz-2 bring-up found a Triton
+# kernel that compiled and then reported OutOfResources on this exact compute
+# capability. levers_declined is therefore empty: nothing has declined, and
+# nothing has succeeded either.
+#
+# A WARNING FOR WHOEVER RUNS THE SMOKE. This kit does not degrade: "a mode is
+# all of its levers", and a lever of the mode that cannot be applied when the
+# client is built makes ESMC.from_pretrained print
+# `NOT ACTIVE: partial activation -- ...` and raise stack.PartialActivation
+# (opt/esmc_opt/__init__.py). The `fused` lever needs the CUDA extension that
+# run.sh install compiles for the visible card; the kit documents it as built
+# "for sm80 and sm90" when no GPU is visible and for the visible GPU otherwise,
+# and this card is sm_121, which nothing upstream has tried. If the smoke fails
+# with a partial activation, set mode = "off" here -- the provider then runs
+# stock ESM C, which is a supported mode of the kit and not a workaround -- and
+# record which lever declined under levers_declined.
+#
+# The pin check exits 0 in this environment with one named drift: flash_attn
+# absent (see the lock's DEVIATION 3). transformer_engine.pytorch DOES import
+# here -- it was built from its sdist for sm_120 -- and the kit's own words
+# for the remaining shortfall are "drift (named, not refused) ... a lever that
+# needs it steps aside by name".
+# `fused` is what took the whole mode down: it needs flash-attn, which is not
+# importable here. `pipe` (device-side weight loading) had applied cleanly --
+# the kit's own line read `levers_applied=pipe levers_fallback=fused` -- and is
+# lost only because a mode is all of its levers.
+levers_declined = ["fused"]

@@ -1,0 +1,602 @@
+# esm_if1 -- ESM-IF1 inverse folding (sequence design from a backbone), held
+# resident.
+#
+# The nineteenth provider on the standard and the FIRST that runs on the CPU.
+# That is not a consolation prize and it is not a weakened manifest to buy a
+# green step; it is the measured answer to "can this kit's pinned stack drive
+# this card", and the measurement is in [gpu] below and in the lock's header.
+#
+# It is also the first provider whose input is a STRUCTURE and whose output is a
+# SEQUENCE -- the inverse of the eleven folding providers. ef2inv designs a
+# binder sequence too, but by gradient descent through a folding model; this one
+# is a single autoregressive decode conditioned on a backbone, 142M parameters,
+# seconds per request.
+#
+# THE KIT IS ARGV-ONLY, the fifth activation shape, shared with ef2inv and
+# af3_torch. It ships no autoload `.pth` -- `opt/pyproject.toml` says "this kit
+# ships no autoload .pth (the mode is chosen on the command line; no import is
+# hooked), so the template builds plain setuptools wheels" -- and its mode
+# variable `ESM_IF1_OPT` is documented as "the environment route of the mode
+# (this command line and run.sh only)". There is no `_autoload` module at all,
+# so the shared `kit_launch` probe has nothing to read and this provider carries
+# its own `launch.py`. See that file's docstring.
+#
+# AND THE KIT'S ONE LEVER IS A LIBRARY, which is new and is why this provider
+# can hold the model at all. `fast`'s single lever `batched_sampling` is two
+# plain functions -- `esm_if1_opt.batched.sample_batch` and
+# `sample_complex_batch` -- which take an ALREADY-BUILT model and run upstream's
+# own sampling statements over B (backbone, sample) rows per forward instead of
+# one. So the resident worker is a different script in the position
+# `esm_if1_opt/kit_design.py` occupies, calling the same functions in the order
+# `batched.run()` calls them, and nothing in the kit is patched, copied or
+# shadowed. Where the taxonomy of "how does a kit activate" has had to grow a
+# row for a `.pth` that refuses and a patched tree on disk, this one is the
+# easiest case it has met: an importable function.
+
+[provider]
+slug = "esm_if1"
+description = "ESM-IF1 inverse folding: sampled sequences for a protein backbone (fair-esm GVP-Transformer, 142M)"
+operations = ["esm_if1_design"]
+status = "verified"
+verified_on = """NVIDIA GB10 host (aarch64, 20 cores -- 10 Cortex-X925 plus 10
+Cortex-A725 -- 130.6 GB unified memory, cc 12.1, driver 580.173.02), **ON THE
+CPU**: `[gpu] policy = "none"` is this provider's declared device and the
+evidence for it is in [gpu] below. venv route, Python 3.11.12, torch 2.4.0
+(CPU-only), fair-esm 2.0.1 at commit 2b369911, kit mode `fast` (lever
+`batched_sampling`), through this provider's own `launch.py`.
+
+ALL FIVE SETUP STEPS GREEN, run one at a time with --only:
+
+    preflight    OK   host meets the declared prerequisites
+    environment  OK   31 pinned distributions                        22.6 s
+    kit          OK   fair-esm 2.0.1 (2b369911): pinned -- 31 files
+                      match stock/fair-esm-2b369911.tar.gz            6.9 s
+    weights      OK   1/1 entries at their pins (1.6 GiB)            36.9 s
+    smoke        OK   one prediction in 13 s, sample_s 5.58,
+                      peak RSS 2.45 GiB                              13.9 s
+
+THE ACCEPTANCE SUITE, one held worker, ladder first and ascending, then mixed
+shapes, then the repeats (build 3.2 s):
+
+    ladder    64 tokens   x2 samples     5.4 s   peak RSS 2.45 GiB
+    ladder   128 tokens   x2 samples    16.0 s   peak RSS 2.45 GiB
+    ladder   256 tokens   x2 samples    43.9 s   peak RSS 2.45 GiB
+    ladder   395 tokens   x2 samples    72.9 s   peak RSS 2.45 GiB
+    ladder   800 tokens   x2 samples   172.2 s   peak RSS 3.65 GiB
+    mixed    64 / 64 / 256 / 64         6.3 / 5.7 / 42.2 / 5.7 s
+    repeats  64 tokens, four identical  5.6 / 5.5 / 5.6 / 5.5 s   -> 4/4
+
+**All SEVEN 64-residue requests of that session returned a BYTE-IDENTICAL
+FASTA**, sha256 over the file: the ladder's first rung, the three 64-token
+mixed requests, and all four repeats -- including the four that came after a
+172-second 800-token request. The worker seeds `torch.manual_seed(seed)` per
+request rather than once per process, so the held model's RNG state cannot
+carry from one request into the next, and this is the measurement of that
+claim rather than an assumption about it. genie3 is the only other provider
+where it has been shown.
+
+**AND THE SAME FILE IS WHAT THE KIT'S OWN CLI PRODUCES.** `bash run.sh design
+--mode fast --nogpu <the smoke's backbone> --chain C --num-samples 2 --seed 37
+--batch_size 64` run three times gives the same sha256 as the resident
+worker's and as the smoke's. That is the equivalence check the per-provider
+skill asks for, passed at the strongest available standard -- byte equality
+rather than a tolerance -- and it is what licenses calling this a wrap of the
+kit rather than a reimplementation of it.
+
+RESIDENCY, measured against that same CLI, which is exactly what a
+`mode = "subprocess"` provider would pay per request:
+
+    kit's run.sh design, fresh process   11.33 / 13.28 / 13.02 s
+    the same request, held worker         5.5 s
+                                         -> 2.3x
+
+and the subprocess's `maxrss` is 2,569,048 KB = **2.45 GiB, the same figure to
+the hundredth of a GiB** as the held worker reports at 64 tokens. Two routes,
+one number: that is the cross-check the three container routes' identical 3.21
+GiB plays for boltz2, and it says the two are running the same model on the
+same stack rather than two things that both finish.
+
+2.3x is the low end of this standard's 2.0x-24x range and the reason is worth
+stating, because it is the opposite of af3_jax's: there is nothing here to
+compile, no CUDA graph to capture and no autotune to persist. What residency
+keeps is the 1.7 GB `torch.load` and the interpreter, 3.2 s of fixed cost
+against a 5.5 s request -- and on a longer backbone the ratio falls further,
+which is honest rather than disappointing. A host that serves mostly short
+backbones gets most of the benefit.
+
+THE UPSTREAM-BUILDS-TWICE CHECK the standard asks for, run before this worker
+was written: `esm.pretrained.esm_if1_gvp4_t16_142M_UR50()` called twice in one
+process returns two independent models and samples the identical sequence from
+each at the same seed -- 52.4 s the first time (which included the download)
+against 2.5 s the second, which is the page cache and not a memo. There is no
+module-level mutable to exhaust, unlike genie3's `default_config`.
+
+What DOES refuse a second time is the kit, by design and by name:
+`esm_if1_opt.enable("off")` after `enable("fast")` raises
+`ActivationError: mode fast was resolved in this process; a second mode (off)
+is refused`. The same mode again is fine. This worker calls `enable` once.
+
+UPSTREAM'S SECOND ROUTE, by hand, in the same held worker:
+`smoke/input-multichain.json` is chains A, B and C of 5YH2 at 48 residues each
+with chain C designed -- 164 tokens through the encoder (the three chains plus
+two 10-residue NaN pads) for a 48-residue design -- and it returned two
+sequences in 16.1 s at 2.45 GiB, with `route=multichain` and
+`designed_length=48` on the reply.
+
+THE DECLARED CEILINGS WERE TESTED, not asserted. Each refuses by name with the
+number in the message (1601 tokens; 16 rows x 800 tokens = 12800 row-tokens),
+and the WORST REQUEST THE THREE ADMIT TOGETHER was then run rather than
+estimated: 1600 tokens at 4 rows took **757.7 s and 11.22 GiB**, against a
+declared `request_timeout_s` of 1800 and a declared envelope of 11.22. That is
+progen2's finding answered in the one currency this provider spends -- there
+two sane ceilings multiplied to 116.93 GiB of VRAM, here they multiply to 4.6x
+the smoke's memory and 140x its wall time, and both had to be checked against
+the limits that are supposed to cover them.
+
+ONE SCIENTIFIC CHECK, because an exit code and a file are not evidence that the
+model is conditioning on the STRUCTURE rather than sampling a prior. The real
+5YH2 chain C, whole and untruncated -- 395 residues, the backbone the kit's own
+README designs with -- at two temperatures, two samples each:
+
+    T = 1.0   61.3 s   native recovery 0.365, 0.347
+    T = 0.1   55.5 s   native recovery 0.446, 0.479
+
+0.35-0.37 at temperature 1.0 is where ESM-IF1's published single-chain native
+recovery sits, and it RISES as the temperature falls, which a model ignoring
+the backbone could not do. The local agreement is visible too: against native
+`...PNWLRFHIGINRYELYS` the two draws read `...PAWLQFWIQITRFQLWK` and
+`...PAWLRFWIGIRRRRLYE`.
+
+The smoke's own recovery is lower (0.27, 0.19) and that is expected rather than
+a discrepancy: it is a 64-residue TRUNCATION, and truncation removes the
+tertiary context the encoder conditions on. And the ladder's rungs are NOT a
+test of any of this -- above 64 residues they are tiled, translated copies of
+one fragment, which is correct for measuring cost and meaningless as biology.
+The manifest says so where the shaper is described rather than leaving a reader
+to infer it from a recovery figure.
+
+WALL TIMES ON A CONTENDED BOX. Every figure above was taken with two other
+agents' sessions on this machine and a load average of 22-29 on 20 cores. The
+standard's rule is to report peaks from any run and wall times only from an
+idle one; the peaks here reproduce (2.45 GiB across the worker, the kit's CLI
+and the smoke) and the wall times should be read as upper bounds. The thread
+sweep in [kit.env] was taken the same way, twice, and its ORDERING is what it
+is used for rather than its absolute values.
+
+RE-VERIFIED INDEPENDENTLY, through the repository's own interpreter rather than
+the one the build used, and the numbers that matter reproduced:
+
+    five steps again      preflight OK / environment present / kit OK /
+                          weights OK / smoke OK, one prediction in 9 s,
+                          peak RSS 2.45 GiB, threads 1
+    ladder 64/128/256/800 2.45 / 2.45 / 2.45 / 3.68 GiB   (3.65 above)
+                          9.6 / 6.7 / 16.3 / 77.4 s
+    mixed 64,64,256,64    2.8 / 2.8 / 21.8 / 5.3 s, all produced
+    repeats x4            5.2 / 5.2 / 5.1 / 5.2 s, 4/4
+    THE DECLARED ROW      1600 tokens x 4 rows -> **11.24 GiB**, 524.3 s,
+                          4 sequences   (11.22 and 757.7 s above)
+
+12 acceptance requests plus the ceiling, 13 results. The two figures a host
+reads came back to within 0.03 and 0.02 GiB of the build's, and the declared row
+was measured rather than carried over -- it is the only number in this file a
+scheduler actually uses. Its wall time came in 30% FASTER than the build's,
+which is the contention note above working in the other direction.
+
+The worker's RSS was watched during that ceiling request and the shape the
+[gpu] comment describes is what happened: 9.56 GiB at four minutes, back to
+1.31 GiB at five and a half while `ru_maxrss` kept 11.24. The peak is a spike
+in the encoder, not a plateau.
+
+AND THE SKILL'S DOCUMENTED EXAMPLE WAS RUN, because a "verified example" that
+has not been executed is a claim. The ten-residue excerpt in
+`skills/setup-esm_if1-remote-tool/SKILL.md` returns two 10-character sequences
+and one `ex.fasta`. Correcting the skill in passing: the reply's keys are
+`native_seq` and `recovery`, not `native_sequence` and `sequence_recovery`."""
+
+[runtime]
+mode = "resident"
+worker = "resident/esm_if1_resident_worker.py"
+# NOT kit_launch:build_command. Two reasons, both the kit's: there is no
+# `modes.ENV` and no `_autoload.ENV` for the shared probe to read, and the one
+# name that exists (`ESM_IF1_OPT`) must be STRIPPED from the worker's
+# environment rather than set, because `modes.resolve` raises ModeConflict when
+# it disagrees with `--mode`. launch.py's docstring has it.
+launch = "tooluniverse.remote.esm_if1.launch:build_command"
+worker_args = [
+  "--socket", "{socket}",
+  "--slug", "{slug}",
+  "--kit", "{kit}",
+  "--mode", "{kit_mode}",
+]
+# 2.9-3.2 s measured on a warm page cache: a 1.7 GB checkpoint through
+# torch.load plus the imports. The first build of this provider's life measured
+# 52.4 s, but that included fetching the file; the margin below is for a cold
+# page cache on a contended box.
+start_timeout_s = 900.0
+# THIS NUMBER AND THE WORKER'S CEILINGS WERE CHECKED AGAINST EACH OTHER, which
+# is progen2's lesson in the one form it takes on a CPU provider: there the
+# ceiling that two sane limits admitted together cost 116.93 GiB, and here
+# memory is flat and TIME is the resource. Wall time goes roughly as L^1.43
+# (5.4 / 16.0 / 43.9 / 72.9 / 172.2 s over 64 / 128 / 256 / 395 / 800 tokens at
+# two rows), and widening a forward pass costs about 1.34x from two rows to
+# four. The worst request the worker's three ceilings admit TOGETHER is
+# therefore 1600 tokens at 4 rows (MAX_ROW_TOKENS = 6400), which the fit puts
+# near 750 s. 1800 s is that with a 2.4x margin, and the point of writing the
+# arithmetic down is that a ceiling admitting a request the timeout cannot
+# cover is not a bound.
+request_timeout_s = 1800.0
+# 900 s. A restart costs only ~3 s of build, which is small next to every other
+# provider's -- but it is also 60% of a warm request, so retiring after fifteen
+# minutes of silence keeps the ratio honest rather than optimising a cheap
+# rebuild. This provider holds no GPU, so an idle worker costs a host ~1.3 GiB
+# of RSS and no accelerator at all.
+idle_timeout_s = 900.0
+# What a run that actually worked leaves behind.
+#
+# THE GLOB WAS TESTED AGAINST A RUN THAT PRODUCED NOTHING, which is the lesson
+# boltzgen's `design_spec.cif` paid for. This worker writes TWO files on every
+# request, successful or not -- `input.pdb` (the backbone as a file, which is
+# what upstream's loader takes) and `opt_manifest.json` (the run record, the
+# kit's own filename) -- and writes `seqs/<name>.fasta` ONLY after every
+# requested sample has been sampled. The test was run rather than reasoned:
+# `setup._what_it_produced` was given an output directory holding exactly those
+# two files and a reply with `sequences = []`, and it REFUSED, naming
+# `['input.pdb', 'opt_manifest.json']` as what it found. The same function on
+# the real smoke directory matched `seqs/smoke.fasta`.
+outputs = ["*.fasta"]
+# And the reply keys beside it, because this provider's answer is a SEQUENCE and
+# a caller may well not want the file. `sequences` is `[]` -- which the smoke
+# step treats as absent -- on any request whose samples were not all produced.
+output_keys = ["sequences", "native_seq"]
+smoke = "smoke/input.json"
+# 13.9 s measured end to end, 5.58 s of it sampling. 600 s is two orders of
+# magnitude over it, and it is also the deadline the acceptance script borrows
+# for the 800-token rung (172.2 s), which is the other thing this number has to
+# cover.
+smoke_timeout_s = 600.0
+
+[gpu]
+# THE FIRST `none` ON THIS STANDARD, and it is a measurement rather than a
+# preference. Three facts, each checked on this machine:
+#
+#   1. The kit pins torch by DIRECT URL to
+#      `torch-2.4.0+cu121-cp311-cp311-linux_x86_64.whl`. On aarch64 that
+#      artifact cannot install at all -- the platform tag, before any question
+#      about CUDA. Its three PyG companions (`torch_scatter`, `torch_sparse`,
+#      `torch_cluster`, all `+pt24cu121` from data.pyg.org) have no aarch64
+#      build of any version, and the lock's header records why they are not
+#      needed either -- in upstream's own words.
+#
+#   2. PyPI's `torch==2.4.0` for aarch64 is 89,850,473 bytes and is CPU-only.
+#      Read off the installed environment rather than inferred:
+#      `torch.version.cuda is None`, `torch.cuda.get_arch_list() == []`, the
+#      only libtorch objects are `libtorch.so`, `libtorch_cpu.so`,
+#      `libtorch_global_deps.so` and `libtorch_python.so`, and all eleven
+#      `nvidia-*` requirements plus `triton` carry the marker
+#      `platform_machine == "x86_64"` in the wheel's own metadata.
+#
+#   3. §10's finding needs a CORRECTION, and a first attempt at this comment got
+#      the correction itself wrong, so both halves are stated with the command
+#      that settled them.
+#
+#      §10 said "PyPI publishes no CUDA-enabled aarch64 torch wheel below 2.7"
+#      and drew from it that forward PTX JIT cannot apply because there is no
+#      CUDA code in the artifact to JIT. The first half is true OF PYPI and
+#      false of download.pytorch.org, whose cu124 index carries
+#      `torch-2.4.0-cp311-cp311-linux_aarch64.whl` at 2,355,105,760 bytes (HEAD
+#      request, 2026-10-01) -- a CUDA-enabled aarch64 build of exactly this
+#      pin's version. So the artifact exists and the conclusion drawn from its
+#      absence does not hold.
+#
+#      The replacement argument first written here was that the artifact is
+#      EMPTY -- that cuBLAS 12.4 for aarch64 carries no PTX, so there is
+#      nothing to JIT forward from. That is ALSO false, and measured:
+#
+#        $ cuobjdump --list-elf/--list-ptx on
+#          nvidia_cublas_cu12-12.4.5.8-py3-none-manylinux2014_aarch64.whl
+#        libcublas.so.12     elf: sm_50 60 61 70 75 80 86 90     ptx: sm_90
+#        libcublasLt.so.12   elf: sm_50 60 61 70 75 80 86 89 90  ptx: sm_90
+#
+#      Both libraries carry sm_90 PTX, and PTX is forward-compatible, so the
+#      driver can in principle JIT it for sm_121. For contrast, the cuBLAS this
+#      host's modern providers run (12.9.1.4, af3_jax's stack) carries cubins
+#      through sm_120 AND sm_120 PTX, and an sm_120 cubin runs on sm_121
+#      directly -- which is why nothing there needs a JIT at all.
+#
+#      So the honest status of the CUDA 12.4 route on this card is UNMEASURED,
+#      not impossible. It was not taken, and these are the reasons rather than
+#      an impossibility proof:
+#
+#        * The three PyG companions have no aarch64 build at ANY version, so a
+#          GPU route has to drop them exactly as this CPU one does. That part
+#          of the deviation is not bought back by the bigger wheel.
+#        * Cross-generation PTX JIT of cuBLAS, Hopper PTX compiled for a
+#          Blackwell consumer part, would sit in the hot path of every GEMM in
+#          the model, untested on this host, with per-process JIT cost and
+#          arch-specific PTX (wgmma and friends) as a live failure mode. That
+#          is a new unknown introduced for a 142M-parameter model that already
+#          meets its latency on one core.
+#        * `[gpu] policy` is a declaration of what this deployment PROVIDES.
+#          `none` is true today. `required` would promise a path nobody has run.
+#
+#      THAT MEASUREMENT HAS SINCE BEEN MADE, and it closes the question: a
+#      throwaway venv with `torch==2.5.1` from the cu124 index reports
+#      `is_available True`, warns that sm_121 is not in its arch list, and then
+#      raises on the FIRST device allocation --
+#
+#        >>> torch.randn(2048, 2048, device="cuda")
+#        RuntimeError: CUDA error: no kernel image is available for execution
+#
+#      -- before any GEMM, so cuBLAS was the wrong library to interrogate.
+#      `cuobjdump` on torch's own 935 MB `libtorch_cuda.so` finds cubins for
+#      sm_50 through sm_90a and NO PTX at all. There is nothing in torch's own
+#      kernels to compile forward from, whatever its dependencies carry.
+#
+#      So `policy = "none"` is no longer "declined on three stated reasons with
+#      the route unmeasured"; the route is measured and it is closed. The three
+#      reasons still hold and are left above because they were the honest basis
+#      for the decision at the time, and because the first of them -- the PyG
+#      companions having no aarch64 build at any version -- would have forced
+#      the same deviation even if the GPU route had opened.
+#
+#   §10's other two escapes were not taken: building torch from source for
+#   aarch64 + CUDA 13 + sm_121 at the pinned version is days of work on a
+#   version that predates CUDA 13, and deviating to torch >= 2.7 would also
+#   mean torch >= 2.6's `weights_only=True` default against a fair-esm
+#   checkpoint carrying an argparse.Namespace, plus torch-geometric 2.6.1's
+#   MessagePassing against a torch several minor versions past its release.
+#
+#   SO: CPU -- and §10 says of this case that for a small model it is "the right
+#   answer rather than a consolation", which the measurements bear out. 142M
+#   parameters; 64 residues designs two sequences in 5.4 s and the kit's own
+#   example chain whole (395 residues) in 72.9 s, on ONE core. Residency still
+#   earns its place at 2.3x against the kit's own CLI, because the fixed cost it
+#   removes is a 1.7 GB checkpoint read and that cost is the same on any device.
+policy = "none"
+# NOT DECLARED, because there is no VRAM to budget; the manifest permits the
+# omission only when policy = "none", which is the point of the field pairing.
+#
+# WHAT A HOST SCHEDULES THIS PROVIDER ON IS HOST MEMORY, and the ladder is:
+#
+#   tokens x rows    64x2   128x2   256x2   395x2   800x2   1600x4
+#   peak RSS (GiB)   2.45    2.45    2.45    2.45    3.65    11.22
+#   wall (s)          5.4    16.0    43.9    72.9   172.2    757.7
+#
+#                                              DECLARED AT 1600 tokens x 4 rows
+#                                              = 11.22 GiB
+#
+# THE DECLARED ROW IS THE CEILING, NOT THE SMOKE, and that choice is this
+# provider's own version of RFdiffusion3's finding. The smoke reserves 2.45 GiB;
+# the worst request this provider's three ceilings admit TOGETHER reserves
+# 11.22 -- 4.6x. A figure quoted from the smoke would have under-budgeted an
+# ordinary request by that factor, and under-budgeting is the failure
+# multi-tenancy cannot absorb. For a deployment that caps the input, the row
+# that matters is on the ladder: 2.45 GiB for anything up to ~400 tokens,
+# 3.65 at 800.
+#
+# WHERE THE MEMORY ACTUALLY GOES was worth watching rather than assuming, and it
+# is not where the time goes. `/proc/<pid>/status` RSS was read three times
+# during that 757.7-second request, at 162 s, 220 s and 238 s of worker
+# lifetime: 5.38 GiB, 9.08 GiB, then **1.48 GiB** -- and it stayed near the
+# last of those for the remaining ~500 s while `ru_maxrss` kept the 11.22. The
+# peak is the GVP ENCODER, one kNN graph over every residue of every row at
+# once, which is a spike early in the request; the long part is the decode
+# loop, and it is small. That is a materially different thing to co-tenant
+# than a provider holding its peak for the whole call, and `ru_maxrss` cannot
+# say so because it is a high-water mark. This comment can.
+#
+# Three more things about the figure, each matching how `vram_budget_gb` is read
+# elsewhere on this standard. It is `ru_maxrss`, a HIGH-WATER MARK that never
+# falls -- the same semantics `peak_reserved_gib` has in six of the eight
+# workers §6 counted, which is why the ladder was taken ASCENDING in a worker
+# nothing larger had touched, and why every rung after the 800 one reads 3.65
+# rather than its own cost. It was cross-checked against an independent
+# process: the kit's own `run.sh design` reports `maxrss` 2,569,048 KB = 2.45
+# GiB for the 64-token request, equal to the worker's to the hundredth of a GiB.
+# And the SHAPE over LENGTH alone is flat -- 2.45 to 3.65 GiB, 1.49x over 12.5x
+# the length -- which puts this provider in esmc's family (1.19x over 16x)
+# rather than openfold3's (3.6x), because the constant term is the 1.7 GB
+# checkpoint and the 142M parameters it becomes. What moves the peak is the
+# PRODUCT of length and rows, which is why the worker bounds that product and
+# not only its factors.
+#
+# THE RESOURCE THAT SCALES HARDEST IS TIME, not memory: about L^1.43 over the
+# five single-row-pair rungs, because the decoder takes one SEQUENTIAL step per
+# designed position and each step attends over a longer prefix. So this
+# provider's input ceiling is bounded by `request_timeout_s` as much as by
+# memory, and the two were checked against each other rather than set
+# independently -- 757.7 s measured at the ceiling against a declared 1800 s.
+# [runtime] request_timeout_s has the arithmetic.
+#
+# AND IT USES ONE CORE, measured rather than conceded: see [kit.env].
+shareable = true
+isolation = "process"
+# No driver_min and no driver_min_reason: this provider needs no driver. The
+# preflight step skips every GPU check when policy = "none", which is what
+# makes that honest rather than merely quiet -- and it is also why this is the
+# one provider here that installs and verifies on a machine with no NVIDIA
+# hardware at all.
+
+[env]
+kind = "venv"
+python = "$TOOLUNIVERSE_ESM_IF1_PYTHON"
+lock = "environment/requirements.lock"
+# Every COMPILED pin, imported. tokenizers 0.10.x installs cleanly on aarch64
+# and then raises `Illegal instruction (core dumped)` at import, which in a
+# worker is a `smoke_protocolerror` with no traceback because SIGILL is
+# uncatchable -- so the only way to find that class is to import each one here.
+# biotite is the one built from source on this architecture (no aarch64 wheel is
+# published); `biotite.structure.io.pdb` and `filter_backbone` are the two
+# things upstream's loader actually calls, so they are what is imported rather
+# than the package root. torch_geometric is pure Python but is a REQUIRED import
+# of `esm.inverse_folding`, and `MessagePassing` is the one name it needs.
+#
+# `esm` is deliberately NOT here: fair-esm is installed by the kit step, which
+# runs after this one, and an [env] verify that named it could never pass.
+verify = """import torch, numpy, scipy.spatial, scipy.stats, biotite.structure
+from biotite.structure import filter_backbone
+from biotite.structure.io import pdb, pdbx
+from torch_geometric.nn import MessagePassing
+import aiohttp, multidict, yarl, frozenlist, propcache, msgpack, psutil, charset_normalizer
+assert torch.__version__.split('+')[0] == '2.4.0', torch.__version__
+assert numpy.__version__ == '1.26.4', numpy.__version__
+assert biotite.__version__ == '0.39.0', biotite.__version__"""
+
+[weights]
+# One file, 1.7 GB, and its digest is the kit's own: stock/PINS.json `weights`
+# carries `bytes` and `sha256` for exactly this checkpoint, so nothing is
+# transcribed from a README and no URL is restated here.
+#
+# The directory variable is this provider's, because the kit has none: its own
+# variable `ESM_IF1_WEIGHTS` names the FILE (STOCK.md, Variables), and
+# `[weights] root_env` is a directory. launch.py derives `ESM_IF1_WEIGHTS` from
+# this root and the worker then calls the kit's own `stack.stage_torch_home()`,
+# which symlinks torch.hub's cache entry to it so upstream's loader finds the
+# verified file and downloads nothing.
+#
+# The worker REFUSES BY NAME (`weights_not_linked`, exit 3) when that staging
+# does not come back `linked`. That matters more here than it looks: upstream's
+# loader downloads 1.7 GB into the hub cache when the entry is absent, and loads
+# whatever is there when the entry is a regular file somebody else put there --
+# so "the model started" is not evidence that the model loaded the file this
+# step certified.
+root_env = "TOOLUNIVERSE_ESM_IF1_WEIGHTS"
+root_default = "~/.esm_if1"
+# The kit's own downloader, by its own documented entry point ("`python -m
+# esm_if1_opt.weights DIR`", which `run.sh install --weights DIR` calls). It
+# runs `torch.hub.download_url_to_file` -- "the transfer upstream's loader
+# uses" -- on the URL in stock/PINS.json, then checks the bytes and the sha256
+# against that same card and refuses by name. run.sh is not used because the
+# weights step, unlike the kit step, does not put the model environment's bin on
+# PATH; `-m` reaches the same function.
+fetch = "{python} -m esm_if1_opt.weights {weights_root}"
+
+[[weights.files]]
+name = "esm_if1_gvp4_t16_142M_UR50.pt"
+size = 1700450121
+sha256 = "be4ba36edec22a9bfaa4946ff6b2815f1f19d8a3d7e0eada8b796d5a0eae9fd4"
+
+[kit]
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "esm_if1"
+# The checkout is shared with every provider pinning this commit; the sparse set
+# is the union of what its providers declare, and the kit step widens it.
+sparse = ["esm_if1", "common"]
+package = "esm_if1_opt"
+# THIS KIT KEEPS NO MODE ENVIRONMENT ROW, and that is a fact about the kit
+# rather than a gap in the probe. `modes.resolve(cli_value, environ)` returns a
+# mode NAME -- a string -- and there is no `env`, no `exports` and no
+# `Resolution` object anywhere in `esm_if1_opt`. That is a sixth resolve() shape
+# for the record, and the simplest: boltz2's returns a mapping with `env`,
+# openfold3's a Resolution with `exports`, esmfold2's a Resolution with neither,
+# boltzgen applies its row to itself, ef2inv's returns a frozen lever table, and
+# this one returns `str`.
+#
+# What a run of this kit normally gets is `configs/<card>.env`, shipped for
+# h100, h200 and a100 and not for this machine. All three set the same four
+# things and launch.py supplies three of them (MODEL_OPT, MODEL_OPT_STATE,
+# PYTHONDONTWRITEBYTECODE); the fourth, MODEL_OPT_TARGET_GPU, is deliberately
+# left unset because it is the GPU class `check` reports against, "a report,
+# never a refusal", and every shipped value names a card this is not.
+env_row = "none"
+env_row_reason = "modes.resolve() returns the mode NAME, a str; esm_if1_opt has no env mapping, no exports and no Resolution type, and its deployment variables live in configs/<card>.env, of which it ships h100/h200/a100 and none for a GB10"
+# `fast` is the kit's own DEFAULT_MODE and its only kit-tier word. Its one lever
+# is `batched_sampling`: upstream's unmodified encoder and decoder over
+# --batch_size (backbone, sample) rows per forward, where upstream's example
+# script calls `model.sample()` once per requested sequence. At B = 1 the
+# statements ARE upstream's and the kit says so ("At B = 1 the statements are
+# upstream's and the sampled sequence equals `model.sample()`'s at the same
+# generator state"), which is why the smoke asks for two samples rather than
+# one: at one sample the lever is a no-op and a green smoke would prove nothing
+# about it.
+#
+# `off` IS reachable from this provider and would mean something different from
+# the usual: this kit's `off` is not "the kit stands aside in process", it is
+# "upstream's `sample_sequences.py` as shipped, one interpreter per structure,
+# in a child proven clean of the kit first" -- a subprocess route by
+# construction, which a resident worker cannot be. A worker started with
+# `--mode off` therefore gets an activation report that says inactive and then
+# holds the model and calls the same two kit functions anyway, which would be
+# dishonest. If this provider ever has to run without the lever, the right form
+# is `[runtime] mode = "subprocess"` with the kit's own `run.sh design --mode
+# off`, and the right reason is the one the kit gives.
+mode = "fast"
+# Two steps, in the order STOCK.md's Stack section runs them. The first is not
+# the kit's own: `run.sh install`'s pin check REFUSES an interpreter whose
+# fair-esm is not the pinned commit, so upstream has to be installed before the
+# check can pass, and the kit ships the bytes to do it with
+# (`stock/fair-esm-2b369911.tar.gz`, the `git archive` of commit 2b369911 --
+# PyPI's fair-esm 2.0.0 is NOT this pin and the check names it). The lock
+# deliberately omits that line for the same reason the kit's own Dockerfile
+# filters it out by name.
+#
+# `bash run.sh install` is then the kit's usual step: opt_core and esm_if1_opt
+# installed editable into the `python` on PATH (which the kit step prepends from
+# [env] python), then `python -I stock/check_pins.py`, which sha256s every
+# `esm/**.py` of the installed distribution against the archive and refuses by
+# name with exit 3 on any difference. No `--weights`: the weights step is the
+# weights step's job.
+install = "{python} -m pip install -q --no-deps stock/fair-esm-2b369911.tar.gz && bash run.sh install"
+# NOTHING IS DECLINED. The kit has exactly one lever and it is device-agnostic
+# by construction: `batched_sampling` is a loop shape, not a kernel, and the
+# kit's own README says `fast` "engages on the GPU torch sees, or on the CPU
+# with --nogpu". There is no tile table, no prebuilt object the levers load (the
+# `kit_foreign_objects` scan of esm_if1/ finds none), and no Triton or CUTLASS
+# anywhere in the tree. So the three ways a lever has failed on this card --
+# a prebuilt cubin for another architecture, a missing tile row, a kernel that
+# builds and does not fit -- have no surface here.
+levers_declined = []
+# EMPTY, AND THE DOOR DOES NOT EXIST. `MODEL_OPT_LEVERS_OFF` is not read
+# anywhere in `esm_if1_opt`: `modes.py` has no such name, `stack.enable()`
+# computes its lever list from `modes.levers(m)` alone, and there is no
+# `fastkit.install`-style resolver as ef2inv has. So this is boltzgen's case
+# rather than ef2inv's, and the honest form is to say so here rather than ship a
+# setting that silently does nothing. launch.py still forwards the variable when
+# this list is non-empty, so a kit that grows the door is served without a code
+# change -- but today a lever could only be turned off by `mode = "off"`, which
+# for this kit means the subprocess route (see `mode` above).
+levers_off = []
+
+# Settings this provider states for the kit, applied before the process starts.
+#
+# ONE ENTRY, AND IT IS THE SAME SETTING BOLTZGEN NEEDED FOR A DIFFERENT REASON.
+# `OMP_NUM_THREADS = "1"` was boltzgen's fix for a library forking a thread pool
+# that `fork()` would not carry over -- 0 designs in 420 s unset, 31.6 s with it.
+# Nothing forks here: upstream's ESM-IF1 path and `esm_if1_opt/batched.py`
+# construct no DataLoader, no multiprocessing pool and no subprocess between
+# them, so there is no `num_workers` to zero either.
+#
+# It is set because ONE THREAD IS FASTER, measured. Min of three repeats, 64
+# residues x 2 samples, on a box another two agents were saturating (load
+# average 29), and again pinned to the ten Cortex-X925 performance cores:
+#
+#   threads        1       2       4       8      20
+#   all 20 cores  8.66   12.59   13.88   13.07   13.91   s
+#   cores 0-9     7.50    9.82    8.28    8.27   11.52   s
+#
+# and the ordering holds at 256 residues: 57.21 s at one thread against 68.16 at
+# four. torch's own default is `os.cpu_count()`, which here is 20 -- the slowest
+# setting tested, by 1.6x.
+#
+# The reason is the shape of the work rather than anything about this host.
+# ESM-IF1's decoder takes one SEQUENTIAL step per designed position, and a step
+# is a 512-wide 8-layer forward over at most a few hundred positions for a
+# handful of rows: tensors small enough that the per-operator thread barrier
+# costs more than the arithmetic it divides. There is no large GEMM for threads
+# to win on, which is exactly what makes the kit's one lever worth having
+# instead -- `batched_sampling` widens the tensors by stacking rows, and that is
+# the axis that does pay (11.14 s per sequence at one row per forward, 1.94 at
+# eight: 5.7x, same distribution).
+#
+# It is declared here rather than only in the worker because OpenMP reads the
+# variable when it creates its pool, which can be before any Python line of
+# ours runs. The worker also calls `torch.set_num_threads(1)` and reports the
+# number in every reply; `ESM_IF1_RESIDENT_THREADS` overrides it for a host that
+# measures otherwise.
+#
+# A consequence worth stating for a scheduler: this provider occupies ONE of
+# twenty cores. Together with ~4 GiB of RSS and no GPU at all, it is the
+# cheapest tenant on this standard.
+[kit.env]
+OMP_NUM_THREADS = "1"

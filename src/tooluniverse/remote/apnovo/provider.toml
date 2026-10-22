@@ -1,0 +1,312 @@
+# AlphaProtein Novo -- de novo enzyme design by catalytic-motif scaffolding.
+#
+# NOT AN ANTHROPIC OPTIMIZATION KIT. Every other provider in this tree points
+# [kit] at `anthropics/uplifting-biomolecular-modeling`; this one points at
+# upstream's own Apache-2.0 repository, because there is no kit for it. The
+# section is still the right mechanism -- a pinned third-party checkout,
+# referenced and never vendored, with its own install command -- so `mode` is
+# "off" and there are no levers to resolve.
+#
+# WHAT IS DIFFERENT ABOUT THIS PROVIDER, AND IT IS NOT TECHNICAL. The generator
+# weights are licensed for NON-COMMERCIAL USE ONLY, by non-commercial
+# organisations, and must not be redistributed. The weights step therefore
+# refuses until the operator sets APNOVO_ACCEPT_WEIGHTS_TERMS=1, which is an
+# acceptance this provider cannot make on anyone's behalf. Output additionally
+# carries its own terms and a citation requirement. README.md states the whole
+# contract; it is not optional reading for a deployment.
+#
+# `protenix_v2` is the precedent this follows in spirit: a digest authenticates
+# bytes and says nothing about entitlement. The difference is that AP Novo's
+# weights ARE served (HTTP 200, no credential) and the gate is contractual
+# rather than technical -- a third category this standard had not met, and the
+# reason the acceptance is an explicit environment variable rather than an
+# implicit consequence of running setup.
+#
+# FOLDING IS DELIBERATELY ABSENT, AND THAT NO LONGER MAKES EVALUATION
+# UNREACHABLE. The folding stage needs AlphaFold 3 / AF3-LA weights whose
+# terms are separate from AP Novo's, and the sibling `af3_jax` provider
+# deliberately avoids them by converting public OpenFold3-preview2 weights
+# instead. Adding folding here is an entitlement decision, not a packaging
+# one, and it has not been made.
+#
+# What changed is the route around it. Upstream's evaluation does not require
+# THIS provider to have folded anything; it requires a directory shaped like
+# `run_alphafold.py` output, and `design_manifest.folded_state_paths` at the
+# pinned commit says exactly what that is:
+# `<sample>_<state>_folded_seed<n>.cif` beside
+# `<sample>_<state>_confidences_seed<n>.json`, with the metadata directory
+# shared at the run root. `apnovo_ingest_folded` writes that from predictions
+# made anywhere, so a caller folds with a provider that has settled its own
+# weights question -- openfold3, protenix_v1, esmfold2, chai1 and
+# rosettafold3 are five on this same standard -- and then evaluates.
+#
+# MEASURED 2026-10-15: generate -> protenix_v1 fold -> ingest -> evaluate ran
+# end to end on this GB10 and produced 547 metrics per design across all four
+# families, 68 of them kemp-suite. Residency showed as 79x at 50 steps
+# (158.52 s cold, 1.99 s held).
+#
+# AND THE ACCEPTANCE HAS NOW RUN, twice, which is the thing one completed
+# campaign was never evidence for. See `verified_on`.
+#
+# The operation was published before that route existed and could only ever
+# return a named error, which was a defect rather than a documented limit.
+# The second half of it was ours: `_evaluate` passed
+# `--input_dir=01_generation` unconditionally, against a flag whose help says
+# "Directory with the output of run_alphafold.py", so a campaign that HAD
+# been folded failed identically to one that had not.
+#
+# RESEQUENCING RUNS IN A THIRD ENVIRONMENT, ON THE CPU, AND BOTH HALVES OF THAT
+# ARE DELIBERATE. LigandMPNN pins torch==2.2.1 / triton==2.2.0 and CUDA 12.1
+# wheels, which cannot coexist with this provider's jax stack -- hence a third
+# interpreter, named by $TOOLUNIVERSE_LIGANDMPNN_PYTHON and invoked as a
+# subprocess, which is how upstream's own run_ligandmpnn.py already works.
+#
+# It runs on the CPU because on this card it CANNOT run on the GPU: torch below
+# 2.7 drives no sm_121 part. That is measured, not inferred -- torch 2.5.1
+# reports `cuda.is_available() True`, warns that sm_121 is not in its arch
+# list, and then raises "no kernel image is available" on the FIRST device
+# allocation; `cuobjdump` on its libtorch_cuda.so shows cubins sm_50..sm_90a
+# and NO PTX to JIT from. PyPI publishes no CUDA aarch64 torch below 2.7 at all.
+#
+# So the environment installs the aarch64 CPU wheel at upstream's exact pin,
+# where `torch.version.cuda` is None and `cuda.is_available()` is False. That
+# last fact is load-bearing rather than incidental: LigandMPNN's run.py picks
+# its device with `"cuda" if torch.cuda.is_available() else "cpu"`, so a CUDA
+# build here would make it choose the card and die on the first allocation.
+# Closing the trap by construction beats hoping nobody installs the wrong wheel.
+#
+# MEASURED: one 129-residue design resequenced in 12 s, overall_confidence
+# 0.3424, seq_rec 0.3643. A resequence is cheap enough that CPU is the right
+# answer rather than a consolation -- and it leaves the card to the generator.
+#
+# `resequence.enabled = false` in a manifest remains supported and folds AP
+# Novo's co-generated sequence directly; the paper reports comparable measured
+# activity for that route on two reactions.
+
+[provider]
+slug = "apnovo"
+description = "AlphaProtein Novo: de novo enzyme design by catalytic-motif scaffolding — a joint sequence–structure diffusion model that co-generates backbones and sequences conditioned on a fixed catalytic motif and fixed ligand atoms"
+operations = [
+    "apnovo_validate_motif",
+    "apnovo_generate_designs",
+    "apnovo_resequence_designs",
+    "apnovo_ingest_folded",
+    "apnovo_evaluate_designs",
+]
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, driver 580.173.02), venv route, CPython 3.12,
+jax 0.10.2 on the lock's jax-cuda12 wheels, upstream alphaprotein_novo at the
+pinned commit e7ce276, kit mode `off` (there is no kit). 2026-10-15/16.
+
+ACCEPTANCE: scripts/remote_validation/verify_provider.py apnovo, run TWICE with
+different ladders -- `--lengths 100,250,500,1000` and `--lengths 100,500,1000,2000`,
+`--repeats 4` both times. 12/12 requests answered in each run, every one
+`produced=yes`, and `peak_reserved_gib` 2.0 on EVERY request of both.
+
+THE RUNG IS A STEP COUNT, NOT A LENGTH, and that is the whole reason this
+provider's acceptance means anything. A length ladder here would have compiled
+ONE engine and printed four greens: `run_generator.parse_and_prepare_diffusion_input`
+passes `max_num_res=512` as a literal, so every design of every length pads to
+one shape. What actually keys a rebuild is upstream's
+`_get_compiled_trajectory(sampling_steps, num_partial_diffusion_steps)`, a
+module-level `functools.lru_cache(maxsize=8)` -- the same shape of hazard
+genie3 carried. So the ladder walks step counts and each rung is a real,
+distinct XLA compilation. See the `apnovo` entry in that script's SHAPERS.
+
+HELD TIME IS LINEAR AND REPRODUCIBLE; COLD TIME IS NOT. Held fits about
+0.0365 s/step + 0.35 s across 100/500/1000/2000 steps in both runs
+(3.9-4.1 s at 100, 18.4 s at 500, 36.8 s at 1000). Cold at the smoke's 50
+steps was 73.0 s in one run and 143.9 s in the other on the same machine, so
+quote the held figure and treat any single cold number as an upper bound.
+
+THE COMPILE IS NOT CONSTANT IN THE STEP COUNT, which a scan-based trajectory
+would suggest it should be: cold minus held is about 80 s at 500 steps, 92 s
+at 1000 and 137 s at 2000.
+
+HOLDING SEVERAL COMPILED ENGINES DOES NOT GROW THE FOOTPRINT. At the top rung
+four distinct trajectories were live in that lru_cache and the peak was still
+2.0 GiB -- so the budget covers a worker that has served a mix of step counts,
+not only a fresh one.
+
+RESIDENCY, CORRECTED. An earlier note here reported 79.3 s cold and 18.8 s
+held at the published 1000 steps, for 4.2x. That pair does not reproduce. One
+2-design request at 1000 steps measures `per_design_s = [193.14, 36.55]` --
+193.1 s for the design that pays the compile and 36.6 s for the one that
+reuses it, so residency at 1000 steps is 5.3x, and the held figure agrees with
+the 36.8 s the acceptance ladder measured independently. The 50-step pair in
+that older note DOES reproduce (1.99 s held there, 2.0-2.2 s across the
+acceptance's four repeats); only the 1000-step pair was wrong."""
+
+[runtime]
+# MEASURED on an NVIDIA GB10. What is held is the Haiku parameter set and
+# upstream's per-(steps, partial_steps) compiled trajectory, neither of which
+# survives a process exit -- so the axis residency pays off on is the STEP
+# COUNT, not the design length, which pads to one fixed shape either way.
+#
+# At the published 1000 denoising steps, one 2-design request measures
+# per_design_s = [193.14, 36.55]: 193.1 s for the design that pays the XLA
+# compile and 36.6 s for the one that reuses it, so residency is worth 5.3x
+# there. At 50 steps the pair is 158.5 s and 1.99 s -- far larger, because
+# compilation dominates at 50 steps and real compute dominates at 1000.
+#
+# PLAN WITH THE FIGURE AT YOUR OWN STEP COUNT. The two differ by more than an
+# order of magnitude, and a second campaign at a DIFFERENT step count is cold
+# again however many designs preceded it.
+#
+# An earlier version of this note quoted 79.3 s cold and 18.8 s held here, for
+# 4.2x. Those numbers do not reproduce; see verified_on.
+mode = "resident"
+worker = "resident/apnovo_resident_worker.py"
+# Its own launcher rather than kit_launch's: that one asks a `<slug>_opt`
+# package for its mode row, and there is no such package here because this is
+# not an Anthropic kit. See launch.py, which is short for the same reason.
+launch = "tooluniverse.remote.apnovo.launch:build_command"
+worker_args = [
+    "--socket", "{socket}",
+    "--slug", "{slug}",
+    "--repo", "{kit}",
+    "--model-dir", "{weights_root}/apnovo_generator",
+    "--ligandmpnn-checkpoint", "{weights_root}/ligandmpnn/ligandmpnn_v_32_030_25.pt",
+]
+# Weight read plus the first XLA compilation for a new length bucket. The
+# generator is 147.5M parameters in a 547 MB zstd record set, so this is far
+# below the predictors' figures.
+# MEASURED: 2.0 s to lay out, ~60 s for the XLA compile of a new bucket, and
+# the parameter read on top. Kept generous because a cold page cache made the
+# same run 217 s where a warm one made it 109 s.
+start_timeout_s = 900.0
+# A campaign is the unit a caller asks for, and upstream samples 1000 denoising
+# steps per design. Hundreds of designs per motif is the published working
+# scale, so this is sized like boltzgen's pipeline rather than like a predictor
+# request.
+request_timeout_s = 14400.0
+idle_timeout_s = 900.0
+smoke = "smoke/input.json"
+# Tight ON PURPOSE. The 2-design, 50-step smoke is the manifest upstream ships
+# for exactly this check; a generous ceiling here is what let a hang read as
+# slowness for two 40-minute runs on another provider.
+smoke_timeout_s = 900.0
+# MEASURED names, not guessed: a design writes `<prefix><n>.cif`, `.pdb`,
+# `.fa` and `<prefix><n>_motif.cif` into the stage directory, and its metadata
+# JSON into `<run>/metadata/` -- which `design_manifest.metadata_dir` puts
+# beside the stage directory, not inside it. The metadata file is written LAST,
+# after every structure save, so it is the artifact that witnesses success
+# rather than one written on the way to failing.
+# Matched on the BASENAME with fnmatch, not on the path -- so a pattern like
+# `metadata/*_metadata.json` can never hit, however right it looks. The
+# metadata JSON is written LAST, after every structure save, which makes it the
+# artifact that witnesses success rather than one written on the way to failing.
+outputs = ["*_metadata.json", "*.cif"]
+# Only `designs`. An earlier draft also claimed `metadata`, which the reply
+# has never carried -- the metadata JSON is a FILE, covered by `outputs` above,
+# and `output_keys` is for providers that answer with arrays. The smoke caught
+# it: "its reply has nothing under ['metadata']".
+output_keys = ["designs"]
+
+[gpu]
+policy = "required"
+# MEASURED, and the measurement answered a question before it was asked:
+# the peak is set by the PADDING BUCKET, not by the step count. Upstream's
+# 2-design test manifest, at the single fixed input shape, reported
+# peak_pool_bytes = 2,145,386,496 at 50 denoising steps and the SAME
+# 2,145,386,496 at 1000, with peak_bytes_in_use 1.01 GiB in both. So this
+# figure does not move with the setting a caller is most likely to change.
+# It is JAX's `peak_pool_bytes`, the analogue of torch's *reserved*; nvidia-smi
+# reports [N/A] for memory.used on this unified-memory part, so there is no
+# figure from there to compare it with, and a JAX budget does not belong in the
+# same column as a torch one.
+#
+# THERE IS NO SECOND BUCKET AND NO AXIS THIS NUMBER MOVES ON. An earlier note
+# here said designs longer than the 512 bucket had not been run and that this
+# was the axis the figure would move on; both halves were wrong.
+# `run_generator.parse_and_prepare_diffusion_input` passes `max_num_res=512`
+# as a LITERAL, not from config and not from the manifest, so EVERY design of
+# EVERY length pads to that one shape. A longer design does not cost more --
+# `motif_spec.create_designable_protein_features` REFUSES it. So 2.0 GiB is
+# the figure for every design this provider can accept, which is a stronger
+# statement than the one it replaces, not a weaker one.
+#
+# CONFIRMED BY THE ACCEPTANCE LADDER (2026-10-15): 2.0 GiB at 100, 250, 500
+# and 1000 denoising steps, with four distinct compiled trajectories live in
+# upstream's `lru_cache` at the top rung -- so holding several compiled
+# engines does not grow the footprint either.
+vram_budget_gb = 2.0
+driver_min = 580
+driver_min_reason = "jaxlib must emit code for sm_121 and a compute capability is only driven by a driver that enumerates it; the 580 series is the first that does for GB10-class parts. The lock's jax-cuda12 wheels carry the CUDA 12.9 runtime, whose own minor-version-compatibility floor is 525, so the higher floor binds. Same reasoning, same stack and same card as af3_jax."
+shareable = true
+isolation = "process"
+
+[env]
+kind = "venv"
+python = "$TOOLUNIVERSE_APNOVO_PYTHON"
+lock = "environment/requirements.lock"
+verify = "import jax, alphafold3, alphaprotein_novo; assert jax.__version__ == '0.10.2', jax.__version__; assert jax.default_backend() == 'gpu', jax.default_backend()"
+
+[weights]
+root_env = "APNOVO_WEIGHTS_ROOT"
+root_default = "~/.apnovo"
+# A plain fetch behind an acceptance the operator makes explicitly. There is no
+# credential to supply and no form to post: the refusal exists because the
+# restriction is contractual, and a setup run that downloaded these silently
+# would make this provider the means by which someone ineligible obtained them.
+fetch = """
+# LigandMPNN first, and outside the acceptance: it is MIT licensed and its
+# terms are not AP Novo's, so gating it behind them would be wrong.
+mkdir -p {weights_root}/ligandmpnn || exit 1
+if [ ! -s {weights_root}/ligandmpnn/ligandmpnn_v_32_030_25.pt ]; then
+  curl -fSL --retry 3 -o {weights_root}/ligandmpnn/ligandmpnn_v_32_030_25.pt \
+    https://files.ipd.uw.edu/pub/ligandmpnn/ligandmpnn_v_32_030_25.pt || exit 1
+fi
+if [ "$APNOVO_ACCEPT_WEIGHTS_TERMS" != "1" ]; then
+  echo "[apnovo] NOT ACTIVE reason=weights_terms_not_accepted" >&2
+  echo "  The AP Novo generator parameters are licensed for NON-COMMERCIAL use" >&2
+  echo "  by non-commercial organisations only (universities, non-profits and" >&2
+  echo "  research institutes, educational, journalism and government bodies)." >&2
+  echo "  They are not available to commercial organisations even for" >&2
+  echo "  non-commercial work, Input must not come from or on behalf of one," >&2
+  echo "  and the parameters must not be redistributed." >&2
+  echo "  Output carries the AP Novo Output Terms of Use, and any publication" >&2
+  echo "  must cite doi 10.64898/2026.10.01.756017." >&2
+  echo "    https://github.com/google-deepmind/alphaprotein-novo/blob/main/WEIGHTS_TERMS_OF_USE.md" >&2
+  echo "    https://github.com/google-deepmind/alphaprotein-novo/blob/main/WEIGHTS_PROHIBITED_USE_POLICY.md" >&2
+  echo "  If your organisation is eligible and you accept those terms:" >&2
+  echo "    export APNOVO_ACCEPT_WEIGHTS_TERMS=1" >&2
+  echo "  then re-run this step. See this provider's README.md." >&2
+  exit 3
+fi
+mkdir -p {weights_root}/apnovo_generator || exit 1
+curl -fSL --retry 3 -o {weights_root}/apnovo_generator/generator.bin.zst \
+  https://storage.googleapis.com/alphaprotein_novo/generator.bin.zst
+"""
+
+[[weights.files]]
+name = "apnovo_generator/generator.bin.zst"
+size = 547140096
+sha256 = "f023bed8d3222223f3e0f14db09bf802bbab35c077c582d0fee7904a38128928"
+
+# LigandMPNN's resequencing checkpoint -- MIT licensed, no gate, 10 MB, and
+# therefore fetched unconditionally rather than behind the acceptance above.
+# Declared here so §4 covers it too: the stage is cheap enough that making it
+# always available beats an optional-weight special case.
+[[weights.files]]
+name = "ligandmpnn/ligandmpnn_v_32_030_25.pt"
+size = 10541943
+sha256 = "ed13e130787f70b6c385efba56949220d16a1d1a98073ada3002b3701a6a8ecf"
+
+[kit]
+upstream = "https://github.com/google-deepmind/alphaprotein-novo"
+commit = "e7ce276cb4a1f68c2ba7d5aa793192cfcb4845c8"
+package = "alphaprotein_novo"
+mode = "off"
+env_row = "none"
+env_row_reason = "there is no kit and therefore no mode row to read: upstream is a plain Apache-2.0 repository with no levers, no modes module and no import hook. The probe would be reading something that does not exist, which is indistinguishable from a row we failed to read, so it is declared absent instead."
+# Installed from the pinned checkout rather than from PyPI, because
+# `alphaprotein_novo` is not published there and its entry points are the
+# scripts at the repository root. `build_data` is alphafold3's CCD compiler and
+# must run once in this environment or ligand parsing fails.
+install = "{python} -m pip install -q --no-deps -e . && {python} -m pip show alphaprotein_novo >/dev/null && (command -v build_data >/dev/null || {python} -c 'import alphafold3') && {python} -c 'import alphaprotein_novo'"
+
+[kit.env]
+# JAX grabs most of the card by default, which is wrong for a shareable
+# provider. af3_jax carries the same pair for the same reason.
+XLA_PYTHON_CLIENT_PREALLOCATE = "false"

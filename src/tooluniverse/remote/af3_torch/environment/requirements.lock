@@ -1,0 +1,172 @@
+# AF3-torch (xfold on OpenFold3 weights) -- the MODEL interpreter's stack.
+#
+# This is the kit's own environment/requirements-torch.lock, pin for pin. Every
+# line below is byte-identical to the kit's list of 33 requirement lines at
+# commit f4f62fa6592ae4938d49b1757bea0cfeff9f468e; only the header differs, and
+# the header is this block. `diff <(grep -v '^#' kit) <(grep -v '^#' ours)` is
+# empty.
+#
+# DEVIATIONS FROM THE KIT, in full:
+#
+#  1. No pin was changed or substituted. The kit's torch lock names no wheel by
+#     URL -- unlike its sibling environment/requirements-jax.lock, whose torch
+#     line is `torch @ https://download.pytorch.org/whl/cpu/torch-2.5.1%2Bcpu-
+#     cp312-cp312-linux_x86_64.whl`. That lock is NOT this file (see 4).
+#
+#  2. The interpreter is built with the standard library's `python -m venv`,
+#     not `uv venv` as the kit's STOCK.md recipe uses. Reason: this kit detects
+#     its own activation hook by listing `.pth` files in every site directory
+#     (`run.sh`, the "fail-loud hook" probe, and af3_torch_opt_autoload.pth
+#     itself), and `uv venv` writes a `_virtualenv.pth` of its own, which broke
+#     the equivalent detection for the openfold3 provider. Same packages, same
+#     digests; only the venv builder differs.
+#
+#  3. CPython 3.12.13 rather than the image's 3.12.1. The kit states "Python
+#     3.12 for the two environments" (STOCK.md, section Stack) and pins no
+#     patch level; 3.12.13 is what uv's managed CPython 3.12 is on this host.
+#     Every one of the 33 wheels resolved for cp312 / linux_aarch64 by name,
+#     with nothing substituted -- verified by `pip install --no-deps` into
+#     ~/af3_torch-venv on an NVIDIA GB10 (aarch64).
+#
+#  4. THE KIT NEEDS A SECOND INTERPRETER THAT THIS FILE DOES NOT DESCRIBE.
+#     af3_torch is the first kit brought onto this standard whose prediction is
+#     a chain of three processes across TWO pinned environments: featurisation
+#     and the mmCIF writers run the sokrypton/alphafold3 fork under
+#     `AF3_TORCH_JAX_PY` (environment/requirements-jax.lock, CPU only), and only
+#     the middle process -- the model -- runs under this lock. `[env] python`
+#     declares one interpreter, so the JAX half is named by the operator in
+#     AF3_TORCH_JAX_PY / AF3_TORCH_JAX_REPO and the worker refuses by name when
+#     it is unset. See provider.toml, [env] and [weights].
+#
+#     That environment cannot be rebuilt from a lock alone in any case: its
+#     `alphafold3-open==3.1.4` line is a comment in the kit's own lock because
+#     no index carries it. It is the fork at commit bc32b22f, patched with
+#     stock/patches/04_of3_empty_template_restype_gap.diff, compiled (one C++
+#     extension) and then `build_data`-ed against the wwPDB chemical-components
+#     dictionary. The kit's STOCK.md section Stack is the recipe.
+#
+#  5. THAT SECOND ENVIRONMENT NOW EXISTS ON THIS HOST, BUILT FROM THE KIT'S OWN
+#     RECIPE ON aarch64. It is not described by a lock in this directory --
+#     `[env]` has room for one -- so its provenance is recorded here, in the
+#     same form as the deviations above, because a build nobody wrote down is a
+#     build nobody can repeat.
+#
+#       interpreter   ~/af3_torch-jax-venv, `uv venv --managed-python --python
+#                     3.12`, CPython 3.12.13 (uv's own release). Here `uv venv`
+#                     is the kit's recipe verbatim and deviation 2 does not
+#                     apply: this environment carries no af3_torch_opt and so
+#                     nothing in it probes site directories for a `.pth`.
+#       source list   the kit's environment/requirements-jax.lock. It carries 85
+#                     installable requirement lines (plus the commented-out
+#                     alphafold3-open): 84 were taken verbatim and the 85th,
+#                     torch, was substituted as below. Installed `--no-deps`.
+#                     `uv pip freeze` of the result is byte-identical to the
+#                     list fed in, line for line.
+#       fork          github.com/sokrypton/alphafold3 at bc32b22f, `.git`
+#                     removed so scikit-build-core versions it 3.1.4, patched
+#                     with stock/patches/04_of3_empty_template_restype_gap.diff
+#                     (one file, src/alphafold3/model/network/template_modules.py,
+#                     applied clean), built with `CC=gcc CXX=g++ uv build
+#                     --wheel --python 3.12 --build-constraint <numpy pin>`,
+#                     then `build_data`.
+#
+#     PINS SUBSTITUTED, in full -- exactly one:
+#
+#       torch   the kit's line 87 is not a version at all, it is a wheel URL:
+#               `torch @ https://download.pytorch.org/whl/cpu/torch-2.5.1%2Bcpu
+#               -cp312-cp312-linux_x86_64.whl#sha256=4856f9d6…`. That file is
+#               x86-64 only and there is no aarch64 sibling of it on
+#               download.pytorch.org's cpu index, so the URL was dropped and
+#               the package taken by name: `torch==2.5.1`, PyPI's cp312
+#               aarch64 wheel. Same upstream version; same CPU-only build in
+#               effect (`torch.version.cuda is None` on the installed one, as
+#               on the `+cpu` wheel); the local version suffix is the only
+#               difference and nothing reads it. This is the deviation the
+#               recipe's extra `torch==2.5.1` line exists for.
+#
+#     NOTHING ELSE WAS SUBSTITUTED, and two groups deserve saying so by name
+#     because they look like they would have to be:
+#
+#       the 13 nvidia-*-cu12 wheels (nvidia-cublas-cu12==12.9.1.4 through
+#       nvidia-nvshmem-cu12==3.5.19) and jax-cuda12-pjrt / jax-cuda12-plugin
+#       0.10.2 all publish aarch64 wheels at the pinned versions and installed
+#       by name. They are dead weight here either way -- the kit runs this
+#       interpreter with JAX_PLATFORMS=cpu -- but they are in the kit's freeze,
+#       so they are in ours, and `jax.devices()` returns [CpuDevice(id=0)].
+#
+#       jax / jaxlib 0.10.2 in particular needed no substitution, which is not
+#       automatic on this architecture: jaxlib publishes NO aarch64 wheel below
+#       0.7.2, so a lock pinning an older jaxlib has to be moved forward rather
+#       than installed. This kit's pin is comfortably above that floor and the
+#       installed file is native -- jaxlib-0.10.2.dist-info WHEEL says
+#       `Tag: cp312-cp312-manylinux_2_27_aarch64`, and jaxlib/_jax.so is `ELF
+#       64-bit LSB shared object, ARM aarch64`. Recorded for whoever re-derives
+#       this environment against a different kit.
+#
+#       rdkit, gemmi, mdtraj, scipy, tensorstore, pydantic-core and the rest of
+#       the compiled PyPI packages: every one resolved cp312 / aarch64 at its
+#       pin. 84 of 85 lines verbatim; torch the only substitution.
+#
+#     THE C++ BUILD, which was the open question: it SUCCEEDS on aarch64.
+#     `uv build --wheel` exited 0 in about two minutes on 20 cores and produced
+#     `alphafold3_open-3.1.4-cp312-cp312-linux_aarch64.whl` (129,978,833 bytes;
+#     the kit's x86-64 artefact in stock/PINS.json `reference.artefacts` is
+#     248,099,430, a different platform's file and not a digest this can be
+#     held to). CMake configured and built abseil 20240116.2, pybind11 2.12.0,
+#     pybind11_abseil, libcifpp 7.0.3 (with the Eigen and Boost::regex it
+#     fetches for itself) and dssp 4.4.7 from source along with the extension,
+#     236 targets, no error. 18 compiler warnings, all of them
+#     -Wmaybe-uninitialized / -Wclass-memaccess from Eigen's NEON PacketMath
+#     and libstdc++ headers, none from alphafold3/*/cpp. NO PORTABILITY PATCH
+#     WAS NEEDED OR APPLIED: upstream already declares the platform
+#     (pyproject.toml `[tool.uv] environments` lists
+#     `platform_machine == 'aarch64'`), and only its wheel tag said x86-64.
+#     Host prerequisites beyond the kit's list: gcc/g++ 13.3.0, cmake 3.28.3,
+#     zlib1g-dev; ninja came from the build's own requires. `build_data` then
+#     wrote ccd.pickle (531 MB), chemical_component_sets.pickle and 51,346 CCD
+#     codes from libcifpp's components.cif in 25 s.
+#
+#     AND THE CONVERSION IS BIT-EXACT. The point of the whole exercise:
+#     `convert_of3_weights.py` run on this aarch64 interpreter produced
+#     of3_ported_weights.bin.zst at 1,369,240,911 bytes, sha256
+#     0c9a0060…3959cf -- the pin in provider.toml `[[weights.files]]`,
+#     generated from the kit's stock/PINS.json and measured on x86-64. The
+#     converter is numpy and zstd over a state dict; nothing in it is
+#     architecture-dependent, and now that is a measurement rather than a hope.
+#     The kit's own gate agrees: `PINS ok torch_py=ok jax_py=ok`.
+#
+# Installed with --no-deps, as the standard requires and as the kit's own
+# Dockerfile does.
+cuda-bindings==13.3.1
+cuda-pathfinder==1.8.0
+cuda-toolkit==13.0.3.0
+einops==0.8.2
+filelock==3.32.4
+fsspec==2026.7.0
+jinja2==3.1.6
+markupsafe==3.0.3
+mpmath==1.3.0
+networkx==3.6.1
+numpy==2.4.1
+nvidia-cublas==13.1.1.3
+nvidia-cuda-cupti==13.0.85
+nvidia-cuda-nvrtc==13.0.88
+nvidia-cuda-runtime==13.0.96
+nvidia-cudnn-cu13==9.20.0.48
+nvidia-cufft==12.0.0.61
+nvidia-cufile==1.15.1.6
+nvidia-curand==10.4.0.35
+nvidia-cusolver==12.0.4.66
+nvidia-cusparse==12.6.3.3
+nvidia-cusparselt-cu13==0.8.1
+nvidia-ml-py==13.610.43
+nvidia-nccl-cu13==2.29.7
+nvidia-nvjitlink==13.3.33
+nvidia-nvshmem-cu13==3.4.5
+nvidia-nvtx==13.0.85
+setuptools==84.0.0
+sympy==1.14.0
+torch==2.13.0
+triton==3.7.1
+typing-extensions==4.16.0
+zstandard==0.25.0

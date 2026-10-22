@@ -1,0 +1,517 @@
+# BoltzGen — protein binder and monomer design, held resident.
+#
+# STATUS: verified on the card named in `verified_on`, on a mixed sequence of
+# seven shapes in one held worker as well as on four consecutive identical
+# requests. Every number in [gpu] and every wall time quoted below was measured
+# on this box.
+#
+# THE ONE THING TO READ BEFORE ANYTHING ELSE: this provider does not work
+# without `[kit.env] OMP_NUM_THREADS = "1"`. Without it the design step does
+# not finish -- not slowly, at all -- because upstream's DataLoader forks a
+# worker that then waits forever for an OpenMP thread pool the fork did not
+# carry over. It cost two 40-minute runs and a wrong diagnosis to find, and the
+# reasoning is written out in full above [kit.env] at the end of this file. The
+# obvious suspect was upstream's `sampling_steps: 500`; it was innocent, and
+# 500 steps costs 40 s.
+#
+# The sixth provider on the standard and the SECOND GENERATIVE one, after
+# RFdiffusion3. It shares that one's shape -- a request carries a
+# specification AND a count, so the reply is N designs and the VRAM budget
+# needs an envelope rather than a number -- and it differs from it in two ways
+# worth stating before the fields:
+#
+# 1. UPSTREAM IS A PIPELINE, NOT A MODEL. `boltzgen run` is `configure` (which
+#    writes <run_dir>/steps.yaml and one config per step) followed by SIX
+#    steps, each of which upstream starts as its own interpreter: design,
+#    inverse_folding, design_folding, folding, analysis, filtering. Each GPU
+#    step builds its own model from its own checkpoint. The kit's `inproc`
+#    lever is precisely the removal of the per-step interpreter -- it runs the
+#    GPU steps of one configured job in ONE process -- and a resident worker is
+#    that process, held across requests instead of started per job.
+#
+# 2. NOBODY MEMOISES THE WEIGHTS, AND THAT IS NOT AN OVERSIGHT. Chai-1 had to
+#    choose between the kit's loader and its own; RFdiffusion3 found upstream
+#    already memoising. Here neither holds: upstream re-reads each step's
+#    checkpoint inside `Predict.run`, and the kit replaces no loader (it is a
+#    set of environment-driven lever modules that patch upstream's classes in
+#    place). The worker does not memoise either, because doing so would mean
+#    patching upstream's own load -- which the kit's `fastinit` lever is
+#    already wrapping -- and the standard's rule is wrap, do not patch. The
+#    worker's ready line and every reply therefore say
+#    `weights_held_by=upstream-per-step`, and what residency buys here is the
+#    process: the interpreter, the torch/rdkit/hydra/biotite import graph, the
+#    CUDA context and the Triton and cuEquivariance JIT caches, paid once
+#    instead of once per pipeline step per request.
+
+[provider]
+slug = "boltzgen"
+description = "BoltzGen protein design (binders and monomers) from a design specification"
+operations = ["boltzgen_design"]
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 130.6 GB unified, driver
+580.173.02), venv route, kit mode fast, all eight levers applied, fallbacks
+none, weights_held_by=upstream-per-step.
+
+VERIFIED ON 4 CONSECUTIVE IDENTICAL REQUESTS IN ONE HELD WORKER and then on a
+MIXED SEQUENCE OF SEVEN SHAPES in another, not on one design. The smoke
+request -- one 60-residue monomer, two designs in a batch of two, the design
+step at upstream's own 500 sampling steps -- four times, one worker held start
+to stop, idle card:
+
+    build 4.5 s, then 27.5 / 26.3 / 31.4 / 68.3 s
+    peak reserved 2.49 GiB on every one of the four
+
+The last of those four is 68 s and not ~27 s because an unrelated session put
+20 GiB on the card part way through it; the peak did not move. Then, in one
+further worker, seven different shapes in a row -- 60x2, 60x4 batch 4, 120x2,
+60x2 at sampling_steps=20, the 60x2 smoke again, 240x2, and 60x2 running
+design + inverse_folding -- every one of which produced its designs. That
+sequence is the test this provider had to pass: length, count, batch size,
+step count and the step list all change under one held process, and the kit
+captures a fresh CUDA graph per shape.
+
+Every request wrote structures; [runtime] outputs and output_keys assert it,
+and the glob deliberately does not match `design_spec.cif`, the picture of the
+specification that `configure` writes whether or not anything is designed.
+
+The card was contended by unrelated sessions for part of this work and the
+wall times above say which. Peak reserved was identical contended and idle.
+The [gpu] ladder was measured twice, in two workers, and reproduced exactly.
+
+ACCEPTANCE 2026-10-17: 13/13 answered, every one produced=yes, and THE
+RECORDED LADDER REPRODUCED EXACTLY. 60/100/200/400/600 residues measured
+2.49 / 2.59 / 2.96 / 6.74 / 7.89 GiB against the 2.49 / 2.59 / 2.96 / 6.74 /
+7.89 already written above -- five points, to the hundredth. This is the
+first provider in this effort whose recorded numbers survived an independent
+re-measurement unchanged.
+
+No produced=NOTHING on any rung, so upstream never reached the path where it
+skips a diffusion batch it cannot fit and still exits 0.
+
+The peak is also perfectly deterministic: 2.49 GiB on all seven 60-residue
+requests across the ladder, mixed and repeat phases. That matters as a
+control -- chai1 and genie3 grow 0.04 GiB per request on identical input and
+share this worker base, so the growth is theirs rather than the harness's.
+"""
+
+[runtime]
+mode = "resident"
+worker = "resident/boltzgen_resident_worker.py"
+launch = "tooluniverse.remote_resident.kit_launch:build_command"
+worker_args = ["--socket", "{socket}", "--slug", "{slug}"]
+# The worker builds NO model at start -- there is none to build, since each
+# pipeline step loads its own checkpoint inside the step. Start-up is the
+# import graph (torch, rdkit, biotite, hydra, pytorch-lightning, upstream) and
+# the kit's activation at the first `import boltzgen`. MEASURED at 6.0-8.0 s
+# warm; kept generous because a cold page cache dominates it and there is no
+# cost to a ceiling that is never reached.
+start_timeout_s = 900.0
+# A design request is a pipeline: up to six steps, five of them GPU steps,
+# over num_designs backbones at upstream's 500 sampling steps. The kit's own
+# README puts its 16-design example at "about six minutes per kit mode" on an
+# H100, and that is the design + inverse-folding + refolding + analysis +
+# filtering whole.
+#
+# MEASURED here only for the `design` step, which is the one the smoke and the
+# [gpu] ladder exercise: 26-34 s for the 60-residue smoke, 107 s at 600
+# residues, 67 s for eight designs at 200. The four scoring steps after it are
+# not in any number this provider has measured, so this ceiling stays at four
+# hours -- it is sized for the whole six-step pipeline on a real binder job,
+# which nothing here has yet run, and a ceiling that is never reached costs
+# nothing. `smoke_timeout_s` below is the tight one, deliberately.
+request_timeout_s = 14400.0
+# What a run that actually generated something leaves behind. NOT "*.cif":
+# `configure` writes one mmCIF visualisation of the SPECIFICATION into the top
+# of the run directory before any step runs -- here `design_spec.cif`, named
+# after the spec file -- and `outputs` is matched against base names over a
+# recursive walk, so "*.cif" would be satisfied by a run that generated no
+# design at all. Upstream's DesignWriter names each design `<stem>_<idx>.cif`
+# (`design_spec_0.cif`, `design_spec_1.cif`), so the index is what separates a
+# design from the picture of the request.
+outputs = ["*_[0-9]*.cif"]
+# The reply-side half, and the stricter of the two: the worker's `structures`
+# list already excludes the top-level visualisation by directory rather than by
+# name, and it is also the key a caller reads. Upstream skips a diffusion batch
+# it cannot fit and still exits 0, so neither half is redundant.
+output_keys = ["structures"]
+idle_timeout_s = 900.0
+# The smallest thing that exercises the generation path end to end: one
+# unconditional 60-residue monomer, two designs in one diffusion batch, the
+# design step alone, at UPSTREAM'S OWN 500 sampling steps. Two designs and not
+# one deliberately -- see smoke/input.yaml.
+smoke = "smoke/input.yaml"
+# MEASURED, idle card, warm JIT caches: the smoke request is 31-34 s in a held
+# worker, and 40.0 s was the slowest single design step observed at upstream's
+# 500 steps. 600 s is roughly 15x the measured figure, which leaves room for a
+# cold Triton cache on a fresh machine (the first run on this box compiled for
+# minutes) without being a number that could hide a hang -- and a hang is the
+# failure this provider actually had: see [kit.env], where an unset
+# OMP_NUM_THREADS stalls the design step indefinitely. The 3600 s this replaces
+# was a guess made before anything had run, and it was large enough that the
+# stall looked like slowness for two whole runs.
+smoke_timeout_s = 600.0
+
+[gpu]
+policy = "required"
+# MEASURED, and the derived 8.0 GiB this replaces was close to right for the
+# wrong reason. That reserve was built on Boltz-2's 5.54 GiB plus margin for
+# "the diffusion batch", on the assumption that the request's COUNT is what
+# costs. It is not. Count is nearly free here and LENGTH is what costs:
+#
+#   LADDER -- peak reserved in one held worker, kit mode fast, design step,
+#   one unconditional monomer, 2 designs in a batch of 2 unless said otherwise.
+#   The right-hand column is what `nvidia-smi` charged the process, which is
+#   the figure a host scheduling the card actually has to find.
+#
+#       residues   designs/batch   peak reserved   nvidia-smi process
+#             60             2/2       2.49 GiB            2882 MiB
+#            100             2/2       2.59 GiB            2988 MiB
+#            200             2/2       2.96 GiB            3362 MiB
+#            400             2/2       6.74 GiB            7234 MiB
+#            600             2/2       7.89 GiB            8410 MiB   <- declared
+#             60             8/8       2.64 GiB            3036 MiB
+#            200             8/8       3.35 GiB            3760 MiB
+#
+#   RUN TWICE, in two separate workers that served the shapes in the same
+#   order, and every peak reproduced to the cent. The second worker had also
+#   captured a 60-residue CUDA graph before the 100-residue row and that row
+#   was still 2.59 GiB, so the sampler's per-shape graph pools are reused
+#   rather than accumulated and these are per-shape figures, not a running
+#   total.
+#
+# THE SHAPE: 3.17x over 10x the length (60 -> 600). That puts BoltzGen with
+# openfold3 (2.9x) and rosettafold3 (3.7x) -- N^2-dominated, the pair
+# representation setting the cost -- and NOT with esmc, whose 1.19x over 16x
+# the length comes of a constant language model dominating everything else.
+# Budget this provider by the longest chain it will be asked for.
+#
+# COUNT IS CHEAP, which is the useful half of the finding and the opposite of
+# what the derived reserve assumed: 2 -> 8 designs costs 1.06x at 60 residues
+# (2.49 -> 2.64) and 1.13x at 200 (2.96 -> 3.35). The diffusion batch shares
+# the trunk, so a caller who wants more designs should raise the count before
+# they think about memory; a caller with a long target should not.
+#
+#   ENVELOPE THIS BUDGET IS FOR: up to 600 residues at diffusion_batch_size
+#   <= 8, the `design` step, under [kit] mode = "fast". 7.89 GiB is the top of
+#   the measured ladder and not a ceiling -- nothing here was pushed to
+#   failure, and the card has 130.6 GB unified.
+#
+# WHAT IS NOT IN THE LADDER, stated rather than implied: these are the DESIGN
+# step. The full six-step pipeline also loads boltz2_conf_final.ckpt
+# (`folding`) and boltz2_aff.ckpt (`affinity`), which ARE Boltz-2 -- whose
+# provider in ../boltz measured 5.54 GiB peak reserved on this same card for a
+# 330-residue protein with a ligand. The steps run one at a time and each
+# builds and drops its own model, so the resident set is the LARGEST step
+# rather than the sum; within this envelope that is design at 600 residues
+# (7.89 GiB), and for a short binder against a large target it will be the
+# folding step instead. A `design + inverse_folding` request measured 2.49 GiB
+# at 60 residues -- inverse folding's checkpoint is 12 MB and adds nothing.
+#
+# ON A SHARED CARD: a request that needs 2.5 GiB was refused with
+# `CUDA error: out of memory` while two sibling sessions held ~60 GiB between
+# them. The GB10's memory is unified and shared with the host, so a sibling's
+# host footprint can refuse a small request. THE WORKER SURVIVED IT and served
+# every later request in the same sequence, which is the behaviour that
+# matters: a bad or unlucky request fails, the worker does not.
+#
+# The same refusal happened ONCE on a card with no compute process on it at
+# all, immediately after a 20 GiB sibling exited: `torch.cuda.mem_get_info`
+# reported 25 GiB free of 121.6 GiB with 89 GiB in the host page cache, and
+# the run that failed was followed by an identical one that passed in 34 s.
+# On unified memory `nvidia-smi` showing no processes does not mean the memory
+# is available yet, so a smoke that fails this way is worth retrying once
+# before it is read as a defect -- which is why `[runtime] smoke_timeout_s` is
+# sized for a slow run and not for a scheduler.
+#
+# Prefer a second worker at [kit] mode = "big" -- the kit's own lowest-memory
+# mode: no graph sampler, no mask hoist, row-chunked token distances,
+# expandable allocator segments -- over widening this number for a
+# specification past the envelope.
+vram_budget_gb = 7.89
+driver_min = 580
+driver_min_reason = "its pinned stack is CUDA 13.0 (torch 2.13.0+cu130)"
+shareable = true
+isolation = "process"
+
+[env]
+kind = "venv"
+python = "$TOOLUNIVERSE_BOLTZGEN_PYTHON"
+lock = "environment/requirements.lock"
+# Deliberately does NOT `import boltzgen`. That import is the kit's own
+# trigger: with BOLTZGEN_OPT set in the shell that runs setup, importing it
+# here would activate a kit mode in the probe process and refuse for want of a
+# GPU, turning an environment check into an unrelated refusal. Everything this
+# line needs is readable without it -- `importlib.metadata` reads the
+# distribution, not the package.
+#
+# cuequivariance_torch IS imported, because it is the one line of this stack
+# that can install perfectly and then fail at run time: boltzgen 0.3.2's own
+# metadata names the CUDA-12 ops pair and this stack carries NVIDIA's CUDA-13
+# build of the same release (STOCK.md "Stock exceptions"), so a resolver
+# allowed to re-derive the set would give an ops library linking a second CUDA
+# runtime. It prints one notice about an absent Blackwell-only kernel on
+# pre-cc-10 cards; that is the library's own line, not a failure.
+verify = """import torch, cuequivariance_torch, boltzgen_opt
+import importlib.metadata as m
+assert m.version('boltzgen') == '0.3.2', m.version('boltzgen')
+assert m.version('cuequivariance-ops-torch-cu13') == '0.11.1'
+assert torch.version.cuda.startswith('13.'), torch.version.cuda"""
+
+[weights]
+# The kit's own name for the directory, and what upstream's `--cache`
+# defaults to. It is a Hugging Face cache ROOT, not a flat directory: the
+# files below carry their snapshot paths because that is the layout upstream's
+# offline lookups read (stock/PINS.json weights.hf_cache_layout), and the kit's
+# fetch step also points each repository's refs/main at the pinned snapshot so
+# that a lookup of "main" with HF_HUB_OFFLINE=1 finds these files.
+root_env = "BOLTZGEN_CACHE"
+root_default = "~/.boltzgen"
+# The kit's own weights module -- the one `run.sh install --weights DIR`
+# calls. It asks upstream's own downloader (huggingface_hub.hf_hub_download,
+# at the pinned snapshot, the call `boltzgen download` makes) for anything
+# absent and digest-checks everything against stock/PINS.json. No URL is
+# restated in ToolUniverse and nothing is fetched at request time. The kit step
+# below already passes --weights, so in the ordinary run this has nothing to
+# do; it is what repairs a cache emptied after the kit was installed.
+#
+# It names no {kit}: `tu remote setup`'s weights step substitutes {python},
+# {weights_root}, {kit} and {slug}, and the kit's module takes the directory
+# as its one argument.
+fetch = "{python} -m boltzgen_opt.weights {weights_root}"
+
+# ---------------------------------------------------------------------------
+# GENERATED from the kit's stock/PINS.json `weights` object by a script, not
+# transcribed: six 64-character digests typed by hand is how one of them ends
+# up a character off and the refusal reads as a corrupt download. The digests
+# are the kit's, which are the Hugging Face LFS digests of the pinned
+# snapshots. The sizes are this box's, read off each file AFTER its digest
+# matched the pin -- PINS declares none, and a size is the cheap check that
+# runs before any hashing.
+#
+#   model repo boltzgen/boltzgen-1     @ c1be29e1f82ffcc72264f64b993c43fb4e0d17f0
+#   data  repo boltzgen/inference-data @ c3d36fd276e9caf098c75d4113c6d5eb320b1a4c
+#
+# Five checkpoints and one data archive, 7.9 GiB in all. They are not five
+# models of one pipeline stage: boltzgen1_diverse and boltzgen1_adherence are
+# the design step's two checkpoints, boltzgen1_ifold is inverse folding, and
+# boltz2_conf_final / boltz2_aff are Boltz-2 doing the refolding and affinity
+# steps. mols.zip is upstream's canonical-molecule library, which `configure`
+# reads on the CPU before any step runs.
+# ---------------------------------------------------------------------------
+
+[[weights.files]]
+name = "models--boltzgen--boltzgen-1/snapshots/c1be29e1f82ffcc72264f64b993c43fb4e0d17f0/boltzgen1_diverse.ckpt"
+size = 1930847192
+sha256 = "360af8bd6e59527ff6ec25dd81253967f3bd3567d200053b10680634751f8e3c"
+
+[[weights.files]]
+name = "models--boltzgen--boltzgen-1/snapshots/c1be29e1f82ffcc72264f64b993c43fb4e0d17f0/boltzgen1_adherence.ckpt"
+size = 1930858014
+sha256 = "ac7078b3dc13064c68e0c3fd542e5bc538c33558bf6607f65e499eb336ca5e5d"
+
+[[weights.files]]
+name = "models--boltzgen--boltzgen-1/snapshots/c1be29e1f82ffcc72264f64b993c43fb4e0d17f0/boltzgen1_ifold.ckpt"
+size = 12582656
+sha256 = "dd4cf108c94471bdc3a326b7b180fa3854dc019110fae780208c30b50bd56578"
+
+[[weights.files]]
+name = "models--boltzgen--boltzgen-1/snapshots/c1be29e1f82ffcc72264f64b993c43fb4e0d17f0/boltz2_conf_final.ckpt"
+size = 2087255089
+sha256 = "525a51ef306da7282a54d23a4a5b91212fc60d0ff6b23b56dd6351de3b387530"
+
+[[weights.files]]
+name = "models--boltzgen--boltzgen-1/snapshots/c1be29e1f82ffcc72264f64b993c43fb4e0d17f0/boltz2_aff.ckpt"
+size = 2061914091
+sha256 = "6dc13d488015666d3c3fdffd29fab54d72e4f2597b654f996cdcf5937feab090"
+
+[[weights.files]]
+name = "datasets--boltzgen--inference-data/snapshots/c3d36fd276e9caf098c75d4113c6d5eb320b1a4c/mols.zip"
+size = 391401102
+sha256 = "3d4f56ac4262e745bb3d09cfaa19099b1d01be208122d501667b952e45521e53"
+
+[kit]
+# The probe reads no row, but unlike esmfold2 and esmc this kit HAS one --
+# eight switches (BG_GRAPH, XA_FAST_INIT, XA_HOIST, HL_ASYNC_WRITER,
+# FL_COND_DEDUP, FL_ATTN_BF16, FL_ATTN_BACKEND, FL_DIT_FUSED) -- and applies
+# them to itself: `stack.activate()` re-resolves with the correct `opt_home`
+# inside the worker and sets all eight before importing the lever modules. The
+# probe cannot reach them because it passes the kit directory where
+# `modes.resolve(mode, opt_home)` wants `opt/`. Nothing is lost for THIS kit,
+# because none of the eight has to be in place before the process starts --
+# unlike chai1's allocator lever, which does.
+#
+# CHECKED, both probe shapes, rather than reasoned about. `kit_launch`'s probe
+# derives MODEL_OPT as `parents[2]` of the package file, which for an editable
+# install at <kit>/opt/boltzgen_opt is the KIT ROOT, and then tries two shapes:
+#
+#   resolve(mode)        -> TypeError: missing 1 required positional argument:
+#                           'opt_home'
+#   resolve(mode, home)  -> FileNotFoundError: <kit>/forward/xattempt_addon/
+#                           src/xa_run.py          (it wants <kit>/opt/forward/...)
+#
+# Both are recorded by the probe as row_errors, so the row is empty for a
+# readable reason and not silently. `resolve(mode, stack.opt_home())` -- what
+# the worker's own `stack.activate()` effectively does -- returns all eight:
+# BG_GRAPH=graph, XA_FAST_INIT=1, XA_HOIST=1, HL_ASYNC_WRITER=1,
+# FL_COND_DEDUP=1, FL_ATTN_BF16=1, FL_ATTN_BACKEND=cudnn, FL_DIT_FUSED=1, which
+# is exactly the row the worker's ACTIVE line prints.
+env_row = "none"
+env_row_reason = "the kit's eight switches are applied by stack.activate() in-process; the probe cannot reach them because modes.resolve(mode, opt_home) wants opt/, not the kit root"
+upstream = "https://github.com/anthropics/uplifting-biomolecular-modeling"
+commit = "f4f62fa6592ae4938d49b1757bea0cfeff9f468e"
+subdir = "boltzgen"
+sparse = ["boltzgen", "common"]
+package = "boltzgen_opt"
+# `fast` is the kit's own default and the mode its speed claims are made for.
+# `exact` is byte-identical to seeded stock at the same seed and is the mode to
+# pick when outputs must not move; `big` is the lowest-memory mode and the one
+# to pick for a specification this card cannot hold under `fast`; `off` runs
+# upstream alone, in a clean subprocess per step, which is not a resident
+# arrangement at all. A process has exactly one mode (stack.activate refuses a
+# second), so a deployment that wants two runs two workers.
+mode = "fast"
+# The kit's own install line, typed as its README types it. It is one command
+# and not two: `run.sh install` does `pip install -e ../common/opt_core -e opt`
+# and then the pin check (stock/check_pins.py, which refuses a `boltzgen` off
+# the pin or a patched/editable install), and `--weights DIR` fetches what is
+# absent and digest-checks what is there. Unlike RFdiffusion3's kit there is no
+# file overlay to apply: this one patches nothing on disk, and the install must
+# stay editable because the package finds its lever directories under opt/ and
+# its pin under stock/ through its own location.
+install = "bash run.sh install --weights {weights_root}"
+# Nothing is declined and nothing is switched off. This kit carries no
+# prebuilt host objects at all -- checked: zero .so/.o/.a/.dylib anywhere under
+# boltzgen/, so an aarch64 host loses none of its nine levers -- and none of
+# its switches races the process the way chai1's allocator lever does: every
+# one is read when the kit's own lever module is imported, which happens
+# inside stack.activate() after kit_launch has already put the whole row in
+# the environment.
+levers_declined = []
+
+# ---------------------------------------------------------------------------
+# THE ONE SETTING THIS PROVIDER STATES FOR THE KIT, AND THE REASON IT EXISTS.
+#
+# Without it the design step DOES NOT FINISH -- not slowly, at all. The first
+# smoke ran 40 minutes and was killed still inside `design`; the run looks
+# alive (a model loaded, 2.2 GiB resident, a progress bar) and is not.
+#
+# WHAT IS ACTUALLY HAPPENING, traced rather than guessed. `faulthandler` on
+# SIGUSR1, installed before the fork so the handler is inherited, dumps the
+# DataLoader worker:
+#
+#     torch/functional.py:1535 in cdist
+#     boltzgen/data/feature/featurizer.py:1375 in process_atom_features
+#     boltzgen/task/predict/data_from_yaml.py:195 in __getitem__
+#     torch/utils/data/_utils/worker.py:374 in _worker_loop
+#
+# The worker is inside `torch.cdist`, burning ZERO CPU, parked in
+# `futex_do_wait`. `cdist` on host tensors goes through `at::parallel_for`,
+# which enters an OpenMP parallel region and waits on the thread pool -- and
+# that pool does not exist in the child, because `fork` keeps only the calling
+# thread. The parent spins the pool up on its own host-tensor work before the
+# predict loop builds the loader (the model process has ~20 pool threads by
+# then), so the first featurisation in the child waits for workers that were
+# never carried over. One thread means no pool to wait on, and the featurizer
+# runs serially instead.
+#
+# MEASURED, both directions, warm Triton caches, idle card, kit mode fast,
+# two 60-residue designs, the design step alone:
+#
+#     OMP_NUM_THREADS unset   killed at 420 s, 0 designs   (and at 40 min)
+#     OMP_NUM_THREADS=1       31.6 s, 2 designs
+#
+# WHY THE MANIFEST AND NOT THE WORKER: OpenMP reads this at its first parallel
+# region, and the kit's levers do host-tensor work during activation -- before
+# any line of the worker's own request handling runs. Set here it is in place
+# before the process starts. `torch.set_num_threads(1)` in worker Python would
+# be a race against the kit's own activation.
+#
+# WHY IT SURVIVES THE MODE: `stack.mode_env` strips caller-set values only
+# under KIT_SWITCH_PREFIXES (BG_ XA_ SZ_ FL_ HL_). `OMP_NUM_THREADS` is not a
+# lever switch, so unlike `levers_off` below this key is not a no-op here.
+#
+# WHAT IT COSTS: host-side tensor work in the model process is serial. The GPU
+# steps are GPU-bound and the featurizer is the only real host consumer, so
+# the cost did not show up in the numbers under [gpu] -- 500 denoiser steps
+# cost 40.0 s against 20 steps' 31.6 s, so the sampler, not the host, is what
+# a longer run pays for. A deployment that wants the pool back must give up
+# the kit's in-process form, which is the whole of what residency buys here.
+#
+# NOT A KIT DEFECT TO REPORT UPSTREAM AS A HANG: stock upstream, same spec,
+# same step count, computes (95% GPU) because nothing has touched the pool
+# before its loader forks. It is the combination -- the kit's levers plus
+# upstream's forking loader -- that stalls, and the kit cannot serve
+# `num_workers = 0` (see below), so one OpenMP thread is the available fix.
+# The table itself is the last thing in this file, because a TOML subtable
+# closes the table it belongs to and everything after [kit.env] would
+# belong to the subtable rather than to [kit].
+# ---------------------------------------------------------------------------
+
+# EMPTY BECAUSE IT HAS TO BE, NOT BECAUSE NOTHING WAS WORTH SWITCHING OFF.
+# `levers_off` IS A NO-OP FOR THIS KIT'S OWN LEVERS -- tested, twice, from
+# both ends:
+#
+#   * `kit_launch` turns `[kit] levers_off` into `MODEL_OPT_LEVERS_OFF`. Grep
+#     the kit: `boltzgen_opt` never reads that name. The only readers under
+#     this checkout are the SHARED CORE's own levers (opt_core's `pair_fused`
+#     tier table and its `pallas` kernel rows), which are reached through
+#     `dit_fused` but are not the eight switches a mode exports.
+#   * `modes.py` says it outright, and the test suite says it again: "Caller-set
+#     values of any lever switch (KIT_SWITCH_PREFIXES = BG_ XA_ SZ_ FL_ HL_)
+#     are dropped from a mode's environment and reported, never obeyed -- the
+#     mode words are the only lever selectors."
+#
+# So a value set here, or in [kit.env], for any BG_/XA_/SZ_/FL_/HL_ name is
+# stripped by `stack.mode_env` before the lever modules are imported, and the
+# ACTIVE line still shows the mode's own value. Setting
+# levers_off = ["async_writer"] was tried: the ACTIVE line still read
+# HL_ASYNC_WRITER=1 and `async_writer` was still in `levers=`.
+#
+# A mode here is all of its levers or none of them. The only lever selector
+# this kit has is [kit] mode above, and a deployment that wants a different
+# lever set names a different mode and accepts the whole set.
+levers_off = []
+
+# ---------------------------------------------------------------------------
+# WHAT THIS PROVIDER CANNOT SERVE, stated rather than discovered. Under a kit
+# mode the kit refuses three things by name, each exit 3 with a sentence that
+# names the escape:
+#
+#   * an unseeded run. The kit's runner is seeded by construction (step i runs
+#     with seed + i), so a kit mode without a seed is NOT ACTIVE. This worker
+#     always passes a seed -- 0 when the caller names none -- and says which in
+#     the reply, so the refusal is unreachable from here; what a caller gives
+#     up is upstream's own unseeded form, which is `--mode off`.
+#
+#   * a diffusion batch of ONE design under `exact` or `fast`. This is the
+#     `hoist` lever: at one design per structure it compares the strides of
+#     its aligned (1, 16, N, N) mask slice with stock's contiguous tensor and
+#     disables itself unless the token count is a multiple of 16 -- and a mode
+#     is all of its levers, so the mode then refuses (CHANGES.md, the `hoist`
+#     entry; the kit's own `warm` verb designs one structure and is documented
+#     as needing --mode big for exactly this). It is why the smoke asks for two
+#     designs, and why the worker refuses diffusion_batch_size = 1 under these
+#     two modes ITSELF, with that sentence. That pre-check is not tidiness: the
+#     kit's refusal is `os._exit(3)` inside the step gate, which in a resident
+#     worker kills the worker rather than failing the request.
+#
+#   * several GPUs. `--devices N > 1` is `--mode off` only; the kit's runner
+#     drives one card. This worker never passes --devices.
+#
+# And ONE THING THE SHARED STANDARD RECOMMENDS THAT THIS KIT FORBIDS: an
+# in-process DataLoader. `num_workers = 0` (or upstream's `debug = true`,
+# which sets it to 0 itself) shifts the featurizer's RNG stream relative to
+# stock's, so the kit's `fastinit` lever declares it cannot serve such a step
+# and the step gate refuses the mode by name before the model loads
+# (xa_fastinit.unserved_reason). The standard's own advice -- pass
+# num_workers=0 so that a 64 MB /dev/shm in a container is not a failure mode
+# -- is therefore not available here, and this provider leaves upstream's
+# default of 1 alone. A container deployment of this provider needs a real
+# /dev/shm.
+# ---------------------------------------------------------------------------
+
+# The setting whose reasoning is written out above the [kit] levers, under
+# "THE ONE SETTING THIS PROVIDER STATES FOR THE KIT": one OpenMP thread in
+# the model process, without which the design step never finishes.
+[kit.env]
+OMP_NUM_THREADS = "1"

@@ -1,0 +1,215 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "run_esmc_embed",
+    "description": "Embed one protein sequence with the ESM Cambrian (ESM C) protein language model and return the mean-pooled embedding vector. Use it to compare, cluster or search proteins by learned representation. The full per-residue matrix is NOT returned inline (2560 floats per residue): ask for 'residue_range' to get a bounded window of residue vectors, or 'per_residue_file' to get the whole matrix written as a .npy file whose path comes back.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "One protein sequence in single-letter amino-acid code, or a single-record FASTA. At most 4096 residues.",
+          "minLength": 1
+        },
+        "include_cls_embedding": {
+          "type": "boolean",
+          "description": "Also return the BOS (sequence-level) vector, which is another whole embedding of the same width.",
+          "default": false
+        },
+        "residue_range": {
+          "type": "array",
+          "description": "Inclusive 1-based [start, end] window of residue vectors to return inline. Refused, not clipped, when (end - start + 1) * embedding_dim exceeds 20000 floats -- at the 6B model's 2560 dimensions that is 7 residues.",
+          "items": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "per_residue_file": {
+          "type": "boolean",
+          "description": "Write the whole (length x embedding_dim) float32 matrix to a .npy file on the provider host and return its path, shape and size instead of its contents.",
+          "default": false
+        },
+        "decimals": {
+          "type": "integer",
+          "description": "Decimal places for returned floats (default 5).",
+          "default": 5,
+          "minimum": 1,
+          "maximum": 8
+        }
+      },
+      "required": [
+        "sequence"
+      ],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "variant": {
+          "type": "string"
+        },
+        "sequence_length": {
+          "type": "integer"
+        },
+        "embedding_dim": {
+          "type": "integer"
+        },
+        "pooling": {
+          "type": "string"
+        },
+        "mean_embedding": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "mean_embedding_norm": {
+          "type": "number"
+        },
+        "cls_embedding": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "residue_embeddings": {
+          "type": "object"
+        },
+        "per_residue_file": {
+          "type": "object"
+        },
+        "timing": {
+          "type": "object"
+        },
+        "weights_held_by": {
+          "type": "string"
+        },
+        "kit_mode": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "EsmcEmbedTool",
+      "url": "https://github.com/anthropics/uplifting-biomolecular-modeling",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/esmc",
+      "mcp_tool_name": "run_esmc_embed"
+    },
+    "test_examples": [
+      {
+        "sequence": "MQIFVKTLTGKTITLEVEPSDTIENVKAKIQDKEGIPPDQQRLIFAGKQLEDGRTLSDYNIQKESTLHLVLRLRGG"
+      }
+    ]
+  },
+  {
+    "type": "RemoteTool",
+    "name": "run_esmc_logits",
+    "description": "Score one protein sequence with the ESM Cambrian (ESM C) masked language model: the model's mean log-likelihood and pseudo-perplexity for the sequence, plus the residues it finds least likely. Use it to rank designs, flag unusual positions, or compare variants of one protein. Per-position log-probabilities are opt-in and bounded, because a long sequence is a long array.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequence": {
+          "type": "string",
+          "description": "One protein sequence in single-letter amino-acid code, or a single-record FASTA. At most 4096 residues.",
+          "minLength": 1
+        },
+        "top_n": {
+          "type": "integer",
+          "description": "How many least-likely residues to name (default 10).",
+          "default": 10,
+          "minimum": 0,
+          "maximum": 200
+        },
+        "per_residue_log_prob": {
+          "type": "boolean",
+          "description": "Return the log-probability of every observed residue, one number per position. Refused for sequences longer than 4000 residues.",
+          "default": false
+        },
+        "decimals": {
+          "type": "integer",
+          "description": "Decimal places for returned floats (default 5).",
+          "default": 5,
+          "minimum": 1,
+          "maximum": 8
+        }
+      },
+      "required": [
+        "sequence"
+      ],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "variant": {
+          "type": "string"
+        },
+        "sequence_length": {
+          "type": "integer"
+        },
+        "mean_log_likelihood": {
+          "type": "number"
+        },
+        "pseudo_perplexity": {
+          "type": "number"
+        },
+        "least_likely_residues": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "position": {
+                "type": "integer"
+              },
+              "residue": {
+                "type": "string"
+              },
+              "log_prob": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "per_residue_log_prob": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "timing": {
+          "type": "object"
+        },
+        "weights_held_by": {
+          "type": "string"
+        },
+        "kit_mode": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "EsmcLogitsTool",
+      "url": "https://github.com/anthropics/uplifting-biomolecular-modeling",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/esmc",
+      "mcp_tool_name": "run_esmc_logits"
+    }
+  }
+]

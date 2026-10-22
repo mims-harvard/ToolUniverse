@@ -1,0 +1,12 @@
+{
+  "variants": [
+    {
+      "chrom": "chr1",
+      "pos": 43110773,
+      "id": "chr1_43110773_G_A_b38",
+      "ref": "G",
+      "alt": "A"
+    }
+  ],
+  "top_tracks": 5
+}
