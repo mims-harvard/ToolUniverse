@@ -1,7 +1,7 @@
 """
 GlyGen_get_glycoprotein
 
-Get detailed glycoprotein information from GlyGen by UniProt accession. Returns protein name, gly...
+Get detailed glycoprotein information from GlyGen by UniProt accession. Returns all gene names wi...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def GlyGen_get_glycoprotein(
     validate: bool = True,
 ) -> Any:
     """
-    Get detailed glycoprotein information from GlyGen by UniProt accession. Returns protein name, gly...
+    Get detailed glycoprotein information from GlyGen by UniProt accession. Returns all gene names wi...
 
     Parameters
     ----------

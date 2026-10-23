@@ -275,6 +275,58 @@ class MonarchV3Tool(BaseTool):
             return handler(arguments)
         return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
+    @staticmethod
+    def _pagination(arguments: Dict[str, Any], default: int, maximum: int):
+        limit = arguments.get("limit", default)
+        if (
+            isinstance(limit, bool)
+            or not isinstance(limit, int)
+            or not 1 <= limit <= maximum
+        ):
+            return (
+                None,
+                None,
+                {
+                    "status": "error",
+                    "error": f"limit must be an integer between 1 and {maximum}",
+                    "parameter": "limit",
+                },
+            )
+        offset = arguments.get("offset", 0)
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return (
+                None,
+                None,
+                {
+                    "status": "error",
+                    "error": "offset must be a non-negative integer",
+                    "parameter": "offset",
+                },
+            )
+        return limit, offset, None
+
+    @staticmethod
+    def _pagination_metadata(data: Any, returned: int, limit: int, offset: int):
+        total = data.get("total") if isinstance(data, dict) else None
+        total_is_exact = (
+            isinstance(total, int) and not isinstance(total, bool) and total >= 0
+        )
+        if not total_is_exact:
+            total = None
+        has_more = offset + returned < total if total_is_exact else None
+        truncated = offset > 0 or has_more is True or not total_is_exact
+        return {
+            "total_results": total,
+            "total_results_is_exact": total_is_exact,
+            "returned": returned,
+            "limit": limit,
+            "offset": offset,
+            "has_more": has_more,
+            "next_offset": offset + returned if has_more and returned else None,
+            "truncated": truncated,
+            "result_set_complete": not truncated,
+        }
+
     def _get_entity(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get detailed entity information by CURIE identifier."""
         entity_id = _normalize_curie(
@@ -331,10 +383,12 @@ class MonarchV3Tool(BaseTool):
             }
 
         category = arguments.get("category", "")
-        limit = arguments.get("limit") or 20
+        limit, offset, pagination_error = self._pagination(arguments, 20, 200)
+        if pagination_error is not None:
+            return pagination_error
 
         url = f"{MONARCH_BASE_URL}/association/all"
-        params = {"limit": min(limit, 200)}
+        params = {"limit": limit, "offset": offset}
         if subject:
             params["subject"] = subject
         if obj:
@@ -362,13 +416,15 @@ class MonarchV3Tool(BaseTool):
                 }
             )
 
-        metadata = {
-            "source": "Monarch Initiative V3",
-            "subject": subject,
-            "object": obj,
-            "category": category,
-            "total_results": data.get("total", len(associations)),
-        }
+        metadata = self._pagination_metadata(data, len(associations), limit, offset)
+        metadata.update(
+            {
+                "source": "Monarch Initiative V3",
+                "subject": subject,
+                "object": obj,
+                "category": category,
+            }
+        )
         if not associations:
             hint = _direction_hint(category, subject, obj)
             if hint:
@@ -387,13 +443,16 @@ class MonarchV3Tool(BaseTool):
         if not query:
             return {"status": "error", "error": "query parameter is required"}
 
-        limit = arguments.get("limit") or 10
+        limit, offset, pagination_error = self._pagination(arguments, 10, 50)
+        if pagination_error is not None:
+            return pagination_error
         category = arguments.get("category")
 
         url = f"{MONARCH_BASE_URL}/search"
         params = {
             "q": query,
-            "limit": min(limit, 50),
+            "limit": limit,
+            "offset": offset,
         }
         if category:
             params["category"] = category
@@ -417,14 +476,18 @@ class MonarchV3Tool(BaseTool):
                 }
             )
 
+        metadata = self._pagination_metadata(data, len(results), limit, offset)
+        metadata.update(
+            {
+                "source": "Monarch Initiative V3",
+                "query": query,
+                "category": category,
+            }
+        )
         return {
             "status": "success",
             "data": results,
-            "metadata": {
-                "source": "Monarch Initiative V3",
-                "query": query,
-                "total_results": data.get("total", len(results)),
-            },
+            "metadata": metadata,
         }
 
     # --- Mondo Disease Ontology specific endpoints ---
@@ -438,13 +501,16 @@ class MonarchV3Tool(BaseTool):
                 "error": "query parameter is required (e.g., 'Alzheimer', 'breast cancer', 'diabetes')",
             }
 
-        limit = arguments.get("limit") or 10
+        limit, offset, pagination_error = self._pagination(arguments, 10, 50)
+        if pagination_error is not None:
+            return pagination_error
 
         url = f"{MONARCH_BASE_URL}/search"
         params = {
             "q": query,
             "category": "biolink:Disease",
-            "limit": min(limit, 50),
+            "limit": limit,
+            "offset": offset,
         }
 
         response = requests.get(url, params=params, timeout=self.timeout)
@@ -464,14 +530,18 @@ class MonarchV3Tool(BaseTool):
                 }
             )
 
+        metadata = self._pagination_metadata(data, len(results), limit, offset)
+        metadata.update(
+            {
+                "source": "Mondo Disease Ontology (via Monarch Initiative V3)",
+                "query": query,
+                "category": "biolink:Disease",
+            }
+        )
         return {
             "status": "success",
             "data": results,
-            "metadata": {
-                "source": "Mondo Disease Ontology (via Monarch Initiative V3)",
-                "query": query,
-                "total_results": data.get("total", len(results)),
-            },
+            "metadata": metadata,
         }
 
     def _mondo_get_disease(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -580,13 +650,16 @@ class MonarchV3Tool(BaseTool):
                 "error": "disease_id parameter is required (e.g., MONDO:0004975, MONDO:0005148)",
             }
 
-        limit = arguments.get("limit") or 20
+        limit, offset, pagination_error = self._pagination(arguments, 20, 200)
+        if pagination_error is not None:
+            return pagination_error
 
         url = f"{MONARCH_BASE_URL}/association"
         params = {
             "subject": disease_id,
             "category": "biolink:DiseaseToPhenotypicFeatureAssociation",
-            "limit": min(limit, 200),
+            "limit": limit,
+            "offset": offset,
         }
 
         response = requests.get(url, params=params, timeout=self.timeout)
@@ -607,11 +680,14 @@ class MonarchV3Tool(BaseTool):
                 }
             )
 
-        metadata = {
-            "source": "Mondo Disease Ontology (via Monarch Initiative V3)",
-            "disease_id": disease_id,
-            "total_phenotypes": data.get("total", len(phenotypes)),
-        }
+        metadata = self._pagination_metadata(data, len(phenotypes), limit, offset)
+        metadata["total_phenotypes"] = metadata["total_results"]
+        metadata.update(
+            {
+                "source": "Mondo Disease Ontology (via Monarch Initiative V3)",
+                "disease_id": disease_id,
+            }
+        )
         return self._rows(rows=phenotypes, metadata=metadata, curie=disease_id)
 
     # --- Additional Monarch V3 endpoints ---
@@ -659,10 +735,12 @@ class MonarchV3Tool(BaseTool):
                 "error": "entity_id is required (e.g., MONDO:0005148 for type 2 diabetes)",
             }
 
-        limit = arguments.get("limit") or 20
+        limit, offset, pagination_error = self._pagination(arguments, 20, 100)
+        if pagination_error is not None:
+            return pagination_error
 
         url = f"{MONARCH_BASE_URL}/mappings"
-        params = {"entity_id": entity_id, "limit": min(limit, 100)}
+        params = {"entity_id": entity_id, "limit": limit, "offset": offset}
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
         data = response.json()
@@ -680,11 +758,14 @@ class MonarchV3Tool(BaseTool):
                 }
             )
 
-        metadata = {
-            "source": "Monarch Initiative V3 - Mappings",
-            "entity_id": entity_id,
-            "total_mappings": data.get("total", len(mappings)),
-        }
+        metadata = self._pagination_metadata(data, len(mappings), limit, offset)
+        metadata["total_mappings"] = metadata["total_results"]
+        metadata.update(
+            {
+                "source": "Monarch Initiative V3 - Mappings",
+                "entity_id": entity_id,
+            }
+        )
         return self._rows(rows=mappings, metadata=metadata, curie=entity_id)
 
     def _semsim_search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:

@@ -1,7 +1,7 @@
 """
 Alliance_search_genes
 
-Search for genes across all model organisms in the Alliance of Genome Resources. Matches by gene ...
+Search genes across all Alliance of Genome Resources species by symbol, synonym, name, or keyword...
 """
 
 from typing import Any, Optional, Callable
@@ -11,13 +11,14 @@ from ._shared_client import get_shared_client
 def Alliance_search_genes(
     query: str,
     limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search for genes across all model organisms in the Alliance of Genome Resources. Matches by gene ...
+    Search genes across all Alliance of Genome Resources species by symbol, synonym, name, or keyword...
 
     Parameters
     ----------
@@ -25,6 +26,8 @@ def Alliance_search_genes(
         Gene symbol or synonym to search for (not a descriptive name). Examples: 'INS...
     limit : int
         Maximum number of results to return (1-50). Default: 10.
+    offset : int
+        Zero-based offset in the complete matching gene list. Continue with metadata....
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -39,7 +42,11 @@ def Alliance_search_genes(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"query": query, "limit": limit}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {"query": query, "limit": limit, "offset": offset}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "Alliance_search_genes",

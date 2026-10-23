@@ -1,7 +1,7 @@
 """
 ClinicalTrials_get_study
 
-Get full details for a specific clinical trial by NCT ID from ClinicalTrials.gov. Returns compreh...
+Get full details for a specific clinical trial by NCT ID from ClinicalTrials.gov. Returns every a...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def ClinicalTrials_get_study(
     validate: bool = True,
 ) -> Any:
     """
-    Get full details for a specific clinical trial by NCT ID from ClinicalTrials.gov. Returns compreh...
+    Get full details for a specific clinical trial by NCT ID from ClinicalTrials.gov. Returns every a...
 
     Parameters
     ----------

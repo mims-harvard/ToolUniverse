@@ -130,7 +130,7 @@
   },
   {
     "name": "UniProtLocations_search",
-    "description": "Search UniProt subcellular locations by name or keyword. Find cellular compartments, organelles, membrane locations, and other subcellular structures. Returns matching locations with IDs, definitions, categories, GO mappings, and protein count statistics. Use this to discover relevant subcellular locations for cell biology research.",
+    "description": "Search UniProt subcellular locations with official cursor pagination. Returns definitions, categories, GO mappings, and protein statistics; metadata reports the true upstream total and next_cursor.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -141,6 +141,10 @@
         "size": {
           "type": "integer",
           "description": "Maximum number of results to return (default: 10, max: 50)."
+        },
+        "cursor": {
+          "type": "string",
+          "description": "Opaque cursor from metadata.next_cursor. Omit for the first page."
         }
       },
       "required": [

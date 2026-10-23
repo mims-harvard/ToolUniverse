@@ -1,7 +1,7 @@
 [
   {
     "name": "ENAPortal_search_studies",
-    "description": "Search the European Nucleotide Archive (ENA) for sequencing studies using text queries or taxonomy filters. Returns study accessions, titles, submitting centers, and publication dates. ENA is the world's largest repository of nucleotide sequences (>3 billion records). Supports powerful query syntax: use 'description=\"keyword\"' for text search, 'tax_tree(TAXID)' for taxonomy-based queries, or combine with AND/OR. Example: searching 'description=\"SARS-CoV-2\"' returns COVID-19 sequencing studies.",
+    "description": "Search the European Nucleotide Archive (ENA) for sequencing studies using text queries or taxonomy filters. Returns study accessions, titles, submitting centers, and publication dates. Metadata reports the exact matching count and whether the response is complete. ENA does not support offset pagination, so use a larger limit or the official limit=0 full-retrieval mode when all matching records are required.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -14,7 +14,8 @@
             "integer",
             "null"
           ],
-          "description": "Maximum results to return (1-100, default 10)."
+          "minimum": 0,
+          "description": "Maximum results to return (default 10). Use 0 to request every matching record, as defined by the ENA Portal API. ENA's normal interface defaults to at most 100,000 records and has no offset pagination."
         },
         "fields": {
           "type": [
@@ -86,7 +87,7 @@
   },
   {
     "name": "ENAPortal_search_samples",
-    "description": "Search the European Nucleotide Archive (ENA) for biological samples by taxonomy or text query. Returns sample accessions, descriptions, taxonomy, and publication dates. Useful for finding source material metadata across the world's nucleotide archives (INSDC). Example: 'tax_tree(562)' finds all E. coli samples; 'description=\"liver\"' finds samples with liver in the description.",
+    "description": "Search the European Nucleotide Archive (ENA) for biological samples by taxonomy or text query. Returns sample accessions, descriptions, taxonomy, and publication dates. Metadata reports the exact matching count and whether the response is complete. ENA does not support offset pagination, so use a larger limit or the official limit=0 full-retrieval mode when all matching records are required.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -99,7 +100,8 @@
             "integer",
             "null"
           ],
-          "description": "Maximum results to return (1-100, default 10)."
+          "minimum": 0,
+          "description": "Maximum results to return (default 10). Use 0 to request every matching record, as defined by the ENA Portal API. ENA's normal interface defaults to at most 100,000 records and has no offset pagination."
         },
         "fields": {
           "type": [
@@ -237,7 +239,7 @@
   },
   {
     "name": "ENAPortal_search_runs_fastq",
-    "description": "Search the European Nucleotide Archive (ENA) for sequencing RUNS (read_run) by taxonomy and library strategy, returning ready-to-use FASTQ download URLs. Unlike the study/sample searches, this hits the read_run result domain, which is the only one that exposes downloadable read files (fastq_ftp, submitted_ftp, sra_ftp) plus checksums (fastq_md5), sizes (fastq_bytes), library_strategy and instrument_platform. Use ENA query syntax: 'tax_eq(TAXID)' for an exact species (e.g., tax_eq(1280) = Staphylococcus aureus), 'tax_tree(TAXID)' to include descendants, optionally combined with 'library_strategy=\"WGS\"'. Returns each run with FTP URLs you can wget/curl directly. No API key required.",
+    "description": "Search the European Nucleotide Archive (ENA) for sequencing RUNS (read_run) by taxonomy and library strategy, returning ready-to-use FASTQ download URLs. Metadata reports the exact matching count and whether the response is complete. ENA does not support offset pagination, so use a larger limit or the official limit=0 full-retrieval mode when all matching records are required. No API key required.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -250,7 +252,8 @@
             "integer",
             "null"
           ],
-          "description": "Maximum runs to return (1-100, default 10)."
+          "minimum": 0,
+          "description": "Maximum runs to return (default 10). Use 0 to request every matching run, as defined by the ENA Portal API. ENA's normal interface defaults to at most 100,000 records and has no offset pagination."
         },
         "fields": {
           "type": [

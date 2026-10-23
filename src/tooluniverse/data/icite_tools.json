@@ -192,7 +192,7 @@
   },
   {
     "name": "iCite_search_publications",
-    "description": "Search PubMed publications by query and get citation metrics from NIH's iCite API. Returns papers matching the search query with citation counts, NIH percentile rankings, approximate potential to translate (APT) scores, and research category flags. Useful for finding highly-cited papers in a specific topic area and evaluating their translational potential. Returns up to 1000 results sorted by citation count.",
+    "description": "Search PubMed by relevance and enrich one recoverable result page with NIH iCite citation metrics. Metadata reports PubMed's exact total_results, next_offset, enrichment completeness, and any PMIDs omitted by iCite. Results are sorted by citation_count within the current PubMed relevance page only, not across the complete query result set.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -205,14 +205,17 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of results (default 10, max 1000)"
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Maximum number of PubMed records to enrich on this page (default 10, max 1000)"
         },
         "offset": {
           "type": [
             "integer",
             "null"
           ],
-          "description": "Offset for pagination (default 0)"
+          "minimum": 0,
+          "description": "Zero-based PubMed relevance offset. Continue with metadata.next_offset while has_more is true."
         }
       },
       "required": [
@@ -10700,6 +10703,53 @@
               "provisional": {
                 "type": "boolean"
               }
+            }
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string"
+            },
+            "returned": {
+              "type": "integer"
+            },
+            "pubmed_records_requested": {
+              "type": "integer"
+            },
+            "total_results": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "enrichment_complete": {
+              "type": "boolean"
+            },
+            "missing_icite_pmids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "sort_scope": {
+              "type": "string"
             }
           }
         }

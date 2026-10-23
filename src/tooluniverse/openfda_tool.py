@@ -3621,6 +3621,10 @@ class FDADrugLabelGetDrugNamesByIndicationStats(FDADrugLabelTool):
                     "total_generic_names": 0,
                     "total_brand_names": 0,
                     "indication": indication,
+                    "generic_names_complete": True,
+                    "brand_names_complete": True,
+                    "api_count_term_limit": 1000,
+                    "warning": None,
                 },
                 "results": {"generic_names": [], "brand_names": []},
             }
@@ -3641,8 +3645,10 @@ class FDADrugLabelGetDrugNamesByIndicationStats(FDADrugLabelTool):
         )
 
         # Handle no matches found as empty result, not error
+        brand_count_failed = False
         if brand_count_result is None:
             brand_names_data = []
+            brand_count_failed = True
         elif "error" in brand_count_result:
             # Check if it's a "No matches found" error
             error_msg = str(brand_count_result.get("error", {}))
@@ -3651,6 +3657,7 @@ class FDADrugLabelGetDrugNamesByIndicationStats(FDADrugLabelTool):
             else:
                 # For other errors, still return generic names if available
                 brand_names_data = []
+                brand_count_failed = True
         else:
             brand_names_data = brand_count_result.get("results", [])
 
@@ -3670,11 +3677,37 @@ class FDADrugLabelGetDrugNamesByIndicationStats(FDADrugLabelTool):
         ]
         brand_names_list = sorted(brand_names_list, key=lambda x: x["term"])
 
+        generic_names_complete = len(all_generic_names_data) < 1000
+        brand_names_complete = not brand_count_failed and len(brand_names_data) < 1000
+        incomplete_parts = []
+        if not generic_names_complete:
+            incomplete_parts.append(
+                "generic-name distribution reached openFDA's 1,000-term count limit"
+            )
+        if brand_count_failed:
+            incomplete_parts.append("brand-name count request failed")
+        elif not brand_names_complete:
+            incomplete_parts.append(
+                "brand-name distribution reached openFDA's 1,000-term count limit"
+            )
+
         return {
             "meta": {
                 "total_generic_names": len(generic_names_list),
                 "total_brand_names": len(brand_names_list),
                 "indication": indication,
+                "generic_names_complete": generic_names_complete,
+                "brand_names_complete": brand_names_complete,
+                "counts_are_lower_bounds": not (
+                    generic_names_complete and brand_names_complete
+                ),
+                "api_count_term_limit": 1000,
+                "warning": (
+                    "; ".join(incomplete_parts)
+                    + "; additional distinct names may exist"
+                    if incomplete_parts
+                    else None
+                ),
             },
             "results": {
                 "generic_names": generic_names_list,

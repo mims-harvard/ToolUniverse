@@ -123,6 +123,19 @@
         "input_terms": {
           "type": "string",
           "description": "Chemical name, CAS Registry Number, or CTD/MeSH chemical ID (e.g., 'C006780', 'D016729', optionally prefixed 'MESH:'). Examples: 'arsenic', 'bisphenol A', 'C006780', '80-05-7'. Matched by exact string against CTD's canonical chemical name, not fuzzy-matched, so an uncommon synonym can fail even when the substance is covered. Other identifier systems (CHEBI, PubChem CID, etc.) are not supported -- resolve to a name first."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 100,
+          "description": "Maximum associations per page."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based association offset; continue with metadata.next_offset while metadata.has_more is true."
         }
       },
       "required": [
@@ -176,6 +189,10 @@
                   "null"
                 ],
                 "description": "Human-readable name of the object"
+              },
+              "target_name_source": {
+                "type": "string",
+                "description": "Provenance of target_name: mydisease.mondo.label, EBI OLS (<ontology>), NLM MeSH, or unresolved."
               },
               "predicate": {
                 "type": [
@@ -481,6 +498,19 @@
         "input_terms": {
           "type": "string",
           "description": "Disease name, MONDO CURIE (e.g. 'MONDO:0007254'), or MeSH disease ID (e.g. 'D001249', optionally prefixed 'MESH:'). Examples: 'breast neoplasm', 'asthma', 'MESH:D001249'. Free-text names are resolved via MONDO's own text search, so common synonyms generally work; exact CURIEs are more reliable for ambiguous names."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 100,
+          "description": "Maximum associations per page."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based association offset; continue with metadata.next_offset while metadata.has_more is true."
         }
       },
       "required": [

@@ -1,7 +1,7 @@
 """
 odphp_topicsearch
 
-Find specific health topics and get their full content. Use when the user mentions a keyword (e.g...
+Search ODPHP MyHealthfinder v4 topics by topic ID or keyword, or omit both to retrieve all topics...
 """
 
 from typing import Any, Optional, Callable
@@ -13,14 +13,14 @@ def odphp_topicsearch(
     topicId: Optional[str] = None,
     categoryId: Optional[str] = None,
     keyword: Optional[str] = None,
-    strip_html: Optional[bool] = None,
+    strip_html: Optional[bool] = False,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Find specific health topics and get their full content. Use when the user mentions a keyword (e.g...
+    Search ODPHP MyHealthfinder v4 topics by topic ID or keyword, or omit both to retrieve all topics...
 
     Parameters
     ----------

@@ -1,7 +1,7 @@
 """
 openalex_search_authors
 
-Search OpenAlex authors via the /authors endpoint. Use this to discover Author IDs (A...) and the...
+Search OpenAlex authors. Basic page mode exposes only the first 10,000 matches; for complete deep...
 """
 
 from typing import Any, Optional, Callable
@@ -12,6 +12,7 @@ def openalex_search_authors(
     search: str,
     per_page: Optional[int] = 5,
     page: Optional[int] = 1,
+    cursor: Optional[str] = None,
     mailto: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -19,7 +20,7 @@ def openalex_search_authors(
     validate: bool = True,
 ) -> Optional[dict[str, Any]]:
     """
-    Search OpenAlex authors via the /authors endpoint. Use this to discover Author IDs (A...) and the...
+    Search OpenAlex authors. Basic page mode exposes only the first 10,000 matches; for complete deep...
 
     Parameters
     ----------
@@ -29,6 +30,8 @@ def openalex_search_authors(
         Results per page (OpenAlex max 200).
     page : int
         Page number (1-indexed).
+    cursor : str
+        Official deep-pagination cursor. Start with '*' and continue with metadata.ne...
     mailto : str
         Optional contact email for OpenAlex polite pool.
     stream_callback : Callable, optional
@@ -51,6 +54,7 @@ def openalex_search_authors(
             "search": search,
             "per_page": per_page,
             "page": page,
+            "cursor": cursor,
             "mailto": mailto,
         }.items()
         if v is not None

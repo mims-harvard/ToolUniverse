@@ -1,7 +1,7 @@
 """
 openalex_search_sources
 
-Search OpenAlex sources (journals, conferences, repositories) by name or ISSN and return JOURNAL-...
+Search OpenAlex sources (journals, conferences, repositories) by name or ISSN and return journal-...
 """
 
 from typing import Any, Optional, Callable
@@ -12,6 +12,7 @@ def openalex_search_sources(
     search: str,
     per_page: Optional[int] = 5,
     page: Optional[int] = 1,
+    cursor: Optional[str] = None,
     mailto: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -19,7 +20,7 @@ def openalex_search_sources(
     validate: bool = True,
 ) -> Optional[dict[str, Any]]:
     """
-    Search OpenAlex sources (journals, conferences, repositories) by name or ISSN and return JOURNAL-...
+    Search OpenAlex sources (journals, conferences, repositories) by name or ISSN and return journal-...
 
     Parameters
     ----------
@@ -29,6 +30,8 @@ def openalex_search_sources(
         Results per page (OpenAlex max 200).
     page : int
         Page number (1-indexed).
+    cursor : str
+        Official deep-pagination cursor. Start with '*' and continue with metadata.ne...
     mailto : str
         Optional contact email for OpenAlex polite pool.
     stream_callback : Callable, optional
@@ -51,6 +54,7 @@ def openalex_search_sources(
             "search": search,
             "per_page": per_page,
             "page": page,
+            "cursor": cursor,
             "mailto": mailto,
         }.items()
         if v is not None

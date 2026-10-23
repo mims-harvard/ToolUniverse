@@ -2,12 +2,13 @@
   {
     "type": "EMPIARTool",
     "name": "EMPIAR_search_entries",
-    "description": "Search the EMPIAR (Electron Microscopy Public Image Archive) for raw EM image datasets by keyword. Returns matching entries with EMPIAR IDs, titles, and release dates. Use EMPIAR_get_entry to retrieve full details for a specific entry.",
+    "description": "Search the EMPIAR raw electron-microscopy archive by keyword with exact EBI offset pagination. Metadata reports total_hits, has_more and next_start; follow next_start with the same query to retrieve later entries. Use EMPIAR_get_entry for full details.",
     "parameter": {
       "type": "object",
       "properties": {
         "query": {
           "type": "string",
+          "minLength": 1,
           "description": "Search query keyword (e.g., 'ribosome', 'membrane protein', 'SARS-CoV-2')"
         },
         "page_size": {
@@ -19,7 +20,7 @@
         },
         "start": {
           "type": "integer",
-          "description": "Starting offset for pagination (default: 0)",
+          "description": "Zero-based offset. Continue with metadata.next_start.",
           "default": 0,
           "minimum": 0
         }

@@ -1,7 +1,7 @@
 """
 DrugSynergy_calculate_bliss
 
-Calculate Bliss Independence synergy score for a drug combination. Model: E_expected = E_a + E_b ...
+Calculate Bliss Independence synergy for a drug combination. Model: E_expected = E_a + E_b - E_a*...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def DrugSynergy_calculate_bliss(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Calculate Bliss Independence synergy score for a drug combination. Model: E_expected = E_a + E_b ...
+    Calculate Bliss Independence synergy for a drug combination. Model: E_expected = E_a + E_b - E_a*...
 
     Parameters
     ----------

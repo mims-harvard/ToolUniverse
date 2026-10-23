@@ -1,7 +1,7 @@
 """
 NASACMR_search_collections
 
-Search NASA's Common Metadata Repository (CMR) for Earth observation datasets and satellite colle...
+Search NASA CMR for Earth-observation collections. Results use exact one-based CMR pagination: st...
 """
 
 from typing import Any, Optional, Callable
@@ -10,7 +10,8 @@ from ._shared_client import get_shared_client
 
 def NASACMR_search_collections(
     keyword: str,
-    page_size: Optional[int] = None,
+    page_size: Optional[int] = 10,
+    page: Optional[int] = 1,
     data_center: Optional[str] = None,
     platform: Optional[str] = None,
     *,
@@ -19,14 +20,16 @@ def NASACMR_search_collections(
     validate: bool = True,
 ) -> Any:
     """
-    Search NASA's Common Metadata Repository (CMR) for Earth observation datasets and satellite colle...
+    Search NASA CMR for Earth-observation collections. Results use exact one-based CMR pagination: st...
 
     Parameters
     ----------
     keyword : str
         Free-text keyword search. Examples: 'sea surface temperature', 'land cover', ...
     page_size : int
-        Number of results to return (default 10, max 2000)
+        Collections per page (default 10, max 2000)
+    page : int
+        One-based CMR page number. Continue with metadata.next_page.
     data_center : str
         Filter by data center short name. Examples: 'NSIDC', 'PODAAC', 'GES_DISC', 'L...
     platform : str
@@ -50,6 +53,7 @@ def NASACMR_search_collections(
         for k, v in {
             "keyword": keyword,
             "page_size": page_size,
+            "page": page,
             "data_center": data_center,
             "platform": platform,
         }.items()

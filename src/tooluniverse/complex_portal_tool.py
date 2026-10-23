@@ -114,8 +114,27 @@ class ComplexPortalTool(BaseTool):
         """
         query = arguments.get("query", "")
         species = arguments.get("species", "9606")  # Default: human
-        first = arguments.get("first", 0)
-        number = arguments.get("number", 25)
+        try:
+            raw_first = arguments.get("first", 0)
+            raw_number = arguments.get("number", 25)
+            if isinstance(raw_first, bool) or isinstance(raw_number, bool):
+                raise ValueError
+            first = int(raw_first)
+            number = int(raw_number)
+            if isinstance(raw_first, float) and not raw_first.is_integer():
+                raise ValueError
+            if isinstance(raw_number, float) and not raw_number.is_integer():
+                raise ValueError
+            if first < 0 or not 1 <= number <= 500:
+                raise ValueError
+        except (TypeError, ValueError):
+            return {
+                "status": "error",
+                "error": (
+                    "first must be a non-negative integer and number must be an "
+                    "integer from 1 to 500"
+                ),
+            }
 
         if not query:
             return {"status": "error", "error": "query parameter is required"}
@@ -128,7 +147,7 @@ class ComplexPortalTool(BaseTool):
                 "facets": "species_f",
                 "filters": f'species_f:("{species_name}")' if species_name else None,
                 "first": first,
-                "number": min(number, 100),
+                "number": number,
             }
             # Remove None values
             params = {k: v for k, v in params.items() if v is not None}
@@ -140,15 +159,13 @@ class ComplexPortalTool(BaseTool):
             complexes = []
             elements = data.get("elements", [])
             for elem in elements:
+                description = elem.get("description")
                 complex_info = {
                     "complex_id": elem.get("complexAC"),
                     "name": elem.get("complexName"),
                     "species": elem.get("organismName"),
-                    "description": (
-                        elem.get("description", "")[:500]
-                        if elem.get("description")
-                        else None
-                    ),
+                    "description": description,
+                    "description_length": len(description or ""),
                     "predicted": elem.get("predictedComplex", False),
                     "subunits": [],
                 }
@@ -169,6 +186,11 @@ class ComplexPortalTool(BaseTool):
             total_found = data.get(
                 "totalNumberOfResults", data.get("size", len(complexes))
             )
+            try:
+                total_found = int(total_found)
+            except (TypeError, ValueError):
+                total_found = len(complexes)
+            has_more = first + len(complexes) < total_found
 
             return {
                 "status": "success",
@@ -178,6 +200,10 @@ class ComplexPortalTool(BaseTool):
                     "complexes": complexes,
                     "count": len(complexes),
                     "total_found": total_found,
+                    "first": first,
+                    "number": number,
+                    "has_more": has_more,
+                    "next_first": first + len(complexes) if has_more else None,
                 },
                 "source": "EBI Complex Portal (includes CORUM data)",
             }
@@ -199,6 +225,10 @@ class ComplexPortalTool(BaseTool):
                         "complexes": [],
                         "count": 0,
                         "total_found": 0,
+                        "first": first,
+                        "number": number,
+                        "has_more": False,
+                        "next_first": None,
                     },
                     "message": f"No complexes found for '{query}'",
                 }

@@ -578,12 +578,16 @@ class PDCTool(BaseTool):
 
         data_type = arguments.get("data_type", "log2_ratio")
         max_genes = arguments.get("max_genes", 50)
+        gene_offset = arguments.get("gene_offset", 0)
         try:
             max_genes = int(max_genes)
         except (TypeError, ValueError):
             max_genes = 50
-        if max_genes < 0:
-            max_genes = 0
+        max_genes = max(1, min(max_genes, 1000))
+        try:
+            gene_offset = max(0, int(gene_offset))
+        except (TypeError, ValueError):
+            gene_offset = 0
 
         # quantDataMatrix returns a 2D array: row 0 is the header
         # (first cell label + aliquot identifiers), each subsequent row is a
@@ -613,8 +617,9 @@ class PDCTool(BaseTool):
         # Header is [row-label, aliquot_1, aliquot_2, ...]; aliquots are columns.
         aliquots = header[1:] if len(header) > 1 else []
 
-        truncated = num_genes > max_genes
-        returned_rows = gene_rows[:max_genes]
+        returned_rows = gene_rows[gene_offset : gene_offset + max_genes]
+        has_more = gene_offset + len(returned_rows) < num_genes
+        truncated = gene_offset > 0 or has_more
 
         return {
             "status": "success",
@@ -629,5 +634,10 @@ class PDCTool(BaseTool):
                 "num_genes_returned": len(returned_rows),
                 "truncated": truncated,
                 "max_genes": max_genes,
+                "gene_offset": gene_offset,
+                "has_more": has_more,
+                "next_gene_offset": gene_offset + len(returned_rows)
+                if has_more
+                else None,
             },
         }

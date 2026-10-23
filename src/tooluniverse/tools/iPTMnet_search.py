@@ -15,6 +15,7 @@ def iPTMnet_search(
     ptm_type: Optional[str] = None,
     term_type: Optional[str] = "All",
     max_results: Optional[int] = 25,
+    offset: Optional[int] = 0,
     query: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -38,6 +39,8 @@ def iPTMnet_search(
         Type of search term. Default: All (searches across all fields)
     max_results : int
         Maximum results to return (default: 25)
+    offset : int
+        Zero-based offset in the complete filtered search response.
     query : str
         Gene name, protein name, or keyword to search (alias for search_term)
     stream_callback : Callable, optional
@@ -63,6 +66,7 @@ def iPTMnet_search(
             "ptm_type": ptm_type,
             "term_type": term_type,
             "max_results": max_results,
+            "offset": offset,
             "query": query,
         }.items()
         if v is not None

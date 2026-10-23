@@ -14,7 +14,15 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of results to return (default 10, max 100)"
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Number of results in this page (default 10, max 100)"
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based search offset. Continue with metadata.next_start while metadata.has_more is true."
         },
         "facet_Category": {
           "type": [
@@ -32,7 +40,8 @@
       "endpoint": "https://www.humanmine.org/humanmine/service/search",
       "params": {
         "format": "json"
-      }
+      },
+      "pagination": "intermine_start"
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -171,7 +180,15 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of results to return (default 10, max 100)"
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Number of results in this page (default 10, max 100)"
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based search offset. Continue with metadata.next_start while metadata.has_more is true."
         }
       },
       "required": [
@@ -183,7 +200,8 @@
       "params": {
         "format": "json",
         "facet_Category": "Gene"
-      }
+      },
+      "pagination": "intermine_start"
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -291,7 +309,15 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of results to return (default 10, max 100)"
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Number of results in this page (default 10, max 100)"
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based search offset. Continue with metadata.next_start while metadata.has_more is true."
         }
       },
       "required": [
@@ -303,7 +329,8 @@
       "params": {
         "format": "json",
         "facet_Category": "Pathway"
-      }
+      },
+      "pagination": "intermine_start"
     },
     "type": "BaseRESTTool",
     "test_examples": [

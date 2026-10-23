@@ -1,7 +1,7 @@
 [
   {
     "name": "EPMC_get_text_mined_annotations",
-    "description": "Get all text-mined annotations from a biomedical article via Europe PMC. Returns gene/protein mentions, diseases, chemicals, organisms, and GO terms automatically extracted from the full text. Useful for quickly identifying which genes, drugs, or diseases are discussed in a paper. Example: pmid='33332779' (COVID-19 tocilizumab trial) returns IL-6 receptor, tocilizumab, SARS-CoV-2, etc.",
+    "description": "Get all unique text-mined annotations from a biomedical article via Europe PMC. Returns the complete deduplicated gene/protein, disease, chemical, organism, GO, and EFO entity sets with mention counts; annotation_counts reports each full group size. Example: PMC5500808 returns more than 70 unique gene/protein entities without silent capping.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -57,7 +57,7 @@
   },
   {
     "name": "EPMC_get_article_genes",
-    "description": "Get genes and proteins mentioned in a biomedical article, identified by text mining from Europe PMC. Returns gene/protein names with UniProt links and mention frequency. Useful for identifying which genes a paper discusses. Example: pmid='33332779' returns interleukin-6 receptor and other proteins.",
+    "description": "Get the complete deduplicated set of genes and proteins mentioned in a biomedical article, identified by Europe PMC text mining. Returns names, links, mention frequency, total_entities, and returned_entities without a hidden top-30 cap.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -107,7 +107,7 @@
   },
   {
     "name": "EPMC_get_article_diseases",
-    "description": "Get diseases mentioned in a biomedical article, identified by text mining from Europe PMC. Returns disease names with ontology links (EFO, HPO) and mention frequency. Example: pmid='33332779' returns COVID-19, pneumonia, etc.",
+    "description": "Get the complete deduplicated set of diseases mentioned in a biomedical article, identified by Europe PMC text mining. Returns disease names, ontology links, mention frequency, and accurate total/returned counts without a hidden top-30 cap.",
     "parameter": {
       "type": "object",
       "properties": {

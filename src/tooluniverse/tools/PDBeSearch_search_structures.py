@@ -12,6 +12,8 @@ def PDBeSearch_search_structures(
     query: str,
     limit: Optional[int] = None,
     sort_by: Optional[str] = "relevance",
+    offset: Optional[int] = 0,
+    max_rows_scanned: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,9 +27,13 @@ def PDBeSearch_search_structures(
     query : str
         Search query - protein name, gene name, or keyword. Supports Solr syntax. Exa...
     limit : int
-        Maximum results to return (1-50, default 10).
+        Unique PDB entries per page (1-1000, default 10). Invalid values return an er...
     sort_by : str
         Result ordering: 'relevance' (default) puts the best text match first with re...
+    offset : int
+        Zero-based offset after deduplication by pdb_id. Continue with metadata.next_...
+    max_rows_scanned : int
+        Optional entity-level Solr scan budget used to fill the requested unique-PDB ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +50,13 @@ def PDBeSearch_search_structures(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"query": query, "limit": limit, "sort_by": sort_by}.items()
+        for k, v in {
+            "query": query,
+            "limit": limit,
+            "sort_by": sort_by,
+            "offset": offset,
+            "max_rows_scanned": max_rows_scanned,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

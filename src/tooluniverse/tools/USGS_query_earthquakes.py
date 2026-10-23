@@ -1,7 +1,7 @@
 """
 USGS_query_earthquakes
 
-Query the USGS FDSN earthquake database with custom parameters to search historical and recent se...
+Query the USGS FDSN earthquake database with explicit one-based offset pagination and an exact to...
 """
 
 from typing import Any, Optional, Callable
@@ -17,14 +17,16 @@ def USGS_query_earthquakes(
     maxlatitude: Optional[float] = None,
     minlongitude: Optional[float] = None,
     maxlongitude: Optional[float] = None,
-    limit: Optional[int] = None,
+    limit: Optional[int] = 20000,
+    offset: Optional[int] = 1,
+    orderby: Optional[str] = "time",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Query the USGS FDSN earthquake database with custom parameters to search historical and recent se...
+    Query the USGS FDSN earthquake database with explicit one-based offset pagination and an exact to...
 
     Parameters
     ----------
@@ -45,7 +47,11 @@ def USGS_query_earthquakes(
     maxlongitude : float
         Maximum longitude
     limit : int
-        Maximum number of events (default 20000, max 20000)
+        Events per page (default 20000, max 20000)
+    offset : int
+        One-based event offset. Continue with metadata.next_offset.
+    orderby : str
+        Stable result ordering. Default 'time' (newest first).
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -72,6 +78,8 @@ def USGS_query_earthquakes(
             "minlongitude": minlongitude,
             "maxlongitude": maxlongitude,
             "limit": limit,
+            "offset": offset,
+            "orderby": orderby,
         }.items()
         if v is not None
     }

@@ -85,3 +85,23 @@ def test_no_hits_is_an_empty_success_not_unrelated_records():
 def test_blank_query_is_an_error_and_makes_no_request():
     result, urls = _run({"query": "  "}, {})
     assert result["status"] == "error" and urls == []
+
+
+def test_page_maps_to_ebi_start_offset_and_reports_next_page():
+    result, urls = _run({"query": "MALAT1", "page_size": 2, "page": 3}, EBI_HIT)
+    params = parse_qs(urlparse(urls[0]).query)
+    assert params["start"] == ["4"] and params["size"] == ["2"]
+    metadata = result["metadata"]
+    assert metadata["page"] == 3 and metadata["returned"] == 2
+    assert metadata["has_more"] is True and metadata["next_page"] == 4
+
+
+def test_last_page_and_accession_lookup_have_no_next_page():
+    last, _ = _run(
+        {"query": "MALAT1", "page_size": 2, "page": 2},
+        {"hitCount": 4, "entries": EBI_HIT["entries"]},
+    )
+    assert last["metadata"]["has_more"] is False
+    assert last["metadata"]["next_page"] is None
+    record, _ = _run({"query": "URS0000D5CD72"}, {"rnacentral_id": "URS0000D5CD72"})
+    assert record["metadata"]["has_more"] is False

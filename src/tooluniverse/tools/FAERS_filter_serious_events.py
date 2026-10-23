@@ -15,6 +15,8 @@ def FAERS_filter_serious_events(
     drug: Optional[str] = None,
     event_type: Optional[str] = None,
     adverse_event: Optional[str] = None,
+    limit: Optional[int] = 20,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -37,6 +39,10 @@ def FAERS_filter_serious_events(
         Alias for seriousness_type. Type of serious event (e.g., hospitalization, dea...
     adverse_event : str
         Specific adverse event to filter within serious events (e.g., 'Myocardial inf...
+    limit : int
+        Maximum ranked reactions to return on this page.
+    offset : int
+        Zero-based ranked-reaction offset. Continue with next_offset while has_more i...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -60,6 +66,8 @@ def FAERS_filter_serious_events(
             "drug": drug,
             "event_type": event_type,
             "adverse_event": adverse_event,
+            "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

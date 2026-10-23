@@ -328,7 +328,7 @@
   },
   {
     "name": "ICD10_search_codes",
-    "description": "Search ICD-10-CM (Clinical Modification) codes by disease name or code. ICD-10-CM is the US clinical modification of ICD-10, the current standard for diagnosis coding in US healthcare (effective through 2025). Returns matching codes with full descriptions. Uses NLM Clinical Tables API (no API key required). This provides 2026 ICD-10-CM codes for backward compatibility while ICD-11 adoption is ongoing.",
+    "description": "Search 2026 ICD-10-CM codes by disease name or code using official NLM count+offset pagination. Returns codes and full descriptions. Response metadata exposes total_results, accessible_results, has_more, and next_offset; NLM caps retrieval at 7,500 matches.",
     "type": "ICD10Tool",
     "parameter": {
       "type": "object",
@@ -339,8 +339,17 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum number of results to return (default: 20, max: 100)",
-          "default": 20
+          "description": "Page size (default 20, range 1-500).",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 500
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based first match. Continue with metadata.next_offset; offset + limit cannot exceed 7,500.",
+          "default": 0,
+          "minimum": 0,
+          "maximum": 7499
         }
       },
       "required": [
@@ -355,40 +364,28 @@
     "return_schema": {
       "type": "object",
       "properties": {
-        "data": {
-          "type": "object",
-          "properties": {
-            "total": {
-              "type": "integer"
-            },
-            "results": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "code": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  }
-                }
+        "total": {
+          "type": "integer"
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
               }
             }
           }
-        },
-        "metadata": {
-          "type": "object",
-          "properties": {
-            "source": {
-              "type": "string"
-            },
-            "version": {
-              "type": "string"
-            }
-          }
         }
-      }
+      },
+      "required": [
+        "total",
+        "results"
+      ]
     },
     "test_examples": [
       {
@@ -397,7 +394,8 @@
       },
       {
         "query": "essential hypertension",
-        "limit": 10
+        "limit": 10,
+        "offset": 10
       },
       {
         "query": "E11",
@@ -433,29 +431,28 @@
     "return_schema": {
       "type": "object",
       "properties": {
-        "data": {
-          "type": "object",
-          "properties": {
-            "total": {
-              "type": "integer"
-            },
-            "results": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "code": {
-                    "type": "string"
-                  },
-                  "name": {
-                    "type": "string"
-                  }
-                }
+        "total": {
+          "type": "integer"
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
               }
             }
           }
         }
-      }
+      },
+      "required": [
+        "total",
+        "results"
+      ]
     },
     "test_examples": [
       {

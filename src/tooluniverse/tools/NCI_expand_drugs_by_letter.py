@@ -1,7 +1,7 @@
 """
 NCI_expand_drugs_by_letter
 
-Browse the NCI Drug Dictionary by first letter. Returns all cancer drugs and drug aliases startin...
+Browse one page of the NCI Drug Dictionary by first letter. The response includes an exact total ...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def NCI_expand_drugs_by_letter(
     validate: bool = True,
 ) -> Any:
     """
-    Browse the NCI Drug Dictionary by first letter. Returns all cancer drugs and drug aliases startin...
+    Browse one page of the NCI Drug Dictionary by first letter. The response includes an exact total ...
 
     Parameters
     ----------
@@ -27,7 +27,7 @@ def NCI_expand_drugs_by_letter(
     size : int
         Number of results per page (default: 100, max: 10000)
     from_ : int
-        Offset for pagination (default: 0)
+        Zero-based record offset (generated Python wrapper name: from_). Continue wit...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

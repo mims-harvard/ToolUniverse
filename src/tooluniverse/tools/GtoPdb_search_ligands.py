@@ -13,6 +13,8 @@ def GtoPdb_search_ligands(
     type_: Optional[str] = None,
     approved: Optional[bool] = None,
     query: Optional[str] = None,
+    limit: Optional[int] = 25,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -31,6 +33,10 @@ def GtoPdb_search_ligands(
         Filter to approved drugs only (true) or all ligands (false/omit). Enforced by...
     query : str
         Name/keyword to search for. Alias for the "name" parameter.
+    limit : int
+        Number of ligands on this page (1-200; default 25).
+    offset : int
+        Zero-based ligand offset. Continue with next_offset while has_more is true.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +58,8 @@ def GtoPdb_search_ligands(
             "type": type_,
             "approved": approved,
             "query": query,
+            "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

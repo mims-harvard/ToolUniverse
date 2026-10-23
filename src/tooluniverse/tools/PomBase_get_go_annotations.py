@@ -1,7 +1,7 @@
 """
 PomBase_get_go_annotations
 
-Get Gene Ontology annotations (biological_process / molecular_function / cellular_component) for ...
+Get the complete Gene Ontology annotation set (biological_process / molecular_function / cellular...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def PomBase_get_go_annotations(
     validate: bool = True,
 ) -> Any:
     """
-    Get Gene Ontology annotations (biological_process / molecular_function / cellular_component) for ...
+    Get the complete Gene Ontology annotation set (biological_process / molecular_function / cellular...
 
     Parameters
     ----------

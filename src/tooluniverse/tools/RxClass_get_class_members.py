@@ -1,7 +1,7 @@
 """
 RxClass_get_class_members
 
-List all drugs belonging to a specific drug class by class ID in NLM RxClass. Returns RXCUIs and ...
+List drugs belonging to a specific NLM RxClass class ID. Metadata reports the exact total_count a...
 """
 
 from typing import Any, Optional, Callable
@@ -13,13 +13,14 @@ def RxClass_get_class_members(
     rela_source: Optional[str] = None,
     ttys: Optional[str] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    List all drugs belonging to a specific drug class by class ID in NLM RxClass. Returns RXCUIs and ...
+    List drugs belonging to a specific NLM RxClass class ID. Metadata reports the exact total_count a...
 
     Parameters
     ----------
@@ -31,6 +32,8 @@ def RxClass_get_class_members(
         RxNorm term types to include. Options: 'IN' (ingredients, default), 'PIN' (pr...
     limit : int
         Maximum number of drugs to return (default 50).
+    offset : int
+        Zero-based offset in the complete class member list. Continue with metadata.n...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def RxClass_get_class_members(
             "rela_source": rela_source,
             "ttys": ttys,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

@@ -386,8 +386,18 @@ class BaseTool:
             # Only filter known internal parameters, not all underscore-prefixed params
             # to allow optional streaming parameter _tooluniverse_stream
             internal_params = {"ctx", "_tooluniverse_stream"}
+            properties = schema.get("properties", {})
+            fixed_operation = (self.tool_config.get("fields") or {}).get("operation")
             filtered_arguments = {
-                k: v for k, v in arguments.items() if k not in internal_params
+                k: v
+                for k, v in arguments.items()
+                if k not in internal_params
+                and not (
+                    k == "operation"
+                    and "operation" not in properties
+                    and isinstance(fixed_operation, str)
+                    and v == fixed_operation
+                )
             }
 
             # Feature-26A-8: ToolUniverse fills `operation` into `arguments`

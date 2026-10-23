@@ -95,7 +95,7 @@ def test_forms_that_the_index_returns_survive_to_the_caller():
     half of the defect free to come back.
     """
     tool = _tool(_FORMS_RESPONSE)
-    result = tool._search_forms({"terms": "PHQ-9"})
+    result = tool._search_forms({"terms": "PHQ-9"})["data"]
     assert result["count"] == 2
     assert [row["code"] for row in result["results"]] == ["44249-1", "89206-7"]
     assert result["total_count"] == 2
@@ -104,7 +104,7 @@ def test_forms_that_the_index_returns_survive_to_the_caller():
 
 def test_a_genuinely_empty_form_search_says_which_kind_of_empty_it_is():
     tool = _tool([0, [], None, []])
-    result = tool._search_forms({"terms": "no such instrument"})
+    result = tool._search_forms({"terms": "no such instrument"})["data"]
     assert result["count"] == 0
     assert "LOINC_search_tests" in result["note"], (
         "an honest zero must point the caller at the operation that can answer"
@@ -234,7 +234,7 @@ def test_rows_beyond_a_short_extra_field_list_are_left_alone():
 def test_extra_fields_are_only_attached_when_the_operation_asked_for_them():
     """Control: the plain test search must not sprout `ef` keys."""
     tool = _tool(_FORMS_RESPONSE)
-    result = tool._search_loinc_items({"terms": "PHQ-9"})
+    result = tool._search_loinc_items({"terms": "PHQ-9"})["data"]
     assert tool.sent.get("ef") is None
     assert all("AnswerLists" not in row for row in result["results"])
 
@@ -350,7 +350,7 @@ def test_the_details_operation_cross_checks_its_row_too():
 
 def test_a_zero_result_response_carries_no_per_code_field_note():
     """It would describe the fields of no codes at all."""
-    result = _tool([0, [], None, []])._search_loinc_items({"terms": "LC/MS/MS"})
+    result = _tool([0, [], None, []])._search_loinc_items({"terms": "LC/MS/MS"})["data"]
     assert result["count"] == 0
     assert "fields_unavailable" not in result
     assert "fields_unavailable_note" not in result

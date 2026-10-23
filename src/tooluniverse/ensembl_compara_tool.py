@@ -261,6 +261,11 @@ class EnsemblComparaTool(BaseTool):
         # Count members in the tree
         members = []
         self._collect_members(tree_data, members)
+        limit = max(1, int(arguments.get("limit", 50)))
+        offset = max(0, int(arguments.get("offset", 0)))
+        page = members[offset : offset + limit]
+        next_offset = offset + len(page)
+        has_more = next_offset < len(members)
 
         return {
             "status": "success",
@@ -268,8 +273,12 @@ class EnsemblComparaTool(BaseTool):
                 "tree_id": tree_id,
                 "newick": newick,
                 "rooted": rooted,
-                "members": members[:50],
+                "members": page,
                 "total_members": len(members),
+                "returned": len(page),
+                "offset": offset,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
             },
             "metadata": {
                 "source": "Ensembl Compara",
@@ -277,10 +286,8 @@ class EnsemblComparaTool(BaseTool):
             },
         }
 
-    def _collect_members(self, node, members, max_members=200):
+    def _collect_members(self, node, members):
         """Recursively collect leaf members from gene tree."""
-        if len(members) >= max_members:
-            return
         if isinstance(node, dict):
             # Leaf nodes carry a gene "id" and have no "children"; internal
             # (ancestral) nodes have "taxonomy" too but no "id". Confirmed
@@ -301,7 +308,7 @@ class EnsemblComparaTool(BaseTool):
                 )
             # Traverse children
             for child in node.get("children", []):
-                self._collect_members(child, members, max_members)
+                self._collect_members(child, members)
 
     def _get_cafe_tree(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get the CAFE gene-family gain/loss tree for a gene family."""
@@ -335,6 +342,11 @@ class EnsemblComparaTool(BaseTool):
         # Recursively collect per-node gene-family size dynamics.
         nodes = []
         self._collect_cafe_nodes(tree, nodes)
+        limit = max(1, int(arguments.get("limit", 200)))
+        offset = max(0, int(arguments.get("offset", 0)))
+        page = nodes[offset : offset + limit]
+        next_offset = offset + len(page)
+        has_more = next_offset < len(nodes)
 
         # The root node carries the family-wide birth-death (lambda) rate.
         root_lambda = tree.get("lambda") if isinstance(tree, dict) else None
@@ -349,8 +361,12 @@ class EnsemblComparaTool(BaseTool):
                 "root_n_members": tree.get("n_members")
                 if isinstance(tree, dict)
                 else None,
-                "nodes": nodes[:200],
+                "nodes": page,
                 "total_nodes": len(nodes),
+                "returned": len(page),
+                "offset": offset,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
             },
             "metadata": {
                 "source": "Ensembl Compara - CAFE",
@@ -358,9 +374,9 @@ class EnsemblComparaTool(BaseTool):
             },
         }
 
-    def _collect_cafe_nodes(self, node, nodes, max_nodes=400):
+    def _collect_cafe_nodes(self, node, nodes):
         """Recursively collect gene-family size dynamics at every CAFE node."""
-        if not isinstance(node, dict) or len(nodes) >= max_nodes:
+        if not isinstance(node, dict):
             return
         tax = node.get("tax") or {}
         nodes.append(
@@ -375,4 +391,4 @@ class EnsemblComparaTool(BaseTool):
             }
         )
         for child in node.get("children", []):
-            self._collect_cafe_nodes(child, nodes, max_nodes)
+            self._collect_cafe_nodes(child, nodes)

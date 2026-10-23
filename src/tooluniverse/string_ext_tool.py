@@ -74,6 +74,12 @@ class STRINGExtTool(BaseTool):
 
         species = arguments.get("species", 9606)
         category = arguments.get("category", None)
+        limit = arguments.get("limit", 15)
+        offset = arguments.get("offset", 0)
+        if isinstance(limit, bool) or not isinstance(limit, int) or limit <= 0:
+            return {"status": "error", "error": "limit must be a positive integer"}
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {"status": "error", "error": "offset must be a non-negative integer"}
 
         url = f"{STRING_API_BASE_URL}/functional_annotation"
         params = {
@@ -102,7 +108,22 @@ class STRINGExtTool(BaseTool):
             )
 
         category_summary = {cat: len(items) for cat, items in by_category.items()}
-        top_annotations = {cat: items[:15] for cat, items in by_category.items()}
+        annotations = {
+            cat: items[offset : offset + limit] for cat, items in by_category.items()
+        }
+        category_pagination = {}
+        for cat, items in by_category.items():
+            returned = len(annotations[cat])
+            has_more = offset + returned < len(items)
+            category_pagination[cat] = {
+                "total": len(items),
+                "returned": returned,
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "next_offset": offset + returned if has_more else None,
+            }
+        has_more = any(page["has_more"] for page in category_pagination.values())
 
         return {
             "status": "success",
@@ -111,12 +132,17 @@ class STRINGExtTool(BaseTool):
                 "species": species,
                 "total_annotations": len(data),
                 "category_summary": category_summary,
-                "annotations": top_annotations,
+                "annotations": annotations,
             },
             "metadata": {
                 "source": "STRING API - Functional Annotation",
                 "identifiers": identifiers,
                 "species": species,
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "next_offset": offset + limit if has_more else None,
+                "category_pagination": category_pagination,
             },
         }
 

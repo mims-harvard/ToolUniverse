@@ -2,7 +2,7 @@
   {
     "type": "CompoundDiseaseProfileTool",
     "name": "gather_disease_profile",
-    "description": "Gather a comprehensive disease profile from Orphanet, OMIM, DisGeNET, OpenTargets, and OLS in a single call. Returns disease identifiers (ORPHA, MIM, EFO, MONDO), associated genes with scores, inheritance pattern, prevalence, and ontology cross-references. Use for disease research requiring multi-database evidence.",
+    "description": "Gather a comprehensive disease profile from Orphanet, OMIM, DisGeNET, OpenTargets, and OLS in a single call. Returns disease identifiers, associated genes, inheritance, prevalence, and the complete OpenTargets cross-reference list with dbXRef_count; cross-references are not silently capped at 10.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -145,6 +145,9 @@
                   "items": {
                     "type": "string"
                   }
+                },
+                "dbXRef_count": {
+                  "type": "integer"
                 }
               }
             },

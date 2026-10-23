@@ -1,7 +1,7 @@
 [
   {
     "name": "UniChem_search_compound",
-    "description": "Search UniChem for a chemical compound by InChIKey, source compound ID, or UCI (UniChem Compound Identifier). Returns cross-references to the compound across 40+ chemical databases including ChEMBL, DrugBank, PDBe, PubChem, KEGG, ChEBI, HMDB, and more. UniChem is EBI's unified chemical cross-referencing service. Example: searching InChIKey 'BSYNRYMUTXBXSQ-UHFFFAOYSA-N' (aspirin) returns mappings to CHEMBL25, DB00945, C01405, etc.",
+    "description": "Search UniChem by InChI, InChIKey, source compound ID, or UCI. Every returned compound is preserved (important because source IDs can map one-to-many), totalCompounds is normalized and verified, and every source record retains its numeric source ID. Per compound, source_record_count, unique_source_count, and duplicate_source_records distinguish database coverage from multiple IDs in the same database. Live aspirin data includes many duplicate records within sources such as ClinicalTrials and BRENDA, so source record count must not be interpreted as unique database count.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -11,7 +11,13 @@
         },
         "type": {
           "type": "string",
-          "description": "Type of the compound identifier. One of: 'inchikey', 'sourceID', 'uci'. Default: 'inchikey'."
+          "enum": [
+            "inchi",
+            "inchikey",
+            "sourceID",
+            "uci"
+          ],
+          "description": "Type of compound representation. sourceID means a source compound ID and requires the numeric sourceID field."
         },
         "sourceID": {
           "type": [
@@ -24,6 +30,22 @@
       "required": [
         "compound",
         "type"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "sourceID"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "sourceID"
+            ]
+          }
+        }
       ]
     },
     "fields": {
@@ -73,6 +95,21 @@
             "source_count": {
               "type": "integer"
             },
+            "total_compounds": {
+              "type": "integer"
+            },
+            "returned_compounds": {
+              "type": "integer"
+            },
+            "result_set_complete": {
+              "type": "boolean"
+            },
+            "compounds": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
             "sources": {
               "type": "array",
               "items": {
@@ -80,6 +117,12 @@
                 "properties": {
                   "source_name": {
                     "type": "string"
+                  },
+                  "source_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
                   },
                   "source_long_name": {
                     "type": "string"
@@ -114,7 +157,7 @@
   },
   {
     "name": "UniChem_list_sources",
-    "description": "List all chemical database sources registered in UniChem. Returns the complete catalog of 40+ databases with their source IDs, names, descriptions, compound counts, and URLs. Use this to discover which databases are available for cross-referencing and to find source IDs for the UniChem_search_compound tool. Major sources include ChEMBL (id=1), DrugBank (id=2), PDBe (id=3), PubChem (id=22), KEGG (id=6), ChEBI (id=7), HMDB (id=18).",
+    "description": "List the complete current UniChem source catalog and verify returned length against totalSources. The live catalog currently reports 25 active sources, not a fixed 40+ count. Use the returned source IDs rather than assuming historical mappings. Current major examples include ChEMBL=1, DrugBank=2, RCSB PDB=3, PDBe=5, ChEBI=7, HMDB=18, and PubChem=22.",
     "parameter": {
       "type": "object",
       "properties": {},
@@ -134,6 +177,12 @@
           "properties": {
             "source_count": {
               "type": "integer"
+            },
+            "reported_total_sources": {
+              "type": "integer"
+            },
+            "result_set_complete": {
+              "type": "boolean"
             },
             "sources": {
               "type": "array",
@@ -198,7 +247,13 @@
         },
         "type": {
           "type": "string",
-          "description": "Type of the compound identifier. One of: 'inchikey', 'sourceID', 'uci'. Default: 'inchikey'."
+          "enum": [
+            "inchi",
+            "inchikey",
+            "sourceID",
+            "uci"
+          ],
+          "description": "Type of compound representation. sourceID requires the numeric sourceID field."
         },
         "sourceID": {
           "type": [
@@ -211,6 +266,22 @@
       "required": [
         "compound",
         "type"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "sourceID"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "sourceID"
+            ]
+          }
+        }
       ]
     },
     "fields": {

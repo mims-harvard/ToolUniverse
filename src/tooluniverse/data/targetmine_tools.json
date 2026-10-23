@@ -12,8 +12,16 @@
         },
         "size": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
           "default": 10,
           "description": "Number of results to return (default: 10)."
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based search offset. Continue with metadata.next_start while metadata.has_more is true."
         },
         "format": {
           "type": "string",
@@ -34,7 +42,8 @@
       "return_format": "JSON",
       "params": {
         "format": "json"
-      }
+      },
+      "pagination": "intermine_start"
     },
     "return_schema": {
       "oneOf": [
@@ -128,8 +137,16 @@
         },
         "size": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
           "default": 10,
           "description": "Number of results to return (default: 10)."
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based search offset. Continue with metadata.next_start while metadata.has_more is true."
         }
       },
       "required": [
@@ -142,7 +159,8 @@
       "params": {
         "format": "json",
         "facet_Category": "Gene"
-      }
+      },
+      "pagination": "intermine_start"
     },
     "return_schema": {
       "oneOf": [

@@ -1,7 +1,7 @@
 """
 ELM_list_classes
 
-List short linear motif (SLiM) classes from the ELM database. Each class represents a distinct ty...
+List ELM short linear motif classes with exact total and recoverable offset pagination. Continue ...
 """
 
 from typing import Any, Optional, Callable
@@ -13,13 +13,14 @@ def ELM_list_classes(
     motif_type: Optional[str] = None,
     query: Optional[str] = None,
     max_results: Optional[int] = 50,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> list[Any]:
     """
-    List short linear motif (SLiM) classes from the ELM database. Each class represents a distinct ty...
+    List ELM short linear motif classes with exact total and recoverable offset pagination. Continue ...
 
     Parameters
     ----------
@@ -31,6 +32,8 @@ def ELM_list_classes(
         Search keyword to filter by name, identifier, or description. E.g., 'caspase'...
     max_results : int
         Maximum results to return (default: 50, max: 400 covers all classes)
+    offset : int
+        Zero-based offset in the filtered motif-class list.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def ELM_list_classes(
             "motif_type": motif_type,
             "query": query,
             "max_results": max_results,
+            "offset": offset,
         }.items()
         if v is not None
     }

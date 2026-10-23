@@ -92,13 +92,36 @@ class AlphaFillTransplantsTool(BaseTool):
                 ):
                     rec["best_local_rmsd"] = rmsd
 
+        source_pdb_offset = max(int(arguments.get("source_pdb_offset") or 0), 0)
+        source_pdb_limit = min(
+            max(int(arguments.get("source_pdb_limit") or 10), 1), 500
+        )
+
         transplants = sorted(
             (
                 {
                     "compound_id": cid,
                     "occurrences": rec["count"],
                     "best_local_rmsd": rec["best_local_rmsd"],
-                    "source_pdb_ids": sorted(rec["source_pdb_ids"])[:10],
+                    "source_pdb_ids": sorted(rec["source_pdb_ids"])[
+                        source_pdb_offset : source_pdb_offset + source_pdb_limit
+                    ],
+                    "source_pdb_ids_total": len(rec["source_pdb_ids"]),
+                    "source_pdb_ids_returned": len(
+                        sorted(rec["source_pdb_ids"])[
+                            source_pdb_offset : source_pdb_offset + source_pdb_limit
+                        ]
+                    ),
+                    "source_pdb_ids_truncated": (
+                        source_pdb_offset + source_pdb_limit
+                        < len(rec["source_pdb_ids"])
+                    ),
+                    "next_source_pdb_offset": (
+                        source_pdb_offset + source_pdb_limit
+                        if source_pdb_offset + source_pdb_limit
+                        < len(rec["source_pdb_ids"])
+                        else None
+                    ),
                 }
                 for cid, rec in agg.items()
             ),

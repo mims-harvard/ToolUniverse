@@ -121,7 +121,7 @@
   },
   {
     "name": "OMA_get_orthologs",
-    "description": "Get pairwise orthologs for a protein from the OMA (Orthologous MAtrix) Browser. Returns orthologous proteins across species with relationship type (1:1, 1:many, many:1, many:many), evolutionary distance, and alignment score. OMA orthologs are inferred using a rigorous algorithm that provides high-confidence predictions. Example: P04637 (human p53) returns orthologs in 200+ species including Mus musculus, Danio rerio, and Drosophila melanogaster. The response reports 'count' (orthologs in this response) alongside 'total_count' (all orthologs OMA holds for the protein); these differ whenever 'per_page' is smaller than the full set, which is usual -- P04637 has 157. When they differ 'truncated' is true and 'truncation_note' says how to widen the request. Treat 'count' as a page size and never as the number of species with an ortholog.",
+    "description": "Get pairwise orthologs for a protein from the OMA (Orthologous MAtrix) Browser. Returns orthologous proteins across species with relationship type (1:1, 1:many, many:1, many:many), evolutionary distance, and alignment score. OMA orthologs are inferred using a rigorous algorithm that provides high-confidence predictions. Example: P04637 (human p53) returns orthologs in 200+ species including Mus musculus, Danio rerio, and Drosophila melanogaster. The upstream protein-ortholog endpoint returns its complete filtered list and ignores per_page/page, so ToolUniverse applies local per_page/offset pagination. The response reports 'count' (orthologs in this response) alongside 'total_count' (all orthologs OMA holds for the protein); these differ whenever 'per_page' is smaller than the full set, which is usual -- P04637 has 157. When they differ 'truncated' is true and 'truncation_note' says how to widen the request; continue with metadata.next_offset while has_more is true. Treat 'count' as a page size and never as the number of species with an ortholog.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -141,7 +141,15 @@
             "integer",
             "null"
           ],
-          "description": "Number of orthologs to return (default: 20). OMA does not paginate this endpoint -- it returns the complete ortholog set in one response -- so this limit is applied by ToolUniverse after fetching, and there is no maximum: set it to 'total_count' to receive every ortholog."
+          "description": "Number of orthologs to return (default: 20, maximum 1000). OMA does not paginate this endpoint -- it returns the complete ortholog set in one response -- so this limit is applied by ToolUniverse after fetching; use 'offset' for later slices.",
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset into the complete filtered ortholog list. Continue with metadata.next_offset while has_more is true."
         }
       },
       "required": [
@@ -225,7 +233,7 @@
   },
   {
     "name": "OMA_get_hog",
-    "description": "Get Hierarchical Orthologous Group (HOG) information from OMA. HOGs represent groups of genes that descended from a single ancestral gene within a given taxonomic range. HOGs capture the full evolutionary history of gene families including gene duplications. Example: HOG:F0782425 returns the p53 HOG at the Euteleostomi level with description 'cellular tumor antigen p53', completeness score 0.61, and child HOGs for fish, mammals, etc.",
+    "description": "Get complete Hierarchical Orthologous Group (HOG) information from OMA. Returns all child HOGs and all alternative taxonomic levels, including every child's complete alternative-level list, with explicit counts at each layer; evolutionary branches are not silently capped.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -320,13 +328,26 @@
   },
   {
     "name": "OMA_get_group",
-    "description": "Get OMA Group details including member proteins. OMA Groups contain sets of strict 1:1 orthologs across all genomes, ensuring each species contributes at most one gene. This is the most stringent orthology definition in OMA. Group numbers are not stable/predictable identifiers to memorize -- resolve the current group ID for a protein of interest via OMA_get_protein's 'oma_group' field first. Verified example: group 1458663 returns the p53 OMA Group, description 'Cellular tumor antigen p53', fingerprint 'ACCQRNQ'.",
+    "description": "Get OMA Group details and page through all member proteins. OMA Groups contain sets of strict 1:1 orthologs across all genomes, ensuring each species contributes at most one gene. This is the most stringent orthology definition in OMA. Reports the true member total, returned count, and next offset so large strict-ortholog groups do not silently stop at 30 members. Group numbers are not stable/predictable identifiers to memorize -- resolve the current group ID for a protein of interest via OMA_get_protein's 'oma_group' field first. Verified example: group 1458663 returns the p53 OMA Group, description 'Cellular tumor antigen p53', fingerprint 'ACCQRNQ'.",
     "parameter": {
       "type": "object",
       "properties": {
         "group_id": {
           "type": "string",
           "description": "OMA Group number (numeric ID). Verified example: '1458663' (p53 group). Use OMA_get_protein to find the current group ID for a specific protein rather than assuming a remembered ID still maps to the same group."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 30,
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Maximum group members to return."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based offset into all OMA group members."
         }
       },
       "required": [
@@ -418,7 +439,7 @@
   },
   {
     "name": "OMA_resolve_xref",
-    "description": "Resolve a gene name, gene symbol, UniProt entry name, or any cross-reference identifier to OMA protein entries. This is the entry point into the OMA toolchain when you only have a common identifier (e.g. 'BRCA2' or 'MED4_HUMAN') rather than a UniProt accession or OMA ID. OMA_get_protein only accepts a UniProt accession (P04637) or OMA ID (HUMAN31534); use this tool first to obtain the entry_nr / oma_id / genome for the gene of interest, then feed the oma_id into OMA_get_protein, OMA_get_orthologs, OMA_get_protein_go, etc. Example: search='MED4_HUMAN' returns entry_nr 24423700, oma_id HUMAN17018, species Homo sapiens (taxon 9606); search='BRCA2' returns matching OMA entries across species.",
+    "description": "Resolve and page through OMA cross-reference matches for a gene symbol, UniProt entry name, or other identifier. Returns the true match total, returned count, and next offset so broad identifiers such as BRCA2 do not silently stop at 100; feed returned OMA IDs into protein/ortholog/HOG tools.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -431,7 +452,16 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of cross-reference matches to return (default: 25, max: 100)."
+          "description": "Maximum cross-reference matches to return (default 25, max 1000).",
+          "default": 25,
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based offset into all OMA cross-reference matches."
         }
       },
       "required": [
@@ -506,7 +536,7 @@
   },
   {
     "name": "OMA_get_genome_pair_orthologs",
-    "description": "Retrieve the complete set of pairwise orthologs between TWO whole genomes (proteome-vs-proteome) in OMA. Unlike OMA_get_orthologs (which returns orthologs of a single query protein), this returns every orthologous protein PAIR between two species genomes -- the data used to build species-pair ortholog tables, dN/dS panels, and comparative-genomics / synteny analyses. Each pair reports entry_1 and entry_2 (omaid, canonical_id, species, HOG/group), the relationship type (1:1, 1:n, n:1, n:m), evolutionary distance, and alignment score. Provide species codes (e.g. genome1='HUMAN', genome2='MOUSE') or NCBI taxon IDs. Results are paginated; use per_page and page. Example: genome1='HUMAN', genome2='MOUSE' returns pairs such as HUMAN01436 (NK2R_HUMAN) <-> MOUSE00001 (NK2R_MOUSE), rel_type 1:1.",
+    "description": "Retrieve pairwise orthologs between two whole genomes in OMA. Unlike OMA_get_orthologs, this endpoint has real server-side page/per_page pagination. Metadata preserves the official x-total-count and reports has_more and next_page, making the complete proteome-vs-proteome set reachable.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -523,14 +553,17 @@
             "integer",
             "null"
           ],
-          "description": "Number of ortholog pairs to return per page (default: 20, max: 100). The full proteome-vs-proteome set is large; paginate with 'page'."
+          "minimum": 1,
+          "maximum": 10000,
+          "description": "Ortholog pairs per official server page (default 20, verified through 10000). Invalid values return an error rather than being silently clamped."
         },
         "page": {
           "type": [
             "integer",
             "null"
           ],
-          "description": "Page number for paginated results (default: 1)."
+          "minimum": 1,
+          "description": "One-based official result page (default 1). Continue with metadata.next_page while has_more is true."
         }
       },
       "required": [

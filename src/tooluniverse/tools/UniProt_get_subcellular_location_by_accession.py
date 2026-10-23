@@ -1,7 +1,7 @@
 """
 UniProt_get_subcellular_location_by_accession
 
-Extract subcellular localization annotations from UniProtKB entry (Comment type = SUBCELLULAR LOC...
+Extract structured subcellular localization annotations from a UniProtKB entry, preserving eviden...
 """
 
 from typing import Any, Optional, Callable
@@ -10,18 +10,21 @@ from ._shared_client import get_shared_client
 
 def UniProt_get_subcellular_location_by_accession(
     accession: str,
+    format: Optional[str] = "structured",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> Any:
     """
-    Extract subcellular localization annotations from UniProtKB entry (Comment type = SUBCELLULAR LOC...
+    Extract structured subcellular localization annotations from a UniProtKB entry, preserving eviden...
 
     Parameters
     ----------
     accession : str
         UniProtKB accession, e.g., P05067.
+    format : str
+        Output shape. 'structured' (default) returns one object per localization with...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -31,12 +34,16 @@ def UniProt_get_subcellular_location_by_accession(
 
     Returns
     -------
-    list[Any]
+    Any
     """
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"accession": accession}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {"accession": accession, "format": format}.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "UniProt_get_subcellular_location_by_accession",

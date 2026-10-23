@@ -1,7 +1,7 @@
 """
 ReactomeContent_get_enhanced_pathway
 
-Get enhanced pathway details from Reactome including description, literature references, GO biolo...
+Get enhanced pathway details from Reactome including the complete curated description and complet...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def ReactomeContent_get_enhanced_pathway(
     validate: bool = True,
 ) -> Any:
     """
-    Get enhanced pathway details from Reactome including description, literature references, GO biolo...
+    Get enhanced pathway details from Reactome including the complete curated description and complet...
 
     Parameters
     ----------

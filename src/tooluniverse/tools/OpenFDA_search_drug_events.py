@@ -10,11 +10,12 @@ from ._shared_client import get_shared_client
 
 def OpenFDA_search_drug_events(
     search: Optional[str] = None,
-    limit: Optional[int] = None,
+    limit: Optional[int] = 1,
     count: Optional[str] = None,
     drug_name: Optional[str] = None,
     reaction: Optional[str] = None,
     adverse_event: Optional[str] = None,
+    skip: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,7 +29,7 @@ def OpenFDA_search_drug_events(
     search : str
         Lucene query for adverse event reports. Use AND/OR with spaces (not +AND+). A...
     limit : int
-        Maximum number of reports to return (default 1, max 100)
+        Record mode: max 100. Count mode: max 1000 terms.
     count : str
         Field to count by for frequency analysis (e.g., 'patient.reaction.reactionmed...
     drug_name : str
@@ -37,6 +38,8 @@ def OpenFDA_search_drug_events(
         MedDRA adverse reaction term (British spelling: 'haemorrhage' not 'hemorrhage...
     adverse_event : str
         Alias for reaction. MedDRA adverse reaction term (British spelling).
+    skip : int
+        Record mode only. Number of reports to skip; continue with metadata.next_skip...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -60,6 +63,7 @@ def OpenFDA_search_drug_events(
             "drug_name": drug_name,
             "reaction": reaction,
             "adverse_event": adverse_event,
+            "skip": skip,
         }.items()
         if v is not None
     }

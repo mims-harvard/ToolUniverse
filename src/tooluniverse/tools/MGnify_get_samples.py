@@ -1,7 +1,7 @@
 """
 MGnify_get_samples
 
-List biological SAMPLES in MGnify (EBI Metagenomics) with full geographic/host/environment proven...
+List MGnify biological samples with geographic, host, and environment provenance. Pass sample_acc...
 """
 
 from typing import Any, Optional, Callable
@@ -12,15 +12,15 @@ def MGnify_get_samples(
     sample_accession: Optional[str] = None,
     study_accession: Optional[str] = None,
     biome: Optional[str] = None,
-    page: Optional[int] = None,
-    page_size: Optional[int] = None,
+    page: Optional[int] = 1,
+    page_size: Optional[int] = 25,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    List biological SAMPLES in MGnify (EBI Metagenomics) with full geographic/host/environment proven...
+    List MGnify biological samples with geographic, host, and environment provenance. Pass sample_acc...
 
     Parameters
     ----------
@@ -31,9 +31,9 @@ def MGnify_get_samples(
     biome : str
         Filter by biome name lineage (e.g., 'root:Host-associated:Human:Digestive sys...
     page : int
-        Page number (default 1).
+        One-based result page for list mode. Continue with metadata.next_page.
     page_size : int
-        Samples per page (default 25, max 100).
+        Samples per page in list mode (default 25, range 1-100).
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

@@ -1,7 +1,7 @@
 """
 NCBI_search_nucleotide
 
-Search NCBI Nucleotide database (GenBank/EMBL/RefSeq) by organism, gene name, or keywords. Return...
+Search NCBI Nucleotide (GenBank/EMBL/RefSeq) with exact offset pagination and automatically resol...
 """
 
 from typing import Any, Optional, Callable
@@ -17,6 +17,7 @@ def NCBI_search_nucleotide(
     seq_type: Optional[str] = None,
     query: Optional[str] = None,
     limit: Optional[int] = 20,
+    offset: Optional[int] = 0,
     sort: Optional[str] = "relevance",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -24,7 +25,7 @@ def NCBI_search_nucleotide(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search NCBI Nucleotide database (GenBank/EMBL/RefSeq) by organism, gene name, or keywords. Return...
+    Search NCBI Nucleotide (GenBank/EMBL/RefSeq) with exact offset pagination and automatically resol...
 
     Parameters
     ----------
@@ -43,7 +44,9 @@ def NCBI_search_nucleotide(
     query : str
         Free-form search query if not using structured filters. Use NCBI query syntax...
     limit : int
-        Maximum number of results to return (default: 20, max: 100)
+        Page size (1-100).
+    offset : int
+        Zero-based result offset, mapped to NCBI ESearch retstart. Continue with data...
     sort : str
         Sort order for results (default: relevance). pub_date sorts by NCBI's 'Date R...
     stream_callback : Callable, optional
@@ -71,6 +74,7 @@ def NCBI_search_nucleotide(
             "seq_type": seq_type,
             "query": query,
             "limit": limit,
+            "offset": offset,
             "sort": sort,
         }.items()
         if v is not None

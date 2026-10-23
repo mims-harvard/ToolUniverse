@@ -79,6 +79,27 @@ class ProgenetixTool(BaseTool):
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
+    @staticmethod
+    def _format_external_references(references):
+        """Keep the complete Beacon reference payload fields used in live data.
+
+        Progenetix biosamples commonly use ``description`` and ``reference``
+        (URL), while individuals commonly use ``notes``. The former formatter
+        only looked for ``label``, silently turning those useful fields into
+        null values.
+        """
+        return [
+            {
+                "id": reference.get("id"),
+                "label": reference.get("label"),
+                "description": reference.get("description"),
+                "reference": reference.get("reference"),
+                "notes": reference.get("notes"),
+            }
+            for reference in (references or [])
+            if isinstance(reference, dict)
+        ]
+
     def _get_biosamples(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search biosamples (tumor samples) by NCIt disease code or other filters."""
         filters = arguments.get("filters", "")
@@ -106,6 +127,9 @@ class ProgenetixTool(BaseTool):
         for rs in result_sets:
             total_count += rs.get("resultsCount", 0)
             for s in rs.get("results", []):
+                external_references = self._format_external_references(
+                    s.get("externalReferences")
+                )
                 sample = {
                     "id": s.get("id"),
                     "biosample_status": s.get("biosampleStatus", {}).get("label"),
@@ -122,12 +146,13 @@ class ProgenetixTool(BaseTool):
                     if s.get("pathologicalTnmFinding")
                     else None,
                     "sample_origin_type": s.get("sampleOriginType", {}).get("label"),
-                    "external_references": [
-                        {"id": er.get("id"), "label": er.get("label")}
-                        for er in s.get("externalReferences", [])[:5]
-                    ],
+                    "external_references": external_references,
+                    "external_references_count": len(external_references),
                 }
                 samples.append(sample)
+
+        skip = int(skip or 0)
+        has_more = skip + len(samples) < total_count
 
         return {
             "status": "success",
@@ -135,6 +160,10 @@ class ProgenetixTool(BaseTool):
                 "filters": filters,
                 "total_count": total_count,
                 "returned_count": len(samples),
+                "skip": skip,
+                "limit": int(limit),
+                "has_more": has_more,
+                "next_skip": skip + len(samples) if has_more else None,
                 "biosamples": samples,
             },
             "metadata": {
@@ -153,7 +182,8 @@ class ProgenetixTool(BaseTool):
             }
 
         limit = arguments.get("limit", 10)
-        params = {"filters": filters, "limit": limit}
+        skip = arguments.get("skip", 0)
+        params = {"filters": filters, "limit": limit, "skip": skip}
 
         url = f"{PROGENETIX_BASE_URL}/individuals"
         response = requests.get(url, params=params, timeout=self.timeout)
@@ -167,6 +197,9 @@ class ProgenetixTool(BaseTool):
         for rs in result_sets:
             total_count += rs.get("resultsCount", 0)
             for ind in rs.get("results", []):
+                external_references = self._format_external_references(
+                    ind.get("externalReferences")
+                )
                 individual = {
                     "id": ind.get("id"),
                     "sex": ind.get("sex", {}).get("label"),
@@ -179,12 +212,13 @@ class ProgenetixTool(BaseTool):
                     "onset_age": ind.get("indexDisease", {})
                     .get("onset", {})
                     .get("age"),
-                    "external_references": [
-                        {"id": er.get("id"), "label": er.get("label")}
-                        for er in ind.get("externalReferences", [])[:5]
-                    ],
+                    "external_references": external_references,
+                    "external_references_count": len(external_references),
                 }
                 individuals.append(individual)
+
+        skip = int(skip or 0)
+        has_more = skip + len(individuals) < total_count
 
         return {
             "status": "success",
@@ -192,6 +226,10 @@ class ProgenetixTool(BaseTool):
                 "filters": filters,
                 "total_count": total_count,
                 "returned_count": len(individuals),
+                "skip": skip,
+                "limit": int(limit),
+                "has_more": has_more,
+                "next_skip": skip + len(individuals) if has_more else None,
                 "individuals": individuals,
             },
             "metadata": {
@@ -204,8 +242,19 @@ class ProgenetixTool(BaseTool):
         """List available filtering terms (ontology codes) in Progenetix."""
         prefixes = arguments.get("prefixes", "NCIT")
         limit = arguments.get("limit", 25)
+        offset = arguments.get("offset", 0)
+        if isinstance(limit, bool) or not isinstance(limit, int) or limit < 1:
+            return {"status": "error", "error": "limit must be a positive integer"}
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+            }
 
-        params = {"prefixes": prefixes, "limit": limit}
+        # The endpoint currently returns the full term catalog regardless of
+        # limit. Do not send a page-size value that could make local offsets
+        # incomplete if upstream starts honoring it later.
+        params = {"prefixes": prefixes}
 
         url = f"{PROGENETIX_BASE_URL}/filtering_terms"
         response = requests.get(url, params=params, timeout=self.timeout)
@@ -228,14 +277,23 @@ class ProgenetixTool(BaseTool):
                 "count": ft.get("count"),
                 "type": ft.get("type"),
             }
-            for ft in filtering_terms[:limit]
+            for ft in filtering_terms[offset : offset + limit]
         ]
+        next_offset = offset + len(terms)
+        has_more = next_offset < len(filtering_terms)
 
         return {
             "status": "success",
             "data": {
                 "prefixes": prefixes,
                 "total_terms": len(filtering_terms),
+                "returned": len(terms),
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
+                "result_set_complete": offset == 0
+                and len(terms) == len(filtering_terms),
                 "terms": terms,
             },
             "metadata": {
@@ -247,16 +305,23 @@ class ProgenetixTool(BaseTool):
     def _get_cohorts(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """List available cohorts in Progenetix."""
         limit = arguments.get("limit", 10)
+        offset = arguments.get("offset", 0)
+        if isinstance(limit, bool) or not isinstance(limit, int) or limit < 1:
+            return {"status": "error", "error": "limit must be a positive integer"}
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+            }
 
         url = f"{PROGENETIX_BASE_URL}/cohorts"
-        params = {"limit": limit}
-        response = requests.get(url, params=params, timeout=self.timeout)
+        response = requests.get(url, timeout=self.timeout)
         response.raise_for_status()
         resp_data = response.json()
 
         collections = resp_data.get("response", {}).get("collections", [])
         cohorts = []
-        for c in collections[:limit]:
+        for c in collections[offset : offset + limit]:
             cohorts.append(
                 {
                     "id": c.get("id"),
@@ -267,10 +332,18 @@ class ProgenetixTool(BaseTool):
                 }
             )
 
+        next_offset = offset + len(cohorts)
+        has_more = next_offset < len(collections)
         return {
             "status": "success",
             "data": {
                 "total_cohorts": len(collections),
+                "returned": len(cohorts),
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
+                "result_set_complete": offset == 0 and len(cohorts) == len(collections),
                 "cohorts": cohorts,
             },
             "metadata": {
@@ -316,6 +389,9 @@ class ProgenetixTool(BaseTool):
         for rs in result_sets:
             total_count += rs.get("resultsCount", 0)
             for s in rs.get("results", []):
+                external_references = self._format_external_references(
+                    s.get("externalReferences")
+                )
                 sample = {
                     "id": s.get("id"),
                     "biosample_status": s.get("biosampleStatus", {}).get("label"),
@@ -325,10 +401,8 @@ class ProgenetixTool(BaseTool):
                     "histological_diagnosis_id": s.get("histologicalDiagnosis", {}).get(
                         "id"
                     ),
-                    "external_references": [
-                        {"id": er.get("id")}
-                        for er in s.get("externalReferences", [])[:3]
-                    ],
+                    "external_references": external_references,
+                    "external_references_count": len(external_references),
                 }
                 samples.append(sample)
 

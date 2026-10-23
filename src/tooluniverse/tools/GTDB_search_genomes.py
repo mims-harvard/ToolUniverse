@@ -28,9 +28,9 @@ def GTDB_search_genomes(
     query : str
         Search query for organism name (e.g., 'Escherichia', 'Staphylococcus aureus',...
     page : int
-        Page number for pagination (default: 1)
+        One-based page number (default 1). Never use 0; continue with metadata.next_p...
     items_per_page : int
-        Number of results per page (default: 10, max: 50)
+        Number of results per page (default 10, max 1000).
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

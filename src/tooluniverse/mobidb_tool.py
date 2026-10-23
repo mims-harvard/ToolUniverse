@@ -132,9 +132,32 @@ class MobiDBTool(BaseTool):
         if isinstance(ptms, dict):
             ptm_names = ptms.get("names", [])
             ptm_positions = ptms.get("positions", [])
+            if not isinstance(ptm_names, list):
+                ptm_names = []
+            if not isinstance(ptm_positions, list):
+                ptm_positions = []
+            ptm_total = max(len(ptm_names), len(ptm_positions))
+            ptm_offset = max(int(arguments.get("ptm_offset") or 0), 0)
+            ptm_limit = max(1, min(int(arguments.get("ptm_limit") or 10), 500))
+            page_end = min(ptm_offset + ptm_limit, ptm_total)
+            ptm_entries = [
+                {
+                    "type": ptm_names[index] if index < len(ptm_names) else None,
+                    "position": (
+                        ptm_positions[index] if index < len(ptm_positions) else None
+                    ),
+                }
+                for index in range(ptm_offset, page_end)
+            ]
+            next_ptm_offset = page_end if page_end < ptm_total else None
             ptm_summary = {
-                "count": len(ptm_positions) if isinstance(ptm_positions, list) else 0,
-                "types": ptm_names[:10] if isinstance(ptm_names, list) else [],
+                "count": ptm_total,
+                "returned": len(ptm_entries),
+                "truncated": next_ptm_offset is not None,
+                "next_offset": next_ptm_offset,
+                "types": [entry["type"] for entry in ptm_entries],
+                "positions": [entry["position"] for entry in ptm_entries],
+                "entries": ptm_entries,
             }
 
         return {

@@ -64,15 +64,37 @@ class MHCMotifAtlasTool(BaseTool):
                     "error": "mhc_class must be 'I' or 'II'",
                 }
 
-            include_sequence = bool(arguments.get("include_sequence", False))
+            include_sequence = arguments.get("include_sequence", False)
+            if not isinstance(include_sequence, bool):
+                return {
+                    "status": "error",
+                    "error": "include_sequence must be a boolean",
+                }
 
-            try:
-                limit = int(arguments.get("limit", 100))
-            except (TypeError, ValueError):
+            limit = arguments.get("limit", 100)
+            offset = arguments.get("offset", 0)
+            if limit is None:
                 limit = 100
-            limit = max(1, min(1000, limit))
+            if offset is None:
+                offset = 0
+            if (
+                isinstance(limit, bool)
+                or not isinstance(limit, int)
+                or not 1 <= limit <= 1000
+            ):
+                return {
+                    "status": "error",
+                    "error": "limit must be an integer from 1 to 1000",
+                }
+            if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+                return {
+                    "status": "error",
+                    "error": "offset must be a non-negative integer",
+                }
 
-            return self._fetch_ligands(allele, mhc_class, include_sequence, limit)
+            return self._fetch_ligands(
+                allele, mhc_class, include_sequence, limit, offset
+            )
         except Exception as exc:  # never raise
             return {"status": "error", "error": f"Unexpected error: {exc}"}
 
@@ -104,6 +126,7 @@ class MHCMotifAtlasTool(BaseTool):
         mhc_class: str,
         include_sequence: bool,
         limit: int,
+        offset: int,
     ) -> Dict[str, Any]:
         result = self._fetch_text(_PEPTIDE_URLS[mhc_class])
         if result.get("status") == "error":
@@ -116,8 +139,7 @@ class MHCMotifAtlasTool(BaseTool):
         header = lines[0].split("\t")
         has_core = len(header) >= 3 and header[2].lower() == "core"
 
-        peptides: List[Dict[str, str]] = []
-        total_matches = 0
+        matches: List[Dict[str, str]] = []
         for line in lines[1:]:
             if not line:
                 continue
@@ -126,14 +148,12 @@ class MHCMotifAtlasTool(BaseTool):
                 continue
             if cols[0] != allele:
                 continue
-            total_matches += 1
-            if len(peptides) < limit:
-                rec = {"peptide": cols[1]}
-                if has_core and len(cols) >= 3:
-                    rec["core"] = cols[2]
-                peptides.append(rec)
+            rec = {"peptide": cols[1]}
+            if has_core and len(cols) >= 3:
+                rec["core"] = cols[2]
+            matches.append(rec)
 
-        if total_matches == 0:
+        if not matches:
             return {
                 "status": "error",
                 "error": (
@@ -143,9 +163,14 @@ class MHCMotifAtlasTool(BaseTool):
                 ),
             }
 
+        peptides = matches[offset : offset + limit]
+        next_offset = offset + len(peptides)
+        has_more = next_offset < len(matches)
+
         sequence = None
+        sequence_error = None
         if include_sequence:
-            sequence = self._fetch_sequence(allele, mhc_class)
+            sequence, sequence_error = self._fetch_sequence(allele, mhc_class)
 
         return {
             "status": "success",
@@ -157,25 +182,35 @@ class MHCMotifAtlasTool(BaseTool):
             },
             "metadata": {
                 "source": "MHC Motif Atlas (mhcmotifatlas.org)",
-                "total_matches": total_matches,
+                "total_matches": len(matches),
+                "total_matches_is_exact": True,
                 "returned": len(peptides),
                 "limit": limit,
-                "truncated": total_matches > len(peptides),
+                "offset": offset,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
+                "truncated": offset > 0 or has_more,
+                "result_set_complete": offset == 0 and len(peptides) == len(matches),
                 "has_core_column": has_core,
+                "sequence_requested": include_sequence,
+                "sequence_found": sequence is not None,
+                "sequence_error": sequence_error,
+                "requested_scope_complete": not include_sequence
+                or sequence is not None,
             },
         }
 
     def _fetch_sequence(self, allele: str, mhc_class: str):
         url = _SEQUENCE_URLS.get(mhc_class)
         if not url:
-            return None
+            return None, f"No sequence table is configured for MHC class {mhc_class}"
         result = self._fetch_text(url)
         if result.get("status") == "error":
-            return None
+            return None, result.get("error")
         for line in result["text"].splitlines()[1:]:
             if not line:
                 continue
             cols = line.split("\t")
             if len(cols) >= 2 and cols[0] == allele:
-                return cols[1]
-        return None
+                return cols[1], None
+        return None, f"No MHC protein sequence found for allele '{allele}'"

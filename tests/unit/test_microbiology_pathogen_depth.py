@@ -90,7 +90,9 @@ class TestPathoplexusSequenceDetails(unittest.TestCase):
             kwargs["params"]["fields"],
             ["accession", "geoLocCountry", "sampleCollectionDate", "lineage"],
         )
-        self.assertEqual(kwargs["params"]["limit"], 2)
+        # One extra row is requested as a sentinel to determine whether a next
+        # page exists; only the caller's requested limit is returned.
+        self.assertEqual(kwargs["params"]["limit"], 3)
 
     def test_missing_organism_returns_error(self):
         """A missing organism yields an error envelope, never an exception."""

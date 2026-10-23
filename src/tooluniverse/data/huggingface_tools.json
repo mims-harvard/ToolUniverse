@@ -1,7 +1,7 @@
 [
   {
     "name": "HuggingFace_search_models",
-    "description": "Search the HuggingFace Hub for machine learning models by keyword, task type, or ML framework. HuggingFace Hub hosts 500,000+ open-source models spanning NLP, computer vision, audio, protein language models, and more. Returns model IDs, download counts, likes, tags, pipeline task, and library information. Filter by pipeline_tag (e.g., 'fill-mask', 'text-classification', 'token-classification', 'image-classification', 'feature-extraction') and by library (e.g., 'transformers', 'diffusers', 'timm'). Use HuggingFace_get_model for full details on a specific model.",
+    "description": "Search the HuggingFace Hub for machine learning models. Results use the Hub's opaque cursor pagination: begin without cursor and continue with metadata.next_cursor while metadata.has_more is true. The Hub does not expose an exact total for this endpoint. Returns model IDs, downloads, likes, tags, pipeline task, and library information.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -14,7 +14,17 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of results to return (default 20, max 1000)"
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 20,
+          "description": "Results per cursor page (default 20, max 1000)"
+        },
+        "cursor": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Opaque continuation cursor from metadata.next_cursor. Omit on the first page."
         },
         "pipeline_tag": {
           "type": [
@@ -36,7 +46,8 @@
       ]
     },
     "fields": {
-      "endpoint": "https://huggingface.co/api/models"
+      "endpoint": "https://huggingface.co/api/models",
+      "pagination": "huggingface_cursor"
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -327,7 +338,7 @@
   },
   {
     "name": "HuggingFace_search_datasets",
-    "description": "Search HuggingFace Hub for machine learning datasets by keyword. HuggingFace hosts 100,000+ open datasets spanning text, image, audio, tabular, and biological sequence data. Returns dataset IDs, authors, download counts, likes, tags (including format, modality, size category), and descriptions. Use this to find training/evaluation datasets for ML models, benchmark datasets, or domain-specific datasets (e.g., protein sequences, medical images, genomics).",
+    "description": "Search HuggingFace Hub for machine learning datasets by keyword. Results use opaque cursor pagination: begin without cursor and continue with metadata.next_cursor while metadata.has_more is true. The Hub does not expose an exact total for this endpoint. Returns dataset IDs, authors, downloads, likes, tags, and descriptions.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -340,7 +351,17 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of results to return (default 20, max 1000)"
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 20,
+          "description": "Results per cursor page (default 20, max 1000)"
+        },
+        "cursor": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Opaque continuation cursor from metadata.next_cursor. Omit on the first page."
         }
       },
       "required": [
@@ -348,7 +369,8 @@
       ]
     },
     "fields": {
-      "endpoint": "https://huggingface.co/api/datasets"
+      "endpoint": "https://huggingface.co/api/datasets",
+      "pagination": "huggingface_cursor"
     },
     "type": "BaseRESTTool",
     "test_examples": [

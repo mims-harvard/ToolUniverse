@@ -1,7 +1,7 @@
 """
 nhanes_search_datasets
 
-Search for NHANES datasets by keyword. Returns information about matching datasets including down...
+Search the live CDC NHANES variable catalog by keyword and return deduplicated matching data file...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,14 @@ def nhanes_search_datasets(
     search_term: Optional[str] = None,
     year: Optional[str] = None,
     limit: Optional[int] = 20,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search for NHANES datasets by keyword. Returns information about matching datasets including down...
+    Search the live CDC NHANES variable catalog by keyword and return deduplicated matching data file...
 
     Parameters
     ----------
@@ -28,6 +29,8 @@ def nhanes_search_datasets(
         Optional NHANES cycle to filter (e.g., '2017-2018'). If omitted, searches the...
     limit : int
         Maximum number of results (default: 20)
+    offset : int
+        Zero-based offset in the complete deduplicated match list. Use next_offset to...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,12 @@ def nhanes_search_datasets(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"search_term": search_term, "year": year, "limit": limit}.items()
+        for k, v in {
+            "search_term": search_term,
+            "year": year,
+            "limit": limit,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

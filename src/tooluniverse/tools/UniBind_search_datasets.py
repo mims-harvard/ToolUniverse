@@ -1,7 +1,7 @@
 """
 UniBind_search_datasets
 
-Search the UniBind catalog of curated, experimentally derived direct transcription factor (TF)-DN...
+Search the UniBind catalog of curated direct transcription factor (TF)-DNA binding-site datasets....
 """
 
 from typing import Any, Optional, Callable
@@ -23,7 +23,7 @@ def UniBind_search_datasets(
     validate: bool = True,
 ) -> Any:
     """
-    Search the UniBind catalog of curated, experimentally derived direct transcription factor (TF)-DN...
+    Search the UniBind catalog of curated direct transcription factor (TF)-DNA binding-site datasets....
 
     Parameters
     ----------

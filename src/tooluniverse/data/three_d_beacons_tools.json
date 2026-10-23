@@ -67,7 +67,7 @@
     },
     {
         "name": "ThreeDBeacons_get_structures",
-        "description": "Get detailed list of 3D structure models for a protein from the 3D Beacons Hub. Returns individual structure entries with model identifier, provider, category, coverage, resolution (experimental), confidence score (predicted), and download URL. Supports filtering by category (e.g., 'EXPERIMENTALLY DETERMINED') or provider (e.g., 'AlphaFold DB'). Example: P04637 filtered to 'TEMPLATE-BASED' returns 5 structures from SWISS-MODEL and AlphaFill with coverage and sequence range.",
+        "description": "Get detailed 3D structure models for a protein from the 3D Beacons Hub. Returns model identifier, provider, category, coverage, resolution or confidence, and download URL. Supports category/provider filters and recoverable offset pagination. Continue with next_offset while has_more is true; broad proteins can have hundreds of structures (P04637 currently has more than 300).",
         "parameter": {
             "type": "object",
             "properties": {
@@ -85,8 +85,15 @@
                 },
                 "max_results": {
                     "type": "integer",
-                    "description": "Maximum structures to return (default 20, max 100).",
+                    "minimum": 1,
+                    "description": "Maximum structures to return on this page (default 20).",
                     "default": 20
+                },
+                "offset": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "Zero-based offset in the complete filtered structure list. Continue with data.next_offset.",
+                    "default": 0
                 }
             },
             "required": [
@@ -127,6 +134,29 @@
                         "returned": {
                             "type": "integer",
                             "description": "Number of structures returned"
+                        },
+                        "offset": {
+                            "type": "integer",
+                            "description": "Zero-based offset of this page"
+                        },
+                        "max_results": {
+                            "type": "integer",
+                            "description": "Requested page size"
+                        },
+                        "has_more": {
+                            "type": "boolean",
+                            "description": "Whether more matching structures are retrievable"
+                        },
+                        "next_offset": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ],
+                            "description": "Offset for the next page, or null at the end"
+                        },
+                        "result_set_complete": {
+                            "type": "boolean",
+                            "description": "Whether this response contains the full filtered result set"
                         },
                         "structures": {
                             "type": "array",

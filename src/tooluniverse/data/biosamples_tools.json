@@ -79,7 +79,7 @@
   },
   {
     "name": "BioSamples_search",
-    "description": "Search the EBI BioSamples database by text query across 60+ million biological samples. Returns matching samples with accessions, names, organisms, and key characteristics. Useful for finding source material metadata for sequencing, proteomics, and other experiments. Example: searching 'breast cancer' returns thousands of tumor samples with tissue/disease annotations.",
+    "description": "Search the EBI BioSamples database by text query across 60+ million biological samples. Returns matching samples with accessions, names, organisms, and key characteristics. For small result sets, use zero-based page navigation. BioSamples caps page navigation at page 500, so complete crawling of larger result sets requires cursor='*' followed by each metadata.next_cursor token.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -92,14 +92,25 @@
             "integer",
             "null"
           ],
-          "description": "Maximum results to return (1-50, default 10)."
+          "minimum": 1,
+          "maximum": 200,
+          "description": "Results per request (1-200, default 10), matching the official BioSamples maximum. Invalid values return an error instead of being silently clamped."
         },
         "page": {
           "type": [
             "integer",
             "null"
           ],
-          "description": "Page number (0-indexed, default 0)."
+          "minimum": 0,
+          "maximum": 500,
+          "description": "Deprecated zero-based page navigation (0-500, default 0). Do not combine with cursor. For complete retrieval, use cursor='*' and follow metadata.next_cursor."
+        },
+        "cursor": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Official opaque cursor pagination token. Pass '*' for the first cursor page, then pass metadata.next_cursor unchanged. Do not combine with page. Cursor mode is required to traverse beyond page 500."
         }
       },
       "required": [
@@ -164,7 +175,7 @@
   },
   {
     "name": "BioSamples_search_by_filter",
-    "description": "Search the EBI BioSamples database with structured attribute filters. More precise than text search - filters by specific metadata fields like organism, tissue, or disease. Example: attribute='organism', value='Homo sapiens' returns human samples; attribute='disease', value='melanoma' returns melanoma-specific samples.",
+    "description": "Search the EBI BioSamples database with a structured attribute filter. For small result sets, use zero-based page navigation. BioSamples caps page navigation at page 500, so complete crawling of larger result sets requires cursor='*' followed by each metadata.next_cursor token. Metadata identifies the active pagination mode and whether cursor mode is required for completeness.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -181,7 +192,25 @@
             "integer",
             "null"
           ],
-          "description": "Maximum results to return (1-50, default 10)."
+          "minimum": 1,
+          "maximum": 200,
+          "description": "Results per request (1-200, default 10), matching the official BioSamples maximum. Invalid values return an error instead of being silently clamped."
+        },
+        "page": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 500,
+          "description": "Deprecated zero-based page navigation (0-500, default 0). Do not combine with cursor. For complete retrieval, use cursor='*' and follow metadata.next_cursor."
+        },
+        "cursor": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Official opaque cursor pagination token. Pass '*' for the first cursor page, then pass metadata.next_cursor unchanged. Do not combine with page. Cursor mode is required to traverse beyond page 500."
         }
       },
       "required": [

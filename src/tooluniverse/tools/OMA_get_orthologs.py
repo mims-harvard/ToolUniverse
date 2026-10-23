@@ -12,6 +12,7 @@ def OMA_get_orthologs(
     protein_id: str,
     rel_type: Optional[str] = None,
     per_page: Optional[int] = None,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -27,7 +28,9 @@ def OMA_get_orthologs(
     rel_type : str
         Filter by orthology relationship type. Options: '1:1' (one-to-one), '1:n' (on...
     per_page : int
-        Number of orthologs to return (default: 20). OMA does not paginate this endpo...
+        Number of orthologs to return (default: 20, maximum 1000). OMA does not pagin...
+    offset : int
+        Zero-based offset into the complete filtered ortholog list. Continue with met...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +51,7 @@ def OMA_get_orthologs(
             "protein_id": protein_id,
             "rel_type": rel_type,
             "per_page": per_page,
+            "offset": offset,
         }.items()
         if v is not None
     }

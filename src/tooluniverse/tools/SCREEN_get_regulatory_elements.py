@@ -1,7 +1,7 @@
 """
 SCREEN_get_regulatory_elements
 
-Get candidate cis-regulatory elements (cCREs) from SCREEN database for specific genomic regions
+Resolve an official human gene symbol to its GRCh38 coordinates with Ensembl, then return genuine...
 """
 
 from typing import Any, Optional, Callable
@@ -13,13 +13,16 @@ def SCREEN_get_regulatory_elements(
     query: Optional[str] = None,
     element_type: Optional[str] = "enhancer",
     limit: Optional[int] = 10,
+    offset: Optional[int] = 0,
+    flank_bp: Optional[int] = 10000,
+    assembly: Optional[str] = "GRCh38",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get candidate cis-regulatory elements (cCREs) from SCREEN database for specific genomic regions
+    Resolve an official human gene symbol to its GRCh38 coordinates with Ensembl, then return genuine...
 
     Parameters
     ----------
@@ -28,9 +31,15 @@ def SCREEN_get_regulatory_elements(
     query : str
         Gene symbol to search for regulatory elements (alias for gene_name).
     element_type : str
-        Type of regulatory element (promoter, enhancer, insulator)
+        cCRE class filter: enhancer (pELS+dELS), promoter (PLS), insulator (CTCF-only...
     limit : int
-        Number of results to return
+        Page size for filtered cCREs.
+    offset : int
+        Zero-based filtered cCRE offset. Continue with metadata.next_offset while met...
+    flank_bp : int
+        Base pairs added on both sides of the Ensembl gene interval (default 10000).
+    assembly : str
+        Genome assembly. This gene-symbol resolver currently supports human GRCh38 only.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +61,9 @@ def SCREEN_get_regulatory_elements(
             "query": query,
             "element_type": element_type,
             "limit": limit,
+            "offset": offset,
+            "flank_bp": flank_bp,
+            "assembly": assembly,
         }.items()
         if v is not None
     }

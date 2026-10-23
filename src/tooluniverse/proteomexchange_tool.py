@@ -318,7 +318,22 @@ class ProteomeXchangeTool(BaseTool):
     def _search_datasets(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search ProteomeXchange datasets via ProteomeCentral API."""
         query = arguments.get("query", "")
-        limit = min(arguments.get("limit", 10), 50)
+        limit = arguments.get("limit", 10)
+        offset = arguments.get("offset", 0)
+        if (
+            isinstance(limit, bool)
+            or not isinstance(limit, int)
+            or not 1 <= limit <= 1000
+        ):
+            return {
+                "status": "error",
+                "error": "limit must be an integer between 1 and 1000",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+            }
 
         # Use ProteomeCentral API (same host as _get_dataset, more reliable)
         url = f"{PX_BASE_URL}/GetDataset"
@@ -349,7 +364,7 @@ class ProteomeXchangeTool(BaseTool):
         # Client-side keyword filter (API ignores keyword param)
         query_lower = query.lower() if query else ""
 
-        datasets = []
+        matching_datasets = []
         for ds in raw_list:
             if not isinstance(ds, dict):
                 continue
@@ -359,11 +374,29 @@ class ProteomeXchangeTool(BaseTool):
             species = _strip_html(ds.get("Species") or str(ds.get("species", "")))
             contact = _strip_html(ds.get("LabHead") or ds.get("contact", ""))
 
-            # Client-side keyword filtering since API ignores keyword param
-            if query_lower and query_lower not in (title + " " + species).lower():
+            # The CGI currently ignores ``keyword`` and returns the entire catalog.
+            # Search every useful display field locally, including the accession (the
+            # old implementation promised accession search but omitted it).
+            searchable = " ".join(
+                str(_strip_html(ds.get(field, "")) or "")
+                for field in (
+                    "Dataset Identifier",
+                    "identifier",
+                    "Title",
+                    "title",
+                    "Species",
+                    "species",
+                    "Keywords",
+                    "Publication",
+                    "LabHead",
+                    "contact",
+                    "Repos",
+                )
+            )
+            if query_lower and query_lower not in searchable.lower():
                 continue
 
-            datasets.append(
+            matching_datasets.append(
                 {
                     "accession": acc,
                     "title": title,
@@ -371,16 +404,25 @@ class ProteomeXchangeTool(BaseTool):
                     "contact": contact,
                 }
             )
-            if len(datasets) >= limit:
-                break
+        datasets = matching_datasets[offset : offset + limit]
+        total_matches = len(matching_datasets)
+        has_more = offset + len(datasets) < total_matches
 
         return {
             "status": "success",
             "data": datasets,
             "metadata": {
                 "source": "ProteomeXchange/ProteomeCentral",
+                "total_matches": total_matches,
                 "total_returned": len(datasets),
+                "limit": limit,
+                "offset": offset,
+                "has_more": has_more,
+                "truncated": len(datasets) < total_matches,
+                "next_offset": offset + len(datasets) if has_more else None,
+                "total_is_exact": True,
                 "query": query or "(all)",
                 "endpoint": "search_datasets",
+                "filtering": "client_side_full_catalog",
             },
         }

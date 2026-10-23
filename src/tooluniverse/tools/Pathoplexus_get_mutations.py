@@ -15,6 +15,7 @@ def Pathoplexus_get_mutations(
     min_proportion: Optional[float] = None,
     mutation_type: Optional[str] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -32,11 +33,13 @@ def Pathoplexus_get_mutations(
     lineage : str
         Filter by lineage.
     min_proportion : float
-        Minimum proportion of sequences carrying the mutation (default 0.8).
+        Minimum proportion of sequences carrying the mutation (0 to 1; default 0.8). ...
     mutation_type : str
         'aminoAcid' (default) or 'nucleotide'.
     limit : int
         Max mutations (default 50, max 500).
+    offset : int
+        Zero-based mutation offset for pagination (default 0). Continue with metadata...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -60,6 +63,7 @@ def Pathoplexus_get_mutations(
             "min_proportion": min_proportion,
             "mutation_type": mutation_type,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

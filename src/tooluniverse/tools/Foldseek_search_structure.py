@@ -1,7 +1,7 @@
 """
 Foldseek_search_structure
 
-Search for structurally similar proteins using Foldseek. Given a PDB ID, downloads the structure ...
+Submit a Foldseek structural similarity search for a PDB structure and wait for completion. Retur...
 """
 
 from typing import Any, Optional, Callable
@@ -15,13 +15,14 @@ def Foldseek_search_structure(
     database: Optional[str] = "afdb50",
     mode: Optional[str] = "3diaa",
     max_results: Optional[int] = 10,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search for structurally similar proteins using Foldseek. Given a PDB ID, downloads the structure ...
+    Submit a Foldseek structural similarity search for a PDB structure and wait for completion. Retur...
 
     Parameters
     ----------
@@ -37,6 +38,8 @@ def Foldseek_search_structure(
         Search mode: '3diaa' (fast 3Di+AA, default), 'tmalign' (TM-align, slower but ...
     max_results : int
         Maximum number of results to return (default 10, max 50).
+    offset : int
+        Zero-based offset in the complete ranked hit list. Use the returned ticket_id...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -60,6 +63,7 @@ def Foldseek_search_structure(
             "database": database,
             "mode": mode,
             "max_results": max_results,
+            "offset": offset,
         }.items()
         if v is not None
     }

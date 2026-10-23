@@ -254,6 +254,128 @@ class TestHppPeptides(unittest.TestCase):
         self.assertEqual(result["status"], "error")
         self.assertIn("accession", result["error"])
 
+    def test_hpp_peptides_expose_later_page(self):
+        payload = {
+            "accession": "P04637",
+            "entryName": "P53_HUMAN",
+            "features": [
+                {
+                    "type": "HPP",
+                    "begin": str(index),
+                    "end": str(index + 1),
+                    "peptide": f"PEPTIDE{index}",
+                }
+                for index in range(5)
+            ],
+        }
+        tool = _ext_tool("proteomics_hpp")
+        with patch(
+            "tooluniverse.ebi_proteins_ext_tool.requests.get",
+            return_value=_resp(payload),
+        ):
+            result = tool.run({"accession": "P04637", "limit": 2, "offset": 2})
+
+        self.assertEqual(
+            [item["peptide"] for item in result["data"]["peptides"]],
+            ["PEPTIDE2", "PEPTIDE3"],
+        )
+        self.assertEqual(result["data"]["total_peptides"], 5)
+        self.assertEqual(result["data"]["next_offset"], 4)
+
+
+@pytest.mark.parametrize(
+    ("endpoint", "collection"),
+    [
+        ("mutagenesis", "features"),
+        ("proteomics_ptm", "features"),
+        ("variation", "variants"),
+        ("features", "features"),
+        ("proteomics", "peptides"),
+    ],
+)
+def test_other_large_ebi_feature_collections_expose_later_pages(endpoint, collection):
+    payload = {
+        "accession": "P04637",
+        "entryName": "P53_HUMAN",
+        "sequence": "ABCDE",
+        "features": [
+            {
+                "type": "FEATURE",
+                "category": "VARIANTS",
+                "begin": str(index),
+                "end": str(index + 1),
+                "peptide": f"PEPTIDE{index}",
+                "sourceType": "uniprot",
+                "wildType": "A",
+                "alternativeSequence": "V",
+            }
+            for index in range(5)
+        ],
+    }
+    tool = _ext_tool(endpoint)
+    with patch(
+        "tooluniverse.ebi_proteins_ext_tool.requests.get",
+        return_value=_resp(payload),
+    ):
+        result = tool.run(
+            {"accession": "P04637", "category": "VARIANTS", "limit": 2, "offset": 2}
+        )
+
+    page = result["data"][collection]
+    assert [item["position_start"] for item in page] == ["2", "3"]
+    assert result["data"]["returned"] == 2
+    assert result["data"]["next_offset"] == 4
+
+
+def test_ebi_feature_and_variation_nested_evidence_is_not_capped():
+    evidences = [
+        {"code": f"ECO:{index}", "source": {"name": "UniProt", "id": str(index)}}
+        for index in range(9)
+    ]
+    xrefs = [
+        {"name": "ClinVar", "id": f"RCV{index}", "url": f"https://example/{index}"}
+        for index in range(43)
+    ]
+    feature_payload = {
+        "accession": "P04637",
+        "features": [
+            {
+                "type": "VARIANT",
+                "category": "VARIANTS",
+                "begin": "72",
+                "end": "72",
+                "evidences": evidences,
+            }
+        ],
+    }
+    variation_payload = {
+        "accession": "P04637",
+        "features": [
+            {
+                "begin": "72",
+                "end": "72",
+                "sourceType": "uniprot",
+                "xrefs": xrefs,
+            }
+        ],
+    }
+
+    with patch(
+        "tooluniverse.ebi_proteins_ext_tool.requests.get",
+        return_value=_resp(feature_payload),
+    ):
+        features = _ext_tool("features").run(
+            {"accession": "P04637", "category": "VARIANTS"}
+        )
+    with patch(
+        "tooluniverse.ebi_proteins_ext_tool.requests.get",
+        return_value=_resp(variation_payload),
+    ):
+        variants = _ext_tool("variation").run({"accession": "P04637"})
+
+    assert len(features["data"]["features"][0]["evidences"]) == 9
+    assert len(variants["data"]["variants"][0]["xrefs"]) == 43
+
 
 # ---------------------------------------------------------------------------
 # Reverse genome -> protein lookup (glocation)

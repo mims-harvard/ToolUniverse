@@ -1,7 +1,7 @@
 """
 civic_search_genes
 
-Search for genes in CIViC (Clinical Interpretation of Variants in Cancer) database. CIViC is a co...
+Search for genes in CIViC (Clinical Interpretation of Variants in Cancer) database. Returns exact...
 """
 
 from typing import Any, Optional, Callable
@@ -10,6 +10,7 @@ from ._shared_client import get_shared_client
 
 def civic_search_genes(
     limit: Optional[int] = 10,
+    after: Optional[str] = None,
     name: Optional[str] = None,
     query: Optional[str] = None,
     gene_name: Optional[str] = None,
@@ -19,12 +20,14 @@ def civic_search_genes(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search for genes in CIViC (Clinical Interpretation of Variants in Cancer) database. CIViC is a co...
+    Search for genes in CIViC (Clinical Interpretation of Variants in Cancer) database. Returns exact...
 
     Parameters
     ----------
     limit : int
         Maximum number of genes to return (default: 10, recommended max: 100)
+    after : str
+        Opaque continuation cursor from metadata.next_cursor.
     name : str
         Gene symbol to search for (e.g., "EGFR", "BRAF", "BRCA1"). Alias: use 'query'...
     query : str
@@ -49,6 +52,7 @@ def civic_search_genes(
         k: v
         for k, v in {
             "limit": limit,
+            "after": after,
             "name": name,
             "query": query,
             "gene_name": gene_name,

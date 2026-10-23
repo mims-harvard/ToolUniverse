@@ -122,6 +122,11 @@ class WikipediaContentTool(BaseTool):
         language = arguments.get("language", "en")
         extract_type = arguments.get("extract_type", "summary")
         max_chars = arguments.get("max_chars", 2000)
+        try:
+            link_limit = min(max(1, int(arguments.get("link_limit", 20))), 500)
+        except (TypeError, ValueError):
+            link_limit = 20
+        links_continue = arguments.get("links_continue")
 
         if not title:
             return {"status": "error", "error": "`title` parameter is required."}
@@ -152,7 +157,10 @@ class WikipediaContentTool(BaseTool):
             "exchars": exchars,
             "format": "json",
             "inprop": "url",
+            "pllimit": link_limit,
         }
+        if links_continue:
+            params["plcontinue"] = links_continue
 
         # Remove None values
         params = {k: v for k, v in params.items() if v is not None}
@@ -197,9 +205,11 @@ class WikipediaContentTool(BaseTool):
             }
 
             # Add links if available
-            if links:
-                # Limit to 20 links
-                result["links"] = [link.get("title", "") for link in links[:20]]
+            result["links"] = [link.get("title", "") for link in links]
+            next_links_continue = data.get("continue", {}).get("plcontinue")
+            result["links_returned"] = len(result["links"])
+            result["links_has_more"] = bool(next_links_continue)
+            result["next_links_continue"] = next_links_continue
 
             return result
 

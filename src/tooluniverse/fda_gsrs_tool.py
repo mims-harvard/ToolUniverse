@@ -87,6 +87,8 @@ class FDAGSRSTool(BaseTool):
             if r.get("structure")
             else "",
             "synonyms": synonyms[:10],
+            "synonyms_total": len(synonyms),
+            "synonyms_truncated": len(synonyms) > 10,
             "xrefs": xrefs,
         }
 
@@ -129,7 +131,26 @@ class FDAGSRSTool(BaseTool):
             or arguments.get("drug_name")
         )
         substance_class = arguments.get("substance_class", "")
-        limit = min(int(arguments.get("limit", 10)), 50)
+        limit = arguments.get("limit", 10)
+        offset = arguments.get("offset", 0)
+        if limit is None:
+            limit = 10
+        if offset is None:
+            offset = 0
+        if (
+            isinstance(limit, bool)
+            or not isinstance(limit, int)
+            or not 1 <= limit <= 50
+        ):
+            return {
+                "status": "error",
+                "error": "limit must be an integer from 1 to 50",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+            }
 
         if not query:
             return {
@@ -140,9 +161,26 @@ class FDAGSRSTool(BaseTool):
         # ``view=full`` inlines each result's codes/names arrays; without it the
         # search records carry only link stubs, so xrefs and synonyms come back
         # empty for every hit.
-        params: Dict[str, Any] = {"q": query.strip(), "top": limit, "view": "full"}
+        params: Dict[str, Any] = {
+            "q": query.strip(),
+            "top": limit + (1 if offset else 0),
+            "skip": offset,
+            "view": "full",
+        }
         if substance_class:
             params["fdim"] = f"substanceClass:{substance_class}"
+
+        # GSRS pins an exact-name hit to every nonzero skip page. Probe the
+        # first hit so that repeated pins can be removed without dropping one
+        # ranked result from every later page.
+        pinned_uuid = None
+        if offset:
+            probe_params = dict(params, top=1, skip=0)
+            probe = self._api_get(f"{GSRS_BASE}/substances/search", probe_params)
+            if probe["ok"]:
+                probe_content = probe["data"].get("content", [])
+                if probe_content:
+                    pinned_uuid = probe_content[0].get("uuid")
 
         result = self._api_get(f"{GSRS_BASE}/substances/search", params)
         if not result["ok"]:
@@ -151,8 +189,17 @@ class FDAGSRSTool(BaseTool):
 
         content = result["data"].get("content", [])
         total = result["data"].get("total", len(content))
+        repeated_pin_removed = bool(
+            offset and pinned_uuid and content and content[0].get("uuid") == pinned_uuid
+        )
+        if repeated_pin_removed:
+            content = content[1:]
+        content = content[:limit]
 
         substances = [self._clean_substance(r) for r in content]
+        next_offset = offset + len(substances)
+        stalled = not substances and offset < total
+        has_more = not stalled and next_offset < total
 
         return {
             "status": "success",
@@ -161,6 +208,20 @@ class FDAGSRSTool(BaseTool):
                 "query": query,
                 "total": total,
                 "returned": len(substances),
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
+                "total_is_exact": True,
+                "truncated": offset > 0 or has_more,
+                "result_set_complete": offset == 0 and len(substances) == total,
+                "pagination_stalled": stalled,
+                "warning": (
+                    "GSRS reported additional substances but returned an empty page at this offset."
+                    if stalled
+                    else None
+                ),
+                "repeated_exact_match_removed": repeated_pin_removed,
                 "substance_class_filter": substance_class or None,
             },
         }
@@ -240,10 +301,14 @@ class FDAGSRSTool(BaseTool):
                     "charge": structure.get("charge", ""),
                     "mwt": structure.get("mwt", ""),
                 },
-                "names": all_names[:20],
+                "names": all_names,
                 "codes": all_codes,
             },
-            "metadata": {"unii": unii},
+            "metadata": {
+                "unii": unii,
+                "total_names": len(all_names),
+                "total_codes": len(all_codes),
+            },
         }
 
     # ------------------------------------------------------------------

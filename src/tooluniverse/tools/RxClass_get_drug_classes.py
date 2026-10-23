@@ -1,7 +1,7 @@
 """
 RxClass_get_drug_classes
 
-Get drug classification from NLM RxClass for a drug name or RXCUI. Returns ATC codes, EPC (Establ...
+Get NLM RxClass classifications for a drug name or RXCUI across ATC, EPC, MoA, VA and other sourc...
 """
 
 from typing import Any, Optional, Callable
@@ -13,13 +13,14 @@ def RxClass_get_drug_classes(
     rxcui: Optional[str] = None,
     rela_source: Optional[str] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get drug classification from NLM RxClass for a drug name or RXCUI. Returns ATC codes, EPC (Establ...
+    Get NLM RxClass classifications for a drug name or RXCUI across ATC, EPC, MoA, VA and other sourc...
 
     Parameters
     ----------
@@ -31,6 +32,8 @@ def RxClass_get_drug_classes(
         Classification source. Options: 'ATC' (WHO Anatomical Therapeutic Chemical, d...
     limit : int
         Maximum results to return (default 20).
+    offset : int
+        Zero-based offset in the complete deduplicated drug-class relation list. Cont...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def RxClass_get_drug_classes(
             "rxcui": rxcui,
             "rela_source": rela_source,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

@@ -1,7 +1,7 @@
 """
 BVBRC_search_surveillance
 
-Search influenza and pathogen surveillance data in BV-BRC. Returns surveillance samples with host...
+Search influenza and pathogen surveillance data in BV-BRC with explicit pagination and true Conte...
 """
 
 from typing import Any, Optional, Callable
@@ -14,13 +14,14 @@ def BVBRC_search_surveillance(
     host_group: Optional[str] = None,
     collection_country: Optional[str] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search influenza and pathogen surveillance data in BV-BRC. Returns surveillance samples with host...
+    Search influenza and pathogen surveillance data in BV-BRC with explicit pagination and true Conte...
 
     Parameters
     ----------
@@ -34,6 +35,8 @@ def BVBRC_search_surveillance(
         Country of sample collection. Examples: 'USA', 'China', 'Egypt', 'Vietnam'.
     limit : int
         Maximum number of results. Default: 25. Max: 100.
+    offset : int
+        Zero-based result offset. Use metadata.next_offset to continue.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def BVBRC_search_surveillance(
             "host_group": host_group,
             "collection_country": collection_country,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

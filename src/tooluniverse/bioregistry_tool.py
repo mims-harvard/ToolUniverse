@@ -120,7 +120,8 @@ class BioregistryTool(BaseTool):
             if data.get("synonyms"):
                 result["synonyms"] = data["synonyms"]
             if data.get("publications"):
-                result["publications"] = data["publications"][:5]
+                result["publications"] = data["publications"]
+                result["publications_count"] = len(data["publications"])
             return {"status": "success", "data": result}
         except Exception as e:
             return {"status": "error", "error": str(e)}
@@ -193,7 +194,8 @@ class BioregistryTool(BaseTool):
                 "status": "error",
                 "error": "Parameter 'query' is required (e.g., 'protein', 'gene ontology')",
             }
-        limit = arguments.get("limit", 10)
+        limit = max(1, int(arguments.get("limit", 10)))
+        offset = max(0, int(arguments.get("offset", 0)))
         try:
             url = f"{BIOREGISTRY_API_URL}/search"
             resp = requests.get(url, params={"q": query}, timeout=self.timeout)
@@ -209,7 +211,7 @@ class BioregistryTool(BaseTool):
             # is usually empty), so names and descriptions come from each prefix's
             # registry record.
             hits = []
-            for item in results[:limit]:
+            for item in results[offset : offset + limit]:
                 if isinstance(item, list) and item:
                     hits.append((item[0], item[1] if len(item) > 1 else ""))
                 elif isinstance(item, dict):
@@ -230,6 +232,14 @@ class BioregistryTool(BaseTool):
                     "query": query,
                     "results": trimmed,
                     "total": len(results),
+                    "returned": len(trimmed),
+                    "offset": offset,
+                    "limit": limit,
+                    "has_more": offset + len(trimmed) < len(results),
+                    "truncated": offset + len(trimmed) < len(results),
+                    "next_offset": offset + len(trimmed)
+                    if offset + len(trimmed) < len(results)
+                    else None,
                 },
             }
         except Exception as e:

@@ -26,18 +26,44 @@ class EMDBRESTTool(BaseTool):
         through as query params instead.
         """
         url = self.tool_config["fields"]["endpoint"]
-        query_params = {}
+        query_params = dict(self.tool_config.get("fields", {}).get("params", {}))
+        param_mapping = self.tool_config.get("fields", {}).get("param_mapping", {})
         for k, v in args.items():
             token = f"{{{k}}}"
             if token in url:
                 url = url.replace(token, str(v))
             else:
-                query_params[k] = v
+                query_params[param_mapping.get(k, k)] = v
         return url, query_params
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         url = None
         try:
+            if (
+                self.tool_config.get("fields", {}).get("pagination")
+                == "ebi_search_start"
+            ):
+                rows = arguments.get("rows", 10)
+                start = arguments.get("start", 0)
+                if (
+                    isinstance(rows, bool)
+                    or not isinstance(rows, int)
+                    or not 1 <= rows <= 100
+                ):
+                    return {
+                        "status": "error",
+                        "error": "rows must be an integer between 1 and 100",
+                        "parameter": "rows",
+                    }
+                if isinstance(start, bool) or not isinstance(start, int) or start < 0:
+                    return {
+                        "status": "error",
+                        "error": "start must be a non-negative integer",
+                        "parameter": "start",
+                    }
+                arguments = dict(arguments)
+                arguments["rows"] = rows
+                arguments["start"] = start
             url, query_params = self._build_url(arguments)
             response = request_with_retry(
                 self.session,
@@ -56,7 +82,44 @@ class EMDBRESTTool(BaseTool):
                     "detail": (response.text or "")[:500],
                 }
             data = response.json()
-            return {"status": "success", "data": data, "url": url}
+            result = {"status": "success", "data": data, "url": url}
+            if (
+                self.tool_config.get("fields", {}).get("pagination")
+                == "ebi_search_start"
+            ):
+                entries = data.get("entries", []) if isinstance(data, dict) else []
+                if not isinstance(entries, list):
+                    entries = []
+                total = data.get("hitCount") if isinstance(data, dict) else None
+                total_is_exact = isinstance(total, int) and not isinstance(total, bool)
+                returned = len(entries)
+                start = arguments["start"]
+                rows = arguments["rows"]
+                has_more = bool(
+                    total_is_exact and returned and start + returned < total
+                )
+                stalled = bool(total_is_exact and not returned and start < total)
+                result["metadata"] = {
+                    "returned": returned,
+                    "total_results": total if total_is_exact else None,
+                    "total_results_is_exact": total_is_exact,
+                    "start": start,
+                    "rows": rows,
+                    "has_more": has_more,
+                    "next_start": start + returned if has_more else None,
+                    "truncated": start > 0 or has_more,
+                    "result_set_complete": bool(
+                        total_is_exact and start == 0 and returned == total
+                    ),
+                    "pagination_stalled": stalled,
+                    "pagination_scope": "ebi_search_emdb_start_hit_count",
+                    "warning": (
+                        "EBI Search reported additional EMDB entries but returned an empty page at this start."
+                        if stalled
+                        else None
+                    ),
+                }
+            return result
         except Exception as e:
             return {
                 "status": "error",

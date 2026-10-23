@@ -1,7 +1,7 @@
 """
 InspireHEP_search_papers
 
-Search high-energy physics literature in the INSPIRE-HEP database, the premier repository for phy...
+Search high-energy physics literature in INSPIRE-HEP. Results use exact one-based page pagination...
 """
 
 from typing import Any, Optional, Callable
@@ -11,7 +11,8 @@ from ._shared_client import get_shared_client
 def InspireHEP_search_papers(
     q: str,
     sort: Optional[str] = None,
-    size: Optional[int] = None,
+    size: Optional[int] = 10,
+    page: Optional[int] = 1,
     fields: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -19,7 +20,7 @@ def InspireHEP_search_papers(
     validate: bool = True,
 ) -> Any:
     """
-    Search high-energy physics literature in the INSPIRE-HEP database, the premier repository for phy...
+    Search high-energy physics literature in INSPIRE-HEP. Results use exact one-based page pagination...
 
     Parameters
     ----------
@@ -28,7 +29,9 @@ def InspireHEP_search_papers(
     sort : str
         Sort order. Values: 'mostrecent' (default), 'mostcited'. Examples: 'mostcited...
     size : int
-        Number of results (1-25). Default: 10
+        Results per page (1-25, default 10)
+    page : int
+        One-based result page. Continue with metadata.next_page.
     fields : str
         Comma-separated fields to return. Default includes titles, authors, abstract,...
     stream_callback : Callable, optional
@@ -47,7 +50,13 @@ def InspireHEP_search_papers(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"q": q, "sort": sort, "size": size, "fields": fields}.items()
+        for k, v in {
+            "q": q,
+            "sort": sort,
+            "size": size,
+            "page": page,
+            "fields": fields,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

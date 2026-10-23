@@ -2,7 +2,7 @@
   {
     "name": "Sequence_count_residues",
     "type": "SequenceAnalyzeTool",
-    "description": "Count occurrences of a specific amino acid or nucleotide residue in a sequence. Accepts either a raw sequence string or a UniProt accession (fetches protein sequence from UniProt REST API). Reports count, fraction, percentage, and 1-based positions. Useful for cysteine counting (disulfide bond estimation), charged residue analysis, or nucleotide composition.",
+    "description": "Count occurrences of a specific amino acid or nucleotide residue in a sequence. Accepts either a raw sequence string or a UniProt accession (fetches protein sequence from UniProt REST API). Reports count, fraction, percentage, and pageable 1-based positions, including explicit truncation and continuation fields for residues occurring more than 50 times.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -25,6 +25,19 @@
         "residue": {
           "type": "string",
           "description": "Single character residue to count (e.g., 'C' for cysteine)"
+        },
+        "position_limit": {
+          "type": "integer",
+          "default": 50,
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Maximum number of matching 1-based residue positions to return on this page."
+        },
+        "position_offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based offset into all matching residue positions. Continue with data.next_position_offset while data.positions_truncated is true."
         }
       },
       "required": [
@@ -53,6 +66,27 @@
                 },
                 "positions_1based": {
                   "type": "array"
+                },
+                "total_positions": {
+                  "type": "integer"
+                },
+                "positions_returned": {
+                  "type": "integer"
+                },
+                "position_limit": {
+                  "type": "integer"
+                },
+                "position_offset": {
+                  "type": "integer"
+                },
+                "positions_truncated": {
+                  "type": "boolean"
+                },
+                "next_position_offset": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 }
               }
             }

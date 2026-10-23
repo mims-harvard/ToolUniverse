@@ -1,7 +1,7 @@
 [
   {
     "name": "Nextstrain_list_datasets",
-    "description": "List available pathogen phylogenetic datasets from Nextstrain. Returns datasets grouped by pathogen (e.g., avian-flu, dengue, ebola, flu, measles, mpox, SARS-CoV-2, zika), each with its true 'dataset_count'. By default only the first 10 dataset paths per pathogen are listed; when that hides entries the response sets 'truncated': true with a 'truncation_note', and 'metadata.total_datasets' always reports the full catalogue size (not the number listed). Pass datasets_per_pathogen=0 to list every dataset. Optionally filter by pathogen name. Nextstrain provides real-time molecular epidemiology for public health, tracking how pathogens evolve and spread worldwide.",
+    "description": "List available pathogen phylogenetic datasets from Nextstrain. Returns datasets grouped by pathogen (e.g., avian-flu, dengue, ebola, flu, measles, mpox, SARS-CoV-2, zika), each with its true 'dataset_count'. By default only the first 10 dataset paths per pathogen are listed; when that hides entries the response sets 'truncated': true with a 'truncation_note', and 'metadata.total_datasets' always reports the full catalogue size (not the number listed). Pass datasets_per_pathogen=0 to list every dataset, or page each pathogen group: start with dataset_offset=0 and continue with that group's next_dataset_offset while has_more is true. Optionally filter by pathogen name. Nextstrain provides real-time molecular epidemiology for public health, tracking how pathogens evolve and spread worldwide.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -19,6 +19,20 @@
           ],
           "minimum": 0,
           "description": "Maximum number of dataset paths listed per pathogen (default 10). Set to 0 to list every dataset with no cap, or to a larger number (e.g. 100) to cover the biggest pathogens such as ncov and avian-flu."
+        },
+        "dataset_limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "description": "Alias for datasets_per_pathogen (page size per pathogen group). Ignored when datasets_per_pathogen is given."
+        },
+        "dataset_offset": {
+          "type": "integer",
+          "description": "Zero-based offset applied within every matched pathogen group (default 0). Continue each group using its next_dataset_offset while has_more is true.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": []
@@ -54,7 +68,7 @@
                 "items": {
                   "type": "string"
                 },
-                "description": "Dataset paths, capped by the datasets_per_pathogen argument (default 10)."
+                "description": "Dataset paths starting at dataset_offset, capped by the datasets_per_pathogen argument (default 10)."
               },
               "datasets_listed": {
                 "type": "integer",
@@ -63,6 +77,24 @@
               "datasets_truncated": {
                 "type": "boolean",
                 "description": "Present and true when 'datasets' lists fewer paths than 'dataset_count'."
+              },
+              "datasets_returned": {
+                "type": "integer",
+                "description": "Same as datasets_listed: the current page size."
+              },
+              "dataset_offset": {
+                "type": "integer"
+              },
+              "has_more": {
+                "type": "boolean",
+                "description": "True when this group has datasets past this page."
+              },
+              "next_dataset_offset": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "dataset_offset for this group's next page, or null when has_more is false."
               }
             }
           }
@@ -83,7 +115,7 @@
   },
   {
     "name": "Nextstrain_get_dataset",
-    "description": "Get metadata and phylogenetic summary for a Nextstrain pathogen dataset. Returns title, last update date, number of sequences, data provenance, maintainers, root node attributes, and available coloring options. Useful for understanding the scope and currency of pathogen genomic surveillance data. Example: 'zika' returns 1044 sequences tracking Zika virus evolution, last updated Dec 2025.",
+    "description": "Get metadata and phylogenetic summary for a Nextstrain pathogen dataset. Returns title, update date, sequence count, provenance, maintainers, root attributes, and the complete list of available coloring dimensions with an explicit count. Large datasets such as seasonal H3N2 expose more than 15 colorings.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -160,6 +192,9 @@
             },
             "available_colorings_count": {
               "type": "integer"
+            },
+            "available_colorings_complete": {
+              "type": "boolean"
             }
           }
         },

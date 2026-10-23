@@ -40,6 +40,7 @@ CONFIGS = {c["name"]: c for c in json.loads(CONFIG_PATH.read_text())}
 class _FakeResponse:
     def __init__(self, payload):
         self._payload = payload
+        self.headers = {}
 
     def json(self):
         return self._payload

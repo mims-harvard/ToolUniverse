@@ -1,7 +1,7 @@
 """
 GlyGen_search_glycoproteins
 
-Search GlyGen for glycoproteins by organism, glycosylation evidence type, protein name, or gene n...
+Search GlyGen for glycoproteins by organism, glycosylation evidence/type, protein name, or gene n...
 """
 
 from typing import Any, Optional, Callable
@@ -14,15 +14,15 @@ def GlyGen_search_glycoproteins(
     glycosylation_type: Optional[str] = None,
     protein_name: Optional[str] = None,
     gene_name: Optional[str] = None,
-    limit: Optional[int] = None,
-    offset: Optional[int] = None,
+    limit: Optional[int] = 20,
+    offset: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search GlyGen for glycoproteins by organism, glycosylation evidence type, protein name, or gene n...
+    Search GlyGen for glycoproteins by organism, glycosylation evidence/type, protein name, or gene n...
 
     Parameters
     ----------
@@ -37,9 +37,9 @@ def GlyGen_search_glycoproteins(
     gene_name : str
         Gene name to search. Example: 'EGFR'.
     limit : int
-        Maximum results to return (default 20, max 50).
+        Results per request (default 20, range 1-50).
     offset : int
-        Pagination offset (1-indexed, default 1).
+        One-based first result (default 1). Continue with metadata.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

@@ -1,7 +1,7 @@
 """
 Alliance_get_disease_genes
 
-Get genes associated with a disease across all model organisms from the Alliance of Genome Resour...
+Get genes associated with a Disease Ontology term across model organisms. Results are recoverably...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def Alliance_get_disease_genes(
     validate: bool = True,
 ) -> Any:
     """
-    Get genes associated with a disease across all model organisms from the Alliance of Genome Resour...
+    Get genes associated with a Disease Ontology term across model organisms. Results are recoverably...
 
     Parameters
     ----------

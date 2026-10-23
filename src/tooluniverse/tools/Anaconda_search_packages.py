@@ -1,7 +1,7 @@
 """
 Anaconda_search_packages
 
-Search Anaconda.org for conda packages across all channels (conda-forge, bioconda, defaults, etc....
+Search Anaconda.org packages with explicit limit/offset pagination. The upstream default silently...
 """
 
 from typing import Any, Optional, Callable
@@ -11,13 +11,15 @@ from ._shared_client import get_shared_client
 def Anaconda_search_packages(
     name: str,
     type_: Optional[str] = None,
+    limit: Optional[int] = 20,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search Anaconda.org for conda packages across all channels (conda-forge, bioconda, defaults, etc....
+    Search Anaconda.org packages with explicit limit/offset pagination. The upstream default silently...
 
     Parameters
     ----------
@@ -25,6 +27,10 @@ def Anaconda_search_packages(
         Package name to search for (e.g., 'numpy', 'samtools', 'biopython', 'r-ggplot2')
     type_ : str
         Package type filter: 'conda' (default), 'pypi', or 'standard_python'
+    limit : int
+        Packages per page (default 20, max 100).
+    offset : int
+        Zero-based package offset. Continue with metadata.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -39,7 +45,16 @@ def Anaconda_search_packages(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"name": name, "type": type_}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {
+            "name": name,
+            "type": type_,
+            "limit": limit,
+            "offset": offset,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "Anaconda_search_packages",

@@ -1,7 +1,7 @@
 """
 OpenFoodFacts_search_products
 
-Search for food products in the Open Food Facts database by name or brand. Returns product detail...
+Search Open Food Facts products by name or brand. Returns one page of product and nutrition data ...
 """
 
 from typing import Any, Optional, Callable
@@ -11,14 +11,14 @@ from ._shared_client import get_shared_client
 def OpenFoodFacts_search_products(
     search_terms: str,
     page_size: Optional[int] = 50,
-    page: Optional[int] = None,
+    page: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search for food products in the Open Food Facts database by name or brand. Returns product detail...
+    Search Open Food Facts products by name or brand. Returns one page of product and nutrition data ...
 
     Parameters
     ----------

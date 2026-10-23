@@ -25,9 +25,9 @@ def AntibodyRegistry_search(
     query : str
         Full-text search term: a target (e.g. 'GFAP', 'CD3'), antibody name, vendor, ...
     size : int
-        Number of results to return (1-100, default 10).
+        Number of results per page (1-500, default 10). The official API rejects valu...
     page : int
-        Result page, starting at 1 (default 1).
+        One-based result page (default 1). Continue with metadata.next_page while met...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

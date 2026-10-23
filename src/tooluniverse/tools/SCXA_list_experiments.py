@@ -1,7 +1,7 @@
 """
 SCXA_list_experiments
 
-List single-cell RNA-seq experiments from EBI Single Cell Expression Atlas. Returns 380+ curated ...
+List a resumable page of single-cell RNA-seq experiments from EBI Single Cell Expression Atlas, w...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,14 @@ def SCXA_list_experiments(
     species: Optional[str] = None,
     keyword: Optional[str] = None,
     limit: Optional[int] = 20,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> list[Any]:
     """
-    List single-cell RNA-seq experiments from EBI Single Cell Expression Atlas. Returns 380+ curated ...
+    List a resumable page of single-cell RNA-seq experiments from EBI Single Cell Expression Atlas, w...
 
     Parameters
     ----------
@@ -27,7 +28,9 @@ def SCXA_list_experiments(
     keyword : str
         Keyword to search in experiment descriptions and factors (e.g., 'pancreas', '...
     limit : int
-        Maximum number of experiments to return (default 20, max 100).
+        Page size (default 20, max 100).
+    offset : int
+        Zero-based experiment offset. Continue with metadata.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,12 @@ def SCXA_list_experiments(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"species": species, "keyword": keyword, "limit": limit}.items()
+        for k, v in {
+            "species": species,
+            "keyword": keyword,
+            "limit": limit,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

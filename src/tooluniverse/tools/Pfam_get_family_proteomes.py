@@ -1,7 +1,7 @@
 """
 Pfam_get_family_proteomes
 
-Get the proteome (organism) distribution for a Pfam protein family. Returns the list of reference...
+Get the proteome (organism) distribution for a Pfam protein family, including organism names, tax...
 """
 
 from typing import Any, Optional, Callable
@@ -11,13 +11,14 @@ from ._shared_client import get_shared_client
 def Pfam_get_family_proteomes(
     pfam_accession: str,
     max_results: Optional[int] = 20,
+    cursor: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get the proteome (organism) distribution for a Pfam protein family. Returns the list of reference...
+    Get the proteome (organism) distribution for a Pfam protein family, including organism names, tax...
 
     Parameters
     ----------
@@ -25,6 +26,8 @@ def Pfam_get_family_proteomes(
         Pfam family accession. Examples: 'PF00001' (7tm_1, found in 1890 proteomes), ...
     max_results : int
         Maximum number of proteomes to return (default 20, max 100).
+    cursor : str
+        Opaque InterPro cursor returned as next_cursor by a previous call. Omit for t...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,6 +47,7 @@ def Pfam_get_family_proteomes(
         for k, v in {
             "pfam_accession": pfam_accession,
             "max_results": max_results,
+            "cursor": cursor,
         }.items()
         if v is not None
     }

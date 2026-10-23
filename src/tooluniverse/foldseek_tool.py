@@ -79,7 +79,22 @@ class FoldseekTool(BaseRESTTool):
         # "tmalign" fallback silently returned noise-level hits (e-value ~0.3,
         # ~2-5% identity) for every query, including trivial control cases.
         mode = arguments.get("mode", "3diaa")
-        max_results = min(int(arguments.get("max_results", 10)), 50)
+        max_results = arguments.get("max_results", 10)
+        offset = arguments.get("offset", 0)
+        if (
+            isinstance(max_results, bool)
+            or not isinstance(max_results, int)
+            or not 1 <= max_results <= 50
+        ):
+            return {
+                "status": "error",
+                "error": "max_results must be an integer from 1 to 50",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+            }
 
         if not pdb_id and not sequence:
             return {
@@ -180,13 +195,34 @@ class FoldseekTool(BaseRESTTool):
 
         result_data = result_resp.json()
         return self._parse_results(
-            result_data, pdb_id or "query", database, max_results
+            result_data,
+            pdb_id or "query",
+            database,
+            max_results,
+            offset,
+            ticket_id,
         )
 
     def _get_result(self, arguments: dict) -> dict:
         """Get results for a previously submitted Foldseek job."""
         ticket_id = arguments.get("ticket_id", "").strip()
-        max_results = min(int(arguments.get("max_results", 10)), 50)
+        max_results = arguments.get("max_results", 10)
+        offset = arguments.get("offset", 0)
+
+        if (
+            isinstance(max_results, bool)
+            or not isinstance(max_results, int)
+            or not 1 <= max_results <= 50
+        ):
+            return {
+                "status": "error",
+                "error": "max_results must be an integer from 1 to 50",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+            }
 
         if not ticket_id:
             return {
@@ -227,10 +263,18 @@ class FoldseekTool(BaseRESTTool):
             }
 
         result_data = result_resp.json()
-        return self._parse_results(result_data, "query", "unknown", max_results)
+        return self._parse_results(
+            result_data, "query", "unknown", max_results, offset, ticket_id
+        )
 
     def _parse_results(
-        self, result_data: dict, query_id: str, database: str, max_results: int
+        self,
+        result_data: dict,
+        query_id: str,
+        database: str,
+        max_results: int,
+        offset: int = 0,
+        ticket_id: str | None = None,
     ) -> dict:
         """Parse Foldseek result JSON into structured output."""
         all_results = result_data.get("results", [])
@@ -263,16 +307,29 @@ class FoldseekTool(BaseRESTTool):
                     )
 
         # Sort by e-value (lower is better)
-        alignments.sort(key=lambda x: (x.get("e_value") or float("inf")))
+        alignments.sort(
+            key=lambda x: (
+                float("inf") if x.get("e_value") is None else x.get("e_value")
+            )
+        )
         total_hits = len(alignments)
-        alignments = alignments[:max_results]
+        alignments = alignments[offset : offset + max_results]
+        next_offset = offset + len(alignments)
+        has_more = next_offset < total_hits
 
         return {
             "status": "success",
             "data": {
                 "query": query_id,
+                "ticket_id": ticket_id,
                 "alignments": alignments,
                 "total_hits": total_hits,
+                "returned": len(alignments),
+                "offset": offset,
+                "max_results": max_results,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
+                "result_set_complete": offset == 0 and len(alignments) == total_hits,
             },
             "metadata": {
                 "database": database,

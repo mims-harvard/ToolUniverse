@@ -1,7 +1,7 @@
 """
 HuggingFace_search_models
 
-Search the HuggingFace Hub for machine learning models by keyword, task type, or ML framework. Hu...
+Search the HuggingFace Hub for machine learning models. Results use the Hub's opaque cursor pagin...
 """
 
 from typing import Any, Optional, Callable
@@ -10,7 +10,8 @@ from ._shared_client import get_shared_client
 
 def HuggingFace_search_models(
     search: str,
-    limit: Optional[int] = None,
+    limit: Optional[int] = 20,
+    cursor: Optional[str] = None,
     pipeline_tag: Optional[str] = None,
     library: Optional[str] = None,
     *,
@@ -19,14 +20,16 @@ def HuggingFace_search_models(
     validate: bool = True,
 ) -> Any:
     """
-    Search the HuggingFace Hub for machine learning models by keyword, task type, or ML framework. Hu...
+    Search the HuggingFace Hub for machine learning models. Results use the Hub's opaque cursor pagin...
 
     Parameters
     ----------
     search : str
         Search query for model name, task, or topic (e.g., 'protein language model', ...
     limit : int
-        Maximum number of results to return (default 20, max 1000)
+        Results per cursor page (default 20, max 1000)
+    cursor : str
+        Opaque continuation cursor from metadata.next_cursor. Omit on the first page.
     pipeline_tag : str
         Filter by ML task type. Common values: 'text-classification', 'token-classifi...
     library : str
@@ -50,6 +53,7 @@ def HuggingFace_search_models(
         for k, v in {
             "search": search,
             "limit": limit,
+            "cursor": cursor,
             "pipeline_tag": pipeline_tag,
             "library": library,
         }.items()

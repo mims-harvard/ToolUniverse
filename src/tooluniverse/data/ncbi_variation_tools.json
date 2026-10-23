@@ -139,7 +139,7 @@
   },
   {
     "name": "NCBIVariation_rsid_lookup",
-    "description": "Look up a dbSNP rsID and retrieve variant details including GRCh38 genomic coordinates, associated genes, clinical significance (ClinVar), citations, and MANE Select transcript IDs. Each entry in 'grch38_placements' reports 'position' as a 1-based GRCh38 coordinate (matching ClinVar, Ensembl VEP and MyVariant) and keeps dbSNP's 0-based interbase SPDI offset in 'spdi_position'. Accepts rsID with or without 'rs' prefix (e.g., 'rs429358' or '429358'). Returns structured summary of the variant.",
+    "description": "Look up a dbSNP rsID and retrieve variant details including GRCh38 genomic coordinates, associated genes, every ClinVar clinical assertion across all annotated alleles, citations, and MANE Select transcript IDs. Clinical records preserve allele IDs, disease identifiers, origins, collection methods, citations, review status, and dates. Each entry in 'grch38_placements' reports 'position' as a 1-based GRCh38 coordinate (matching ClinVar, Ensembl VEP and MyVariant) and keeps dbSNP's 0-based interbase SPDI offset in 'spdi_position'. Accepts rsID with or without 'rs' prefix (e.g., 'rs429358' or '429358'). Returns structured summary of the variant.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -170,13 +170,23 @@
         "mane_select_ids": {"type": "array"},
         "grch38_placements": {"type": "array"},
         "genes": {"type": "array"},
-        "clinical_significance": {"type": "array"}
+        "clinical_significance": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Complete clinical assertions across every allele annotation"
+        },
+        "clinical_significance_count": {
+          "type": "integer",
+          "description": "Number of complete clinical assertions returned"
+        }
       }
     }
   },
   {
     "name": "NCBIVariation_alfa_frequencies_by_rsid",
-    "description": "Get ALFA (Allele Frequency Aggregator) per-ancestry allele frequencies for a dbSNP rsID from NCBI Variation Services. Unlike dbSNP esummary global_mafs (one aggregate global frequency per study), this returns allele COUNTS and computed frequencies broken down by population/ancestry: European, African, African American, East Asian, Latin American, South Asian, Other Asian, etc. SAMN biosample IDs are resolved to ancestry names via the live ALFA frequency metadata, aggregating >1M dbGaP subjects. Accepts rsID with or without 'rs' prefix.",
+    "description": "Get ALFA (Allele Frequency Aggregator) per-ancestry allele frequencies for a dbSNP rsID from NCBI Variation Services. Unlike dbSNP esummary global_mafs (one aggregate global frequency per study), this returns allele COUNTS and computed frequencies broken down by population/ancestry: European, African, African American, East Asian, Latin American, South Asian, Other Asian, etc. SAMN biosample IDs are normally resolved through live NCBI ALFA metadata. If that secondary endpoint is unavailable, frequency counts remain live but labels use a bundled snapshot; metadata.population_labels_source, population_metadata_error, and unresolved_biosample_ids expose this explicitly. Accepts rsID with or without 'rs' prefix.",
     "parameter": {
       "type": "object",
       "properties": {

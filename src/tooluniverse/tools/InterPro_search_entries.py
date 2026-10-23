@@ -1,7 +1,7 @@
 """
 InterPro_search_entries
 
-Search InterPro entries (domains, families, sites) by keyword. Returns matching InterPro entries ...
+Search InterPro entries (domains, families, sites) by keyword. Results are cursor-paginated: when...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,14 @@ def InterPro_search_entries(
     query: str,
     entry_type: Optional[str] = None,
     page_size: Optional[int] = 20,
+    cursor: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search InterPro entries (domains, families, sites) by keyword. Returns matching InterPro entries ...
+    Search InterPro entries (domains, families, sites) by keyword. Results are cursor-paginated: when...
 
     Parameters
     ----------
@@ -28,6 +29,8 @@ def InterPro_search_entries(
         Filter by entry type. Options: 'domain', 'family', 'homologous_superfamily', ...
     page_size : int
         Number of results to return (1-50, default 20).
+    cursor : str
+        Opaque InterPro cursor returned as next_cursor by a previous call.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +51,7 @@ def InterPro_search_entries(
             "query": query,
             "entry_type": entry_type,
             "page_size": page_size,
+            "cursor": cursor,
         }.items()
         if v is not None
     }

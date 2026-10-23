@@ -1,7 +1,7 @@
 """
 Genebass_gene_burden_phewas
 
-Exome-wide gene-level burden PheWAS from Genebass (UK Biobank ~394K exomes, SAIGE-GENE+). Given o...
+Page through all Genebass gene-burden PheWAS associations after stable ascending p-value sorting....
 """
 
 from typing import Any, Optional, Callable
@@ -12,6 +12,7 @@ def Genebass_gene_burden_phewas(
     gene: str,
     burden_set: Optional[str] = "pLoF",
     limit: Optional[int] = 25,
+    offset: Optional[int] = 0,
     max_pval: Optional[float] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -19,7 +20,7 @@ def Genebass_gene_burden_phewas(
     validate: bool = True,
 ) -> Any:
     """
-    Exome-wide gene-level burden PheWAS from Genebass (UK Biobank ~394K exomes, SAIGE-GENE+). Given o...
+    Page through all Genebass gene-burden PheWAS associations after stable ascending p-value sorting....
 
     Parameters
     ----------
@@ -29,6 +30,8 @@ def Genebass_gene_burden_phewas(
         Variant category aggregated in the burden test. One of: 'pLoF' (default), 'mi...
     limit : int
         Maximum number of phenotype associations to return (sorted by ascending burde...
+    offset : int
+        Zero-based offset into filtered, p-value-sorted burden associations.
     max_pval : float
         Optional: only return associations with burden p-value <= this threshold (e.g...
     stream_callback : Callable, optional
@@ -51,6 +54,7 @@ def Genebass_gene_burden_phewas(
             "gene": gene,
             "burden_set": burden_set,
             "limit": limit,
+            "offset": offset,
             "max_pval": max_pval,
         }.items()
         if v is not None

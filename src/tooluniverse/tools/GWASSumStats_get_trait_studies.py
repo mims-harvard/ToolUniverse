@@ -12,6 +12,7 @@ def GWASSumStats_get_trait_studies(
     trait: Optional[str] = None,
     size: Optional[int] = None,
     trait_id: Optional[str] = None,
+    start: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,9 +26,11 @@ def GWASSumStats_get_trait_studies(
     trait : str
         Text matched case-insensitively against the EFO trait label, e.g. 'alzheimer'...
     size : int
-        Number of studies to return (default 20, max 100).
+        Studies per page (default 20, max 1000).
     trait_id : str
         Deprecated. An ontology id such as 'EFO_0000249'; the API filters on the labe...
+    start : int
+        Zero-based start offset (default 0); must be a multiple of size because the v...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,12 @@ def GWASSumStats_get_trait_studies(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"trait": trait, "size": size, "trait_id": trait_id}.items()
+        for k, v in {
+            "trait": trait,
+            "size": size,
+            "trait_id": trait_id,
+            "start": start,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

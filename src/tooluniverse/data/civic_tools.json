@@ -1,15 +1,24 @@
 [
   {
     "name": "civic_search_genes",
-    "description": "Search for genes in CIViC (Clinical Interpretation of Variants in Cancer) database. CIViC is a community knowledgebase for expert-curated interpretations of variants in cancer. Returns genes with their IDs, names, and descriptions. Use this to find genes of interest before querying variants or evidence.",
+    "description": "Search for genes in CIViC (Clinical Interpretation of Variants in Cancer) database. Returns exact totalCount and cursor pagination metadata. When metadata.has_more is true, pass metadata.next_cursor as after with the same gene filter.",
     "type": "CIViCTool",
     "parameter": {
       "type": "object",
       "properties": {
         "limit": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
           "description": "Maximum number of genes to return (default: 10, recommended max: 100)",
           "default": 10
+        },
+        "after": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Opaque continuation cursor from metadata.next_cursor."
         },
         "name": {
           "type": "string",
@@ -24,10 +33,11 @@
           "description": "Gene symbol to search for. Alias for 'name'."
         }
       },
-      "required": []
+      "required": [],
+      "additionalProperties": false
     },
     "fields": {
-      "query": "query GetGenes($limit: Int, $entrezSymbols: [String!]) { genes(first: $limit, entrezSymbols: $entrezSymbols) { totalCount pageInfo { hasNextPage } nodes { id name description entrezId } } }",
+      "query": "query GetGenes($limit: Int, $after: String, $entrezSymbols: [String!]) { genes(first: $limit, after: $after, entrezSymbols: $entrezSymbols) { totalCount pageInfo { hasNextPage endCursor } nodes { id name description entrezId } } }",
       "operation_name": "GetGenes",
       "array_wrap": {
         "name": "entrezSymbols",
@@ -55,6 +65,12 @@
                     "hasNextPage": {
                       "type": "boolean",
                       "description": "True when more records match than were returned; the returned nodes are an incomplete sample of totalCount."
+                    },
+                    "endCursor": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
                     }
                   }
                 },
@@ -117,7 +133,7 @@
   },
   {
     "name": "civic_get_variants_by_gene",
-    "description": "Get all variants associated with a specific gene in CIViC database. Returns variant information including names, coordinates, and associated evidence. Use gene_name or gene_symbol (e.g., 'EGFR', 'BRAF') for convenience, or gene_id if already known. Uses cursor-based pagination to return up to 500 variants per call.",
+    "description": "Get variants associated with a specific gene in CIViC. Returns variant IDs, names, the exact totalCount, and cursor pagination metadata. Use gene_name or gene_symbol (e.g., 'EGFR', 'BRAF') for convenience, or gene_id if already known. When metadata.has_more is true, pass metadata.next_cursor as after to retrieve the next page.",
     "type": "CIViCTool",
     "parameter": {
       "type": "object",
@@ -142,6 +158,13 @@
           "type": "integer",
           "description": "Maximum number of variants to return (default: 500, uses cursor pagination to bypass CIViC's 100/page server cap)",
           "default": 500
+        },
+        "after": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Opaque CIViC continuation cursor. Pass metadata.next_cursor from the preceding call with the same gene filter."
         }
       },
       "required": []
@@ -179,6 +202,12 @@
                         "hasNextPage": {
                           "type": "boolean",
                           "description": "True when more records match than were returned; the returned nodes are an incomplete sample of totalCount."
+                        },
+                        "endCursor": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
                         }
                       }
                     },
@@ -226,6 +255,30 @@
             "format": {
               "type": "string"
             },
+            "returned": {
+              "type": "integer"
+            },
+            "total_results": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_cursor": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "result_set_complete": {
+              "type": "boolean"
+            },
             "note": {
               "type": "string",
               "description": "Optional note about duplicate variant names or other data quality observations"
@@ -247,7 +300,7 @@
   },
   {
     "name": "civic_get_variant",
-    "description": "Get detailed information about a specific variant in CIViC database by variant ID. Variants represent specific genetic alterations (SNVs, indels, structural variants, etc.) with clinical significance in cancer. Returns variant name, coordinates, gene association, and related information.",
+    "description": "Get detailed information about a specific variant in CIViC database by variant ID. Associated molecular profiles are cursor-paginated. When metadata.molecular_profiles_has_more is true, pass metadata.next_molecular_profile_cursor as molecular_profile_after to retrieve the next page.",
     "type": "CIViCTool",
     "parameter": {
       "type": "object",
@@ -255,14 +308,29 @@
         "variant_id": {
           "type": "integer",
           "description": "CIViC variant ID (e.g., 4170)"
+        },
+        "molecular_profile_limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 5,
+          "description": "Maximum associated molecular profiles to return on this page (default: 5, maximum: 100)"
+        },
+        "molecular_profile_after": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Opaque continuation cursor from metadata.next_molecular_profile_cursor."
         }
       },
       "required": [
         "variant_id"
-      ]
+      ],
+      "additionalProperties": false
     },
     "fields": {
-      "query": "query GetVariant($variant_id: Int!) { variant(id: $variant_id) { id name variantAliases variantTypes { id name soid } molecularProfiles(first: 5) { totalCount pageInfo { hasNextPage } nodes { id name molecularProfileScore } } ... on GeneVariant { clinvarIds hgvsDescriptions } } }",
+      "query": "query GetVariant($variant_id: Int!, $molecular_profile_limit: Int, $molecular_profile_after: String) { variant(id: $variant_id) { id name variantAliases variantTypes { id name soid } molecularProfiles(first: $molecular_profile_limit, after: $molecular_profile_after) { totalCount pageInfo { hasNextPage endCursor } nodes { id name molecularProfileScore } } ... on GeneVariant { clinvarIds hgvsDescriptions } } }",
       "operation_name": "GetVariant"
     },
     "return_schema": {
@@ -297,6 +365,12 @@
                         "hasNextPage": {
                           "type": "boolean",
                           "description": "True when more molecular profiles match than were returned; the returned nodes are an incomplete sample of totalCount."
+                        },
+                        "endCursor": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
                         }
                       }
                     },
@@ -310,6 +384,12 @@
                           },
                           "name": {
                             "type": "string"
+                          },
+                          "molecularProfileScore": {
+                            "type": [
+                              "number",
+                              "null"
+                            ]
                           }
                         }
                       }
@@ -330,14 +410,16 @@
   },
   {
     "name": "civic_search_variants",
-    "description": "Search for variants in CIViC database. Returns a list of variants with their IDs and names. Use 'query' to search by variant name (e.g., 'V600E'), or 'gene'/'gene_name' to get all variants for a specific gene (e.g., 'EGFR'). To find a specific variant in a gene, combine gene_name + variant_name (e.g., gene_name='EGFR', variant_name='L858R'). Note: CIViC stores variants without gene prefix — do not combine gene and variant in a single string.",
+    "description": "Search for variants in CIViC database. The tool follows CIViC's 100-record GraphQL pages up to limit and returns exact totalCount plus pageInfo. If pageInfo.hasNextPage is true, pass pageInfo.endCursor as after to continue. Use query to search by variant name, or gene/gene_name to get variants for a gene.",
     "type": "CIViCTool",
     "parameter": {
       "type": "object",
       "properties": {
         "limit": {
           "type": "integer",
-          "description": "Maximum number of variants to return (default: 20, recommended max: 100)",
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Maximum number of variants to return across server pages (default: 20, max: 1000).",
           "default": 20
         },
         "query": {
@@ -355,12 +437,16 @@
         "variant_name": {
           "type": "string",
           "description": "Specific variant name to filter within a gene (e.g., 'L858R', 'V600E', 'T790M'). Use together with gene_name — CIViC stores variants without the gene prefix (use 'L858R' not 'EGFR L858R'). Gene-prefixed clinical spellings ('EGFRvIII', 'BRAFV600E') are still handled: the gene-stripped designation is queried as well and both result sets are merged, reported in normalization_note."
+        },
+        "after": {
+          "type": "string",
+          "description": "Opaque CIViC continuation cursor from a previous pageInfo.endCursor."
         }
       },
       "required": []
     },
     "fields": {
-      "query": "query SearchVariants($query: String, $limit: Int) { variants(name: $query, first: $limit) { totalCount pageInfo { hasNextPage } nodes { id name ... on GeneVariant { feature { id name } } } } }",
+      "query": "query SearchVariants($query: String, $limit: Int, $after: String) { variants(name: $query, first: $limit, after: $after) { totalCount pageInfo { hasNextPage endCursor } nodes { id name ... on GeneVariant { feature { id name } } } } }",
       "operation_name": "SearchVariants"
     },
     "return_schema": {
@@ -476,14 +562,16 @@
   },
   {
     "name": "civic_search_evidence_items",
-    "description": "Search for evidence items in CIViC database. Evidence items are curated statements linking variants or molecular profiles to clinical outcomes, therapies, or disease states. Returns evidence with disease, therapies, significance, direction, and citation. Filter by therapy name (e.g., 'imatinib'), disease name (e.g., 'leukemia'), or molecular profile name (e.g., 'BRAF V600E').",
+    "description": "Search for curated CIViC evidence items. The tool follows CIViC's 100-record GraphQL pages up to limit and returns exact totalCount plus pageInfo. If pageInfo.hasNextPage is true, pass pageInfo.endCursor as after to continue. Filters include therapy, disease, molecular profile, evidence type, significance, direction, and status.",
     "type": "CIViCTool",
     "parameter": {
       "type": "object",
       "properties": {
         "limit": {
           "type": "integer",
-          "description": "Maximum number of evidence items to return (default: 20, recommended max: 100)",
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Maximum evidence items to return across server pages (default: 20, max: 1000).",
           "default": 20
         },
         "status": {
@@ -526,12 +614,29 @@
             "null"
           ],
           "description": "Filter by clinical significance. Values depend on evidence_type, e.g. SENSITIVITYRESPONSE, RESISTANCE (predictive); BETTER_OUTCOME, POOR_OUTCOME (prognostic); POSITIVE, NEGATIVE (diagnostic); ONCOGENIC, PROTECTIVE. Use to separate, e.g., resistance from sensitivity evidence for a variant."
+        },
+        "after": {
+          "type": "string",
+          "description": "Opaque CIViC continuation cursor from a previous pageInfo.endCursor."
+        },
+        "evidence_direction": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "SUPPORTS",
+            "DOES_NOT_SUPPORT",
+            "NA",
+            null
+          ],
+          "description": "Filter by evidence direction."
         }
       },
       "required": []
     },
     "fields": {
-      "query": "query SearchEvidenceItems($limit: Int, $status: EvidenceStatusFilter, $therapyName: String, $diseaseName: String, $molecularProfileName: String, $evidenceType: EvidenceType, $significance: EvidenceSignificance) { evidenceItems(first: $limit, status: $status, therapyName: $therapyName, diseaseName: $diseaseName, molecularProfileName: $molecularProfileName, evidenceType: $evidenceType, significance: $significance) { totalCount pageInfo { hasNextPage } nodes { id description evidenceLevel evidenceType evidenceDirection significance status disease { name } therapies { name } molecularProfile { id name } source { citation } } } }",
+      "query": "query SearchEvidenceItems($limit: Int, $after: String, $status: EvidenceStatusFilter, $therapyName: String, $diseaseName: String, $molecularProfileName: String, $evidenceType: EvidenceType, $significance: EvidenceSignificance, $evidenceDirection: EvidenceDirection) { evidenceItems(first: $limit, after: $after, status: $status, therapyName: $therapyName, diseaseName: $diseaseName, molecularProfileName: $molecularProfileName, evidenceType: $evidenceType, significance: $significance, evidenceDirection: $evidenceDirection) { totalCount pageInfo { hasNextPage endCursor } nodes { id description evidenceLevel evidenceType evidenceDirection significance status disease { name } therapies { name } molecularProfile { id name } source { citation } } } }",
       "operation_name": "SearchEvidenceItems",
       "param_map": {
         "therapy": "therapyName",
@@ -539,7 +644,8 @@
         "disease": "diseaseName",
         "disease_name": "diseaseName",
         "molecular_profile": "molecularProfileName",
-        "evidence_type": "evidenceType"
+        "evidence_type": "evidenceType",
+        "evidence_direction": "evidenceDirection"
       },
       "variable_defaults": {
         "status": "ACCEPTED"
@@ -655,15 +761,24 @@
   },
   {
     "name": "civic_search_assertions",
-    "description": "Search for assertions in CIViC database. Assertions are higher-level clinical interpretations that integrate multiple evidence items into formal statements about clinical actionability. Returns a list of assertions with descriptions and associated molecular profiles or variants. Filter by therapy (e.g., 'ponatinib'), disease (e.g., 'leukemia'), or variant name.",
+    "description": "Search CIViC assertions with exact totalCount and cursor pagination. When metadata.has_more is true, pass metadata.next_cursor as after with the same filters.",
     "type": "CIViCTool",
     "parameter": {
       "type": "object",
       "properties": {
         "limit": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
           "description": "Maximum number of assertions to return (default: 20, recommended max: 100)",
           "default": 20
+        },
+        "after": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Opaque continuation cursor from metadata.next_cursor."
         },
         "therapy": {
           "type": "string",
@@ -686,10 +801,11 @@
           "description": "Filter by variant name (e.g., 'V600E', 'T315I')."
         }
       },
-      "required": []
+      "required": [],
+      "additionalProperties": false
     },
     "fields": {
-      "query": "query SearchAssertions($limit: Int, $therapyName: String, $diseaseName: String, $variantName: String) { assertions(first: $limit, therapyName: $therapyName, diseaseName: $diseaseName, variantName: $variantName) { totalCount pageInfo { hasNextPage } nodes { id description status } } }",
+      "query": "query SearchAssertions($limit: Int, $after: String, $therapyName: String, $diseaseName: String, $variantName: String) { assertions(first: $limit, after: $after, therapyName: $therapyName, diseaseName: $diseaseName, variantName: $variantName) { totalCount pageInfo { hasNextPage endCursor } nodes { id description status } } }",
       "operation_name": "SearchAssertions",
       "param_map": {
         "therapy": "therapyName",
@@ -719,6 +835,12 @@
                     "hasNextPage": {
                       "type": "boolean",
                       "description": "True when more records match than were returned; the returned nodes are an incomplete sample of totalCount."
+                    },
+                    "endCursor": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
                     }
                   }
                 },
@@ -755,7 +877,7 @@
   },
   {
     "name": "civic_get_molecular_profile",
-    "description": "Get detailed information about a specific molecular profile in CIViC database by molecular profile ID. Molecular profiles represent combinations of variants or features (e.g., 'BRAF V600E') that serve as biomarkers for clinical interpretation. Returns profile name, description, clinical significance score, and associated evidence items with diseases, therapies, and evidence levels.",
+    "description": "Get detailed information about a specific molecular profile in CIViC database by molecular profile ID. Molecular profiles represent combinations of variants or features (e.g., 'BRAF V600E') that serve as biomarkers for clinical interpretation. Associated evidence is cursor-paginated: when metadata.evidence_has_more is true, pass metadata.next_evidence_cursor as evidence_after to retrieve the next page.",
     "type": "CIViCTool",
     "parameter": {
       "type": "object",
@@ -766,16 +888,26 @@
         },
         "evidence_limit": {
           "type": "integer",
-          "description": "Maximum number of evidence items to return (default: 10)",
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Maximum number of evidence items to return on this page (default: 10, maximum: 100)",
           "default": 10
+        },
+        "evidence_after": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Opaque evidence cursor from metadata.next_evidence_cursor."
         }
       },
       "required": [
         "molecular_profile_id"
-      ]
+      ],
+      "additionalProperties": false
     },
     "fields": {
-      "query": "query GetMolecularProfile($molecular_profile_id: Int!, $evidence_limit: Int) { molecularProfile(id: $molecular_profile_id) { id name molecularProfileScore description evidenceItems(first: $evidence_limit) { totalCount pageInfo { hasNextPage } nodes { id name evidenceLevel evidenceDirection significance status disease { name } therapies { name } } } } }",
+      "query": "query GetMolecularProfile($molecular_profile_id: Int!, $evidence_limit: Int, $evidence_after: String) { molecularProfile(id: $molecular_profile_id) { id name molecularProfileScore description evidenceItems(first: $evidence_limit, after: $evidence_after) { totalCount pageInfo { hasNextPage endCursor } nodes { id name evidenceLevel evidenceDirection significance status disease { name } therapies { name } } } } }",
       "operation_name": "GetMolecularProfile"
     },
     "return_schema": {
@@ -815,6 +947,12 @@
                         "hasNextPage": {
                           "type": "boolean",
                           "description": "True when more records match than were returned; the returned nodes are an incomplete sample of totalCount."
+                        },
+                        "endCursor": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
                         }
                       }
                     },
@@ -881,15 +1019,24 @@
   },
   {
     "name": "civic_search_molecular_profiles",
-    "description": "Search for molecular profiles in CIViC database. Molecular profiles represent combinations of variants or features (e.g., 'BRAF V600E', 'EGFR T790M') that serve as biomarkers for clinical interpretation. Returns a list of molecular profiles with IDs and names. Use the 'query' parameter to filter by profile name (alias: 'name').",
+    "description": "Search CIViC molecular profiles with exact totalCount and cursor pagination. When metadata.has_more is true, pass metadata.next_cursor as after.",
     "type": "CIViCTool",
     "parameter": {
       "type": "object",
       "properties": {
         "limit": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
           "description": "Maximum number of molecular profiles to return (default: 20, recommended max: 100)",
           "default": 20
+        },
+        "after": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Opaque continuation cursor from metadata.next_cursor."
         },
         "query": {
           "type": "string",
@@ -900,10 +1047,11 @@
           "description": "Alias for query. Filter by molecular profile name (e.g., 'PD-L1', 'KRAS G12C')."
         }
       },
-      "required": []
+      "required": [],
+      "additionalProperties": false
     },
     "fields": {
-      "query": "query SearchMolecularProfiles($limit: Int, $query: String) { molecularProfiles(first: $limit, name: $query) { totalCount pageInfo { hasNextPage } nodes { id name } } }",
+      "query": "query SearchMolecularProfiles($limit: Int, $after: String, $query: String) { molecularProfiles(first: $limit, after: $after, name: $query) { totalCount pageInfo { hasNextPage endCursor } nodes { id name } } }",
       "operation_name": "SearchMolecularProfiles",
       "param_map": {
         "name": "query"
@@ -929,6 +1077,12 @@
                     "hasNextPage": {
                       "type": "boolean",
                       "description": "True when more records match than were returned; the returned nodes are an incomplete sample of totalCount."
+                    },
+                    "endCursor": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
                     }
                   }
                 },
@@ -964,15 +1118,24 @@
   },
   {
     "name": "civic_search_diseases",
-    "description": "Search for diseases in CIViC database. Returns a list of cancer diseases and conditions (with IDs and names) that are associated with variants and evidence in CIViC. Use 'query' or 'name' to filter by disease name (e.g., 'leukemia', 'melanoma').",
+    "description": "Search CIViC diseases with cursor pagination. CIViC publishes no filter-aware total for this browse table, so metadata.has_more is the completeness signal; continue with metadata.next_cursor as after while has_more is true.",
     "type": "CIViCTool",
     "parameter": {
       "type": "object",
       "properties": {
         "limit": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
           "description": "Maximum number of diseases to return (default: 20, recommended max: 100)",
           "default": 20
+        },
+        "after": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Opaque continuation cursor from metadata.next_cursor."
         },
         "name": {
           "type": "string",
@@ -983,10 +1146,11 @@
           "description": "Alias for name. Filter by disease name."
         }
       },
-      "required": []
+      "required": [],
+      "additionalProperties": false
     },
     "fields": {
-      "query": "query SearchDiseases($limit: Int, $name: String) { browseDiseases(first: $limit, name: $name) { pageInfo { hasNextPage } nodes { id name } } }",
+      "query": "query SearchDiseases($limit: Int, $after: String, $name: String) { browseDiseases(first: $limit, after: $after, name: $name) { pageInfo { hasNextPage endCursor } nodes { id name } } }",
       "operation_name": "SearchDiseases",
       "param_map": {
         "query": "name"
@@ -1008,6 +1172,12 @@
                     "hasNextPage": {
                       "type": "boolean",
                       "description": "True when more records match than were returned. This connection publishes no filter-aware total, so this is the only completeness signal available."
+                    },
+                    "endCursor": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
                     }
                   }
                 },
@@ -1040,15 +1210,24 @@
   },
   {
     "name": "civic_search_therapies",
-    "description": "Search for therapies (drugs/treatments) in CIViC database. Returns a list of cancer therapies and drugs (with IDs and names) that are associated with variants and evidence in CIViC. Use 'query' or 'name' to filter by therapy name (e.g., 'imatinib', 'pembrolizumab').",
+    "description": "Search CIViC therapies with cursor pagination. CIViC publishes no filter-aware total for this browse table, so metadata.has_more is the completeness signal; continue with metadata.next_cursor as after while has_more is true.",
     "type": "CIViCTool",
     "parameter": {
       "type": "object",
       "properties": {
         "limit": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
           "description": "Maximum number of therapies to return (default: 20, recommended max: 100)",
           "default": 20
+        },
+        "after": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Opaque continuation cursor from metadata.next_cursor."
         },
         "name": {
           "type": "string",
@@ -1059,10 +1238,11 @@
           "description": "Alias for name. Filter by therapy/drug name."
         }
       },
-      "required": []
+      "required": [],
+      "additionalProperties": false
     },
     "fields": {
-      "query": "query SearchTherapies($limit: Int, $name: String) { browseTherapies(first: $limit, name: $name) { pageInfo { hasNextPage } nodes { id name } } }",
+      "query": "query SearchTherapies($limit: Int, $after: String, $name: String) { browseTherapies(first: $limit, after: $after, name: $name) { pageInfo { hasNextPage endCursor } nodes { id name } } }",
       "operation_name": "SearchTherapies",
       "param_map": {
         "query": "name"
@@ -1084,6 +1264,12 @@
                     "hasNextPage": {
                       "type": "boolean",
                       "description": "True when more records match than were returned. This connection publishes no filter-aware total, so this is the only completeness signal available."
+                    },
+                    "endCursor": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
                     }
                   }
                 },

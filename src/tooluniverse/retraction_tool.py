@@ -14,6 +14,7 @@ via CROSSREF_MAILTO is encouraged for Crossref's faster "polite pool").
 """
 
 import os
+from urllib.parse import quote, unquote
 from typing import Any, Dict, List
 
 import requests
@@ -52,6 +53,9 @@ class RetractionCheckTool(BaseTool):
         doi = (
             str(doi).strip().replace("https://doi.org/", "").replace("doi:", "").strip()
         )
+        doi = unquote(doi).lower()
+        if not doi.startswith("10.") or "/" not in doi or any(c.isspace() for c in doi):
+            return {"status": "error", "error": "Parameter 'doi' is not a valid DOI."}
 
         params = {}
         mailto = os.environ.get("CROSSREF_MAILTO")
@@ -60,7 +64,7 @@ class RetractionCheckTool(BaseTool):
 
         try:
             resp = requests.get(
-                f"{CROSSREF_WORKS_URL}/{doi}",
+                f"{CROSSREF_WORKS_URL}/{quote(doi, safe='/')}",
                 params=params,
                 headers={"User-Agent": "ToolUniverse/RetractionCheck"},
                 timeout=self.timeout,
@@ -84,11 +88,23 @@ class RetractionCheckTool(BaseTool):
                 "error": f"Crossref returned HTTP {resp.status_code}",
             }
         try:
-            message = resp.json().get("message", {})
+            body = resp.json()
         except ValueError:
             return {
                 "status": "error",
                 "error": "Crossref returned a non-JSON response.",
+            }
+
+        if not isinstance(body, dict) or not isinstance(body.get("message"), dict):
+            return {"status": "error", "error": "Crossref returned malformed metadata."}
+        message = body["message"]
+        returned_doi = str(message.get("DOI", "")).lower()
+        if returned_doi and returned_doi != doi:
+            return {
+                "status": "error",
+                "error": "Crossref returned a different DOI than requested.",
+                "requested_doi": doi,
+                "returned_doi": returned_doi or None,
             }
 
         # Deduplicate notices by (type, notice DOI) — Crossref sometimes lists
@@ -108,6 +124,8 @@ class RetractionCheckTool(BaseTool):
                     "notice_doi": update.get("DOI"),
                     "date": _notice_date(update),
                     "source": update.get("source"),
+                    "record_id": update.get("record-id"),
+                    "record": update,
                 }
             )
 
@@ -123,9 +141,17 @@ class RetractionCheckTool(BaseTool):
                 "has_expression_of_concern": bool(types & _CONCERN_TYPES),
                 "has_correction": bool(types & _CORRECTION_TYPES),
                 "notices": notices,
+                "record": message,
             },
             "metadata": {
                 "source": "Crossref update metadata (Retraction Watch)",
                 "notice_count": len(notices),
+                "returned_doi_verified": returned_doi == doi,
+                "source_record_complete": True,
+                "classification_criteria": {
+                    "retracted_types": sorted(_RETRACTION_TYPES),
+                    "concern_types": sorted(_CONCERN_TYPES),
+                    "correction_types": sorted(_CORRECTION_TYPES),
+                },
             },
         }

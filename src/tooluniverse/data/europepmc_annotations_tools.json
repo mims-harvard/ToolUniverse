@@ -1,7 +1,7 @@
 [
   {
     "name": "EuroPMCAnnot_get_article_annotations",
-    "description": "Get text-mined annotations from a scientific article using the Europe PMC Annotations API. Returns entities extracted from the article text including chemicals, organisms, gene ontology terms, diseases, and gene/protein mentions, with their exact text, surrounding context, ontology URIs, and section locations. Powered by Europe PMC's SciLite text mining pipeline. Use this to extract structured biological entities from published literature without reading the full text. Example: PMC4353746 returns 19 chemical annotations and 12 GO annotations.",
+    "description": "Get text-mined annotations from a scientific article using the Europe PMC Annotations API. Returns entities extracted from the article text including chemicals, organisms, gene ontology terms, diseases, and gene/protein mentions, with their exact text, surrounding context, ontology URIs, and section locations. Powered by Europe PMC's SciLite text mining pipeline. Use this to extract structured biological entities from published literature without reading the full text. Example: PMC4353746 returns 19 chemical annotations and 12 GO annotations. Page through the annotations with limit/offset; data reports total_annotations, has_more and next_offset.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -29,6 +29,19 @@
             null
           ],
           "description": "Filter by annotation type. Note 'Gene_Proteins' is spelled with an underscore. Default: all types."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 200,
+          "description": "Maximum number of annotations to return in this page."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based annotation offset. Use data.next_offset for the next page."
         }
       },
       "required": [
@@ -57,7 +70,10 @@
             "article_id": {"type": "string"},
             "pmcid": {"type": ["string", "null"]},
             "source": {"type": ["string", "null"]},
-            "annotation_count": {"type": "integer", "description": "Annotations returned, capped at 200."},
+            "annotation_count": {
+              "type": "integer",
+              "description": "Annotations returned in this page (limit, default 200)."
+            },
             "total_annotations": {"type": "integer", "description": "Annotations this article has in total."},
             "annotations": {
               "type": "array",
@@ -98,7 +114,7 @@
   },
   {
     "name": "EuroPMCAnnot_get_annotations_by_type",
-    "description": "Get all annotations of a specific type from multiple articles using the Europe PMC Annotations API. Useful for batch extraction of entities from a set of articles - e.g., extract all chemicals mentioned across a set of related papers, or all organism mentions from a research group's publications. Supports up to 200 article IDs per request.",
+    "description": "Get all annotations of a specific type from multiple articles using the Europe PMC Annotations API. Useful for batch extraction of entities from a set of articles - e.g., extract all chemicals mentioned across a set of related papers, or all organism mentions from a research group's publications. Supports up to 200 article IDs per request. Each article's annotations are paged with page_size and offset, and carry their own total_annotations, has_more and next_offset.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -130,6 +146,21 @@
           ],
           "minimum": 1,
           "description": "Maximum annotations returned per article. Default: 100. The Europe PMC endpoint returns every annotation for the requested articles in one response, so this caps how many are included per article; each article's total_annotations still reports its full count."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Alias for page_size, used when page_size is not given."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based annotation offset applied independently within each returned article. Use each article's next_offset for the next page."
         }
       },
       "required": [
@@ -188,13 +219,26 @@
   },
   {
     "name": "EuroPMCAnnot_get_chemicals_from_article",
-    "description": "Extract chemical/compound mentions from a scientific article using Europe PMC text mining. Returns chemicals identified in the article with their ChEBI ontology URIs, exact text matches, and surrounding context. Specialized shortcut for the most common annotation use case in drug discovery and pharmacology research. Example: PMC4353746 (resistin study) returns 19 chemical annotations including peptide, resistin, and specific compounds.",
+    "description": "Extract chemical/compound mentions from a scientific article using Europe PMC text mining. Returns chemicals identified in the article with their ChEBI ontology URIs, exact text matches, and surrounding context. Specialized shortcut for the most common annotation use case in drug discovery and pharmacology research. Example: PMC4353746 (resistin study) returns 19 chemical annotations including peptide, resistin, and specific compounds. Page through the mentions with limit/offset; data reports total_chemicals, has_more and next_offset.",
     "parameter": {
       "type": "object",
       "properties": {
         "article_id": {
           "type": "string",
           "description": "PMC article identifier. Format: 'PMC:PMCXXXXXXX'. Examples: 'PMC:PMC4353746', 'PMC:PMC3531190'."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 200,
+          "description": "Maximum number of chemical mentions to return in this page."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based chemical-mention offset. Use data.next_offset for the next page."
         }
       },
       "required": [
@@ -219,7 +263,10 @@
           "type": "object",
           "properties": {
             "article_id": {"type": "string"},
-            "chemical_count": {"type": "integer", "description": "Chemicals returned, capped at 200."},
+            "chemical_count": {
+              "type": "integer",
+              "description": "Chemicals returned in this page (limit, default 200)."
+            },
             "total_chemicals": {"type": "integer", "description": "Chemicals this article mentions in total."},
             "chemicals": {
               "type": "array",

@@ -27,10 +27,10 @@ def test_gpml_format_fetches_gpml_instead_of_running_sparql():
         patch("tooluniverse.wikipathways_tool._sparql") as sparql,
     ):
         result = _tool().run({"wpid": "WP254", "format": "gpml"})
-    assert result == {
-        "status": "success",
-        "data": {"wpid": "WP254", "format": "gpml", "gpml": "<Pathway/>"},
-    }
+    assert result["status"] == "success"
+    assert result["data"]["wpid"] == "WP254"
+    assert result["data"]["format"] == "gpml"
+    assert result["data"]["gpml"] == "<Pathway/>"
     fetch.assert_called_once_with("WP254", timeout=30)
     sparql.assert_not_called()
 
@@ -53,6 +53,6 @@ def test_json_format_still_runs_sparql_not_gpml():
 def test_missing_gpml_is_a_clear_error_not_a_stack_trace():
     error = HTTPError("url", 404, "Not Found", {}, None)
     with patch("tooluniverse.wikipathways_tool._fetch_gpml", side_effect=error):
-        result = _tool().run({"wpid": "NOTREAL999", "format": "gpml"})
+        result = _tool().run({"wpid": "WP999999999", "format": "gpml"})
     assert result["status"] == "error"
     assert "404" in result["error"]

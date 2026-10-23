@@ -15,6 +15,7 @@ def FDA_OrangeBook_search_drug(
     drug_name: Optional[str] = None,
     application_number: Optional[str] = None,
     limit: Optional[int] = 10,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -37,6 +38,8 @@ def FDA_OrangeBook_search_drug(
         FDA application number (e.g., 'NDA020402', 'ANDA078394')
     limit : int
         Maximum number of results (1-100, default 10)
+    offset : int
+        Zero-based Drugs@FDA result offset. Continue with next_offset while has_more ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -60,6 +63,7 @@ def FDA_OrangeBook_search_drug(
             "drug_name": drug_name,
             "application_number": application_number,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

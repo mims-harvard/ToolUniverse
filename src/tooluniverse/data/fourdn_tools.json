@@ -2,7 +2,7 @@
   {
     "name": "FourDN_search_data",
     "type": "FourDNTool",
-    "description": "Search 4DN Data Portal for Hi-C chromatin conformation files and experiments. Access 350+ uniformly processed Hi-C contact files from multiple technologies (in situ Hi-C, Capture Hi-C, Micro-C XL). Search by assay type, cell type, or keywords. Returns file metadata with download URLs. Note: Downloads require free 4DN account (create at data.4dnucleome.org). Use for: finding Hi-C datasets, discovering 3D genome data, accessing TAD (Topologically Associating Domain) boundaries, A/B compartments, chromatin loop calls.",
+    "description": "Search 4DN Data Portal for Hi-C chromatin conformation files and experiments. Results are recoverably paginated: start with offset=0 and continue with next_offset while has_more is true. The tool corrects the portal's 10,000-hit sentinel on later pages with a zero-result count probe and explicitly marks total_is_exact. Search by assay type, cell type, or keywords. Returns file metadata with download URLs. Note: Downloads require a free 4DN account (create at data.4dnucleome.org). Use for finding Hi-C datasets, discovering 3D genome data, and accessing TAD boundaries, A/B compartments, or chromatin loop calls.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -42,10 +42,16 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum results to return",
+          "description": "Maximum results to return on this page",
           "default": 25,
           "minimum": 1,
           "maximum": 100
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based result offset. Continue with next_offset while has_more is true.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": []
@@ -59,8 +65,29 @@
         "num_results": {
           "type": "integer"
         },
+        "returned": {
+          "type": "integer"
+        },
+        "offset": {
+          "type": "integer"
+        },
         "total": {
           "type": "integer"
+        },
+        "total_is_exact": {
+          "type": "boolean"
+        },
+        "upstream_page_total": {
+          "type": "integer"
+        },
+        "has_more": {
+          "type": "boolean"
+        },
+        "next_offset": {
+          "type": [
+            "integer",
+            "null"
+          ]
         },
         "results": {
           "type": "array"
@@ -69,6 +96,9 @@
           "type": "string"
         },
         "error": {
+          "type": "string"
+        },
+        "warning": {
           "type": "string"
         }
       },

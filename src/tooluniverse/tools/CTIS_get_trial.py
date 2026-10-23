@@ -1,7 +1,7 @@
 """
 CTIS_get_trial
 
-Retrieve a single EU CTIS clinical trial by its CT number (format like '2022-503001-38-01'). Retu...
+Retrieve complete top-level public CTIS trial metadata by CT number, including human-readable and...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def CTIS_get_trial(
     validate: bool = True,
 ) -> Any:
     """
-    Retrieve a single EU CTIS clinical trial by its CT number (format like '2022-503001-38-01'). Retu...
+    Retrieve complete top-level public CTIS trial metadata by CT number, including human-readable and...
 
     Parameters
     ----------

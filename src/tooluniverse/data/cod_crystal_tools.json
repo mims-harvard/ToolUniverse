@@ -1,7 +1,7 @@
 [
   {
     "name": "COD_search_structures",
-    "description": "Search the Crystallography Open Database (COD) for crystal structures by chemical formula, elements, space group, mineral name, or compound name. COD is the largest open-access collection of crystal structures with 500,000+ experimentally determined structures. Returns unit cell parameters (a, b, c, alpha, beta, gamma), space group, chemical formula, mineral/compound name, and publication details (DOI, journal, authors). Useful for materials science, chemistry, mineralogy, and solid-state physics research.",
+    "description": "Search the Crystallography Open Database (COD) by chemical formula, elements, space group, mineral name, or compound name with recoverable client-side offset pagination. COD's public JSON endpoint ignores limit/results/offset/page, so this tool fetches the exact upstream set and exposes metadata.total_results, has_more and next_offset; continue until has_more is false. At least one search filter is required. Full upstream records are preserved.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -94,14 +94,26 @@
             "integer",
             "null"
           ],
-          "description": "Alias for 'results'. Maximum number of results to return (default 100, use smaller values for speed, e.g. 5 or 10)"
+          "description": "Alias for limit. Page size from 1 to 500; default 100."
         },
         "results": {
           "type": [
             "integer",
             "null"
           ],
-          "description": "Maximum number of results to return (default 100, use smaller values for speed, e.g. 5 or 10)"
+          "description": "Legacy alias for limit. Page size from 1 to 500; default 100."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Client-side page size, 1-500 (default 100). Server-side default is 100. Left undeclared as a schema default so it cannot collide with the max_results/results aliases.",
+          "minimum": 1,
+          "maximum": 500
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based client-side offset. Continue with metadata.next_offset while metadata.has_more is true.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": []
@@ -313,7 +325,7 @@
   },
   {
     "name": "COD_get_structure",
-    "description": "Get detailed crystal structure information from the Crystallography Open Database (COD) by COD entry ID. Returns complete crystallographic data including unit cell parameters (a, b, c, alpha, beta, gamma), space group, chemical formula, mineral/compound name, Z value, publication details (DOI, journal, authors, year), diffraction method, and radiation type. Use COD_search_structures first to find COD IDs, then use this tool for full details on a specific structure.",
+    "description": "Get the complete source record for one seven-digit Crystallography Open Database entry ID. Validates that the returned file ID matches the request and reports missing IDs explicitly. Returns all upstream crystallographic and publication fields, including unit cell, space group, formula, names, Z, R factors, DOI, journal, authors, method and radiation.",
     "parameter": {
       "type": "object",
       "properties": {

@@ -1,7 +1,7 @@
 """
 FourDN_search_data
 
-Search 4DN Data Portal for Hi-C chromatin conformation files and experiments. Access 350+ uniform...
+Search 4DN Data Portal for Hi-C chromatin conformation files and experiments. Results are recover...
 """
 
 from typing import Any, Optional, Callable
@@ -16,13 +16,14 @@ def FourDN_search_data(
     assay_title: Optional[str] = None,
     biosource_name: Optional[str] = None,
     limit: Optional[int] = 25,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search 4DN Data Portal for Hi-C chromatin conformation files and experiments. Access 350+ uniform...
+    Search 4DN Data Portal for Hi-C chromatin conformation files and experiments. Results are recover...
 
     Parameters
     ----------
@@ -39,7 +40,9 @@ def FourDN_search_data(
     biosource_name : str
         Filter by cell type (e.g., 'H1-hESC', 'HFFc6', 'GM12878')
     limit : int
-        Maximum results to return
+        Maximum results to return on this page
+    offset : int
+        Zero-based result offset. Continue with next_offset while has_more is true.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -64,6 +67,7 @@ def FourDN_search_data(
             "assay_title": assay_title,
             "biosource_name": biosource_name,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

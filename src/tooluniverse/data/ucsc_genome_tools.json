@@ -1,7 +1,7 @@
 [
   {
     "name": "UCSC_search",
-    "description": "Search the UCSC Genome Browser for genes, transcripts, or genomic features by name. Returns position matches across tracks (MANE, RefSeq, GENCODE, HGNC, etc.) for a given genome assembly. Supports searching for gene symbols, transcript IDs, SNP rsIDs, or chromosomal bands. Example: searching 'TP53' in hg38 returns chr17:7668421-7687490 from MANE Select and other tracks.",
+    "description": "Search the UCSC Genome Browser for genes, transcripts, or genomic features by name. Returns the true match count across all returned tracks with explicit local offset pagination; continue with next_offset while has_more is true. Supports gene symbols, transcript IDs, SNP rsIDs, and chromosomal bands.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -12,6 +12,19 @@
         "genome": {
           "type": "string",
           "description": "UCSC genome assembly identifier. Default: 'hg38'. Others: 'hg19', 'mm10', 'mm39', 'dm6', 'ce11', 'danRer11', 'sacCer3'."
+        },
+        "limit": {
+          "type": "integer",
+          "default": 50,
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Maximum position matches per page (default 50, max 1000)."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based match offset. Continue with next_offset while has_more is true."
         }
       },
       "required": [
@@ -45,6 +58,27 @@
             },
             "match_count": {
               "type": "integer"
+            },
+            "total_matches": {
+              "type": "integer"
+            },
+            "returned_count": {
+              "type": "integer"
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
             },
             "matches": {
               "type": "array",
@@ -96,7 +130,7 @@
   },
   {
     "name": "UCSC_list_tracks",
-    "description": "Discover available UCSC Genome Browser annotation tracks for a genome assembly, and inspect a track's column schema. With only 'genome' set, returns the list of leaf tracks (each with track name, type, shortLabel, longLabel, parent) so you can find valid track names to pass to UCSC_get_track (there are tens of thousands, e.g. dbSnp155, dbSnp155ClinVar, dbSnp155Common, knownGene, ncbiRefSeq, encodeCcreCombined). Use 'name_filter' to narrow the list by substring (matched against track name, shortLabel, longLabel). When 'track' is also provided, returns that track's column schema instead (column name, sqlType, jsonType, description) from the list/schema endpoint. Example: genome 'hg38' returns 23000+ tracks; genome 'hg38' + track 'knownGene' returns its 27 columns (chrom, chromStart, ...).",
+    "description": "Discover UCSC Genome Browser tracks with exact track_count and recoverable local offset pagination. Continue with next_offset while has_more is true. When track is provided, returns that track's column schema instead of the list.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -124,6 +158,12 @@
             "null"
           ],
           "description": "Maximum number of tracks to return when listing (default 500). The total matched count is always reported in track_count."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset in the filtered track list. Continue with next_offset."
         }
       },
       "required": [
@@ -161,6 +201,21 @@
             },
             "track_count": {
               "type": "integer"
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
             },
             "returned_count": {
               "type": "integer"
@@ -358,7 +413,7 @@
   },
   {
     "name": "UCSC_get_track",
-    "description": "Get annotation track data from the UCSC Genome Browser for a specified genomic region. Retrieves features like genes, regulatory elements, conservation scores, variants, or repeats from any of UCSC's 370+ tracks. Use UCSC_search first to find the genomic coordinates of your gene of interest. Example: track 'knownGene' on hg38 chr17:7668421-7687490 returns GENCODE gene annotations for the TP53 region.",
+    "description": "Get annotation track data for a genomic region. If UCSC reports maxItemsLimit=true, the response sets truncated and includes a remediation note; UCSC supplies no continuation cursor, so increase maxItemsOutput or split the interval before treating results as complete.",
     "parameter": {
       "type": "object",
       "properties": {

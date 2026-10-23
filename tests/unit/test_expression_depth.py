@@ -58,17 +58,19 @@ def _gtex_tool(operation):
     )
 
 
-# The handlers call _resolve_gencode_id() (which hits /reference/gene). Tests
-# always pass versioned GENCODE IDs so resolution is a no-op even if the mock
-# returns an empty body for that endpoint.
+# The handlers call _resolve_gencode_id() (which hits /reference/gene). Return
+# a dataset-compatible versioned ID so resolution is explicit and verified.
 def _gtex_side_effect(payload_by_path):
     """Return a side_effect routing requests.get by endpoint substring."""
 
     def _side(url, *args, **kwargs):
+        if url.endswith("/reference/gene"):
+            base_id = (kwargs.get("params") or {}).get("geneId")
+            return _resp({"data": [{"gencodeId": f"{base_id}.16"}]})
         for needle, payload in payload_by_path.items():
             if needle in url:
                 return _resp(payload)
-        # /reference/gene resolution and anything unmapped -> empty body
+        # Anything unmapped -> empty body.
         return _resp({"data": []})
 
     return _side

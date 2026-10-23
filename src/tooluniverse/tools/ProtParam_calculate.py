@@ -1,7 +1,7 @@
 """
 ProtParam_calculate
 
-Calculate physicochemical properties of a protein from its amino acid sequence (similar to ExPASy...
+Calculate physicochemical properties of a protein locally from its amino acid sequence (similar t...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def ProtParam_calculate(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Calculate physicochemical properties of a protein from its amino acid sequence (similar to ExPASy...
+    Calculate physicochemical properties of a protein locally from its amino acid sequence (similar t...
 
     Parameters
     ----------

@@ -1,7 +1,7 @@
 """
 FDA_OrangeBook_check_generic_availability
 
-Check if generic versions are FDA-approved for a brand-name drug. Returns reference drug info, ap...
+Check whether FDA-approved generic applications exist for a brand or ingredient. Scans every matc...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def FDA_OrangeBook_check_generic_availability(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Check if generic versions are FDA-approved for a brand-name drug. Returns reference drug info, ap...
+    Check whether FDA-approved generic applications exist for a brand or ingredient. Scans every matc...
 
     Parameters
     ----------

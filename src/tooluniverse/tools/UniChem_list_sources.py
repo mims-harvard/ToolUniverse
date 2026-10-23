@@ -1,7 +1,7 @@
 """
 UniChem_list_sources
 
-List all chemical database sources registered in UniChem. Returns the complete catalog of 40+ dat...
+List the complete current UniChem source catalog and verify returned length against totalSources....
 """
 
 from typing import Any, Optional, Callable
@@ -15,7 +15,7 @@ def UniChem_list_sources(
     validate: bool = True,
 ) -> Any:
     """
-    List all chemical database sources registered in UniChem. Returns the complete catalog of 40+ dat...
+    List the complete current UniChem source catalog and verify returned length against totalSources....
 
     Parameters
     ----------

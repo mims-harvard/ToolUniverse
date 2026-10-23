@@ -12,6 +12,8 @@ def MedlinePlus_search_topics_by_keyword(
     term: str,
     db: str,
     rettype: Optional[str] = "topic",
+    retstart: Optional[int] = 0,
+    retmax: Optional[int] = 10,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,6 +30,10 @@ def MedlinePlus_search_topics_by_keyword(
         Database to search. Only two values are actually served by NLM's wsearch endp...
     rettype : str
         Result return format (default: topic). topic returns the full structured heal...
+    retstart : int
+        Zero-based offset of the first result to return. Use next_offset from the pre...
+    retmax : int
+        Maximum number of matching records requested from MedlinePlus for this page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +50,13 @@ def MedlinePlus_search_topics_by_keyword(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"term": term, "db": db, "rettype": rettype}.items()
+        for k, v in {
+            "term": term,
+            "db": db,
+            "rettype": rettype,
+            "retstart": retstart,
+            "retmax": retmax,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

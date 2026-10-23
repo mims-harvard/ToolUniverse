@@ -1,7 +1,7 @@
 [
   {
     "name": "PDBeSearch_search_structures",
-    "description": "Search PDB structures through PDBe's Solr search interface by keyword, protein name, or gene name. Returns PDB IDs, titles, resolution, experimental methods, deposition dates, and organisms, sorted by relevance by default (best text match first, resolution as tie-breaker; sort_by='resolution' gives best-resolved first). Complements RCSB PDB tools with powerful full-text search. Example: searching 'insulin' returns 400+ structures; 'BRCA1' returns 148 structures including BRCT domains.",
+    "description": "Search PDB structures through PDBe's Solr search interface by keyword, protein name, or gene name. Returns PDB IDs, titles, resolution, experimental methods, deposition dates, and organisms, sorted by relevance by default (best text match first, resolution as tie-breaker; sort_by='resolution' gives best-resolved first). PDBe's index is entity-level, so one PDB entry can occur in many Solr documents: this tool deduplicates by pdb_id and applies offset after deduplication. Metadata distinguishes entity-level total_found from unique results, exposes next_offset, and reports whether max_rows_scanned prevented the requested unique page from being filled. Complements RCSB PDB tools with powerful full-text search. Example: searching 'insulin' returns 400+ structures; 'BRCA1' returns 148 structures including BRCT domains.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -14,7 +14,9 @@
             "integer",
             "null"
           ],
-          "description": "Maximum results to return (1-50, default 10)."
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Unique PDB entries per page (1-1000, default 10). Invalid values return an error rather than being silently clamped."
         },
         "sort_by": {
           "type": "string",
@@ -24,6 +26,18 @@
           ],
           "default": "relevance",
           "description": "Result ordering: 'relevance' (default) puts the best text match first with resolution as the tie-breaker; 'resolution' lists the best-resolved structures first, even if they only mention the query."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset after deduplication by pdb_id. Continue with metadata.next_offset while has_more is true."
+        },
+        "max_rows_scanned": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200000,
+          "description": "Optional entity-level Solr scan budget used to fill the requested unique-PDB page. The dynamic default scales with offset+limit. If metadata.scan_limit_reached is true, increase this value and rerun the same offset."
         }
       },
       "required": [
@@ -208,7 +222,7 @@
   },
   {
     "name": "PDBeSearch_search_by_organism",
-    "description": "Search PDB structures filtered by organism through PDBe's Solr search. Combines keyword search with organism name filtering. Useful for finding species-specific protein structures. Example: searching for 'kinase' in 'Homo sapiens' returns human protein kinase structures sorted by resolution.",
+    "description": "Search PDBe Solr records filtered by organism, optionally combined with a keyword. Results are offset-paginated: pass metadata.next_start as start while metadata.has_more is true. PDBe's total_found is an entity-level Solr count, so one PDB entry can occur in multiple records.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -228,7 +242,15 @@
             "integer",
             "null"
           ],
-          "description": "Maximum results to return (1-50, default 10)."
+          "minimum": 1,
+          "maximum": 10000,
+          "description": "PDBe Solr records per page (1-10000, default 10), matching the verified upstream capability. Invalid values return an error rather than being silently clamped."
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based PDBe Solr record offset (default 0)."
         }
       },
       "required": [

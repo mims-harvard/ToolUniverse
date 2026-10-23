@@ -153,7 +153,7 @@
   {
     "type": "InterProMemberDBTool",
     "name": "InterPro_list_member_signatures",
-    "description": "Browse / paginate the signature catalog of a single InterPro member database. Returns a page of member-database signatures (accession, name, type, and the integrated InterPro entry each maps to) plus the total count for that database. Useful for surveying what a member database (Pfam, SMART, PANTHER, CDD, NCBIfam, SUPERFAMILY, CATH-Gene3D, PRINTS, HAMAP, PIRSF, PROSITE, SFLD, AntiFam) contains. Optionally filter by entry type (family, domain, homologous_superfamily, site). No API key.",
+    "description": "Browse the signature catalog of one InterPro member database. Results are cursor-paginated: when has_more is true, pass next_cursor as cursor with the same filters to retrieve the next page.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -168,6 +168,13 @@
         "page_size": {
           "type": "integer",
           "description": "Number of signatures to return per page (1-100, default 20)."
+        },
+        "cursor": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Opaque InterPro cursor returned as next_cursor by a previous call."
         }
       },
       "required": [
@@ -195,6 +202,15 @@
             },
             "returned": {
               "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_cursor": {
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "entries": {
               "type": "array",
@@ -271,7 +287,7 @@
   {
     "type": "InterProMemberDBTool",
     "name": "InterPro_get_structures_for_entry",
-    "description": "List the experimentally-solved PDB structures whose chains contain a given InterPro domain/family. Returns each PDB structure's id, title, experiment type (e.g. x-ray, electron microscopy), and resolution, plus the total structure count for that InterPro entry. Useful for finding crystallographic / cryo-EM examples of a domain. Input is an integrated InterPro accession (IPR...). No API key.",
+    "description": "List experimentally solved PDB structures whose chains contain an InterPro domain/family. Results are cursor-paginated: when has_more is true, pass next_cursor as cursor to retrieve the next page.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -282,6 +298,13 @@
         "page_size": {
           "type": "integer",
           "description": "Number of structures to return (1-100, default 20)."
+        },
+        "cursor": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Opaque InterPro cursor returned as next_cursor by a previous call."
         }
       },
       "required": [
@@ -309,6 +332,15 @@
             },
             "returned": {
               "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_cursor": {
+              "type": [
+                "string",
+                "null"
+              ]
             },
             "structures": {
               "type": "array",

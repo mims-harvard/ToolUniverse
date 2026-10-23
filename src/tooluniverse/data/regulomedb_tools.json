@@ -2,7 +2,7 @@
   {
     "type": "RegulomeDBRESTTool",
     "name": "RegulomeDB_query_variant",
-    "description": "Query RegulomeDB for regulatory variant annotations using rsID",
+    "description": "Query RegulomeDB for regulatory variant annotations using rsID. Nearby SNPs are independently paginated: use nearby_snp_offset and nearby_snp_limit, and follow next_nearby_snp_offset until it is null.",
     "aliases": [
       "RegulomeDB_get_score"
     ],
@@ -16,6 +16,19 @@
         "variant": {
           "type": "string",
           "description": "Alias for rsid. dbSNP rsID (e.g., 'rs7903146', 'rs429358')."
+        },
+        "nearby_snp_offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset into the nearby SNP list (default 0)."
+        },
+        "nearby_snp_limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 10,
+          "description": "Maximum nearby SNPs to return (default 10, max 500)."
         }
       },
       "required": []
@@ -106,6 +119,21 @@
             },
             "nearby_snps": {
               "type": "array"
+            },
+            "nearby_snps_total": {
+              "type": "integer"
+            },
+            "nearby_snps_returned": {
+              "type": "integer"
+            },
+            "nearby_snps_truncated": {
+              "type": "boolean"
+            },
+            "next_nearby_snp_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
             },
             "notifications": {
               "type": [

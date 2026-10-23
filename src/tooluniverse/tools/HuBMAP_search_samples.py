@@ -1,7 +1,7 @@
 """
 HuBMAP_search_samples
 
-Search HuBMAP (Human BioMolecular Atlas Program) biospecimen Samples (the physical tissue layer, ...
+Search HuBMAP biospecimen Samples with exact totals and Elasticsearch offset pagination. Continue...
 """
 
 from typing import Any, Optional, Callable
@@ -13,13 +13,14 @@ def HuBMAP_search_samples(
     sample_category: Optional[str] = None,
     registered_only: Optional[bool] = False,
     limit: Optional[int] = 10,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search HuBMAP (Human BioMolecular Atlas Program) biospecimen Samples (the physical tissue layer, ...
+    Search HuBMAP biospecimen Samples with exact totals and Elasticsearch offset pagination. Continue...
 
     Parameters
     ----------
@@ -31,6 +32,8 @@ def HuBMAP_search_samples(
         If true, return only spatially-registered samples that carry CCF/RUI coordina...
     limit : int
         Maximum number of results (1-50, default 10).
+    offset : int
+        Number of matching samples to skip. Continue with metadata.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def HuBMAP_search_samples(
             "sample_category": sample_category,
             "registered_only": registered_only,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

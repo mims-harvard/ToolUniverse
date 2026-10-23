@@ -12,6 +12,7 @@ def ClinicalTrials_get_field_values(
     field: str,
     query_cond: Optional[str] = None,
     page_size: Optional[int] = 50,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,6 +29,8 @@ def ClinicalTrials_get_field_values(
         NOT SUPPORTED - passing this returns an error. ClinicalTrials.gov's field-val...
     page_size : int
         Maximum number of value rows to return, highest study count first (default 50...
+    offset : int
+        Zero-based local offset within the fixed accessible top-values window.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +51,7 @@ def ClinicalTrials_get_field_values(
             "field": field,
             "query_cond": query_cond,
             "page_size": page_size,
+            "offset": offset,
         }.items()
         if v is not None
     }

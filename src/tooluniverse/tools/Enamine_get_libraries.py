@@ -1,7 +1,7 @@
 """
 Enamine_get_libraries
 
-Get information about available Enamine compound libraries including REAL database, building bloc...
+Retrieve the live Enamine library catalog when its Store API is available. If upstream is unavail...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def Enamine_get_libraries(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get information about available Enamine compound libraries including REAL database, building bloc...
+    Retrieve the live Enamine library catalog when its Store API is available. If upstream is unavail...
 
     Parameters
     ----------

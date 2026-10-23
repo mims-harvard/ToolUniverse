@@ -1,7 +1,7 @@
 """
 STRING_get_functional_annotations
 
-Get comprehensive functional annotations for a protein from STRING database. Returns per-protein ...
+Get comprehensive functional annotations for a protein from STRING, grouped by category. limit an...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,15 @@ def STRING_get_functional_annotations(
     identifiers: str,
     species: Optional[int] = 9606,
     category: Optional[str] = None,
+    limit: Optional[int] = 15,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get comprehensive functional annotations for a protein from STRING database. Returns per-protein ...
+    Get comprehensive functional annotations for a protein from STRING, grouped by category. limit an...
 
     Parameters
     ----------
@@ -28,6 +30,10 @@ def STRING_get_functional_annotations(
         NCBI taxonomy ID (default 9606 for human). Examples: 9606 (human), 10090 (mou...
     category : str
         Filter by annotation category. Options: 'Process' (GO BP), 'Function' (GO MF)...
+    limit : int
+        Page size within each annotation category (default 15).
+    offset : int
+        Zero-based offset within each annotation category. Continue with category_pag...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +54,8 @@ def STRING_get_functional_annotations(
             "identifiers": identifiers,
             "species": species,
             "category": category,
+            "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

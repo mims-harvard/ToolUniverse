@@ -1,7 +1,7 @@
 """
 OMA_resolve_xref
 
-Resolve a gene name, gene symbol, UniProt entry name, or any cross-reference identifier to OMA pr...
+Resolve and page through OMA cross-reference matches for a gene symbol, UniProt entry name, or ot...
 """
 
 from typing import Any, Optional, Callable
@@ -10,21 +10,24 @@ from ._shared_client import get_shared_client
 
 def OMA_resolve_xref(
     search: str,
-    limit: Optional[int] = None,
+    limit: Optional[int] = 25,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Resolve a gene name, gene symbol, UniProt entry name, or any cross-reference identifier to OMA pr...
+    Resolve and page through OMA cross-reference matches for a gene symbol, UniProt entry name, or ot...
 
     Parameters
     ----------
     search : str
         Gene symbol (e.g. 'BRCA2'), UniProt entry name (e.g. 'MED4_HUMAN'), or any cr...
     limit : int
-        Maximum number of cross-reference matches to return (default: 25, max: 100).
+        Maximum cross-reference matches to return (default 25, max 1000).
+    offset : int
+        Zero-based offset into all OMA cross-reference matches.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,7 +43,9 @@ def OMA_resolve_xref(
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
-        k: v for k, v in {"search": search, "limit": limit}.items() if v is not None
+        k: v
+        for k, v in {"search": search, "limit": limit, "offset": offset}.items()
+        if v is not None
     }
     return get_shared_client().run_one_function(
         {

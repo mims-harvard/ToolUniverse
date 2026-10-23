@@ -51,16 +51,16 @@ def _sent_sort(arguments):
 
 
 def test_default_ordering_is_relevance_with_resolution_as_tiebreaker():
-    assert _sent_sort({"query": "insulin"}) == "score desc,resolution asc"
+    assert _sent_sort({"query": "insulin"}) == "score desc,resolution asc,pdb_id asc"
 
 
 def test_relevance_can_be_requested_explicitly():
     assert _sent_sort({"query": "insulin", "sort_by": "relevance"}) == (
-        "score desc,resolution asc"
+        "score desc,resolution asc,pdb_id asc"
     )
 
 
 def test_resolution_ordering_is_still_available():
     assert _sent_sort({"query": "insulin", "sort_by": "resolution"}) == (
-        "resolution asc"
+        "resolution asc,pdb_id asc"
     )

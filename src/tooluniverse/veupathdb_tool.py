@@ -238,6 +238,10 @@ class VEuPathDBTool(BaseTool):
         except (TypeError, ValueError):
             limit = 25
         limit = max(1, min(limit, 500))
+        try:
+            offset = max(0, int(arguments.get("offset") or 0))
+        except (TypeError, ValueError):
+            offset = 0
 
         # The WDK `organism` param is a multi-pick vocabulary whose value is a
         # JSON-encoded array of organism term strings.
@@ -246,7 +250,7 @@ class VEuPathDBTool(BaseTool):
             "reportConfig": {
                 "attributes": attributes,
                 "tables": [],
-                "pagination": {"offset": 0, "numRecords": limit},
+                "pagination": {"offset": offset, "numRecords": limit},
             },
         }
 
@@ -259,6 +263,11 @@ class VEuPathDBTool(BaseTool):
         rows = self._parse_search_records(payload.get("records", []))
         meta = payload.get("meta", {}) or {}
         total = meta.get("totalCount", meta.get("displayTotalCount"))
+        try:
+            total_count = int(total) if total is not None else None
+        except (TypeError, ValueError):
+            total_count = None
+        has_more = total_count is not None and offset + len(rows) < total_count
 
         return {
             "status": "success",
@@ -267,8 +276,12 @@ class VEuPathDBTool(BaseTool):
                 "source": "VEuPathDB",
                 "project": site["project_id"],
                 "organism": organism,
-                "total_count": total,
+                "total_count": total_count if total_count is not None else total,
                 "returned": len(rows),
+                "limit": limit,
+                "offset": offset,
+                "has_more": has_more,
+                "next_offset": offset + len(rows) if has_more else None,
                 "attributes": attributes,
                 "operation": "search_genes_by_organism",
             },

@@ -1,7 +1,7 @@
 [
   {
     "name": "PomBase_get_gene",
-    "description": "Get detailed gene information from PomBase for fission yeast (S. pombe) by systematic ID. Returns gene name, protein product, InterPro domain annotations, deletion viability, UniProt cross-reference, and transmembrane domain coordinates. S. pombe is a key model organism for cell cycle, chromosome biology, and RNA processing research. Example: SPBC11B10.09 returns cdc2 (cyclin-dependent kinase), essential for cell division.",
+    "description": "Get detailed gene information from PomBase for fission yeast (S. pombe) by systematic ID. Returns the complete InterPro match and transmembrane-domain lists with explicit counts, plus product, deletion viability, and cross-references. S. pombe is a key model organism for cell cycle, chromosome biology, and RNA processing research. Example: SPAC1093.06c (dhc1) returns all 29 annotated domain matches.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -104,6 +104,15 @@
                   }
                 }
               }
+            },
+            "interpro_domain_count": {
+              "type": "integer"
+            },
+            "tm_domains": {
+              "type": "array"
+            },
+            "tm_domain_count": {
+              "type": "integer"
             }
           }
         },
@@ -123,7 +132,7 @@
   },
   {
     "name": "PomBase_search_genes",
-    "description": "Search PomBase for fission yeast (S. pombe) genes by name, systematic ID, or protein product keyword. Searches across 12,600+ gene entries. Returns matching genes with systematic IDs, gene names, and protein products. Example: searching 'kinase' returns CDK and other kinase genes; searching 'cdc' returns cell division cycle genes.",
+    "description": "Search all PomBase fission-yeast genes by name, systematic ID, or product keyword with complete local limit/offset pagination. Metadata reports total_matches, has_more, and next_offset; continue while more matches remain.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -136,7 +145,16 @@
             "integer",
             "null"
           ],
-          "description": "Maximum results to return (1-50, default 10)."
+          "minimum": 1,
+          "maximum": 50,
+          "default": 10,
+          "description": "Maximum results in this page (1-50, default 10)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset in the complete filtered match list. Continue with metadata.next_offset."
         }
       },
       "required": [
@@ -204,7 +222,7 @@
   },
   {
     "name": "PomBase_get_gene_phenotypes",
-    "description": "Get phenotype annotations for a fission yeast (S. pombe) gene from PomBase. Returns deletion viability, FYPO (Fission Yeast Phenotype Ontology) term annotations with evidence codes. S. pombe phenotypes are a key resource for understanding gene function in cell biology. Example: SPBC11B10.09 (cdc2) is inviable when deleted, reflecting its essential role in cell division.",
+    "description": "Get all phenotype annotations for a fission yeast (S. pombe) gene from PomBase. Returns deletion viability and the complete set of both single-locus and multi-locus FYPO (Fission Yeast Phenotype Ontology) annotations; phenotype_count is the full returned count. S. pombe phenotypes are a key resource for understanding gene function in cell biology. Example: SPBC11B10.09 (cdc2) has hundreds of phenotype annotations and is inviable when deleted.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -389,13 +407,31 @@
   },
   {
     "name": "PomBase_get_interactions",
-    "description": "Get physical and genetic interactions for a fission-yeast (S. pombe) gene from PomBase, each with evidence method, reference (PMID), throughput, and source database. Example: SPBC11B10.09 (cdc2) has ~100 physical interactions (e.g. SPAC1006.03c/red1 via Affinity Capture-MS, PMID:24713849, BIOGRID) and ~118 genetic interactions.",
+    "description": "Get physical and genetic interactions for a fission-yeast gene from PomBase, each with evidence, reference, throughput, and source. The two lists are independently paginated: continue with next_physical_offset and/or next_genetic_offset while the corresponding has_more field is true. Example: cdc2 has about 100 physical and 118 genetic records.",
     "parameter": {
       "type": "object",
       "properties": {
         "gene_id": {
           "type": "string",
           "description": "PomBase systematic ID. Examples: 'SPBC11B10.09' (cdc2)."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 75,
+          "description": "Maximum records returned from each interaction list in this page."
+        },
+        "physical_offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based physical-interaction offset; continue with next_physical_offset."
+        },
+        "genetic_offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based genetic-interaction offset; continue with next_genetic_offset."
         }
       },
       "required": [
@@ -431,6 +467,21 @@
             },
             "physical_interaction_count": {
               "type": "integer"
+            },
+            "physical_interactions_returned": {
+              "type": "integer"
+            },
+            "physical_offset": {
+              "type": "integer"
+            },
+            "physical_has_more": {
+              "type": "boolean"
+            },
+            "next_physical_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
             },
             "physical_interactions": {
               "type": "array",
@@ -477,6 +528,24 @@
               }
             },
             "genetic_interaction_count": {
+              "type": "integer"
+            },
+            "genetic_interactions_returned": {
+              "type": "integer"
+            },
+            "genetic_offset": {
+              "type": "integer"
+            },
+            "genetic_has_more": {
+              "type": "boolean"
+            },
+            "next_genetic_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "limit": {
               "type": "integer"
             },
             "genetic_interactions": {
@@ -541,7 +610,7 @@
   },
   {
     "name": "PomBase_get_go_annotations",
-    "description": "Get Gene Ontology annotations (biological_process / molecular_function / cellular_component) for a fission-yeast (S. pombe) gene from PomBase, with per-aspect counts and resolved term names. Example: SPBC11B10.09 (cdc2) returns BP terms like GO:0000082 'G1/S transition of mitotic cell cycle', plus MF and CC terms.",
+    "description": "Get the complete Gene Ontology annotation set (biological_process / molecular_function / cellular_component) for a fission-yeast (S. pombe) gene from PomBase, with full per-aspect counts and resolved term names. No aspect is silently capped. Example: SPBC11B10.09 (cdc2) returns all BP, MF, and CC annotations.",
     "parameter": {
       "type": "object",
       "properties": {

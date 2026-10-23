@@ -1,7 +1,7 @@
 """
 PomBase_get_interactions
 
-Get physical and genetic interactions for a fission-yeast (S. pombe) gene from PomBase, each with...
+Get physical and genetic interactions for a fission-yeast gene from PomBase, each with evidence, ...
 """
 
 from typing import Any, Optional, Callable
@@ -10,18 +10,27 @@ from ._shared_client import get_shared_client
 
 def PomBase_get_interactions(
     gene_id: str,
+    limit: Optional[int] = 75,
+    physical_offset: Optional[int] = 0,
+    genetic_offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get physical and genetic interactions for a fission-yeast (S. pombe) gene from PomBase, each with...
+    Get physical and genetic interactions for a fission-yeast gene from PomBase, each with evidence, ...
 
     Parameters
     ----------
     gene_id : str
         PomBase systematic ID. Examples: 'SPBC11B10.09' (cdc2).
+    limit : int
+        Maximum records returned from each interaction list in this page.
+    physical_offset : int
+        Zero-based physical-interaction offset; continue with next_physical_offset.
+    genetic_offset : int
+        Zero-based genetic-interaction offset; continue with next_genetic_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +45,16 @@ def PomBase_get_interactions(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"gene_id": gene_id}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {
+            "gene_id": gene_id,
+            "limit": limit,
+            "physical_offset": physical_offset,
+            "genetic_offset": genetic_offset,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "PomBase_get_interactions",

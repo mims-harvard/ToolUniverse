@@ -103,12 +103,34 @@ class NCBINucleotideSearchTool(NCBIEUtilsTool):
                     "error": "No search criteria provided. Use organism, gene, keywords, or query.",
                 }
 
+            limit = arguments.get("limit")
+            if limit is None:
+                limit = arguments.get("max_results", 20)
+            offset = arguments.get("offset", 0)
+            if (
+                isinstance(limit, bool)
+                or not isinstance(limit, int)
+                or not 1 <= limit <= 100
+            ):
+                return {
+                    "status": "error",
+                    "error": "limit must be an integer between 1 and 100",
+                    "parameter": "limit",
+                }
+            if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+                return {
+                    "status": "error",
+                    "error": "offset must be a non-negative integer",
+                    "parameter": "offset",
+                }
+
             # Build esearch parameters
             params = {
                 "db": self.db,
                 "term": search_term,
                 "retmode": "json",
-                "retmax": arguments.get("limit") or arguments.get("max_results") or 20,
+                "retmax": limit,
+                "retstart": offset,
             }
             # NCBI names its sort schemas differently ("Date Released", "Sequence
             # Length") and ignores unknown ones with a warning, so pub_date and
@@ -127,6 +149,8 @@ class NCBINucleotideSearchTool(NCBIEUtilsTool):
                 esearch_result = data.get("esearchresult", {})
                 uids = esearch_result.get("idlist", [])
                 count = int(esearch_result.get("count", 0))
+                returned = len(uids)
+                has_more = offset + returned < count
 
                 # Auto-fetch accession numbers so results are immediately usable
                 accessions = []
@@ -156,7 +180,12 @@ class NCBINucleotideSearchTool(NCBIEUtilsTool):
                     "uids": uids,
                     "accessions": accessions,
                     "count": count,
-                    "returned": len(uids),
+                    "returned": returned,
+                    "offset": offset,
+                    "limit": limit,
+                    "has_more": has_more,
+                    "next_offset": offset + returned if returned and has_more else None,
+                    "truncated": has_more,
                     "search_term": search_term,
                 }
                 # Fix-54A-1: ``search_term`` echoed back the term as SUBMITTED,

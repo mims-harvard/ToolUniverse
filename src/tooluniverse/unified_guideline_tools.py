@@ -2118,10 +2118,14 @@ class SIGNSearchGuidelinesTool(BaseTool):
 
     def run(self, arguments):
         query = arguments.get("query", "")
-        limit = int(arguments.get("limit", 10))
+        limit = arguments.get("limit", 10)
+        offset = arguments.get("offset", 0)
 
         if not query:
             return {"status": "error", "error": "query parameter is required"}
+        page_error = _validate_guideline_pagination(limit, offset)
+        if page_error:
+            return page_error
 
         try:
             rows = _fetch_sign_table()
@@ -2136,7 +2140,8 @@ class SIGNSearchGuidelinesTool(BaseTool):
                 "error": f"Error parsing SIGN guidelines page: {exc}",
             }
 
-        return _rank_by_terms(rows, query, ("title", "topic"))[:limit]
+        results = _rank_by_terms(rows, query, ("title", "topic"))
+        return _paginate_guidelines(results, limit, offset)
 
 
 @register_tool()
@@ -2149,7 +2154,12 @@ class SIGNListGuidelinesTool(BaseTool):
 
     def run(self, arguments):
         topic = arguments.get("topic", None)
-        limit = int(arguments.get("limit", 20))
+        limit = arguments.get("limit", 20)
+        offset = arguments.get("offset", 0)
+
+        page_error = _validate_guideline_pagination(limit, offset)
+        if page_error:
+            return page_error
 
         try:
             rows = _fetch_sign_table()
@@ -2182,7 +2192,7 @@ class SIGNListGuidelinesTool(BaseTool):
                 }
             rows = matched
 
-        return rows[:limit]
+        return _paginate_guidelines(rows, limit, offset)
 
 
 # ---------------------------------------------------------------------------
@@ -2193,6 +2203,35 @@ _CTFPHC_URL = "https://canadiantaskforce.ca/guidelines/published-guidelines/"
 _CTFPHC_HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
 }
+
+
+def _validate_guideline_pagination(limit, offset):
+    if isinstance(limit, bool) or not isinstance(limit, int) or limit < 1:
+        return {"status": "error", "error": "limit must be a positive integer"}
+    if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+        return {
+            "status": "error",
+            "error": "offset must be a non-negative integer",
+        }
+    return None
+
+
+def _paginate_guidelines(rows, limit, offset):
+    """Keep the historical list result while making every page recoverable."""
+    total = len(rows)
+    page = rows[offset : offset + limit]
+    next_offset = offset + len(page)
+    has_more = next_offset < total
+    pagination = {
+        "total_count": total,
+        "returned": len(page),
+        "offset": offset,
+        "limit": limit,
+        "has_more": has_more,
+        "next_offset": next_offset if has_more else None,
+        "result_set_complete": offset == 0 and len(page) == total,
+    }
+    return [{**row, "search_pagination": pagination} for row in page]
 
 
 def _fetch_ctfphc_links():
@@ -2248,7 +2287,12 @@ class CTFPHCListGuidelinesTool(BaseTool):
     """
 
     def run(self, arguments):
-        limit = int(arguments.get("limit", 30))
+        limit = arguments.get("limit", 30)
+        offset = arguments.get("offset", 0)
+
+        page_error = _validate_guideline_pagination(limit, offset)
+        if page_error:
+            return page_error
 
         try:
             guidelines = _fetch_ctfphc_links()
@@ -2263,7 +2307,7 @@ class CTFPHCListGuidelinesTool(BaseTool):
                 "error": f"Error parsing CTFPHC guidelines page: {exc}",
             }
 
-        return guidelines[:limit]
+        return _paginate_guidelines(guidelines, limit, offset)
 
 
 @register_tool()
@@ -2276,10 +2320,14 @@ class CTFPHCSearchGuidelinesTool(BaseTool):
 
     def run(self, arguments):
         query = arguments.get("query", "")
-        limit = int(arguments.get("limit", 10))
+        limit = arguments.get("limit", 10)
+        offset = arguments.get("offset", 0)
 
         if not query:
             return {"status": "error", "error": "query parameter is required"}
+        page_error = _validate_guideline_pagination(limit, offset)
+        if page_error:
+            return page_error
 
         try:
             guidelines = _fetch_ctfphc_links()
@@ -2294,4 +2342,5 @@ class CTFPHCSearchGuidelinesTool(BaseTool):
                 "error": f"Error parsing CTFPHC guidelines page: {exc}",
             }
 
-        return _rank_by_terms(guidelines, query, ("title",))[:limit]
+        results = _rank_by_terms(guidelines, query, ("title",))
+        return _paginate_guidelines(results, limit, offset)

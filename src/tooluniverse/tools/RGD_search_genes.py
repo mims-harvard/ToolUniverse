@@ -1,7 +1,7 @@
 """
 RGD_search_genes
 
-Search for rat genes by symbol or keyword in the Rat Genome Database. Returns matching genes with...
+Search rat, human, or mouse genes through RGD/Alliance by symbol or keyword. Returns IDs, symbols...
 """
 
 from typing import Any, Optional, Callable
@@ -17,7 +17,7 @@ def RGD_search_genes(
     validate: bool = True,
 ) -> Any:
     """
-    Search for rat genes by symbol or keyword in the Rat Genome Database. Returns matching genes with...
+    Search rat, human, or mouse genes through RGD/Alliance by symbol or keyword. Returns IDs, symbols...
 
     Parameters
     ----------

@@ -151,13 +151,19 @@ class CellPaintingTool(BaseTool):
         if plate_id is None:
             return {"status": "error", "error": "Missing required parameter: plate_id"}
 
-        limit = arguments.get("limit", 20)
+        limit = max(1, min(int(arguments.get("limit", 20)), 1000))
+        offset = max(0, int(arguments.get("offset", 0)))
 
-        result = self._make_request(f"plates/{plate_id}/wells/", {"limit": limit})
+        result = self._make_request(
+            f"plates/{plate_id}/wells/", {"limit": limit, "offset": offset}
+        )
         if not result["ok"]:
             return {"status": "error", "error": result["error"]}
 
-        wells_raw = result["data"].get("data", [])
+        response_data = result["data"]
+        wells_raw = response_data.get("data", [])
+        response_meta = response_data.get("meta", {})
+        total_count = response_meta.get("totalCount")
         output = []
         for well in wells_raw:
             well_samples = well.get("WellSamples", [])
@@ -179,4 +185,24 @@ class CellPaintingTool(BaseTool):
             "status": "success",
             "data": output,
             "num_results": len(output),
+            "pagination": {
+                "total_count": total_count,
+                "returned": len(output),
+                "limit": limit,
+                "offset": offset,
+                "has_more": (
+                    offset + len(output) < total_count
+                    if isinstance(total_count, int)
+                    else len(output) == limit
+                ),
+                "next_offset": (
+                    offset + len(output)
+                    if (
+                        offset + len(output) < total_count
+                        if isinstance(total_count, int)
+                        else len(output) == limit
+                    )
+                    else None
+                ),
+            },
         }

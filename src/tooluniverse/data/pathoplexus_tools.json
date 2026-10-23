@@ -104,12 +104,19 @@
                         "number",
                         "null"
                     ],
-                    "description": "Minimum proportion of sequences carrying the mutation (default 0.8)."
+                    "minimum": 0,
+                    "maximum": 1,
+                    "description": "Minimum proportion of sequences carrying the mutation (0 to 1; default 0.8). Zero is valid and requests all observed mutations."
                 },
                 "mutation_type": {
                     "type": [
                         "string",
                         "null"
+                    ],
+                    "enum": [
+                        "aminoAcid",
+                        "nucleotide",
+                        null
                     ],
                     "description": "'aminoAcid' (default) or 'nucleotide'."
                 },
@@ -118,7 +125,18 @@
                         "integer",
                         "null"
                     ],
+                    "minimum": 1,
+                    "maximum": 500,
                     "description": "Max mutations (default 50, max 500)."
+                },
+                "offset": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "minimum": 0,
+                    "maximum": 10000000,
+                    "description": "Zero-based mutation offset for pagination (default 0). Continue with metadata.next_offset when metadata.has_more is true."
                 }
             },
             "required": [
@@ -191,11 +209,15 @@
                 },
                 "limit": {
                     "type": ["integer", "null"],
+                    "minimum": 1,
+                    "maximum": 1000,
                     "description": "Max sequence rows (default 50, max 1000)."
                 },
                 "offset": {
                     "type": ["integer", "null"],
-                    "description": "Row offset for pagination (default 0)."
+                    "minimum": 0,
+                    "maximum": 10000000,
+                    "description": "Zero-based row offset for pagination (default 0). Continue with metadata.next_offset when metadata.has_more is true."
                 }
             },
             "required": ["organism"]
@@ -258,6 +280,11 @@
                 },
                 "sequence_type": {
                     "type": ["string", "null"],
+                    "enum": [
+                        "nucleotide",
+                        "aminoAcid",
+                        null
+                    ],
                     "description": "'nucleotide' (default) or 'aminoAcid'."
                 },
                 "aligned": {
@@ -266,7 +293,18 @@
                 },
                 "limit": {
                     "type": ["integer", "null"],
+                    "minimum": 1,
+                    "maximum": 100,
                     "description": "Number of sequences to download (default 1, max 100)."
+                },
+                "offset": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "minimum": 0,
+                    "maximum": 10000000,
+                    "description": "Zero-based sequence offset for pagination (default 0). For a full FASTA page, metadata.next_offset identifies the next page to probe."
                 }
             },
             "required": ["organism"]

@@ -1,7 +1,7 @@
 """
 PubChemBioAssay_get_assay
 
-Get detailed description of a PubChem BioAssay by its AID (Assay ID). PubChem BioAssay stores ove...
+Get the complete detailed description of a PubChem BioAssay by its AID (Assay ID), including ever...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def PubChemBioAssay_get_assay(
     validate: bool = True,
 ) -> Any:
     """
-    Get detailed description of a PubChem BioAssay by its AID (Assay ID). PubChem BioAssay stores ove...
+    Get the complete detailed description of a PubChem BioAssay by its AID (Assay ID), including ever...
 
     Parameters
     ----------

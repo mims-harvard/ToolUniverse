@@ -2,7 +2,7 @@
   {
     "name": "fda_pharmacogenomic_biomarkers",
     "type": "FDAPharmacogenomicBiomarkersTool",
-    "description": "Retrieve pharmacogenomic biomarkers from FDA drug labels. This tool fetches the Table of Pharmacogenomic Biomarkers in Drug Labeling from the FDA website and allows filtering by drug name or biomarker.",
+    "description": "Retrieve the FDA Table of Pharmacogenomic Biomarkers in Drug Labeling, optionally filtered by drug or biomarker. Results are recoverably paginated: start with offset=0 and continue with next_offset while has_more is true. count is the complete filtered-row count.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -18,6 +18,12 @@
           "type": "integer",
           "description": "Maximum number of results to return.",
           "default": 10
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based filtered-row offset. Continue with next_offset while has_more is true.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": []
@@ -38,6 +44,18 @@
           "type": [
             "integer",
             "number"
+          ]
+        },
+        "offset": {
+          "type": "integer"
+        },
+        "has_more": {
+          "type": "boolean"
+        },
+        "next_offset": {
+          "type": [
+            "integer",
+            "null"
           ]
         },
         "results": {

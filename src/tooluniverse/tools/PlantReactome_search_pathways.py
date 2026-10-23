@@ -1,7 +1,7 @@
 """
 PlantReactome_search_pathways
 
-Search for plant biological pathways in Plant Reactome (Gramene). Plant Reactome is a curated res...
+Search Plant Reactome pathways by keyword and optional species. The official endpoint can report ...
 """
 
 from typing import Any, Optional, Callable
@@ -17,7 +17,7 @@ def PlantReactome_search_pathways(
     validate: bool = True,
 ) -> Any:
     """
-    Search for plant biological pathways in Plant Reactome (Gramene). Plant Reactome is a curated res...
+    Search Plant Reactome pathways by keyword and optional species. The official endpoint can report ...
 
     Parameters
     ----------

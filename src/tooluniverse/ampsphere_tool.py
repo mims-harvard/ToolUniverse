@@ -48,13 +48,6 @@ def _err(message: str, **extra: Any) -> Dict[str, Any]:
     return out
 
 
-def _as_int(value: Any, default: int) -> int:
-    try:
-        return int(value)
-    except (TypeError, ValueError):
-        return default
-
-
 def _detail_snippet(resp: requests.Response) -> str:
     """Extract the API's JSON ``detail`` message if present, else raw text."""
     try:
@@ -214,11 +207,13 @@ def _get(path: str, params: Dict[str, Any] | None = None):
                     ),
                 },
                 "page_size": {
-                    "type": ["integer", "string"],
+                    "type": "integer",
+                    "minimum": 1,
                     "description": "Results per page (default 20).",
                 },
                 "page": {
-                    "type": ["integer", "string"],
+                    "type": "integer",
+                    "minimum": 0,
                     "description": "Zero-based page index (default 0).",
                 },
             },
@@ -248,6 +243,9 @@ def _get(path: str, params: Dict[str, Any] | None = None):
                                 "total_page": {"type": ["integer", "null"]},
                                 "total_item": {"type": ["integer", "null"]},
                                 "returned_count": {"type": ["integer", "null"]},
+                                "has_more": {"type": ["boolean", "null"]},
+                                "next_page": {"type": ["integer", "null"]},
+                                "result_set_complete": {"type": ["boolean", "null"]},
                                 "filters": {"type": "object"},
                             },
                         },
@@ -308,7 +306,10 @@ class AMPSphereSearchAmpsTool(BaseTool):
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         arguments = arguments or {}
 
-        if arguments.get("list_options"):
+        list_options = arguments.get("list_options", False)
+        if not isinstance(list_options, bool):
+            return _err("list_options must be a boolean")
+        if list_options:
             payload, error = _get("/all_available_options")
             if error is not None:
                 return error
@@ -330,15 +331,21 @@ class AMPSphereSearchAmpsTool(BaseTool):
         filters: Dict[str, Any] = {}
         for arg_key, api_key in self._PARAM_MAP.items():
             if _provided(arg_key):
-                params[api_key] = str(arguments[arg_key]).strip()
+                if not isinstance(arguments[arg_key], str):
+                    return _err(f"{arg_key} must be a string")
+                params[api_key] = arguments[arg_key].strip()
                 filters[arg_key] = params[api_key]
 
-        page_size = _as_int(arguments.get("page_size", 20), 20)
-        page = _as_int(arguments.get("page", 0), 0)
-        if page_size <= 0:
-            page_size = 20
-        if page < 0:
-            page = 0
+        page_size = arguments.get("page_size", 20)
+        page = arguments.get("page", 0)
+        if (
+            isinstance(page_size, bool)
+            or not isinstance(page_size, int)
+            or page_size < 1
+        ):
+            return _err("page_size must be a positive integer")
+        if isinstance(page, bool) or not isinstance(page, int) or page < 0:
+            return _err("page must be a non-negative integer")
         params["page_size"] = page_size
         params["page"] = page
 
@@ -351,6 +358,14 @@ class AMPSphereSearchAmpsTool(BaseTool):
 
         info = payload.get("info") or {}
         records = payload.get("data") or []
+        current_page = info.get("currentPage")
+        total_pages = info.get("totalPage")
+        total_items = info.get("totalItem")
+        has_more = bool(
+            isinstance(current_page, int)
+            and isinstance(total_pages, int)
+            and current_page + 1 < total_pages
+        )
         return {
             "status": "success",
             "data": records,
@@ -358,11 +373,20 @@ class AMPSphereSearchAmpsTool(BaseTool):
                 "source": _SOURCE,
                 "url": f"{_BASE_URL}/amps",
                 "mode": "search",
-                "current_page": info.get("currentPage"),
+                "current_page": current_page,
                 "page_size": info.get("pageSize"),
-                "total_page": info.get("totalPage"),
-                "total_item": info.get("totalItem"),
+                "total_page": total_pages,
+                "total_item": total_items,
                 "returned_count": len(records),
+                "has_more": has_more,
+                "next_page": current_page + 1 if has_more else None,
+                "truncated": bool((current_page or 0) > 0 or has_more),
+                "result_set_complete": bool(
+                    current_page == 0
+                    and isinstance(total_items, int)
+                    and len(records) == total_items
+                ),
+                "pagination_stalled": bool(has_more and not records),
                 "filters": filters,
             },
         }

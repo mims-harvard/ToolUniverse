@@ -157,6 +157,11 @@ class RCSBDataTool(BaseTool):
                 "error": "pdb_id parameter is required (e.g., '4HHB', '1TUP')",
             }
 
+        operation_limit = min(max(1, int(arguments.get("operation_limit", 10))), 1000)
+        operation_offset = max(0, int(arguments.get("operation_offset", 0)))
+        evidence_limit = min(max(1, int(arguments.get("evidence_limit", 5))), 1000)
+        evidence_offset = max(0, int(arguments.get("evidence_offset", 0)))
+
         url = f"{RCSB_DATA_BASE_URL}/assembly/{pdb_id}/{assembly_id}"
         response = requests.get(url, timeout=self.timeout)
         response.raise_for_status()
@@ -167,9 +172,12 @@ class RCSBDataTool(BaseTool):
         oper_list = data.get("pdbx_struct_oper_list", [])
         auth_evidence = data.get("pdbx_struct_assembly_auth_evidence", [])
 
-        # Extract operations
+        # Extract a caller-selectable operations window.
         operations = []
-        for op in oper_list[:10]:
+        operation_page = oper_list[
+            operation_offset : operation_offset + operation_limit
+        ]
+        for op in operation_page:
             operations.append(
                 {
                     "id": op.get("id"),
@@ -178,15 +186,21 @@ class RCSBDataTool(BaseTool):
                 }
             )
 
-        # Extract evidence
+        # Extract a caller-selectable evidence window.
         evidence = []
-        for ev in auth_evidence[:5]:
+        evidence_page = auth_evidence[
+            evidence_offset : evidence_offset + evidence_limit
+        ]
+        for ev in evidence_page:
             evidence.append(
                 {
                     "experimental_support": ev.get("experimental_support"),
                     "details": ev.get("details"),
                 }
             )
+
+        operation_has_more = operation_offset + len(operations) < len(oper_list)
+        evidence_has_more = evidence_offset + len(evidence) < len(auth_evidence)
 
         return {
             "status": "success",
@@ -205,7 +219,29 @@ class RCSBDataTool(BaseTool):
                     "total_polymer_monomer_count"
                 ),
                 "operations": operations,
+                "operation_count": len(oper_list),
+                "operations_pagination": {
+                    "offset": operation_offset,
+                    "limit": operation_limit,
+                    "returned": len(operations),
+                    "has_more": operation_has_more,
+                    "next_offset": (
+                        operation_offset + len(operations)
+                        if operation_has_more
+                        else None
+                    ),
+                },
                 "evidence": evidence,
+                "evidence_count": len(auth_evidence),
+                "evidence_pagination": {
+                    "offset": evidence_offset,
+                    "limit": evidence_limit,
+                    "returned": len(evidence),
+                    "has_more": evidence_has_more,
+                    "next_offset": (
+                        evidence_offset + len(evidence) if evidence_has_more else None
+                    ),
+                },
             },
             "metadata": {
                 "source": "RCSB PDB Data API - Assembly",

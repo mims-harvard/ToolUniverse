@@ -15,6 +15,7 @@ def Pathoplexus_get_sequences_fasta(
     sequence_type: Optional[str] = None,
     aligned: Optional[bool] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -37,6 +38,8 @@ def Pathoplexus_get_sequences_fasta(
         Return aligned sequences instead of unaligned (default false).
     limit : int
         Number of sequences to download (default 1, max 100).
+    offset : int
+        Zero-based sequence offset for pagination (default 0). For a full FASTA page,...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -60,6 +63,7 @@ def Pathoplexus_get_sequences_fasta(
             "sequence_type": sequence_type,
             "aligned": aligned,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

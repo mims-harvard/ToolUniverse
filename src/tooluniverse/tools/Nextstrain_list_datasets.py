@@ -11,6 +11,8 @@ from ._shared_client import get_shared_client
 def Nextstrain_list_datasets(
     pathogen: Optional[str] = None,
     datasets_per_pathogen: Optional[int] = None,
+    dataset_limit: Optional[int] = None,
+    dataset_offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,6 +27,10 @@ def Nextstrain_list_datasets(
         Optional pathogen name filter. Examples: 'flu', 'ebola', 'zika', 'dengue', 'm...
     datasets_per_pathogen : int
         Maximum number of dataset paths listed per pathogen (default 10). Set to 0 to...
+    dataset_limit : int
+        Alias for datasets_per_pathogen (page size per pathogen group). Ignored when ...
+    dataset_offset : int
+        Zero-based offset applied within every matched pathogen group (default 0). Co...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,6 +50,8 @@ def Nextstrain_list_datasets(
         for k, v in {
             "pathogen": pathogen,
             "datasets_per_pathogen": datasets_per_pathogen,
+            "dataset_limit": dataset_limit,
+            "dataset_offset": dataset_offset,
         }.items()
         if v is not None
     }

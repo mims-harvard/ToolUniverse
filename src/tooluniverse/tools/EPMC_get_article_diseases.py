@@ -1,7 +1,7 @@
 """
 EPMC_get_article_diseases
 
-Get diseases mentioned in a biomedical article, identified by text mining from Europe PMC. Return...
+Get the complete deduplicated set of diseases mentioned in a biomedical article, identified by Eu...
 """
 
 from typing import Any, Optional, Callable
@@ -17,7 +17,7 @@ def EPMC_get_article_diseases(
     validate: bool = True,
 ) -> Any:
     """
-    Get diseases mentioned in a biomedical article, identified by text mining from Europe PMC. Return...
+    Get the complete deduplicated set of diseases mentioned in a biomedical article, identified by Eu...
 
     Parameters
     ----------

@@ -102,6 +102,13 @@ class SwissLipidsTool(BaseTool):
             limit = max(1, min(int(arguments.get("limit", 10)), 100))
         except (TypeError, ValueError):
             return {"status": "error", "error": "Parameter 'limit' must be an integer."}
+        try:
+            offset = max(0, int(arguments.get("offset", 0)))
+        except (TypeError, ValueError):
+            return {
+                "status": "error",
+                "error": "Parameter 'offset' must be an integer.",
+            }
 
         body, err = self._request("search", {"term": str(term)})
         if err:
@@ -124,8 +131,9 @@ class SwissLipidsTool(BaseTool):
                 "entity_type": h.get("entity_type"),
                 "classification_level": h.get("classification_level"),
             }
-            for h in hits[:limit]
+            for h in hits[offset : offset + limit]
         ]
+        has_more = offset + len(results) < len(hits)
         return {
             "status": "success",
             "data": results,
@@ -134,6 +142,11 @@ class SwissLipidsTool(BaseTool):
                 "query": str(term),
                 "total_matches": len(hits),
                 "returned": len(results),
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_offset": offset + len(results) if has_more else None,
             },
         }
 

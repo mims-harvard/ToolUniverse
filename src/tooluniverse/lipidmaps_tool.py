@@ -9,8 +9,11 @@ proteins, and mass spectrometry data.
 API Documentation: https://lipidmaps.org/resources/rest
 """
 
-import requests
 from typing import Dict, Any
+from urllib.parse import quote
+
+import requests
+
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
@@ -28,6 +31,36 @@ _REQUEST_HEADERS = {
         "Chrome/124.0.0.0 Safari/537.36 ToolUniverse/LipidMaps"
     ),
     "Accept": "application/json,text/plain,*/*",
+}
+
+_COMPOUND_OUTPUT_ITEMS = {
+    "all",
+    "classification",
+    "regno",
+    "lm_id",
+    "name",
+    "sys_name",
+    "synonyms",
+    "abbrev",
+    "abbrev_chains",
+    "core",
+    "main_class",
+    "sub_class",
+    "class_level4",
+    "exactmass",
+    "formula",
+    "inchi",
+    "inchi_key",
+    "kegg_id",
+    "hmdb_id",
+    "chebi_id",
+    "lipidbank_id",
+    "pubchem_cid",
+    "smiles",
+    "molfile",
+    "structure",
+    "physchem",
+    "png",
 }
 
 
@@ -104,9 +137,17 @@ class LipidMapsTool(BaseTool):
             not raw_text
             or raw_text.lower() == "null"
             or raw_text == '""'
-            or raw_text == "{}"
+            or raw_text in ("{}", "[]")
         ):
-            return {"status": "success", "data": [], "message": "No results found"}
+            return {
+                "status": "success",
+                "data": [],
+                "message": "No results found",
+                "metadata": {
+                    "total_results": 0,
+                    "result_set_complete": True,
+                },
+            }
 
         try:
             data = response.json()
@@ -117,34 +158,57 @@ class LipidMapsTool(BaseTool):
                 # Check if it's a multi-row result (Row1, Row2, ...)
                 row_keys = [k for k in data.keys() if k.startswith("Row")]
                 if row_keys:
+                    if len(row_keys) != len(data) or any(
+                        not key[3:].isdigit() or not isinstance(data[key], dict)
+                        for key in row_keys
+                    ):
+                        return {
+                            "status": "error",
+                            "error": "LIPID MAPS returned malformed keyed row records",
+                        }
                     # Convert Row1, Row2, ... to a list
-                    results = [data[k] for k in sorted(row_keys)]
+                    row_keys.sort(key=lambda key: int(key[3:]))
+                    results = [data[key] for key in row_keys]
                     return {
                         "status": "success",
                         "data": results,
-                        "metadata": {"total_results": len(results)},
+                        "metadata": {
+                            "total_results": len(results),
+                            "result_set_complete": True,
+                        },
                     }
-                elif "input" in data or "lm_id" in data or "gene_id" in data:
-                    # Single result
-                    return {
-                        "status": "success",
-                        "data": data,
-                        "metadata": {"total_results": 1},
-                    }
-                else:
-                    return {"status": "success", "data": data}
-            elif isinstance(data, list):
+                # Single result or selected-field response.
                 return {
                     "status": "success",
                     "data": data,
-                    "metadata": {"total_results": len(data)},
+                    "metadata": {"total_results": 1, "result_set_complete": True},
+                }
+            elif isinstance(data, list):
+                if any(not isinstance(record, dict) for record in data):
+                    return {
+                        "status": "error",
+                        "error": "LIPID MAPS returned a malformed record list",
+                    }
+                return {
+                    "status": "success",
+                    "data": data,
+                    "metadata": {
+                        "total_results": len(data),
+                        "result_set_complete": True,
+                    },
                 }
             else:
-                return {"status": "success", "data": data}
+                return {
+                    "status": "error",
+                    "error": "LIPID MAPS returned an unexpected JSON response shape",
+                }
 
         except ValueError:
-            # Not JSON - return raw text (some endpoints return TSV)
-            return {"status": "success", "data": raw_text}
+            return {
+                "status": "error",
+                "error": "LIPID MAPS JSON endpoint returned a non-JSON response "
+                f"(first 200 chars: {raw_text[:200]})",
+            }
 
     # Cross-reference / structure input items accepted by the LMSD compound
     # route. Lets a single tool resolve any external metabolite/lipid id to a
@@ -166,10 +230,22 @@ class LipidMapsTool(BaseTool):
 
     def _query_compound(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Query compound/lipid information from LMSD."""
-        input_value = arguments.get("input_value", "")
+        input_value = arguments.get("input_value")
         output_item = arguments.get("output_item", "all")
-        if not input_value:
-            return {"status": "error", "error": "input_value parameter is required"}
+        if not isinstance(input_value, str) or not input_value.strip():
+            return {
+                "status": "error",
+                "error": "input_value must be a non-empty string",
+            }
+        input_value = input_value.strip()
+        if (
+            not isinstance(output_item, str)
+            or output_item not in _COMPOUND_OUTPUT_ITEMS
+        ):
+            return {
+                "status": "error",
+                "error": "output_item is not a supported LIPID MAPS compound field",
+            }
 
         # Reject unrecognized parameters. `xref_type` has a default (kegg_id), so
         # a typo like `input_type` (instead of `xref_type`) was silently accepted
@@ -192,20 +268,27 @@ class LipidMapsTool(BaseTool):
         # Allow the input item (the LMSD lookup key) to be overridden per call
         # via xref_type / input_item, falling back to the config default. This
         # powers the cross-reference lookup tool without a new tool class.
-        input_item = (
-            arguments.get("xref_type") or arguments.get("input_item") or self.input_item
-        )
-        input_item = str(input_item).strip()
+        xref_type = arguments.get("xref_type")
+        explicit_input_item = arguments.get("input_item")
+        if (
+            xref_type is not None
+            and explicit_input_item is not None
+            and xref_type != explicit_input_item
+        ):
+            return {
+                "status": "error",
+                "error": "Conflicting xref_type and input_item values were supplied",
+            }
+        input_item = xref_type or explicit_input_item or self.input_item
+        if not isinstance(input_item, str):
+            return {"status": "error", "error": "xref_type must be a string"}
+        input_item = input_item.strip()
         if input_item not in self._XREF_INPUT_ITEMS:
             return {
                 "status": "error",
                 "error": f"Unsupported xref_type '{input_item}'. Supported: "
                 + ", ".join(sorted(self._XREF_INPUT_ITEMS)),
             }
-
-        result = self._make_request(
-            f"compound/{input_item}/{input_value}/{output_item}/json"
-        )
 
         # LMSD's `abbrev` field only stores sum-composition shorthand (e.g.
         # 'PC 34:1'), never the acyl-chain-specific form real lipidomics
@@ -217,22 +300,58 @@ class LipidMapsTool(BaseTool):
         # cosmetic). Retry automatically so a name copy-pasted straight out
         # of a lipidomics results table (slash form) still resolves instead
         # of silently returning zero hits.
-        if (
-            input_item == "abbrev"
-            and not result.get("data")
-            and "/" in input_value
-        ):
-            chains_value = input_value.replace("/", "_")
-            retry = self._make_request(
-                f"compound/abbrev_chains/{chains_value}/{output_item}/json"
-            )
-            if retry.get("data"):
-                retry.setdefault("metadata", {})["resolved_via"] = (
-                    f"abbrev_chains='{chains_value}' (retried after 'abbrev' "
-                    f"lookup of the acyl-chain form '{input_value}' found nothing)"
-                )
-                return retry
+        resolved_via = None
+        effective_item = input_item
+        effective_value = input_value
+        if input_item in ("abbrev", "abbrev_chains") and "/" in input_value:
+            effective_item = "abbrev_chains"
+            effective_value = input_value.replace("/", "_")
+            resolved_via = f"abbrev_chains={effective_value}"
 
+        sub_path = "/".join(
+            quote(segment, safe="")
+            for segment in (
+                "compound",
+                effective_item,
+                effective_value,
+                output_item,
+                "json",
+            )
+        )
+        result = self._make_request(sub_path)
+        metadata = result.setdefault("metadata", {})
+        metadata.update(
+            {
+                "input_item": effective_item,
+                "input_value": effective_value,
+                "output_item": output_item,
+                "field_scope_complete": output_item == "all",
+            }
+        )
+        if resolved_via:
+            metadata["resolved_via"] = resolved_via
+        if (
+            result.get("status") == "success"
+            and output_item == "all"
+            and effective_item == "lm_id"
+            and result.get("data")
+        ):
+            records = (
+                result["data"] if isinstance(result["data"], list) else [result["data"]]
+            )
+            mismatches = [
+                record.get("lm_id")
+                for record in records
+                if not isinstance(record, dict)
+                or (record.get("lm_id") or "").upper() != effective_value.upper()
+            ]
+            if mismatches:
+                return {
+                    "status": "error",
+                    "error": "LIPID MAPS returned a different LMID than requested",
+                    "returned_lm_ids": mismatches,
+                }
+            metadata["exact_identifier_verified"] = True
         return result
 
     def _query_gene(self, arguments: Dict[str, Any]) -> Dict[str, Any]:

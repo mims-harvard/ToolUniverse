@@ -1,7 +1,7 @@
 [
   {
     "name": "SASBDB_search",
-    "description": "Search SASBDB small-angle scattering database by query term or UniProt accession. Accepts free-text queries (routes to all-entries listing with guidance) or UniProt IDs (returns matching entries directly). Use SASBDB_get_entry with a specific code for full details.",
+    "description": "Search SASBDB small-angle scattering database by query term or UniProt accession. UniProt IDs return matching entries directly. Because SASBDB has no full-text search API, other queries explicitly fall back to the published-entry catalog; total_entries, has_more, and next_offset make that catalog fully pageable. Use SASBDB_get_entry with a specific code for full details.",
     "type": "SASBDBTextSearchTool",
     "parameter": {
       "type": "object",
@@ -12,7 +12,14 @@
         },
         "max_results": {
           "type": ["integer", "null"],
-          "description": "Cap on entries returned when query is free-text and falls back to listing all published SASBDB entries (~5432). Default 50."
+          "description": "Page size when a free-text query falls back to listing the published-entry catalog. Default 50.",
+          "minimum": 1
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based catalog offset for free-text fallback results. Continue with next_offset while has_more is true.",
+          "minimum": 0,
+          "default": 0
         }
       },
       "required": ["query"]

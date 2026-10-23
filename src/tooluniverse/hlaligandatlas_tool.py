@@ -60,11 +60,23 @@ class HLALigandAtlasTool(BaseTool):
         allele = (arguments.get("allele") or "").strip()
         tissue = (arguments.get("tissue") or "").strip().lower()
 
-        try:
-            limit = int(arguments.get("limit", 50))
-        except (TypeError, ValueError):
+        limit = arguments.get("limit", 50)
+        offset = arguments.get("offset", 0)
+        if limit is None:
             limit = 50
-        limit = max(1, min(500, limit))
+        if offset is None:
+            offset = 0
+        if (
+            isinstance(limit, bool)
+            or not isinstance(limit, int)
+            or not 1 <= limit <= 500
+        ):
+            return {
+                "status": "error",
+                "error": "limit must be an integer from 1 to 500",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {"status": "error", "error": "offset must be a non-negative integer"}
 
         if hla_class and hla_class not in ("HLA-I", "HLA-II"):
             return {
@@ -98,7 +110,7 @@ class HLALigandAtlasTool(BaseTool):
             return {"status": "error", "error": "Empty aggregated table"}
 
         header = lines[0].split("\t")
-        rows: List[Dict[str, Any]] = []
+        matches: List[Dict[str, Any]] = []
         scanned = 0
         for line in lines[1:]:
             if not line:
@@ -121,7 +133,7 @@ class HLALigandAtlasTool(BaseTool):
             if tissue and tissue not in tissues.lower():
                 continue
 
-            rows.append(
+            matches.append(
                 {
                     "peptide_sequence_id": cols[0],
                     "peptide_sequence": pep,
@@ -130,8 +142,9 @@ class HLALigandAtlasTool(BaseTool):
                     "tissues": [t for t in tissues.split(",") if t],
                 }
             )
-            if len(rows) >= limit:
-                break
+        rows = matches[offset : offset + limit]
+        next_offset = offset + len(rows)
+        has_more = next_offset < len(matches)
 
         return {
             "status": "success",
@@ -140,9 +153,15 @@ class HLALigandAtlasTool(BaseTool):
                 "source": "HLA Ligand Atlas (release 2020.12)",
                 "columns": header,
                 "returned": len(rows),
+                "total_matches": len(matches),
+                "total_matches_is_exact": True,
                 "rows_scanned": scanned,
                 "limit": limit,
-                "truncated": len(rows) >= limit,
+                "offset": offset,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
+                "truncated": offset > 0 or has_more,
+                "result_set_complete": offset == 0 and len(rows) == len(matches),
                 "filters": {
                     "peptide": peptide or None,
                     "hla_class": hla_class or None,

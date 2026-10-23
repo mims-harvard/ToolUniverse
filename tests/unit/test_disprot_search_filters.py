@@ -46,7 +46,7 @@ def _search(query, responses, **extra):
     calls = []
 
     def fake_get(url, params=None, timeout=None):
-        (field,) = [k for k in params if k not in ("release", "page_size")]
+        (field,) = [k for k in params if k not in ("release", "page_size", "page")]
         calls.append((field, params[field]))
         return _Resp(responses.get(field, []))
 
@@ -111,3 +111,26 @@ def test_page_size_caps_the_merged_list():
 def test_empty_query_is_an_error():
     result, calls = _search("  ", {})
     assert result["status"] == "error" and calls == []
+
+
+def test_merged_page_reports_overflow_and_continuation():
+    """Merged gene+name hits past page_size are counted, and upstream totals drive next_page."""
+    calls = []
+
+    def fake_get(url, params=None, timeout=None):
+        calls.append(params)
+        field = "gene" if "gene" in params else "name"
+        rows = [_entry(f"P{field[0]}{i:04d}", f"{field}{i}") for i in range(3)]
+        return _Resp(rows, size=7)
+
+    tool = DisProtTool({"name": "DisProt_search", "fields": {"endpoint": "search"}})
+    with patch("tooluniverse.disprot_tool.requests.get", side_effect=fake_get):
+        result = tool.run({"query": "abc", "page_size": 3, "page": 1})
+
+    meta = result["metadata"]
+    assert all(c["page"] == 1 and c["page_size"] == 3 for c in calls)
+    assert len(result["data"]) == 3
+    assert meta["merged_overflow"] == 3
+    assert meta["has_more"] is True and meta["next_page"] == 2
+    assert meta["total_results_is_exact"] is False
+    assert meta["result_set_complete"] is False

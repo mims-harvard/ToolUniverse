@@ -1,13 +1,39 @@
 [
     {
         "name": "UniParc_get_entry",
-        "description": "Get a UniProt UniParc entry by its stable UPI identifier. UniParc is the most comprehensive, non-redundant protein sequence archive, storing every unique sequence ever seen across all major databases (UniProtKB, RefSeq, Ensembl, PDB, EMBL/GenBank, EPO patents, etc.). Each unique sequence gets a permanent UPI ID. Returns all active database cross-references (with gene name, protein name, organism), InterPro domain annotations, and full sequence with length/weight/checksums. Essential for tracking a protein sequence across databases and finding all records with an identical sequence. Example: UPI000002ED67 is TP53 (p53), active in Swiss-Prot (P04637), TrEMBL, RefSeq, Ensembl, PDB with 551 total cross-references.",
+        "description": "Get a UniProt UniParc entry by its stable UPI identifier. Returns the full sequence plus explicitly paginated active database cross-references and sequence features. Metadata reports complete totals, truncation, and next offsets so large entries are never presented as complete when only one page was returned.",
         "parameter": {
             "type": "object",
             "properties": {
                 "upi": {
                     "type": "string",
                     "description": "UniParc identifier (e.g., 'UPI000002ED67' for TP53/P04637). Find UPIs via UniParc_search or from UniProt protein pages."
+                },
+                "cross_reference_offset": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "default": 0,
+                    "description": "Zero-based offset into active cross-references. Continue with metadata.next_cross_reference_offset."
+                },
+                "cross_reference_limit": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 500,
+                    "default": 100,
+                    "description": "Maximum active cross-references returned in this response."
+                },
+                "feature_offset": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "default": 0,
+                    "description": "Zero-based offset into sequence features. Continue with metadata.next_feature_offset."
+                },
+                "feature_limit": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 500,
+                    "default": 100,
+                    "description": "Maximum sequence features returned in this response."
                 }
             },
             "required": [
@@ -142,7 +168,7 @@
     },
     {
         "name": "UniParc_search",
-        "description": "Search UniProt UniParc sequence archive by gene name, organism, or database membership. Finds all unique protein sequences matching the query, returning UPI identifiers, UniProt accessions, organisms, gene names, and creation dates. Useful for finding all sequence variants of a gene across species, or identifying sequences present in specific databases (PDB, RefSeq, Ensembl). Supports Lucene query syntax: 'gene:TP53 AND organism_id:9606' for human TP53 sequences, 'database:PDB AND gene:BRCA1' for BRCA1 sequences with PDB structures. Example: gene:TP53 AND organism_id:9606 returns multiple UniParc entries including the canonical p53 and splice variants.",
+        "description": "Search UniParc with official result cursor pagination plus independently reachable organism and gene-name pages inside each sequence record. Large identical sequences can map to hundreds of organisms and gene names. Each result reports nested totals, returned counts, truncation flags, and next offsets instead of silently showing only five.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -152,7 +178,39 @@
                 },
                 "size": {
                     "type": "integer",
-                    "description": "Number of results to return (default 5, max 10)."
+                    "minimum": 1,
+                    "maximum": 500,
+                    "description": "Results per official cursor page (default 5, maximum 500). Invalid values return an error rather than being silently clamped."
+                },
+                "cursor": {
+                    "type": "string",
+                    "description": "Opaque cursor from metadata.next_cursor. Omit for the first page."
+                },
+                "organism_offset": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "default": 0,
+                    "description": "Zero-based offset into each result's organism list."
+                },
+                "organism_limit": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 500,
+                    "default": 100,
+                    "description": "Maximum organisms returned per UniParc result."
+                },
+                "gene_name_offset": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "default": 0,
+                    "description": "Zero-based offset into each result's gene-name list."
+                },
+                "gene_name_limit": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 500,
+                    "default": 100,
+                    "description": "Maximum gene names returned per UniParc result."
                 }
             },
             "required": [
@@ -209,11 +267,41 @@
                                     }
                                 }
                             },
+                            "organisms_total": {
+                                "type": "integer"
+                            },
+                            "organisms_returned": {
+                                "type": "integer"
+                            },
+                            "organisms_truncated": {
+                                "type": "boolean"
+                            },
+                            "next_organism_offset": {
+                                "type": [
+                                    "integer",
+                                    "null"
+                                ]
+                            },
                             "gene_names": {
                                 "type": "array",
                                 "items": {
                                     "type": "string"
                                 }
+                            },
+                            "gene_names_total": {
+                                "type": "integer"
+                            },
+                            "gene_names_returned": {
+                                "type": "integer"
+                            },
+                            "gene_names_truncated": {
+                                "type": "boolean"
+                            },
+                            "next_gene_name_offset": {
+                                "type": [
+                                    "integer",
+                                    "null"
+                                ]
                             },
                             "oldest_created": {
                                 "type": [

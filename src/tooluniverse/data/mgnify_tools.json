@@ -2,7 +2,7 @@
   {
     "name": "MGnify_search_studies",
     "type": "MGnifyStudiesTool",
-    "description": "Search MGnify metagenomics/microbiome studies by biome or keyword. Returns study accessions (MGYS...), names, bioproject IDs, biome names, and analysis counts. Use to find datasets from specific environments (e.g., gut microbiome, soil, ocean) before retrieving analyses or taxonomy. Example: biome='root:Host-associated' returns gut, skin, and oral studies.",
+    "description": "Search MGnify studies with explicit page pagination. Preserves upstream JSON:API links and pagination totals so all matching microbiome studies are reachable.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -20,6 +20,12 @@
           "minimum": 1,
           "maximum": 100,
           "description": "Number of records per page (1–100)."
+        },
+        "page": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 1,
+          "description": "One-based page number. Continue with metadata.next_page."
         }
       }
     },
@@ -62,7 +68,7 @@
   {
     "name": "MGnify_list_analyses",
     "type": "MGnifyAnalysesTool",
-    "description": "List analyses associated with a study accession (taxonomic/functional outputs). Use to enumerate available processed results for programmatic retrieval.",
+    "description": "List analyses for a study with explicit page pagination. Preserves upstream JSON:API links, total result count, total pages, and next_page.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -76,6 +82,12 @@
           "minimum": 1,
           "maximum": 100,
           "description": "Number of records per page (1–100)."
+        },
+        "page": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 1,
+          "description": "One-based page number. Continue with metadata.next_page."
         }
       },
       "required": ["study_accession"]

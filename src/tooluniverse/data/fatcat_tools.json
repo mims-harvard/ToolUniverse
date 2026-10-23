@@ -2,7 +2,7 @@
   {
     "type": "FatcatScholarTool",
     "name": "Fatcat_search_scholar",
-    "description": "Search Internet Archive Scholar via Fatcat releases search and retrieve detailed metadata including authors, publication year, DOI, journal, publisher, abstract, and PDF links. Fatcat is the underlying database powering Internet Archive Scholar, providing access to 140+ million research papers and academic publications.",
+    "description": "Search Internet Archive Scholar's Fatcat release index and retrieve detailed metadata. Results are recoverably paginated: request at most 10 enriched records per call, start with offset=0, and continue with metadata.next_offset while metadata.has_more is true. The current Scholar HTML endpoint does not expose an exact total. Each item reports metadata_complete and metadata_error so a failed release-page enrichment is distinguishable from genuinely absent DOI/author/abstract fields.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -12,10 +12,16 @@
         },
         "max_results": {
           "type": "integer",
-          "description": "Maximum number of results to return. Default is 10, maximum is 100.",
+          "description": "Number of enriched releases to return per page. Default and maximum are 10; use offset/metadata.next_offset for additional results.",
           "default": 10,
           "minimum": 1,
-          "maximum": 100
+          "maximum": 10
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based search-result offset. Continue with metadata.next_offset.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": [
@@ -70,6 +76,17 @@
           "source": {
             "type": "string",
             "description": "Source identifier (always 'Fatcat/IA Scholar')"
+          },
+          "metadata_complete": {
+            "type": "boolean",
+            "description": "True when the release detail page was fetched and parsed successfully."
+          },
+          "metadata_error": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Reason detailed metadata could not be fetched, or null on success."
           }
         }
       }
@@ -77,7 +94,8 @@
     "test_examples": [
       {
         "query": "machine learning",
-        "max_results": 2
+        "max_results": 2,
+        "offset": 0
       },
       {
         "query": "quantum physics",

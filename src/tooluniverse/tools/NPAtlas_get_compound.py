@@ -1,7 +1,7 @@
 """
 NPAtlas_get_compound
 
-Get the full NPAtlas record for a microbial natural product by its NPAID (e.g. 'NPA000001'): name...
+Get a lossless NPAtlas compound record by NPAID. data includes a convenient normalized projection...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def NPAtlas_get_compound(
     validate: bool = True,
 ) -> Any:
     """
-    Get the full NPAtlas record for a microbial natural product by its NPAID (e.g. 'NPA000001'): name...
+    Get a lossless NPAtlas compound record by NPAID. data includes a convenient normalized projection...
 
     Parameters
     ----------

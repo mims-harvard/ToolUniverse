@@ -284,13 +284,17 @@ class HPOTool(BaseTool):
                 entry["mondo_id"] = it.get("mondoId")
             trimmed.append(entry)
 
+        has_more = offset + len(trimmed) < total
         metadata = {
             "source": "HPO (JAX Ontology) network annotation",
             "term_id": term_id,
             "total": total,
             "offset": offset,
+            "limit": limit,
             "returned": len(trimmed),
-            "has_more": offset + len(trimmed) < total,
+            "has_more": has_more,
+            "next_offset": offset + len(trimmed) if has_more else None,
+            "result_set_complete": offset == 0 and not has_more,
         }
         # An obsolete/merged term comes back as HTTP 200 with empty arrays,
         # indistinguishable from a live term nothing is annotated to. The one
@@ -343,8 +347,10 @@ class HPOTool(BaseTool):
             "definition": data.get("definition"),
             "comment": data.get("comment"),
             "synonyms": data.get("synonyms", []),
+            "synonym_count": len(data.get("synonyms", []) or []),
             "descendant_count": data.get("descendantCount"),
             "xrefs": data.get("xrefs", []),
+            "xref_count": len(data.get("xrefs", []) or []),
         }
 
         # Extract translations if available
@@ -352,9 +358,13 @@ class HPOTool(BaseTool):
         if translations:
             result["translations"] = [
                 {"language": t.get("language"), "name": t.get("name")}
-                for t in translations[:5]
+                for t in translations
                 if t and t.get("name")
             ]
+            result["translation_count"] = len(result["translations"])
+        else:
+            result["translations"] = []
+            result["translation_count"] = 0
 
         metadata = {
             "source": "HPO (JAX Ontology)",
@@ -386,20 +396,40 @@ class HPOTool(BaseTool):
         except (TypeError, ValueError):
             max_results = 10
         max_results = max(1, min(max_results, 50))
+        try:
+            offset = max(0, int(arguments.get("offset", 0)))
+        except (TypeError, ValueError):
+            return {"status": "error", "error": "offset must be an integer"}
 
         url = f"{HPO_BASE_URL}/search"
         # The JAX ontology search endpoint sizes the page with `limit`. The
         # previous `max` key was silently ignored, capping every result set at
         # the API default of 10 regardless of the requested count.
-        params = {"q": query, "limit": max_results}
+        page = offset // max_results
+        leading_skip = offset % max_results
+        params = {"q": query, "limit": max_results, "page": page}
 
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
         data = response.json()
+        terms = data.get("terms", [])
+        if not isinstance(terms, list):
+            terms = []
+        total_available = data.get("totalCount", len(terms))
+
+        # An arbitrary offset can start part-way through an upstream page. Fetch
+        # the following page when needed so the requested page remains full.
+        if leading_skip and offset + max_results < total_available:
+            next_params = {"q": query, "limit": max_results, "page": page + 1}
+            next_response = requests.get(url, params=next_params, timeout=self.timeout)
+            next_response.raise_for_status()
+            next_terms = next_response.json().get("terms", [])
+            if isinstance(next_terms, list):
+                terms.extend(next_terms)
 
         # Defensive truncation in case an upstream change ever returns more
         # rows than requested.
-        terms = data.get("terms", [])[:max_results]
+        terms = terms[leading_skip : leading_skip + max_results]
         results = []
         for term in terms:
             results.append(
@@ -408,10 +438,12 @@ class HPOTool(BaseTool):
                     "name": term.get("name"),
                     "definition": term.get("definition"),
                     "descendant_count": term.get("descendantCount"),
-                    "synonyms": term.get("synonyms", [])[:5],
+                    "synonyms": term.get("synonyms", []) or [],
+                    "synonym_count": len(term.get("synonyms", []) or []),
                 }
             )
 
+        has_more = offset + len(results) < total_available
         return {
             "status": "success",
             "data": results,
@@ -422,7 +454,12 @@ class HPOTool(BaseTool):
                 # Total matches available across all pages (the API reports this
                 # as `totalCount`), so callers can see more terms exist beyond
                 # the returned page instead of assuming this page is exhaustive.
-                "total_available": data.get("totalCount", len(results)),
+                "total_available": total_available,
+                "offset": offset,
+                "limit": max_results,
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_offset": offset + len(results) if has_more else None,
             },
         }
 

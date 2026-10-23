@@ -1,7 +1,7 @@
 """
 FDAGSRS_search_substances
 
-Search FDA GSRS (Global Substance Registration System) for substances by name, UNII code, InChIKe...
+Search FDA GSRS for substances by name, UNII, InChIKey, or formula. Results are recoverably pagin...
 """
 
 from typing import Any, Optional, Callable
@@ -11,14 +11,15 @@ from ._shared_client import get_shared_client
 def FDAGSRS_search_substances(
     query: str,
     substance_class: Optional[str] = None,
-    limit: Optional[int] = None,
+    limit: Optional[int] = 10,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search FDA GSRS (Global Substance Registration System) for substances by name, UNII code, InChIKe...
+    Search FDA GSRS for substances by name, UNII, InChIKey, or formula. Results are recoverably pagin...
 
     Parameters
     ----------
@@ -28,6 +29,8 @@ def FDAGSRS_search_substances(
         Filter by substance class. Options: 'chemical', 'protein', 'mixture', 'polyme...
     limit : int
         Maximum number of results to return (1-50, default 10).
+    offset : int
+        Zero-based ranked-result offset. Continue with metadata.next_offset while met...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +51,7 @@ def FDAGSRS_search_substances(
             "query": query,
             "substance_class": substance_class,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

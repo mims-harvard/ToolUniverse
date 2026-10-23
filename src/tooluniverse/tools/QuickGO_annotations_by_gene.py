@@ -13,6 +13,8 @@ def QuickGO_annotations_by_gene(
     aspect: Optional[str] = None,
     taxon_id: Optional[int] = None,
     limit: Optional[int] = 25,
+    page: Optional[int] = 1,
+    evidence_code: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -30,7 +32,11 @@ def QuickGO_annotations_by_gene(
     taxon_id : int
         Filter by NCBI taxonomy ID. Example: 9606 (human), 10090 (mouse).
     limit : int
-        Maximum number of annotations to return. Default: 25, max: 100.
+        Number of annotations per page. Default: 25, max: 100.
+    page : int
+        One-based result page. Use metadata.next_page while metadata.has_more is true.
+    evidence_code : str
+        Exact Evidence and Conclusion Ontology (ECO) accession filter, such as 'ECO:0...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +58,8 @@ def QuickGO_annotations_by_gene(
             "aspect": aspect,
             "taxon_id": taxon_id,
             "limit": limit,
+            "page": page,
+            "evidence_code": evidence_code,
         }.items()
         if v is not None
     }

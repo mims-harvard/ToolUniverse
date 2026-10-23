@@ -1,7 +1,7 @@
 """
 EPMC_get_article_genes
 
-Get genes and proteins mentioned in a biomedical article, identified by text mining from Europe P...
+Get the complete deduplicated set of genes and proteins mentioned in a biomedical article, identi...
 """
 
 from typing import Any, Optional, Callable
@@ -17,7 +17,7 @@ def EPMC_get_article_genes(
     validate: bool = True,
 ) -> Any:
     """
-    Get genes and proteins mentioned in a biomedical article, identified by text mining from Europe P...
+    Get the complete deduplicated set of genes and proteins mentioned in a biomedical article, identi...
 
     Parameters
     ----------

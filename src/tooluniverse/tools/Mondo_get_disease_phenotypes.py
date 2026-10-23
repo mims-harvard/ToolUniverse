@@ -1,7 +1,7 @@
 """
 Mondo_get_disease_phenotypes
 
-Get HPO (Human Phenotype Ontology) phenotypes associated with a Mondo disease. Returns the phenot...
+Get HPO phenotypes associated with a Mondo disease using exact offset pagination. Metadata report...
 """
 
 from typing import Any, Optional, Callable
@@ -10,21 +10,24 @@ from ._shared_client import get_shared_client
 
 def Mondo_get_disease_phenotypes(
     disease_id: str,
-    limit: Optional[int] = None,
+    limit: Optional[int] = 20,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get HPO (Human Phenotype Ontology) phenotypes associated with a Mondo disease. Returns the phenot...
+    Get HPO phenotypes associated with a Mondo disease using exact offset pagination. Metadata report...
 
     Parameters
     ----------
     disease_id : str
         Mondo disease identifier. Examples: 'MONDO:0004975' (Alzheimer disease, 95 ph...
     limit : int
-        Maximum number of phenotypes to return (default: 20, max: 200).
+        Phenotypes per page (1-200).
+    offset : int
+        Zero-based offset. Continue with metadata.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +44,7 @@ def Mondo_get_disease_phenotypes(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"disease_id": disease_id, "limit": limit}.items()
+        for k, v in {"disease_id": disease_id, "limit": limit, "offset": offset}.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

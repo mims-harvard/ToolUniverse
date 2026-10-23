@@ -68,7 +68,8 @@ class GmrepoTool(BaseTool):
         if not query:
             return {"status": "error", "error": "Missing required parameter: query"}
 
-        limit = arguments.get("limit", 20)
+        limit = max(1, int(arguments.get("limit", 20)))
+        offset = max(0, int(arguments.get("offset", 0)))
 
         url = f"{GMREPO_BASE}/get_all_gut_microbes/"
         resp = requests.post(
@@ -94,7 +95,8 @@ class GmrepoTool(BaseTool):
 
         # Sort by number of presented samples (most abundant first)
         matches.sort(key=lambda x: int(x.get("presented_samples", "0")), reverse=True)
-        matches = matches[:limit]
+        total_matches = len(matches)
+        matches = matches[offset : offset + limit]
 
         results = []
         for sp in matches:
@@ -113,14 +115,15 @@ class GmrepoTool(BaseTool):
             "data": results,
             "metadata": {
                 "query": query,
-                "total_matches": len(
-                    [
-                        s
-                        for s in all_species
-                        if query_lower in (s.get("name") or "").lower()
-                    ]
-                ),
+                "total_matches": total_matches,
                 "returned": len(results),
+                "offset": offset,
+                "limit": limit,
+                "has_more": offset + len(results) < total_matches,
+                "truncated": offset + len(results) < total_matches,
+                "next_offset": offset + len(results)
+                if offset + len(results) < total_matches
+                else None,
                 "total_species_in_db": len(all_species),
             },
         }
@@ -128,7 +131,8 @@ class GmrepoTool(BaseTool):
     def _get_phenotypes(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """List phenotypes/conditions with gut microbiome data."""
         query = arguments.get("query", "")
-        limit = arguments.get("limit", 20)
+        limit = max(1, int(arguments.get("limit", 20)))
+        offset = max(0, int(arguments.get("offset", 0)))
 
         url = f"{GMREPO_BASE}/get_all_phenotypes/"
         resp = requests.post(
@@ -156,7 +160,8 @@ class GmrepoTool(BaseTool):
 
         # Sort by number of valid runs (most data first)
         phenotypes.sort(key=lambda x: x.get("valid_runs", 0), reverse=True)
-        phenotypes = phenotypes[:limit]
+        total_matches = len(phenotypes)
+        phenotypes = phenotypes[offset : offset + limit]
 
         results = []
         for p in phenotypes:
@@ -177,7 +182,15 @@ class GmrepoTool(BaseTool):
             "data": results,
             "metadata": {
                 "query": query or "(all phenotypes)",
+                "total_matches": total_matches,
                 "returned": len(results),
+                "offset": offset,
+                "limit": limit,
+                "has_more": offset + len(results) < total_matches,
+                "truncated": offset + len(results) < total_matches,
+                "next_offset": offset + len(results)
+                if offset + len(results) < total_matches
+                else None,
                 "total_phenotypes_in_db": len(data.get("phenotypes", [])),
             },
         }

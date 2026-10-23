@@ -1,7 +1,7 @@
 [
   {
     "name": "UniProt_search_proteomes",
-    "description": "Search the UniProt Proteome database for complete sets of proteins expressed by organisms. Proteomes represent the complete set of proteins from a fully sequenced genome. Supports searching by organism name, taxonomy ID, BUSCO completeness, proteome type (reference/representative/redundant), and more. Returns proteome IDs (e.g., UP000005640 for human), gene counts, organism info, and quality metrics. Useful for comparative genomics, finding model organism proteomes, or identifying reference proteomes.",
+    "description": "Search the UniProt Proteome database with official cursor pagination. Supports organism, taxonomy, BUSCO, and proteome-type queries. Metadata reports the true upstream total and next_cursor; pass that opaque cursor back for the next distinct page.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -13,6 +13,10 @@
           "type": "integer",
           "default": 10,
           "description": "Number of results to return (default 10, max 500)"
+        },
+        "cursor": {
+          "type": "string",
+          "description": "Opaque cursor from metadata.next_cursor. Omit for the first page."
         }
       },
       "required": [
@@ -23,7 +27,8 @@
       "endpoint": "https://rest.uniprot.org/proteomes/search",
       "params": {
         "format": "json"
-      }
+      },
+      "pagination": "uniprot_cursor"
     },
     "type": "BaseRESTTool",
     "test_examples": [

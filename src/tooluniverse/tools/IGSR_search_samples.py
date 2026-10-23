@@ -1,7 +1,7 @@
 """
 IGSR_search_samples
 
-Search samples from the 1000 Genomes Project by population, data collection, or sample name. Retu...
+Search samples from the 1000 Genomes Project by population, data collection, or sample name. Resu...
 """
 
 from typing import Any, Optional, Callable
@@ -14,13 +14,14 @@ def IGSR_search_samples(
     data_collection: Optional[str] = None,
     sample_name: Optional[str] = None,
     limit: Optional[int] = 25,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search samples from the 1000 Genomes Project by population, data collection, or sample name. Retu...
+    Search samples from the 1000 Genomes Project by population, data collection, or sample name. Resu...
 
     Parameters
     ----------
@@ -33,7 +34,9 @@ def IGSR_search_samples(
     sample_name : str
         Look up specific sample by name (e.g., 'HG00096', 'NA12878').
     limit : int
-        Maximum number of results to return.
+        Results per page (1-500). The IGSR server's real maximum is 500; invalid valu...
+    offset : int
+        Zero-based result offset. Continue with next_offset while has_more is true.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def IGSR_search_samples(
             "data_collection": data_collection,
             "sample_name": sample_name,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

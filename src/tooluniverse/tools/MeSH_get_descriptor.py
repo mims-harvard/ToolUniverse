@@ -1,7 +1,7 @@
 """
 MeSH_get_descriptor
 
-Get detailed information for a MeSH descriptor by its ID. Returns the descriptor's label, type, a...
+Get the complete source record for a MeSH descriptor by its ID. Returns convenient parsed fields ...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def MeSH_get_descriptor(
     validate: bool = True,
 ) -> Any:
     """
-    Get detailed information for a MeSH descriptor by its ID. Returns the descriptor's label, type, a...
+    Get the complete source record for a MeSH descriptor by its ID. Returns convenient parsed fields ...
 
     Parameters
     ----------

@@ -1,7 +1,7 @@
 """
 LitVar_get_variant_publications
 
-Get PubMed publication IDs (PMIDs) that mention a specific genetic variant, from NCBI LitVar2. Re...
+Get PubMed and PubMed Central publication IDs that mention a variant in NCBI LitVar2. LitVar2 ign...
 """
 
 from typing import Any, Optional, Callable
@@ -12,22 +12,25 @@ def LitVar_get_variant_publications(
     rsid: str,
     format: Optional[str] = "json",
     max: Optional[int] = 50,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get PubMed publication IDs (PMIDs) that mention a specific genetic variant, from NCBI LitVar2. Re...
+    Get PubMed and PubMed Central publication IDs that mention a variant in NCBI LitVar2. LitVar2 ign...
 
     Parameters
     ----------
     rsid : str
         dbSNP rsID of the variant (e.g., 'rs328', 'rs7903146', 'rs429358', 'rs80357906')
     format : str
-        Response format (default 'json')
+        Compatibility option; LitVar2 returns JSON and only 'json' is accepted.
     max : int
-        Maximum number of PMIDs to return (default 50)
+        Maximum IDs returned from each of the PMID and PMCID lists on this local page...
+    offset : int
+        Zero-based local offset into both complete ID lists. Use metadata.next_offset...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,12 @@ def LitVar_get_variant_publications(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"rsid": rsid, "format": format, "max": max}.items()
+        for k, v in {
+            "rsid": rsid,
+            "format": format,
+            "max": max,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

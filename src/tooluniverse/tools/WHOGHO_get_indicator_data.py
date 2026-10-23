@@ -11,8 +11,9 @@ from ._shared_client import get_shared_client
 def WHOGHO_get_indicator_data(
     indicator_code: str,
     filter: Optional[str] = None,
-    top: Optional[int] = None,
+    top: Optional[int] = 100,
     orderby: Optional[str] = None,
+    skip: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,9 +29,11 @@ def WHOGHO_get_indicator_data(
     filter : str
         OData filter for data rows. Examples: "SpatialDim eq 'USA'", "TimeDim eq 2022...
     top : int
-        Maximum number of data rows to return (default 100). One row is one country-y...
+        Maximum number of data rows to return per page (default 100, max 1000). One r...
     orderby : str
         OData $orderby clause controlling row order, which also determines which rows...
+    skip : int
+        Zero-based OData offset. Continue with metadata.next_skip.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def WHOGHO_get_indicator_data(
             "filter": filter,
             "top": top,
             "orderby": orderby,
+            "skip": skip,
         }.items()
         if v is not None
     }

@@ -1,7 +1,7 @@
 [
   {
     "name": "SCXA_list_experiments",
-    "description": "List single-cell RNA-seq experiments from EBI Single Cell Expression Atlas. Returns 380+ curated scRNA-seq datasets with species, cell counts, technology (10x, Smart-seq2, Drop-seq), and experimental factors (cell type, tissue, disease). Filter by species or keyword. Covers Human Cell Atlas, GTEx, Tabula Sapiens, and more. Example: filtering by 'Homo sapiens' returns 159 experiments.",
+    "description": "List a resumable page of single-cell RNA-seq experiments from EBI Single Cell Expression Atlas, with species, cell counts, technology, and experimental factors. Filter by species or keyword; metadata.total_matching is the exact post-filter count and metadata.next_offset continues the result set.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -15,8 +15,16 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum number of experiments to return (default 20, max 100).",
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Page size (default 20, max 100).",
           "default": 20
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Zero-based experiment offset. Continue with metadata.next_offset.",
+          "default": 0
         }
       }
     },
@@ -191,7 +199,7 @@
   },
   {
     "name": "SCXA_get_cluster_marker_genes",
-    "description": "Get EBI Single Cell Expression Atlas computed marker genes per cell cluster (or per cell type) for an experiment - results that SCXA_list_experiments and SCXA_search_gene cannot retrieve. marker_type='clusters' (default): top marker genes per cell cluster at clustering resolution k (requires `k`); each row has geneName, the cell-group it marks, expression value, p-value, and unit (CPM). marker_type='cell_types': marker genes for inferred cell types (requires `organism_part`). Example: E-MTAB-5061 k=8 -> rows like {gene_name: ENSG00000224981, cell_group_value_where_marker: '1', p_value: 4.37e-71, expression_unit: CPM}. E-ENAD-13 k=4 -> Olfm4 p_value 3.0e-179.",
+    "description": "Get EBI Single Cell Expression Atlas computed marker genes per cell cluster or inferred cell type. When limit is supplied, offset and metadata.next_offset provide resumable local pagination; metadata.num_markers is the exact full row count rather than the page length. Omitting limit preserves the all-rows behavior.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -219,8 +227,14 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Optional maximum number of marker rows to return.",
+          "description": "Optional page size. Omit to return all marker rows from offset.",
           "minimum": 1
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based marker-row offset. Default 0.",
+          "minimum": 0,
+          "default": 0
         }
       },
       "required": [

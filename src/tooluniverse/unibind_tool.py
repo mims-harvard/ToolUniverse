@@ -57,7 +57,13 @@ class UniBindRESTTool(BaseTool):
                 return self._get_dataset(arguments)
             if operation == "list_tfs":
                 return self._list_tfs(arguments)
-            return self._search_datasets(arguments)
+            if operation == "search_datasets":
+                return self._search_datasets(arguments)
+            return {
+                "status": "error",
+                "error": f"Unknown UniBind operation: {operation}",
+                "parameter": "operation",
+            }
         except requests.exceptions.Timeout:
             return {
                 "status": "error",
@@ -87,12 +93,19 @@ class UniBindRESTTool(BaseTool):
     @staticmethod
     def _int_arg(
         arguments: Dict[str, Any], key: str, default: int, lo: int, hi: int
-    ) -> int:
-        try:
-            val = int(arguments.get(key, default))
-        except (TypeError, ValueError):
-            val = default
-        return max(lo, min(hi, val))
+    ) -> Any:
+        value = arguments.get(key, default)
+        if (
+            isinstance(value, bool)
+            or not isinstance(value, int)
+            or not lo <= value <= hi
+        ):
+            return {
+                "status": "error",
+                "error": f"{key} must be an integer between {lo} and {hi}",
+                "parameter": key,
+            }
+        return value
 
     # ------------------------------------------------------------------ #
     # search_datasets
@@ -107,11 +120,27 @@ class UniBindRESTTool(BaseTool):
         filters: Dict[str, Any] = {}
         for key in ("tf_name", "species", "cell_line", "collection"):
             val = arguments.get(key)
-            if val:
-                filters[key] = val
+            if val is not None:
+                if not isinstance(val, str) or not val.strip():
+                    return {
+                        "status": "error",
+                        "error": f"{key} must be a non-empty string when provided",
+                        "parameter": key,
+                    }
+                filters[key] = val.strip()
+        if filters.get("collection") not in (None, "Robust", "Permissive"):
+            return {
+                "status": "error",
+                "error": "collection must be 'Robust' or 'Permissive'",
+                "parameter": "collection",
+            }
 
         page = self._int_arg(arguments, "page", 1, 1, 10_000_000)
+        if isinstance(page, dict):
+            return page
         page_size = self._int_arg(arguments, "page_size", 25, 1, 1000)
+        if isinstance(page_size, dict):
+            return page_size
 
         params = dict(filters)
         order = arguments.get("order")
@@ -133,6 +162,8 @@ class UniBindRESTTool(BaseTool):
                 }
             )
 
+        has_next = bool(data.get("next"))
+        has_previous = bool(data.get("previous")) or page > 1
         return {
             "status": "success",
             "data": results,
@@ -141,7 +172,12 @@ class UniBindRESTTool(BaseTool):
                 "returned": len(results),
                 "page": page,
                 "page_size": page_size,
-                "has_next": bool(data.get("next")),
+                "has_next": has_next,
+                "has_previous": has_previous,
+                "next_page": page + 1 if has_next else None,
+                "previous_page": page - 1 if has_previous else None,
+                "truncated": has_next or has_previous,
+                "result_set_complete": not has_next and not has_previous,
                 "filters": filters,
                 "source": "UniBind (unibind.uio.no)",
             },
@@ -250,27 +286,86 @@ class UniBindRESTTool(BaseTool):
         always returns the full list, so any ``search`` term is applied as a
         case-insensitive client-side substring filter on the TF name.
         """
-        # Pull the full TF list (592 entries -> one page with page_size=1000).
-        data = self._get_json(f"{UNIBIND_BASE}/tfs/", {"page_size": 1000, "page": 1})
-        rows = data.get("results", []) or []
+        search = arguments.get("search")
+        if search is not None:
+            if not isinstance(search, str) or not search.strip():
+                return {
+                    "status": "error",
+                    "error": "search must be a non-empty string when provided",
+                    "parameter": "search",
+                }
+            search = search.strip()
+        limit = self._int_arg(arguments, "limit", 200, 1, 1000)
+        if isinstance(limit, dict):
+            return limit
+        raw_offset = arguments.get("offset", 0)
+        if (
+            isinstance(raw_offset, bool)
+            or not isinstance(raw_offset, int)
+            or raw_offset < 0
+        ):
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+                "parameter": "offset",
+            }
+
+        # The catalog currently fits in one 1000-row page, but follow `next`
+        # until exhaustion so growth cannot silently hide later TF symbols.
+        rows = []
+        page = 1
+        pages_fetched = 0
+        upstream_count = None
+        while True:
+            data = self._get_json(
+                f"{UNIBIND_BASE}/tfs/", {"page_size": 1000, "page": page}
+            )
+            page_rows = data.get("results", []) or []
+            if not isinstance(page_rows, list):
+                return {
+                    "status": "error",
+                    "error": "UniBind TF catalog returned an invalid results field",
+                }
+            rows.extend(page_rows)
+            pages_fetched += 1
+            if upstream_count is None:
+                upstream_count = data.get("count")
+            if not data.get("next"):
+                break
+            if not page_rows:
+                return {
+                    "status": "error",
+                    "error": "UniBind TF catalog advertised a next page after an empty page",
+                }
+            page += 1
         names = [r.get("tf_name") for r in rows if r.get("tf_name")]
 
-        search = arguments.get("search")
-        if search:
-            needle = str(search).strip().lower()
+        if search is not None:
+            needle = search.lower()
             names = [n for n in names if needle in n.lower()]
 
         names = sorted(set(names))
-        limit = self._int_arg(arguments, "limit", 200, 1, 1000)
-        truncated = len(names) > limit
-        names = names[:limit]
+        total_matches = len(names)
+        names = names[raw_offset : raw_offset + limit]
+        next_offset = raw_offset + len(names)
+        has_more = next_offset < total_matches
+        truncated = raw_offset > 0 or has_more
 
         return {
             "status": "success",
             "data": names,
             "metadata": {
-                "total_tfs_in_unibind": data.get("count"),
+                "total_tfs_in_unibind": upstream_count,
+                "upstream_records_retrieved": len(rows),
+                "upstream_pages_fetched": pages_fetched,
+                "upstream_complete": True,
+                "total_matches": total_matches,
                 "returned": len(names),
+                "offset": raw_offset,
+                "limit": limit,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
+                "result_set_complete": not truncated,
                 "search": search,
                 "truncated": truncated,
                 "source": "UniBind (unibind.uio.no)",

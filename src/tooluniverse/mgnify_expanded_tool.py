@@ -159,8 +159,10 @@ class MGnifyExpandedTool(BaseTool):
         """Search/list MGnify genomes with optional filters."""
         params = {"format": "json"}
 
-        page = arguments.get("page", 1)
-        page_size = min(arguments.get("page_size", 25), 100)
+        pagination_args = self._validate_pagination(arguments, default_page_size=25)
+        if isinstance(pagination_args, dict):
+            return pagination_args
+        page, page_size = pagination_args
         params["page"] = page
         params["page_size"] = page_size
 
@@ -210,18 +212,16 @@ class MGnifyExpandedTool(BaseTool):
                 }
             )
 
-        pagination = raw.get("meta", {}).get("pagination", {})
-
         return {
             "status": "success",
             "data": results,
-            "metadata": {
-                "total_results": pagination.get("count", len(results)),
-                "page": pagination.get("page", page),
-                "pages": pagination.get("pages"),
-                "source": "MGnify",
-                "endpoint": "genomes/search",
-            },
+            "metadata": self._pagination_metadata(
+                raw,
+                results,
+                page,
+                page_size,
+                {"source": "MGnify", "endpoint": "genomes/search"},
+            ),
         }
 
     def _biome_list(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -233,8 +233,10 @@ class MGnifyExpandedTool(BaseTool):
         and ``lineage`` lists that biome plus all its descendants via
         /biomes/{lineage}/children.
         """
-        page_size = min(arguments.get("page_size", 25), 100)
-        page = arguments.get("page", 1)
+        pagination_args = self._validate_pagination(arguments, default_page_size=25)
+        if isinstance(pagination_args, dict):
+            return pagination_args
+        page, page_size = pagination_args
         depth = arguments.get("depth")
         lineage = arguments.get("lineage")
 
@@ -246,10 +248,6 @@ class MGnifyExpandedTool(BaseTool):
             params = {"format": "json", "page_size": page_size, "page": page}
             raw = self._get_json(url, params)
             results = self._biome_rows(raw)
-            pagination = raw.get("meta", {}).get("pagination", {})
-            total = pagination.get("count", len(results))
-            pages = pagination.get("pages")
-            shown_page = pagination.get("page", page)
         else:
             depth = int(depth)
             rows = []
@@ -265,21 +263,31 @@ class MGnifyExpandedTool(BaseTool):
                 fetch_page += 1
             matching = [r for r in rows if r["biome_id"].count(":") + 1 == depth]
             total = len(matching)
-            pages = max(1, -(-total // page_size))
-            shown_page = page
             start = (page - 1) * page_size
             results = matching[start : start + page_size]
+            # Paged locally, so describe the filtered list in MGnify's shape.
+            raw = {
+                "meta": {
+                    "pagination": {
+                        "count": total,
+                        "page": page,
+                        "pages": max(1, -(-total // page_size)),
+                    }
+                }
+            }
 
+        metadata = self._pagination_metadata(
+            raw,
+            results,
+            page,
+            page_size,
+            {"source": "MGnify", "endpoint": "biomes"},
+        )
+        metadata["pages"] = metadata["total_pages"]
         return {
             "status": "success",
             "data": results,
-            "metadata": {
-                "total_results": total,
-                "page": shown_page,
-                "pages": pages,
-                "source": "MGnify",
-                "endpoint": "biomes",
-            },
+            "metadata": metadata,
         }
 
     def _get_json(self, url: str, params: Dict[str, Any]) -> Dict[str, Any]:
@@ -380,8 +388,10 @@ class MGnifyExpandedTool(BaseTool):
             }
 
         params = {"format": "json"}
-        page = arguments.get("page", 1)
-        page_size = min(arguments.get("page_size", 25), 100)
+        pagination_args = self._validate_pagination(arguments, default_page_size=25)
+        if isinstance(pagination_args, dict):
+            return pagination_args
+        page, page_size = pagination_args
         params["page"] = page
         params["page_size"] = page_size
 
@@ -398,18 +408,16 @@ class MGnifyExpandedTool(BaseTool):
         raw = response.json()
 
         results = [self._format_sample(item) for item in raw.get("data", [])]
-        pagination = raw.get("meta", {}).get("pagination", {})
-
         return {
             "status": "success",
             "data": results,
-            "metadata": {
-                "total_results": pagination.get("count", len(results)),
-                "page": pagination.get("page", page),
-                "pages": pagination.get("pages"),
-                "source": "MGnify",
-                "endpoint": "samples",
-            },
+            "metadata": self._pagination_metadata(
+                raw,
+                results,
+                page,
+                page_size,
+                {"source": "MGnify", "endpoint": "samples"},
+            ),
         }
 
     @staticmethod
@@ -459,11 +467,14 @@ class MGnifyExpandedTool(BaseTool):
                 "error": "analysis_id is required (e.g., MGYA00585482)",
             }
 
-        page_size = min(arguments.get("page_size", 100), 100)
+        pagination_args = self._validate_pagination(arguments, default_page_size=100)
+        if isinstance(pagination_args, dict):
+            return pagination_args
+        page, page_size = pagination_args
         url = f"{MGNIFY_BASE_URL}/analyses/{analysis_id}/downloads"
         response = requests.get(
             url,
-            params={"format": "json", "page_size": page_size},
+            params={"format": "json", "page": page, "page_size": page_size},
             timeout=self.timeout,
         )
         response.raise_for_status()
@@ -487,25 +498,97 @@ class MGnifyExpandedTool(BaseTool):
                 }
             )
 
-        pagination = raw.get("meta", {}).get("pagination", {})
         return {
             "status": "success",
             "data": results,
-            "metadata": {
-                "analysis_id": analysis_id,
-                "total_results": pagination.get("count", len(results)),
-                "returned": len(results),
-                "source": "MGnify",
-                "endpoint": "analyses/downloads",
-            },
+            "metadata": self._pagination_metadata(
+                raw,
+                results,
+                page,
+                page_size,
+                {
+                    "analysis_id": analysis_id,
+                    "source": "MGnify",
+                    "endpoint": "analyses/downloads",
+                },
+            ),
         }
 
+    @staticmethod
+    def _validate_pagination(arguments: Dict[str, Any], default_page_size: int):
+        """Validate MGnify's one-based page controls without silent clamping."""
+        page = arguments.get("page", 1)
+        page_size = arguments.get("page_size", default_page_size)
+        if isinstance(page, bool) or not isinstance(page, int) or page < 1:
+            return {
+                "status": "error",
+                "error": "page must be a positive integer",
+                "parameter": "page",
+            }
+        if (
+            isinstance(page_size, bool)
+            or not isinstance(page_size, int)
+            or not 1 <= page_size <= 100
+        ):
+            return {
+                "status": "error",
+                "error": "page_size must be an integer between 1 and 100",
+                "parameter": "page_size",
+            }
+        return page, page_size
+
+    @staticmethod
+    def _pagination_metadata(
+        raw: Dict[str, Any],
+        results: list,
+        requested_page: int,
+        page_size: int,
+        extra: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """Build exact continuation metadata from MGnify JSON:API pagination."""
+        pagination = raw.get("meta", {}).get("pagination", {})
+        page = pagination.get("page", requested_page)
+        pages = pagination.get("pages")
+        total = pagination.get("count", len(results))
+        try:
+            page = int(page)
+        except (TypeError, ValueError):
+            page = requested_page
+        try:
+            pages = int(pages) if pages is not None else None
+        except (TypeError, ValueError):
+            pages = None
+        try:
+            total = int(total)
+        except (TypeError, ValueError):
+            total = len(results)
+        has_more = page < pages if pages is not None else page * page_size < total
+        metadata = {
+            "total_results": total,
+            "returned_count": len(results),
+            "page": page,
+            "requested_page": requested_page,
+            "page_size": page_size,
+            "total_pages": pages,
+            "has_more": has_more,
+            "next_page": page + 1 if has_more else None,
+            "truncated": has_more,
+            "result_set_complete": not has_more,
+            "next_url": (raw.get("links") or {}).get("next"),
+        }
+        metadata.update(extra)
+        return metadata
+
     def _fetch_analysis_annotations(
-        self, analysis_id: str, annotation_type: str, page_size: int = 25
+        self,
+        analysis_id: str,
+        annotation_type: str,
+        page: int = 1,
+        page_size: int = 25,
     ) -> Dict[str, Any]:
         """Shared helper to fetch paginated annotations from an analysis."""
         url = f"{MGNIFY_BASE_URL}/analyses/{analysis_id}/{annotation_type}"
-        params = {"format": "json", "page_size": min(page_size, 100)}
+        params = {"format": "json", "page": page, "page_size": page_size}
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
         return response.json()
@@ -521,11 +604,18 @@ class MGnifyExpandedTool(BaseTool):
 
         rna_type = arguments.get("rna_type", "ssu")
         if rna_type not in ("ssu", "lsu"):
-            rna_type = "ssu"
+            return {
+                "status": "error",
+                "error": "rna_type must be either 'ssu' or 'lsu'",
+                "parameter": "rna_type",
+            }
 
-        page_size = arguments.get("page_size", 25)
+        pagination_args = self._validate_pagination(arguments, default_page_size=25)
+        if isinstance(pagination_args, dict):
+            return pagination_args
+        page, page_size = pagination_args
         raw = self._fetch_analysis_annotations(
-            analysis_id, f"taxonomy/{rna_type}", page_size
+            analysis_id, f"taxonomy/{rna_type}", page, page_size
         )
 
         results = []
@@ -542,18 +632,21 @@ class MGnifyExpandedTool(BaseTool):
                 }
             )
 
-        pagination = raw.get("meta", {}).get("pagination", {})
         return {
             "status": "success",
             "data": results,
-            "metadata": {
-                "analysis_id": analysis_id,
-                "rna_type": rna_type,
-                "total_results": pagination.get("count", len(results)),
-                "page": pagination.get("page", 1),
-                "pages": pagination.get("pages"),
-                "source": "MGnify",
-            },
+            "metadata": self._pagination_metadata(
+                raw,
+                results,
+                page,
+                page_size,
+                {
+                    "analysis_id": analysis_id,
+                    "rna_type": rna_type,
+                    "source": "MGnify",
+                    "endpoint": f"analyses/taxonomy/{rna_type}",
+                },
+            ),
         }
 
     def _analysis_go_terms(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -565,8 +658,11 @@ class MGnifyExpandedTool(BaseTool):
                 "error": "analysis_id is required (e.g., MGYA00585482)",
             }
 
-        page_size = arguments.get("page_size", 25)
-        raw = self._fetch_analysis_annotations(analysis_id, "go-terms", page_size)
+        pagination_args = self._validate_pagination(arguments, default_page_size=25)
+        if isinstance(pagination_args, dict):
+            return pagination_args
+        page, page_size = pagination_args
+        raw = self._fetch_analysis_annotations(analysis_id, "go-terms", page, page_size)
 
         results = []
         for item in raw.get("data", []):
@@ -580,17 +676,20 @@ class MGnifyExpandedTool(BaseTool):
                 }
             )
 
-        pagination = raw.get("meta", {}).get("pagination", {})
         return {
             "status": "success",
             "data": results,
-            "metadata": {
-                "analysis_id": analysis_id,
-                "total_results": pagination.get("count", len(results)),
-                "page": pagination.get("page", 1),
-                "pages": pagination.get("pages"),
-                "source": "MGnify",
-            },
+            "metadata": self._pagination_metadata(
+                raw,
+                results,
+                page,
+                page_size,
+                {
+                    "analysis_id": analysis_id,
+                    "source": "MGnify",
+                    "endpoint": "analyses/go-terms",
+                },
+            ),
         }
 
     def _analysis_interpro(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -602,9 +701,12 @@ class MGnifyExpandedTool(BaseTool):
                 "error": "analysis_id is required (e.g., MGYA00585482)",
             }
 
-        page_size = arguments.get("page_size", 25)
+        pagination_args = self._validate_pagination(arguments, default_page_size=25)
+        if isinstance(pagination_args, dict):
+            return pagination_args
+        page, page_size = pagination_args
         raw = self._fetch_analysis_annotations(
-            analysis_id, "interpro-identifiers", page_size
+            analysis_id, "interpro-identifiers", page, page_size
         )
 
         results = []
@@ -618,15 +720,18 @@ class MGnifyExpandedTool(BaseTool):
                 }
             )
 
-        pagination = raw.get("meta", {}).get("pagination", {})
         return {
             "status": "success",
             "data": results,
-            "metadata": {
-                "analysis_id": analysis_id,
-                "total_results": pagination.get("count", len(results)),
-                "page": pagination.get("page", 1),
-                "pages": pagination.get("pages"),
-                "source": "MGnify",
-            },
+            "metadata": self._pagination_metadata(
+                raw,
+                results,
+                page,
+                page_size,
+                {
+                    "analysis_id": analysis_id,
+                    "source": "MGnify",
+                    "endpoint": "analyses/interpro-identifiers",
+                },
+            ),
         }

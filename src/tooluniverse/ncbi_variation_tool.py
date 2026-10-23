@@ -8,8 +8,10 @@ API: https://api.ncbi.nlm.nih.gov/variation/v0/
 No authentication required.
 """
 
+from typing import Any, Dict, Optional
+
 import requests
-from typing import Dict, Any
+
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 from .http_utils import upstream_reason_suffix
@@ -295,40 +297,57 @@ class NCBIVariationTool(BaseTool):
                 if clinical:
                     result["genes"] = _dedupe_genes(clinical)
 
-                # Extract clinical significance
-                for annot in allele_annots:
-                    clin = annot.get("clinical", [])
-                    if clin:
-                        result["clinical_significance"] = [
+                # Preserve every clinical assertion across every allele. The
+                # former loop overwrote earlier alleles and then kept only five
+                # records from the final non-empty allele annotation.
+                clinical_assertions = []
+                for annotation_index, annot in enumerate(allele_annots):
+                    for clinical_record in annot.get("clinical", []) or []:
+                        clinical_assertions.append(
                             {
-                                "accession": c.get("accession_version"),
-                                "review_status": c.get("review_status"),
-                                "disease_names": c.get("disease_names", []),
-                                "significance": c.get("clinical_significances", []),
+                                **clinical_record,
+                                # Backwards-compatible aliases used by the old
+                                # compact projection.
+                                "accession": clinical_record.get("accession_version"),
+                                "significance": clinical_record.get(
+                                    "clinical_significances", []
+                                ),
+                                "allele_annotation_index": annotation_index,
                             }
-                            for c in clin[:5]  # Limit to first 5
-                        ]
+                        )
+                if clinical_assertions:
+                    result["clinical_significance"] = clinical_assertions
+                    result["clinical_significance_count"] = len(clinical_assertions)
 
         return {
             "status": "success",
             "data": result,
         }
 
-    def _alfa_pop_map(self) -> Dict[str, str]:
+    def _alfa_pop_map(self) -> "tuple[Dict[str, str], str, Optional[str]]":
         """Resolve SAMN biosample ids to ancestry names via /metadata/frequency.
 
-        Falls back to a bundled map when the metadata endpoint is unreachable so
-        per-ancestry labelling still works offline.
+        Returns ``(mapping, source, fallback_reason)``. A bundled map keeps
+        per-ancestry labelling useful during an NCBI metadata outage, but its
+        provenance must remain visible to callers rather than being presented
+        as if it were retrieved live.
         """
+        metadata_url = f"{NCBI_VAR_BASE}/metadata/frequency"
         try:
-            resp = requests.get(
-                f"{NCBI_VAR_BASE}/metadata/frequency", timeout=self.timeout
-            )
+            resp = requests.get(metadata_url, timeout=self.timeout)
             if resp.status_code != 200:
-                return dict(_ALFA_POP_FALLBACK)
+                return (
+                    dict(_ALFA_POP_FALLBACK),
+                    "bundled_fallback",
+                    f"NCBI metadata request returned HTTP {resp.status_code}",
+                )
             meta = resp.json()
-        except Exception:
-            return dict(_ALFA_POP_FALLBACK)
+        except Exception as exc:
+            return (
+                dict(_ALFA_POP_FALLBACK),
+                "bundled_fallback",
+                f"NCBI metadata request failed: {exc}",
+            )
 
         pop_map: Dict[str, str] = {}
 
@@ -343,7 +362,13 @@ class NCBIVariationTool(BaseTool):
         for study in studies:
             if isinstance(study, dict):
                 _walk(study.get("populations"))
-        return pop_map or dict(_ALFA_POP_FALLBACK)
+        if not pop_map:
+            return (
+                dict(_ALFA_POP_FALLBACK),
+                "bundled_fallback",
+                "NCBI metadata response contained no population labels",
+            )
+        return pop_map, "live_ncbi_metadata", None
 
     def _alfa_frequencies(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Per-ancestry ALFA allele frequencies for a dbSNP rsID.
@@ -381,7 +406,10 @@ class NCBIVariationTool(BaseTool):
                 ),
             }
 
-        pop_map = self._alfa_pop_map()
+        pop_map, population_labels_source, population_metadata_error = (
+            self._alfa_pop_map()
+        )
+        biosample_ids = set()
         positions = []
         for pos_key, pos_data in results.items():
             ref = pos_data.get("ref")
@@ -391,6 +419,7 @@ class NCBIVariationTool(BaseTool):
                 for samn, allele_counts in (
                     study_data.get("allele_counts") or {}
                 ).items():
+                    biosample_ids.add(samn)
                     total = sum(v for v in allele_counts.values() if isinstance(v, int))
                     frequencies = {
                         allele: (count / total if total else 0.0)
@@ -414,6 +443,26 @@ class NCBIVariationTool(BaseTool):
                 }
             )
 
+        unresolved_biosample_ids = sorted(biosample_ids.difference(pop_map))
+        metadata = {
+            "frequency_source": "NCBI Variation ALFA",
+            "population_metadata_url": f"{NCBI_VAR_BASE}/metadata/frequency",
+            "population_labels_source": population_labels_source,
+            "population_metadata_retrieved_live": (
+                population_labels_source == "live_ncbi_metadata"
+            ),
+            "population_labels_complete": not unresolved_biosample_ids,
+            "unresolved_biosample_ids": unresolved_biosample_ids,
+        }
+        if population_metadata_error is not None:
+            metadata["population_metadata_error"] = population_metadata_error
+            metadata["warning"] = (
+                "Population names came from ToolUniverse's bundled ALFA label "
+                "snapshot because live NCBI population metadata was unavailable. "
+                "Allele counts and frequencies still come from the live variant "
+                "frequency response."
+            )
+
         return {
             "status": "success",
             "data": {
@@ -421,6 +470,7 @@ class NCBIVariationTool(BaseTool):
                 "build_id": data.get("build_id"),
                 "positions": positions,
             },
+            "metadata": metadata,
         }
 
     def _spdi_to_rsids(self, arguments: Dict[str, Any]) -> Dict[str, Any]:

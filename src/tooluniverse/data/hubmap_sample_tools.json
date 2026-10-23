@@ -1,7 +1,7 @@
 [
   {
     "name": "HuBMAP_search_samples",
-    "description": "Search HuBMAP (Human BioMolecular Atlas Program) biospecimen Samples (the physical tissue layer, distinct from datasets). HuBMAP Samples are anatomical blocks, sections, organs, or cell suspensions cut from human donors and registered into the Common Coordinate Framework (CCF). Filter by organ (2-letter RUI code) and sample_category, and optionally restrict to spatially-registered specimens (those carrying CCF/RUI coordinates). Organ codes: LK=Left Kidney, RK=Right Kidney, LL=Left Lung, RL=Right Lung, HT=Heart, LV=Liver, SP=Spleen, PA=Pancreas, SK=Skin, BR=Brain, BM=Bone Marrow, SI=Small Intestine, LI=Large Intestine, UT=Uterus, PL=Placenta, BL=Bladder, LY=Lymph Node. Each result reports whether the sample is spatially registered and its donor link. Use HuBMAP_get_sample to retrieve the full CCF/RUI spatial coordinates for a returned sample.",
+    "description": "Search HuBMAP biospecimen Samples with exact totals and Elasticsearch offset pagination. Continue with metadata.next_offset while metadata.has_more is true. Filter by organ, sample category, and CCF/RUI registration.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -21,10 +21,19 @@
         "limit": {
           "type": "integer",
           "description": "Maximum number of results (1-50, default 10).",
-          "default": 10
+          "default": 10,
+          "minimum": 1,
+          "maximum": 50
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Number of matching samples to skip. Continue with metadata.next_offset.",
+          "default": 0,
+          "minimum": 0
         }
       },
-      "required": []
+      "required": [],
+      "additionalProperties": false
     },
     "fields": {
       "operation": "search_samples"
@@ -297,7 +306,7 @@
   },
   {
     "name": "HuBMAP_search_donors",
-    "description": "Search HuBMAP (Human BioMolecular Atlas Program) human Donors -- the individuals from whom all HuBMAP tissue samples and datasets are derived. Returns each donor with normalized demographics (age, sex, race, body_mass_index, cause_of_death, and other UMLS/SNOMED-coded organ_donor_data fields when available) extracted from the donor metadata. Filter by owning group (e.g. 'Stanford', 'Vanderbilt TMC') or free-text query across donor description and demographic values. Useful for building demographically-matched tissue cohorts before retrieving the donor's samples (HuBMAP_search_samples) and datasets (HuBMAP_search_datasets).",
+    "description": "Search HuBMAP human Donors with normalized demographics, exact totals, and Elasticsearch offset pagination. Continue with metadata.next_offset while metadata.has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -312,10 +321,19 @@
         "limit": {
           "type": "integer",
           "description": "Maximum number of results (1-50, default 10).",
-          "default": 10
+          "default": 10,
+          "minimum": 1,
+          "maximum": 50
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Number of matching donors to skip. Continue with metadata.next_offset.",
+          "default": 0,
+          "minimum": 0
         }
       },
-      "required": []
+      "required": [],
+      "additionalProperties": false
     },
     "fields": {
       "operation": "search_donors"

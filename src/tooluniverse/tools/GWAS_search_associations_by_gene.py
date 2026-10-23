@@ -1,7 +1,7 @@
 """
 GWAS_search_associations_by_gene
 
-Search GWAS Catalog associations by gene name (returns strongest risk allele and p-value fields).
+Search GWAS Catalog associations by gene name with zero-based pagination. Results within each pag...
 """
 
 from typing import Any, Optional, Callable
@@ -11,20 +11,23 @@ from ._shared_client import get_shared_client
 def GWAS_search_associations_by_gene(
     gene_name: str,
     size: Optional[int] = 100,
+    page: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search GWAS Catalog associations by gene name (returns strongest risk allele and p-value fields).
+    Search GWAS Catalog associations by gene name with zero-based pagination. Results within each pag...
 
     Parameters
     ----------
     gene_name : str
         Gene symbol (e.g., BRCA1).
     size : int
-        Max associations to return (default 100; results are sorted by p-value, most ...
+        Associations per page (default 100, max 1000). Results are sorted by p-value ...
+    page : int
+        Zero-based GWAS Catalog result page. Continue with next_page while has_more i...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,7 +43,9 @@ def GWAS_search_associations_by_gene(
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
-        k: v for k, v in {"gene_name": gene_name, "size": size}.items() if v is not None
+        k: v
+        for k, v in {"gene_name": gene_name, "size": size, "page": page}.items()
+        if v is not None
     }
     return get_shared_client().run_one_function(
         {

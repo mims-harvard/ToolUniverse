@@ -10,9 +10,7 @@ synonyms, and taxonomy classification hierarchies from multiple sources
 API: https://eol.org/api/
 No authentication required for v1 JSON endpoints. Free public access.
 
-Note: EOL's SSL certificate has chain issues with Python's certifi bundle.
-We use urllib with a custom SSL context that uses the system certificate store
-as a workaround.
+TLS certificate and hostname verification are required for every request.
 """
 
 import json
@@ -30,17 +28,8 @@ EOL_BASE_URL = "https://eol.org/api"
 
 
 def _eol_http_get(url, timeout=30):
-    """HTTP GET with SSL workaround for EOL's incomplete certificate chain.
-
-    EOL's server certificate chain is not recognized by Python's bundled
-    certifi CA store (and load_default_certs() also fails). This is a
-    known issue with eol.org; curl works because it uses the OS keychain.
-    We disable SSL verification as a pragmatic workaround since the EOL
-    API is a public read-only endpoint with no sensitive data exchange.
-    """
+    """HTTP GET with standard certificate and hostname verification."""
     ctx = ssl.create_default_context()
-    ctx.check_hostname = False
-    ctx.verify_mode = ssl.CERT_NONE
 
     req = Request(url)
     req.add_header("User-Agent", "ToolUniverse/1.0 (EOL API client)")
@@ -105,14 +94,44 @@ class EOLTool(BaseTool):
         else:
             return {"status": "error", "error": "Unknown endpoint: %s" % self.endpoint}
 
+    @staticmethod
+    def _integer_control(arguments, name, default=None, minimum=0, maximum=None):
+        value = arguments.get(name, default)
+        if (
+            isinstance(value, bool)
+            or not isinstance(value, int)
+            or value < minimum
+            or (maximum is not None and value > maximum)
+        ):
+            range_text = "%s or greater" % minimum
+            if maximum is not None:
+                range_text = "%s to %s" % (minimum, maximum)
+            return {
+                "status": "error",
+                "error": "%s must be an integer from %s" % (name, range_text),
+            }
+        return value
+
+    @staticmethod
+    def _boolean_control(arguments, name, default):
+        value = arguments.get(name, default)
+        if not isinstance(value, bool):
+            return {"status": "error", "error": "%s must be a boolean" % name}
+        return value
+
     def _search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search for species/taxa by name."""
         query = arguments.get("query", "")
-        if not query:
-            return {"status": "error", "error": "query parameter is required"}
+        if not isinstance(query, str) or not query.strip():
+            return {"status": "error", "error": "query must be a non-empty string"}
+        query = query.strip()
 
-        page = int(arguments.get("page", 1))
+        page = arguments.get("page", 1)
         exact = arguments.get("exact", False)
+        if isinstance(page, bool) or not isinstance(page, int) or page < 1:
+            return {"status": "error", "error": "page must be a positive integer"}
+        if not isinstance(exact, bool):
+            return {"status": "error", "error": "exact must be a boolean"}
 
         params = {"q": query, "page": page}
         if exact:
@@ -120,9 +139,36 @@ class EOLTool(BaseTool):
 
         url = "%s/search/1.0.json?%s" % (EOL_BASE_URL, urlencode(params))
         data = _eol_http_get(url, timeout=self.timeout)
+        if not isinstance(data, dict):
+            return {"status": "error", "error": "EOL search response was not an object"}
+        raw_results = data.get("results")
+        total = data.get("totalResults")
+        start_index = data.get("startIndex")
+        items_per_page = data.get("itemsPerPage")
+        if (
+            not isinstance(raw_results, list)
+            or isinstance(total, bool)
+            or not isinstance(total, int)
+            or total < 0
+            or isinstance(start_index, bool)
+            or not isinstance(start_index, int)
+            or start_index < 1
+            or isinstance(items_per_page, bool)
+            or not isinstance(items_per_page, int)
+            or items_per_page < 1
+        ):
+            return {
+                "status": "error",
+                "error": "EOL search response lacked valid pagination metadata",
+            }
 
         results = []
-        for r in data.get("results", []):
+        for r in raw_results:
+            if not isinstance(r, dict):
+                return {
+                    "status": "error",
+                    "error": "EOL search response contained a malformed result",
+                }
             results.append(
                 {
                     "page_id": r.get("id"),
@@ -132,14 +178,25 @@ class EOLTool(BaseTool):
                 }
             )
 
+        consumed = start_index - 1 + len(results)
+        has_more = consumed < total
+        stalled = has_more and not results
         return {
             "status": "success",
             "data": results,
             "metadata": {
                 "source": "Encyclopedia of Life",
-                "total_results": data.get("totalResults", 0),
-                "start_index": data.get("startIndex", 1),
-                "items_per_page": data.get("itemsPerPage", 50),
+                "total_results": total,
+                "start_index": start_index,
+                "items_per_page": items_per_page,
+                "page": page,
+                "returned": len(results),
+                "has_more": has_more,
+                "next_page": page + 1 if has_more and not stalled else None,
+                "result_set_complete": start_index == 1 and not has_more,
+                "requested_page_complete": not stalled,
+                "pagination_stalled": stalled,
+                "exact": exact,
                 "query": query,
             },
         }
@@ -153,18 +210,52 @@ class EOLTool(BaseTool):
 
     def _get_page(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get detailed species/taxon page by EOL page ID."""
-        page_id = arguments.get("page_id")
-        if page_id is None:
-            return {"status": "error", "error": "page_id parameter is required"}
-
-        images_per_page = int(arguments.get("images_per_page", 3))
-        texts_per_page = int(arguments.get("texts_per_page", 2))
-        details = arguments.get("details", True)
-        common_names = arguments.get("common_names", True)
-        synonyms = arguments.get("synonyms", True)
+        controls = {
+            "page_id": self._integer_control(arguments, "page_id", minimum=1),
+            "images_per_page": self._integer_control(
+                arguments, "images_per_page", 3, 0, 75
+            ),
+            "texts_per_page": self._integer_control(
+                arguments, "texts_per_page", 2, 0, 75
+            ),
+            "common_name_limit": self._integer_control(
+                arguments, "common_name_limit", 20, 1, 1000
+            ),
+            "common_name_offset": self._integer_control(
+                arguments, "common_name_offset", 0, 0
+            ),
+            "synonym_limit": self._integer_control(
+                arguments, "synonym_limit", 20, 1, 1000
+            ),
+            "synonym_offset": self._integer_control(arguments, "synonym_offset", 0, 0),
+            "classification_limit": self._integer_control(
+                arguments, "classification_limit", 15, 1, 1000
+            ),
+            "classification_offset": self._integer_control(
+                arguments, "classification_offset", 0, 0
+            ),
+            "details": self._boolean_control(arguments, "details", True),
+            "common_names": self._boolean_control(arguments, "common_names", True),
+            "synonyms": self._boolean_control(arguments, "synonyms", True),
+        }
+        for value in controls.values():
+            if isinstance(value, dict):
+                return value
+        page_id = controls["page_id"]
+        images_per_page = controls["images_per_page"]
+        texts_per_page = controls["texts_per_page"]
+        details = controls["details"]
+        common_names = controls["common_names"]
+        synonyms = controls["synonyms"]
+        common_name_limit = controls["common_name_limit"]
+        common_name_offset = controls["common_name_offset"]
+        synonym_limit = controls["synonym_limit"]
+        synonym_offset = controls["synonym_offset"]
+        classification_limit = controls["classification_limit"]
+        classification_offset = controls["classification_offset"]
 
         params = {
-            "id": int(page_id),
+            "id": page_id,
             "images_per_page": images_per_page,
             "texts_per_page": texts_per_page,
             "videos_per_page": 0,
@@ -181,7 +272,11 @@ class EOLTool(BaseTool):
 
         # Process vernacular names
         vernacular_names = []
-        for vn in tc.get("vernacularNames", [])[:20]:
+        all_common_names = tc.get("vernacularNames", [])
+        common_name_page = all_common_names[
+            common_name_offset : common_name_offset + common_name_limit
+        ]
+        for vn in common_name_page:
             vernacular_names.append(
                 {
                     "name": vn.get("vernacularName"),
@@ -191,7 +286,9 @@ class EOLTool(BaseTool):
 
         # Process synonyms
         synonym_list = []
-        for syn in tc.get("synonyms", [])[:20]:
+        all_synonyms = tc.get("synonyms", [])
+        synonym_page = all_synonyms[synonym_offset : synonym_offset + synonym_limit]
+        for syn in synonym_page:
             synonym_list.append(syn.get("synonym"))
 
         # Process data objects (images + text)
@@ -206,16 +303,14 @@ class EOLTool(BaseTool):
                         "thumbnail_url": do.get("eolThumbnailURL"),
                         "rights_holder": do.get("rightsHolder"),
                         "license": do.get("license"),
-                        "description": self._strip_html(
-                            (do.get("description") or "")[:300]
-                        ),
+                        "description": self._strip_html(do.get("description") or ""),
                     }
                 )
             elif "Text" in dtype:
                 desc_text = self._strip_html(do.get("description") or "")
                 descriptions.append(
                     {
-                        "text": desc_text[:500] if desc_text else None,
+                        "text": desc_text if desc_text else None,
                         "source": do.get("source"),
                         "license": do.get("license"),
                     }
@@ -223,7 +318,11 @@ class EOLTool(BaseTool):
 
         # Taxonomy classifications available
         classifications = []
-        for entry in tc.get("taxonConcepts", [])[:15]:
+        all_classifications = tc.get("taxonConcepts", [])
+        classification_page = all_classifications[
+            classification_offset : classification_offset + classification_limit
+        ]
+        for entry in classification_page:
             classifications.append(
                 {
                     "hierarchy_entry_id": entry.get("identifier"),
@@ -246,22 +345,54 @@ class EOLTool(BaseTool):
             },
             "metadata": {
                 "source": "Encyclopedia of Life",
-                "num_common_names": len(tc.get("vernacularNames", [])),
-                "num_synonyms": len(tc.get("synonyms", [])),
-                "num_classifications": len(tc.get("taxonConcepts", [])),
+                "num_common_names": len(all_common_names),
+                "common_names_returned": len(vernacular_names),
+                "common_name_limit": common_name_limit,
+                "common_name_offset": common_name_offset,
+                "common_names_truncated": len(vernacular_names) < len(all_common_names),
+                "next_common_name_offset": (
+                    common_name_offset + len(vernacular_names)
+                    if common_name_offset + len(vernacular_names)
+                    < len(all_common_names)
+                    else None
+                ),
+                "num_synonyms": len(all_synonyms),
+                "synonyms_returned": len(synonym_list),
+                "synonym_limit": synonym_limit,
+                "synonym_offset": synonym_offset,
+                "synonyms_truncated": len(synonym_list) < len(all_synonyms),
+                "next_synonym_offset": (
+                    synonym_offset + len(synonym_list)
+                    if synonym_offset + len(synonym_list) < len(all_synonyms)
+                    else None
+                ),
+                "num_classifications": len(all_classifications),
+                "classifications_returned": len(classifications),
+                "classification_limit": classification_limit,
+                "classification_offset": classification_offset,
+                "classifications_truncated": len(classifications)
+                < len(all_classifications),
+                "next_classification_offset": (
+                    classification_offset + len(classifications)
+                    if classification_offset + len(classifications)
+                    < len(all_classifications)
+                    else None
+                ),
             },
         }
 
     def _get_hierarchy_entry(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get taxonomy hierarchy for a specific classification entry."""
-        hierarchy_entry_id = arguments.get("hierarchy_entry_id")
-        if hierarchy_entry_id is None:
-            return {
-                "status": "error",
-                "error": "hierarchy_entry_id parameter is required",
-            }
+        hierarchy_entry_id = self._integer_control(
+            arguments, "hierarchy_entry_id", minimum=1
+        )
+        child_limit = self._integer_control(arguments, "child_limit", 20, 1, 1000)
+        child_offset = self._integer_control(arguments, "child_offset", 0, 0)
+        for value in (hierarchy_entry_id, child_limit, child_offset):
+            if isinstance(value, dict):
+                return value
 
-        params = {"id": int(hierarchy_entry_id)}
+        params = {"id": hierarchy_entry_id}
         url = "%s/hierarchy_entries/1.0.json?%s" % (EOL_BASE_URL, urlencode(params))
         data = _eol_http_get(url, timeout=self.timeout)
 
@@ -280,7 +411,9 @@ class EOLTool(BaseTool):
 
         # Process children
         children = []
-        for c in data.get("children", [])[:20]:
+        all_children = data.get("children", [])
+        child_page = all_children[child_offset : child_offset + child_limit]
+        for c in child_page:
             children.append(
                 {
                     "taxon_id": c.get("taxonID"),
@@ -317,19 +450,44 @@ class EOLTool(BaseTool):
             "metadata": {
                 "source": "Encyclopedia of Life",
                 "num_ancestors": len(ancestors),
-                "num_children": len(children),
+                "num_children": len(all_children),
+                "children_returned": len(children),
+                "child_limit": child_limit,
+                "child_offset": child_offset,
+                "children_truncated": child_offset + len(children) < len(all_children),
+                "next_child_offset": (
+                    child_offset + len(children)
+                    if child_offset + len(children) < len(all_children)
+                    else None
+                ),
             },
         }
 
     def _get_collection(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get EOL curated collection details."""
-        collection_id = arguments.get("collection_id")
-        if collection_id is None:
-            return {"status": "error", "error": "collection_id parameter is required"}
-
-        page = int(arguments.get("page", 1))
-        per_page = int(arguments.get("per_page", 50))
+        collection_id = self._integer_control(arguments, "collection_id", minimum=1)
+        page = self._integer_control(arguments, "page", 1, 1)
+        per_page = self._integer_control(arguments, "per_page", 50, 1, 500)
+        for value in (collection_id, page, per_page):
+            if isinstance(value, dict):
+                return value
         filter_type = arguments.get("filter", "")
+        allowed_filters = {
+            "",
+            "taxa",
+            "text",
+            "image",
+            "sound",
+            "video",
+            "collection",
+            "community",
+            "user",
+        }
+        if not isinstance(filter_type, str) or filter_type not in allowed_filters:
+            return {
+                "status": "error",
+                "error": "filter is not a supported EOL object type",
+            }
 
         # EOL puts the collection ID in the URL path, not a query parameter --
         # unlike /search/1.0.json and /pages/1.0.json, where "1.0" really is an
@@ -340,7 +498,7 @@ class EOLTool(BaseTool):
         # 2, "Test_Collection", proving the path segment decides the result).
         params = {
             "page": page,
-            "per_page": min(per_page, 500),
+            "per_page": per_page,
         }
         if filter_type:
             params["filter"] = filter_type

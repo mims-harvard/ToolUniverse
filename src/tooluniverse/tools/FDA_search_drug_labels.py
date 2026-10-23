@@ -14,6 +14,7 @@ def FDA_search_drug_labels(
     limit: Optional[int] = 5,
     max_section_chars: Optional[int] = 2000,
     route: Optional[str] = None,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -34,6 +35,8 @@ def FDA_search_drug_labels(
         Maximum characters returned per clinical section (default: 2000, 0 = no limit...
     route : str
         Optional route of administration of the product whose label you want, as open...
+    offset : int
+        Zero-based label offset. Continue with metadata.next_offset while metadata.ha...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def FDA_search_drug_labels(
             "limit": limit,
             "max_section_chars": max_section_chars,
             "route": route,
+            "offset": offset,
         }.items()
         if v is not None
     }

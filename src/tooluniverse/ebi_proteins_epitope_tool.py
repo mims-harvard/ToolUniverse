@@ -86,9 +86,9 @@ class EBIProteinsEpitopeTool(BaseTool):
             iedb_ids = []
             for ev in evidences:
                 src = ev.get("source", {})
-                if src.get("name") == "PubMed":
+                if src.get("name") == "PubMed" and src.get("id"):
                     pmids.append(src.get("id"))
-                if src.get("name") == "IEDB":
+                if src.get("name") == "IEDB" and src.get("id"):
                     iedb_ids.append(src.get("id"))
             # The IEDB epitope ID actually lives under "xrefs", not
             # "evidences.source" (confirmed live: every EPITOPE feature's
@@ -109,8 +109,13 @@ class EBIProteinsEpitopeTool(BaseTool):
                     "sequence": f.get("epitopeSequence"),
                     "match_score": f.get("matchScore"),
                     "description": f.get("description"),
-                    "pmids": pmids[:5],
-                    "iedb_ids": iedb_ids[:3],
+                    "pmids": pmids,
+                    "pmid_count": len(pmids),
+                    "iedb_ids": iedb_ids,
+                    "iedb_id_count": len(iedb_ids),
+                    "evidences": evidences,
+                    "evidence_count": len(evidences),
+                    "xrefs": f.get("xrefs", []) or [],
                 }
             )
 

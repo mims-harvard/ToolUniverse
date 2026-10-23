@@ -120,6 +120,13 @@ class ProtVarMapTool:
                 entry["alphamissense"] = {
                     "score": am.get("amPathogenicity"),
                     "class": am.get("amClass"),
+                    "classification_scope": "model_prediction",
+                    "is_clinical_classification": False,
+                    "class_thresholds": {
+                        "likely_benign": "score < 0.34",
+                        "ambiguous": "0.34 <= score <= 0.564",
+                        "likely_pathogenic": "score > 0.564",
+                    },
                 }
             # ProtVar 2.x merges EVE/ESM-1v into a single popEveScore object.
             pev = iso.get("popEveScore")
@@ -159,6 +166,23 @@ class ProtVarMapTool:
                 "genomic_coordinates": genomic,
                 "isoform_mappings": mappings,
                 "messages": messages,
+                "prediction_context": {
+                    "interpretation": (
+                        "AlphaMissense, EVE, ESM-1v, PopEVE, and CADD values are "
+                        "computational model scores, not retrieved clinical "
+                        "classifications or evidence of pathogenicity."
+                    ),
+                    "clinical_use_warning": (
+                        "Do not substitute these predictions for ClinVar/ACMG "
+                        "classification or professional clinical interpretation."
+                    ),
+                    "alphamissense_source": (
+                        "https://github.com/google-deepmind/alphamissense"
+                    ),
+                    "alphamissense_threshold_source": (
+                        "https://github.com/Ensembl/VEP_plugins/issues/668"
+                    ),
+                },
             },
         }
 
@@ -226,13 +250,38 @@ class ProtVarFunctionTool:
                 "error": f"No ProtVar function annotation for {acc} position {pos}",
             }
 
+        alternative_names = result.get("alternativeNames") or []
+        if isinstance(alternative_names, str):
+            # ProtVar 2.x currently serializes this field as a semicolon-delimited
+            # string, while older payloads and the conceptual model use a list.
+            # Normalize both forms to the documented list without losing names.
+            alternative_names = [
+                name.strip() for name in alternative_names.split(";") if name.strip()
+            ]
+        elif not isinstance(alternative_names, list):
+            alternative_names = [alternative_names]
+
         # Extract key information
         data = {
             "accession": result.get("accession"),
             "position": result.get("position"),
+            "variant_aa": variant_aa or None,
             "protein_name": result.get("name"),
-            "gene_names": result.get("geneNames") or [],
+            # ProtVar 2.x uses ``gene``; older payloads used ``geneNames``.
+            "gene_names": result.get("gene") or result.get("geneNames") or [],
             "protein_existence": result.get("proteinExistence"),
+            "alternative_names": alternative_names,
+            "database_references": result.get("dbReferences") or [],
+            # Preserve the structural and predictive annotations returned by
+            # /function. The former wrapper silently discarded all of these.
+            "pockets": result.get("pockets") or [],
+            "interactions": result.get("interactions") or [],
+            "conservation_score": result.get("conservScore"),
+            "esm_score": result.get("esmScore"),
+            "eve_score": result.get("eveScore"),
+            "population_eve_score": result.get("popEveScore"),
+            "foldx_predictions": result.get("foldxs") or [],
+            "m3d_predictions": result.get("m3dPred"),
         }
 
         # Extract features at this position. Use `or []` throughout: the upstream
@@ -267,7 +316,33 @@ class ProtVarFunctionTool:
                     comments.append({"type": ctype, "value": t.get("value")})
         data["comments"] = comments
 
-        return {"status": "success", "data": data}
+        metadata = {
+            "source": "ProtVar /function",
+            "pocket_count": len(data["pockets"]),
+            "interaction_count": len(data["interactions"]),
+            "foldx_prediction_count": len(data["foldx_predictions"]),
+            "variant_specific_predictions_requested": bool(variant_aa),
+            "prediction_fields_present": {
+                "conservation": data["conservation_score"] is not None,
+                "esm": data["esm_score"] is not None,
+                "eve": data["eve_score"] is not None,
+                "population_eve": data["population_eve_score"] is not None,
+                "foldx": bool(data["foldx_predictions"]),
+                "m3d": data["m3d_predictions"] is not None,
+            },
+        }
+        if not variant_aa:
+            metadata["warning"] = (
+                "variant_aa was not supplied. ProtVar returns position-level "
+                "context, but omits mutation-specific ESM, EVE, PopEVE, FoldX, "
+                "and M3D predictions. Pass variant_aa to request those scores."
+            )
+
+        return {
+            "status": "success",
+            "data": data,
+            "metadata": metadata,
+        }
 
 
 MAX_XREFS_PER_VARIANT = 25

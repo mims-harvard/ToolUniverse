@@ -15,8 +15,26 @@ import requests
 from typing import Dict, Any
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+from .uniprot_pagination import pagination_metadata
 
 UNIPROT_BASE_URL = "https://rest.uniprot.org"
+
+
+def _validated_search_size(arguments: Dict[str, Any]) -> tuple[int | None, str | None]:
+    """Validate the shared UniProt REST search page size (official max 500)."""
+    raw_size = arguments.get("size")
+    raw_size = 10 if raw_size is None else raw_size
+    try:
+        if isinstance(raw_size, bool):
+            raise ValueError
+        size = int(raw_size)
+        if isinstance(raw_size, float) and not raw_size.is_integer():
+            raise ValueError
+        if not 1 <= size <= 500:
+            raise ValueError
+    except (TypeError, ValueError):
+        return None, "size must be an integer from 1 to 500"
+    return size, None
 
 
 @register_tool("UniProtRefTool")
@@ -86,9 +104,14 @@ class UniProtRefTool(BaseTool):
         if not query:
             return {"status": "error", "error": "query parameter is required"}
 
-        size = min(arguments.get("size") or 10, 25)
+        size, size_error = _validated_search_size(arguments)
+        if size_error:
+            return {"status": "error", "error": size_error}
+        assert size is not None
         url = f"{UNIPROT_BASE_URL}/diseases/search"
         params = {"query": query, "size": size, "format": "json"}
+        if arguments.get("cursor"):
+            params["cursor"] = arguments["cursor"]
 
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
@@ -125,7 +148,7 @@ class UniProtRefTool(BaseTool):
             "metadata": {
                 "source": "UniProt Controlled Disease Vocabulary",
                 "query": query,
-                "total_results": len(diseases),
+                **pagination_metadata(response, len(diseases)),
             },
         }
 
@@ -179,9 +202,14 @@ class UniProtRefTool(BaseTool):
         if not query:
             return {"status": "error", "error": "query parameter is required"}
 
-        size = min(arguments.get("size") or 10, 25)
+        size, size_error = _validated_search_size(arguments)
+        if size_error:
+            return {"status": "error", "error": size_error}
+        assert size is not None
         url = f"{UNIPROT_BASE_URL}/keywords/search"
         params = {"query": query, "size": size, "format": "json"}
+        if arguments.get("cursor"):
+            params["cursor"] = arguments["cursor"]
 
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
@@ -210,7 +238,7 @@ class UniProtRefTool(BaseTool):
             "metadata": {
                 "source": "UniProt Keyword Controlled Vocabulary",
                 "query": query,
-                "total_results": len(keywords),
+                **pagination_metadata(response, len(keywords)),
             },
         }
 
@@ -284,11 +312,16 @@ class UniProtRefTool(BaseTool):
         r = response.json()
 
         tax = r.get("taxonomy", {})
+        all_components = r.get("components", [])
+        total_proteins = sum((c.get("proteinCount") or 0) for c in all_components)
+        component_offset = max(arguments.get("component_offset") or 0, 0)
+        component_limit = min(max(arguments.get("component_limit") or 30, 1), 500)
+        component_page = all_components[
+            component_offset : component_offset + component_limit
+        ]
         components = []
-        total_proteins = 0
-        for c in r.get("components", [])[:30]:
+        for c in component_page:
             count = c.get("proteinCount", 0) or 0
-            total_proteins += count
             genome_acc = None
             for xr in c.get("proteomeCrossReferences", []):
                 if xr.get("database") == "GenomeAccession":
@@ -302,11 +335,14 @@ class UniProtRefTool(BaseTool):
                 }
             )
 
+        has_more = component_offset + len(components) < len(all_components)
+        description = r.get("description") or ""
         return {
             "status": "success",
             "data": {
                 "id": r.get("id"),
-                "description": (r.get("description") or "")[:500],
+                "description": description,
+                "description_length": len(description),
                 "organism": {
                     "scientific_name": tax.get("scientificName"),
                     "common_name": tax.get("commonName"),
@@ -318,6 +354,13 @@ class UniProtRefTool(BaseTool):
             },
             "metadata": {
                 "source": "UniProt Proteomes",
+                "total_components": len(all_components),
+                "components_returned": len(components),
+                "component_offset": component_offset,
+                "components_truncated": has_more,
+                "next_component_offset": (
+                    component_offset + len(components) if has_more else None
+                ),
             },
         }
 
@@ -327,9 +370,14 @@ class UniProtRefTool(BaseTool):
         if not query:
             return {"status": "error", "error": "query parameter is required"}
 
-        size = min(arguments.get("size") or 10, 25)
+        size, size_error = _validated_search_size(arguments)
+        if size_error:
+            return {"status": "error", "error": size_error}
+        assert size is not None
         url = f"{UNIPROT_BASE_URL}/proteomes/search"
         params = {"query": query, "size": size, "format": "json"}
+        if arguments.get("cursor"):
+            params["cursor"] = arguments["cursor"]
 
         response = requests.get(url, params=params, timeout=self.timeout)
         response.raise_for_status()
@@ -358,6 +406,6 @@ class UniProtRefTool(BaseTool):
             "metadata": {
                 "source": "UniProt Proteomes",
                 "query": query,
-                "total_results": len(proteomes),
+                **pagination_metadata(response, len(proteomes)),
             },
         }

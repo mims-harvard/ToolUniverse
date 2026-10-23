@@ -1,7 +1,7 @@
 """
 FoodDataCentral_search_foods
 
-Search USDA FoodData Central for foods by keyword. Returns matching foods with nutrient data, bra...
+Search USDA FoodData Central for foods by keyword. Each food includes the complete nutrient array...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def FoodDataCentral_search_foods(
     validate: bool = True,
 ) -> Any:
     """
-    Search USDA FoodData Central for foods by keyword. Returns matching foods with nutrient data, bra...
+    Search USDA FoodData Central for foods by keyword. Each food includes the complete nutrient array...
 
     Parameters
     ----------

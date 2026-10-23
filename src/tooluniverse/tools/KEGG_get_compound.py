@@ -1,7 +1,7 @@
 """
 KEGG_get_compound
 
-Get KEGG compound/metabolite details including names, formula, molecular weight, associated pathw...
+Get complete KEGG compound/metabolite details. In addition to names, formula, mass, pathways, enz...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def KEGG_get_compound(
     validate: bool = True,
 ) -> Any:
     """
-    Get KEGG compound/metabolite details including names, formula, molecular weight, associated pathw...
+    Get complete KEGG compound/metabolite details. In addition to names, formula, mass, pathways, enz...
 
     Parameters
     ----------

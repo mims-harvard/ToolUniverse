@@ -61,6 +61,23 @@ class EnamineTool(BaseTool):
                 "error": f"Unknown operation: {operation}. Supported: search_catalog, get_compound, search_smiles, get_libraries",
             }
 
+    @staticmethod
+    def _pagination(arguments: Dict[str, Any]):
+        limit = arguments.get("limit", 20)
+        offset = arguments.get("offset", 0)
+        if (
+            isinstance(limit, bool)
+            or not isinstance(limit, int)
+            or not 1 <= limit <= 100
+        ):
+            return {
+                "status": "error",
+                "error": "limit must be an integer from 1 to 100",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {"status": "error", "error": "offset must be a non-negative integer"}
+        return limit, offset
+
     def _search_catalog(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
         Search Enamine catalog by keyword or compound name.
@@ -75,6 +92,10 @@ class EnamineTool(BaseTool):
             return {"status": "error", "error": "Missing required parameter: query"}
 
         catalog = arguments.get("catalog", "all")
+        pagination = self._pagination(arguments)
+        if isinstance(pagination, dict):
+            return pagination
+        limit, offset = pagination
 
         try:
             # Try Enamine Store API
@@ -97,31 +118,42 @@ class EnamineTool(BaseTool):
                     if isinstance(data, list)
                     else data.get("compounds", data.get("results", []))
                 )
+                if not isinstance(results, list):
+                    return {
+                        "status": "error",
+                        "error": "Enamine API returned an unexpected search payload",
+                    }
+                page = results[offset : offset + limit]
+                has_more = offset + len(page) < len(results)
                 return {
                     "status": "success",
                     "data": {
                         "query": query,
                         "catalog": catalog,
-                        "results": results[:20],
-                        "count": len(results[:20]),
+                        "results": page,
+                        "count": len(page),
                         "total_results": len(results),
                     },
-                    "metadata": {"source": "Enamine"},
+                    "metadata": {
+                        "source": "Enamine",
+                        "upstream_payload_count": len(results),
+                        "returned": len(page),
+                        "limit": limit,
+                        "offset": offset,
+                        "has_more_within_payload": has_more,
+                        "next_offset": offset + len(page) if has_more else None,
+                        "upstream_result_set_complete": None,
+                        "warning": "The Enamine endpoint does not document whether its JSON payload is the complete catalog match set.",
+                    },
                 }
 
-            # API unavailable — return search URL with explicit note
+            # A navigation URL is not retrieved catalog data. Report failure
+            # explicitly instead of returning a successful empty result.
             api_status = response.status_code
             return {
-                "status": "success",
-                "data": {
-                    "query": query,
-                    "catalog": catalog,
-                    "results": [],
-                    "api_available": False,
-                    "search_url": f"{ENAMINE_BASE_URL}/compound-search/quick?q={query}",
-                    "note": f"Enamine API returned HTTP {api_status}. Visit search_url to search manually. REAL database contains 37B+ make-on-demand compounds.",
-                },
-                "metadata": {"source": "Enamine"},
+                "status": "error",
+                "error": f"Enamine catalog API unavailable (HTTP {api_status}); no catalog data was retrieved.",
+                "search_url": f"{ENAMINE_BASE_URL}/compound-search/quick?q={urllib.parse.quote(query)}",
             }
 
         except requests.exceptions.RequestException as e:
@@ -167,15 +199,11 @@ class EnamineTool(BaseTool):
                     },
                 }
 
-            # Return compound URL
+            # Do not present a guessed web URL as retrieved compound details.
             return {
-                "status": "success",
-                "data": {
-                    "enamine_id": enamine_id,
-                    "url": f"{ENAMINE_BASE_URL}/compound/{enamine_id}",
-                    "note": "Visit url to view compound details and ordering information",
-                },
-                "metadata": {"source": "Enamine", "enamine_id": enamine_id},
+                "status": "error",
+                "error": f"Enamine compound API unavailable (HTTP {response.status_code}); no compound details were retrieved.",
+                "compound_url": f"{ENAMINE_BASE_URL}/compound/{urllib.parse.quote(enamine_id)}",
             }
 
         except requests.exceptions.RequestException as e:
@@ -197,6 +225,15 @@ class EnamineTool(BaseTool):
             return {"status": "error", "error": "Missing required parameter: smiles"}
 
         search_type = arguments.get("search_type", "similarity")
+        if search_type not in {"exact", "substructure", "similarity"}:
+            return {
+                "status": "error",
+                "error": "search_type must be exact, substructure, or similarity",
+            }
+        pagination = self._pagination(arguments)
+        if isinstance(pagination, dict):
+            return pagination
+        limit, offset = pagination
 
         try:
             response = requests.post(
@@ -214,30 +251,40 @@ class EnamineTool(BaseTool):
             ):
                 data = response.json()
                 results = data if isinstance(data, list) else data.get("compounds", [])
+                if not isinstance(results, list):
+                    return {
+                        "status": "error",
+                        "error": "Enamine API returned an unexpected structure-search payload",
+                    }
+                page = results[offset : offset + limit]
+                has_more = offset + len(page) < len(results)
                 return {
                     "status": "success",
                     "data": {
                         "query_smiles": smiles,
                         "search_type": search_type,
-                        "results": results[:20],
-                        "count": len(results[:20]),
+                        "results": page,
+                        "count": len(page),
                         "total_results": len(results),
                     },
-                    "metadata": {"source": "Enamine"},
+                    "metadata": {
+                        "source": "Enamine",
+                        "upstream_payload_count": len(results),
+                        "returned": len(page),
+                        "limit": limit,
+                        "offset": offset,
+                        "has_more_within_payload": has_more,
+                        "next_offset": offset + len(page) if has_more else None,
+                        "upstream_result_set_complete": None,
+                        "warning": "The Enamine endpoint does not document whether its JSON payload is the complete catalog match set.",
+                    },
                 }
 
-            # Return search guidance
             encoded_smiles = urllib.parse.quote(smiles)
             return {
-                "status": "success",
-                "data": {
-                    "query_smiles": smiles,
-                    "search_type": search_type,
-                    "results": [],
-                    "search_url": f"{ENAMINE_BASE_URL}/compound-search/structure?smiles={encoded_smiles}",
-                    "note": "Visit search_url to perform structure search on Enamine catalog",
-                },
-                "metadata": {"source": "Enamine"},
+                "status": "error",
+                "error": f"Enamine structure-search API unavailable (HTTP {response.status_code}); no compounds were retrieved.",
+                "search_url": f"{ENAMINE_BASE_URL}/compound-search/structure?smiles={encoded_smiles}",
             }
 
         except requests.exceptions.RequestException as e:
@@ -271,40 +318,11 @@ class EnamineTool(BaseTool):
                     "metadata": {"source": "Enamine"},
                 }
 
-            # Return known libraries info
+            # Static marketing copy is not a live library retrieval result.
             return {
-                "status": "success",
-                "data": {
-                    "libraries": [
-                        {
-                            "name": "REAL Database",
-                            "description": "37+ billion make-on-demand compounds",
-                            "url": f"{ENAMINE_BASE_URL}/compound-collections/real-compounds",
-                        },
-                        {
-                            "name": "Building Blocks",
-                            "description": "300,000+ in-stock building blocks for synthesis",
-                            "url": f"{ENAMINE_BASE_URL}/building-blocks",
-                        },
-                        {
-                            "name": "Screening Compounds",
-                            "description": "3M+ ready-to-ship screening compounds",
-                            "url": f"{ENAMINE_BASE_URL}/compound-collections/screening-compounds",
-                        },
-                        {
-                            "name": "Fragment Library",
-                            "description": "Diverse fragment collection for FBDD",
-                            "url": f"{ENAMINE_BASE_URL}/compound-collections/fragments",
-                        },
-                        {
-                            "name": "Covalent Library",
-                            "description": "Compounds with reactive warheads",
-                            "url": f"{ENAMINE_BASE_URL}/compound-collections/covalent-screening",
-                        },
-                    ],
-                    "main_url": f"{ENAMINE_BASE_URL}/compound-collections",
-                },
-                "metadata": {"source": "Enamine"},
+                "status": "error",
+                "error": f"Enamine libraries API unavailable (HTTP {response.status_code}); no live library data was retrieved.",
+                "main_url": f"{ENAMINE_BASE_URL}/compound-collections",
             }
 
         except requests.exceptions.RequestException as e:

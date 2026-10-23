@@ -1,7 +1,7 @@
 [
   {
     "name": "AllenBrain_search_genes",
-    "description": "Search for genes in the Allen Brain Atlas by gene symbol (acronym) or name. Returns gene metadata including Entrez ID, chromosome, homologene ID. Useful for finding gene IDs needed to query expression data. Example: 'Gad1' returns glutamate decarboxylase 1 records for mouse and rat.",
+    "description": "Search Allen Brain Atlas genes by symbol or name with exact RMA row pagination. Metadata reports the upstream total and next_start_row so later gene matches remain reachable.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -21,8 +21,16 @@
         },
         "num_rows": {
           "type": "integer",
-          "description": "Max results to return. Default: 50.",
+          "minimum": 1,
+          "maximum": 2000,
+          "description": "Results per page (1-2000).",
           "default": 50
+        },
+        "start_row": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based RMA row offset. Continue with metadata.next_start_row."
         }
       }
     },
@@ -130,7 +138,7 @@
   },
   {
     "name": "AllenBrain_search_structures",
-    "description": "Search for brain structures/regions in the Allen Brain Atlas ontology by acronym or name. Returns structure hierarchy, atlas coordinates, and color coding. Example: 'CA1' returns hippocampal Field CA1 across multiple atlases.",
+    "description": "Search Allen Brain Atlas structures by acronym or name with exact RMA row pagination. Metadata reports the upstream total and next_start_row so later structures remain reachable.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -150,8 +158,16 @@
         },
         "num_rows": {
           "type": "integer",
-          "description": "Max results to return. Default: 50.",
+          "minimum": 1,
+          "maximum": 2000,
+          "description": "Results per page (1-2000).",
           "default": 50
+        },
+        "start_row": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based RMA row offset. Continue with metadata.next_start_row."
         }
       }
     },
@@ -282,7 +298,7 @@
   },
   {
     "name": "AllenBrain_get_expression_datasets",
-    "description": "Get gene expression experiment datasets from the Allen Mouse Brain Atlas for a given gene. Returns section data sets including plane of section, section thickness, and linked gene info. These datasets contain ISH (in situ hybridization) gene expression images. Example: 'Gad1' returns 22 ISH experiment datasets.",
+    "description": "Get Allen Mouse Brain ISH expression datasets for a gene with exact RMA row pagination. Failed experiments are excluded from data, while metadata separately reports the upstream total including failed rows, failed rows on this page, and next_start_row.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -297,8 +313,16 @@
         },
         "num_rows": {
           "type": "integer",
-          "description": "Max results to return. Default: 50.",
+          "minimum": 1,
+          "maximum": 2000,
+          "description": "Results per page (1-2000).",
           "default": 50
+        },
+        "start_row": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based RMA row offset. Continue with metadata.next_start_row."
         }
       },
       "required": [
@@ -545,7 +569,7 @@
   },
   {
     "name": "AllenBrain_get_structure_expression_values",
-    "description": "Get quantified per-structure gene-expression values (StructureUnionize) for one Allen Mouse Brain ISH experiment (SectionDataSet). Returns the actual numeric spatial expression aggregated over each annotated brain structure: expression_energy (intensity x density), expression_density (fraction of expressing pixels), sum_expressing_pixels, plus the structure record (acronym, name). This is the real spatial expression signal, not just experiment metadata. Get a section_data_set_id from AllenBrain_get_expression_datasets. Example: section_data_set_id=75457539 (a Gad1 mouse-brain ISH dataset) returns 2406 per-structure rows.",
+    "description": "Get quantified StructureUnionize expression values for one Allen Mouse Brain ISH experiment. Each dataset can contain about 2400 brain-structure rows; use start_row and follow metadata.next_start_row instead of treating the default 50-row page as complete. Returns expression_energy, expression_density, sum_expressing_pixels and optional structure records.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -560,8 +584,16 @@
         },
         "num_rows": {
           "type": "integer",
-          "description": "Max per-structure rows to return. There are ~2400 structures per dataset. Default: 50.",
+          "minimum": 1,
+          "maximum": 2000,
+          "description": "Per-structure rows per page (1-2000). There are approximately 2400 rows per dataset; continue with start_row.",
           "default": 50
+        },
+        "start_row": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based RMA row offset. Continue with metadata.next_start_row."
         }
       },
       "required": [

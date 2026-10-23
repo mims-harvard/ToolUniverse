@@ -2,7 +2,7 @@
   {
     "type": "DBpediaSPARQLTool",
     "name": "DBpedia_SPARQL_query",
-    "description": "Execute SPARQL queries against DBpedia to retrieve structured knowledge. DBpedia extracts structured information from Wikipedia and makes it available as linked data. This tool is particularly useful for querying information about people, places, organizations, works, and other entities, especially in humanities and social sciences domains. No API key required.",
+    "description": "Execute SELECT or ASK queries against the public DBpedia SPARQL endpoint. SELECT results are recoverably paginated with a one-extra-row probe: continue with next_offset while has_more is true. Explicit max_results/offset override terminal LIMIT/OFFSET clauses, while an omitted max_results uses the query LIMIT or defaults to 100. Both normalized values and original binding metadata (URI/literal type, datatype, language) are returned. ASK returns its boolean rather than a misleading empty list. CONSTRUCT and DESCRIBE are explicitly unsupported.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -12,8 +12,14 @@
         },
         "max_results": {
           "type": "integer",
-          "description": "Optional result limit override. If not specified, uses the LIMIT clause in the SPARQL query or returns all results.",
-          "minimum": 1
+          "description": "Optional SELECT page size override (1-1000). If omitted, use the terminal query LIMIT or default to 100.",
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Optional zero-based SELECT result offset. Continue with data.next_offset while data.has_more is true.",
+          "minimum": 0
         }
       },
       "required": [
@@ -21,11 +27,97 @@
       ]
     },
     "return_schema": {
-      "type": "array",
-      "description": "List of query results from DBpedia SPARQL endpoint",
-      "items": {
-        "type": "object",
-        "description": "Each result is a dictionary with variable names as keys and their values from the SPARQL query results"
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "query_type": {
+              "type": "string",
+              "enum": [
+                "SELECT",
+                "ASK"
+              ]
+            },
+            "boolean": {
+              "type": "boolean"
+            },
+            "variables": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "bindings": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "returned": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "result_set_complete": {
+              "type": "boolean"
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string"
+            },
+            "qualifiers_preserved": {
+              "type": "boolean"
+            },
+            "explicit_order_by": {
+              "type": "boolean"
+            },
+            "pagination_stability_guaranteed": {
+              "type": "boolean"
+            },
+            "pagination_guidance": {
+              "type": "string"
+            },
+            "requested_scope_complete": {
+              "type": "boolean"
+            }
+          }
+        },
+        "error": {
+          "type": "string"
+        }
       }
     },
     "test_examples": [

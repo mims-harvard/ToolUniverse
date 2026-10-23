@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def IDR_get_study_datasets(
     project_id: int,
-    limit: Optional[int] = None,
-    offset: Optional[int] = None,
+    limit: Optional[int] = 25,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

@@ -1,7 +1,7 @@
 """
 InterPro_get_proteins_by_domain
 
-Find proteins that contain a specific InterPro domain. Performs a reverse lookup from an InterPro...
+Find proteins that contain a specific InterPro domain. Results are cursor-paginated: when has_mor...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,14 @@ def InterPro_get_proteins_by_domain(
     domain_id: str,
     page_size: Optional[int] = 20,
     reviewed_only: Optional[bool] = False,
+    cursor: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Find proteins that contain a specific InterPro domain. Performs a reverse lookup from an InterPro...
+    Find proteins that contain a specific InterPro domain. Results are cursor-paginated: when has_mor...
 
     Parameters
     ----------
@@ -28,6 +29,8 @@ def InterPro_get_proteins_by_domain(
         Number of proteins to return (1-50, default 20).
     reviewed_only : bool
         If true, only return Swiss-Prot reviewed entries (default false returns all U...
+    cursor : str
+        Opaque InterPro cursor returned as next_cursor by a previous call.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +51,7 @@ def InterPro_get_proteins_by_domain(
             "domain_id": domain_id,
             "page_size": page_size,
             "reviewed_only": reviewed_only,
+            "cursor": cursor,
         }.items()
         if v is not None
     }

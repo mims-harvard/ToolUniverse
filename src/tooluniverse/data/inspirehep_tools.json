@@ -1,7 +1,7 @@
 [
   {
     "name": "InspireHEP_search_papers",
-    "description": "Search high-energy physics literature in the INSPIRE-HEP database, the premier repository for physics papers in particle physics, astrophysics, and related fields. Returns paper titles, authors, abstract, citation count, DOI, and arXiv identifiers. No authentication required. Search syntax: 'a einstein' (author), 't higgs' (title), 'j phys.rev' (journal), 'cn cms' (collaboration), 'texkey smith:2024abc'. Covers 1.6 million+ records.",
+    "description": "Search high-energy physics literature in INSPIRE-HEP. Results use exact one-based page pagination: begin with page=1 and continue with metadata.next_page while metadata.has_more is true; metadata.total_results is exact. Returns titles, authors, abstracts, citation counts, DOI and arXiv identifiers.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -21,7 +21,16 @@
             "integer",
             "null"
           ],
-          "description": "Number of results (1-25). Default: 10"
+          "minimum": 1,
+          "maximum": 25,
+          "default": 10,
+          "description": "Results per page (1-25, default 10)"
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "One-based result page. Continue with metadata.next_page."
         },
         "fields": {
           "type": [
@@ -39,7 +48,8 @@
       "endpoint": "https://inspirehep.net/api/literature",
       "params": {
         "sort": "mostrecent"
-      }
+      },
+      "pagination": "inspire_page"
     },
     "type": "BaseRESTTool",
     "test_examples": [

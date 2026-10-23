@@ -1,4 +1,7 @@
 import requests
+import re
+from urllib.parse import quote, unquote
+
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
@@ -18,11 +21,24 @@ class UnpaywallTool(BaseTool):
 
     def run(self, arguments):
         tool_name = self.tool_config.get("name", "")
-        doi = arguments.get("doi")
+        unknown = sorted(set(arguments) - {"doi", "email"})
+        if unknown:
+            return {
+                "status": "error",
+                "error": f"Unrecognized parameter(s): {', '.join(unknown)}",
+            }
+        doi, doi_error = self._normalize_doi(arguments.get("doi"))
         email = arguments.get("email")
 
-        if not doi:
-            return {"status": "error", "error": "`doi` parameter is required."}
+        if doi_error:
+            return {"status": "error", "error": doi_error}
+        assert doi is not None
+        if email is not None and (
+            not isinstance(email, str)
+            or not re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email.strip())
+        ):
+            return {"status": "error", "error": "email must be a valid email address"}
+        email = email.strip() if email else None
 
         if tool_name == "Unpaywall_get_full_text_url":
             return self._get_full_text_url(doi, email or DEFAULT_EMAIL)
@@ -35,9 +51,21 @@ class UnpaywallTool(BaseTool):
             }
         return self._check_oa_status(doi, email)
 
+    @staticmethod
+    def _normalize_doi(value):
+        if not isinstance(value, str) or not value.strip():
+            return None, "`doi` must be a non-empty string."
+        doi = unquote(value.strip())
+        doi = re.sub(r"^https?://(?:dx\.)?doi\.org/", "", doi, flags=re.IGNORECASE)
+        doi = re.sub(r"^doi:\s*", "", doi, flags=re.IGNORECASE)
+        doi = doi.strip().rstrip(".")
+        if not re.fullmatch(r"10\.\d{4,9}/\S+", doi, flags=re.IGNORECASE):
+            return None, "doi must be a valid DOI such as 10.7554/eLife.01567"
+        return doi.lower(), None
+
     def _call_api(self, doi, email):
         """Shared API call logic."""
-        url = f"{self.base_url}{doi}"
+        url = f"{self.base_url}{quote(doi, safe='/')}"
         params = {"email": email}
         try:
             response = requests.get(url, params=params, timeout=20)
@@ -61,7 +89,37 @@ class UnpaywallTool(BaseTool):
                 "reason": response.reason,
             }
 
-        return response.json(), None
+        try:
+            data = response.json()
+        except ValueError as exc:
+            return None, {
+                "status": "error",
+                "error": f"Unpaywall returned invalid JSON: {exc}",
+            }
+        if not isinstance(data, dict):
+            return None, {
+                "status": "error",
+                "error": "Unpaywall returned an unexpected response shape",
+            }
+        returned_doi = data.get("doi")
+        if not isinstance(returned_doi, str) or returned_doi.lower() != doi.lower():
+            return None, {
+                "status": "error",
+                "error": "Unpaywall returned a different DOI than requested",
+                "requested_doi": doi,
+                "returned_doi": returned_doi,
+            }
+        for field in ("oa_locations", "oa_locations_embargoed"):
+            value = data.get(field)
+            if value is not None and (
+                not isinstance(value, list)
+                or any(not isinstance(location, dict) for location in value)
+            ):
+                return None, {
+                    "status": "error",
+                    "error": f"Unpaywall returned malformed {field}",
+                }
+        return data, None
 
     def _check_oa_status(self, doi, email):
         """Original OA status check."""
@@ -84,8 +142,30 @@ class UnpaywallTool(BaseTool):
                 "year": data.get("year"),
                 "publisher": data.get("publisher"),
                 "url": data.get("url"),
+                "doi_url": data.get("doi_url"),
+                "genre": data.get("genre"),
+                "published_date": data.get("published_date"),
+                "updated": data.get("updated"),
+                "has_repository_copy": data.get("has_repository_copy"),
+                "is_paratext": data.get("is_paratext"),
+                "journal_is_in_doaj": data.get("journal_is_in_doaj"),
+                "first_oa_location": data.get("first_oa_location"),
+                "oa_locations_embargoed": data.get("oa_locations_embargoed") or [],
+                "authors": data.get("z_authors") or [],
+                "data_standard": data.get("data_standard"),
+                "record": data,
             },
-            "metadata": {"source": "Unpaywall", "email": email},
+            "metadata": {
+                "source": "Unpaywall",
+                "email": email,
+                "requested_doi": doi,
+                "returned_doi_verified": True,
+                "source_record_complete": True,
+                "oa_location_count": len(data.get("oa_locations") or []),
+                "embargoed_oa_location_count": len(
+                    data.get("oa_locations_embargoed") or []
+                ),
+            },
         }
 
     @staticmethod
@@ -93,15 +173,7 @@ class UnpaywallTool(BaseTool):
         """Extract relevant fields from a single OA location dict."""
         if not loc or not isinstance(loc, dict):
             return None
-        return {
-            "url": loc.get("url"),
-            "url_for_pdf": loc.get("url_for_pdf"),
-            "url_for_landing_page": loc.get("url_for_landing_page"),
-            "host_type": loc.get("host_type"),
-            "version": loc.get("version"),
-            "license": loc.get("license"),
-            "is_best": loc.get("is_best", False),
-        }
+        return dict(loc)
 
     def _get_full_text_url(self, doi, email):
         """Retrieve full-text PDF and landing page URLs for a DOI."""
@@ -113,6 +185,11 @@ class UnpaywallTool(BaseTool):
         all_locations = [
             extracted
             for loc in (data.get("oa_locations") or [])
+            if (extracted := self._extract_oa_location(loc))
+        ]
+        embargoed_locations = [
+            extracted
+            for loc in (data.get("oa_locations_embargoed") or [])
             if (extracted := self._extract_oa_location(loc))
         ]
 
@@ -130,13 +207,19 @@ class UnpaywallTool(BaseTool):
                 "best_oa_version": best.get("version"),
                 "best_oa_license": best.get("license"),
                 "all_oa_locations": all_locations,
+                "embargoed_oa_locations": embargoed_locations,
                 "journal_name": data.get("journal_name"),
                 "publisher": data.get("publisher"),
                 "year": data.get("year"),
+                "record": data,
             },
             "metadata": {
                 "source": "Unpaywall",
                 "api_version": "v2",
                 "total_oa_locations": len(all_locations),
+                "total_embargoed_oa_locations": len(embargoed_locations),
+                "requested_doi": doi,
+                "returned_doi_verified": True,
+                "source_record_complete": True,
             },
         }

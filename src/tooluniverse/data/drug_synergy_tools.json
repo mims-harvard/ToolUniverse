@@ -2,7 +2,7 @@
   {
     "name": "DrugSynergy_calculate_bliss",
     "type": "DrugSynergyTool",
-    "description": "Calculate Bliss Independence synergy score for a drug combination. Model: E_expected = E_a + E_b - E_a*E_b. Synergy score = (E_combo - E_expected) * 100. Positive = synergy; Negative = antagonism. Inputs are fractional inhibition values (0-1). Based on Bliss (1939). Use for: single-concentration combination screening, high-throughput synergy assessment.",
+    "description": "Calculate Bliss Independence synergy for a drug combination. Model: E_expected = E_a + E_b - E_a*E_b; bliss_synergy_score = E_combo - E_expected in fractional-inhibition units (not multiplied by 100). Positive is synergy and negative is antagonism. The interpretation is ToolUniverse-derived from the raw, unrounded score: >=0.10 strong synergy, (0,0.10) synergy, 0 additivity, (-0.10,0) antagonism, and <=-0.10 strong antagonism. interpretation_criteria exposes the exact units, raw value, boundaries, and provenance. Inputs are fractional inhibition values (0-1). Based on Bliss (1939).",
     "parameter": {
       "type": "object",
       "properties": {
@@ -63,6 +63,10 @@
         "interpretation": {
           "type": "string"
         },
+        "interpretation_criteria": {
+          "type": "object",
+          "description": "Machine-readable ToolUniverse derivation provenance, raw score, units, and exact classification rules."
+        },
         "note": {
           "type": "string"
         }
@@ -83,7 +87,7 @@
   {
     "name": "DrugSynergy_calculate_hsa",
     "type": "DrugSynergyTool",
-    "description": "Calculate Highest Single Agent (HSA) synergy score for drug combinations across dose points. HSA expected = max(E_a, E_b) at each dose. Synergy = observed - HSA expected. Requires matching arrays of effects for drug A, drug B, and the combination. Use for: multi-dose combination matrices, identifying synergistic dose ranges.",
+    "description": "Calculate Highest Single Agent (HSA) synergy scores across dose points. HSA expected = max(E_a, E_b) and synergy = observed - expected in fractional-inhibition units. Inputs must be 0-1 fractions; percentage values are rejected. The mean interpretation is ToolUniverse-derived from the raw, unrounded mean using the same explicit +/-0.10 rules returned in interpretation_criteria. Requires matching arrays for drug A, drug B, and the combination.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -100,7 +104,7 @@
           "items": {
             "type": "number"
           },
-          "description": "Array of drug A inhibition effects at each dose point (0-1 or 0-100)"
+          "description": "Array of drug A fractional inhibition effects at each dose point (0-1; percentages are not accepted)"
         },
         "effects_b": {
           "type": "array",
@@ -146,6 +150,10 @@
         },
         "interpretation": {
           "type": "string"
+        },
+        "interpretation_criteria": {
+          "type": "object",
+          "description": "Machine-readable ToolUniverse derivation provenance, raw mean score, units, and exact classification rules."
         },
         "note": {
           "type": "string"

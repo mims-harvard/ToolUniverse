@@ -337,11 +337,21 @@ class USDAPlantsProfileTool(_USDAPlantsBase):
                 "status": "error",
                 "error": "'searchText' is required (a plant scientific/common name or genus, e.g. 'white oak').",
             }
-        try:
-            limit = int(arguments.get("limit", 25))
-        except (TypeError, ValueError):
-            limit = 25
-        limit = max(1, min(limit, 200))
+        limit = arguments.get("limit", 25)
+        if (
+            isinstance(limit, bool)
+            or not isinstance(limit, int)
+            or not 1 <= limit <= 200
+        ):
+            return {
+                "status": "error",
+                "error": "limit must be an integer from 1 to 200",
+            }
+        offset = arguments.get("offset", 0)
+        if isinstance(offset, bool) or not isinstance(offset, int):
+            return {"status": "error", "error": "offset must be a non-negative integer"}
+        if offset < 0:
+            return {"status": "error", "error": "offset must be a non-negative integer"}
 
         try:
             resp = requests.get(
@@ -365,8 +375,13 @@ class USDAPlantsProfileTool(_USDAPlantsBase):
                 "error": "USDA PLANTS returned a non-JSON response",
             }
 
-        if not isinstance(results, list):
-            results = []
+        if not isinstance(results, list) or any(
+            not isinstance(item, dict) for item in results
+        ):
+            return {
+                "status": "error",
+                "error": "USDA PLANTS returned malformed search results",
+            }
         matches = []
         for item in results:
             if not isinstance(item, dict):
@@ -392,13 +407,19 @@ class USDAPlantsProfileTool(_USDAPlantsBase):
             )
 
         total = len(matches)
-        matches = matches[:limit]
+        matches = matches[offset : offset + limit]
+        has_more = offset + len(matches) < total
         return {
             "status": "success",
             "data": matches,
             "metadata": {
                 "total_results": total,
                 "returned_results": len(matches),
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "next_offset": offset + len(matches) if has_more else None,
+                "result_set_complete": offset == 0 and len(matches) == total,
                 "query": search_text,
                 "source": "USDA PLANTS",
                 "note": "Use the 'symbol' field with USDA_plants_get_profile / USDA_plants_get_characteristics."

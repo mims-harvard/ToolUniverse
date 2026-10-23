@@ -1,7 +1,7 @@
 """
 VEuPathDB_search_genes_by_organism
 
-Search a VEuPathDB pathogen-genome database for all genes belonging to a given organism/strain, u...
+Search genes belonging to an organism/strain in a VEuPathDB member database using the WDK GenesBy...
 """
 
 from typing import Any, Optional, Callable
@@ -13,13 +13,14 @@ def VEuPathDB_search_genes_by_organism(
     project: Optional[str] = None,
     attributes: Optional[list[str] | str] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search a VEuPathDB pathogen-genome database for all genes belonging to a given organism/strain, u...
+    Search genes belonging to an organism/strain in a VEuPathDB member database using the WDK GenesBy...
 
     Parameters
     ----------
@@ -31,6 +32,8 @@ def VEuPathDB_search_genes_by_organism(
         Optional list of gene attribute columns to return. Defaults to primary_key, p...
     limit : int
         Maximum number of genes to return (1-500, default 25).
+    offset : int
+        Zero-based WDK gene result offset. Continue with metadata.next_offset while m...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def VEuPathDB_search_genes_by_organism(
             "project": project,
             "attributes": attributes,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

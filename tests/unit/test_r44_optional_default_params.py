@@ -72,7 +72,7 @@ def test_fatcat_run_uses_default_max_results_when_omitted():
         tool.run({"query": "CRISPR"})
         params = mock_get.call_args.kwargs["params"]
 
-    assert params["limit"] == 10
+    assert params == {"q": "CRISPR", "entity_type": "releases", "offset": 0}
 
 
 def test_openaire_run_uses_defaults_when_omitted():

@@ -1,7 +1,7 @@
 """
 UniProt_get_ptm_processing_by_accession
 
-Extract all PTM and processing sites from UniProtKB entry (feature type = MODIFIED RESIDUE or SIG...
+Extract all UniProtKB post-translational modification and chain-processing features: modified res...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def UniProt_get_ptm_processing_by_accession(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Extract all PTM and processing sites from UniProtKB entry (feature type = MODIFIED RESIDUE or SIG...
+    Extract all UniProtKB post-translational modification and chain-processing features: modified res...
 
     Parameters
     ----------

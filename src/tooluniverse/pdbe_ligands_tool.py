@@ -123,10 +123,18 @@ class PDBeLigandsTool(BaseTool):
 
         ligands_raw = data[pdb_id]
         ligands = []
-        for lig in ligands_raw[:50]:
+        ligand_offset = max(int(arguments.get("ligand_offset") or 0), 0)
+        ligand_limit = min(max(int(arguments.get("ligand_limit") or 50), 1), 500)
+        annotation_offset = max(int(arguments.get("annotation_offset") or 0), 0)
+        annotation_limit = min(max(int(arguments.get("annotation_limit") or 5), 1), 500)
+        ligand_page = ligands_raw[ligand_offset : ligand_offset + ligand_limit]
+        for lig in ligand_page:
             annotations = lig.get("annotations", [])
             annotation_info = []
-            for ann in annotations[:5]:
+            annotation_page = annotations[
+                annotation_offset : annotation_offset + annotation_limit
+            ]
+            for ann in annotation_page:
                 interacting = ann.get("interacting_entity", {})
                 annotation_info.append(
                     {
@@ -147,15 +155,32 @@ class PDBeLigandsTool(BaseTool):
                     "author_residue_number": lig.get("author_residue_number"),
                     "carbohydrate_polymer": lig.get("carbohydrate_polymer", False),
                     "annotations": annotation_info,
+                    "annotations_total": len(annotations),
+                    "annotations_returned": len(annotation_page),
+                    "annotations_truncated": (
+                        annotation_offset + len(annotation_page) < len(annotations)
+                    ),
+                    "next_annotation_offset": (
+                        annotation_offset + len(annotation_page)
+                        if annotation_offset + len(annotation_page) < len(annotations)
+                        else None
+                    ),
                 }
             )
 
+        ligands_truncated = ligand_offset + len(ligand_page) < len(ligands_raw)
         return {
             "status": "success",
             "data": {
                 "pdb_id": pdb_id,
                 "ligands": ligands,
                 "total_ligands": len(ligands_raw),
+                "ligand_offset": ligand_offset,
+                "ligands_returned": len(ligand_page),
+                "ligands_truncated": ligands_truncated,
+                "next_ligand_offset": (
+                    ligand_offset + len(ligand_page) if ligands_truncated else None
+                ),
             },
             "metadata": {
                 "source": "PDBe REST API (ebi.ac.uk/pdbe)",
@@ -208,14 +233,22 @@ class PDBeLigandsTool(BaseTool):
         molecules = entry_data.get("molecules", [])
 
         result_molecules = []
-        for mol in molecules[:10]:
+        molecule_offset = max(int(arguments.get("molecule_offset") or 0), 0)
+        molecule_limit = min(max(int(arguments.get("molecule_limit") or 10), 1), 500)
+        chain_offset = max(int(arguments.get("chain_offset") or 0), 0)
+        chain_limit = min(max(int(arguments.get("chain_limit") or 5), 1), 500)
+        residue_offset = max(int(arguments.get("residue_offset") or 0), 0)
+        residue_limit = min(max(int(arguments.get("residue_limit") or 30), 1), 5000)
+        molecule_page = molecules[molecule_offset : molecule_offset + molecule_limit]
+        for mol in molecule_page:
             chains = mol.get("chains", [])
             chain_results = []
-            for chain in chains[:5]:
+            chain_page = chains[chain_offset : chain_offset + chain_limit]
+            for chain in chain_page:
                 residues = chain.get("residues", [])
-                # Summarize residues - show first/last and count
                 residue_summary = []
-                for res in residues[:30]:
+                residue_page = residues[residue_offset : residue_offset + residue_limit]
+                for res in residue_page:
                     residue_summary.append(
                         {
                             "residue_number": res.get("residue_number"),
@@ -230,6 +263,16 @@ class PDBeLigandsTool(BaseTool):
                         "chain_id": chain.get("chain_id"),
                         "struct_asym_id": chain.get("struct_asym_id"),
                         "total_residues": len(residues),
+                        "residue_offset": residue_offset,
+                        "residues_returned": len(residue_page),
+                        "residues_truncated": (
+                            residue_offset + len(residue_page) < len(residues)
+                        ),
+                        "next_residue_offset": (
+                            residue_offset + len(residue_page)
+                            if residue_offset + len(residue_page) < len(residues)
+                            else None
+                        ),
                         "residues": residue_summary,
                     }
                 )
@@ -238,15 +281,33 @@ class PDBeLigandsTool(BaseTool):
                 {
                     "entity_id": mol.get("entity_id"),
                     "chains": chain_results,
+                    "total_chains": len(chains),
+                    "chain_offset": chain_offset,
+                    "chains_returned": len(chain_page),
+                    "chains_truncated": (chain_offset + len(chain_page) < len(chains)),
+                    "next_chain_offset": (
+                        chain_offset + len(chain_page)
+                        if chain_offset + len(chain_page) < len(chains)
+                        else None
+                    ),
                 }
             )
 
+        molecules_truncated = molecule_offset + len(molecule_page) < len(molecules)
         return {
             "status": "success",
             "data": {
                 "pdb_id": pdb_id,
                 "molecules": result_molecules,
                 "total_molecules": len(molecules),
+                "molecule_offset": molecule_offset,
+                "molecules_returned": len(molecule_page),
+                "molecules_truncated": molecules_truncated,
+                "next_molecule_offset": (
+                    molecule_offset + len(molecule_page)
+                    if molecules_truncated
+                    else None
+                ),
             },
             "metadata": {
                 "source": "PDBe REST API (ebi.ac.uk/pdbe)",

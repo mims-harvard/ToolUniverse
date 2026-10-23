@@ -1,7 +1,7 @@
 """
 EnsemblPheno_get_by_term
 
-Reverse phenotype lookup from the Ensembl REST API: given a trait/disease NAME (e.g. 'Alzheimer d...
+Reverse phenotype lookup from the Ensembl REST API: given a trait/disease name or ontology access...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,15 @@ def EnsemblPheno_get_by_term(
     species: Optional[str] = "homo_sapiens",
     term: Optional[str] = None,
     accession: Optional[str] = None,
+    limit: Optional[int] = 500,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Reverse phenotype lookup from the Ensembl REST API: given a trait/disease NAME (e.g. 'Alzheimer d...
+    Reverse phenotype lookup from the Ensembl REST API: given a trait/disease name or ontology access...
 
     Parameters
     ----------
@@ -28,6 +30,10 @@ def EnsemblPheno_get_by_term(
         Trait or disease name. Examples: 'Alzheimer disease', 'Coronary artery diseas...
     accession : str
         Ontology accession (EFO, HP, MONDO, Orphanet). Examples: 'EFO:0000249' (Alzhe...
+    limit : int
+        Maximum associations per page.
+    offset : int
+        Zero-based association offset. Continue with data.next_offset while has_more ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +50,13 @@ def EnsemblPheno_get_by_term(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"species": species, "term": term, "accession": accession}.items()
+        for k, v in {
+            "species": species,
+            "term": term,
+            "accession": accession,
+            "limit": limit,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

@@ -1,7 +1,7 @@
 """
 MGnify_get_taxonomy
 
-Get taxonomic composition from a MGnify metagenomics analysis. Returns organisms detected with th...
+Get a page of taxonomic composition from a MGnify analysis, including abundance, lineage, and ran...
 """
 
 from typing import Any, Optional, Callable
@@ -11,6 +11,7 @@ from ._shared_client import get_shared_client
 def MGnify_get_taxonomy(
     analysis_id: str,
     rna_type: Optional[str] = "ssu",
+    page: Optional[int] = 1,
     page_size: Optional[int] = 25,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -18,7 +19,7 @@ def MGnify_get_taxonomy(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Get taxonomic composition from a MGnify metagenomics analysis. Returns organisms detected with th...
+    Get a page of taxonomic composition from a MGnify analysis, including abundance, lineage, and ran...
 
     Parameters
     ----------
@@ -26,6 +27,8 @@ def MGnify_get_taxonomy(
         MGnify analysis accession (e.g., 'MGYA00585482'). Find IDs via MGnify_list_an...
     rna_type : str
         rRNA marker type: 'ssu' for 16S/18S (default) or 'lsu' for 23S/28S.
+    page : int
+        One-based result page. Continue with metadata.next_page.
     page_size : int
         Number of taxa to return per page (default 25, max 100).
     stream_callback : Callable, optional
@@ -47,6 +50,7 @@ def MGnify_get_taxonomy(
         for k, v in {
             "analysis_id": analysis_id,
             "rna_type": rna_type,
+            "page": page,
             "page_size": page_size,
         }.items()
         if v is not None

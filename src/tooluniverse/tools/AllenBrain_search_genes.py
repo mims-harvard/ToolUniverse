@@ -1,7 +1,7 @@
 """
 AllenBrain_search_genes
 
-Search for genes in the Allen Brain Atlas by gene symbol (acronym) or name. Returns gene metadata...
+Search Allen Brain Atlas genes by symbol or name with exact RMA row pagination. Metadata reports ...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,14 @@ def AllenBrain_search_genes(
     gene_acronym: Optional[str] = None,
     gene_name: Optional[str] = None,
     num_rows: Optional[int] = 50,
+    start_row: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> list[Any]:
     """
-    Search for genes in the Allen Brain Atlas by gene symbol (acronym) or name. Returns gene metadata...
+    Search Allen Brain Atlas genes by symbol or name with exact RMA row pagination. Metadata reports ...
 
     Parameters
     ----------
@@ -27,7 +28,9 @@ def AllenBrain_search_genes(
     gene_name : str
         Gene name for partial match search (alternative to gene_acronym). Example: 'g...
     num_rows : int
-        Max results to return. Default: 50.
+        Results per page (1-2000).
+    start_row : int
+        Zero-based RMA row offset. Continue with metadata.next_start_row.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +51,7 @@ def AllenBrain_search_genes(
             "gene_acronym": gene_acronym,
             "gene_name": gene_name,
             "num_rows": num_rows,
+            "start_row": start_row,
         }.items()
         if v is not None
     }

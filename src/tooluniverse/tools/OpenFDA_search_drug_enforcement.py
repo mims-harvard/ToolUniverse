@@ -1,7 +1,7 @@
 """
 OpenFDA_search_drug_enforcement
 
-Search the FDA drug enforcement (recall) database via openFDA. Contains drug recalls, withdrawals...
+Search FDA drug recalls via openFDA. Record mode exposes exact totals and skip pagination; contin...
 """
 
 from typing import Any, Optional, Callable
@@ -10,7 +10,8 @@ from ._shared_client import get_shared_client
 
 def OpenFDA_search_drug_enforcement(
     search: Optional[str] = None,
-    limit: Optional[int] = None,
+    limit: Optional[int] = 5,
+    skip: Optional[int] = None,
     count: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -18,14 +19,16 @@ def OpenFDA_search_drug_enforcement(
     validate: bool = True,
 ) -> Any:
     """
-    Search the FDA drug enforcement (recall) database via openFDA. Contains drug recalls, withdrawals...
+    Search FDA drug recalls via openFDA. Record mode exposes exact totals and skip pagination; contin...
 
     Parameters
     ----------
     search : str
         Lucene query for drug recalls (e.g., 'classification:"Class I"', 'status:Ongo...
     limit : int
-        Maximum number of results (default 5, max 100)
+        Record mode: max 100. Count mode: max 1000 terms.
+    skip : int
+        Record mode only. Number of recalls to skip; continue with metadata.next_skip...
     count : str
         Field to count by for frequency analysis. Must use the '.exact' keyword sub-f...
     stream_callback : Callable, optional
@@ -44,7 +47,12 @@ def OpenFDA_search_drug_enforcement(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"search": search, "limit": limit, "count": count}.items()
+        for k, v in {
+            "search": search,
+            "limit": limit,
+            "skip": skip,
+            "count": count,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

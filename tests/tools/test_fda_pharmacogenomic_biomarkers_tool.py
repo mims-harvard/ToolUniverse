@@ -79,6 +79,16 @@ def test_run_with_mock_data(mock_get, fda_tool):
     # Test no filter
     result_all = fda_tool.run({})
     assert result_all["count"] == 3
+
+    # Complete results remain accessible beyond the first page.
+    first = fda_tool.run({"limit": 2, "offset": 0})
+    tail = fda_tool.run({"limit": 2, "offset": 2})
+    assert [row["Drug"] for row in first["results"]] == ["Abacavir", "Warfarin"]
+    assert first["has_more"] is True
+    assert first["next_offset"] == 2
+    assert [row["Drug"] for row in tail["results"]] == ["Codeine"]
+    assert tail["has_more"] is False
+    assert tail["next_offset"] is None
     
     # Verify User-Agent header was called
     args, kwargs = mock_get.call_args

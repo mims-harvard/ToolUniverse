@@ -14,6 +14,8 @@ Authentication: Token-based via ADDGENE_API_KEY environment variable.
 Register at https://developers.addgene.org/ to obtain a free token.
 """
 
+import math
+
 import requests
 from typing import Dict, Any, Optional, List
 from .base_tool import BaseTool
@@ -55,6 +57,21 @@ class AddgeneTool(BaseTool):
         if self.api_key:
             headers["Authorization"] = "Token " + self.api_key
         return headers
+
+    @staticmethod
+    def _pagination(arguments: Dict[str, Any], default_limit: int) -> Any:
+        """Validate DRF page pagination even when called outside schema validation."""
+        limit = arguments.get("limit", default_limit)
+        page = arguments.get("page", 1)
+        if isinstance(limit, bool) or not isinstance(limit, int):
+            return {"status": "error", "error": "limit must be an integer"}
+        if not 1 <= limit <= 100:
+            return {"status": "error", "error": "limit must be between 1 and 100"}
+        if isinstance(page, bool) or not isinstance(page, int):
+            return {"status": "error", "error": "page must be an integer"}
+        if page < 1:
+            return {"status": "error", "error": "page must be at least 1"}
+        return limit, page
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         operation = arguments.get("operation")
@@ -104,9 +121,12 @@ class AddgeneTool(BaseTool):
         query = arguments.get("query")
         organism = arguments.get("organism")
         vector_type = arguments.get("vector_type")
-        limit = min(int(arguments.get("limit", 10)), 100)
+        pagination = self._pagination(arguments, 10)
+        if isinstance(pagination, dict):
+            return pagination
+        limit, page = pagination
 
-        params = {"page_size": limit}
+        params = {"page_size": limit, "page": page}
 
         if query:
             params["name"] = query
@@ -132,18 +152,37 @@ class AddgeneTool(BaseTool):
         data = response.json()
 
         results = data.get("results", [])
+        total_count = data.get("count", len(results))
+        total_pages = math.ceil(total_count / limit) if total_count else 0
+        next_url = data.get("next")
+        has_more = bool(next_url)
+        stalled = bool(not next_url and page < total_pages)
         return {
             "status": "success",
             "data": {
                 "plasmids": results,
-                "total_count": data.get("count", len(results)),
-                "next_page": data.get("next"),
+                "total_count": total_count,
+                "next_page": next_url,
             },
             "metadata": {
                 "source": "Addgene",
                 "query": query,
                 "organism": organism,
                 "vector_type": vector_type,
+                "page": page,
+                "page_size": limit,
+                "returned": len(results),
+                "total_pages": total_pages,
+                "has_more": has_more,
+                "next_page_number": page + 1 if has_more else None,
+                "truncated": page > 1 or has_more,
+                "result_set_complete": page == 1 and len(results) == total_count,
+                "pagination_stalled": stalled,
+                "warning": (
+                    "Addgene reports additional matches but did not provide a next-page URL."
+                    if stalled
+                    else None
+                ),
             },
         }
 
@@ -211,13 +250,22 @@ class AddgeneTool(BaseTool):
                 "error": "At least one of 'name' or 'institution' is required.",
             }
 
-        params = {"page_size": 50}
+        if institution:
+            return {
+                "status": "error",
+                "error": (
+                    "Addgene's Developers API does not expose an institution filter; "
+                    "institution cannot be searched reliably. Search by depositor name instead."
+                ),
+            }
+
+        pagination = self._pagination(arguments, 50)
+        if isinstance(pagination, dict):
+            return pagination
+        limit, page = pagination
+        params = {"page_size": limit, "page": page}
         if name:
             params["pis"] = name
-        if institution:
-            # Institution is not a direct filter in the API;
-            # we search by article_authors which may contain institution info
-            params["article_authors"] = institution
 
         response = requests.get(
             ADDGENE_API_URL + "/catalog/plasmid/",
@@ -247,6 +295,7 @@ class AddgeneTool(BaseTool):
                     depositors[dep_str] = {
                         "name": dep_str,
                         "plasmid_count": 0,
+                        "plasmid_count_scope": "current_page",
                         "example_plasmids": [],
                     }
                 depositors[dep_str]["plasmid_count"] += 1
@@ -258,17 +307,41 @@ class AddgeneTool(BaseTool):
         depositor_list = sorted(
             depositors.values(), key=lambda x: x["plasmid_count"], reverse=True
         )
+        total_matching = data.get("count", len(results))
+        total_pages = math.ceil(total_matching / limit) if total_matching else 0
+        has_more = bool(data.get("next"))
+        stalled = bool(not has_more and page < total_pages)
 
         return {
             "status": "success",
             "data": {
                 "depositors": depositor_list,
                 "total_depositors": len(depositor_list),
-                "total_plasmids_searched": data.get("count", len(results)),
+                "total_plasmids_searched": len(results),
+                "total_matching_plasmids": total_matching,
             },
             "metadata": {
                 "source": "Addgene",
                 "name_query": name,
                 "institution_query": institution,
+                "page": page,
+                "page_size": limit,
+                "returned_plasmids": len(results),
+                "total_pages": total_pages,
+                "has_more": has_more,
+                "next_page": page + 1 if has_more else None,
+                "truncated": page > 1 or has_more,
+                "derived_depositor_counts_scope": "current_page",
+                "result_set_complete": page == 1 and len(results) == total_matching,
+                "pagination_stalled": stalled,
+                "warning": (
+                    "Depositor counts are derived only from plasmids on this page; follow next_page to scan more matches."
+                    if has_more
+                    else (
+                        "Addgene reports additional matches but did not provide a next-page URL."
+                        if stalled
+                        else None
+                    )
+                ),
             },
         }

@@ -16,6 +16,78 @@ from .tool_registry import register_tool
 
 # Base URL for MyGene.info API v3
 MYGENE_BASE_URL = "https://mygene.info/v3"
+BIOTHINGS_MAX_PAGE_SIZE = 1000
+BIOTHINGS_MAX_RESULT_WINDOW = 10000
+
+
+def _validate_query_page(arguments: Dict[str, Any]) -> tuple[int, int, Optional[str]]:
+    """Validate the page supported by BioThings Elasticsearch-backed APIs."""
+
+    size = arguments.get("size", 10)
+    offset = arguments.get("offset", 0)
+    if size is None:
+        size = 10
+    if offset is None:
+        offset = 0
+    if (
+        isinstance(size, bool)
+        or not isinstance(size, int)
+        or not 1 <= size <= BIOTHINGS_MAX_PAGE_SIZE
+    ):
+        return 0, 0, "size must be an integer between 1 and 1000"
+    if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+        return 0, 0, "offset must be a non-negative integer"
+    if offset + size > BIOTHINGS_MAX_RESULT_WINDOW:
+        return (
+            0,
+            0,
+            "offset + size must not exceed the BioThings result window of 10000; "
+            "narrow the query to retrieve matches beyond that window",
+        )
+    return size, offset, None
+
+
+def _paged_query_result(
+    payload: Dict[str, Any], *, offset: int, limit: int, source: str
+) -> Dict[str, Any]:
+    """Wrap a BioThings query response with explicit reachable-page metadata."""
+
+    hits = payload.get("hits", []) if isinstance(payload, dict) else []
+    total = payload.get("total") if isinstance(payload, dict) else None
+    returned = len(hits)
+    accessible_results = (
+        min(total, BIOTHINGS_MAX_RESULT_WINDOW) if isinstance(total, int) else None
+    )
+    has_more = (
+        isinstance(accessible_results, int) and offset + returned < accessible_results
+    )
+    upstream_truncated = isinstance(total, int) and total > BIOTHINGS_MAX_RESULT_WINDOW
+    warning = None
+    if upstream_truncated:
+        warning = (
+            f"The query has {total} matches, but this BioThings endpoint exposes "
+            f"only the first {BIOTHINGS_MAX_RESULT_WINDOW} through offset pagination. "
+            "Narrow or partition the query to retrieve additional matches."
+        )
+    return {
+        "status": "success",
+        "data": payload,
+        "metadata": {
+            "source": source,
+            "total_results": total,
+            "accessible_results": accessible_results,
+            "returned": returned,
+            "offset": offset,
+            "limit": limit,
+            "has_more": has_more,
+            "truncated": has_more,
+            "next_offset": offset + returned if has_more else None,
+            "upstream_truncated": upstream_truncated,
+            "all_results_reachable": not upstream_truncated,
+            "warning": warning,
+        },
+    }
+
 
 # An rsID resolves in either assembly and to any number of records; an HGVS id
 # does neither. Several MyVariant behaviours below fork on this distinction.
@@ -61,24 +133,32 @@ class MyGeneTool(BaseTool):
         query = arguments.get("query", "")
         species = arguments.get("species", "human")
         fields = arguments.get("fields", "symbol,name,entrezgene,ensembl.gene")
-        size = arguments.get("size", 10)
+        sort = arguments.get("sort")
+        limit, offset, page_error = _validate_query_page(arguments)
 
         if not query:
             return {"status": "error", "error": "Query parameter is required"}
+        if page_error:
+            return {"status": "error", "error": page_error}
 
         params = {
             "q": query,
             "species": species,
             "fields": fields,
-            "size": min(size, 100),  # Cap at 100 to avoid overwhelming responses
+            "size": limit,
+            "from": offset,
         }
+        if sort:
+            params["sort"] = sort
 
         try:
             response = requests.get(
                 f"{MYGENE_BASE_URL}/query", params=params, timeout=self.timeout
             )
             response.raise_for_status()
-            return {"status": "success", "data": response.json()}
+            return _paged_query_result(
+                response.json(), offset=offset, limit=limit, source="MyGene.info"
+            )
         except requests.RequestException as e:
             return {
                 "status": "error",
@@ -250,16 +330,21 @@ class MyVariantTool(BaseTool):
         """
         query = arguments.get("query", "")
         fields = arguments.get("fields", "dbsnp,clinvar,cadd,gnomad_genome")
-        size = arguments.get("size", 10)
+        sort = arguments.get("sort")
+        limit, offset, page_error = _validate_query_page(arguments)
 
         if not query:
             return {"status": "error", "error": "Query parameter is required"}
+        if page_error:
+            return {"status": "error", "error": page_error}
 
         assembly, error = self._resolve_assembly(arguments)
         if error:
             return error
 
-        params = {"q": query, "fields": fields, "size": min(size, 100)}
+        params = {"q": query, "fields": fields, "size": limit, "from": offset}
+        if sort:
+            params["sort"] = sort
         params.update(self._assembly_params(assembly))
         label = self.ASSEMBLY_LABELS[assembly]
         try:
@@ -267,11 +352,13 @@ class MyVariantTool(BaseTool):
                 f"{self.MYVARIANT_BASE_URL}/query", params=params, timeout=self.timeout
             )
             response.raise_for_status()
-            return {
-                "status": "success",
-                "coordinate_assembly": label,
-                "data": response.json(),
-            }
+            result = _paged_query_result(
+                response.json(),
+                offset=offset,
+                limit=limit,
+                source="MyVariant.info",
+            )
+            return {"coordinate_assembly": label, **result}
         except requests.RequestException as e:
             return {
                 "status": "error",
@@ -492,19 +579,26 @@ class MyChemTool(BaseTool):
         """
         query = arguments.get("query", "")
         fields = arguments.get("fields", "drugbank,chebi,pubchem,chembl")
-        size = arguments.get("size", 10)
+        sort = arguments.get("sort")
+        limit, offset, page_error = _validate_query_page(arguments)
 
         if not query:
             return {"status": "error", "error": "Query parameter is required"}
+        if page_error:
+            return {"status": "error", "error": page_error}
 
-        params = {"q": query, "fields": fields, "size": min(size, 100)}
+        params = {"q": query, "fields": fields, "size": limit, "from": offset}
+        if sort:
+            params["sort"] = sort
 
         try:
             response = requests.get(
                 f"{self.MYCHEM_BASE_URL}/query", params=params, timeout=self.timeout
             )
             response.raise_for_status()
-            return {"status": "success", "data": response.json()}
+            return _paged_query_result(
+                response.json(), offset=offset, limit=limit, source="MyChem.info"
+            )
         except requests.RequestException as e:
             return {
                 "status": "error",

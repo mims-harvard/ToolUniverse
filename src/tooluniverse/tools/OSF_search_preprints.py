@@ -1,7 +1,7 @@
 """
 OSF_search_preprints
 
-Search OSF (Open Science Framework) Preprints for research preprints and working papers. OSF Prep...
+Search one field (title by default, or description) in OSF Preprints across OSF, PsyArXiv, SocArX...
 """
 
 from typing import Any, Optional, Callable
@@ -11,14 +11,16 @@ from ._shared_client import get_shared_client
 def OSF_search_preprints(
     query: str,
     max_results: Optional[int] = 10,
+    page: Optional[int] = 1,
+    search_field: Optional[str] = "title",
     provider: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> dict[str, Any]:
     """
-    Search OSF (Open Science Framework) Preprints for research preprints and working papers. OSF Prep...
+    Search one field (title by default, or description) in OSF Preprints across OSF, PsyArXiv, SocArX...
 
     Parameters
     ----------
@@ -26,6 +28,10 @@ def OSF_search_preprints(
         Search query for OSF preprints. Use keywords to search across titles and abst...
     max_results : int
         Maximum number of results to return. Default is 10, maximum is 100.
+    page : int
+        One-based result page. OSF uses the bare page parameter; continue with metada...
+    search_field : str
+        Field to search. OSF exposes separate title and description filters rather th...
     provider : str
         Optional preprint provider filter (e.g., 'osf', 'psyarxiv', 'socarxiv'). If n...
     stream_callback : Callable, optional
@@ -37,7 +43,7 @@ def OSF_search_preprints(
 
     Returns
     -------
-    list[Any]
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
@@ -47,6 +53,8 @@ def OSF_search_preprints(
         for k, v in {
             "query": query,
             "max_results": max_results,
+            "page": page,
+            "search_field": search_field,
             "provider": provider,
         }.items()
         if v is not None

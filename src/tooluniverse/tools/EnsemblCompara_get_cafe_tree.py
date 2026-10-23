@@ -1,7 +1,7 @@
 """
 EnsemblCompara_get_cafe_tree
 
-Retrieve the Ensembl Compara CAFE tree for a gene family: the gene gain/loss (expansion/contracti...
+Retrieve an Ensembl Compara CAFE gene-family gain/loss tree. Nodes are recoverably paginated with...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,15 @@ def EnsemblCompara_get_cafe_tree(
     gene_tree_id: Optional[str] = None,
     gene: Optional[str] = None,
     species: Optional[str] = None,
+    limit: Optional[int] = 200,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Retrieve the Ensembl Compara CAFE tree for a gene family: the gene gain/loss (expansion/contracti...
+    Retrieve an Ensembl Compara CAFE gene-family gain/loss tree. Nodes are recoverably paginated with...
 
     Parameters
     ----------
@@ -28,6 +30,10 @@ def EnsemblCompara_get_cafe_tree(
         Gene symbol (e.g. 'BRCA2') or Ensembl gene ID (e.g. 'ENSG00000139618'). The C...
     species : str
         Species for symbol lookup when 'gene' is a symbol (default: 'human'). Example...
+    limit : int
+        Maximum CAFE nodes per page (default 200).
+    offset : int
+        Zero-based node offset. Continue with data.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +54,8 @@ def EnsemblCompara_get_cafe_tree(
             "gene_tree_id": gene_tree_id,
             "gene": gene,
             "species": species,
+            "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

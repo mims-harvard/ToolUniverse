@@ -1,7 +1,7 @@
 """
 ProtVar_get_function
 
-Get functional annotations at a specific amino acid position from ProtVar. Returns annotated UniP...
+Get the functional, structural, interaction, and predictive annotations returned by ProtVar at a ...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def ProtVar_get_function(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get functional annotations at a specific amino acid position from ProtVar. Returns annotated UniP...
+    Get the functional, structural, interaction, and predictive annotations returned by ProtVar at a ...
 
     Parameters
     ----------
@@ -27,7 +27,7 @@ def ProtVar_get_function(
     position : int
         Amino acid position in the protein (1-based).
     variant_aa : str
-        Single-letter code for the variant amino acid (e.g. 'H' for histidine). Optio...
+        Single-letter code for the variant amino acid (e.g. 'H' for histidine). Suppl...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

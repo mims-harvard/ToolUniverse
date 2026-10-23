@@ -64,7 +64,7 @@
   {
     "type": "ProteinsAPIRESTTool",
     "name": "proteins_api_get_variants",
-    "description": "Get variation data for a protein including disease-associated variants, natural variants, and population data. Supports batch operations: pass a list of accessions or comma-separated string to retrieve multiple proteins in parallel. Returns variant information with positions, amino acid changes, disease associations, and evidence. Note: Not all proteins have annotated variants.",
+    "description": "Get variation data for a protein including disease-associated variants, natural variants, and population data. Variants are nested in one EBI protein record, so this tool applies size/offset to each record's features array locally and reports total_features, features_returned, has_more_features, and next_feature_offset. Supports batch accessions with the same per-protein page. Continue until has_more_features is false. Note: not all proteins have annotated variants.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -77,19 +77,21 @@
         },
         "size": {
           "type": "integer",
-          "description": "Maximum number of variants to return per protein (default: 100)",
+          "description": "Maximum nested variant features to return per protein in this page (default: 100).",
+          "minimum": 1,
+          "maximum": 1000,
           "default": 100
         },
         "offset": {
           "type": "integer",
-          "description": "Offset for pagination (default: 0)",
+          "description": "Zero-based offset within each protein's nested features array. Continue with next_feature_offset.",
+          "minimum": 0,
           "default": 0
         },
         "format": {
           "type": "string",
           "enum": [
-            "json",
-            "xml"
+            "json"
           ],
           "default": "json",
           "description": "Response format. JSON is recommended for most use cases."
@@ -104,8 +106,70 @@
       "return_format": "JSON"
     },
     "return_schema": {
-      "type": "array",
-      "description": "List of protein variations with positions, amino acid changes, disease associations, and evidence. Each variant includes fields like 'ftId', 'wildType', 'alternativeSequence', 'begin', 'end', 'somaticStatus', 'association', etc."
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "error"
+          ]
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "features": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "total_features": {
+                "type": "integer"
+              },
+              "features_returned": {
+                "type": "integer"
+              },
+              "feature_offset": {
+                "type": "integer"
+              },
+              "feature_page_size": {
+                "type": "integer"
+              },
+              "features_truncated": {
+                "type": "boolean"
+              },
+              "has_more_features": {
+                "type": "boolean"
+              },
+              "next_feature_offset": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "result_set_complete": {
+                "type": "boolean"
+              }
+            },
+            "additionalProperties": true
+          }
+        },
+        "url": {
+          "type": "string"
+        },
+        "count": {
+          "type": "integer"
+        },
+        "error": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "status"
+      ]
     },
     "test_examples": [
       {

@@ -1,7 +1,7 @@
 """
 HPA_search_genes_by_query
 
-Search for matching genes by gene name, keywords, or cell line names and return Ensembl ID list. ...
+Search HPA genes by gene name, keyword, synonym, or cell-line text. HPA's search can be very broa...
 """
 
 from typing import Any, Optional, Callable
@@ -11,13 +11,14 @@ from ._shared_client import get_shared_client
 def HPA_search_genes_by_query(
     search_query: str,
     max_results: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search for matching genes by gene name, keywords, or cell line names and return Ensembl ID list. ...
+    Search HPA genes by gene name, keyword, synonym, or cell-line text. HPA's search can be very broa...
 
     Parameters
     ----------
@@ -25,6 +26,8 @@ def HPA_search_genes_by_query(
         Gene name, alias, keyword, or cell line name to search for, e.g., 'EGFR', 'TP...
     max_results : int
         Maximum number of gene matches to return (default: 50). This search does a br...
+    offset : int
+        Zero-based offset in the complete ranked HPA response. Continue with next_off...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +44,11 @@ def HPA_search_genes_by_query(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"search_query": search_query, "max_results": max_results}.items()
+        for k, v in {
+            "search_query": search_query,
+            "max_results": max_results,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

@@ -1,7 +1,7 @@
 [
   {
     "name": "OpenFoodFacts_search_products",
-    "description": "Search for food products in the Open Food Facts database by name or brand. Returns product details including nutrition grades (Nutri-Score A-E), ingredients, nutrients (calories, fat, sugar, salt, protein), and food categories. Over 3 million products from worldwide. No authentication required.",
+    "description": "Search Open Food Facts products by name or brand. Returns one page of product and nutrition data plus total/continuation metadata. Follow metadata.next_page while metadata.has_more is true. The upstream field page_count means records on the current page, not total pages; use metadata.total_pages instead.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -10,18 +10,16 @@
           "description": "Food product name or brand to search for. Examples: 'nutella', 'coca cola', 'oreo', 'kelloggs cornflakes', 'olive oil'"
         },
         "page_size": {
-          "type": [
-            "integer",
-            "null"
-          ],
+          "type": "integer",
           "description": "Number of results per page (1-100). Defaults to 50, which is what an unparameterised call has always returned from this endpoint -- pass a smaller number for a lighter response.",
-          "default": 50
+          "default": 50,
+          "minimum": 1,
+          "maximum": 100
         },
         "page": {
-          "type": [
-            "integer",
-            "null"
-          ],
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
           "description": "Page number for pagination. Default: 1"
         }
       },
@@ -35,11 +33,12 @@
         "search_simple": "1",
         "action": "process",
         "json": "1",
-        "fields": "product_name,brands,nutrition_grades,nutriments,categories,ingredients_text,image_url,countries_tags"
+        "fields": "code,product_name,brands,nutrition_grades,nutriments,categories,ingredients_text,image_url,countries_tags"
       },
       "headers": {
         "User-Agent": "ToolUniverse/1.0 (research; https://github.com/mims-harvard/ToolUniverse)"
-      }
+      },
+      "pagination": "openfoodfacts_page"
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -94,6 +93,10 @@
               "items": {
                 "type": "object",
                 "properties": {
+                  "code": {
+                    "type": "string",
+                    "description": "Product barcode; pass this to OpenFoodFacts_get_product for the full record."
+                  },
                   "brands": {
                     "type": "string"
                   },
@@ -19406,7 +19409,7 @@
   },
   {
     "name": "OpenFoodFacts_filter_products_by_tags",
-    "description": "Structured / faceted product search of the Open Food Facts database via the v2 search API. Filter products by controlled-vocabulary tag fields rather than free text: additives_tags (e.g. 'en:e322' = lecithin), allergens_tags (e.g. 'en:peanuts'), categories_tags_en (e.g. 'Sodas'), brands_tags, nutrition_grades_tags (Nutri-Score a-e), labels_tags (e.g. 'en:organic'), and countries_tags (e.g. 'en:france'). This answers queries the legacy name/brand search cannot, such as 'all products containing additive E322', 'all peanut-allergen products', or 'category Sodas with Nutri-Score a'. Multiple tag filters combine with AND. Use the 'fields' parameter to control which product fields are returned. No API key required.",
+    "description": "Structured Open Food Facts v2 tag search. Multiple controlled-vocabulary filters combine with AND. Returns one page plus total/continuation metadata; follow metadata.next_page while metadata.has_more is true. Upstream page_count is only the number returned on the current page, not the total page count.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -19467,17 +19470,16 @@
           "description": "Comma-separated list of product fields to return. Default: product_name,code,brands,categories_tags_en,nutrition_grades,additives_tags,allergens_tags,labels_tags,nutriments"
         },
         "page_size": {
-          "type": [
-            "integer",
-            "null"
-          ],
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 20,
           "description": "Number of results per page (1-100). Default: 20"
         },
         "page": {
-          "type": [
-            "integer",
-            "null"
-          ],
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
           "description": "Page number for pagination. Default: 1"
         }
       },
@@ -19491,7 +19493,8 @@
       },
       "headers": {
         "User-Agent": "ToolUniverse/1.0 (research; https://github.com/mims-harvard/ToolUniverse)"
-      }
+      },
+      "pagination": "openfoodfacts_page"
     },
     "type": "BaseRESTTool",
     "test_examples": [

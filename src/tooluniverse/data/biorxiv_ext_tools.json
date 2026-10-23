@@ -1,17 +1,17 @@
 [
   {
     "name": "BioRxiv_list_recent_preprints",
-    "description": "List recent bioRxiv or medRxiv preprints by date range. Returns up to 100 preprints posted between the given start and end dates, with title, authors, abstract, DOI, category, and publication status. The bioRxiv API returns results in batches of up to 100; use the cursor parameter for pagination (0 for first page, 100 for second, etc.). Use this to monitor new preprints in a date range or discover recent work in a field. For searching by DOI, use BioRxiv_get_preprint instead. For searching by keywords, use EuropePMC_search_articles with 'SRC:PPR' filter.",
+    "description": "List bioRxiv or medRxiv preprints by date range. The live API currently returns 30 records per batch; cursor is a zero-based record offset, not a page number. Always continue with metadata.next_cursor while metadata.has_more is true rather than adding a fixed 100. Metadata distinguishes total records (including revisions) from unique_new_papers. For keyword search, use EuropePMC_search_articles with 'SRC:PPR'.",
     "parameter": {
       "type": "object",
       "properties": {
         "start_date": {
           "type": "string",
-          "description": "Start date in YYYY-MM-DD format (e.g., '2024-01-01'). Date range must not exceed 60 days."
+          "description": "Inclusive start date in YYYY-MM-DD format (e.g., '2024-01-01')."
         },
         "end_date": {
           "type": "string",
-          "description": "End date in YYYY-MM-DD format (e.g., '2024-01-03'). Date range must not exceed 60 days."
+          "description": "Inclusive end date in YYYY-MM-DD format (e.g., '2024-01-03'); must not precede start_date."
         },
         "server": {
           "type": "string",
@@ -24,7 +24,8 @@
         },
         "cursor": {
           "type": "integer",
-          "description": "Pagination cursor (0 for first 100 results, 100 for next 100, etc.)",
+          "minimum": 0,
+          "description": "Zero-based record offset. Start at 0, then use metadata.next_cursor; do not assume a fixed batch size.",
           "default": 0
         }
       },
@@ -34,7 +35,8 @@
       ]
     },
     "fields": {
-      "endpoint": "https://api.biorxiv.org/details/{server}/{start_date}/{end_date}/{cursor}"
+      "endpoint": "https://api.biorxiv.org/details/{server}/{start_date}/{end_date}/{cursor}",
+      "pagination": "biorxiv_cursor"
     },
     "type": "BaseRESTTool",
     "test_examples": [
@@ -76,7 +78,7 @@
                   },
                   "count": {
                     "type": "integer",
-                    "description": "Number of results in this batch (max 100)"
+                    "description": "Number of results in this batch (currently 30 in the live API)"
                   },
                   "count_new_papers": {
                     "type": "string",

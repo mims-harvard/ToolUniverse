@@ -15,6 +15,7 @@ def UniProt_search(
     min_length: Optional[int] = None,
     max_length: Optional[int] = None,
     fields: Optional[list[str]] = None,
+    cursor: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -37,6 +38,8 @@ def UniProt_search(
         Maximum sequence length. Auto-converts to an open-ended length range query (u...
     fields : list[str]
         List of field names to return (e.g., ['accession','gene_primary','length','or...
+    cursor : str
+        Opaque cursor from data.next_cursor. Omit for the first page; cursors must no...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -60,6 +63,7 @@ def UniProt_search(
             "min_length": min_length,
             "max_length": max_length,
             "fields": fields,
+            "cursor": cursor,
         }.items()
         if v is not None
     }

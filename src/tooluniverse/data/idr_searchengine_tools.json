@@ -49,7 +49,14 @@
             "integer",
             "null"
           ],
-          "description": "Optional client-side cap on the number of image rows returned (the API returns up to 1000)."
+          "description": "Maximum number of image rows to return. Defaults to 1000. Requests can span multiple IDR server pages."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Zero-based offset in the complete matching image set. Use next_offset to continue. Default 0."
         }
       },
       "required": [
@@ -93,6 +100,30 @@
             },
             "image_count": {
               "type": "integer"
+            },
+            "total_image_count": {
+              "type": "integer"
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "returned": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "result_set_complete": {
+              "type": "boolean"
             },
             "images": {
               "type": "array",
@@ -204,6 +235,20 @@
             "null"
           ],
           "description": "Resource type to search. Default 'image'."
+        },
+        "max_results": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum number of matching study containers to return. Defaults to 1000."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Zero-based offset in the complete matching container set. Use next_offset to continue. Default 0."
         }
       },
       "required": [
@@ -245,6 +290,30 @@
             },
             "container_count": {
               "type": "integer"
+            },
+            "total_container_count": {
+              "type": "integer"
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "returned": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "result_set_complete": {
+              "type": "boolean"
             },
             "containers": {
               "type": "array",
@@ -394,7 +463,14 @@
             "integer",
             "null"
           ],
-          "description": "Optional client-side cap on the number of values returned."
+          "description": "Maximum number of distinct values to return. If omitted, all values are returned."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Zero-based offset in the complete distinct-value list. Use next_offset to continue. Default 0."
         }
       },
       "required": [
@@ -425,6 +501,33 @@
             },
             "value_count": {
               "type": "integer"
+            },
+            "total_value_count": {
+              "type": "integer"
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "returned": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "result_set_complete": {
+              "type": "boolean"
             },
             "values": {
               "type": "array",

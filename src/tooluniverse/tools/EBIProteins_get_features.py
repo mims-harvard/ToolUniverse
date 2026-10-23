@@ -1,7 +1,7 @@
 """
 EBIProteins_get_features
 
-Get protein features filtered by category from the EBI Proteins API. Categories include DOMAINS_A...
+Get protein features by category from the EBI Proteins API with limit/offset pagination and expli...
 """
 
 from typing import Any, Optional, Callable
@@ -11,13 +11,15 @@ from ._shared_client import get_shared_client
 def EBIProteins_get_features(
     accession: str,
     category: Optional[str] = None,
+    limit: Optional[int] = 100,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get protein features filtered by category from the EBI Proteins API. Categories include DOMAINS_A...
+    Get protein features by category from the EBI Proteins API with limit/offset pagination and expli...
 
     Parameters
     ----------
@@ -25,6 +27,10 @@ def EBIProteins_get_features(
         UniProt accession. Examples: 'P04637' (TP53), 'P00533' (EGFR), 'P01308' (Insu...
     category : str
         Feature category. Options: 'DOMAINS_AND_SITES', 'MOLECULE_PROCESSING', 'PTM',...
+    limit : int
+        Maximum number of category features to return in this page.
+    offset : int
+        Zero-based feature offset. Use data.next_offset for the next page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +47,12 @@ def EBIProteins_get_features(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"accession": accession, "category": category}.items()
+        for k, v in {
+            "accession": accession,
+            "category": category,
+            "limit": limit,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

@@ -15,6 +15,7 @@ import requests
 from typing import Dict, Any
 from .base_tool import BaseTool
 from .tool_registry import register_tool
+from .uniprot_pagination import pagination_metadata
 
 UNIPROT_LOCATIONS_URL = "https://rest.uniprot.org/locations"
 
@@ -172,6 +173,8 @@ class UniProtLocationsTool(BaseTool):
             "query": query,
             "size": size,
         }
+        if arguments.get("cursor"):
+            params["cursor"] = arguments["cursor"]
 
         response = requests.get(
             url,
@@ -191,6 +194,6 @@ class UniProtLocationsTool(BaseTool):
             "metadata": {
                 "source": "UniProt Subcellular Locations",
                 "query": query,
-                "returned": len(results),
+                **pagination_metadata(response, len(results)),
             },
         }

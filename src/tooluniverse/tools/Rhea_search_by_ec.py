@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def Rhea_search_by_ec(
     ec_number: str,
-    limit: Optional[int] = None,
-    offset: Optional[int] = None,
+    limit: Optional[int] = 20,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,

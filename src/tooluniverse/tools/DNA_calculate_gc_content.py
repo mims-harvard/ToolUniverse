@@ -1,7 +1,7 @@
 """
 DNA_calculate_gc_content
 
-Calculate GC content percentage and full nucleotide composition of a DNA sequence. Returns GC%, A...
+Calculate GC content percentage and full nucleotide composition of a DNA sequence. N bases are ex...
 """
 
 from typing import Any, Optional, Callable
@@ -17,7 +17,7 @@ def DNA_calculate_gc_content(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Calculate GC content percentage and full nucleotide composition of a DNA sequence. Returns GC%, A...
+    Calculate GC content percentage and full nucleotide composition of a DNA sequence. N bases are ex...
 
     Parameters
     ----------

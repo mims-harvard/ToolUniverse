@@ -90,18 +90,42 @@ class SASBDBTextSearchTool(BaseTool):
             # ~5432 entries unbounded (~350KB) with no way to cap it --
             # confirmed live. Apply the same client-side cap pattern used
             # elsewhere in the project (e.g. HPA_search_genes_by_query).
-            max_results = arguments.get("max_results") or 50
+            try:
+                max_results = max(1, int(arguments.get("max_results") or 50))
+                offset = max(0, int(arguments.get("offset", 0)))
+            except (TypeError, ValueError):
+                return {
+                    "status": "error",
+                    "error": "Parameters 'max_results' and 'offset' must be integers.",
+                }
             total = len(entries)
-            truncated_entries = entries[:max_results]
+            truncated_entries = entries[offset : offset + max_results]
+            has_more = offset + len(truncated_entries) < total
+            next_offset = offset + len(truncated_entries) if has_more else None
             return {
                 "status": "success",
                 "data": truncated_entries,
                 "total_entries": total,
-                "truncated": total > len(truncated_entries),
+                "returned": len(truncated_entries),
+                "offset": offset,
+                "max_results": max_results,
+                "has_more": has_more,
+                "truncated": has_more,
+                "next_offset": next_offset,
+                "metadata": {
+                    "total_entries": total,
+                    "returned": len(truncated_entries),
+                    "offset": offset,
+                    "max_results": max_results,
+                    "has_more": has_more,
+                    "truncated": has_more,
+                    "next_offset": next_offset,
+                },
                 "note": (
                     f"SASBDB does not support free-text search. "
                     f"Returned {len(truncated_entries)} of {total} published entries "
-                    f"(pass max_results to change the cap). "
+                    f"starting at offset {offset}. Continue with next_offset while "
+                    f"has_more is true (pass max_results to change the page size). "
                     f"To search by protein, provide a UniProt accession (e.g., 'P02769' for BSA). "
                     f"Use SASBDB_get_entry with a specific code (e.g., 'SASDCZ9') for details."
                 ),

@@ -56,11 +56,12 @@ class TestSearchGroupsEnrichment:
         for g in groups:
             assert "name" in g
             assert "level_taxid" in g
+            assert g["enrichment_status"] == "complete"
         assert groups[0]["name"] == "Lysozyme"
         assert groups[1]["name"] == "lysozyme g-like"
         assert groups[2]["name"] == "lysozyme G-like"
 
-    def test_per_group_tab_failure_leaves_that_group_bare_not_fatal(self):
+    def test_per_group_tab_failure_is_disclosed_without_dropping_other_groups(self):
         tool = _tool()
         search_resp = _json_resp({"data": ["1at2759", "2at33208"]})
         with patch(
@@ -73,4 +74,40 @@ class TestSearchGroupsEnrichment:
         groups = result["data"]["groups"]
         assert len(groups) == 2
         assert "name" not in groups[0]
+        assert groups[0]["enrichment_status"] == "unavailable"
+        assert "network error" in groups[0]["enrichment_error"]
         assert groups[1]["name"] == "ok"
+        assert groups[1]["enrichment_status"] == "complete"
+        summary = result["metadata"]["group_enrichment"]
+        assert summary == {
+            "attempted": 2,
+            "complete": 1,
+            "failed": 1,
+            "all_complete": False,
+            "failures": [
+                {
+                    "group_id": "1at2759",
+                    "error": "OrthoDB /tab request failed: network error",
+                }
+            ],
+        }
+
+    def test_non_200_or_malformed_enrichment_is_never_silent(self):
+        tool = _tool()
+        search_resp = _json_resp({"data": ["1at2759", "2at33208"], "count": "2"})
+        unavailable = MagicMock(status_code=503, text="maintenance")
+        malformed = MagicMock(status_code=200, text="pub_og_id\tog_name\tlevel_taxid\n")
+        with patch(
+            "tooluniverse.orthodb_tool.requests.get",
+            side_effect=[search_resp, unavailable, malformed],
+        ):
+            result = tool.run({"query": "lysozyme", "limit": 2})
+
+        assert result["status"] == "success"
+        assert [g["enrichment_status"] for g in result["data"]["groups"]] == [
+            "unavailable",
+            "unavailable",
+        ]
+        assert result["metadata"]["group_enrichment"]["failed"] == 2
+        assert "HTTP 503" in result["metadata"]["group_enrichment"]["failures"][0]["error"]
+        assert "no member row" in result["metadata"]["group_enrichment"]["failures"][1]["error"]

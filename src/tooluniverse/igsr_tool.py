@@ -21,6 +21,28 @@ from .tool_registry import register_tool
 IGSR_BASE_URL = "https://www.internationalgenome.org/api/beta"
 
 
+def _pagination_arguments(
+    arguments: Dict[str, Any], *, default_limit: int
+) -> tuple[int | None, int | None, str | None]:
+    """Validate IGSR's real 500-record page boundary without clamping."""
+    raw_limit = arguments.get("limit", default_limit)
+    raw_offset = arguments.get("offset", 0)
+    try:
+        if isinstance(raw_limit, bool) or isinstance(raw_offset, bool):
+            raise ValueError
+        limit = int(raw_limit)
+        offset = int(raw_offset)
+        if isinstance(raw_limit, float) and not raw_limit.is_integer():
+            raise ValueError
+        if isinstance(raw_offset, float) and not raw_offset.is_integer():
+            raise ValueError
+        if not 1 <= limit <= 500 or offset < 0:
+            raise ValueError
+    except (TypeError, ValueError):
+        return None, None, "limit must be 1-500 and offset must be non-negative"
+    return limit, offset, None
+
+
 @register_tool("IGSRTool")
 class IGSRTool(BaseTool):
     """
@@ -102,12 +124,19 @@ class IGSRTool(BaseTool):
         """Search 1000 Genomes populations by superpopulation or name."""
         superpopulation = arguments.get("superpopulation")
         query_text = arguments.get("query")
-        limit = min(int(arguments.get("limit", 25)), 100)
+        limit, offset, pagination_error = _pagination_arguments(
+            arguments, default_limit=25
+        )
+        if pagination_error:
+            return {"status": "error", "error": pagination_error}
+        assert limit is not None and offset is not None
 
         # Fetch all populations (212 total) when superpopulation filter is needed,
         # since the superpopulation.code field is not keyword-indexed in Elasticsearch.
-        fetch_limit = 300 if superpopulation else limit
+        fetch_limit = 500 if superpopulation else limit
         body: Dict[str, Any] = {"size": fetch_limit}
+        if not superpopulation:
+            body["from"] = offset
 
         filters = []
         if query_text:
@@ -155,13 +184,19 @@ class IGSRTool(BaseTool):
         # superpopulation filter is applied client-side the Elasticsearch hit count
         # ignores it, so the post-filter length is the authoritative total there.
         total = len(populations) if superpopulation else self._total_hits(raw)
-        populations = populations[:limit]
+        if superpopulation:
+            populations = populations[offset : offset + limit]
+        next_offset = offset + len(populations)
+        has_more = next_offset < total
 
         return {
             "status": "success",
             "data": {
                 "total": total,
                 "returned": len(populations),
+                "offset": offset,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
                 "populations": populations,
             },
             "metadata": {
@@ -176,9 +211,14 @@ class IGSRTool(BaseTool):
         population = arguments.get("population")
         data_collection = arguments.get("data_collection")
         sample_name = arguments.get("sample_name")
-        limit = min(int(arguments.get("limit", 25)), 100)
+        limit, offset, pagination_error = _pagination_arguments(
+            arguments, default_limit=25
+        )
+        if pagination_error:
+            return {"status": "error", "error": pagination_error}
+        assert limit is not None and offset is not None
 
-        body: Dict[str, Any] = {"size": limit}
+        body: Dict[str, Any] = {"size": limit, "from": offset}
 
         filters = []
         if population:
@@ -216,11 +256,17 @@ class IGSRTool(BaseTool):
                 }
             )
 
+        total = self._total_hits(raw)
+        next_offset = offset + len(samples)
+        has_more = next_offset < total
         return {
             "status": "success",
             "data": {
-                "total": self._total_hits(raw),
+                "total": total,
                 "returned": len(samples),
+                "offset": offset,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
                 "samples": samples,
             },
             "metadata": {
@@ -232,9 +278,14 @@ class IGSRTool(BaseTool):
 
     def _list_data_collections(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """List available 1000 Genomes data collections and studies."""
-        limit = min(int(arguments.get("limit", 50)), 100)
+        limit, offset, pagination_error = _pagination_arguments(
+            arguments, default_limit=50
+        )
+        if pagination_error:
+            return {"status": "error", "error": pagination_error}
+        assert limit is not None and offset is not None
 
-        body: Dict[str, Any] = {"size": limit}
+        body: Dict[str, Any] = {"size": limit, "from": offset}
         raw = self._es_search("data-collection", body)
 
         collections = []
@@ -252,11 +303,17 @@ class IGSRTool(BaseTool):
                 }
             )
 
+        total = self._total_hits(raw)
+        next_offset = offset + len(collections)
+        has_more = next_offset < total
         return {
             "status": "success",
             "data": {
-                "total": self._total_hits(raw),
+                "total": total,
                 "returned": len(collections),
+                "offset": offset,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
                 "collections": collections,
             },
             "metadata": {

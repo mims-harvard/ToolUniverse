@@ -1,7 +1,7 @@
 """
 UCSC_list_tracks
 
-Discover available UCSC Genome Browser annotation tracks for a genome assembly, and inspect a tra...
+Discover UCSC Genome Browser tracks with exact track_count and recoverable local offset paginatio...
 """
 
 from typing import Any, Optional, Callable
@@ -13,13 +13,14 @@ def UCSC_list_tracks(
     track: Optional[str] = None,
     name_filter: Optional[str] = None,
     max_tracks: Optional[int] = None,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Discover available UCSC Genome Browser annotation tracks for a genome assembly, and inspect a tra...
+    Discover UCSC Genome Browser tracks with exact track_count and recoverable local offset paginatio...
 
     Parameters
     ----------
@@ -31,6 +32,8 @@ def UCSC_list_tracks(
         Optional substring filter (case-insensitive) applied to track name/shortLabel...
     max_tracks : int
         Maximum number of tracks to return when listing (default 500). The total matc...
+    offset : int
+        Zero-based offset in the filtered track list. Continue with next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def UCSC_list_tracks(
             "track": track,
             "name_filter": name_filter,
             "max_tracks": max_tracks,
+            "offset": offset,
         }.items()
         if v is not None
     }

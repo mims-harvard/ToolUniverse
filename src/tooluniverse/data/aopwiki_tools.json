@@ -2,7 +2,7 @@
   {
     "name": "AOPWiki_list_aops",
     "type": "AOPWikiListTool",
-    "description": "List Adverse Outcome Pathways (AOPs) from AOPWiki. Returns AOP IDs, titles, and short names. AOPs describe causal chains from molecular initiating events through key events to adverse outcomes, used in toxicology and risk assessment. Pass `search` to keep only AOPs whose title or short name contains a keyword (e.g. 'thyroid', 'PPAR', 'steatosis') -- AOPWiki publishes ~600 AOPs, so an unfiltered list is rarely what you want. Use AOPWiki_get_aop on a returned ID for its key events, stressor chemicals, and causal relationships.",
+    "description": "List the complete AOP-Wiki Adverse Outcome Pathway catalog. Every upstream page is fetched and checked against stable pagination totals; the tool returns an error rather than an apparently complete list when pages, totals, or IDs conflict. Optional search is a case-insensitive local title/short-name filter over that verified complete catalog.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -36,12 +36,13 @@
   {
     "name": "AOPWiki_get_aop",
     "type": "AOPWikiDetailTool",
-    "description": "Get detailed information about a specific Adverse Outcome Pathway (AOP) from AOPWiki by AOP ID. Returns the molecular initiating events (MIEs), key events (KEs), adverse outcomes (AOs), stressors (chemicals), and key event relationships (causal chain).",
+    "description": "Get one AOP-Wiki pathway with stressors, typed molecular initiating events, key events, adverse outcomes, and directed event pairs. The source_relation value is preserved only as an opaque AOP association reference: it is not safe to use as /relationships/{id}, because live AOP-Wiki values can resolve to an unrelated pair or no record.",
     "parameter": {
       "type": "object",
       "properties": {
         "aop_id": {
           "type": "integer",
+          "minimum": 1,
           "description": "AOP numeric identifier. Find IDs using AOPWiki_list_aops. Example: 3 (mitochondrial complex I inhibition leading to parkinsonian motor deficits)."
         }
       },
@@ -71,7 +72,13 @@
             "type": "object",
             "properties": {
               "event_id": {"type": ["integer", "null"]},
-              "event": {"type": ["string", "null"]}
+              "event": {"type": ["string", "null"]},
+              "event_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
             }
           }
         },
@@ -81,7 +88,13 @@
             "type": "object",
             "properties": {
               "event_id": {"type": ["integer", "null"]},
-              "event": {"type": ["string", "null"]}
+              "event": {"type": ["string", "null"]},
+              "event_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
             }
           }
         },
@@ -91,7 +104,13 @@
             "type": "object",
             "properties": {
               "event_id": {"type": ["integer", "null"]},
-              "event": {"type": ["string", "null"]}
+              "event": {"type": ["string", "null"]},
+              "event_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
             }
           }
         },
@@ -100,6 +119,16 @@
           "items": {
             "type": "object",
             "properties": {
+              "source_relation": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "source_relation_semantics": {
+                "type": "string",
+                "description": "Always opaque_aop_association_reference; not a validated relationship detail ID"
+              },
               "upstream_event_id": {"type": ["integer", "null"]},
               "upstream_event": {"type": ["string", "null"]},
               "downstream_event_id": {"type": ["integer", "null"]},
@@ -128,6 +157,7 @@
       "properties": {
         "event_id": {
           "type": "integer",
+          "minimum": 1,
           "description": "AOP-Wiki Key Event numeric id, e.g. 18 ('Activation, AhR'). Obtain ids from AOPWiki_get_aop."
         }
       },

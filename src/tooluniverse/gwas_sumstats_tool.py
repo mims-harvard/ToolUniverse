@@ -25,7 +25,7 @@ now, so that tool is retired rather than repointed.
 """
 
 import requests
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional, Tuple
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
@@ -48,6 +48,60 @@ def _study_record(entry: dict) -> dict:
         "publication_date": entry.get("publicationDate"),
         "first_author": entry.get("firstAuthor"),
         "association_count": entry.get("associationCount"),
+    }
+
+
+def _validate_page(
+    arguments: Dict[str, Any], default_size: int
+) -> Tuple[int, int, Optional[str]]:
+    """Validate start/size locally instead of silently capping them.
+
+    v2 pages by page index, so ``start`` must fall on a page boundary
+    (a multiple of ``size``) to be honoured exactly.
+    """
+    size = arguments.get("size")
+    if size is None:
+        size = arguments.get("limit")
+    if size is None:
+        size = default_size
+    start = arguments.get("start")
+    if start is None:
+        start = 0
+    if isinstance(size, bool) or not isinstance(size, int) or not 1 <= size <= 1000:
+        return 0, 0, "size must be an integer between 1 and 1000"
+    if isinstance(start, bool) or not isinstance(start, int) or start < 0:
+        return 0, 0, "start must be a non-negative integer"
+    if start % size:
+        return (
+            0,
+            0,
+            (
+                f"start must be a multiple of size ({size}); the GWAS Catalog v2 "
+                f"API pages by page index. Continue with metadata.next_start."
+            ),
+        )
+    return size, start, None
+
+
+def _page_metadata(
+    data: Dict[str, Any], *, start: int, size: int, returned: int
+) -> Dict[str, Any]:
+    """Explicit completeness metadata from v2's exact page.totalElements."""
+    total = (data.get("page") or {}).get("totalElements")
+    if isinstance(total, int):
+        has_more = start + returned < total
+    else:
+        has_more = bool(((data.get("_links") or {}).get("next") or {}).get("href"))
+        total = None if has_more else start + returned
+    return {
+        "total_results": total,
+        "total_is_exact": total is not None,
+        "returned": returned,
+        "start": start,
+        "size": size,
+        "has_more": has_more,
+        "truncated": has_more,
+        "next_start": start + returned if has_more else None,
     }
 
 
@@ -107,10 +161,12 @@ class GWASSumStatsTool(BaseTool):
 
     def _list_studies(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """List GWAS Catalog studies."""
-        size = arguments.get("size") or arguments.get("limit") or 20
+        size, start, page_error = _validate_page(arguments, 20)
+        if page_error:
+            return {"status": "error", "error": page_error}
 
         url = f"{GWAS_BASE_URL}/studies"
-        params = {"size": min(size, 100)}
+        params = {"size": size, "page": start // size}
         resp = requests.get(url, params=params, timeout=self.timeout)
         resp.raise_for_status()
         data = resp.json()
@@ -126,8 +182,8 @@ class GWASSumStatsTool(BaseTool):
             "data": studies,
             "metadata": {
                 "source": "GWAS Catalog v2",
-                "returned": len(studies),
                 "total_available": (data.get("page") or {}).get("totalElements"),
+                **_page_metadata(data, start=start, size=size, returned=len(studies)),
             },
         }
 
@@ -169,9 +225,12 @@ class GWASSumStatsTool(BaseTool):
                 ),
             }
 
+        size, start, page_error = _validate_page(arguments, 20)
+        if page_error:
+            return {"status": "error", "error": page_error}
+
         url = f"{GWAS_BASE_URL}/studies"
-        size = arguments.get("size") or 20
-        params = {"efoTrait": trait, "size": min(size, 100)}
+        params = {"efoTrait": trait, "size": size, "page": start // size}
         resp = requests.get(url, params=params, timeout=self.timeout)
         resp.raise_for_status()
         data = resp.json()
@@ -191,6 +250,7 @@ class GWASSumStatsTool(BaseTool):
                     "source": "GWAS Catalog v2",
                     "trait": trait,
                     "num_studies": 0,
+                    **_page_metadata(data, start=start, size=size, returned=0),
                     "note": (
                         "No studies matched. The match is a case-insensitive "
                         "substring of the EFO label, so a shorter term casts "
@@ -208,6 +268,7 @@ class GWASSumStatsTool(BaseTool):
                 "trait": trait,
                 "num_studies": len(studies),
                 "total_available": total,
+                **_page_metadata(data, start=start, size=size, returned=len(studies)),
             },
         }
 

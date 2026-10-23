@@ -1,7 +1,7 @@
 """
 COD_search_structures
 
-Search the Crystallography Open Database (COD) for crystal structures by chemical formula, elemen...
+Search the Crystallography Open Database (COD) by chemical formula, elements, space group, minera...
 """
 
 from typing import Any, Optional, Callable
@@ -23,13 +23,15 @@ def COD_search_structures(
     sgNumber: Optional[str] = None,
     max_results: Optional[int] = None,
     results: Optional[int] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search the Crystallography Open Database (COD) for crystal structures by chemical formula, elemen...
+    Search the Crystallography Open Database (COD) by chemical formula, elements, space group, minera...
 
     Parameters
     ----------
@@ -58,9 +60,13 @@ def COD_search_structures(
     sgNumber : str
         Space group number (1-230). Examples: '225' (Fm-3m, FCC metals), '62' (Pnma, ...
     max_results : int
-        Alias for 'results'. Maximum number of results to return (default 100, use sm...
+        Alias for limit. Page size from 1 to 500; default 100.
     results : int
-        Maximum number of results to return (default 100, use smaller values for spee...
+        Legacy alias for limit. Page size from 1 to 500; default 100.
+    limit : int
+        Client-side page size, 1-500 (default 100). Server-side default is 100. Left ...
+    offset : int
+        Zero-based client-side offset. Continue with metadata.next_offset while metad...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -92,6 +98,8 @@ def COD_search_structures(
             "sgNumber": sgNumber,
             "max_results": max_results,
             "results": results,
+            "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

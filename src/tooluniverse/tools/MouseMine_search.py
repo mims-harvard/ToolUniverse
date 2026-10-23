@@ -11,6 +11,7 @@ from ._shared_client import get_shared_client
 def MouseMine_search(
     q: str,
     size: Optional[int] = 10,
+    start: Optional[int] = 0,
     format: Optional[str] = "json",
     facet_Category: Optional[str] = None,
     *,
@@ -27,6 +28,8 @@ def MouseMine_search(
         Search query: gene symbol (e.g., 'Brca1', 'Tp53', 'Sox9'), protein name, dise...
     size : int
         Number of results to return (default: 10, max: 100).
+    start : int
+        Zero-based search offset. Continue with metadata.next_start while metadata.ha...
     format : str
         Response format. Must be 'json'.
     facet_Category : str
@@ -50,6 +53,7 @@ def MouseMine_search(
         for k, v in {
             "q": q,
             "size": size,
+            "start": start,
             "format": format,
             "facet_Category": facet_Category,
         }.items()

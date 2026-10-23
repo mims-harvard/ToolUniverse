@@ -1,7 +1,7 @@
 """
 HuBMAP_get_dataset
 
-Get detailed metadata for a specific HuBMAP dataset by its HuBMAP ID. Returns comprehensive infor...
+Get detailed metadata for a HuBMAP dataset by ID. Returns complete contacts and contributors with...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def HuBMAP_get_dataset(
     validate: bool = True,
 ) -> Any:
     """
-    Get detailed metadata for a specific HuBMAP dataset by its HuBMAP ID. Returns comprehensive infor...
+    Get detailed metadata for a HuBMAP dataset by ID. Returns complete contacts and contributors with...
 
     Parameters
     ----------

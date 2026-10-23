@@ -1,12 +1,13 @@
 [
   {
     "name": "Ensembl_get_cross_references",
-    "description": "Get all external database cross-references for an Ensembl stable identifier. Returns linked records from HGNC, EntrezGene, UniProt, GeneCards, Reactome, MIM/OMIM, ArrayExpress, and other databases. Essential for mapping between Ensembl and other identifier systems, discovering related database entries, or building cross-database links for a gene. Can filter by specific external database. Example: 'ENSG00000141510' (TP53) returns 157 cross-references across 11 databases including HGNC:11998, EntrezGene:7157, GeneCards:TP53, MIM_GENE:191170, and Reactome pathways.",
+    "description": "Get external database cross-references for an Ensembl stable identifier with exact local offset pagination over the complete Ensembl response. Supports an official external_db filter. Metadata exposes total_xrefs and next_offset; database_summary covers the full result while page_database_summary covers only returned xrefs.",
     "parameter": {
       "type": "object",
       "properties": {
         "ensembl_id": {
           "type": "string",
+          "minLength": 1,
           "description": "Ensembl stable identifier. Can be gene (ENSG*), transcript (ENST*), or translation (ENSP*). Examples: 'ENSG00000141510' (TP53 gene), 'ENST00000269305' (TP53 canonical transcript)."
         },
         "external_db": {
@@ -14,7 +15,21 @@
             "string",
             "null"
           ],
+          "minLength": 1,
           "description": "Optional: filter by external database name. Examples: 'HGNC', 'EntrezGene', 'Uniprot_gn', 'MIM_GENE', 'Reactome_gene', 'GeneCards'. If not specified, returns all cross-references."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5000,
+          "default": 500,
+          "description": "Maximum xrefs returned from the complete response (default 500)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based xref offset. Continue with metadata.next_offset."
         }
       },
       "required": [
@@ -85,9 +100,23 @@
             },
             "database_summary": {
               "type": "object",
-              "description": "Count of xrefs per database"
+              "description": "Count of all matching xrefs per database, before local pagination."
+            },
+            "page_database_summary": {
+              "type": "object",
+              "description": "Count of returned-page xrefs per database."
+            },
+            "truncated": {
+              "type": "boolean"
             }
-          }
+          },
+          "required": [
+            "ensembl_id",
+            "xrefs",
+            "database_summary",
+            "page_database_summary",
+            "truncated"
+          ]
         },
         {
           "type": "object",
@@ -105,16 +134,19 @@
   },
   {
     "name": "Ensembl_lookup_gene_by_symbol",
-    "description": "Look up Ensembl gene IDs for a gene symbol across external databases. Given a gene symbol (e.g., 'TP53'), returns all matching Ensembl gene and transcript IDs. Useful for converting gene symbols to Ensembl stable identifiers for use with other Ensembl APIs. Example: symbol 'TP53' in human returns ENSG00000141510 (gene) and related transcript/translation IDs; 'BRCA1' returns ENSG00000012048.",
+    "description": "Look up Ensembl IDs for a gene symbol and species. The complete Ensembl response is exposed through local offset pagination with total_results and next_offset, instead of silently dropping matches after 50. An optional external_db filter is passed to Ensembl.",
     "parameter": {
       "type": "object",
       "properties": {
         "symbol": {
           "type": "string",
+          "minLength": 1,
           "description": "Gene symbol to look up. Examples: 'TP53', 'BRCA1', 'EGFR', 'BRAF', 'KRAS'."
         },
         "species": {
           "type": "string",
+          "minLength": 1,
+          "default": "human",
           "description": "Species name. Default: 'human'. Examples: 'human', 'mouse', 'rat', 'zebrafish'."
         },
         "external_db": {
@@ -122,7 +154,21 @@
             "string",
             "null"
           ],
+          "minLength": 1,
           "description": "Optional: filter by external database. Examples: 'HGNC', 'EntrezGene'."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5000,
+          "default": 50,
+          "description": "Maximum Ensembl IDs returned (default 50)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based result offset. Continue with metadata.next_offset."
         }
       },
       "required": [
@@ -168,7 +214,12 @@
                 }
               }
             }
-          }
+          },
+          "required": [
+            "symbol",
+            "species",
+            "ensembl_ids"
+          ]
         },
         {
           "type": "object",

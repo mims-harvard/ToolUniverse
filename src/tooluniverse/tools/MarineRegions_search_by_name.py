@@ -1,7 +1,7 @@
 """
 MarineRegions_search_by_name
 
-Search the Marine Regions Gazetteer (VLIZ) for ocean/sea geographic features by name. Returns MRG...
+Search the Marine Regions Gazetteer (VLIZ) for ocean/sea geographic features by name. Returns at ...
 """
 
 from typing import Any, Optional, Callable
@@ -10,8 +10,8 @@ from ._shared_client import get_shared_client
 
 def MarineRegions_search_by_name(
     name: str,
-    like: Optional[bool] = None,
-    fuzzy: Optional[bool] = None,
+    like: Optional[bool] = True,
+    fuzzy: Optional[bool] = False,
     offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -19,18 +19,18 @@ def MarineRegions_search_by_name(
     validate: bool = True,
 ) -> Any:
     """
-    Search the Marine Regions Gazetteer (VLIZ) for ocean/sea geographic features by name. Returns MRG...
+    Search the Marine Regions Gazetteer (VLIZ) for ocean/sea geographic features by name. Returns at ...
 
     Parameters
     ----------
     name : str
         Name of the marine geographic feature. Examples: 'North Sea', 'Pacific Ocean'...
     like : bool
-        If true, perform a partial/fuzzy name match (LIKE search). Default: true
+        If true, perform a partial name match (SQL LIKE). Default: true
     fuzzy : bool
-        If true, perform fuzzy matching for approximate name searches. Default: false
+        If true, perform Levenshtein fuzzy matching. Default: false
     offset : int
-        Pagination offset. Default: 0 (first page)
+        Zero-based record offset. Start at 0 and continue with metadata.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

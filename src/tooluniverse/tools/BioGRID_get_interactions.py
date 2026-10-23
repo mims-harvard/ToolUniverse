@@ -1,7 +1,7 @@
 """
 BioGRID_get_interactions
 
-Query experimentally validated protein and genetic interactions from BioGRID (Biological General ...
+Query experimentally validated protein and genetic interactions from BioGRID. Results use the off...
 """
 
 from typing import Any, Optional, Callable
@@ -15,6 +15,7 @@ def BioGRID_get_interactions(
     interaction_type: Optional[str] = "both",
     evidence_types: Optional[list[str]] = None,
     limit: Optional[int] = 100,
+    offset: Optional[int] = 0,
     throughput: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -22,7 +23,7 @@ def BioGRID_get_interactions(
     validate: bool = True,
 ) -> Any:
     """
-    Query experimentally validated protein and genetic interactions from BioGRID (Biological General ...
+    Query experimentally validated protein and genetic interactions from BioGRID. Results use the off...
 
     Parameters
     ----------
@@ -37,7 +38,9 @@ def BioGRID_get_interactions(
     evidence_types : list[str]
         Filter by evidence types (e.g., ['Affinity Capture-MS', 'Two-hybrid'] for phy...
     limit : int
-        Maximum number of interactions to return (default: 100, max: 10000)
+        Maximum upstream interactions to scan on this page (default: 100, max: 9999; ...
+    offset : int
+        Zero-based BioGRID upstream record offset. Continue with metadata.next_offset.
     throughput : str
         Filter by throughput: 'low' (low-throughput studies), 'high' (high-throughput...
     stream_callback : Callable, optional
@@ -63,6 +66,7 @@ def BioGRID_get_interactions(
             "interaction_type": interaction_type,
             "evidence_types": evidence_types,
             "limit": limit,
+            "offset": offset,
             "throughput": throughput,
         }.items()
         if v is not None

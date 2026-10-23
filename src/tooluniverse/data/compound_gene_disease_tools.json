@@ -2,7 +2,7 @@
   {
     "type": "CompoundGeneDiseaseAssociationTool",
     "name": "gather_gene_disease_associations",
-    "description": "Query multiple gene-disease databases (DisGeNET, OMIM, OpenTargets, GenCC, ClinVar) in a single call. Returns a cross-referenced comparison table showing which sources agree on each association, with concordance scores. Use when you need to compare gene-disease evidence across databases or find associations unique to one source. Each association carries 'concordance' (how many sources named it) with two denominators: 'total_sources_queried' (all five, including any that failed) and 'total_sources_with_data' (those that actually contributed) -- use the latter, since a source with no API key configured otherwise looks like a source that disagreed. 'associations' is capped at 50 and 'per_source_results' at 10 rows per source; 'num_associations', 'truncated' and 'per_source_result_counts' give the untruncated figures and 'notes' names any truncation that applied.",
+    "description": "Query multiple gene-disease databases (DisGeNET, OMIM, OpenTargets, GenCC, ClinVar) in a single call. Returns a cross-referenced comparison table showing which sources agree on each association, with concordance scores. Use when you need to compare gene-disease evidence across databases or find associations unique to one source. Each association carries 'concordance' (how many sources named it) with two denominators: 'total_sources_queried' (all five, including any that failed) and 'total_sources_with_data' (those that actually contributed) -- use the latter, since a source with no API key configured otherwise looks like a source that disagreed. 'associations' is paged by limit/offset (default 50) and 'per_source_results' by source_limit/source_offset (default 10 rows per source); 'num_associations', 'truncated' and 'per_source_result_counts' give the untruncated figures and 'notes' names any truncation that applied. Use next_association_offset as offset for the next association page and per_source_pagination[source].next_offset as source_offset for source rows.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -19,6 +19,32 @@
             "null"
           ],
           "description": "Disease name (e.g., 'breast cancer', 'distal renal tubular acidosis'). At least one of gene or disease required."
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 50,
+          "description": "Associations per page (1-500; default 50)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based concordance association offset."
+        },
+        "source_limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 10,
+          "description": "Rows returned per source (1-500; default 10)."
+        },
+        "source_offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset applied independently to every source list."
         }
       },
       "required": []
@@ -58,7 +84,7 @@
         },
         "num_associations": {
           "type": "integer",
-          "description": "Size of the full concordance table, counted before the 50-row cap on 'associations'. Compare with the length of 'associations', or read 'truncated'."
+          "description": "Size of the full concordance table, counted before paging 'associations'. Compare with the length of 'associations', or read 'truncated'."
         },
         "associations": {
           "type": "array",
@@ -102,7 +128,7 @@
         },
         "per_source_results": {
           "type": "object",
-          "description": "Up to 10 raw extracted items per source, keyed by source name (DisGeNET, OMIM, OpenTargets, GenCC, ClinVar). Truncated at 10 without altering 'per_source_result_counts', which gives the real count.",
+          "description": "Current page of raw extracted items per source (source_limit rows, default 10), keyed by source name (DisGeNET, OMIM, OpenTargets, GenCC, ClinVar). Paging does not alter 'per_source_result_counts', which gives the real count.",
           "additionalProperties": {
             "type": "array",
             "items": {
@@ -146,7 +172,10 @@
         },
         "truncated": {
           "type": "boolean",
-          "description": "True when the concordance table was cut to 50 rows, i.e. when 'num_associations' exceeds the length of 'associations'. Follows the repo-wide truncated / truncation-disclosure convention; 'notes' carries the prose."
+          "description": "True when the concordance table was cut to a page (limit, default 50), i.e. when 'num_associations' exceeds the length of 'associations'. Follows the repo-wide truncated / truncation-disclosure convention; 'notes' carries the prose."
+        },
+        "per_source_pagination": {
+          "type": "object"
         }
       },
       "required": [

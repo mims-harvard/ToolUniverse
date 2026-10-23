@@ -1,7 +1,7 @@
 """
 SIMBAD_query_object
 
-Query the SIMBAD astronomical database for information about celestial objects. Supports queries ...
+Query SIMBAD by object name, coordinates, or wildcard identifier. Coordinate and identifier respo...
 """
 
 from typing import Any, Optional, Callable
@@ -17,13 +17,14 @@ def SIMBAD_query_object(
     identifier: Optional[str] = None,
     output_format: Optional[str] = "basic",
     max_results: Optional[int] = 10,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Query the SIMBAD astronomical database for information about celestial objects. Supports queries ...
+    Query SIMBAD by object name, coordinates, or wildcard identifier. Coordinate and identifier respo...
 
     Parameters
     ----------
@@ -42,7 +43,9 @@ def SIMBAD_query_object(
     output_format : str
         Level of detail in output. Options: 'basic' (ID, coordinates, type), 'detaile...
     max_results : int
-        Maximum number of results to return for coordinate or identifier queries
+        Maximum rows on this local response page
+    offset : int
+        Zero-based offset into the rows returned by the SIMBAD script response; conti...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -68,6 +71,7 @@ def SIMBAD_query_object(
             "identifier": identifier,
             "output_format": output_format,
             "max_results": max_results,
+            "offset": offset,
         }.items()
         if v is not None
     }

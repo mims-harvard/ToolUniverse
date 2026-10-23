@@ -1,7 +1,7 @@
 [
   {
     "name": "MyGene_query_genes",
-    "description": "Search for genes by keyword, symbol, name, or other identifiers. Returns gene annotations from 30+ sources including Entrez Gene, Ensembl, UniProt, HGNC. Useful for finding gene IDs, symbols, descriptions, and basic annotations.",
+    "description": "Search MyGene.info with explicit offset pagination. Pages may contain up to 1000 records. BioThings exposes at most the first 10,000 matches through offset pagination; metadata distinguishes total_results from accessible_results and reports upstream_truncated when the query must be narrowed or partitioned. Use a stable sort such as sort='entrezgene' across pages.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -21,8 +21,21 @@
         },
         "size": {
           "type": "integer",
-          "description": "Maximum number of results to return (1-100).",
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Maximum number of results to return (1-1000). offset + size may not exceed 10,000.",
           "default": 10
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "maximum": 9999,
+          "description": "Zero-based result offset within BioThings' first-10,000 window. Continue with metadata.next_offset while non-null."
+        },
+        "sort": {
+          "type": "string",
+          "description": "Optional upstream sort field. Use 'entrezgene' for stable exhaustive pagination; omit to preserve relevance ranking."
         }
       },
       "required": [
@@ -56,7 +69,10 @@
           "description": "Total number of matching genes"
         },
         "max_score": {
-          "type": "number",
+          "type": [
+            "number",
+            "null"
+          ],
           "description": "Maximum relevance score"
         },
         "hits": {
@@ -70,7 +86,10 @@
                 "description": "Gene ID (usually Entrez gene ID)"
               },
               "_score": {
-                "type": "number",
+                "type": [
+                  "number",
+                  "null"
+                ],
                 "description": "Relevance score"
               },
               "symbol": {
@@ -89,13 +108,32 @@
                 "description": "Entrez Gene ID"
               },
               "ensembl": {
-                "type": "object",
-                "properties": {
-                  "gene": {
-                    "type": "string",
-                    "description": "Ensembl gene ID"
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "gene": {
+                        "type": "string",
+                        "description": "Ensembl gene ID"
+                      }
+                    }
+                  },
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "gene": {
+                          "type": "string",
+                          "description": "Ensembl gene ID"
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "type": "null"
                   }
-                }
+                ]
               },
               "summary": {
                 "type": "string",
@@ -300,7 +338,7 @@
   },
   {
     "name": "MyVariant_query_variants",
-    "description": "Search for genetic variants by various criteria including rsID, gene, chromosome position, or clinical significance. Returns variant annotations from sources like dbSNP, ClinVar, gnomAD, and CADD. Coordinates default to hg19/GRCh37 -- set assembly='hg38' for hg38/GRCh38 (e.g. rs4244285 is chr10:g.96541616G>C on hg19 and chr10:g.94781859G>C on hg38). Any HGVS coordinate in the query must be written in the assembly you request; an rsID works in either. The response reports the frame in a top-level 'coordinate_assembly' key.",
+    "description": "Search for genetic variants by various criteria including rsID, gene, chromosome position, or clinical significance. Returns variant annotations from sources like dbSNP, ClinVar, gnomAD, and CADD. Coordinates default to hg19/GRCh37 -- set assembly='hg38' for hg38/GRCh38 (e.g. rs4244285 is chr10:g.96541616G>C on hg19 and chr10:g.94781859G>C on hg38). Any HGVS coordinate in the query must be written in the assembly you request; an rsID works in either. The response reports the frame in a top-level 'coordinate_assembly' key. Results use explicit offset pagination with pages up to 1000 records. BioThings exposes at most the first 10,000 matches through offset pagination; metadata distinguishes total_results from accessible_results and reports upstream_truncated when a broad query must be narrowed or partitioned. Use a stable sort such as sort='vcf.position' across pages.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -315,7 +353,9 @@
         },
         "size": {
           "type": "integer",
-          "description": "Maximum number of results (1-100).",
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Maximum number of results (1-1000). offset + size may not exceed 10,000.",
           "default": 10
         },
         "assembly": {
@@ -326,6 +366,17 @@
             "hg38"
           ],
           "default": "hg19"
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "maximum": 9999,
+          "description": "Zero-based result offset within BioThings' first-10,000 window. Continue with metadata.next_offset while non-null."
+        },
+        "sort": {
+          "type": "string",
+          "description": "Optional upstream sort field. Use 'vcf.position' for stable exhaustive pagination; omit to preserve relevance ranking."
         }
       },
       "required": [
@@ -478,7 +529,7 @@
   },
   {
     "name": "MyChem_query_chemicals",
-    "description": "Search for chemicals and drugs by name, structure (InChIKey, SMILES), or database ID. Returns annotations from sources like DrugBank, ChEMBL, ChEBI, and PubChem.",
+    "description": "Search MyChem.info with explicit offset pagination and pages up to 1000 records. BioThings exposes at most the first 10,000 matches through offset pagination; metadata distinguishes total_results from accessible_results and reports upstream_truncated when a broad query must be narrowed or partitioned. Use a stable sort such as sort='pubchem.cid' across pages.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -493,8 +544,21 @@
         },
         "size": {
           "type": "integer",
-          "description": "Maximum number of results (1-100).",
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Maximum number of results (1-1000). offset + size may not exceed 10,000.",
           "default": 10
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "maximum": 9999,
+          "description": "Zero-based result offset within BioThings' first-10,000 window. Continue with metadata.next_offset while non-null."
+        },
+        "sort": {
+          "type": "string",
+          "description": "Optional upstream sort field. Use 'pubchem.cid' for stable exhaustive pagination; omit to preserve relevance ranking."
         }
       },
       "required": [

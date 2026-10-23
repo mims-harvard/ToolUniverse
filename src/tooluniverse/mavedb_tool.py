@@ -63,7 +63,8 @@ class MaveDBTool(BaseTool):
     def _search(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """Search MaveDB score sets by text query."""
         query = params.get("query", "")
-        limit = params.get("limit", 20)
+        limit = max(1, int(params.get("limit", 20)))
+        offset = max(0, int(params.get("offset", 0)))
         if not query:
             return {"status": "error", "error": "query parameter is required"}
 
@@ -80,7 +81,7 @@ class MaveDBTool(BaseTool):
 
         data = resp.json()
         all_score_sets = data.get("scoreSets", [])
-        score_sets = all_score_sets[:limit]
+        score_sets = all_score_sets[offset : offset + limit]
         results = []
         for ss in score_sets:
             target_genes = [
@@ -109,6 +110,13 @@ class MaveDBTool(BaseTool):
                 # computed before truncation so callers know more may exist.
                 "total_results": len(all_score_sets),
                 "returned_results": len(results),
+                "offset": offset,
+                "limit": limit,
+                "has_more": offset + len(results) < len(all_score_sets),
+                "truncated": offset + len(results) < len(all_score_sets),
+                "next_offset": offset + len(results)
+                if offset + len(results) < len(all_score_sets)
+                else None,
                 "query": query,
             },
         }
@@ -329,6 +337,31 @@ class MaveDBTool(BaseTool):
             return items[:limit], True
         return items, False
 
+    @staticmethod
+    def _parse_offset(raw_offset: Any) -> Optional[int]:
+        """Coerce an offset to a non-negative integer, or return None."""
+        if raw_offset is None:
+            return 0
+        if isinstance(raw_offset, bool):
+            return None
+        try:
+            value = int(raw_offset)
+        except (TypeError, ValueError):
+            return None
+        return value if value >= 0 else None
+
+    @staticmethod
+    def _paginate(
+        items: list, limit: Optional[int], offset: int
+    ) -> Tuple[list, bool, bool, Optional[int]]:
+        """Return a recoverable local page over an upstream full-list response."""
+        end = None if limit is None else offset + limit
+        page = items[offset:end]
+        has_more = offset + len(page) < len(items)
+        truncated = offset > 0 or has_more
+        next_offset = offset + len(page) if has_more else None
+        return page, truncated, has_more, next_offset
+
     def _get_mapped_variants(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """Get genomically-mapped (GA4GH VRS / ClinGen Allele ID) coordinates.
 
@@ -342,6 +375,12 @@ class MaveDBTool(BaseTool):
             return {"status": "error", "error": "urn parameter is required"}
 
         limit = self._parse_limit(params.get("limit"))
+        offset = self._parse_offset(params.get("offset", 0))
+        if offset is None:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+            }
 
         try:
             resp = self.session.get(
@@ -395,7 +434,7 @@ class MaveDBTool(BaseTool):
             )
 
         total = len(mapped)
-        mapped, truncated = self._apply_limit(mapped, limit)
+        mapped, truncated, has_more, next_offset = self._paginate(mapped, limit, offset)
 
         return {
             "status": "success",
@@ -404,6 +443,11 @@ class MaveDBTool(BaseTool):
                 "total_mapped_variants": total,
                 "returned": len(mapped),
                 "truncated": truncated,
+                "offset": offset,
+                "limit_applied": limit,
+                "has_more": has_more,
+                "next_offset": next_offset,
+                "result_set_complete": not truncated,
                 "n_with_genomic_location": n_with_genomic,
                 "n_with_clingen_allele_id": n_with_clingen,
                 "mapped_variants": mapped,
@@ -432,6 +476,12 @@ class MaveDBTool(BaseTool):
 
         sig_filter = (params.get("clinical_significance") or "").strip().lower()
         limit = self._parse_limit(params.get("limit"))
+        offset = self._parse_offset(params.get("offset", 0))
+        if offset is None:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+            }
 
         try:
             resp = self.session.get(
@@ -485,7 +535,9 @@ class MaveDBTool(BaseTool):
             )
 
         total = len(controls)
-        controls, truncated = self._apply_limit(controls, limit)
+        controls, truncated, has_more, next_offset = self._paginate(
+            controls, limit, offset
+        )
 
         return {
             "status": "success",
@@ -494,6 +546,11 @@ class MaveDBTool(BaseTool):
                 "total_clinical_controls": total,
                 "returned": len(controls),
                 "truncated": truncated,
+                "offset": offset,
+                "limit_applied": limit,
+                "has_more": has_more,
+                "next_offset": next_offset,
+                "result_set_complete": not truncated,
                 "significance_filter": sig_filter or None,
                 "significance_breakdown": dict(sig_counts),
                 "clinical_controls": controls,
@@ -522,6 +579,12 @@ class MaveDBTool(BaseTool):
             return {"status": "error", "error": "urn parameter is required"}
 
         limit = self._parse_limit(params.get("limit"))
+        offset = self._parse_offset(params.get("offset", 0))
+        if offset is None:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+            }
 
         try:
             resp = self.session.get(
@@ -571,7 +634,9 @@ class MaveDBTool(BaseTool):
             )
 
         total = len(variants)
-        variants, truncated = self._apply_limit(variants, limit)
+        variants, truncated, has_more, next_offset = self._paginate(
+            variants, limit, offset
+        )
 
         return {
             "status": "success",
@@ -580,6 +645,11 @@ class MaveDBTool(BaseTool):
                 "total_gnomad_variants": total,
                 "returned": len(variants),
                 "truncated": truncated,
+                "offset": offset,
+                "limit_applied": limit,
+                "has_more": has_more,
+                "next_offset": next_offset,
+                "result_set_complete": not truncated,
                 "gnomad_variants": variants,
             },
             "metadata": {

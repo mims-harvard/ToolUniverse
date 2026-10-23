@@ -143,7 +143,7 @@
   {
     "name": "ConoServer_search_conopeptides",
     "type": "ConoServerSearchConopeptidesTool",
-    "description": "Search ConoServer conopeptides (cone-snail venom peptides) by one or more case-insensitive substring filters: name, sequence, pharmacological_family (e.g. 'alpha conotoxin'), gene_superfamily (e.g. 'A superfamily'), cysteine_framework (e.g. 'I'), organism (Conus species, e.g. 'Conus geographus'), or conopeptide_class. Returns matching records (sequence, modifications, masses, organism, references). Keyless ConoServer bulk export (conoserver.org).",
+    "description": "Search ConoServer conopeptides (cone-snail venom peptides) by one or more case-insensitive substring filters. Returns matching records with sequence, modifications, masses, organism, and references. The keyless bulk export is filtered locally and exposes count, has_more, truncated, and next_offset so all matches are reachable.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -154,7 +154,13 @@
         "cysteine_framework": {"type": "string", "description": "Cysteine framework, e.g. 'I', 'III', 'VI/VII'."},
         "organism": {"type": "string", "description": "Source Conus species, e.g. 'Conus geographus'."},
         "conopeptide_class": {"type": "string", "description": "Conopeptide class, e.g. 'conotoxin'."},
-        "limit": {"type": "integer", "description": "Max records to return (default 25, max 200)."}
+        "limit": {"type": "integer", "description": "Max records to return (default 25, max 200)."},
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based result offset. Continue with data.next_offset while has_more is true."
+        }
       }
     },
     "return_schema": {
@@ -167,6 +173,21 @@
             },
             "returned": {
               "type": "integer"
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "truncated": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
             },
             "results": {
               "type": "array"

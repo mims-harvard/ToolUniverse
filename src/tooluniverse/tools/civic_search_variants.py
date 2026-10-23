@@ -1,7 +1,7 @@
 """
 civic_search_variants
 
-Search for variants in CIViC database. Returns a list of variants with their IDs and names. Use '...
+Search for variants in CIViC database. The tool follows CIViC's 100-record GraphQL pages up to li...
 """
 
 from typing import Any, Optional, Callable
@@ -14,18 +14,19 @@ def civic_search_variants(
     gene: Optional[str] = None,
     gene_name: Optional[str] = None,
     variant_name: Optional[str] = None,
+    after: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search for variants in CIViC database. Returns a list of variants with their IDs and names. Use '...
+    Search for variants in CIViC database. The tool follows CIViC's 100-record GraphQL pages up to li...
 
     Parameters
     ----------
     limit : int
-        Maximum number of variants to return (default: 20, recommended max: 100)
+        Maximum number of variants to return across server pages (default: 20, max: 1...
     query : str
         Variant name to search for (e.g., "T790M", "V600E", "exon 19 deletion"). Retu...
     gene : str
@@ -34,6 +35,8 @@ def civic_search_variants(
         Alias for gene. Gene symbol (e.g., 'TP53', 'BRCA1').
     variant_name : str
         Specific variant name to filter within a gene (e.g., 'L858R', 'V600E', 'T790M...
+    after : str
+        Opaque CIViC continuation cursor from a previous pageInfo.endCursor.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def civic_search_variants(
             "gene": gene,
             "gene_name": gene_name,
             "variant_name": variant_name,
+            "after": after,
         }.items()
         if v is not None
     }

@@ -1,7 +1,7 @@
 """
 BVBRC_search_genome_features
 
-Search for genome features (genes, proteins, CDS) in BV-BRC pathogen genomes. Find specific genes...
+Search for genome features (genes, proteins, CDS) in BV-BRC pathogen genomes with explicit pagina...
 """
 
 from typing import Any, Optional, Callable
@@ -14,13 +14,14 @@ def BVBRC_search_genome_features(
     genome_id: Optional[str] = None,
     limit: Optional[int] = None,
     keyword: Optional[str] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search for genome features (genes, proteins, CDS) in BV-BRC pathogen genomes. Find specific genes...
+    Search for genome features (genes, proteins, CDS) in BV-BRC pathogen genomes with explicit pagina...
 
     Parameters
     ----------
@@ -34,6 +35,8 @@ def BVBRC_search_genome_features(
         Maximum number of results. Default: 10. Max: 100.
     keyword : str
         Alias for product: gene product keyword to search (e.g., 'spike protein', 'be...
+    offset : int
+        Zero-based result offset. Use metadata.next_offset to continue.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def BVBRC_search_genome_features(
             "genome_id": genome_id,
             "limit": limit,
             "keyword": keyword,
+            "offset": offset,
         }.items()
         if v is not None
     }

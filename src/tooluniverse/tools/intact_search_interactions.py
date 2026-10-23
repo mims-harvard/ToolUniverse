@@ -1,7 +1,7 @@
 """
 intact_search_interactions
 
-Search for interactions in IntAct database using EBI Search API (IntAct domain). Supports searchi...
+Search IntAct interactions through EBI Search. The first parameter is a zero-based offset and is ...
 """
 
 from typing import Any, Optional, Callable
@@ -19,14 +19,14 @@ def intact_search_interactions(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Search for interactions in IntAct database using EBI Search API (IntAct domain). Supports searchi...
+    Search IntAct interactions through EBI Search. The first parameter is a zero-based offset and is ...
 
     Parameters
     ----------
     query : str
         Search query string (e.g., protein name, gene name, interaction type)
     first : int
-        First result index for pagination (default: 0)
+        Zero-based result offset. Continue with metadata.next_start while metadata.ha...
     max : int
         Maximum number of results to return (default: 25, max: 100)
     format : str

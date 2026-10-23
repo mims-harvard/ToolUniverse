@@ -482,6 +482,12 @@
           "minimum": 1,
           "maximum": 200,
           "description": "Maximum number of projects to return (default 100)"
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based project offset for retrieving later ranked projects"
         }
       },
       "required": []
@@ -497,41 +503,41 @@
             "project_count": {
               "type": "integer"
             },
+            "returned_project_count": {
+              "type": "integer"
+            },
             "total_mutated_cases": {
               "type": "integer"
             },
             "total_cases": {
               "type": "integer"
             },
+            "offset": {
+              "type": "integer"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
             "projects": {
               "type": "array",
               "items": {
-                "type": "object",
-                "properties": {
-                  "project_id": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
-                  },
-                  "mutated_case_count": {
-                    "type": "integer"
-                  },
-                  "total_case_count": {
-                    "type": "integer"
-                  },
-                  "frequency": {
-                    "type": [
-                      "number",
-                      "null"
-                    ]
-                  }
-                }
+                "type": "object"
               }
             }
           },
           "required": [
-            "gene"
+            "gene",
+            "project_count",
+            "projects"
           ]
         },
         {
@@ -554,7 +560,8 @@
       },
       {
         "gene_symbol": "TP53",
-        "size": 5
+        "size": 5,
+        "offset": 5
       }
     ],
     "label": [
@@ -695,34 +702,95 @@
         "gene_symbol": {
           "type": "string",
           "description": "Optional: gene symbol to filter cases with mutations in this gene (e.g., 'TP53', 'KRAS')"
+        },
+        "limit": {
+          "type": "integer",
+          "default": 50,
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Maximum donors to return from the requested page (default 50)"
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based donor offset for retrieving later pages"
         }
       },
       "required": ["project_id"]
     },
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "project_id": {"type": "string"},
-        "gene_symbol": {"type": ["string", "null"]},
-        "total_donors": {"type": "integer"},
-        "alive_censored": {"type": "integer"},
-        "deceased": {"type": "integer"},
-        "max_follow_up_days": {"type": "number"},
-        "median_follow_up_days": {"type": "number"},
-        "donors": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "time": {"type": "number"},
-              "censored": {"type": "boolean"},
-              "survivalEstimate": {"type": "number"},
-              "id": {"type": "string"},
-              "submitter_id": {"type": "string"}
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "project_id": {
+              "type": "string"
+            },
+            "gene_symbol": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "total_donors": {
+              "type": "integer"
+            },
+            "returned_donors": {
+              "type": "integer"
+            },
+            "alive_censored": {
+              "type": "integer"
+            },
+            "deceased": {
+              "type": "integer"
+            },
+            "max_follow_up_days": {
+              "type": "number"
+            },
+            "median_follow_up_days": {
+              "type": "number"
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "donors": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
             }
-          }
+          },
+          "required": [
+            "project_id",
+            "total_donors",
+            "donors"
+          ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {
@@ -733,7 +801,9 @@
       },
       {
         "project_id": "TCGA-BRCA",
-        "gene_symbol": "TP53"
+        "gene_symbol": "TP53",
+        "limit": 50,
+        "offset": 50
       }
     ],
     "label": [

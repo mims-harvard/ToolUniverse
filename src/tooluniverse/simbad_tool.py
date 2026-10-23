@@ -5,6 +5,7 @@ This tool provides access to the SIMBAD astronomical database,
 allowing queries for astronomical objects by name, coordinates, or identifiers.
 """
 
+import re
 import requests
 from typing import Dict, Any, List, Optional
 from .base_tool import BaseTool
@@ -60,15 +61,26 @@ class SIMBADTool(BaseTool):
             Dictionary containing object information
         """
         object_name = arguments.get("object_name")
-        if not object_name:
+        if not isinstance(object_name, str) or not object_name.strip():
             return {
                 "status": "error",
                 "data": {
                     "error": "object_name parameter is required for query_type='object_name'"
                 },
             }
+        object_name = object_name.strip()
+        if "\n" in object_name or "\r" in object_name:
+            return {
+                "status": "error",
+                "data": {"error": "object_name must not contain line breaks"},
+            }
 
         output_format = arguments.get("output_format", "basic")
+        if output_format not in ("basic", "detailed", "full"):
+            return {
+                "status": "error",
+                "data": {"error": "output_format must be basic, detailed, or full"},
+            }
 
         # Build SIMBAD script query
         script_lines = [
@@ -103,8 +115,41 @@ class SIMBADTool(BaseTool):
                 },
             }
 
+        if (
+            isinstance(ra, bool)
+            or not isinstance(ra, (int, float))
+            or not 0 <= ra <= 360
+            or isinstance(dec, bool)
+            or not isinstance(dec, (int, float))
+            or not -90 <= dec <= 90
+        ):
+            return {
+                "status": "error",
+                "data": {"error": "ra must be 0..360 and dec must be -90..90 degrees"},
+            }
+        if (
+            isinstance(radius, bool)
+            or not isinstance(radius, (int, float))
+            or not 0 < radius <= 120
+        ):
+            return {
+                "status": "error",
+                "data": {
+                    "error": "radius must be a number from 0 (exclusive) to 120 arcmin"
+                },
+            }
+
         output_format = arguments.get("output_format", "basic")
+        if output_format not in ("basic", "detailed", "full"):
+            return {
+                "status": "error",
+                "data": {"error": "output_format must be basic, detailed, or full"},
+            }
         max_results = arguments.get("max_results", 10)
+        offset = arguments.get("offset", 0)
+        paging_error = self._validate_paging(max_results, offset)
+        if paging_error:
+            return paging_error
 
         # Build SIMBAD script query for coordinate search
         script_lines = [
@@ -116,7 +161,10 @@ class SIMBADTool(BaseTool):
         script = "\n".join(script_lines)
 
         return self._execute_query(
-            script, f"coordinates: RA={ra}, DEC={dec}, radius={radius}m", max_results
+            script,
+            f"coordinates: RA={ra}, DEC={dec}, radius={radius}m",
+            max_results,
+            offset,
         )
 
     def _query_by_identifier(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -130,16 +178,31 @@ class SIMBADTool(BaseTool):
             Dictionary containing matching objects
         """
         identifier = arguments.get("identifier")
-        if not identifier:
+        if not isinstance(identifier, str) or not identifier.strip():
             return {
                 "status": "error",
                 "data": {
                     "error": "identifier parameter is required for query_type='identifier'"
                 },
             }
+        identifier = identifier.strip()
+        if "\n" in identifier or "\r" in identifier:
+            return {
+                "status": "error",
+                "data": {"error": "identifier must not contain line breaks"},
+            }
 
         output_format = arguments.get("output_format", "basic")
+        if output_format not in ("basic", "detailed", "full"):
+            return {
+                "status": "error",
+                "data": {"error": "output_format must be basic, detailed, or full"},
+            }
         max_results = arguments.get("max_results", 10)
+        offset = arguments.get("offset", 0)
+        paging_error = self._validate_paging(max_results, offset)
+        if paging_error:
+            return paging_error
 
         # Build SIMBAD script query
         script_lines = [
@@ -150,7 +213,25 @@ class SIMBADTool(BaseTool):
 
         script = "\n".join(script_lines)
 
-        return self._execute_query(script, identifier, max_results)
+        return self._execute_query(script, identifier, max_results, offset)
+
+    @staticmethod
+    def _validate_paging(max_results: Any, offset: Any):
+        if (
+            isinstance(max_results, bool)
+            or not isinstance(max_results, int)
+            or not 1 <= max_results <= 1000
+        ):
+            return {
+                "status": "error",
+                "data": {"error": "max_results must be an integer from 1 to 1000"},
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "data": {"error": "offset must be a non-negative integer"},
+            }
+        return None
 
     def _get_format_string(self, output_format: str) -> str:
         """
@@ -172,7 +253,11 @@ class SIMBADTool(BaseTool):
             return "%IDLIST(1) | %COO(A D;ICRS) | %OTYPE"
 
     def _execute_query(
-        self, script: str, query_description: str, max_results: Optional[int] = None
+        self,
+        script: str,
+        query_description: str,
+        max_results: Optional[int] = None,
+        offset: int = 0,
     ) -> Dict[str, Any]:
         """
         Execute a SIMBAD script query.
@@ -208,25 +293,23 @@ class SIMBADTool(BaseTool):
         # Parse the response
         result_text = response.text.strip()
 
+        error_marker = re.search(r"(?im)^::error[^\n]*\n(?P<body>[\s\S]*)", result_text)
+        if error_marker:
+            error_body = error_marker.group("body").strip()
+            return {
+                "status": "error",
+                "data": {
+                    "error": "SIMBAD script error",
+                    "query": query_description,
+                    "upstream_error": error_body[:1000],
+                },
+            }
+
         # Parse the results
         lines = result_text.strip().split("\n")
 
         # Filter out SIMBAD metadata lines (starting with ::)
         data_lines = [line for line in lines if line and not line.startswith("::")]
-
-        # Check for errors in response
-        if any(
-            "error" in line.lower() or "not found" in line.lower()
-            for line in data_lines
-        ):
-            return {
-                "status": "error",
-                "data": {
-                    "error": "Object not found in SIMBAD",
-                    "query": query_description,
-                    "raw_response": result_text[:500],  # First 500 chars for debugging
-                },
-            }
 
         if not data_lines:
             return {
@@ -236,7 +319,7 @@ class SIMBADTool(BaseTool):
 
         # Parse results
         results = []
-        for line in data_lines[:max_results] if max_results else data_lines:
+        for line in data_lines:
             parts = [p.strip() for p in line.split("|")]
             if len(parts) >= 3:
                 result_dict = {
@@ -255,13 +338,40 @@ class SIMBADTool(BaseTool):
 
                 results.append(result_dict)
 
+        total_in_response = len(results)
+        if max_results is not None:
+            page = results[offset : offset + max_results]
+        else:
+            page = results
+        next_offset = offset + len(page)
+        has_more = next_offset < total_in_response
+
         result_data = {
             "success": True,
             "query": query_description,
-            "count": len(results),
-            "results": results,
+            "count": len(page),
+            "results": page,
         }
-        return {"status": "success", "data": result_data}
+        return {
+            "status": "success",
+            "data": result_data,
+            "metadata": {
+                "total_matches_in_response": total_in_response,
+                "total_matches_in_response_is_exact": True,
+                "returned": len(page),
+                "limit": max_results,
+                "offset": offset,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
+                "response_page_complete": offset == 0
+                and len(page) == total_in_response,
+                "upstream_result_set_complete": None,
+                "upstream_completion_note": (
+                    "SIMBAD script output does not provide a total or overflow flag; "
+                    "use SIMBAD_advanced_query for overflow-detectable broad queries."
+                ),
+            },
+        }
 
 
 @register_tool("SIMBADAdvancedTool")
@@ -292,14 +402,29 @@ class SIMBADAdvancedTool(BaseTool):
             Dictionary containing query results
         """
         adql_query = arguments.get("adql_query")
-        if not adql_query:
+        if not isinstance(adql_query, str) or not adql_query.strip():
             return {
                 "status": "error",
                 "data": {"error": "adql_query parameter is required"},
             }
+        adql_query = adql_query.strip()
 
         max_results = arguments.get("max_results", 100)
         output_format = arguments.get("format", "json")
+        if (
+            isinstance(max_results, bool)
+            or not isinstance(max_results, int)
+            or not 1 <= max_results <= 10000
+        ):
+            return {
+                "status": "error",
+                "data": {"error": "max_results must be an integer from 1 to 10000"},
+            }
+        if output_format not in ("json", "votable"):
+            return {
+                "status": "error",
+                "data": {"error": "format must be json or votable"},
+            }
 
         try:
             params = {
@@ -307,7 +432,7 @@ class SIMBADAdvancedTool(BaseTool):
                 "LANG": "ADQL",
                 "QUERY": adql_query,
                 "FORMAT": "json" if output_format == "json" else "votable",
-                "MAXREC": max_results,
+                "MAXREC": max_results + 1 if output_format == "json" else max_results,
             }
 
             response = requests.post(self.tap_url, data=params, timeout=60)
@@ -315,26 +440,68 @@ class SIMBADAdvancedTool(BaseTool):
 
             if output_format == "json":
                 try:
+                    payload = response.json()
+                    if not isinstance(payload, dict) or not isinstance(
+                        payload.get("data"), list
+                    ):
+                        return {
+                            "status": "error",
+                            "data": {
+                                "error": "SIMBAD TAP returned an unexpected JSON payload",
+                                "query": adql_query,
+                            },
+                        }
+                    rows = payload["data"]
+                    has_more = len(rows) > max_results
+                    payload = dict(payload)
+                    payload["data"] = rows[:max_results]
                     result_data = {
                         "success": True,
                         "query": adql_query,
-                        "results": response.json(),
+                        "results": payload,
                     }
-                    return {"status": "success", "data": result_data}
+                    return {
+                        "status": "success",
+                        "data": result_data,
+                        "metadata": {
+                            "returned": len(payload["data"]),
+                            "limit": max_results,
+                            "has_more": has_more,
+                            "result_set_complete": not has_more,
+                            "overflow_detection": "MAXREC_plus_one_probe",
+                        },
+                    }
                 except ValueError:
-                    result_data = {
-                        "success": True,
-                        "query": adql_query,
-                        "results": response.text,
+                    return {
+                        "status": "error",
+                        "data": {
+                            "error": "SIMBAD TAP returned invalid JSON",
+                            "query": adql_query,
+                        },
                     }
-                    return {"status": "success", "data": result_data}
             else:
+                has_more = bool(
+                    re.search(
+                        r"<INFO\b[^>]*\bname=[\"']QUERY_STATUS[\"'][^>]*\bvalue=[\"']OVERFLOW[\"']",
+                        response.text,
+                        re.IGNORECASE,
+                    )
+                )
                 result_data = {
                     "success": True,
                     "query": adql_query,
                     "results": response.text,
                 }
-                return {"status": "success", "data": result_data}
+                return {
+                    "status": "success",
+                    "data": result_data,
+                    "metadata": {
+                        "limit": max_results,
+                        "has_more": has_more,
+                        "result_set_complete": not has_more,
+                        "overflow_detection": "VOTable_QUERY_STATUS",
+                    },
+                }
 
         except requests.Timeout:
             return {

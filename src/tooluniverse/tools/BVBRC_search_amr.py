@@ -13,6 +13,7 @@ def BVBRC_search_amr(
     genome_id: Optional[str] = None,
     resistant_phenotype: Optional[str] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -30,7 +31,9 @@ def BVBRC_search_amr(
     resistant_phenotype : str
         Filter by resistance phenotype. Options: 'Resistant', 'Susceptible', 'Interme...
     limit : int
-        Maximum number of results. Default: 25. Max: 100.
+        Maximum number of results per page. Default: 25. Max: 100.
+    offset : int
+        Zero-based result offset. Use metadata.next_offset to retrieve the next page....
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def BVBRC_search_amr(
             "genome_id": genome_id,
             "resistant_phenotype": resistant_phenotype,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

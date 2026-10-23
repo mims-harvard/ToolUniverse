@@ -90,9 +90,14 @@ class EnsemblLDTool(BaseTool):
         population = arguments.get("population", "")
         r2_threshold = arguments.get("r2_threshold", None)
         d_prime_threshold = arguments.get("d_prime_threshold", None)
-        limit = arguments.get("limit")
-        if limit is None:
-            limit = DEFAULT_LD_VARIANT_LIMIT
+        try:
+            limit = max(1, int(arguments.get("limit") or DEFAULT_LD_VARIANT_LIMIT))
+            offset = max(0, int(arguments.get("offset", 0)))
+        except (TypeError, ValueError):
+            return {
+                "status": "error",
+                "error": "Parameters 'limit' and 'offset' must be integers.",
+            }
 
         if not variant_id:
             return {
@@ -148,14 +153,19 @@ class EnsemblLDTool(BaseTool):
         # taken after truncation reads as "this variant has 200 LD partners" and
         # hides that the weakest returned r2 is far above the requested threshold.
         total_ld_count = len(ld_variants)
-        ld_variants = ld_variants[:limit]
+        ld_variants = ld_variants[offset : offset + limit]
+        has_more = offset + len(ld_variants) < total_ld_count
 
         result = {
             "query_variant": variant_id,
             "population": population,
             "total_ld_count": total_ld_count,
             "ld_count": len(ld_variants),
-            "truncated": total_ld_count > len(ld_variants),
+            "offset": offset,
+            "limit": limit,
+            "has_more": has_more,
+            "truncated": has_more,
+            "next_offset": offset + len(ld_variants) if has_more else None,
             "ld_variants": ld_variants,
         }
 

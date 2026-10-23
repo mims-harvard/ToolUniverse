@@ -1,7 +1,7 @@
 """
 LOVD_search_variants
 
-Search variants in LOVD by DBID or HGVS DNA notation. Use variant_dbid for exact LOVD variant IDs...
+Search LOVD variants by exactly one DBID or HGVS DNA notation. The wrapper verifies every returne...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def LOVD_search_variants(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Search variants in LOVD by DBID or HGVS DNA notation. Use variant_dbid for exact LOVD variant IDs...
+    Search LOVD variants by exactly one DBID or HGVS DNA notation. The wrapper verifies every returne...
 
     Parameters
     ----------

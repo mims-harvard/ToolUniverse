@@ -74,6 +74,24 @@ class QuickGOTool(BaseTool):
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
+    @staticmethod
+    def _pagination_metadata(
+        data: Dict[str, Any], requested_page: int, returned: int
+    ) -> Dict[str, Any]:
+        """Expose QuickGO's pageInfo instead of silently hiding later pages."""
+        page_info = data.get("pageInfo") or {}
+        current_page = int(page_info.get("current") or requested_page)
+        total_pages = int(page_info.get("total") or 0)
+        results_per_page = int(page_info.get("resultsPerPage") or returned)
+        has_more = current_page < total_pages
+        return {
+            "page": current_page,
+            "results_per_page": results_per_page,
+            "total_pages": total_pages,
+            "has_more": has_more,
+            "next_page": current_page + 1 if has_more else None,
+        }
+
     def _annotation_by_gene(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Search GO annotations for a specific gene product."""
         gene_product_id = arguments.get("gene_product_id", "")
@@ -95,9 +113,12 @@ class QuickGOTool(BaseTool):
             }
 
         url = f"{QUICKGO_BASE_URL}/annotation/search"
+        page = max(1, int(arguments.get("page") or 1))
+        limit = min(max(1, int(arguments.get("limit") or 25)), 100)
         params = {
             "geneProductId": gene_product_id,
-            "limit": arguments.get("limit", 25),
+            "limit": limit,
+            "page": page,
         }
 
         # Optional filters
@@ -111,7 +132,7 @@ class QuickGOTool(BaseTool):
 
         evidence_code = arguments.get("evidence_code")
         if evidence_code:
-            params["goUsage"] = "exact"
+            params["evidenceCode"] = evidence_code
 
         headers = {"Accept": "application/json"}
         response = requests.get(
@@ -131,6 +152,7 @@ class QuickGOTool(BaseTool):
                     "symbol": r.get("symbol"),
                     "qualifier": r.get("qualifier"),
                     "go_evidence": r.get("goEvidence"),
+                    "evidence_code": r.get("evidenceCode"),
                     "assigned_by": r.get("assignedBy"),
                     "reference": r.get("reference"),
                 }
@@ -169,6 +191,7 @@ class QuickGOTool(BaseTool):
                 "query": gene_product_id,
                 "total_annotations": data.get("numberOfHits", len(annotations)),
                 "page_size": len(annotations),
+                **self._pagination_metadata(data, page, len(annotations)),
             },
         }
 
@@ -179,15 +202,22 @@ class QuickGOTool(BaseTool):
             return {"status": "error", "error": "go_id parameter is required"}
 
         url = f"{QUICKGO_BASE_URL}/annotation/search"
+        page = max(1, int(arguments.get("page") or 1))
+        limit = min(max(1, int(arguments.get("limit") or 25)), 100)
         params = {
             "goId": go_id,
-            "limit": arguments.get("limit", 25),
+            "limit": limit,
+            "page": page,
         }
 
         # Optional filters
         taxon_id = arguments.get("taxon_id")
         if taxon_id:
             params["taxonId"] = taxon_id
+
+        evidence_code = arguments.get("evidence_code")
+        if evidence_code:
+            params["evidenceCode"] = evidence_code
 
         headers = {"Accept": "application/json"}
         response = requests.get(
@@ -207,6 +237,7 @@ class QuickGOTool(BaseTool):
                     "go_aspect": r.get("goAspect"),
                     "qualifier": r.get("qualifier"),
                     "go_evidence": r.get("goEvidence"),
+                    "evidence_code": r.get("evidenceCode"),
                     "taxon_id": r.get("taxonId"),
                     "assigned_by": r.get("assignedBy"),
                 }
@@ -220,6 +251,7 @@ class QuickGOTool(BaseTool):
                 "query_go_id": go_id,
                 "total_annotations": data.get("numberOfHits", len(annotations)),
                 "page_size": len(annotations),
+                **self._pagination_metadata(data, page, len(annotations)),
             },
         }
 

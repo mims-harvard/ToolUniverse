@@ -21,6 +21,7 @@ API docs: https://lipidmaps.org/resources/rest
 """
 
 from typing import Any, Dict
+from urllib.parse import quote
 
 import requests
 
@@ -55,6 +56,40 @@ _PROTEIN_INPUT_ITEMS = {
     "protein_entry",
 }
 
+_GENE_OUTPUT_ITEMS = {
+    "all",
+    "lmp_id",
+    "gene_id",
+    "gene_name",
+    "gene_symbol",
+    "gene_synonyms",
+    "alt_names",
+    "chromosome",
+    "map_location",
+    "summary",
+    "taxid",
+    "species",
+    "species_long",
+}
+_PROTEIN_OUTPUT_ITEMS = {
+    "all",
+    "lmp_id",
+    "gene_id",
+    "gene_name",
+    "gene_symbol",
+    "taxid",
+    "species",
+    "species_long",
+    "mrna_id",
+    "refseq_id",
+    "protein_gi",
+    "uniprot_id",
+    "protein_entry",
+    "protein_name",
+    "seqlength",
+    "seq",
+}
+
 
 @register_tool("LipidMapsGeneTool")
 class LipidMapsGeneTool(BaseTool):
@@ -76,18 +111,36 @@ class LipidMapsGeneTool(BaseTool):
         """Execute an LMPD gene/protein lookup. Never raises."""
         try:
             input_value = arguments.get("input_value")
-            if input_value is None or not str(input_value).strip():
+            if not isinstance(input_value, str) or not input_value.strip():
                 return {
                     "status": "error",
-                    "error": "Parameter 'input_value' is required (e.g. a gene "
+                    "error": "Parameter 'input_value' must be a non-empty string (e.g. a gene "
                     "symbol 'FASN', UniProt id 'P49327', or NCBI gene id '2194').",
                 }
-            input_value = str(input_value).strip()
-            output_item = str(arguments.get("output_item") or "all").strip()
+            input_value = input_value.strip()
+            output_item = arguments.get("output_item", "all")
+            if not isinstance(output_item, str) or not output_item.strip():
+                return {
+                    "status": "error",
+                    "error": "Parameter 'output_item' must be a non-empty string.",
+                }
+            output_item = output_item.strip()
 
             # Allow the lookup key to be overridden per call, else use the
             # config default for this tool.
-            input_item = str(arguments.get("input_item") or self.input_item).strip()
+            input_item = arguments.get("input_item", self.input_item)
+            if not isinstance(input_item, str) or not input_item.strip():
+                return {
+                    "status": "error",
+                    "error": "Parameter 'input_item' must be a non-empty string.",
+                }
+            input_item = input_item.strip()
+
+            if self.context not in ("gene", "protein"):
+                return {
+                    "status": "error",
+                    "error": f"Unsupported LIPID MAPS context '{self.context}'.",
+                }
 
             allowed = (
                 _GENE_INPUT_ITEMS if self.context == "gene" else _PROTEIN_INPUT_ITEMS
@@ -99,8 +152,28 @@ class LipidMapsGeneTool(BaseTool):
                     f"{self.context} context. Supported: " + ", ".join(sorted(allowed)),
                 }
 
-            sub_path = f"{self.context}/{input_item}/{input_value}/{output_item}/json"
-            return self._make_request(sub_path, input_item, input_value)
+            allowed_outputs = (
+                _GENE_OUTPUT_ITEMS if self.context == "gene" else _PROTEIN_OUTPUT_ITEMS
+            )
+            if output_item not in allowed_outputs:
+                return {
+                    "status": "error",
+                    "error": f"Unsupported output_item '{output_item}' for the "
+                    f"{self.context} context. Supported: "
+                    + ", ".join(sorted(allowed_outputs)),
+                }
+
+            sub_path = "/".join(
+                quote(segment, safe="")
+                for segment in (
+                    self.context,
+                    input_item,
+                    input_value,
+                    output_item,
+                    "json",
+                )
+            )
+            return self._make_request(sub_path, input_item, input_value, output_item)
         except requests.exceptions.Timeout:
             return {
                 "status": "error",
@@ -123,7 +196,7 @@ class LipidMapsGeneTool(BaseTool):
             }
 
     def _make_request(
-        self, sub_path: str, input_item: str, input_value: str
+        self, sub_path: str, input_item: str, input_value: str, output_item: str
     ) -> Dict[str, Any]:
         """Fetch and normalize an LMPD response.
 
@@ -148,6 +221,8 @@ class LipidMapsGeneTool(BaseTool):
                     "input_item": input_item,
                     "input_value": input_value,
                     "total_results": 0,
+                    "result_set_complete": True,
+                    "output_item": output_item,
                 },
             }
 
@@ -160,7 +235,10 @@ class LipidMapsGeneTool(BaseTool):
                 f"(first 200 chars: {raw_text[:200]}).",
             }
 
-        records = self._to_record_list(payload)
+        try:
+            records = self._to_record_list(payload)
+        except ValueError as exc:
+            return {"status": "error", "error": str(exc)}
         return {
             "status": "success",
             "data": records,
@@ -170,6 +248,9 @@ class LipidMapsGeneTool(BaseTool):
                 "input_item": input_item,
                 "input_value": input_value,
                 "total_results": len(records),
+                "result_set_complete": True,
+                "output_item": output_item,
+                "field_scope_complete": output_item == "all",
             },
         }
 
@@ -177,11 +258,25 @@ class LipidMapsGeneTool(BaseTool):
     def _to_record_list(payload: Any) -> list:
         """Flatten a LIPID MAPS payload into a list of record dicts."""
         if isinstance(payload, list):
-            return [r for r in payload if isinstance(r, dict)]
+            if any(not isinstance(record, dict) for record in payload):
+                raise ValueError("LIPID MAPS returned a malformed record list")
+            return payload
         if isinstance(payload, dict):
-            row_keys = sorted(k for k in payload if k.startswith("Row"))
+            row_keys = [key for key in payload if key.startswith("Row")]
             if row_keys:
-                return [payload[k] for k in row_keys if isinstance(payload[k], dict)]
+                if len(row_keys) != len(payload):
+                    raise ValueError(
+                        "LIPID MAPS mixed row records with unexpected response fields"
+                    )
+                if any(
+                    not key[3:].isdigit() or not isinstance(payload[key], dict)
+                    for key in row_keys
+                ):
+                    raise ValueError(
+                        "LIPID MAPS returned a malformed keyed row response"
+                    )
+                row_keys.sort(key=lambda key: int(key[3:]))
+                return [payload[key] for key in row_keys]
             # Single flat record.
             return [payload]
-        return []
+        raise ValueError("LIPID MAPS returned an unexpected JSON response shape")

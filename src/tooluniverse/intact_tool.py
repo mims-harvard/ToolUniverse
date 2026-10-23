@@ -226,6 +226,8 @@ class IntActRESTTool(BaseTool):
                     params["size"] = (
                         arguments.get("size") or arguments.get("limit") or default_size
                     )
+            start = max(0, int(arguments.get("first", arguments.get("start", 0))))
+            params["start"] = start
 
             response = self.session.get(
                 ebi_search_url, params=params, timeout=self.timeout
@@ -265,7 +267,15 @@ class IntActRESTTool(BaseTool):
                         "url": response.url,
                         "count": len(entries),
                         "hitCount": data.get("hitCount", len(entries)),
-                        "interaction_ids": interaction_ids[:10],
+                        "interaction_ids": interaction_ids,
+                        "start": start,
+                        "has_more": start + len(entries)
+                        < data.get("hitCount", len(entries)),
+                        "next_start": (
+                            start + len(entries)
+                            if start + len(entries) < data.get("hitCount", len(entries))
+                            else None
+                        ),
                         "note": "Data retrieved via EBI Search API (IntAct domain). For detailed interactor info, use IntAct website.",
                     },
                 }
@@ -296,6 +306,14 @@ class IntActRESTTool(BaseTool):
                     "count": len(entries),
                     "hitCount": data.get("hitCount", len(entries)),
                     "interaction_ids": interaction_ids,
+                    "start": start,
+                    "has_more": start + len(entries)
+                    < data.get("hitCount", len(entries)),
+                    "next_start": (
+                        start + len(entries)
+                        if start + len(entries) < data.get("hitCount", len(entries))
+                        else None
+                    ),
                     "note": note,
                 },
             }

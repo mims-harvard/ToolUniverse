@@ -187,6 +187,8 @@ _KNOWN_ARGUMENTS = frozenset(
         "demographic",
         "seriousness_type",
         "event_type",
+        "limit",
+        "offset",
     }
 )
 
@@ -1429,7 +1431,15 @@ class FAERSAnalyticsTool(BaseTool):
             # parsed only to be discarded. Same idiom as
             # openfda_adv_tool._fetch_limit. Without this the request fell back
             # to openFDA's 100-row default page and threw 80 rows away.
-            facet_limit = min(_TOP_SERIOUS_REACTIONS + 1, self._count_limit())
+            # The ranking is paged locally with limit/offset, so the probe row
+            # sits just past the requested page; openFDA caps the whole facet
+            # at its per-request maximum.
+            ceiling = self._count_limit()
+            limit = max(
+                1, min(int(arguments.get("limit") or _TOP_SERIOUS_REACTIONS), ceiling)
+            )
+            offset = max(0, min(int(arguments.get("offset") or 0), ceiling))
+            facet_limit = min(offset + limit + 1, ceiling)
             url = self._with_api_key(
                 f"{FDA_BASE_URL}?search={search_query}"
                 f"&count={PT_COUNT_FIELD}&limit={facet_limit}"
@@ -1456,11 +1466,14 @@ class FAERSAnalyticsTool(BaseTool):
                 total_data.get("meta", {}).get("results", {}).get("total", 0)
             )
 
-            # Format results
+            # Page the ranked count results locally. The old fixed [:20] made
+            # ranks past 20 unreachable from generated clients.
             serious_reactions = [
                 {"reaction": r.get("term"), "count": r.get("count")}
-                for r in results[:_TOP_SERIOUS_REACTIONS]
+                for r in results[offset : offset + limit]
             ]
+            next_offset = offset + len(serious_reactions)
+            has_more = len(results) > next_offset
 
             # Fix-R38: `total_serious_events` is honest -- it is
             # `meta.results.total` from a plain search, which openFDA does
@@ -1471,7 +1484,7 @@ class FAERSAnalyticsTool(BaseTool):
             # bucket carrying count 69). Rows beyond the slice were directly
             # observed in `results`, so the truncation is a fact here rather than
             # an inference.
-            truncated = len(results) > len(serious_reactions)
+            truncated = has_more
 
             # Fix-R50: the two numbers below count different things, and read
             # side by side without saying so they look like a contradiction.
@@ -1491,6 +1504,10 @@ class FAERSAnalyticsTool(BaseTool):
                 "total_serious_events": total_serious,
                 "top_serious_reactions": serious_reactions,
                 "top_serious_reactions_truncated": truncated,
+                "returned": len(serious_reactions),
+                "offset": offset,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
                 "note": f"Serious events: {'All' if seriousness_type == 'all' else seriousness_type.replace('_', ' ')}",
                 "coverage_note": (
                     f"total_serious_events ({total_serious:,}) counts REPORTS. "
@@ -1505,7 +1522,7 @@ class FAERSAnalyticsTool(BaseTool):
             if truncated:
                 result["top_serious_reactions_truncation_note"] = (
                     _ranked_terms_truncation_note(
-                        "serious reactions", len(serious_reactions), observed=True
+                        "serious reactions", next_offset, observed=True
                     )
                 )
             # Fix-R53-2: measured over the drug (and reaction) cohort this
@@ -1854,19 +1871,24 @@ class FAERSAnalyticsTool(BaseTool):
                 ),
             )
 
-            # Format PT level. Every returned row is kept -- slicing here is what
-            # produced the constant "total" this fix removes.
+            # Every row openFDA returned stays reachable: by default all of them
+            # are published -- a fixed slice here is what produced the constant
+            # "total" this fix removes -- and limit/offset page through them.
+            page_limit = max(1, min(int(arguments.get("limit") or limit), limit))
+            offset = max(0, int(arguments.get("offset") or 0))
             pt_level = [
                 {"preferred_term": r.get("term"), "count": r.get("count")}
-                for r in pt_results
+                for r in pt_results[offset : offset + page_limit]
             ]
+            next_offset = offset + len(pt_level)
+            has_more = next_offset < len(pt_results)
 
             # `limit` is already the ceiling, so there is no row past it to probe
-            # with: a full page is all that can be observed and the honest reading
-            # is "possibly incomplete", never "complete". A short page, by
-            # contrast, exhausted the facet, so unique_PTs_returned is then the
-            # true number of distinct PTs.
-            truncated = len(pt_level) >= limit
+            # with: a full facet is all that can be observed and the honest
+            # reading is "possibly incomplete", never "complete". A short facet,
+            # by contrast, is exhausted, so unique_PTs_returned is then the true
+            # number of distinct PTs.
+            truncated = len(pt_results) >= limit
 
             # Note: Full MedDRA hierarchy requires MedDRA license and the FAERS
             # API doesn't provide HLT/SOC directly, so nothing here is rolled up
@@ -1874,13 +1896,17 @@ class FAERSAnalyticsTool(BaseTool):
             # the truncation described above.
             hierarchy: Dict[str, Any] = {
                 "PT_level": pt_level,
-                "unique_PTs_returned": len(pt_level),
+                "unique_PTs_returned": len(pt_results),
                 "limit": limit,
                 "truncated": truncated,
+                "returned": len(pt_level),
+                "offset": offset,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
             }
             if truncated:
                 hierarchy["truncation_note"] = _ranked_terms_truncation_note(
-                    "preferred terms (PTs)", len(pt_level), observed=False
+                    "preferred terms (PTs)", len(pt_results), observed=False
                 )
 
             return {

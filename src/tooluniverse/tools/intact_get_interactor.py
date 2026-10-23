@@ -1,7 +1,7 @@
 """
 intact_get_interactor
 
-Get detailed information about a specific interactor from IntAct database by IntAct identifier (e...
+Get the first matching interactor plus metadata for all interaction entries fetched in this page....
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def intact_get_interactor(
     validate: bool = True,
 ) -> Any:
     """
-    Get detailed information about a specific interactor from IntAct database by IntAct identifier (e...
+    Get the first matching interactor plus metadata for all interaction entries fetched in this page....
 
     Parameters
     ----------

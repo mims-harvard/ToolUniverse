@@ -262,7 +262,7 @@
   },
   {
     "name": "OpenNeuro_search_by_modality",
-    "description": "Search OpenNeuro neuroimaging datasets filtered by imaging modality. Supported modalities include: 'MRI' (structural and functional MRI), 'EEG' (electroencephalography), 'iEEG' (intracranial EEG), 'MEG' (magnetoencephalography), 'PET' (positron emission tomography). Returns dataset IDs, names, creation dates, and total count of matching datasets. OpenNeuro hosts 1600+ BIDS-formatted brain imaging datasets.",
+    "description": "Search OpenNeuro neuroimaging datasets filtered by imaging modality. Returns the exact matching count and cursor pagination metadata. When metadata.has_more is true, pass metadata.next_cursor as after with the same modality.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -275,14 +275,25 @@
             "integer",
             "null"
           ],
+          "minimum": 1,
+          "maximum": 25,
+          "default": 10,
           "description": "Number of datasets to return (default 10, max 25)"
+        },
+        "after": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Opaque continuation cursor from metadata.next_cursor."
         }
       },
       "required": [
         "modality"
-      ]
+      ],
+      "additionalProperties": false
     },
-    "query_schema": "query SearchByModality($first: Int, $modality: String) {\n  datasets(first: $first, modality: $modality, orderBy: {created: descending}) {\n    edges {\n      node {\n        id\n        created\n        name\n        public\n      }\n    }\n    pageInfo { count }\n  }\n}",
+    "query_schema": "query SearchByModality($first: Int, $after: String, $modality: String) {\n  datasets(first: $first, after: $after, modality: $modality, orderBy: {created: descending}) {\n    edges {\n      node {\n        id\n        created\n        name\n        public\n      }\n    }\n    pageInfo { count hasNextPage endCursor }\n  }\n}",
     "fields": {},
     "type": "OpenNeuroTool",
     "test_examples": [
@@ -338,6 +349,15 @@
                         "count": {
                           "type": ["integer", "null"],
                           "description": "Total matching datasets"
+                        },
+                        "hasNextPage": {
+                          "type": "boolean"
+                        },
+                        "endCursor": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
                         }
                       }
                     }
@@ -549,7 +569,7 @@
   },
   {
     "name": "OpenNeuro_advanced_search",
-    "description": "Faceted search across all OpenNeuro datasets plus the archive-wide total participant count. Returns participantCount (total number of subjects across the whole OpenNeuro archive) and advancedSearch with pageInfo.count (number of datasets matching the facet filters) and a best-effort list of matching dataset IDs. Pass any combination of flat facet arguments (species, sex, diagnosis, modality, tasks, keywords, scannerManufacturers, tracerNames, studyDomains, ageRange, subjectCountRange, authors, bodyParts, bidsDatasetType, tracerRadionuclides); omit all to count the whole archive. Note: some matched datasets are not anonymously readable, so a few edges may be omitted, but the counts remain accurate.",
+    "description": "Faceted search across all OpenNeuro datasets plus the archive-wide total participant count. Returns the exact matching dataset count and cursor pagination metadata. Continue with metadata.next_cursor while metadata.has_more is true. Some matched datasets are not anonymously readable, so metadata reports both returned_readable and permission_omitted_on_page; a short readable page is not necessarily the final page.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -624,11 +644,22 @@
         },
         "first": {
           "type": ["integer", "null"],
+          "minimum": 1,
+          "maximum": 25,
+          "default": 10,
           "description": "Number of matching datasets to return (default 10, max 25)"
+        },
+        "after": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Opaque continuation cursor from metadata.next_cursor."
         }
-      }
+      },
+      "additionalProperties": false
     },
-    "query_schema": "query AdvancedSearch($query: DatasetSearchInput!, $first: Int) {\n  participantCount\n  advancedSearch(query: $query, first: $first) {\n    pageInfo {\n      count\n    }\n    edges {\n      node {\n        id\n      }\n    }\n  }\n}",
+    "query_schema": "query AdvancedSearch($query: DatasetSearchInput!, $first: Int, $after: String) {\n  participantCount\n  advancedSearch(query: $query, first: $first, after: $after) {\n    pageInfo {\n      count\n      hasNextPage\n      endCursor\n    }\n    edges {\n      node {\n        id\n      }\n    }\n  }\n}",
     "fields": {},
     "type": "OpenNeuroTool",
     "test_examples": [
@@ -660,6 +691,15 @@
                         "count": {
                           "type": ["integer", "null"],
                           "description": "Number of datasets matching the facet filters"
+                        },
+                        "hasNextPage": {
+                          "type": "boolean"
+                        },
+                        "endCursor": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
                         }
                       }
                     },

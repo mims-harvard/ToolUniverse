@@ -1,20 +1,29 @@
 [
   {
     "name": "OpenML_search_datasets",
-    "description": "Search the OpenML platform for machine learning benchmark datasets. OpenML hosts thousands of curated datasets with standardized metadata, quality metrics, and associated ML tasks/runs. Returns dataset IDs, names, versions, formats, and quality statistics (number of instances, features, classes, missing values). Use this to discover datasets for benchmarking, AutoML experiments, or finding datasets by name. Results are paginated; use limit to control page size. Use OpenML_get_dataset for full metadata on a specific dataset.",
+    "description": "List/discover OpenML benchmark datasets in catalog order. This endpoint does not perform keyword search. Results use path-based offset pagination: start with offset=0 and continue with metadata.next_offset while metadata.has_more is true. OpenML exposes no total here; ToolUniverse reports an exact total only on a short final page. Returns dataset IDs, names, versions, formats, and quality statistics.",
     "parameter": {
       "type": "object",
       "properties": {
         "limit": {
           "type": "integer",
-          "description": "Maximum number of datasets to return (default 20, max 10000). Controls pagination page size.",
-          "default": 20
+          "description": "Datasets per page (default 20, max 10000).",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 10000
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based dataset offset. Continue with metadata.next_offset while metadata.has_more is true."
         }
       },
       "required": []
     },
     "fields": {
-      "endpoint": "https://www.openml.org/api/v1/json/data/list/limit/{limit}"
+      "endpoint": "https://www.openml.org/api/v1/json/data/list/limit/{limit}/offset/{offset}",
+      "pagination": "openml_offset_path"
     },
     "type": "BaseRESTTool",
     "test_examples": [

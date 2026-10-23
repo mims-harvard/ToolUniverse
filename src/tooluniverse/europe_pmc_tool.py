@@ -1409,6 +1409,30 @@ class EuropePMCRESTTool(BaseTool):
     def run(self, arguments):
         """Execute the Europe PMC REST API request."""
         try:
+            props = self.tool_config.get("parameter", {}).get("properties", {})
+            page = arguments.get("page", props.get("page", {}).get("default", 1))
+            page_size = arguments.get(
+                "page_size", props.get("page_size", {}).get("default", 25)
+            )
+            if isinstance(page, bool) or not isinstance(page, int) or page < 1:
+                return {
+                    "status": "error",
+                    "error": "page must be an integer greater than or equal to 1",
+                    "parameter": "page",
+                }
+            if (
+                isinstance(page_size, bool)
+                or not isinstance(page_size, int)
+                or not 1 <= page_size <= 1000
+            ):
+                return {
+                    "status": "error",
+                    "error": "page_size must be an integer between 1 and 1000",
+                    "parameter": "page_size",
+                }
+            arguments = dict(arguments)
+            arguments["page"] = page
+            arguments["page_size"] = page_size
             url = self._build_url(arguments)
 
             # Extract query parameters (those not in URL path)
@@ -1436,7 +1460,47 @@ class EuropePMCRESTTool(BaseTool):
 
             if response.status_code == 200:
                 data = response.json()
-                return {"status": "success", "data": data, "url": response.url}
+                container_key = self.tool_config.get("fields", {}).get(
+                    "record_container"
+                )
+                record_key = self.tool_config.get("fields", {}).get("record_key")
+                container = data.get(container_key) if isinstance(data, dict) else None
+                records = (
+                    container.get(record_key, []) if isinstance(container, dict) else []
+                )
+                if not isinstance(records, list):
+                    records = []
+                total = data.get("hitCount") if isinstance(data, dict) else None
+                total_is_exact = isinstance(total, int) and not isinstance(total, bool)
+                returned = len(records)
+                consumed = (page - 1) * page_size + returned
+                has_more = bool(total_is_exact and returned and consumed < total)
+                return {
+                    "status": "success",
+                    "data": data,
+                    "url": response.url,
+                    "count": returned,
+                    "metadata": {
+                        "returned": returned,
+                        "total_results": total if total_is_exact else None,
+                        "total_results_is_exact": total_is_exact,
+                        "page": page,
+                        "page_size": page_size,
+                        "total_pages": (
+                            (total + page_size - 1) // page_size
+                            if total_is_exact
+                            else None
+                        ),
+                        "has_more": has_more,
+                        "next_page": page + 1 if has_more else None,
+                        "truncated": page > 1 or has_more,
+                        "result_set_complete": bool(
+                            total_is_exact and page == 1 and returned == total
+                        ),
+                        "record_path": f"{container_key}.{record_key}",
+                        "pagination_scope": "europe_pmc_hitcount_one_based_page",
+                    },
+                }
             else:
                 return {
                     "status": "error",

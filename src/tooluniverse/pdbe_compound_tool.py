@@ -143,9 +143,12 @@ class PDBECompoundTool(BaseTool):
                 "compound_type": compound.get("compound_type"),
                 "inchi": compound.get("inchi"),
                 "inchi_key": compound.get("inchi_key"),
-                "smiles": smiles[:3],
-                "systematic_names": sys_names[:3],
-                "cross_references": cross_links[:15],
+                "smiles": smiles,
+                "smiles_count": len(smiles),
+                "systematic_names": sys_names,
+                "systematic_name_count": len(sys_names),
+                "cross_references": cross_links,
+                "cross_reference_count": len(cross_links),
                 "first_observed_in": compound.get("first_observed_in") or [],
                 "release_status": compound.get("release_status"),
                 "creation_date": compound.get("creation_date"),
@@ -165,6 +168,15 @@ class PDBECompoundTool(BaseTool):
             }
 
         comp_id = comp_id.upper()
+        try:
+            limit = max(1, min(int(arguments.get("limit", 100)), 500))
+            offset = max(0, int(arguments.get("offset", 0)))
+        except (TypeError, ValueError):
+            return {
+                "status": "error",
+                "error": "limit and offset must be integers",
+            }
+
         # Use PDBe API for compound summary - it provides the same info
         url = f"{PDBE_COMPOUND_BASE_URL}/summary/{comp_id}"
         response = requests.get(url, timeout=self.timeout)
@@ -184,20 +196,18 @@ class PDBECompoundTool(BaseTool):
         compound = compound_list[0]
         first_seen = compound.get("first_observed_in") or []
 
-        # Also get compound in_pdb data from the regular PDBe API
-        pdb_url = f"https://www.ebi.ac.uk/pdbe/api/pdb/compound/summary/{comp_id}"
-        try:
-            pdb_response = requests.get(pdb_url, timeout=self.timeout)
-            pdb_response.raise_for_status()
-            pdb_data = pdb_response.json()
-            pdb_entries = pdb_data.get(comp_id, [{}])
-            if pdb_entries:
-                pdb_entry = pdb_entries[0]
-                pdb_ids = pdb_entry.get("pdb_entries", [])
-            else:
-                pdb_ids = []
-        except Exception:
-            pdb_ids = []
+        # The summary endpoint has no pdb_entries field. The official
+        # compound/in_pdb endpoint returns every containing PDB entry plus
+        # occurrence qualifiers (bound/subcomponent type and copy counts).
+        pdb_url = f"https://www.ebi.ac.uk/pdbe/api/pdb/compound/in_pdb/{comp_id}"
+        pdb_response = requests.get(pdb_url, timeout=self.timeout)
+        pdb_response.raise_for_status()
+        occurrences = pdb_response.json().get(comp_id, []) or []
+        page = occurrences[offset : offset + limit]
+        pdb_ids = [row.get("pdb_id") for row in page if row.get("pdb_id")]
+        total = len(occurrences)
+        next_offset = offset + len(page)
+        has_more = next_offset < total
 
         return {
             "status": "success",
@@ -207,10 +217,22 @@ class PDBECompoundTool(BaseTool):
                 "formula": compound.get("formula"),
                 "weight": compound.get("weight"),
                 "first_observed_in": first_seen,
-                "pdb_entries": pdb_ids[:50] if pdb_ids else first_seen,
+                "pdb_entries": pdb_ids,
+                "occurrences": page,
+                "total_structures": total,
+                "returned": len(page),
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
             },
             "metadata": {
                 "source": "PDBe Graph API (ebi.ac.uk/pdbe)",
-                "total_structures": len(pdb_ids) if pdb_ids else len(first_seen),
+                "total_structures": total,
+                "returned": len(page),
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "next_offset": next_offset if has_more else None,
             },
         }

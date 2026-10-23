@@ -1,7 +1,7 @@
 """
 BVBRC_search_epitopes
 
-Search for pathogen epitopes (B-cell and T-cell) in BV-BRC. Returns epitope sequences, types, pro...
+Search for pathogen epitopes (B-cell and T-cell) in BV-BRC with explicit pagination. Metadata rep...
 """
 
 from typing import Any, Optional, Callable
@@ -14,13 +14,14 @@ def BVBRC_search_epitopes(
     epitope_type: Optional[str] = None,
     organism: Optional[str] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search for pathogen epitopes (B-cell and T-cell) in BV-BRC. Returns epitope sequences, types, pro...
+    Search for pathogen epitopes (B-cell and T-cell) in BV-BRC with explicit pagination. Metadata rep...
 
     Parameters
     ----------
@@ -34,6 +35,8 @@ def BVBRC_search_epitopes(
         Organism name keyword to search across epitope records. Example: 'coronavirus...
     limit : int
         Maximum number of results. Default: 25. Max: 100.
+    offset : int
+        Zero-based result offset. Use metadata.next_offset to continue.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def BVBRC_search_epitopes(
             "epitope_type": epitope_type,
             "organism": organism,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

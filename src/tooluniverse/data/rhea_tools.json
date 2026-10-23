@@ -14,6 +14,8 @@
             "integer",
             "null"
           ],
+          "minimum": 1,
+          "default": 20,
           "description": "Maximum number of reactions to return per page (default 20, max 1000). This caps the page only; `metadata.total_results` reports the full result-set size."
         },
         "offset": {
@@ -21,6 +23,8 @@
             "integer",
             "null"
           ],
+          "minimum": 0,
+          "default": 0,
           "description": "Number of matching reactions to skip before returning a page (default 0). Combine with `limit` and `metadata.has_more` to page through large result sets."
         }
       },
@@ -101,6 +105,8 @@
             "integer",
             "null"
           ],
+          "minimum": 1,
+          "default": 20,
           "description": "Maximum number of reactions to return per page (default 20, max 1000). This caps the page only; `metadata.total_results` reports the full result-set size."
         },
         "offset": {
@@ -108,6 +114,8 @@
             "integer",
             "null"
           ],
+          "minimum": 0,
+          "default": 0,
           "description": "Number of matching reactions to skip before returning a page (default 0). Combine with `limit` and `metadata.has_more` to page through large result sets."
         }
       },
@@ -185,6 +193,8 @@
             "integer",
             "null"
           ],
+          "minimum": 1,
+          "default": 20,
           "description": "Maximum number of reactions to return per page (default 20, max 1000). This caps the page only; `metadata.total_results` reports the full result-set size."
         },
         "offset": {
@@ -192,6 +202,8 @@
             "integer",
             "null"
           ],
+          "minimum": 0,
+          "default": 0,
           "description": "Number of matching reactions to skip before returning a page (default 0). Combine with `limit` and `metadata.has_more` to page through large result sets."
         }
       },

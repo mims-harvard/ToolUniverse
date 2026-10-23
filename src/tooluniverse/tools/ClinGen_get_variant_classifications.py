@@ -11,6 +11,8 @@ from ._shared_client import get_shared_client
 def ClinGen_get_variant_classifications(
     gene: Optional[str] = None,
     variant: Optional[str] = None,
+    limit: Optional[int] = 100,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,6 +27,10 @@ def ClinGen_get_variant_classifications(
         Optional: Filter by gene symbol
     variant : str
         Optional: filter to one variant. Accepts a ClinGen canonical allele ID ('CA16...
+    limit : int
+        Maximum classifications to return from this page
+    offset : int
+        Zero-based classification offset; follow next_offset for later records
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,7 +46,14 @@ def ClinGen_get_variant_classifications(
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
-        k: v for k, v in {"gene": gene, "variant": variant}.items() if v is not None
+        k: v
+        for k, v in {
+            "gene": gene,
+            "variant": variant,
+            "limit": limit,
+            "offset": offset,
+        }.items()
+        if v is not None
     }
     return get_shared_client().run_one_function(
         {

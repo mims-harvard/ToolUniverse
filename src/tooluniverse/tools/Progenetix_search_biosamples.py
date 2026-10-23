@@ -1,7 +1,7 @@
 """
 Progenetix_search_biosamples
 
-Search cancer tumor biosamples in the Progenetix database by NCIt disease ontology code. Progenet...
+Search cancer tumor biosamples in Progenetix by NCIt disease code. Returns diagnoses, stage, and ...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def Progenetix_search_biosamples(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search cancer tumor biosamples in the Progenetix database by NCIt disease ontology code. Progenet...
+    Search cancer tumor biosamples in Progenetix by NCIt disease code. Returns diagnoses, stage, and ...
 
     Parameters
     ----------

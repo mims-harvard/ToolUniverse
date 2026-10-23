@@ -1,7 +1,7 @@
 """
 CoL_get_children
 
-Get child taxa (immediate subtaxa) of a given taxon in the Catalogue of Life. For example, get al...
+Get immediate child taxa of a Catalogue of Life taxon through the official tree/{id}/children end...
 """
 
 from typing import Any, Optional, Callable
@@ -10,15 +10,15 @@ from ._shared_client import get_shared_client
 
 def CoL_get_children(
     parentId: str,
-    limit: Optional[int] = None,
-    offset: Optional[int] = None,
+    limit: Optional[int] = 10,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get child taxa (immediate subtaxa) of a given taxon in the Catalogue of Life. For example, get al...
+    Get immediate child taxa of a Catalogue of Life taxon through the official tree/{id}/children end...
 
     Parameters
     ----------

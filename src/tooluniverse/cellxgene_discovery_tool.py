@@ -76,7 +76,8 @@ class CellxGeneDiscoveryTool(BaseTool):
 
     def _list_collections(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """List curated single-cell collections."""
-        limit = min(arguments.get("limit", 20), 100)
+        limit = max(1, min(int(arguments.get("limit", 20)), 100))
+        offset = max(0, int(arguments.get("offset", 0)))
 
         url = f"{CXG_BASE_URL}/curation/v1/collections"
         params = {"visibility": "PUBLIC"}
@@ -86,7 +87,7 @@ class CellxGeneDiscoveryTool(BaseTool):
 
         total = len(collections)
         results = []
-        for c in collections[:limit]:
+        for c in collections[offset : offset + limit]:
             datasets = c.get("datasets", [])
             total_cells = sum(
                 ds.get("cell_count", 0) for ds in datasets if ds.get("cell_count")
@@ -95,9 +96,8 @@ class CellxGeneDiscoveryTool(BaseTool):
                 {
                     "collection_id": c.get("collection_id"),
                     "name": c.get("name"),
-                    "description": c.get("description", "")[:200]
-                    if c.get("description")
-                    else None,
+                    "description": c.get("description"),
+                    "description_length": len(c.get("description") or ""),
                     "doi": c.get("doi"),
                     "contact_name": c.get("contact_name"),
                     "curator_name": c.get("curator_name"),
@@ -113,6 +113,12 @@ class CellxGeneDiscoveryTool(BaseTool):
             "data": {
                 "total_collections": total,
                 "returned": len(results),
+                "offset": offset,
+                "has_more": offset + len(results) < total,
+                "truncated": offset + len(results) < total,
+                "next_offset": offset + len(results)
+                if offset + len(results) < total
+                else None,
                 "collections": results,
             },
             "metadata": {
@@ -156,7 +162,8 @@ class CellxGeneDiscoveryTool(BaseTool):
                     "tissues": tissues,
                     "diseases": diseases,
                     "organisms": organisms,
-                    "cell_types": cell_types[:20],  # Limit long lists
+                    "cell_types": cell_types,
+                    "cell_type_count": len(cell_types),
                     "assays": assays,
                     "is_primary_data": ds.get("is_primary_data"),
                 }
@@ -186,7 +193,8 @@ class CellxGeneDiscoveryTool(BaseTool):
         disease = arguments.get("disease", "")
         organism = arguments.get("organism", "")
         cell_type = arguments.get("cell_type", "")
-        limit = min(arguments.get("limit", 20), 100)
+        limit = max(1, min(int(arguments.get("limit", 20)), 100))
+        offset = max(0, int(arguments.get("offset", 0)))
 
         if not any([tissue, disease, organism, cell_type]):
             return {
@@ -246,7 +254,7 @@ class CellxGeneDiscoveryTool(BaseTool):
         total = len(filtered)
         # Sort by cell count descending
         filtered.sort(key=lambda x: x.get("cell_count", 0) or 0, reverse=True)
-        filtered = filtered[:limit]
+        filtered = filtered[offset : offset + limit]
 
         results = []
         for d in filtered:
@@ -275,6 +283,12 @@ class CellxGeneDiscoveryTool(BaseTool):
             "data": {
                 "total_matching": total,
                 "returned": len(results),
+                "offset": offset,
+                "has_more": offset + len(results) < total,
+                "truncated": offset + len(results) < total,
+                "next_offset": offset + len(results)
+                if offset + len(results) < total
+                else None,
                 "datasets": results,
             },
             "metadata": {

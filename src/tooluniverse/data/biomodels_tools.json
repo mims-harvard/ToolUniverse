@@ -2,7 +2,7 @@
   {
     "name": "biomodels_search",
     "type": "BioModelsRESTTool",
-    "description": "Search for computational biological models in the EBI BioModels database by keyword. Returns models with identifiers, names, formats (typically SBML), and URLs. Use this to find systems biology models related to specific biological processes (e.g., 'glycolysis', 'apoptosis', 'cell cycle'), diseases, or pathways. Find model IDs to use with other BioModels tools for detailed information and downloads.",
+    "description": "Search EBI BioModels by keyword with recoverable offset pagination. Continue with metadata.next_offset while metadata.has_more is true; metadata.total_results is the exact upstream match count. BioModels enforces a minimum upstream batch of 10, but this wrapper returns exactly the requested limit.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -12,8 +12,16 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum number of results to return",
-          "default": 10
+          "description": "Maximum models to return on this page (1-100).",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based model offset. Continue with metadata.next_offset.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": [
@@ -57,7 +65,8 @@
       "method": "GET",
       "params": {
         "format": "json"
-      }
+      },
+      "pagination": "biomodels_offset"
     }
   },
   {
@@ -291,7 +300,7 @@
   {
     "type": "BioModelsRESTTool",
     "name": "BioModels_search_parameters",
-    "description": "Search for specific parameters within BioModels entries. Find models containing parameters matching your query (e.g., reaction rates, initial concentrations, kinetic constants). Returns models with parameter names, values, and units. Essential for finding models with specific parameter values or discovering parameter ranges across multiple models. Use this for comparative analysis or parameter estimation studies.",
+    "description": "Search parameters within BioModels entries using the parameter service's size/start pagination. Continue with metadata.next_offset while metadata.has_more is true; metadata.total_results is the exact filtered count. BioModels enforces a minimum upstream batch of 10, but this wrapper returns exactly the requested limit.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -305,6 +314,12 @@
           "default": 10,
           "minimum": 1,
           "maximum": 100
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based parameter-record offset. Continue with metadata.next_offset.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": [
@@ -316,7 +331,8 @@
       "method": "GET",
       "params": {
         "format": "json"
-      }
+      },
+      "pagination": "biomodels_offset"
     },
     "return_schema": {
       "type": "object",

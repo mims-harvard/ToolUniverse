@@ -222,7 +222,8 @@ class CompoundDiseaseProfileTool(BaseTool):
                     "efo_id": obj.get("id", entry.get("id", "")),
                     "name": obj.get("name", entry.get("name", "")),
                     "description": str(obj.get("description", ""))[:300],
-                    "dbXRefs": obj.get("dbXRefs", [])[:10],
+                    "dbXRefs": obj.get("dbXRefs", []),
+                    "dbXRef_count": len(obj.get("dbXRefs", [])),
                 }
         if isinstance(data, dict):
             return {

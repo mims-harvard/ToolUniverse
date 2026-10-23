@@ -1,7 +1,7 @@
 """
 SASBDB_search
 
-Search SASBDB small-angle scattering database by query term or UniProt accession. Accepts free-te...
+Search SASBDB small-angle scattering database by query term or UniProt accession. UniProt IDs ret...
 """
 
 from typing import Any, Optional, Callable
@@ -11,20 +11,23 @@ from ._shared_client import get_shared_client
 def SASBDB_search(
     query: str,
     max_results: Optional[int] = None,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search SASBDB small-angle scattering database by query term or UniProt accession. Accepts free-te...
+    Search SASBDB small-angle scattering database by query term or UniProt accession. UniProt IDs ret...
 
     Parameters
     ----------
     query : str
         Search query: UniProt accession (e.g., 'P02769' for BSA) or free-text term. N...
     max_results : int
-        Cap on entries returned when query is free-text and falls back to listing all...
+        Page size when a free-text query falls back to listing the published-entry ca...
+    offset : int
+        Zero-based catalog offset for free-text fallback results. Continue with next_...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +44,11 @@ def SASBDB_search(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"query": query, "max_results": max_results}.items()
+        for k, v in {
+            "query": query,
+            "max_results": max_results,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

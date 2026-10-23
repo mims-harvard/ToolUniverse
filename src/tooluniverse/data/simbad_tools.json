@@ -2,7 +2,7 @@
   {
     "type": "SIMBADTool",
     "name": "SIMBAD_query_object",
-    "description": "Query the SIMBAD astronomical database for information about celestial objects. Supports queries by object name, coordinates, or identifier. SIMBAD contains data on millions of astronomical objects including stars, galaxies, and other celestial bodies.",
+    "description": "Query SIMBAD by object name, coordinates, or wildcard identifier. Coordinate and identifier responses are exactly paginated within the returned script response using offset/next_offset. SIMBAD script output has no upstream total or overflow flag, so metadata.upstream_result_set_complete is null; use SIMBAD_advanced_query when broad-query overflow detection is required. Script errors retain the upstream message instead of being mislabeled as 'object not found'.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -18,14 +18,20 @@
         },
         "ra": {
           "type": "number",
+          "minimum": 0,
+          "maximum": 360,
           "description": "Right Ascension in degrees (0-360). Required when query_type='coordinates'"
         },
         "dec": {
           "type": "number",
+          "minimum": -90,
+          "maximum": 90,
           "description": "Declination in degrees (-90 to +90). Required when query_type='coordinates'"
         },
         "radius": {
           "type": "number",
+          "exclusiveMinimum": 0,
+          "maximum": 120,
           "description": "Search radius in arcminutes for coordinate queries. Default is 1.0 arcmin",
           "default": 1.0
         },
@@ -41,8 +47,16 @@
         },
         "max_results": {
           "type": "integer",
-          "description": "Maximum number of results to return for coordinate or identifier queries",
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Maximum rows on this local response page",
           "default": 10
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset into the rows returned by the SIMBAD script response; continue with metadata.next_offset"
         }
       },
       "required": []
@@ -113,7 +127,8 @@
         "ra": 10.68458,
         "dec": 41.26917,
         "radius": 2.0,
-        "max_results": 5
+        "max_results": 5,
+        "offset": 0
       },
       {
         "query_type": "identifier",
@@ -129,7 +144,7 @@
   {
     "type": "SIMBADAdvancedTool",
     "name": "SIMBAD_advanced_query",
-    "description": "Execute advanced ADQL (Astronomical Data Query Language) queries on SIMBAD using TAP (Table Access Protocol). Allows complex database queries with SQL-like syntax for sophisticated astronomical data searches. Use this for queries that require joins, filtering, or complex conditions.",
+    "description": "Execute ADQL against SIMBAD TAP with explicit truncation detection. JSON requests use a MAXREC+1 probe and return at most max_results rows; VOTable requests inspect QUERY_STATUS=OVERFLOW. metadata.has_more and result_set_complete prevent a MAXREC-limited response from appearing complete.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -139,7 +154,9 @@
         },
         "max_results": {
           "type": "integer",
-          "description": "Maximum number of results to return",
+          "minimum": 1,
+          "maximum": 10000,
+          "description": "Maximum rows to return; overflow is reported in metadata",
           "default": 100
         },
         "format": {

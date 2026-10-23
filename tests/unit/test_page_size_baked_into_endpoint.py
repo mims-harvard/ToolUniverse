@@ -25,9 +25,10 @@ TP53 matches 1812 annotation rows upstream, so the caller got 50 of 1812 and
 could not ask for more. Substituting ``{rows}`` makes the declared default of
 100 real and the parameter effective (verified live: 5 -> 5, 300 -> 300).
 
-The remaining hard-coded cap, ``GO_search_terms``' ``rows=10``, is left alone
-on purpose: that tool returns the raw Solr envelope, so its ``response.numFound``
-is visible to the caller and the truncation is not silent.
+``GO_search_terms`` keeps a page-size cap on purpose, but as a declared
+``rows`` parameter with a maximum: its ``golr_start`` pagination reports Solr's
+``response.numFound`` as ``total_results`` with ``has_more``/``next_start``,
+so the truncation is not silent.
 
 Config-only assertions -- no network.
 """
@@ -165,6 +166,8 @@ def test_go_search_terms_keeps_its_cap_because_it_reports_num_found():
     """The negative control: this endpoint's cap is disclosed, so it stays."""
     config = _config("gene_ontology_tools.json", "GO_search_terms")
 
-    assert "rows=10" in config["fields"]["endpoint"]
-    assert "extract_path" not in config["fields"]
-    assert "numFound" in json.dumps(config["return_schema"])
+    assert "rows={rows}" in config["fields"]["endpoint"]
+    rows = config["parameter"]["properties"]["rows"]
+    assert isinstance(rows.get("maximum"), int)
+    # golr_start pagination surfaces response.numFound as total_results.
+    assert config["fields"]["pagination"] == "golr_start"

@@ -83,6 +83,8 @@ class MyDiseaseTool(BaseTool):
             }
 
         fields_param = arguments.get("fields", "mondo,disease_ontology,ctd,hpo")
+        annotation_limit = max(1, min(int(arguments.get("annotation_limit", 20)), 1000))
+        annotation_offset = max(0, int(arguments.get("annotation_offset", 0)))
 
         # Build API fields parameter
         if fields_param == "all":
@@ -148,13 +150,35 @@ class MyDiseaseTool(BaseTool):
             # MyDisease returns a bare object when only one entry exists.
             chems = chems if isinstance(chems, list) else [chems]
             paths = paths if isinstance(paths, list) else [paths]
+            chemicals_page = chems[
+                annotation_offset : annotation_offset + annotation_limit
+            ]
+            pathways_page = paths[
+                annotation_offset : annotation_offset + annotation_limit
+            ]
             result["ctd"] = {
-                "chemicals_count": len(chems[:20]),
+                "chemicals_count": len(chemicals_page),
                 "total_chemicals": len(chems),
-                "chemicals": chems[:20],
-                "pathways_count": len(paths[:20]),
+                "chemicals_returned": len(chemicals_page),
+                "chemicals_has_more": annotation_offset + len(chemicals_page)
+                < len(chems),
+                "chemicals_next_offset": (
+                    annotation_offset + len(chemicals_page)
+                    if annotation_offset + len(chemicals_page) < len(chems)
+                    else None
+                ),
+                "chemicals": chemicals_page,
+                "pathways_count": len(pathways_page),
                 "total_pathways": len(paths),
-                "pathways": paths[:20],
+                "pathways_returned": len(pathways_page),
+                "pathways_has_more": annotation_offset + len(pathways_page)
+                < len(paths),
+                "pathways_next_offset": (
+                    annotation_offset + len(pathways_page)
+                    if annotation_offset + len(pathways_page) < len(paths)
+                    else None
+                ),
+                "pathways": pathways_page,
             }
 
         # Extract HPO data (API returns a list for diseases with multiple OMIM entries)
@@ -176,24 +200,46 @@ class MyDiseaseTool(BaseTool):
                             hpo_names.append(entry["disease_name"])
                         if entry.get("omim"):
                             omim_ids.append(entry["omim"])
+                phenotypes_page = all_phenos[
+                    annotation_offset : annotation_offset + annotation_limit
+                ]
                 result["hpo"] = {
                     "disease_name": hpo_names[0] if hpo_names else None,
                     "omim": omim_ids,
-                    "phenotypes_count": len(all_phenos[:20]),
+                    "phenotypes_count": len(phenotypes_page),
                     "total_phenotypes": len(all_phenos),
-                    "phenotypes": all_phenos[:20],
+                    "phenotypes_returned": len(phenotypes_page),
+                    "phenotypes_has_more": annotation_offset + len(phenotypes_page)
+                    < len(all_phenos),
+                    "phenotypes_next_offset": (
+                        annotation_offset + len(phenotypes_page)
+                        if annotation_offset + len(phenotypes_page) < len(all_phenos)
+                        else None
+                    ),
+                    "phenotypes": phenotypes_page,
                 }
             else:
                 phenos = hpo.get("phenotype_related_to_disease", [])
                 phenos = phenos if isinstance(phenos, list) else [phenos]
+                phenotypes_page = phenos[
+                    annotation_offset : annotation_offset + annotation_limit
+                ]
                 result["hpo"] = {
                     "disease_name": hpo.get("disease_name"),
                     "omim": hpo.get("omim"),
                     "inheritance": hpo.get("inheritance"),
                     "clinical_course": hpo.get("clinical_course"),
-                    "phenotypes_count": len(phenos[:20]),
+                    "phenotypes_count": len(phenotypes_page),
                     "total_phenotypes": len(phenos),
-                    "phenotypes": phenos[:20],
+                    "phenotypes_returned": len(phenotypes_page),
+                    "phenotypes_has_more": annotation_offset + len(phenotypes_page)
+                    < len(phenos),
+                    "phenotypes_next_offset": (
+                        annotation_offset + len(phenotypes_page)
+                        if annotation_offset + len(phenotypes_page) < len(phenos)
+                        else None
+                    ),
+                    "phenotypes": phenotypes_page,
                 }
 
         # Extract DisGeNET data
@@ -219,7 +265,8 @@ class MyDiseaseTool(BaseTool):
                 "error": "query parameter is required (e.g., 'breast cancer', 'melanoma')",
             }
 
-        size = min(arguments.get("size", 10), 100)
+        size = max(1, min(int(arguments.get("size", 10)), 100))
+        start = max(0, int(arguments.get("start", 0)))
         fields_param = arguments.get(
             "fields",
             "mondo.label,disease_ontology.name,disease_ontology.doid,hpo.disease_name",
@@ -229,6 +276,7 @@ class MyDiseaseTool(BaseTool):
         params = {
             "q": query,
             "size": size,
+            "from": start,
             "fields": fields_param,
         }
         response = requests.get(url, params=params, timeout=self.timeout)
@@ -258,11 +306,16 @@ class MyDiseaseTool(BaseTool):
                 )
             diseases.append(entry)
 
+        total_hits = data.get("total", 0)
+        has_more = start + len(diseases) < total_hits
         return {
             "status": "success",
             "data": {
-                "total_hits": data.get("total", 0),
+                "total_hits": total_hits,
                 "returned": len(diseases),
+                "start": start,
+                "has_more": has_more,
+                "next_start": start + len(diseases) if has_more else None,
                 "diseases": diseases,
             },
             "metadata": {

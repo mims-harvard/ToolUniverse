@@ -1,7 +1,7 @@
 """
 LINCS_list_libraries
 
-List available LINCS signature libraries with metadata. LINCS SigCom contains 431+ libraries cove...
+List and optionally keyword-filter the complete LINCS SigCom library catalog. Filtering is applie...
 """
 
 from typing import Any, Optional, Callable
@@ -11,20 +11,23 @@ from ._shared_client import get_shared_client
 def LINCS_list_libraries(
     keyword: Optional[str] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> list[Any]:
     """
-    List available LINCS signature libraries with metadata. LINCS SigCom contains 431+ libraries cove...
+    List and optionally keyword-filter the complete LINCS SigCom library catalog. Filtering is applie...
 
     Parameters
     ----------
     keyword : str
         Optional keyword to filter libraries (case-insensitive). Examples: 'L1000', '...
     limit : int
-        Maximum number of libraries to return (1-100). Default: 50.
+        Libraries per page (1-1000, default 50).
+    offset : int
+        Zero-based offset into the filtered library list. Continue with metadata.next...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,7 +43,9 @@ def LINCS_list_libraries(
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
-        k: v for k, v in {"keyword": keyword, "limit": limit}.items() if v is not None
+        k: v
+        for k, v in {"keyword": keyword, "limit": limit, "offset": offset}.items()
+        if v is not None
     }
     return get_shared_client().run_one_function(
         {

@@ -1,7 +1,7 @@
 """
 BioRxiv_list_recent_preprints
 
-List recent bioRxiv or medRxiv preprints by date range. Returns up to 100 preprints posted betwee...
+List bioRxiv or medRxiv preprints by date range. The live API currently returns 30 records per ba...
 """
 
 from typing import Any, Optional, Callable
@@ -19,18 +19,18 @@ def BioRxiv_list_recent_preprints(
     validate: bool = True,
 ) -> Any:
     """
-    List recent bioRxiv or medRxiv preprints by date range. Returns up to 100 preprints posted betwee...
+    List bioRxiv or medRxiv preprints by date range. The live API currently returns 30 records per ba...
 
     Parameters
     ----------
     start_date : str
-        Start date in YYYY-MM-DD format (e.g., '2024-01-01'). Date range must not exc...
+        Inclusive start date in YYYY-MM-DD format (e.g., '2024-01-01').
     end_date : str
-        End date in YYYY-MM-DD format (e.g., '2024-01-03'). Date range must not excee...
+        Inclusive end date in YYYY-MM-DD format (e.g., '2024-01-03'); must not preced...
     server : str
         Server: 'biorxiv' for biology preprints, 'medrxiv' for health sciences preprints
     cursor : int
-        Pagination cursor (0 for first 100 results, 100 for next 100, etc.)
+        Zero-based record offset. Start at 0, then use metadata.next_cursor; do not a...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

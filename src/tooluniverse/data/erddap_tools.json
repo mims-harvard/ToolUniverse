@@ -10,18 +10,17 @@
           "description": "Search keyword(s) for dataset discovery. Examples: 'sea surface temperature', 'chlorophyll', 'wave height', 'salinity', 'currents', 'wind', 'MODIS', 'SST', 'bathymetry'"
         },
         "itemsPerPage": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "description": "Number of results to return (1-100). Default: 10"
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 10,
+          "description": "Number of results per page (1-100). Defaults to 10. Use metadata.next_page while metadata.has_more is true to retrieve all matching datasets."
         },
         "page": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "description": "Page number for pagination. Default: 1"
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "One-based result page. Defaults to 1. ERDDAP silently coerces page 0 to page 1, so this wrapper rejects values below 1."
         }
       },
       "required": [
@@ -33,7 +32,8 @@
       "params": {
         "page": 1,
         "itemsPerPage": 10
-      }
+      },
+      "pagination": "erddap_page"
     },
     "type": "BaseRESTTool",
     "test_examples": [

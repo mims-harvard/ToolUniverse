@@ -2,7 +2,7 @@
   {
     "name": "EPMC_get_citations",
     "type": "BaseRESTTool",
-    "description": "Get articles that cite a specific paper from Europe PMC. Given a PubMed ID (PMID), returns a list of citing articles with their titles, authors, journals, publication years, and citation counts. This enables citation network traversal: find what papers cite a given study to track research impact, identify follow-up studies, and discover related work. Essential for systematic reviews and literature mapping. Use PMID from EuropePMC search results.",
+    "description": "Get one page of articles that cite a specific paper from Europe PMC. Given a PubMed ID (PMID), returns citing articles plus exact hitCount-derived pagination metadata (total_results, total_pages, has_more, and next_page), so callers can retrieve the complete citation set. Use PMID from EuropePMC search results.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -13,11 +13,14 @@
         "page": {
           "type": "integer",
           "default": 1,
+          "minimum": 1,
           "description": "Page number for paginated results (1-based). Default: 1."
         },
         "pageSize": {
           "type": "integer",
           "default": 25,
+          "minimum": 1,
+          "maximum": 1000,
           "description": "Number of citing articles to return per page (1-1000). Default: 25."
         }
       },
@@ -26,7 +29,10 @@
       ]
     },
     "fields": {
-      "endpoint": "https://www.ebi.ac.uk/europepmc/webservices/rest/MED/{pmid}/citations?format=json&page={page}&pageSize={pageSize}"
+      "endpoint": "https://www.ebi.ac.uk/europepmc/webservices/rest/MED/{pmid}/citations?format=json&page={page}&pageSize={pageSize}",
+      "pagination": "epmc_page",
+      "record_container": "citationList",
+      "record_key": "citation"
     },
     "return_schema": {
       "oneOf": [
@@ -96,7 +102,7 @@
   {
     "name": "EPMC_get_references",
     "type": "BaseRESTTool",
-    "description": "Get the reference list (bibliography) of a specific paper from Europe PMC. Given a PubMed ID (PMID), returns all articles cited BY that paper (its reference list). This is the reverse of citations: instead of finding who cites a paper, find what papers it cites. Essential for understanding a paper's intellectual foundations, finding seminal works, and tracing research lineage. Use PMID from EuropePMC search results.",
+    "description": "Get one page of the reference list (bibliography) of a specific paper from Europe PMC. Given a PubMed ID (PMID), returns cited articles plus exact hitCount-derived pagination metadata (total_results, total_pages, has_more, and next_page), so callers can retrieve the complete bibliography. Use PMID from EuropePMC search results.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -107,11 +113,14 @@
         "page": {
           "type": "integer",
           "default": 1,
+          "minimum": 1,
           "description": "Page number for paginated results (1-based). Default: 1."
         },
         "pageSize": {
           "type": "integer",
           "default": 25,
+          "minimum": 1,
+          "maximum": 1000,
           "description": "Number of references to return per page (1-1000). Default: 25."
         }
       },
@@ -120,7 +129,10 @@
       ]
     },
     "fields": {
-      "endpoint": "https://www.ebi.ac.uk/europepmc/webservices/rest/MED/{pmid}/references?format=json&page={page}&pageSize={pageSize}"
+      "endpoint": "https://www.ebi.ac.uk/europepmc/webservices/rest/MED/{pmid}/references?format=json&page={page}&pageSize={pageSize}",
+      "pagination": "epmc_page",
+      "record_container": "referenceList",
+      "record_key": "reference"
     },
     "return_schema": {
       "oneOf": [

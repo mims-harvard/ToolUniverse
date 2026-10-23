@@ -47,7 +47,21 @@
         },
         "totalHits": {
           "type": "integer",
-          "description": "Total number of matching experiments"
+          "description": "Upstream match count. This is only a lower bound when totalHitsExact is false."
+        },
+        "totalHitsExact": {
+          "type": "boolean",
+          "description": "Preserves BioStudies isTotalHitsExact. False means totalHits can increase as later pages are visited."
+        },
+        "totalHitsRelation": {
+          "type": "string",
+          "enum": [
+            "exact",
+            "lower_bound"
+          ]
+        },
+        "totalHitsWarning": {
+          "type": "string"
         },
         "page": {
           "type": "integer",
@@ -56,6 +70,27 @@
         "pageSize": {
           "type": "integer",
           "description": "Number of results per page"
+        },
+        "returned": {
+          "type": "integer"
+        },
+        "offset": {
+          "type": "integer"
+        },
+        "limit": {
+          "type": "integer"
+        },
+        "has_more": {
+          "type": "boolean"
+        },
+        "next_offset": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "result_set_complete": {
+          "type": "boolean"
         }
       }
     },

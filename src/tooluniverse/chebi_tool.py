@@ -227,11 +227,15 @@ class ChEBITool(BaseTool):
         names_dict = raw.get("names", {})
         for name_type, name_list in names_dict.items():
             if isinstance(name_list, list):
-                for entry in name_list[:10]:
+                for entry in name_list:
                     if isinstance(entry, dict):
                         syn = _strip_html(entry.get("name", ""))
                         if syn and syn not in synonyms:
                             synonyms.append(syn)
+        synonym_offset = max(int(arguments.get("synonym_offset") or 0), 0)
+        synonym_limit = min(max(int(arguments.get("synonym_limit") or 20), 1), 500)
+        synonym_page = synonyms[synonym_offset : synonym_offset + synonym_limit]
+        synonyms_truncated = synonym_offset + len(synonym_page) < len(synonyms)
 
         # Chemical data is nested under 'chemical_data'
         chem_data = raw.get("chemical_data", {})
@@ -270,7 +274,14 @@ class ChEBITool(BaseTool):
             "charge": chem_data.get("charge", None),
             "smiles": struct_data.get("smiles", None),
             "inchikey": struct_data.get("standard_inchi_key", None),
-            "synonyms": synonyms[:20],
+            "synonyms": synonym_page,
+            "synonyms_total": len(synonyms),
+            "synonym_offset": synonym_offset,
+            "synonyms_returned": len(synonym_page),
+            "synonyms_truncated": synonyms_truncated,
+            "next_synonym_offset": (
+                synonym_offset + len(synonym_page) if synonyms_truncated else None
+            ),
         }
 
         # ChEBI serves the primary entry when a merged/obsolete accession is
@@ -305,6 +316,10 @@ class ChEBITool(BaseTool):
         except (TypeError, ValueError):
             limit = 10
         limit = max(0, min(limit, 100))
+        try:
+            offset = max(0, int(arguments.get("offset", 0)))
+        except (TypeError, ValueError):
+            return {"status": "error", "error": "offset must be an integer"}
 
         # Use advanced_search endpoint for better relevance
         url = f"{CHEBI_BASE_URL}/advanced_search/"
@@ -322,9 +337,11 @@ class ChEBITool(BaseTool):
         compounds = []
         total_matches = None
         number_pages = None
-        page = 1
+        page = offset // _SEARCH_PAGE_SIZE + 1
+        leading_skip = offset % _SEARCH_PAGE_SIZE
+        needed = leading_skip + limit
         pages_fetched = 0
-        while page <= _SEARCH_MAX_PAGES:
+        while pages_fetched < _SEARCH_MAX_PAGES:
             try:
                 response = requests.post(
                     url,
@@ -339,7 +356,7 @@ class ChEBITool(BaseTool):
                 # Never discard the pages already in hand: a failure while
                 # fetching page N > 1 degrades to "fewer results than asked
                 # for", not to an error. Only a failed first page is fatal.
-                if page == 1:
+                if pages_fetched == 0:
                     raise
                 break
 
@@ -376,7 +393,7 @@ class ChEBITool(BaseTool):
                     }
                 )
 
-            if len(compounds) >= limit:
+            if len(compounds) >= needed:
                 break
             if not results:
                 break
@@ -388,7 +405,12 @@ class ChEBITool(BaseTool):
                 break
             page += 1
 
-        compounds = compounds[:limit]
+        compounds = compounds[leading_skip : leading_skip + limit]
+        has_more = (
+            offset + len(compounds) < total_matches
+            if total_matches is not None
+            else False
+        )
 
         result = {
             "query": query,
@@ -398,6 +420,11 @@ class ChEBITool(BaseTool):
             # "10 exist". It is None when the API omits the count.
             "result_count": len(compounds),
             "total_matches": total_matches,
+            "offset": offset,
+            "limit": limit,
+            "has_more": has_more,
+            "truncated": has_more,
+            "next_offset": offset + len(compounds) if has_more else None,
             "compounds": compounds,
         }
 

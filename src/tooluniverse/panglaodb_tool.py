@@ -200,10 +200,10 @@ class PanglaoDBMarkerTool(BaseTool):
             )
         )
 
-        total = len(matches)
-        limit = arguments.get("limit", 50)
-        if isinstance(limit, int) and limit > 0:
-            matches = matches[:limit]
+        page = self._paginate_matches(arguments, matches)
+        if page.get("status") == "error":
+            return page
+        matches = page["matches"]
 
         data = [self._format_marker(r) for r in matches]
         return {
@@ -215,8 +215,12 @@ class PanglaoDBMarkerTool(BaseTool):
                 "species_filter": species,
                 "organ_filter": organ,
                 "canonical_only": canonical_only,
-                "total_matching": total,
+                "total_matching": page["total"],
                 "returned": len(data),
+                "offset": page["offset"],
+                "limit": page["limit"],
+                "has_more": page["has_more"],
+                "next_offset": page["next_offset"],
             },
         }
 
@@ -246,10 +250,10 @@ class PanglaoDBMarkerTool(BaseTool):
             )
         )
 
-        total = len(matches)
-        limit = arguments.get("limit", 50)
-        if isinstance(limit, int) and limit > 0:
-            matches = matches[:limit]
+        page = self._paginate_matches(arguments, matches)
+        if page.get("status") == "error":
+            return page
+        matches = page["matches"]
 
         data = [self._format_marker(r) for r in matches]
         return {
@@ -259,9 +263,48 @@ class PanglaoDBMarkerTool(BaseTool):
                 "source": "PanglaoDB (panglaodb.se)",
                 "gene": gene,
                 "species_filter": species,
-                "total_matching": total,
+                "total_matching": page["total"],
                 "returned": len(data),
+                "offset": page["offset"],
+                "limit": page["limit"],
+                "has_more": page["has_more"],
+                "next_offset": page["next_offset"],
             },
+        }
+
+    @staticmethod
+    def _paginate_matches(
+        arguments: Dict[str, Any], matches: List[Dict[str, Any]]
+    ) -> Dict[str, Any]:
+        """Return one explicit, resumable page from a locally filtered result set."""
+        limit = arguments.get("limit", 50)
+        if limit is None:
+            limit = 50
+        offset = arguments.get("offset", 0)
+        if offset is None:
+            offset = 0
+
+        if isinstance(limit, bool) or not isinstance(limit, int) or limit <= 0:
+            return {
+                "status": "error",
+                "error": "limit must be a positive integer",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+            }
+
+        total = len(matches)
+        page_matches = matches[offset : offset + limit]
+        has_more = offset + len(page_matches) < total
+        return {
+            "matches": page_matches,
+            "total": total,
+            "offset": offset,
+            "limit": limit,
+            "has_more": has_more,
+            "next_offset": offset + len(page_matches) if has_more else None,
         }
 
     def _list_cell_types(

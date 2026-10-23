@@ -1,7 +1,7 @@
 """
 GBIF_search_occurrences
 
-Retrieve species occurrence records from GBIF with optional filters (taxonKey, country, coordinat...
+Retrieve GBIF occurrence records with exact total and offset continuation. Continue with metadata...
 """
 
 from typing import Any, Optional, Callable
@@ -20,7 +20,7 @@ def GBIF_search_occurrences(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve species occurrence records from GBIF with optional filters (taxonKey, country, coordinat...
+    Retrieve GBIF occurrence records with exact total and offset continuation. Continue with metadata...
 
     Parameters
     ----------
@@ -33,7 +33,7 @@ def GBIF_search_occurrences(
     limit : int
         Maximum number of results to return (1–300).
     offset : int
-        Result offset for pagination (0-based).
+        Zero-based offset. The wrapper enforces GBIF's current offset + limit <= 1000...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

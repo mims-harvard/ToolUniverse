@@ -1,7 +1,7 @@
 """
 GxA_list_experiments
 
-List gene expression experiments from EBI Gene Expression Atlas. Can filter by species (e.g., 'Ho...
+List a resumable page of gene expression experiments from EBI Gene Expression Atlas. Filter by sp...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,14 @@ def GxA_list_experiments(
     species: Optional[str] = None,
     experiment_type: Optional[str] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    List gene expression experiments from EBI Gene Expression Atlas. Can filter by species (e.g., 'Ho...
+    List a resumable page of gene expression experiments from EBI Gene Expression Atlas. Filter by sp...
 
     Parameters
     ----------
@@ -27,7 +28,9 @@ def GxA_list_experiments(
     experiment_type : str
         Filter by experiment type: 'baseline' (tissue/cell type expression), 'differe...
     limit : int
-        Maximum number of experiments to return (1-100). Default: 20.
+        Page size (1-100). Default: 20.
+    offset : int
+        Zero-based experiment offset. Continue with data.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +51,7 @@ def GxA_list_experiments(
             "species": species,
             "experiment_type": experiment_type,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

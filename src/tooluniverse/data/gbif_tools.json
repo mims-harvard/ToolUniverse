@@ -2,7 +2,7 @@
   {
     "name": "GBIF_search_species",
     "type": "GBIFTool",
-    "description": "Find taxa by keyword (scientific/common names) in GBIF. Use to resolve organism names to stable taxon keys (rank, lineage) for downstream biodiversity/occurrence queries.",
+    "description": "Find taxa by scientific/common-name keyword in GBIF with exact total and offset continuation. Continue with metadata.next_offset. GBIF species search exposes at most the first 100,000 ranked matches; refine broad queries when metadata.upstream_truncated is true.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -14,14 +14,14 @@
           "type": "integer",
           "default": 10,
           "minimum": 1,
-          "maximum": 300,
-          "description": "Maximum number of results to return (1–300)."
+          "maximum": 1000,
+          "description": "Maximum number of results to return (1–1000). GBIF silently clamps larger values to 1000."
         },
         "offset": {
           "type": "integer",
           "default": 0,
           "minimum": 0,
-          "description": "Result offset for pagination (0-based)."
+          "description": "Result offset for pagination. The wrapper enforces offset + limit <= 100000."
         }
       },
       "required": ["query"]
@@ -74,7 +74,7 @@
   {
     "name": "GBIF_search_occurrences",
     "type": "GBIFOccurrenceTool",
-    "description": "Retrieve species occurrence records from GBIF with optional filters (taxonKey, country, coordinates). Use for distribution mapping, presence-only modeling, and sampling context.",
+    "description": "Retrieve GBIF occurrence records with exact total and offset continuation. Continue with metadata.next_offset. Search results expose at most the first 100,001 records; refine filters or use GBIF's download API when metadata.upstream_truncated is true.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -102,7 +102,7 @@
           "type": "integer",
           "default": 0,
           "minimum": 0,
-          "description": "Result offset for pagination (0-based)."
+          "description": "Zero-based offset. The wrapper enforces GBIF's current offset + limit <= 100001 window."
         }
       }
     },

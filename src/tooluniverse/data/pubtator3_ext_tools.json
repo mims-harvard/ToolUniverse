@@ -1,7 +1,7 @@
 [
   {
     "name": "PubTator3_GetEntityRelations",
-    "description": "Query the NCBI PubTator3 relation knowledge graph for a normalized biomedical entity and return RANKED relation edges aggregated across all of PubMed. Given a single entity (e1), returns every related entity with the relation type (associate, cause, treat, prevent, inhibit, stimulate, interact, compare, drug_interact, negative_correlate, positive_correlate, etc.), the source/target entities, and the aggregate publication count supporting each edge. Edges are returned ranked by supporting publication count (highest first). This answers 'what is entity X related to, ranked by literature evidence' as a graph query, distinct from returning the articles themselves. Optionally pass a relation type and/or a second entity (e2) to query a specific pair (e.g. does chemical A treat disease B). Entities must use PubTator's normalized @TYPE_Name format, e.g. @GENE_BRAF, @DISEASE_Melanoma, @CHEMICAL_Doxorubicin. Use PubTator3_EntityAutocomplete to resolve free text into these normalized identifiers.",
+    "description": "Query the NCBI PubTator3 relation graph for a normalized biomedical entity. PubTator returns the full ranked edge array and has no server pagination, so ToolUniverse applies exact client-side pagination: start with offset=0 and continue with metadata.next_offset while metadata.has_more is true. metadata.total_results is exact. Edges retain publication-count ranking. Entities use @TYPE_Name format.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -29,7 +29,14 @@
             "null"
           ],
           "default": 50,
-          "description": "Maximum number of top-ranked relation edges to return (client-side truncation; the API may return thousands of edges). Default 50."
+          "minimum": 1,
+          "description": "Number of ranked relation edges in this client-side page (default 50)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based ranked-edge offset. Continue with metadata.next_offset while metadata.has_more is true."
         }
       },
       "required": [
@@ -38,7 +45,8 @@
     },
     "fields": {
       "endpoint": "https://www.ncbi.nlm.nih.gov/research/pubtator3-api/relations",
-      "client_side_limit": true
+      "client_side_limit": true,
+      "pagination": "client_side_offset"
     },
     "type": "BaseRESTTool",
     "test_examples": [

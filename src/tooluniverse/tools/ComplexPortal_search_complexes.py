@@ -12,6 +12,7 @@ def ComplexPortal_search_complexes(
     query: str,
     species: Optional[str] = "9606",
     number: Optional[int] = 25,
+    first: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -27,7 +28,9 @@ def ComplexPortal_search_complexes(
     species : str
         NCBI taxonomy ID or common species name to filter by species (default: '9606'...
     number : int
-        Maximum complexes to return (default: 25)
+        Complexes requested for this page (default 25, reliable upstream maximum 500)...
+    first : int
+        Zero-based result offset. Omit for the first page; use next_first from the pr...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +47,12 @@ def ComplexPortal_search_complexes(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"query": query, "species": species, "number": number}.items()
+        for k, v in {
+            "query": query,
+            "species": species,
+            "number": number,
+            "first": first,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

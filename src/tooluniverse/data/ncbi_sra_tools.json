@@ -2,7 +2,7 @@
   {
     "type": "NCBISRATool",
     "name": "NCBI_SRA_search_runs",
-    "description": "Search NCBI Sequence Read Archive (SRA) for NGS/RNA-seq sequencing runs by study accession, organism, sequencing strategy (RNA-Seq, WGS, ChIP-Seq), platform (ILLUMINA, OXFORD_NANOPORE), or library source. Returns SRA UIDs which can be used with other SRA tools to retrieve metadata and download links. Essential for discovering high-throughput sequencing data from public repositories. Use this to find relevant sequencing experiments before accessing the actual FASTQ data files.",
+    "description": "Search NCBI Sequence Read Archive (SRA) with exact offset pagination by study, organism, sequencing strategy, platform, library source, or free-form query. The response reports the exact count, returned, has_more, and next_offset; continue with offset=next_offset until has_more is false. Returned SRA UIDs can be passed to the metadata and file-location tools.",
     "parameter": {
       "type": "object",
       "required": [],
@@ -37,10 +37,16 @@
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum number of results to return (default: 20, max: 100)",
+          "description": "Page size (1-100).",
           "default": 20,
           "minimum": 1,
           "maximum": 100
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based result offset, mapped to NCBI ESearch retstart. Continue with data.next_offset.",
+          "default": 0,
+          "minimum": 0
         },
         "sort": {
           "type": "string",
@@ -78,7 +84,25 @@
             },
             "returned": {
               "type": "integer",
-              "description": "Number of UIDs returned (limited by limit parameter)"
+              "description": "Number of UIDs returned on this page."
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "truncated": {
+              "type": "boolean"
             },
             "search_term": {
               "type": "string",
@@ -115,6 +139,24 @@
           "type": "integer",
           "description": "Number of UIDs returned"
         },
+        "offset": {
+          "type": "integer"
+        },
+        "limit": {
+          "type": "integer"
+        },
+        "has_more": {
+          "type": "boolean"
+        },
+        "next_offset": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "truncated": {
+          "type": "boolean"
+        },
         "search_term": {
           "type": "string",
           "description": "Generated NCBI search term used"
@@ -131,7 +173,8 @@
       {
         "operation": "search",
         "study": "SRP000001",
-        "limit": 10
+        "limit": 10,
+        "offset": 10
       },
       {
         "operation": "search",

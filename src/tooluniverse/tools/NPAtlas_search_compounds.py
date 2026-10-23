@@ -1,7 +1,7 @@
 """
 NPAtlas_search_compounds
 
-Search the Natural Products Atlas (NPAtlas) for microbial (bacterial/fungal) natural products by ...
+Search NPAtlas microbial natural products with exact skip pagination. Metadata uses a one-record ...
 """
 
 from typing import Any, Optional, Callable
@@ -13,14 +13,15 @@ def NPAtlas_search_compounds(
     inchikey: Optional[str] = None,
     formula: Optional[str] = None,
     smiles: Optional[str] = None,
-    limit: Optional[int] = None,
+    limit: Optional[int] = 10,
+    skip: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search the Natural Products Atlas (NPAtlas) for microbial (bacterial/fungal) natural products by ...
+    Search NPAtlas microbial natural products with exact skip pagination. Metadata uses a one-record ...
 
     Parameters
     ----------
@@ -33,7 +34,9 @@ def NPAtlas_search_compounds(
     smiles : str
         SMILES for structure search.
     limit : int
-        Max results (default 10, max 100).
+        Results per page (1-100).
+    skip : int
+        Zero-based result offset. Continue with metadata.next_skip.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def NPAtlas_search_compounds(
             "formula": formula,
             "smiles": smiles,
             "limit": limit,
+            "skip": skip,
         }.items()
         if v is not None
     }

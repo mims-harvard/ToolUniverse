@@ -1,24 +1,134 @@
 [
     {
         "name": "AllenCellTypes_search_specimens",
-        "description": "Search the Allen Cell Types Database for individual neuron specimens characterized by electrophysiology and morphology (human and mouse). Filter by donor species ('Homo Sapiens' or 'Mus musculus') and/or brain structure. Returns per-neuron records: donor species/sex/age/disease state, brain structure, transgenic line, and key electrophysiology features (average firing rate, input resistance, membrane tau, upstroke/downstroke ratio) plus whether a morphological reconstruction exists. Distinct from gene-expression atlas tools. No API key required.",
-        "parameter": {"type": "object", "properties": {
-            "species": {"type": ["string", "null"], "description": "Donor species: 'Homo Sapiens' or 'Mus musculus'."},
-            "structure": {"type": ["string", "null"], "description": "Brain structure name substring, e.g. 'frontal gyrus', 'visual cortex'."},
-            "limit": {"type": ["integer", "null"], "description": "Max specimens (default 20, max 100)."}
-        }, "required": [], "additionalProperties": false},
+        "description": "Search Allen Cell Types neuron specimens with exact RMA row pagination. Filter by donor species and/or brain structure; metadata reports total_available, has_more and next_start_row so records after the default page remain reachable. Returns electrophysiology, donor, structure and reconstruction metadata.",
+        "parameter": {
+            "type": "object",
+            "properties": {
+                "species": {"type": ["string", "null"], "description": "Donor species: 'Homo Sapiens' or 'Mus musculus'."},
+                "structure": {"type": ["string", "null"], "description": "Brain structure name substring, e.g. 'frontal gyrus', 'visual cortex'."},
+                "limit": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 2000,
+                    "default": 20,
+                    "description": "Specimens per page (1-2000)."
+                },
+                "start_row": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "default": 0,
+                    "description": "Zero-based RMA offset. Continue with metadata.next_start_row."
+                }
+            },
+            "required": [],
+            "additionalProperties": false
+        },
         "fields": {"timeout": 30},
         "type": "AllenCellTypesSpecimensTool",
         "test_examples": [{"species": "Homo Sapiens", "limit": 5}, {"species": "Mus musculus", "limit": 3}, {"structure": "frontal gyrus", "limit": 3}],
         "return_schema": {
-          "oneOf": [
-            {
-              "type": "array",
-              "items": {
-                "type": "object"
-              }
-            },
-            {
+            "oneOf": [
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "specimen_id": {
+                                "type": [
+                                    "integer",
+                                    "null"
+                                ]
+                            },
+                            "specimen_name": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "species": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "sex": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "age": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "disease_state": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "brain_structure": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "transgenic_line": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ]
+                            },
+                            "avg_firing_rate": {
+                                "type": [
+                                    "number",
+                                    "null"
+                                ]
+                            },
+                            "input_resistance": {
+                                "type": [
+                                    "number",
+                                    "null"
+                                ]
+                            },
+                            "tau": {
+                                "type": [
+                                    "number",
+                                    "null"
+                                ]
+                            },
+                            "upstroke_downstroke_ratio": {
+                                "type": [
+                                    "number",
+                                    "null"
+                                ]
+                            },
+                            "has_reconstruction": {
+                                "type": "boolean"
+                            }
+                        },
+                        "required": [
+                            "specimen_id",
+                            "specimen_name",
+                            "species",
+                            "sex",
+                            "age",
+                            "disease_state",
+                            "brain_structure",
+                            "transgenic_line",
+                            "avg_firing_rate",
+                            "input_resistance",
+                            "tau",
+                            "upstroke_downstroke_ratio",
+                            "has_reconstruction"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                {
               "type": "object",
               "properties": {
                 "error": {
@@ -29,7 +139,7 @@
                 "error"
               ]
             }
-          ]
+            ]
         }
     }
 ]

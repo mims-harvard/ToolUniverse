@@ -1,7 +1,7 @@
 """
 GOAPI_get_gene_functions
 
-Get Gene Ontology (GO) annotations for a specific gene, showing its known biological processes, m...
+Get Gene Ontology annotations for a specific gene with explicit start/rows pagination. The GO API...
 """
 
 from typing import Any, Optional, Callable
@@ -11,6 +11,7 @@ from ._shared_client import get_shared_client
 def GOAPI_get_gene_functions(
     gene_id: str,
     rows: Optional[int] = None,
+    start: Optional[int] = 0,
     aspect: Optional[str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -18,14 +19,16 @@ def GOAPI_get_gene_functions(
     validate: bool = True,
 ) -> Any:
     """
-    Get Gene Ontology (GO) annotations for a specific gene, showing its known biological processes, m...
+    Get Gene Ontology annotations for a specific gene with explicit start/rows pagination. The GO API...
 
     Parameters
     ----------
     gene_id : str
         Gene identifier as a CURIE. Examples: 'HGNC:11998' (TP53), 'UniProtKB:P04637'...
     rows : int
-        Maximum number of annotations to return (default: 20, max: 100).
+        Annotations per page (default 20, verified upstream through 1000). ToolUniver...
+    start : int
+        Zero-based association offset. Continue with metadata.next_start while has_mo...
     aspect : str
         Filter by GO aspect: 'P' (Biological Process), 'F' (Molecular Function), 'C' ...
     stream_callback : Callable, optional
@@ -44,7 +47,12 @@ def GOAPI_get_gene_functions(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"gene_id": gene_id, "rows": rows, "aspect": aspect}.items()
+        for k, v in {
+            "gene_id": gene_id,
+            "rows": rows,
+            "start": start,
+            "aspect": aspect,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

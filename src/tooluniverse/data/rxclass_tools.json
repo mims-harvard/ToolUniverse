@@ -2,7 +2,7 @@
   {
     "name": "RxClass_get_drug_classes",
     "type": "RxClassTool",
-    "description": "Get drug classification from NLM RxClass for a drug name or RXCUI. Returns ATC codes, EPC (Established Pharmacologic Class), MoA, VA drug classes, and more. No API key required. Example: 'metformin' -> ATC A10BA02 (biguanides); 'aspirin' -> ATC N02BA01, EPC 'Platelet Aggregation Inhibitor'.",
+    "description": "Get NLM RxClass classifications for a drug name or RXCUI across ATC, EPC, MoA, VA and other sources. Metadata reports exact total_count and recoverable offset pagination; continue with next_offset while has_more is true. Use rela_source='ALL' for the complete cross-source relation set.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -20,7 +20,16 @@
         },
         "limit": {
           "type": ["integer", "null"],
+          "minimum": 1,
           "description": "Maximum results to return (default 20)."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "description": "Zero-based offset in the complete deduplicated drug-class relation list. Continue with metadata.next_offset."
         }
       },
       "required": []
@@ -84,7 +93,7 @@
   {
     "name": "RxClass_get_class_members",
     "type": "RxClassTool",
-    "description": "List all drugs belonging to a specific drug class by class ID in NLM RxClass. Returns RXCUIs and drug names for all member ingredients. No API key required. Example: classId='M01AE' (propionic acid derivatives) returns ibuprofen, naproxen, ketoprofen, etc.",
+    "description": "List drugs belonging to a specific NLM RxClass class ID. Metadata reports the exact total_count and recoverable offset pagination; continue with next_offset while has_more is true. Example: broad ATC class J01 contains more than 150 ingredient members.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -102,7 +111,16 @@
         },
         "limit": {
           "type": ["integer", "null"],
+          "minimum": 1,
           "description": "Maximum number of drugs to return (default 50)."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "description": "Zero-based offset in the complete class member list. Continue with metadata.next_offset."
         }
       },
       "required": ["class_id"]
@@ -150,7 +168,7 @@
   {
     "name": "RxClass_find_classes",
     "type": "RxClassTool",
-    "description": "Search NLM RxClass drug classification database by keyword. Returns matching class IDs, names, and types (ATC, EPC, MoA, etc.). No API key required. Example: query='analgesic' returns pain-related drug classes; query='beta blocker' returns adrenergic receptor blocker classes.",
+    "description": "Search NLM RxClass class names by keyword across ATC, EPC, MoA, VA and other class types. Metadata reports exact total_count and recoverable offset pagination; continue with next_offset while has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -164,7 +182,16 @@
         },
         "limit": {
           "type": ["integer", "null"],
+          "minimum": 1,
           "description": "Maximum results to return (default 20)."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "description": "Zero-based offset in the complete matching class list. Continue with metadata.next_offset."
         }
       },
       "required": ["query"]

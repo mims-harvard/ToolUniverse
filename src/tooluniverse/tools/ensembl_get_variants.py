@@ -1,7 +1,7 @@
 """
 ensembl_get_variants
 
-Get genetic variants (SNPs, indels) in a genomic region. Returns variant information including po...
+Get genetic variants (SNPs, indels) in a genomic region using explicit offset/limit pagination ov...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,15 @@ def ensembl_get_variants(
     region: str,
     species: Optional[str] = "human",
     feature: Optional[str] = "variation",
+    offset: Optional[int] = 0,
+    limit: Optional[int] = 500,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> list[Any]:
     """
-    Get genetic variants (SNPs, indels) in a genomic region. Returns variant information including po...
+    Get genetic variants (SNPs, indels) in a genomic region using explicit offset/limit pagination ov...
 
     Parameters
     ----------
@@ -28,6 +30,10 @@ def ensembl_get_variants(
         Species name (default 'human'). Examples: 'human', 'mouse', 'rat'
     feature : str
         Feature type to retrieve (default 'variation')
+    offset : int
+        Zero-based offset within all variants returned by Ensembl.
+    limit : int
+        Maximum variants returned in this response (default 500, max 5000). Set null ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,7 +50,13 @@ def ensembl_get_variants(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"region": region, "species": species, "feature": feature}.items()
+        for k, v in {
+            "region": region,
+            "species": species,
+            "feature": feature,
+            "offset": offset,
+            "limit": limit,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

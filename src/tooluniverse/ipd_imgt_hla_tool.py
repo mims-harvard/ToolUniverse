@@ -14,7 +14,7 @@ never have to write the filter expression themselves.
 
 import requests
 from typing import Any, Dict
-from urllib.parse import quote
+from urllib.parse import parse_qs, quote, urlparse
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
@@ -93,6 +93,32 @@ class IPDIMGTHLATool(BaseTool):
             return 10
 
     @staticmethod
+    def _validate_paging(arguments: Dict[str, Any]) -> Any:
+        """Validate IPD's bounded page size and opaque cursor without coercion."""
+        limit = arguments.get("limit", 10)
+        if (
+            isinstance(limit, bool)
+            or not isinstance(limit, int)
+            or not 1 <= limit <= 100
+        ):
+            return {
+                "status": "error",
+                "error": "limit must be an integer from 1 to 100",
+            }
+        cursor = arguments.get("cursor")
+        if cursor is not None and (not isinstance(cursor, str) or not cursor.strip()):
+            return {"status": "error", "error": "cursor must be a non-empty string"}
+        return limit, cursor.strip() if isinstance(cursor, str) else None
+
+    @staticmethod
+    def _cursor_from_link(link: Any, direction: str) -> Any:
+        """Extract an opaque next/previous token from IPD's relative link."""
+        if not isinstance(link, str) or not link:
+            return None
+        values = parse_qs(urlparse(link).query).get(direction, [])
+        return values[0] if values else None
+
+    @staticmethod
     def _resolve_match(arguments: Dict[str, Any], default: str) -> Any:
         """Return the requested match mode, or an error dict if it is invalid."""
         match = arguments.get("match", default)
@@ -126,9 +152,15 @@ class IPDIMGTHLATool(BaseTool):
         if self._is_api_error(match):
             return match
 
-        limit = self._clamp_limit(arguments.get("limit", 10))
+        paging = self._validate_paging(arguments)
+        if self._is_api_error(paging):
+            return paging
+        limit, cursor = paging
         query = self._build_filter("name", name, match)
-        api_response = self._make_request("allele", {"query": query, "limit": limit})
+        params = {"query": query, "limit": limit}
+        if cursor:
+            params["next"] = cursor
+        api_response = self._make_request("allele", params)
         if self._is_api_error(api_response):
             return api_response
 
@@ -139,18 +171,34 @@ class IPDIMGTHLATool(BaseTool):
             for d in data
             if isinstance(d, dict)
         ]
+        next_cursor = self._cursor_from_link(meta.get("next"), "next")
+        previous_cursor = self._cursor_from_link(meta.get("prev"), "prev")
+        total = meta.get("total")
+        total_is_exact = isinstance(total, int) and not isinstance(total, bool)
 
         return {
             "status": "success",
             "data": {
                 "alleles": alleles,
                 "count": len(alleles),
-                "total": meta.get("total"),
+                "total": total if total_is_exact else None,
+                "limit": limit,
+                "cursor": cursor,
+                "has_more": next_cursor is not None,
+                "next_cursor": next_cursor,
+                "previous_cursor": previous_cursor,
+                "result_set_complete": bool(
+                    cursor is None and total_is_exact and len(alleles) == total
+                ),
             },
             "metadata": {
                 "query": query,
                 "match": match,
                 "source": "IPD-IMGT/HLA (EMBL-EBI)",
+                "returned": len(alleles),
+                "total_results": total if total_is_exact else None,
+                "total_results_is_exact": total_is_exact,
+                "pagination_scope": "ipd_opaque_next_cursor",
             },
         }
 
@@ -174,6 +222,14 @@ class IPDIMGTHLATool(BaseTool):
                 "status": "error",
                 "error": f"No HLA allele found for accession: {accession}",
             }
+        if str(api_response["accession"]).upper() != accession.upper():
+            return {
+                "status": "error",
+                "error": (
+                    "IPD-IMGT/HLA allele identity mismatch: requested "
+                    f"{accession}, received {api_response['accession']}"
+                ),
+            }
 
         return {
             "status": "success",
@@ -195,28 +251,50 @@ class IPDIMGTHLATool(BaseTool):
         if self._is_api_error(match):
             return match
 
-        limit = self._clamp_limit(arguments.get("limit", 10))
+        paging = self._validate_paging(arguments)
+        if self._is_api_error(paging):
+            return paging
+        limit, cursor = paging
         query = self._build_filter(field, query_text, match)
-        api_response = self._make_request("cell", {"query": query, "limit": limit})
+        params = {"query": query, "limit": limit}
+        if cursor:
+            params["next"] = cursor
+        api_response = self._make_request("cell", params)
         if self._is_api_error(api_response):
             return api_response
 
         data = api_response.get("data", []) if isinstance(api_response, dict) else []
         meta = api_response.get("meta", {}) if isinstance(api_response, dict) else {}
         cells = [d for d in data if isinstance(d, dict)]
+        next_cursor = self._cursor_from_link(meta.get("next"), "next")
+        previous_cursor = self._cursor_from_link(meta.get("prev"), "prev")
+        total = meta.get("total")
+        total_is_exact = isinstance(total, int) and not isinstance(total, bool)
 
         return {
             "status": "success",
             "data": {
                 "cells": cells,
                 "count": len(cells),
-                "total": meta.get("total"),
+                "total": total if total_is_exact else None,
+                "limit": limit,
+                "cursor": cursor,
+                "has_more": next_cursor is not None,
+                "next_cursor": next_cursor,
+                "previous_cursor": previous_cursor,
+                "result_set_complete": bool(
+                    cursor is None and total_is_exact and len(cells) == total
+                ),
             },
             "metadata": {
                 "query": query,
                 "field": field,
                 "match": match,
                 "source": "IPD-IMGT/HLA cells (EMBL-EBI)",
+                "returned": len(cells),
+                "total_results": total if total_is_exact else None,
+                "total_results_is_exact": total_is_exact,
+                "pagination_scope": "ipd_opaque_next_cursor",
             },
         }
 

@@ -1,7 +1,7 @@
 """
 HGNC_search_genes
 
-Search for human genes in HGNC by symbol, name, or alias. Supports wildcards (e.g., 'BRCA*' finds...
+Search HGNC by symbol, name, alias, previous symbol, external ID, or location. Wildcards are supp...
 """
 
 from typing import Any, Optional, Callable
@@ -17,7 +17,7 @@ def HGNC_search_genes(
     validate: bool = True,
 ) -> Any:
     """
-    Search for human genes in HGNC by symbol, name, or alias. Supports wildcards (e.g., 'BRCA*' finds...
+    Search HGNC by symbol, name, alias, previous symbol, external ID, or location. Wildcards are supp...
 
     Parameters
     ----------

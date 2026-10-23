@@ -2,7 +2,7 @@
   {
     "type": "PRIDERESTTool",
     "name": "PRIDE_search_proteomics",
-    "description": "Search the PRIDE Archive for proteomics experiments and mass spectrometry datasets. Returns project metadata including accession IDs (PXD...), species, tissue types, instruments, publication dates, and file counts. Use this to discover protein expression data, PTM studies, and downloadable raw files for reanalysis. Example queries: 'breast cancer', 'phosphorylation', 'COVID-19 proteome'.",
+    "description": "Search PRIDE proteomics projects with explicit zero-based page pagination. Metadata preserves PRIDE's total_records header and reports truncation and next_page.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -14,6 +14,12 @@
           "type": "integer",
           "default": 20,
           "description": "Number of projects to return per page (default: 20, max: 100)"
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based page number. Continue with metadata.next_page."
         }
       },
       "required": [

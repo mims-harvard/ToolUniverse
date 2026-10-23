@@ -13,6 +13,7 @@ def Crossref_search_works(
     limit: Optional[int] = 10,
     offset: Optional[int] = None,
     filter: Optional[str] = None,
+    cursor: Optional[str] = "*",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -31,6 +32,8 @@ def Crossref_search_works(
         Skip this many matching works before returning results. Use with 'limit' to p...
     filter : str
         Optional filter string for Crossref API. Examples: 'type:journal-article' (on...
+    cursor : str
+        Crossref deep-pagination cursor. Use '*' for the first page, then metadata.ne...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def Crossref_search_works(
             "limit": limit,
             "offset": offset,
             "filter": filter,
+            "cursor": cursor,
         }.items()
         if v is not None
     }

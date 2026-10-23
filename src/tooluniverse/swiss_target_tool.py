@@ -172,6 +172,10 @@ class SwissTargetTool(BaseTool):
             }
 
         top_n = arguments.get("top_n")
+        if top_n is not None and (
+            isinstance(top_n, bool) or not isinstance(top_n, int) or top_n < 1
+        ):
+            return {"status": "error", "error": "top_n must be a positive integer"}
 
         # Step 1: Submit prediction job via POST to predict.php
         # The response is streamed with progress updates as inline scripts
@@ -259,7 +263,8 @@ class SwissTargetTool(BaseTool):
             }
 
         # Apply top_n filter if specified
-        if top_n is not None and top_n > 0:
+        total_available_targets = len(targets)
+        if top_n is not None:
             targets = targets[:top_n]
 
         # Extract job ID for reference
@@ -275,7 +280,10 @@ class SwissTargetTool(BaseTool):
                     "organism": organism,
                     "job_id": job_id,
                 },
-                "total_targets": len(targets),
+                "total_targets": total_available_targets,
+                "returned_targets": len(targets),
+                "top_n_applied": top_n,
+                "result_set_complete": len(targets) == total_available_targets,
                 "result_url": job_url,
             },
         }

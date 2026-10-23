@@ -30,6 +30,20 @@ def _query_resp(hits):
     return r
 
 
+def _ols_resp(label):
+    r = MagicMock()
+    r.raise_for_status = MagicMock()
+    r.json.return_value = {"_embedded": {"terms": [{"label": label}]}}
+    return r
+
+
+def _mesh_resp(label):
+    r = MagicMock()
+    r.raise_for_status = MagicMock()
+    r.json.return_value = {"terms": [{"label": label, "preferred": True}]}
+    return r
+
+
 class TestCtdDiseasesPubmedExtraction:
     def test_publications_extracted_for_matching_chemical(self):
         tool = _tool()
@@ -81,6 +95,71 @@ class TestCtdDiseasesPubmedExtraction:
             rows = tool._ctd_diseases("cholesterol")
 
         assert rows[0]["PubMedIDs"] == ["12345"]
+
+    def test_missing_mydisease_label_is_resolved_by_exact_ols_id(self):
+        tool = _tool()
+        hits = [
+            {
+                "_id": "EFO:0009426",
+                "ctd": {
+                    "chemical_related_to_disease": {
+                        "chemical_name": "cholesterol",
+                        "pubmed": "20484746",
+                    }
+                },
+            }
+        ]
+        with patch(
+            "tooluniverse.metabolite_tool.requests.get",
+            side_effect=[_query_resp(hits), _ols_resp("necrosis")],
+        ):
+            rows = tool._ctd_diseases("cholesterol")
+
+        assert rows[0]["DiseaseName"] == "necrosis"
+        assert rows[0]["DiseaseNameSource"] == "EBI OLS (efo)"
+
+    def test_umls_hit_uses_its_mesh_cross_reference_for_name(self):
+        tool = _tool()
+        hits = [
+            {
+                "_id": "UMLS:C0025261",
+                "umls": {"mesh": {"preferred": "D008569"}},
+                "ctd": {
+                    "chemical_related_to_disease": {
+                        "chemical_name": "cholesterol",
+                    }
+                },
+            }
+        ]
+        with patch(
+            "tooluniverse.metabolite_tool.requests.get",
+            side_effect=[_query_resp(hits), _mesh_resp("Memory Disorders")],
+        ):
+            rows = tool._ctd_diseases("cholesterol")
+
+        assert rows[0]["DiseaseName"] == "Memory Disorders"
+        assert rows[0]["DiseaseNameSource"] == "NLM MeSH"
+
+    def test_list_merged_umls_cross_reference_is_supported(self):
+        tool = _tool()
+        hits = [
+            {
+                "_id": "UMLS:C0025261",
+                "umls": [{"mesh": {"preferred": "D008569"}}],
+                "ctd": {
+                    "chemical_related_to_disease": {
+                        "chemical_name": "cholesterol",
+                    }
+                },
+            }
+        ]
+        with patch(
+            "tooluniverse.metabolite_tool.requests.get",
+            side_effect=[_query_resp(hits), _mesh_resp("Memory Disorders")],
+        ):
+            rows = tool._ctd_diseases("cholesterol")
+
+        assert rows[0]["DiseaseName"] == "Memory Disorders"
 
     def test_entry_with_no_publications_gets_empty_list_not_crash(self):
         tool = _tool()

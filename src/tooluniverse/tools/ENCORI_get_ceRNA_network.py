@@ -16,6 +16,7 @@ def ENCORI_get_ceRNA_network(
     pval: Optional[float] = None,
     fdr: Optional[float] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -40,6 +41,8 @@ def ENCORI_get_ceRNA_network(
         Maximum FDR (default 0.01).
     limit : int
         Maximum ceRNA partner rows to return (1-500, default 100).
+    offset : int
+        Zero-based ranked row offset. Continue with metadata.next_offset while metada...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -64,6 +67,7 @@ def ENCORI_get_ceRNA_network(
             "pval": pval,
             "fdr": fdr,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

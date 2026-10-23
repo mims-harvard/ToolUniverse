@@ -324,7 +324,7 @@
     },
     {
         "name": "NCBIDatasets_get_orthologs",
-        "description": "Get orthologous genes across species for a given NCBI Gene ID. Returns orthologs identified by NCBI's Ortholog pipeline, including gene symbols, species, and gene types for each ortholog. Useful for comparative genomics and cross-species gene function studies. Example: gene_id 7157 (TP53) returns mouse Trp53, rat Tp53, zebrafish tp53, etc.",
+        "description": "Get orthologous genes across species for a given NCBI Gene ID. NCBI's ortholog endpoint returns a complete set rather than honoring page_size, so this tool paginates that set locally and reports the exact total, has_more, and next_offset. Returns gene symbols, species, and gene types. Example: gene_id 7157 (TP53) currently has hundreds of cross-species ortholog records.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -336,8 +336,13 @@
                 "page_size": {
                     "type": "integer",
                     "minimum": 1,
-                    "maximum": 100,
-                    "description": "Maximum number of orthologs to return (1-100). Default: 20."
+                    "maximum": 1000,
+                    "description": "Maximum orthologs in this local result page (1-1000, default 20)."
+                },
+                "offset": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "description": "Zero-based offset into the complete ortholog set (default 0). Use metadata.next_offset to continue."
                 }
             },
             "required": [
@@ -357,7 +362,8 @@
                 "page_size": 10
             },
             {
-                "gene_id": "672"
+                "gene_id": "672",
+                "offset": 20
             }
         ],
         "return_schema": {
@@ -735,7 +741,7 @@
     },
     {
         "name": "NCBIDatasets_list_genomes_by_taxon",
-        "description": "List genome assemblies available for a taxon (NCBI tax id or scientific name) via the NCBI Datasets v2 API. Returns a summary list of assemblies (accession, assembly name/level, RefSeq category, release date, total length, N50, GC%) plus the total count available. Use to discover what genomes exist for an organism or clade, e.g. all Escherichia coli or Mycobacterium tuberculosis assemblies. Set reference_only to restrict to reference/representative genomes. No API key required.",
+        "description": "List genome assemblies available for a taxon (NCBI tax id or scientific name) via the NCBI Datasets v2 API. Returns assembly summaries, the exact total count available, and continuation metadata. When metadata.has_more is true, pass metadata.next_page_token back as page_token to retrieve the next page. Set reference_only to restrict to reference/representative genomes. No API key required.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -751,8 +757,17 @@
                         "null"
                     ],
                     "minimum": 1,
-                    "maximum": 100,
-                    "description": "Max assemblies to return (default 20, max 100)."
+                    "maximum": 1000,
+                    "description": "Assemblies per page (default 20, maximum reliable upstream size 1000)."
+                },
+                "page_token": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "minLength": 1,
+                    "pattern": ".*\\S.*",
+                    "description": "Opaque continuation token from metadata.next_page_token. Omit for the first page."
                 },
                 "reference_only": {
                     "type": [
@@ -781,7 +796,8 @@
             },
             {
                 "taxon": "562",
-                "limit": 3
+                "limit": 3,
+                "page_token": null
             },
             {
                 "taxon": "Mycobacterium tuberculosis",

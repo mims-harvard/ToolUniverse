@@ -255,12 +255,19 @@ class OLSTool(BaseTool):
                 "error": "`query` parameter is required for `search_terms`.",
             }
 
-        rows = int(
-            arguments.get("rows")
-            or arguments.get("limit")
-            or arguments.get("size")
-            or 10
+        rows = min(
+            max(
+                1,
+                int(
+                    arguments.get("rows")
+                    or arguments.get("limit")
+                    or arguments.get("size")
+                    or 10
+                ),
+            ),
+            100,
         )
+        start = max(0, int(arguments.get("start") or 0))
         ontology = arguments.get("ontology")
         exact_match = bool(arguments.get("exact_match", False))
         include_obsolete = bool(arguments.get("include_obsolete", False))
@@ -268,7 +275,7 @@ class OLSTool(BaseTool):
         params = {
             "q": query,
             "rows": rows,
-            "start": 0,
+            "start": start,
             "exact": exact_match,
             "obsoletes": include_obsolete,
         }
@@ -296,6 +303,13 @@ class OLSTool(BaseTool):
                 ],
                 "total_items": num_found,
                 "showing": len(term_models),
+                "start": start,
+                "has_more": start + len(term_models) < num_found,
+                "next_start": (
+                    start + len(term_models)
+                    if start + len(term_models) < num_found
+                    else None
+                ),
             }
         else:
             formatted = self._format_term_collection(data, rows)
@@ -332,7 +346,7 @@ class OLSTool(BaseTool):
     def _handle_search_ontologies(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         search = arguments.get("search")
         page = int(arguments.get("page", 0))
-        size = int(arguments.get("size", 20))
+        size = min(max(1, int(arguments.get("size", 20))), 1000)
 
         params: Dict[str, Any] = {"page": page, "size": size}
         if search:
@@ -355,17 +369,24 @@ class OLSTool(BaseTool):
             except ValidationError:
                 continue
 
-        return {
-            "status": "success",
+        total_pages = data.get("totalPages", 0)
+        total_items = data.get("totalElements", len(ontologies))
+        has_more = page + 1 < total_pages
+        payload = {
             "results": validated or ontologies,
             "pagination": {
                 "page": page,
                 "size": size,
-                "total_pages": data.get("totalPages", 0),
-                "total_items": data.get("totalElements", len(ontologies)),
+                "total_pages": total_pages,
+                "total_items": total_items,
+                "has_more": has_more,
+                "next_page": page + 1 if has_more else None,
             },
             "search": search,
         }
+        # Keep the legacy top-level fields while also supplying the standard
+        # ToolUniverse `data` envelope used by return-schema validation.
+        return {"status": "success", "data": payload, **payload}
 
     def _handle_get_term_info(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         # Feature-111A-003: term_iri alias for id (consistent with sibling OLS tools)
@@ -501,11 +522,12 @@ class OLSTool(BaseTool):
             }
 
         include_obsolete = bool(arguments.get("include_obsolete", False))
-        size = int(arguments.get("size", 20))
+        size = min(max(1, int(arguments.get("size", 20))), 1000)
+        page = max(0, int(arguments.get("page") or 0))
         encoded = url_encode_iri(term_iri)
 
         params = {
-            "page": 0,
+            "page": page,
             "size": size,
             "includeObsoleteEntities": include_obsolete,
         }
@@ -533,10 +555,11 @@ class OLSTool(BaseTool):
 
         include_obsolete = bool(arguments.get("include_obsolete", False))
         size = int(arguments.get("size", 20))
+        page = max(0, int(arguments.get("page") or 0))
         encoded = url_encode_iri(term_iri)
 
         params = {
-            "page": 0,
+            "page": page,
             "size": size,
             "includeObsoleteEntities": include_obsolete,
         }
@@ -609,8 +632,7 @@ class OLSTool(BaseTool):
         # Exclude the query term itself
         similar = [d for d in docs if d.get("iri") != term_iri][:size]
 
-        return {
-            "status": "success",
+        payload = {
             "term_iri": term_iri,
             "source_label": label,
             "ontology": ontology,
@@ -618,6 +640,7 @@ class OLSTool(BaseTool):
             "total": len(similar),
             "note": "Results via text search (OLS v4 semantic similarity endpoint unavailable).",
         }
+        return {"status": "success", "data": payload, **payload}
 
     def _get_json(
         self, path: str, params: Optional[Dict[str, Any]] = None
@@ -682,13 +705,54 @@ class OLSTool(BaseTool):
                         if candidates:
                             elements = candidates[0]
 
+        page_info = data.get("page") if isinstance(data, dict) else None
+        if not isinstance(page_info, dict) and isinstance(data, dict):
+            # OLS4 v2 hierarchy endpoints currently return pagination fields at
+            # the top level (`page`, `numElements`, `totalPages`,
+            # `totalElements`), while some Spring-style OLS responses use a
+            # nested `page` object. Normalize both layouts.
+            if any(
+                key in data
+                for key in ("page", "numElements", "totalPages", "totalElements")
+            ):
+                page_info = {
+                    "number": data.get("page", 0),
+                    "size": data.get("numElements", size),
+                    "totalPages": data.get("totalPages", 0),
+                    "totalElements": data.get("totalElements", 0),
+                }
+
         if not elements:
             # Keep the success shape stable for empty result sets. Returning the
             # raw upstream envelope here meant a leaf term answered with
             # `totalElements`/`elements` while a non-leaf answered with
             # `total_items`/`terms`, so callers reading `data["terms"]` broke on
             # exactly the queries that legitimately have no children.
-            return {"terms": [], "total_items": 0, "showing": 0}
+            total = (
+                page_info.get("totalElements", 0)
+                if isinstance(page_info, dict)
+                else data.get("totalElements", 0)
+                if isinstance(data, dict)
+                else 0
+            )
+            result: Dict[str, Any] = {
+                "terms": [],
+                "total_items": total,
+                "showing": 0,
+            }
+            if isinstance(page_info, dict):
+                current = page_info.get("number", 0)
+                total_pages = page_info.get("totalPages", 0)
+                has_more = current + 1 < total_pages
+                result["pagination"] = {
+                    "page": current,
+                    "size": page_info.get("size", size),
+                    "total_pages": total_pages,
+                    "total_items": total,
+                    "has_more": has_more,
+                    "next_page": current + 1 if has_more else None,
+                }
+            return result
 
         limited = elements[:size]
         term_models = [self._build_term_model(item) for item in limited]
@@ -708,13 +772,17 @@ class OLSTool(BaseTool):
             "showing": len(term_models),
         }
 
-        page_info = data.get("page") if isinstance(data, dict) else None
         if isinstance(page_info, dict):
+            current = page_info.get("number", 0)
+            total_pages = page_info.get("totalPages", 0)
+            has_more = current + 1 < total_pages
             result["pagination"] = {
-                "page": page_info.get("number", 0),
+                "page": current,
                 "size": page_info.get("size", len(limited)),
-                "total_pages": page_info.get("totalPages", 0),
+                "total_pages": total_pages,
                 "total_items": page_info.get("totalElements", total),
+                "has_more": has_more,
+                "next_page": current + 1 if has_more else None,
             }
 
         return result

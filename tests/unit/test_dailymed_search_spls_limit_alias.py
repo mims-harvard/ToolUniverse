@@ -10,6 +10,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from tooluniverse.dailymed_tool import SearchSPLTool
+from tooluniverse.tools.DailyMed_search_spls import DailyMed_search_spls
 
 pytestmark = pytest.mark.unit
 
@@ -50,3 +51,17 @@ def test_no_pagination_arg_defaults_to_100():
 
     params = mock_get.call_args.kwargs["params"]
     assert params["pagesize"] == 100
+
+
+def test_generated_wrapper_can_forward_limit_without_default_pagesize_masking_it():
+    client = MagicMock()
+    client.run_one_function.return_value = {"status": "success", "data": []}
+    with patch(
+        "tooluniverse.tools.DailyMed_search_spls.get_shared_client",
+        return_value=client,
+    ):
+        DailyMed_search_spls("isoniazid", limit=3)
+
+    arguments = client.run_one_function.call_args.args[0]["arguments"]
+    assert arguments["limit"] == 3
+    assert "pagesize" not in arguments

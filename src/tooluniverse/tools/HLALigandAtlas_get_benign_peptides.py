@@ -1,7 +1,7 @@
 """
 HLALigandAtlas_get_benign_peptides
 
-Retrieve benign-tissue HLA-presented peptides (immunopeptidome) from the HLA Ligand Atlas (hla-li...
+Retrieve benign-tissue HLA-presented peptides from the complete HLA Ligand Atlas 2020.12 aggregat...
 """
 
 from typing import Any, Optional, Callable
@@ -14,13 +14,14 @@ def HLALigandAtlas_get_benign_peptides(
     allele: Optional[str] = None,
     tissue: Optional[str] = None,
     limit: Optional[int] = 50,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Retrieve benign-tissue HLA-presented peptides (immunopeptidome) from the HLA Ligand Atlas (hla-li...
+    Retrieve benign-tissue HLA-presented peptides from the complete HLA Ligand Atlas 2020.12 aggregat...
 
     Parameters
     ----------
@@ -33,7 +34,9 @@ def HLALigandAtlas_get_benign_peptides(
     tissue : str
         Tissue of origin substring to match, e.g. 'Lung', 'Brain', 'Spleen'. Case-ins...
     limit : int
-        Maximum number of peptide rows to return (1-500). Default 50.
+        Maximum rows on this page, 1-500. Defaults to 50; invalid values are rejected.
+    offset : int
+        Zero-based offset into the exact filtered match set; continue with metadata.n...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def HLALigandAtlas_get_benign_peptides(
             "allele": allele,
             "tissue": tissue,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

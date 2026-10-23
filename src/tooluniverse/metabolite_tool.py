@@ -13,6 +13,7 @@ import requests
 from typing import Any, Dict, List, Optional
 
 from .base_tool import BaseTool
+from .ctd_tool import CTDTool, _first_nested_value
 from .tool_registry import register_tool
 
 PUBCHEM_API = "https://pubchem.ncbi.nlm.nih.gov/rest/pug"
@@ -70,6 +71,9 @@ class MetaboliteTool(BaseTool):
     def __init__(self, tool_config: Dict[str, Any]):
         super().__init__(tool_config)
         self.timeout: int = tool_config.get("timeout", 30)
+        self._ctd_label_resolver = CTDTool(
+            {"name": "_metabolite_ctd_label_resolver", "fields": {"timeout": self.timeout}}
+        )
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         operation = arguments.get("operation", "")
@@ -190,32 +194,55 @@ class MetaboliteTool(BaseTool):
         # PubChem synonyms) alongside plain names -- match it against the
         # right nested field rather than always searching by name.
         match_field = "cas_registry_number" if _CAS_RE.match(chemical_term) else "chemical_name"
-        try:
-            r = requests.get(
-                "https://mydisease.info/v1/query",
-                params={
-                    "q": f'ctd.chemical_related_to_disease.{match_field}:"{safe}"',
-                    "fields": "mondo.label,ctd.chemical_related_to_disease",
-                    "size": 200,
-                },
-                headers={"Accept": "application/json"},
-                timeout=self.timeout,
-            )
-            r.raise_for_status()
-        except requests.RequestException as exc:
-            raise CTDBackendUnavailable(
-                f"mydisease.info is unavailable: {exc}"
-            ) from exc
-        try:
-            hits = r.json().get("hits") or []
-        except ValueError:
-            return []
+        hits = []
+        page_offset = 0
+        page_size = 200
+        while True:
+            try:
+                r = requests.get(
+                    "https://mydisease.info/v1/query",
+                    params={
+                        "q": f'ctd.chemical_related_to_disease.{match_field}:"{safe}"',
+                        "fields": (
+                            "mondo.label,umls.mesh.preferred,"
+                            "ctd.chemical_related_to_disease"
+                        ),
+                        "size": page_size,
+                        "from": page_offset,
+                    },
+                    headers={"Accept": "application/json"},
+                    timeout=self.timeout,
+                )
+                r.raise_for_status()
+            except requests.RequestException as exc:
+                raise CTDBackendUnavailable(
+                    f"mydisease.info is unavailable: {exc}"
+                ) from exc
+            try:
+                payload = r.json()
+            except ValueError:
+                return []
+            page_hits = payload.get("hits") or []
+            hits.extend(page_hits)
+            total_hits = int(payload.get("total", len(hits)))
+            page_offset += len(page_hits)
+            if not page_hits or page_offset >= total_hits:
+                break
 
         rows = []
         for hit in hits:
             disease_id = hit.get("_id")
-            mondo = hit.get("mondo")
-            disease_name = mondo.get("label") if isinstance(mondo, dict) else None
+            disease_name = _first_nested_value(hit, "mondo", "label")
+            disease_name_source = "mydisease.mondo.label" if disease_name else "unresolved"
+            if not disease_name and disease_id:
+                mesh_fallback = _first_nested_value(
+                    hit, "umls", "mesh", "preferred"
+                )
+                disease_name, disease_name_source = (
+                    self._ctd_label_resolver._resolve_ontology_label(
+                        disease_id, mesh_fallback=mesh_fallback
+                    )
+                )
             # BioThings occasionally merges more than one source record onto
             # the same disease document, in which case `ctd` itself is a
             # list of sub-documents instead of a single dict -- see
@@ -238,6 +265,7 @@ class MetaboliteTool(BaseTool):
                 rows.append(
                     {
                         "DiseaseName": disease_name,
+                        "DiseaseNameSource": disease_name_source,
                         "DiseaseID": disease_id,
                         "DirectEvidence": entry.get("direct_evidence"),
                         "PubMedIDs": [str(p) for p in pubmed_ids],
@@ -315,38 +343,48 @@ class MetaboliteTool(BaseTool):
     def _search(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
         Search for metabolites by name or molecular formula.
-        Returns up to 10 PubChem compounds with name, formula, weight, SMILES.
+        Returns a resumable PubChem result page with name, formula, weight, SMILES.
         """
         query = arguments.get("query", "")
         if not query:
             return {"status": "error", "error": "Missing required parameter: query"}
 
         search_type = arguments.get("search_type", "name")
-        limit = max(1, min(int(arguments.get("limit", 10)), 50))
+        limit = arguments.get("limit", 10)
+        offset = arguments.get("offset", 0)
+        if isinstance(limit, bool) or not isinstance(limit, int) or not 1 <= limit <= 50:
+            return {"status": "error", "error": "limit must be an integer from 1 to 50"}
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {"status": "error", "error": "offset must be a non-negative integer"}
         try:
+            total_results = 0
+            result_set_complete = True
+            selected_properties = None
             if search_type == "formula":
                 url = f"{PUBCHEM_API}/compound/fastformula/{requests.utils.quote(query)}/property/Title,MolecularFormula,MolecularWeight,CanonicalSMILES/JSON"
                 resp = requests.get(url, timeout=self.timeout)
-                cids_to_fetch: list[int] = []
-                if resp.status_code == 200:
-                    for p in (
-                        resp.json()
-                        .get("PropertyTable", {})
-                        .get("Properties", [])[:limit]
-                    ):
-                        cids_to_fetch.append(p.get("CID"))
+                all_properties = (
+                    resp.json().get("PropertyTable", {}).get("Properties", [])
+                    if resp.status_code == 200
+                    else []
+                )
+                total_results = len(all_properties)
+                selected_properties = all_properties[offset : offset + limit]
+                cids_to_fetch = []
             else:
                 # Try exact name first; fall back to PubChem keyword search on miss
                 exact_url = f"{PUBCHEM_API}/compound/name/{requests.utils.quote(query)}/cids/JSON"
                 resp = requests.get(exact_url, timeout=self.timeout)
                 if resp.status_code == 200:
-                    cids_to_fetch = (
-                        resp.json().get("IdentifierList", {}).get("CID", [])[:limit]
-                    )
+                    all_cids = resp.json().get("IdentifierList", {}).get("CID", [])
+                    total_results = len(all_cids)
+                    cids_to_fetch = all_cids[offset : offset + limit]
                 else:
-                    # Keyword fallback via PubChem autocomplete → fastsimilarity is not
-                    # available without a structure; use the compound keyword search instead
-                    kw_url = f"https://pubchem.ncbi.nlm.nih.gov/rest/autocomplete/compound/{requests.utils.quote(query)}/json?limit={limit}"
+                    # Autocomplete does not expose an authoritative total, so label
+                    # this candidate set as incomplete instead of implying its end is
+                    # the end of all PubChem matches.
+                    suggestion_limit = min(max(offset + limit, 5), 100)
+                    kw_url = f"https://pubchem.ncbi.nlm.nih.gov/rest/autocomplete/compound/{requests.utils.quote(query)}/json?limit={suggestion_limit}"
                     kw_resp = requests.get(kw_url, timeout=self.timeout)
                     cids_to_fetch = []
                     if kw_resp.status_code == 200:
@@ -355,7 +393,8 @@ class MetaboliteTool(BaseTool):
                             .get("dictionary_terms", {})
                             .get("compound", [])
                         )
-                        for suggestion in suggestions[:5]:
+                        candidate_cids = []
+                        for suggestion in suggestions:
                             cid_resp = requests.get(
                                 f"{PUBCHEM_API}/compound/name/{requests.utils.quote(suggestion)}/cids/JSON",
                                 timeout=self.timeout,
@@ -366,31 +405,60 @@ class MetaboliteTool(BaseTool):
                                     .get("IdentifierList", {})
                                     .get("CID", [])
                                 )
-                                cids_to_fetch.extend(cids[:2])
-                        cids_to_fetch = list(dict.fromkeys(cids_to_fetch))[:limit]
+                                candidate_cids.extend(cids[:2])
+                        candidate_cids = list(dict.fromkeys(candidate_cids))
+                        total_results = len(candidate_cids)
+                        cids_to_fetch = candidate_cids[offset : offset + limit]
+                    result_set_complete = False
 
             results = []
-            if cids_to_fetch:
+            if selected_properties is not None:
+                properties = selected_properties
+            elif cids_to_fetch:
                 cid_str = ",".join(str(c) for c in cids_to_fetch)
                 prop_url = f"{PUBCHEM_API}/compound/cid/{cid_str}/property/Title,MolecularFormula,MolecularWeight,IsomericSMILES/JSON"
                 prop_resp = requests.get(prop_url, timeout=self.timeout)
-                if prop_resp.status_code == 200:
-                    for p in (
-                        prop_resp.json().get("PropertyTable", {}).get("Properties", [])
-                    ):
-                        results.append(
-                            {
-                                "pubchem_cid": p.get("CID"),
-                                "name": p.get("Title"),
-                                "formula": p.get("MolecularFormula"),
-                                "molecular_weight": p.get("MolecularWeight"),
-                                "smiles": p.get("SMILES") or p.get("IsomericSMILES"),
-                            }
-                        )
+                properties = (
+                    prop_resp.json().get("PropertyTable", {}).get("Properties", [])
+                    if prop_resp.status_code == 200
+                    else []
+                )
+            else:
+                properties = []
+            for p in properties:
+                results.append(
+                    {
+                        "pubchem_cid": p.get("CID"),
+                        "name": p.get("Title"),
+                        "formula": p.get("MolecularFormula"),
+                        "molecular_weight": p.get("MolecularWeight"),
+                        "smiles": (
+                            p.get("SMILES")
+                            or p.get("IsomericSMILES")
+                            or p.get("ConnectivitySMILES")
+                            or p.get("CanonicalSMILES")
+                        ),
+                    }
+                )
+            has_more = offset + len(results) < total_results
             return {
                 "status": "success",
-                "data": {"query": query, "results": results, "count": len(results)},
-                "metadata": {"source": "PubChem"},
+                "data": {
+                    "query": query,
+                    "results": results,
+                    "count": len(results),
+                    "total_count": total_results,
+                },
+                "metadata": {
+                    "source": "PubChem",
+                    "offset": offset,
+                    "limit": limit,
+                    "returned": len(results),
+                    "total_results": total_results,
+                    "has_more": has_more,
+                    "next_offset": offset + len(results) if has_more else None,
+                    "result_set_complete": result_set_complete,
+                },
             }
         except requests.exceptions.RequestException as e:
             return {"status": "error", "error": f"Request failed: {str(e)}"}
@@ -409,7 +477,12 @@ class MetaboliteTool(BaseTool):
                 "status": "error",
                 "error": "Provide hmdb_id, compound_name, or pubchem_cid.",
             }
-        limit = int(arguments.get("limit", 50))
+        limit = arguments.get("limit", 50)
+        offset = arguments.get("offset", 0)
+        if isinstance(limit, bool) or not isinstance(limit, int) or limit <= 0:
+            return {"status": "error", "error": "limit must be a positive integer"}
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {"status": "error", "error": "offset must be a non-negative integer"}
 
         try:
             cid = self._resolve_to_cid(identifier)
@@ -433,9 +506,10 @@ class MetaboliteTool(BaseTool):
             ):
                 synonyms = [identifier] + list(synonyms)
             term_used, rows = self._resolve_ctd_term(title, synonyms)
-            diseases = [
+            all_diseases = [
                 {
                     "disease_name": r.get("DiseaseName"),
+                    "disease_name_source": r.get("DiseaseNameSource", "unresolved"),
                     "disease_id": r.get("DiseaseID"),
                     "disease_categories": r.get("DiseaseCategories"),
                     "direct_evidence": r.get("DirectEvidence"),
@@ -446,7 +520,12 @@ class MetaboliteTool(BaseTool):
                     ),
                 }
                 for r in rows
-            ][:limit]
+            ]
+            diseases = all_diseases[offset : offset + limit]
+            has_more = offset + len(diseases) < len(all_diseases)
+            unresolved_names = sum(
+                1 for disease in all_diseases if not disease.get("disease_name")
+            )
 
             return {
                 "status": "success",
@@ -455,12 +534,27 @@ class MetaboliteTool(BaseTool):
                     "compound_name": title,
                     "pubchem_cid": cid,
                     "ctd_query_term": term_used,
-                    "disease_count": len(diseases),
+                    "disease_count": len(all_diseases),
+                    "returned": len(diseases),
+                    "offset": offset,
+                    "limit": limit,
+                    "has_more": has_more,
+                    "next_offset": offset + len(diseases) if has_more else None,
+                    "result_set_complete": offset == 0 and not has_more,
+                    "unresolved_disease_name_count": unresolved_names,
                     "diseases": diseases,
                 },
                 "metadata": {
                     "source": "CTD (Comparative Toxicogenomics Database)",
                     "pubchem_url": f"https://pubchem.ncbi.nlm.nih.gov/compound/{cid}",
+                    "total_results": len(all_diseases),
+                    "returned": len(diseases),
+                    "offset": offset,
+                    "limit": limit,
+                    "has_more": has_more,
+                    "next_offset": offset + len(diseases) if has_more else None,
+                    "result_set_complete": offset == 0 and not has_more,
+                    "unresolved_disease_name_count": unresolved_names,
                 },
             }
         except CTDBackendUnavailable as e:

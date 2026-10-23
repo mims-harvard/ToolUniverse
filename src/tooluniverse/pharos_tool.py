@@ -126,6 +126,85 @@ class PharosTool(BaseTool):
         except Exception as e:
             return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
+    @staticmethod
+    def _pagination_args(arguments: Dict[str, Any], default_top: int, maximum: int):
+        """Validate Pharos' native zero-based ``skip`` / ``top`` window."""
+        top = arguments.get("top", default_top)
+        skip = arguments.get("skip", 0)
+        if isinstance(top, bool) or not isinstance(top, int) or not 1 <= top <= maximum:
+            return (
+                None,
+                None,
+                {
+                    "status": "error",
+                    "error": f"top must be an integer between 1 and {maximum}",
+                },
+            )
+        if isinstance(skip, bool) or not isinstance(skip, int) or skip < 0:
+            return (
+                None,
+                None,
+                {
+                    "status": "error",
+                    "error": "skip must be a non-negative integer",
+                },
+            )
+        return top, skip, None
+
+    @staticmethod
+    def _add_offset_metadata(
+        result: Dict[str, Any], returned: int, total: Any, skip: int, top: int
+    ) -> None:
+        total_is_exact = isinstance(total, int) and not isinstance(total, bool)
+        has_more = bool(total_is_exact and returned and skip + returned < total)
+        result["metadata"] = {
+            "returned": returned,
+            "total_results": total if total_is_exact else None,
+            "total_results_is_exact": total_is_exact,
+            "skip": skip,
+            "top": top,
+            "has_more": has_more,
+            "next_skip": skip + returned if has_more else None,
+            "truncated": skip > 0 or has_more,
+            "result_set_complete": bool(
+                total_is_exact and skip == 0 and returned == total
+            ),
+            "pagination_scope": "pharos_graphql_skip_top",
+        }
+
+    @staticmethod
+    def _ranked_window_metadata(
+        result: Dict[str, Any], raw_returned: int, returned: int, total: Any, top: int
+    ) -> None:
+        total_is_exact = isinstance(total, int) and not isinstance(total, bool)
+        accessible = min(total, raw_returned) if total_is_exact else raw_returned
+        upstream_truncated = bool(total_is_exact and accessible < total)
+        result["metadata"] = {
+            "returned": returned,
+            "requested_top": top,
+            "total_results": total if total_is_exact else None,
+            "total_results_is_exact": total_is_exact,
+            "accessible_results": accessible,
+            "upstream_truncated": upstream_truncated,
+            "top_n_truncated": returned < accessible,
+            "pagination_supported": False,
+            "has_more": False,
+            "next_skip": None,
+            "result_set_complete": bool(
+                total_is_exact and returned == total and not upstream_truncated
+            ),
+            "pagination_scope": "pharos_fixed_ranked_window",
+            "warning": (
+                "Pharos exposes top/skip in GraphQL introspection but currently ignores both for targets and returns the same first 10 ranked records. Narrow the query or apply a facet filter to reach records outside accessible_results."
+                if upstream_truncated
+                else (
+                    "Increase top up to 10 to retrieve all accessible matches."
+                    if returned < accessible
+                    else None
+                )
+            ),
+        }
+
     def _get_target(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """
         Get detailed target information by gene symbol or UniProt ID.
@@ -191,6 +270,11 @@ class PharosTool(BaseTool):
         """
         query_term = arguments.get("query")
         top = arguments.get("top", 10)
+        if isinstance(top, bool) or not isinstance(top, int) or not 1 <= top <= 10:
+            return {
+                "status": "error",
+                "error": "top must be an integer between 1 and 10",
+            }
         tdl = arguments.get("tdl")
 
         if not query_term:
@@ -225,7 +309,7 @@ class PharosTool(BaseTool):
         )
         variables = {
             "term": query_term,
-            "top": min(top, 100),  # Cap at 100
+            "top": 10,
             "facets": facets,
         }
 
@@ -233,12 +317,20 @@ class PharosTool(BaseTool):
 
         if result["status"] == "success":
             targets_data = result["data"].get("targets", {})
-            shown, note = _apply_top(
-                targets_data.get("targets", []), top, targets_data.get("count", 0)
-            )
+            raw_targets = targets_data.get("targets", [])
+            if not isinstance(raw_targets, list):
+                raw_targets = []
+            shown, note = _apply_top(raw_targets, top, targets_data.get("count", 0))
             result["data"] = {"count": targets_data.get("count", 0), "targets": shown}
             if note:
                 result["data"]["note"] = note
+            self._ranked_window_metadata(
+                result,
+                len(raw_targets),
+                len(result["data"]["targets"]),
+                result["data"]["count"],
+                top,
+            )
 
         return result
 
@@ -305,15 +397,21 @@ class PharosTool(BaseTool):
         Returns targets with TDL classification for drug discovery prioritization.
         """
         disease = arguments.get("disease")
-        top = arguments.get("top", 20)
+        top = arguments.get("top", 10)
+        if isinstance(top, bool) or not isinstance(top, int) or not 1 <= top <= 10:
+            return {
+                "status": "error",
+                "error": "top must be an integer between 1 and 10",
+            }
+        tdl = arguments.get("tdl")
 
         if not disease:
             return {"status": "error", "error": "disease parameter is required"}
 
         # Use associatedDisease filter
         query = """
-        query GetDiseaseTargets($disease: String!, $top: Int!) {
-            targets(filter: {associatedDisease: $disease}, top: $top) {
+        query GetDiseaseTargets($disease: String!, $top: Int!, $facets: [IFilterFacet!]) {
+            targets(filter: {associatedDisease: $disease, facets: $facets}, top: $top) {
                 count
                 targets {
                     name
@@ -327,15 +425,23 @@ class PharosTool(BaseTool):
         }
         """
 
-        variables = {"disease": disease, "top": min(top, 100)}
+        facets = (
+            [{"facet": "Target Development Level", "values": [tdl]}] if tdl else None
+        )
+        variables = {
+            "disease": disease,
+            "top": 10,
+            "facets": facets,
+        }
 
         result = self._execute_graphql(query, variables)
 
         if result["status"] == "success":
             targets_data = result["data"].get("targets", {})
-            shown, note = _apply_top(
-                targets_data.get("targets", []), top, targets_data.get("count", 0)
-            )
+            raw_targets = targets_data.get("targets", [])
+            if not isinstance(raw_targets, list):
+                raw_targets = []
+            shown, note = _apply_top(raw_targets, top, targets_data.get("count", 0))
             result["data"] = {
                 "disease": disease,
                 "count": targets_data.get("count", 0),
@@ -343,6 +449,13 @@ class PharosTool(BaseTool):
             }
             if note:
                 result["data"]["note"] = note
+            self._ranked_window_metadata(
+                result,
+                len(raw_targets),
+                len(result["data"]["targets"]),
+                result["data"]["count"],
+                top,
+            )
 
         return result
 
@@ -372,20 +485,18 @@ class PharosTool(BaseTool):
         if q is None:
             return {"status": "error", "error": label}
 
-        top = arguments.get("top", 3)
-        try:
-            top = min(max(int(top), 1), 50)
-        except (TypeError, ValueError):
-            top = 3
+        top, skip, page_error = self._pagination_args(arguments, 3, 50)
+        if page_error:
+            return page_error
 
         query = """
-        query TargetLigands($q: ITarget!, $top: Int!) {
+        query TargetLigands($q: ITarget!, $top: Int!, $skip: Int!) {
             target(q: $q) {
                 sym
                 tdl
                 fam
                 ligandCounts { name value }
-                ligands(top: $top) {
+                ligands(top: $top, skip: $skip) {
                     name
                     isdrug
                     synonyms { name value }
@@ -394,7 +505,7 @@ class PharosTool(BaseTool):
             }
         }
         """
-        result = self._execute_graphql(query, {"q": q, "top": top})
+        result = self._execute_graphql(query, {"q": q, "top": top, "skip": skip})
 
         if result["status"] == "success":
             target = result["data"].get("target")
@@ -405,6 +516,21 @@ class PharosTool(BaseTool):
                     "message": f"No target found for {label}",
                 }
             result["data"] = target
+            ligand_total = next(
+                (
+                    item.get("value")
+                    for item in target.get("ligandCounts", [])
+                    if isinstance(item, dict) and item.get("name") == "ligand"
+                ),
+                None,
+            )
+            self._add_offset_metadata(
+                result,
+                len(target.get("ligands") or []),
+                ligand_total,
+                skip,
+                top,
+            )
 
         return result
 

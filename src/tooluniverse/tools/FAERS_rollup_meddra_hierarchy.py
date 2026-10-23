@@ -12,6 +12,8 @@ def FAERS_rollup_meddra_hierarchy(
     operation: Optional[str] = "rollup_meddra_hierarchy",
     drug_name: Optional[str] = None,
     drug: Optional[str] = None,
+    limit: Optional[int] = None,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,6 +30,10 @@ def FAERS_rollup_meddra_hierarchy(
         Generic drug name
     drug : str
         Alias for drug_name. Generic drug name.
+    limit : int
+        Maximum ranked Preferred Terms to return on this page. Defaults to every PT o...
+    offset : int
+        Zero-based Preferred Term offset. Continue with next_offset while has_more is...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +54,8 @@ def FAERS_rollup_meddra_hierarchy(
             "operation": operation,
             "drug_name": drug_name,
             "drug": drug,
+            "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

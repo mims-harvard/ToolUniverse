@@ -1,7 +1,7 @@
 """
 Unpaywall_get_full_text_url
 
-Retrieve full-text PDF and landing page URLs for a scholarly article via its DOI. Returns the bes...
+Retrieve full-text and landing-page URLs from Unpaywall after normalizing and verifying the DOI. ...
 """
 
 from typing import Any, Optional, Callable
@@ -17,7 +17,7 @@ def Unpaywall_get_full_text_url(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve full-text PDF and landing page URLs for a scholarly article via its DOI. Returns the bes...
+    Retrieve full-text and landing-page URLs from Unpaywall after normalizing and verifying the DOI. ...
 
     Parameters
     ----------

@@ -1,7 +1,7 @@
 """
 LOVD_get_variants
 
-Get all curated variants for a gene from LOVD. Returns variant details including HGVS DNA/RNA/pro...
+Get the full unpaginated LOVD variant response for a gene. Every record's gene symbol and Variant...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def LOVD_get_variants(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Get all curated variants for a gene from LOVD. Returns variant details including HGVS DNA/RNA/pro...
+    Get the full unpaginated LOVD variant response for a gene. Every record's gene symbol and Variant...
 
     Parameters
     ----------

@@ -2,7 +2,7 @@
   {
     "type": "IntActRESTTool",
     "name": "intact_get_interactor",
-    "description": "Get detailed information about a specific interactor from IntAct database by IntAct identifier (e.g., 'EBI-1004115'). Note: This requires an IntAct-specific identifier, not UniProt IDs. For UniProt IDs, use intact_get_interactions instead. Returns interactor details including names, aliases, organism, and cross-references. Returns 25 interactions per call by default; compare 'count' with 'hitCount' in the response metadata and raise 'size' to retrieve the rest.",
+    "description": "Get the first matching interactor plus metadata for all interaction entries fetched in this page. interaction_ids is no longer cut to 10 and contains one ID per fetched entry. Compare count with hitCount to assess completeness.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -101,7 +101,7 @@
   {
     "type": "IntActRESTTool",
     "name": "intact_search_interactions",
-    "description": "Search for interactions in IntAct database using EBI Search API (IntAct domain). Supports searching by protein names, gene names, interaction types, or other criteria. Use '*' as query to get all interactions (may be slow). Returns interaction entries with interaction IDs (e.g., 'EBI-366083-EBI-366083') in the 'interaction_ids' field. These IDs can be used with intact_get_interaction_details or intact_get_interaction_network to get detailed information.",
+    "description": "Search IntAct interactions through EBI Search. The first parameter is a zero-based offset and is forwarded as EBI start; metadata reports hitCount, start, has_more, and next_start. interaction_ids contains every ID in the returned page.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -111,7 +111,7 @@
         },
         "first": {
           "type": "integer",
-          "description": "First result index for pagination (default: 0)",
+          "description": "Zero-based result offset. Continue with metadata.next_start while metadata.has_more is true.",
           "default": 0,
           "minimum": 0
         },

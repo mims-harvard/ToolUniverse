@@ -288,6 +288,26 @@ class ProteomicsDBTool(BaseTool):
 
         organism_id = arguments.get("organism_id", 9606)
         max_results = arguments.get("max_results", 20)
+        offset = arguments.get("offset", 0)
+        if (
+            isinstance(max_results, bool)
+            or not isinstance(max_results, int)
+            or not 1 <= max_results <= 100
+        ):
+            return {
+                "status": "error",
+                "error": "max_results must be an integer between 1 and 100",
+                "parameter": "max_results",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+                "parameter": "offset",
+            }
+
+        # OData string literals escape a single quote by doubling it.
+        escaped_query = str(query).replace("'", "''")
 
         # Try gene name first, then UniProt ID, then protein name
         # Use OData substringof for flexible matching
@@ -298,13 +318,27 @@ class ProteomicsDBTool(BaseTool):
             "&$format=json&$select=PROTEIN_ID,UNIQUE_IDENTIFIER,ENTRY_NAME,"
             "PROTEIN_NAME,GENE_NAME,TAXCODE,MASS"
             "&$top=%d"
-        ) % (API_V2_URL, query, query, query, organism_id, max_results)
+            "&$skip=%d&$inlinecount=allpages"
+        ) % (
+            API_V2_URL,
+            escaped_query,
+            escaped_query,
+            escaped_query,
+            organism_id,
+            max_results,
+            offset,
+        )
 
         result = _odata_request(url, timeout=30)
         if not result["ok"]:
             return {"status": "error", "error": result["error"]}
 
-        raw_results = result["data"].get("d", {}).get("results", [])
+        result_block = result["data"].get("d", {})
+        raw_results = result_block.get("results", [])
+        try:
+            total_raw_records = int(result_block.get("__count"))
+        except (TypeError, ValueError):
+            total_raw_records = None
 
         # Deduplicate by UNIQUE_IDENTIFIER (same protein can appear with
         # different PROTEIN_IDs due to database versions)
@@ -340,6 +374,28 @@ class ProteomicsDBTool(BaseTool):
                 "organism_id": organism_id,
                 "num_results": len(proteins),
                 "proteins": proteins,
+            },
+            "metadata": {
+                "offset": offset,
+                "max_results": max_results,
+                "raw_records_returned": len(raw_results),
+                "unique_proteins_returned": len(proteins),
+                "total_raw_records": total_raw_records,
+                "total_raw_records_is_exact": total_raw_records is not None,
+                "total_unique_proteins": None,
+                "total_unique_proteins_is_exact": False,
+                "has_more": total_raw_records is not None
+                and offset + len(raw_results) < total_raw_records,
+                "next_offset": (
+                    offset + len(raw_results)
+                    if total_raw_records is not None
+                    and len(raw_results) > 0
+                    and offset + len(raw_results) < total_raw_records
+                    else None
+                ),
+                "result_set_complete": total_raw_records is not None
+                and offset == 0
+                and len(raw_results) == total_raw_records,
             },
         }
 

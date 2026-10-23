@@ -46,6 +46,8 @@ def test_rxterms_merges_display_and_extra_fields():
     ]
     with patch("tooluniverse.clinical_tables_tool.requests.get", return_value=_resp(body)):
         out = _tool("RxTerms_search_drugs").run({"terms": "metformin"})
+    assert out["status"] == "success"
+    out = out["data"]
     assert out["count"] == 2
     first = out["results"][0]
     assert first["DISPLAY_NAME"] == "metFORMIN (Oral Pill)"
@@ -62,6 +64,8 @@ def test_conditions_aligns_icd_crosswalk():
     ]
     with patch("tooluniverse.clinical_tables_tool.requests.get", return_value=_resp(body)):
         out = _tool("HealthConditions_search").run({"terms": "diabetes"})
+    assert out["status"] == "success"
+    out = out["data"]
     row = out["results"][0]
     assert row["primary_name"] == "Diabetes mellitus"
     assert row["consumer_name"] == "Diabetes mellitus (DM)"
@@ -81,6 +85,11 @@ def test_disease_names_uses_default_display_column():
     with patch("tooluniverse.clinical_tables_tool.requests.get", side_effect=fake_get):
         out = _tool("DiseaseNames_search").run({"terms": "cystic fibrosis"})
     assert "df" not in captured  # df must be omitted for disease_names
+    assert captured["count"] == 20
+    assert captured["offset"] == 0
+    assert "maxList" not in captured
+    assert out["status"] == "success"
+    out = out["data"]
     assert out["results"][0]["code"] == "C0010674"
     assert out["results"][0]["primary_name"] == "Cystic fibrosis"
 

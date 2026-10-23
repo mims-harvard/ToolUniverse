@@ -157,7 +157,7 @@
   },
   {
     "name": "ClinVar_search_by_region",
-    "description": "Find ClinVar variants that OVERLAP a genomic region, including large copy-number variants that begin far outside it. Use this for 'which variant is located at chr:start-end' questions: Entrez's chrpos search matches a variant's START position, so a narrow window misses a pathogenic CNV that spans the region but starts megabases upstream (an 11 bp search at chr7:155593770-155593780 returns nothing, though a 1.5 Mb pathogenic loss covers it). The search therefore widens the window upstream by 'margin' and keeps only records whose span genuinely overlaps; records Entrez indexes as single-base are excluded from the upstream part of that window, since a one-base variant starting outside the region cannot reach into it. Results are sorted smallest span first, so the most specific overlapping variant comes first. Completeness is reported, not assumed: 'total_available' is Entrez's own count for the search, 'n_candidates' is how many of those records were actually fetched and checked for overlap, and 'truncated' is true (with a 'truncation_note') when the second number is smaller than the first -- in that case an empty or short 'variants' list is NOT evidence that nothing overlaps the region.",
+    "description": "Find ClinVar variants that OVERLAP a genomic region, including large copy-number variants that begin far outside it. Use this for 'which variant is located at chr:start-end' questions: Entrez's chrpos search matches a variant's START position, so a narrow window misses a pathogenic CNV that spans the region but starts megabases upstream (an 11 bp search at chr7:155593770-155593780 returns nothing, though a 1.5 Mb pathogenic loss covers it). The search therefore widens the window upstream by 'margin' and keeps only records whose span genuinely overlaps; records Entrez indexes as single-base are excluded from the upstream part of that window, since a one-base variant starting outside the region cannot reach into it. Results are sorted smallest span first within each candidate page. Completeness is reported, not assumed: 'total_available' (also 'candidate_total') is Entrez's own count for the search, 'n_candidates' is how many of those records were fetched and checked for overlap in this candidate page, and 'truncated' is true (with a 'truncation_note') when the second number is smaller than the first -- in that case an empty or short 'variants' list is NOT evidence that nothing overlaps the region. Pagination is two-dimensional: exhaust next_result_offset within the current candidate page, then advance next_candidate_offset; aggregate every candidate page before making global completeness or smallest-span claims.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -197,8 +197,29 @@
         },
         "max_results": {
           "type": "integer",
-          "description": "Maximum overlapping variants to return; the full number found is reported as 'n_overlapping'. Default 50.",
-          "default": 50
+          "description": "Maximum overlapping variants to return from this candidate page; the full number found in the page is reported as 'n_overlapping'. Default 50.",
+          "default": 50,
+          "minimum": 1,
+          "maximum": 500
+        },
+        "result_offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Offset within overlaps found in the current candidate page. Follow next_result_offset first."
+        },
+        "candidate_limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 500,
+          "description": "Number of Entrez candidates to inspect in this page."
+        },
+        "candidate_offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Entrez candidate offset. Advance to next_candidate_offset after exhausting result pages."
         }
       },
       "required": []

@@ -1,7 +1,7 @@
 """
 RGD_get_annotations
 
-Get disease, phenotype, pathway, and GO annotations for a rat gene from RGD. Returns curated anno...
+Get disease, phenotype, pathway, GO, and expression annotations for an RGD gene with limit/offset...
 """
 
 from typing import Any, Optional, Callable
@@ -11,13 +11,15 @@ from ._shared_client import get_shared_client
 def RGD_get_annotations(
     rgd_id: str,
     aspect: Optional[str] = "",
+    limit: Optional[int] = 50,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get disease, phenotype, pathway, and GO annotations for a rat gene from RGD. Returns curated anno...
+    Get disease, phenotype, pathway, GO, and expression annotations for an RGD gene with limit/offset...
 
     Parameters
     ----------
@@ -25,6 +27,10 @@ def RGD_get_annotations(
         RGD gene ID (e.g., '2218' for Brca1)
     aspect : str
         Filter by annotation type: 'D' (Disease), 'P' (Pathway), 'W' (Phenotype), 'F'...
+    limit : int
+        Maximum number of filtered annotations to return in this page.
+    offset : int
+        Zero-based offset after aspect filtering. Use metadata.next_offset for the ne...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -40,7 +46,14 @@ def RGD_get_annotations(
 
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
-        k: v for k, v in {"rgd_id": rgd_id, "aspect": aspect}.items() if v is not None
+        k: v
+        for k, v in {
+            "rgd_id": rgd_id,
+            "aspect": aspect,
+            "limit": limit,
+            "offset": offset,
+        }.items()
+        if v is not None
     }
     return get_shared_client().run_one_function(
         {

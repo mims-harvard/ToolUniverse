@@ -10,6 +10,8 @@ from ._shared_client import get_shared_client
 
 def CTD_get_disease_chemicals(
     input_terms: str,
+    limit: Optional[int] = 100,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -22,6 +24,10 @@ def CTD_get_disease_chemicals(
     ----------
     input_terms : str
         Disease name, MONDO CURIE (e.g. 'MONDO:0007254'), or MeSH disease ID (e.g. 'D...
+    limit : int
+        Maximum associations per page.
+    offset : int
+        Zero-based association offset; continue with metadata.next_offset while metad...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -36,7 +42,15 @@ def CTD_get_disease_chemicals(
     # Handle mutable defaults to avoid B006 linting error
 
     # Strip None values so optional parameters don't trigger schema validation errors
-    _args = {k: v for k, v in {"input_terms": input_terms}.items() if v is not None}
+    _args = {
+        k: v
+        for k, v in {
+            "input_terms": input_terms,
+            "limit": limit,
+            "offset": offset,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "CTD_get_disease_chemicals",

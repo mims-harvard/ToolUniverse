@@ -104,12 +104,14 @@ class ClinGenAlleleTool(BaseTool):
         # Extract external records
         ext = data.get("externalRecords", {})
         external_ids = {}
+        external_details = {}
         for db_name, records in ext.items():
             if isinstance(records, list):
                 external_ids[db_name] = [
                     r.get("id") or r.get("preferredName") or r.get("@id", "")
-                    for r in records[:5]
+                    for r in records
                 ]
+                external_details[db_name] = records
 
         # Extract genomic coordinates
         genomic = []
@@ -126,6 +128,7 @@ class ClinGenAlleleTool(BaseTool):
                         "allele": coord.get("allele"),
                         "reference_allele": coord.get("referenceAllele"),
                         "reference_genome": ga.get("referenceGenome"),
+                        "hgvs": ga.get("hgvs") or [],
                         # RefSeqGene/LRG rows carry no referenceGenome and no
                         # chromosome, so referenceSequence is the only thing that
                         # identifies the frame these coordinates are counted in.
@@ -134,30 +137,43 @@ class ClinGenAlleleTool(BaseTool):
                     }
                 )
 
-        # Extract transcript alleles. These rows expose no start/end, so they
-        # need no coordinate-system label -- but upstream does carry a
-        # `referenceSequence` per transcript, which pins the RS accession the
-        # HGVS is expressed against.
+        # Extract transcript alleles. Upstream carries a `referenceSequence`
+        # per transcript, which pins the RS accession the HGVS is expressed
+        # against. Rows whose raw `coordinates` are passed through get the same
+        # coordinate-system label as the genomic rows.
         transcripts = []
-        for ta in (data.get("transcriptAlleles") or [])[:10]:
+        for ta in data.get("transcriptAlleles") or []:
             hgvs_list = ta.get("hgvs") or []
+            coordinates = ta.get("coordinates") or []
             transcripts.append(
                 {
-                    "hgvs": hgvs_list[:3] if hgvs_list else [],
+                    "hgvs": hgvs_list,
                     "gene_symbol": ta.get("geneSymbol"),
                     "protein_effect": ta.get("proteinEffect", {}).get("hgvs")
                     if ta.get("proteinEffect")
                     else None,
+                    "protein_effect_details": ta.get("proteinEffect"),
+                    "coordinates": coordinates,
+                    "gene": ta.get("gene"),
+                    "gene_ncbi_id": ta.get("geneNCBI_id"),
                     "reference_sequence": ta.get("referenceSequence"),
                 }
             )
+            if coordinates:
+                transcripts[-1]["coordinate_system"] = COORDINATE_SYSTEM
 
         result = {
             "ca_id": ca_id,
             "community_standard_title": data.get("communityStandardTitle", []),
             "external_records": external_ids,
-            "genomic_alleles": genomic[:5],
+            "external_record_details": external_details,
+            "external_record_count": sum(
+                len(records) for records in external_details.values()
+            ),
+            "genomic_alleles": genomic,
+            "genomic_allele_count": len(genomic),
             "transcript_alleles": transcripts,
+            "transcript_allele_count": len(transcripts),
         }
         return {
             "status": "success",

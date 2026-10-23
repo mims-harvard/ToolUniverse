@@ -10,7 +10,8 @@ from ._shared_client import get_shared_client
 
 def ReactomeAnalysis_token_result(
     token: str,
-    page_size: Optional[int] = None,
+    page_size: Optional[int] = 20,
+    page: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -25,6 +26,8 @@ def ReactomeAnalysis_token_result(
         Analysis token from a previous ReactomeAnalysis_pathway_enrichment or Reactom...
     page_size : int
         Number of pathways per page (default 20, max 50).
+    page : int
+        One-based pathway result page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +44,7 @@ def ReactomeAnalysis_token_result(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"token": token, "page_size": page_size}.items()
+        for k, v in {"token": token, "page_size": page_size, "page": page}.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

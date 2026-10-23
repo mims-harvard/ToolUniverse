@@ -1,7 +1,7 @@
 """
 Pharos_get_disease_targets
 
-Get drug targets associated with a disease from Pharos. Returns targets with TDL classification t...
+Get Pharos targets associated with a disease, with a real optional TDL facet filter. Pharos curre...
 """
 
 from typing import Any, Optional, Callable
@@ -11,14 +11,14 @@ from ._shared_client import get_shared_client
 def Pharos_get_disease_targets(
     disease: str,
     tdl: Optional[str] = None,
-    top: Optional[int] = 20,
+    top: Optional[int] = 10,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get drug targets associated with a disease from Pharos. Returns targets with TDL classification t...
+    Get Pharos targets associated with a disease, with a real optional TDL facet filter. Pharos curre...
 
     Parameters
     ----------
@@ -27,7 +27,7 @@ def Pharos_get_disease_targets(
     tdl : str
         Optional filter by Target Development Level
     top : int
-        Maximum number of results (1-100). Pharos' API currently returns at most 10 t...
+        Number of records to return from Pharos' fixed first-10 ranked window (1-10);...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

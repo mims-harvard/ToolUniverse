@@ -1,7 +1,7 @@
 """
 OMA_get_genome_pair_orthologs
 
-Retrieve the complete set of pairwise orthologs between TWO whole genomes (proteome-vs-proteome) ...
+Retrieve pairwise orthologs between two whole genomes in OMA. Unlike OMA_get_orthologs, this endp...
 """
 
 from typing import Any, Optional, Callable
@@ -19,7 +19,7 @@ def OMA_get_genome_pair_orthologs(
     validate: bool = True,
 ) -> Any:
     """
-    Retrieve the complete set of pairwise orthologs between TWO whole genomes (proteome-vs-proteome) ...
+    Retrieve pairwise orthologs between two whole genomes in OMA. Unlike OMA_get_orthologs, this endp...
 
     Parameters
     ----------
@@ -28,9 +28,9 @@ def OMA_get_genome_pair_orthologs(
     genome2 : str
         Second genome: UniProt species code (e.g. 'MOUSE', 'PANTR') or NCBI taxon ID ...
     per_page : int
-        Number of ortholog pairs to return per page (default: 20, max: 100). The full...
+        Ortholog pairs per official server page (default 20, verified through 10000)....
     page : int
-        Page number for paginated results (default: 1).
+        One-based official result page (default 1). Continue with metadata.next_page ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

@@ -1,29 +1,49 @@
 [
   {
     "name": "odphp_myhealthfinder",
-    "description": "This tool provides personalized preventive-care recommendations and it is helpful for different ages, sexes, pregnancy status, gives age/sex/pregnancy. It retrieves metadata, plain-language sections, and dataset links to the full article (AccessibleVersion links). If the user wants the full text of a recommendation, the `odphp_outlink_fetch` tool is helpful.",
+    "description": "Retrieve personalized preventive-care recommendations from the ODPHP MyHealthfinder v4 API. The response reports the upstream total, returned record count, and exact completeness. HTTP-200 application errors and silently changed query values are explicit. Use odphp_outlink_fetch for AccessibleVersion links.",
     "type": "ODPHPMyHealthfinder",
     "parameter": {
       "type": "object",
       "properties": {
         "lang": {
           "type": "string",
+          "enum": [
+            "en",
+            "es"
+          ],
+          "default": "en",
           "description": "Language code (en or es)"
         },
         "age": {
           "type": "integer",
+          "minimum": 0,
+          "maximum": 120,
           "description": "Age in years (0\u2013120)"
         },
         "sex": {
           "type": "string",
+          "enum": [
+            "Male",
+            "Female",
+            "male",
+            "female"
+          ],
           "description": "Male or Female"
         },
         "pregnant": {
           "type": "string",
+          "enum": [
+            "Yes",
+            "No",
+            "yes",
+            "no"
+          ],
           "description": "\"Yes\" or \"No\""
         },
         "strip_html": {
           "type": "boolean",
+          "default": false,
           "description": "If true, also return PlainSections[] with HTML removed for each topic"
         }
       },
@@ -321,29 +341,37 @@
         "lang": "en",
         "age": 1,
         "sex": "female",
-        "pregnant": "false",
+        "pregnant": "no",
         "strip_html": true
       }
     ]
   },
   {
     "name": "odphp_itemlist",
-    "description": "This tools browses and returns available topics and categories and it is helpful to help narrow a broad request (e.g., \u201cshow me all topics\u201d). For full topic content, `odphp_topicsearch` tool is helpful.",
+    "description": "List ODPHP MyHealthfinder v4 topics or categories. The response exposes the upstream total, returned record count, and exact completeness; application-level errors and ignored query values are explicit.",
     "type": "ODPHPItemList",
     "parameter": {
       "type": "object",
       "properties": {
         "lang": {
           "type": "string",
+          "enum": [
+            "en",
+            "es"
+          ],
+          "default": "en",
           "description": "Language code (en or es)"
         },
         "type": {
           "type": "string",
+          "enum": [
+            "topic",
+            "category"
+          ],
           "description": "topic or category"
         }
       },
       "required": [
-        "lang",
         "type"
       ]
     },
@@ -467,13 +495,18 @@
   },
   {
     "name": "odphp_topicsearch",
-    "description": "Find specific health topics and get their full content. Use when the user mentions a keyword (e.g., \u201cfolic acid\u201d, \u201cblood pressure\u201d) or when you already have topic/category IDs from `odphp_itemlist`. Returns detailed topic pages (Title, Sections, RelatedItems) and an AccessibleVersion link. Next: to quote or summarize the actual page text, pass the AccessibleVersion (or RelatedItems URLs) to `odphp_outlink_fetch`.",
+    "description": "Search ODPHP MyHealthfinder v4 topics by topic ID or keyword, or omit both to retrieve all topics. categoryId is retained for compatibility, but an upstream-ignored value now produces an explicit parameter-mismatch error. Exact total/count completeness and HTTP-200 application errors are exposed. Use odphp_outlink_fetch for linked content.",
     "type": "ODPHPTopicSearch",
     "parameter": {
       "type": "object",
       "properties": {
         "lang": {
           "type": "string",
+          "enum": [
+            "en",
+            "es"
+          ],
+          "default": "en",
           "description": "Language code (en or es)"
         },
         "topicId": {
@@ -490,6 +523,7 @@
         },
         "strip_html": {
           "type": "boolean",
+          "default": false,
           "description": "If true, also return PlainSections[] with HTML removed for each topic"
         }
       },
@@ -584,21 +618,21 @@
       {
         "lang": "en",
         "topicId": "30544",
-        "categoryId": "15",
-        "keyword": "diabetes",
         "strip_html": true
       }
     ]
   },
   {
     "name": "odphp_outlink_fetch",
-    "description": "This tool retrieves readable text from ODPHP article links and information sources. This is helpful after using the `odphp_myhealthfinder` or `odphp_topicsearch` tools or when the user wants to simply dive deeper into ODPHP data.",
+    "description": "Retrieve readable content from 1-3 ODPHP or related absolute URLs. HTML is cleaned, JSON is serialized instead of silently returned as empty text, and plain text is preserved. max_chars truncation is explicit per result via original_text_chars/text_truncated. More than 3 URLs or invalid controls are rejected before any network request; per-URL HTTP failures are surfaced in both the item and aggregate completeness metadata.",
     "type": "ODPHPOutlinkFetch",
     "parameter": {
       "type": "object",
       "properties": {
         "urls": {
           "type": "array",
+          "minItems": 1,
+          "maxItems": 3,
           "items": {
             "type": "string"
           },
@@ -606,11 +640,14 @@
         },
         "max_chars": {
           "type": "integer",
+          "minimum": 1,
+          "maximum": 1000000,
           "description": "Optional hard cap on extracted text length (e.g., 5000)"
         },
         "return_html": {
           "type": "boolean",
-          "description": "If true, also return minimally cleaned HTML"
+          "default": false,
+          "description": "If true, also return original HTML for HTML responses"
         }
       },
       "required": [
@@ -646,6 +683,15 @@
               },
               "text": {
                 "type": "string"
+              },
+              "original_text_chars": {
+                "type": "integer"
+              },
+              "text_truncated": {
+                "type": "boolean"
+              },
+              "error": {
+                "type": "string"
               }
             }
           }
@@ -655,6 +701,18 @@
           "properties": {
             "source": {
               "type": "string"
+            },
+            "requested_urls": {
+              "type": "integer"
+            },
+            "processed_urls": {
+              "type": "integer"
+            },
+            "failed_urls": {
+              "type": "integer"
+            },
+            "requested_scope_complete": {
+              "type": "boolean"
             }
           }
         }
@@ -663,14 +721,14 @@
     "test_examples": [
       {
         "urls": [
-          "https://health.gov/myhealthfinder/api/v3/topicsearch.json?topicId=30606"
+          "https://odphp.health.gov/myhealthfinder/api/v4/topicsearch.json?TopicId=30606"
         ],
         "max_chars": 2000,
         "return_html": false
       },
       {
         "urls": [
-          "https://health.gov/myhealthfinder/api/v3/topicsearch.json?topicId=30606"
+          "https://odphp.health.gov/myhealthfinder/api/v4/topicsearch.json?TopicId=30606"
         ],
         "max_chars": 5000,
         "return_html": false

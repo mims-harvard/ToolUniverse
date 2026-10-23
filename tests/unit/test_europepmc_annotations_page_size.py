@@ -132,3 +132,53 @@ def test_per_article_total_attributes_truncation_across_a_batch():
     # returned counts.
     assert data["total_annotations"] == 132
     assert sum(a["total_annotations"] for a in data["articles"]) == 132
+
+
+def test_offset_pages_past_the_cap_and_reports_next_offset():
+    """Annotations beyond page_size are reachable with offset, not lost."""
+    with patch(
+        "tooluniverse.europepmc_annotations_tool.requests.get",
+        return_value=_response(150),
+    ):
+        first = _tool().run(
+            {
+                "article_ids": "PMC:PMC4353746",
+                "annotation_type": "Chemicals",
+                "page_size": 100,
+            }
+        )["data"]["articles"][0]
+        second = _tool().run(
+            {
+                "article_ids": "PMC:PMC4353746",
+                "annotation_type": "Chemicals",
+                "limit": 100,
+                "offset": first["next_offset"],
+            }
+        )["data"]["articles"][0]
+
+    assert first["has_more"] is True and first["next_offset"] == 100
+    assert [a["exact"] for a in second["annotations"]][:2] == ["chem100", "chem101"]
+    assert second["annotation_count"] == 50
+    assert second["has_more"] is False and second["next_offset"] is None
+
+
+def test_single_article_limit_offset_pagination():
+    tool = EuroPMCAnnotationsTool(
+        {
+            "name": "EuroPMCAnnot_get_article_annotations",
+            "fields": {"endpoint_type": "by_article"},
+        }
+    )
+    with patch(
+        "tooluniverse.europepmc_annotations_tool.requests.get",
+        return_value=_response(250),
+    ):
+        default = tool.run({"article_id": "PMC4353746"})["data"]
+        later = tool.run({"article_id": "PMC4353746", "limit": 2, "offset": 248})[
+            "data"
+        ]
+
+    assert (default["annotation_count"], default["total_annotations"]) == (200, 250)
+    assert default["has_more"] is True and default["next_offset"] == 200
+    assert [a["exact"] for a in later["annotations"]] == ["chem248", "chem249"]
+    assert later["has_more"] is False

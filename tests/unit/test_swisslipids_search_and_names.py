@@ -75,7 +75,9 @@ class TestExactMatchRanking:
         resp = _resp(_CHOLESTEROL_SEARCH_HITS)
 
         with patch("tooluniverse.swisslipids_tool.requests.get", return_value=resp):
-            result = tool.run({"operation": "search", "query": "cholesterol", "limit": 2})
+            result = tool.run(
+                {"operation": "search", "query": "cholesterol", "limit": 2}
+            )
 
         assert result["status"] == "success"
         names = [r["entity_name"] for r in result["data"]]
@@ -87,7 +89,9 @@ class TestExactMatchRanking:
         resp = _resp(_CHOLESTEROL_SEARCH_HITS)
 
         with patch("tooluniverse.swisslipids_tool.requests.get", return_value=resp):
-            result = tool.run({"operation": "search", "query": "CHOLESTEROL", "limit": 1})
+            result = tool.run(
+                {"operation": "search", "query": "CHOLESTEROL", "limit": 1}
+            )
 
         assert result["data"][0]["entity_name"] == "cholesterol"
 
@@ -97,10 +101,34 @@ class TestExactMatchRanking:
         resp = _resp(hits)
 
         with patch("tooluniverse.swisslipids_tool.requests.get", return_value=resp):
-            result = tool.run({"operation": "search", "query": "cholesterol", "limit": 2})
+            result = tool.run(
+                {"operation": "search", "query": "cholesterol", "limit": 2}
+            )
 
         names = [r["entity_name"] for r in result["data"]]
-        assert names == ["docosanoyl-cholesterol", "(15-methylhexadecanoyl)-cholesterol"]
+        assert names == [
+            "docosanoyl-cholesterol",
+            "(15-methylhexadecanoyl)-cholesterol",
+        ]
+
+    def test_offset_reaches_results_after_ranked_first_page(self):
+        tool = _tool()
+        resp = _resp(_CHOLESTEROL_SEARCH_HITS)
+
+        with patch("tooluniverse.swisslipids_tool.requests.get", return_value=resp):
+            result = tool.run(
+                {
+                    "operation": "search",
+                    "query": "cholesterol",
+                    "limit": 1,
+                    "offset": 1,
+                }
+            )
+
+        assert result["data"][0]["entity_id"] == "SLM:000500294"
+        assert result["metadata"]["total_matches"] == 3
+        assert result["metadata"]["next_offset"] == 2
+        assert result["metadata"]["truncated"] is True
 
 
 class TestEntityNameMarkupStripped:
@@ -109,7 +137,9 @@ class TestEntityNameMarkupStripped:
         resp = _resp(_MARKUP_CHILDREN)
 
         with patch("tooluniverse.swisslipids_tool.requests.get", return_value=resp):
-            result = tool.run({"operation": "get_children", "entity_id": "SLM:000001193"})
+            result = tool.run(
+                {"operation": "get_children", "entity_id": "SLM:000001193"}
+            )
 
         assert result["status"] == "success"
         name = result["data"][0]["entity_name"]

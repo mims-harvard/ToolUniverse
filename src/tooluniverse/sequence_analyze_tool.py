@@ -135,6 +135,10 @@ class SequenceAnalyzeTool(BaseTool):
         count = seq_upper.count(residue_upper)
         fraction = count / len(seq_upper)
         positions = [i + 1 for i, c in enumerate(seq_upper) if c == residue_upper]
+        position_limit = min(max(int(arguments.get("position_limit") or 50), 1), 1000)
+        position_offset = max(int(arguments.get("position_offset") or 0), 0)
+        position_page = positions[position_offset : position_offset + position_limit]
+        positions_truncated = position_offset + len(position_page) < len(positions)
 
         data = {
             "sequence_length": len(seq_upper),
@@ -142,8 +146,15 @@ class SequenceAnalyzeTool(BaseTool):
             "count": count,
             "fraction": round(fraction, 4),
             "percent": round(fraction * 100, 2),
-            "positions_1based": positions[:50],
+            "positions_1based": position_page,
             "total_positions": len(positions),
+            "positions_returned": len(position_page),
+            "position_limit": position_limit,
+            "position_offset": position_offset,
+            "positions_truncated": positions_truncated,
+            "next_position_offset": (
+                position_offset + len(position_page) if positions_truncated else None
+            ),
         }
         if arguments.get("uniprot_id"):
             data["uniprot_id"] = arguments["uniprot_id"]

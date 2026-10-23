@@ -222,7 +222,7 @@
   },
   {
     "name": "NWS_get_active_alerts",
-    "description": "Get active weather alerts from the National Weather Service. Can be filtered by US state/territory. Returns current severe weather warnings, watches, and advisories including tornado warnings, flood warnings, winter storm warnings, etc.",
+    "description": "Get active National Weather Service alerts with exact local offset pagination. NWS does not recognize a limit query parameter, so ToolUniverse retrieves the complete filtered active-alert set, then applies limit/offset locally. Continue with metadata.next_offset while metadata.has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -245,7 +245,16 @@
             "integer",
             "null"
           ],
-          "description": "Maximum number of alerts to return (default: 50)"
+          "minimum": 1,
+          "maximum": 500,
+          "default": 50,
+          "description": "Alerts per local page (default 50, max 500). Not sent to NWS."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset within the complete filtered active-alert set. Continue with metadata.next_offset."
         }
       },
       "required": []
@@ -254,7 +263,16 @@
       "endpoint": "https://api.weather.gov/alerts/active",
       "headers": {
         "User-Agent": "ToolUniverse/1.0"
-      }
+      },
+      "client_only_params": [
+        "limit",
+        "offset"
+      ],
+      "lowercase_params": [],
+      "uppercase_params": [
+        "area"
+      ],
+      "pagination": "nws_client_offset"
     },
     "type": "BaseRESTTool",
     "test_examples": [

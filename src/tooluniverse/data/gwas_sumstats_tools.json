@@ -1,7 +1,7 @@
 [
   {
     "name": "GWASSumStats_list_studies",
-    "description": "List studies in the EBI GWAS Catalog, newest API (v2). Returns the study accession with its reported trait, mapped EFO traits, PubMed id, first author, publication date and association count. Use the accession with GWASSumStats_get_region_associations' FTP pointer to fetch that study's full summary statistics.",
+    "description": "List studies in the EBI GWAS Catalog, newest API (v2). Returns the study accession with its reported trait, mapped EFO traits, PubMed id, first author, publication date and association count. Use the accession with GWASSumStats_get_region_associations' FTP pointer to fetch that study's full summary statistics. Paginate with start/size: continue with metadata.next_start while metadata.has_more is true; metadata.total_results is the exact total from the API.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -10,7 +10,17 @@
             "integer",
             "null"
           ],
-          "description": "Number of studies to return (default 20, max 100)."
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Studies per page (default 20, max 1000)."
+        },
+        "start": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "description": "Zero-based start offset (default 0); must be a multiple of size because the v2 API pages by page index. Continue with metadata.next_start."
         }
       },
       "required": []
@@ -41,7 +51,7 @@
   },
   {
     "name": "GWASSumStats_get_trait_studies",
-    "description": "Find GWAS Catalog studies for a trait, matched on the EFO trait LABEL rather than an ontology id. The match is a case-insensitive substring of the label, so 'alzheimer' returns more studies than 'Alzheimer disease' and both are valid: use a shorter term to cast wider, a fuller label to narrow. Passing trait_id returns an error explaining this rather than an empty result.",
+    "description": "Find GWAS Catalog studies for a trait, matched on the EFO trait LABEL rather than an ontology id. The match is a case-insensitive substring of the label, so 'alzheimer' returns more studies than 'Alzheimer disease' and both are valid: use a shorter term to cast wider, a fuller label to narrow. Passing trait_id returns an error explaining this rather than an empty result. Paginate with start/size: continue with metadata.next_start while metadata.has_more is true; metadata.total_results is the exact total from the API.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -55,7 +65,8 @@
             "null"
           ],
           "minimum": 1,
-          "description": "Number of studies to return (default 20, max 100)."
+          "maximum": 1000,
+          "description": "Studies per page (default 20, max 1000)."
         },
         "trait_id": {
           "type": [
@@ -63,6 +74,14 @@
             "null"
           ],
           "description": "Deprecated. An ontology id such as 'EFO_0000249'; the API filters on the label, so this returns an error telling you how to resolve it."
+        },
+        "start": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "description": "Zero-based start offset (default 0); must be a multiple of size because the v2 API pages by page index. Continue with metadata.next_start."
         }
       },
       "required": []

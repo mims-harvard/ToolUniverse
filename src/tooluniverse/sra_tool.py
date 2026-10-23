@@ -83,7 +83,8 @@ class SRATool(BaseTool):
         organism = arguments.get("organism")
         library_strategy = arguments.get("library_strategy")
         platform = arguments.get("platform")
-        limit = min(int(arguments.get("limit", 10)), 50)
+        limit = max(1, min(int(arguments.get("limit", 10)), 50))
+        start = max(0, int(arguments.get("start", 0)))
 
         terms = []
         if query:
@@ -109,6 +110,7 @@ class SRATool(BaseTool):
             "db": "sra",
             "term": search_term,
             "retmax": limit,
+            "retstart": start,
             "retmode": "json",
             "sort": "relevance",
         }
@@ -131,6 +133,9 @@ class SRATool(BaseTool):
             payload = {
                 "total": total_count,
                 "returned": 0,
+                "start": start,
+                "has_more": False,
+                "next_start": None,
                 "experiments": [],
                 "query_used": search_term,
             }
@@ -160,9 +165,13 @@ class SRATool(BaseTool):
             parsed = self._parse_sra_summary(entry, uid)
             experiments.append(parsed)
 
+        has_more = start + len(experiments) < total_count
         payload = {
             "total": total_count,
             "returned": len(experiments),
+            "start": start,
+            "has_more": has_more,
+            "next_start": start + len(experiments) if has_more else None,
             "experiments": experiments,
             "query_used": search_term,
         }
@@ -316,7 +325,13 @@ class SRATool(BaseTool):
                             "is_public": run.attrib.get("is_public"),
                         }
                     )
-                result["runs"] = runs[:10]
+                result["runs"] = runs
+                result["runs_returned"] = len(runs)
+                try:
+                    expected_runs = int(result.get("total_runs", len(runs)))
+                except (TypeError, ValueError):
+                    expected_runs = len(runs)
+                result["runs_complete"] = len(runs) >= expected_runs
             except ET.ParseError:
                 pass
 

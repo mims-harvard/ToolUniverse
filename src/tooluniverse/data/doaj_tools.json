@@ -2,7 +2,7 @@
   {
     "type": "DOAJTool",
     "name": "DOAJ_search_articles",
-    "description": "Search DOAJ (Directory of Open Access Journals) for open-access articles. Returns articles with title, authors, year, DOI, venue, and URL.",
+    "description": "Search DOAJ for open-access articles or journals with exact recoverable pagination. Start with page=1 and continue with metadata.next_page while metadata.has_more is true; metadata.total_results and total_pages are exact. Page size is 1-100.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -12,8 +12,16 @@
         },
         "max_results": {
           "type": "integer",
-          "description": "Maximum number of articles to return. Default is 10, maximum is 100.",
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Number of results per page (1-100). Out-of-range values are rejected rather than silently clamped.",
           "default": 10
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 1,
+          "description": "One-based result page. Continue with metadata.next_page while metadata.has_more is true."
         },
         "type": {
           "type": "string",

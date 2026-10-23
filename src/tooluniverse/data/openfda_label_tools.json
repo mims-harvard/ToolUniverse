@@ -1,7 +1,7 @@
 [
   {
     "name": "FDA_search_drug_labels",
-    "description": "Search FDA-approved drug labels (prescribing information) by drug name or medical indication. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops). Drug labels contain official clinical guidance: indications, dosing regimens, contraindications, black box warnings, drug interactions, and adverse reactions. Use drug_name for drug-specific lookups (e.g., 'metformin', 'warfarin') or indication for condition-based searches (e.g., 'hypertension', 'type 2 diabetes'). Returns a list of matching drug labels with key clinical sections. This is a compact multi-record summary view: each clinical section is limited to max_section_chars (default 2000) so a 20-record search stays small. Whenever a section is shortened the response carries top-level 'truncated': true and a 'truncation_note' naming the affected sections; raise max_section_chars, or use FDA_get_drug_label for the full text of one drug.",
+    "description": "Search FDA-approved drug labels (prescribing information) by drug name or medical indication. Pass 'route' whenever the product's form is known (eye drops -> OPHTHALMIC, cream or ointment -> TOPICAL, IV injection -> INTRAVENOUS, IM injection -> INTRAMUSCULAR, rectal foam or suppository -> RECTAL, inhaler -> RESPIRATORY (INHALATION), patch -> TRANSDERMAL): one drug name covers products of several routes whose labels differ, and without 'route' the tool returns whichever products openFDA lists first (for example, 'atropine sulfate' without a route can return injections and Lomotil tablets but not the eye drops). Drug labels contain official clinical guidance: indications, dosing regimens, contraindications, black box warnings, drug interactions, and adverse reactions. Use drug_name for drug-specific lookups (e.g., 'metformin', 'warfarin') or indication for condition-based searches (e.g., 'hypertension', 'type 2 diabetes'). Returns a list of matching drug labels with key clinical sections. Results are paginated: start with offset=0 and continue with metadata.next_offset while metadata.has_more is true; metadata.total reports all matching labels. This is a compact multi-record summary view: each clinical section is limited to max_section_chars (default 2000) so a 20-record search stays small. Whenever a section is shortened the response carries top-level 'truncated': true and a 'truncation_note' naming the affected sections; raise max_section_chars, or use FDA_get_drug_label for the full text of one drug.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -38,6 +38,13 @@
             "null"
           ],
           "description": "Optional route of administration of the product whose label you want, as openFDA names it (case-insensitive), for example ORAL, TOPICAL, OPHTHALMIC, INTRAVENOUS, INTRAMUSCULAR, SUBCUTANEOUS, RECTAL, NASAL, TRANSDERMAL, VAGINAL, SUBLINGUAL, RESPIRATORY (INHALATION) or AURICULAR (OTIC). One name often covers products of several routes (atropine: injection, eye drops, and combination tablets); without a route the tool returns whichever labels openFDA lists first. A label whose openFDA block names no route is matched when its description or carton text names the route. An unknown route is rejected with the full list."
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based label offset. Continue with metadata.next_offset while metadata.has_more is true.",
+          "default": 0,
+          "minimum": 0,
+          "maximum": 25000
         }
       },
       "required": []
@@ -356,7 +363,7 @@
   },
   {
     "name": "FDA_list_drug_classes",
-    "description": "List FDA pharmacological drug classes (Established Pharmacologic Class, EPC) and the number of drug products in each class. Classes include designations like 'Selective Serotonin Reuptake Inhibitor [EPC]', 'Beta-Adrenergic Blocker [EPC]', 'HMG-CoA Reductase Inhibitor [EPC]' (statins), 'ACE Inhibitor [EPC]', etc. Use this to discover drug class names for filtering or understanding drug categorization.",
+    "description": "List FDA Established Pharmacologic Classes and label counts. The ranked class catalog is recoverably paginated: start with offset=0 and continue with metadata.next_offset while metadata.has_more is true. openFDA exposes at most 1000 class values; metadata.total_is_exact marks whether that cap was reached.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -364,6 +371,12 @@
           "type": "integer",
           "description": "Maximum number of drug classes to return (default: 20, max: 100)",
           "default": 20
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based ranked-class offset. Continue with metadata.next_offset.",
+          "default": 0,
+          "minimum": 0
         }
       },
       "required": []

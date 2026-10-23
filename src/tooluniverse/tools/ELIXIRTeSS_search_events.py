@@ -1,7 +1,7 @@
 """
 ELIXIRTeSS_search_events
 
-Search ELIXIR TeSS for upcoming and past bioinformatics training events, workshops, and courses. ...
+Search ELIXIR TeSS for bioinformatics training events. Results use one-based page pagination: sta...
 """
 
 from typing import Any, Optional, Callable
@@ -13,14 +13,15 @@ def ELIXIRTeSS_search_events(
     country: Optional[str] = None,
     event_type: Optional[str] = None,
     online: Optional[bool] = None,
-    page_size: Optional[int] = None,
+    page_size: Optional[int] = 10,
+    page: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search ELIXIR TeSS for upcoming and past bioinformatics training events, workshops, and courses. ...
+    Search ELIXIR TeSS for bioinformatics training events. Results use one-based page pagination: sta...
 
     Parameters
     ----------
@@ -33,7 +34,9 @@ def ELIXIRTeSS_search_events(
     online : bool
         Filter to online events only (true/false)
     page_size : int
-        Number of results to return (default 10)
+        Results per page (default 10, max 100)
+    page : int
+        One-based page number. Continue with metadata.next_page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def ELIXIRTeSS_search_events(
             "event_type": event_type,
             "online": online,
             "page_size": page_size,
+            "page": page,
         }.items()
         if v is not None
     }

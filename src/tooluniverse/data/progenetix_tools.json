@@ -1,7 +1,7 @@
 [
   {
     "name": "Progenetix_search_biosamples",
-    "description": "Search cancer tumor biosamples in the Progenetix database by NCIt disease ontology code. Progenetix contains genome-wide copy number variation (CNV) profiles from over 100,000 tumor samples. Returns biosample IDs, histological diagnosis, pathological stage, and external references. Uses the GA4GH Beacon v2 protocol. Example: NCIT:C3058 returns 28 glioblastoma biosamples with histological classification and study references.",
+    "description": "Search cancer tumor biosamples in Progenetix by NCIt disease code. Returns diagnoses, stage, and every external reference with its id, label, description, URL/reference, and notes; reference metadata is not discarded. Use skip/limit and next_skip while has_more is true to retrieve all results.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -38,6 +38,21 @@
         "filters": {"type": "string"},
         "total_count": {"type": "integer"},
         "returned_count": {"type": "integer"},
+        "skip": {
+          "type": "integer"
+        },
+        "limit": {
+          "type": "integer"
+        },
+        "has_more": {
+          "type": "boolean"
+        },
+        "next_skip": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
         "biosamples": {
           "type": "array",
           "items": {
@@ -53,6 +68,9 @@
               "external_references": {
                 "type": "array",
                 "items": {"type": "object"}
+              },
+              "external_references_count": {
+                "type": "integer"
               }
             }
           }
@@ -62,7 +80,7 @@
   },
   {
     "name": "Progenetix_search_individuals",
-    "description": "Search individuals (patients) in the Progenetix cancer CNV database by NCIt disease ontology code. Returns patient IDs, sex, disease diagnosis, age at onset, and study references. Useful for cohort characterization in cancer genomics studies. Example: NCIT:C9145 returns 27 AML patients with sex and age data.",
+    "description": "Search individuals (patients) in the Progenetix cancer CNV database by NCIt disease code. Returns sex, diagnosis, onset, and every external reference with id, label, description, URL/reference, and notes. Use skip/limit and next_skip while has_more is true; broad diseases can contain hundreds of patients.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -76,6 +94,12 @@
           "minimum": 1,
           "maximum": 100,
           "description": "Maximum number of individuals to return (default: 10)."
+        },
+        "skip": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Number of matching individuals to skip. Use next_skip from the preceding response for the next page."
         }
       },
       "required": ["filters"]
@@ -94,6 +118,21 @@
         "filters": {"type": "string"},
         "total_count": {"type": "integer"},
         "returned_count": {"type": "integer"},
+        "skip": {
+          "type": "integer"
+        },
+        "limit": {
+          "type": "integer"
+        },
+        "has_more": {
+          "type": "boolean"
+        },
+        "next_skip": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
         "individuals": {
           "type": "array",
           "items": {
@@ -107,6 +146,9 @@
               "external_references": {
                 "type": "array",
                 "items": {"type": "object"}
+              },
+              "external_references_count": {
+                "type": "integer"
               }
             }
           }
@@ -116,7 +158,7 @@
   },
   {
     "name": "Progenetix_list_filtering_terms",
-    "description": "List available filtering terms (ontology codes) in the Progenetix cancer CNV database. Returns NCIt cancer type codes, EDAM operation codes, or other ontology terms with the number of matching samples. Useful for discovering which cancer types are available before querying biosamples or individuals. Example: prefixes='NCIT' returns 890 NCIt terms across all cancer types.",
+    "description": "List Progenetix filtering terms (ontology codes) with matching-sample counts. Prefix filtering is applied client-side before exact total_terms and recoverable offset pagination; continue with data.next_offset while has_more is true. The live NCIT catalog currently contains more than 600 terms.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -131,6 +173,12 @@
           "minimum": 1,
           "maximum": 200,
           "description": "Maximum number of terms to return (default: 25)."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based offset after prefix filtering. Continue with data.next_offset."
         }
       },
       "required": []
@@ -148,6 +196,27 @@
       "properties": {
         "prefixes": {"type": "string"},
         "total_terms": {"type": "integer"},
+        "returned": {
+          "type": "integer"
+        },
+        "offset": {
+          "type": "integer"
+        },
+        "limit": {
+          "type": "integer"
+        },
+        "has_more": {
+          "type": "boolean"
+        },
+        "next_offset": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "result_set_complete": {
+          "type": "boolean"
+        },
         "terms": {
           "type": "array",
           "items": {
@@ -165,7 +234,7 @@
   },
   {
     "name": "Progenetix_list_cohorts",
-    "description": "List available cohorts in the Progenetix cancer CNV database. Returns cohort IDs, names, sizes, and data types. Progenetix organizes samples into cohorts like TCGA, DIPG studies, and curated cancer sets. Example: returns 6 cohorts including TCGA (517 samples) and DIPG (16 samples).",
+    "description": "List Progenetix cohorts with IDs, names, sizes, types, and data types. Returns exact total_cohorts and recoverable offset pagination; continue with data.next_offset while has_more is true.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -175,6 +244,12 @@
           "minimum": 1,
           "maximum": 50,
           "description": "Maximum number of cohorts to return (default: 10)."
+        },
+        "offset": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Zero-based offset in the complete cohort list. Continue with data.next_offset."
         }
       },
       "required": []
@@ -191,6 +266,27 @@
       "type": "object",
       "properties": {
         "total_cohorts": {"type": "integer"},
+        "returned": {
+          "type": "integer"
+        },
+        "offset": {
+          "type": "integer"
+        },
+        "limit": {
+          "type": "integer"
+        },
+        "has_more": {
+          "type": "boolean"
+        },
+        "next_offset": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "result_set_complete": {
+          "type": "boolean"
+        },
         "cohorts": {
           "type": "array",
           "items": {
@@ -212,7 +308,7 @@
   },
   {
     "name": "Progenetix_cnv_search",
-    "description": "Search for cancer biosamples with copy number variations (CNVs) in a specific genomic region. Combines disease filter with genomic coordinates to find samples with amplifications or deletions in genes of interest. Uses RefSeq chromosome accessions for coordinates. Example: searching for EGFR amplifications (refseq:NC_000007.14:55019017-55211628, DUP) in breast cancer (NCIT:C4017) returns 9 matching biosamples.",
+    "description": "Search for cancer biosamples with copy number variations (CNVs) in a specific genomic region. Combines disease and genomic filters and returns complete external-reference metadata (id, label, description, URL/reference, and notes) instead of only reference IDs.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -289,6 +385,9 @@
               "external_references": {
                 "type": "array",
                 "items": {"type": "object"}
+              },
+              "external_references_count": {
+                "type": "integer"
               }
             }
           }

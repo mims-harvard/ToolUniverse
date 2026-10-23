@@ -1,7 +1,7 @@
 """
 fda_pharmacogenomic_biomarkers
 
-Retrieve pharmacogenomic biomarkers from FDA drug labels. This tool fetches the Table of Pharmaco...
+Retrieve the FDA Table of Pharmacogenomic Biomarkers in Drug Labeling, optionally filtered by dru...
 """
 
 from typing import Any, Optional, Callable
@@ -12,13 +12,14 @@ def fda_pharmacogenomic_biomarkers(
     drug_name: Optional[str] = None,
     biomarker: Optional[str] = None,
     limit: Optional[int] = 10,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve pharmacogenomic biomarkers from FDA drug labels. This tool fetches the Table of Pharmaco...
+    Retrieve the FDA Table of Pharmacogenomic Biomarkers in Drug Labeling, optionally filtered by dru...
 
     Parameters
     ----------
@@ -28,6 +29,8 @@ def fda_pharmacogenomic_biomarkers(
         Filter by the specific biomarker (e.g., 'CYP2D6', 'HLA-B*5701'). Case-insensi...
     limit : int
         Maximum number of results to return.
+    offset : int
+        Zero-based filtered-row offset. Continue with next_offset while has_more is t...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +51,7 @@ def fda_pharmacogenomic_biomarkers(
             "drug_name": drug_name,
             "biomarker": biomarker,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

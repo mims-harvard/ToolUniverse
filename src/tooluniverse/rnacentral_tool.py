@@ -42,6 +42,11 @@ def _http_get(
                     "minimum": 1,
                     "maximum": 100,
                 },
+                "page": {
+                    "type": "integer",
+                    "default": 1,
+                    "minimum": 1,
+                },
             },
             "required": ["query"],
         },
@@ -61,6 +66,7 @@ class RNAcentralSearchTool:
         query = {
             "query": (arguments.get("query") or "").strip(),
             "page_size": int(arguments.get("page_size") or 10),
+            "page": max(int(arguments.get("page") or 1), 1),
         }
         if not query["query"]:
             return {
@@ -75,6 +81,8 @@ class RNAcentralSearchTool:
         # through EBI Search's RNAcentral index; only an accession is fetched from
         # the RNAcentral API itself.
         accession = _URS.match(query["query"])
+        size = max(1, min(query["page_size"], 100))
+        start = (query["page"] - 1) * size
         try:
             if accession:
                 urs, taxid = accession.group(1).upper(), accession.group(2)
@@ -88,7 +96,8 @@ class RNAcentralSearchTool:
                 params = {
                     "query": query["query"],
                     "format": "json",
-                    "size": max(1, min(query["page_size"], 100)),
+                    "size": size,
+                    "start": start,
                     "fields": "description,rna_type,length",
                 }
                 found = _http_get(f"{_EBI_SEARCH}?{urlencode(params)}", timeout=timeout)
@@ -114,12 +123,28 @@ class RNAcentralSearchTool:
                     "results": results,
                 }
                 endpoint = "ebisearch"
+            results = data["results"]
+            # EBI Search reports hitCount, so the page is the last one only
+            # when it reaches that total.
+            has_more = (
+                accession is None
+                and isinstance(data["count"], int)
+                and start + len(results) < data["count"]
+            )
             return {
                 "status": "success",
                 "source": "RNAcentral",
                 "endpoint": endpoint,
                 "query": query,
                 "data": data,
+                "metadata": {
+                    "returned": len(results),
+                    "page": query["page"],
+                    "page_size": query["page_size"],
+                    "has_more": has_more,
+                    "truncated": has_more,
+                    "next_page": query["page"] + 1 if has_more else None,
+                },
                 "success": True,
             }
         except Exception as e:
@@ -184,7 +209,10 @@ class RNAcentralGetTool:
         sub_resources = fields.get("sub_resources")
 
         if sub_resources:
-            return self._get_sub_resources(base, acc, sub_resources, timeout)
+            controls = self._sub_resource_controls(arguments, sub_resources)
+            if isinstance(controls, dict) and controls.get("status") == "error":
+                return controls
+            return self._get_sub_resources(base, acc, sub_resources, timeout, controls)
 
         endpoint = "rna/{accession}"
         url = f"{base}/rna/{acc}"
@@ -210,12 +238,48 @@ class RNAcentralGetTool:
                 "success": False,
             }
 
-    def _get_sub_resources(self, base, acc, sub_resources, timeout):
+    @staticmethod
+    def _sub_resource_controls(arguments, sub_resources):
+        page_size = arguments.get("page_size", 10)
+        if (
+            isinstance(page_size, bool)
+            or not isinstance(page_size, int)
+            or not 1 <= page_size <= 50
+        ):
+            return {
+                "status": "error",
+                "error": "page_size must be an integer between 1 and 50",
+                "parameter": "page_size",
+                "source": "RNAcentral",
+                "success": False,
+            }
+        controls = {"page_size": page_size}
+        for name in sub_resources:
+            parameter = f"{name}_page"
+            page = arguments.get(parameter, 1)
+            if isinstance(page, bool) or not isinstance(page, int) or page < 1:
+                return {
+                    "status": "error",
+                    "error": f"{parameter} must be a positive integer",
+                    "parameter": parameter,
+                    "source": "RNAcentral",
+                    "success": False,
+                }
+            controls[parameter] = page
+        return controls
+
+    def _get_sub_resources(self, base, acc, sub_resources, timeout, controls):
         """Fetch and merge one or more rna/{accession}/{name} sub-endpoints."""
         data: Dict[str, Any] = {}
         errors = []
         for name in sub_resources:
-            url = f"{base}/rna/{acc}/{name}?format=json"
+            page = controls[f"{name}_page"]
+            params = {
+                "format": "json",
+                "page_size": controls["page_size"],
+                "page": page,
+            }
+            url = f"{base}/rna/{acc}/{name}/?{urlencode(params)}"
             try:
                 payload = _http_get(
                     url, headers={"Accept": "application/json"}, timeout=timeout
@@ -228,7 +292,20 @@ class RNAcentralGetTool:
                     if isinstance(payload, dict) and payload.get("count") is not None
                     else len(results)
                 )
-                data[name] = {"count": count, "results": results}
+                has_more = bool(payload.get("next"))
+                truncated = page > 1 or has_more
+                data[name] = {
+                    "count": count,
+                    "results": results,
+                    "returned": len(results),
+                    "page": page,
+                    "page_size": controls["page_size"],
+                    "has_more": has_more,
+                    "next_page": page + 1 if has_more else None,
+                    "previous_page": (page - 1 if payload.get("previous") else None),
+                    "truncated": truncated,
+                    "result_set_complete": not truncated,
+                }
             except Exception as e:
                 errors.append(f"{name}: {e}")
 
@@ -250,6 +327,17 @@ class RNAcentralGetTool:
             "accession": acc,
             "data": data,
             "partial_errors": errors or None,
+            "metadata": {
+                "publication_total_is_record_count": True,
+                "unique_pmids_not_guaranteed": "publications" in sub_resources,
+                "warning": (
+                    "RNAcentral may repeat a PMID with different citation "
+                    "metadata; publications.count is not guaranteed to be a "
+                    "unique PMID count."
+                    if "publications" in sub_resources
+                    else None
+                ),
+            },
             "success": True,
         }
 

@@ -1,7 +1,7 @@
 """
 Harmonizome_get_dataset
 
-Get detailed information about a specific dataset integrated in Harmonizome (Ma'ayan Lab). Return...
+Get Harmonizome dataset metadata plus a recoverable page of its gene-set catalog. Large datasets ...
 """
 
 from typing import Any, Optional, Callable
@@ -11,20 +11,23 @@ from ._shared_client import get_shared_client
 def Harmonizome_get_dataset(
     dataset_name: str,
     gene_set_limit: Optional[int] = None,
+    gene_set_offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get detailed information about a specific dataset integrated in Harmonizome (Ma'ayan Lab). Return...
+    Get Harmonizome dataset metadata plus a recoverable page of its gene-set catalog. Large datasets ...
 
     Parameters
     ----------
     dataset_name : str
         Exact dataset name from Harmonizome. Examples: 'CTD Gene-Disease Associations...
     gene_set_limit : int
-        Maximum number of gene set names to return (default: 50).
+        Gene set names per page (default 50, max 1000).
+    gene_set_offset : int
+        Zero-based offset into the complete gene-set catalog. Continue with metadata....
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -44,6 +47,7 @@ def Harmonizome_get_dataset(
         for k, v in {
             "dataset_name": dataset_name,
             "gene_set_limit": gene_set_limit,
+            "gene_set_offset": gene_set_offset,
         }.items()
         if v is not None
     }

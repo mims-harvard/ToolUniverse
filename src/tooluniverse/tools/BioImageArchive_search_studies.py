@@ -1,7 +1,7 @@
 """
 BioImageArchive_search_studies
 
-Search the BioImage Archive (EBI BioStudies) for biological imaging datasets. The BioImage Archiv...
+Search the BioImage Archive (EBI BioStudies) for biological imaging datasets with explicit page n...
 """
 
 from typing import Any, Optional, Callable
@@ -18,7 +18,7 @@ def BioImageArchive_search_studies(
     validate: bool = True,
 ) -> Any:
     """
-    Search the BioImage Archive (EBI BioStudies) for biological imaging datasets. The BioImage Archiv...
+    Search the BioImage Archive (EBI BioStudies) for biological imaging datasets with explicit page n...
 
     Parameters
     ----------
@@ -27,7 +27,7 @@ def BioImageArchive_search_studies(
     page_size : int
         Number of results per page. Default: 10. Max: 100.
     page : int
-        Page number (1-indexed). Default: 1.
+        Page number (1-indexed). Default: 1. Continue with metadata.next_page.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

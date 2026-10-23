@@ -1,7 +1,7 @@
 """
 Harmonizome_get_gene_set_members
 
-Retrieve the actual Harmonizome association payload (which Harmonizome_get_dataset and Harmonizom...
+Retrieve Harmonizome gene-set members or per-gene associations. Both modes are recoverably pagina...
 """
 
 from typing import Any, Optional, Callable
@@ -14,13 +14,14 @@ def Harmonizome_get_gene_set_members(
     dataset: Optional[str] = None,
     gene_symbol: Optional[str] = None,
     limit: Optional[int] = 100,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Retrieve the actual Harmonizome association payload (which Harmonizome_get_dataset and Harmonizom...
+    Retrieve Harmonizome gene-set members or per-gene associations. Both modes are recoverably pagina...
 
     Parameters
     ----------
@@ -34,6 +35,8 @@ def Harmonizome_get_gene_set_members(
         Gene symbol for mode='gene' (e.g. 'DTD2', 'TP53').
     limit : int
         Maximum number of association rows to return (default 100). Sets can have tho...
+    offset : int
+        Zero-based association offset. Continue with metadata.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def Harmonizome_get_gene_set_members(
             "dataset": dataset,
             "gene_symbol": gene_symbol,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

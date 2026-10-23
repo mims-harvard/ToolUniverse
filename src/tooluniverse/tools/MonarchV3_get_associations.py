@@ -12,7 +12,8 @@ def MonarchV3_get_associations(
     category: str,
     subject: Optional[str] = None,
     object: Optional[str] = None,
-    limit: Optional[int] = None,
+    limit: Optional[int] = 20,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -30,7 +31,9 @@ def MonarchV3_get_associations(
     category : str
         Biolink association category, written as subject->object. Options: 'biolink:G...
     limit : int
-        Maximum number of associations to return (default: 20, max: 200).
+        Associations per page (1-200).
+    offset : int
+        Zero-based offset. Continue with metadata.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def MonarchV3_get_associations(
             "object": object,
             "category": category,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

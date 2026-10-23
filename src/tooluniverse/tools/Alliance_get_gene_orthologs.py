@@ -12,6 +12,7 @@ def Alliance_get_gene_orthologs(
     gene_id: str,
     stringency: Optional[str] = None,
     limit: Optional[int] = None,
+    page: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -28,6 +29,8 @@ def Alliance_get_gene_orthologs(
         Ortholog stringency filter: 'stringent' (default), 'moderate', or 'all'.
     limit : int
         Max results per category (default 20, max 100).
+    page : int
+        One-based page number shared by the ortholog and paralog queries. Continue wi...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -48,6 +51,7 @@ def Alliance_get_gene_orthologs(
             "gene_id": gene_id,
             "stringency": stringency,
             "limit": limit,
+            "page": page,
         }.items()
         if v is not None
     }

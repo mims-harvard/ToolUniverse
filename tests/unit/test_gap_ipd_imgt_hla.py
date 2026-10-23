@@ -141,13 +141,13 @@ def test_search_alleles_hla_prefix_case_insensitive():
     assert kwargs["params"]["query"] == 'startsWith(name,"A*02:01")'
 
 
-def test_search_alleles_limit_clamped():
+def test_search_alleles_invalid_limit_is_rejected():
     tool = _make_tool("IPD_search_hla_alleles")
     with patch("tooluniverse.ipd_imgt_hla_tool.requests.get") as mock_get:
         mock_get.return_value = _mock_response(json_data={"data": [], "meta": {}})
-        tool.run({"name": "A*01", "limit": 9999})
-    _, kwargs = mock_get.call_args
-    assert kwargs["params"]["limit"] == 100
+        result = tool.run({"name": "A*01", "limit": 9999})
+    assert result["status"] == "error"
+    mock_get.assert_not_called()
 
 
 # ---------------------------------------------------------------------------

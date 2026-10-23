@@ -1,7 +1,7 @@
 """
 ORCID_get_works
 
-Get list of publications and works for an ORCID researcher. Returns titles, publication types, da...
+Get every public work-summary assertion for an ORCID researcher. ORCID groups equivalent works fr...
 """
 
 from typing import Any, Optional, Callable
@@ -17,7 +17,7 @@ def ORCID_get_works(
     validate: bool = True,
 ) -> list[Any]:
     """
-    Get list of publications and works for an ORCID researcher. Returns titles, publication types, da...
+    Get every public work-summary assertion for an ORCID researcher. ORCID groups equivalent works fr...
 
     Parameters
     ----------

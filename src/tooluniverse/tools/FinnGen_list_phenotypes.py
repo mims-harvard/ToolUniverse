@@ -13,6 +13,7 @@ def FinnGen_list_phenotypes(
     category: Optional[str] = None,
     min_cases: Optional[int] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -31,6 +32,8 @@ def FinnGen_list_phenotypes(
         Minimum number of cases required. Use to filter for well-powered phenotypes (...
     limit : int
         Maximum number of results to return (default 50).
+    offset : int
+        Zero-based result offset. Continue with metadata.next_offset while has_more i...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def FinnGen_list_phenotypes(
             "category": category,
             "min_cases": min_cases,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

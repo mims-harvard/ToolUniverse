@@ -1,7 +1,7 @@
 [
   {
     "name": "Enamine_search_catalog",
-    "description": "Search Enamine compound catalog by keyword or name. Enamine is a leading supplier with 37B+ make-on-demand compounds (REAL database), 300K+ building blocks, and 3M+ screening compounds.",
+    "description": "Search Enamine compound catalog by keyword or name when the Enamine Store API is available. The tool returns an explicit error rather than a successful empty result when the upstream endpoint is unavailable. JSON payloads support local limit/offset pagination, with metadata warning that upstream global completeness is undocumented.",
     "type": "EnamineTool",
     "parameter": {
       "type": "object",
@@ -19,6 +19,19 @@
           "type": "string",
           "description": "Catalog: REAL (make-on-demand), BB (building blocks), SCR (screening), all (default: all)",
           "default": "all"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 20,
+          "description": "Maximum records from the returned API payload."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset within the returned API payload."
         }
       },
       "required": [
@@ -47,7 +60,7 @@
   },
   {
     "name": "Enamine_get_compound",
-    "description": "Get compound details by Enamine ID. Returns structure, availability, pricing, and ordering information.",
+    "description": "Get compound details by Enamine ID when the Enamine Store API is available. If upstream retrieval fails, returns an explicit error and never substitutes a guessed web URL for compound data.",
     "type": "EnamineTool",
     "parameter": {
       "type": "object",
@@ -88,7 +101,7 @@
   },
   {
     "name": "Enamine_search_smiles",
-    "description": "Search Enamine by chemical structure (SMILES). Supports exact match, substructure, and similarity search. Ideal for finding purchasable analogs of hit compounds.",
+    "description": "Search Enamine by chemical structure (SMILES) when the Enamine Store API is available. Returns an explicit error rather than a successful empty result when upstream is unavailable. JSON payloads support local limit/offset pagination with unknown upstream completeness.",
     "type": "EnamineTool",
     "parameter": {
       "type": "object",
@@ -104,8 +117,26 @@
         },
         "search_type": {
           "type": "string",
+          "enum": [
+            "exact",
+            "substructure",
+            "similarity"
+          ],
           "description": "Search type: exact, substructure, similarity (default: similarity)",
           "default": "similarity"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 20,
+          "description": "Maximum records from the returned API payload."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset within the returned API payload."
         }
       },
       "required": [
@@ -134,7 +165,7 @@
   },
   {
     "name": "Enamine_get_libraries",
-    "description": "Get information about available Enamine compound libraries including REAL database, building blocks, screening compounds, and specialized libraries (fragments, covalent).",
+    "description": "Retrieve the live Enamine library catalog when its Store API is available. If upstream is unavailable, returns an explicit error rather than presenting hard-coded marketing copy as retrieved data.",
     "type": "EnamineTool",
     "parameter": {
       "type": "object",

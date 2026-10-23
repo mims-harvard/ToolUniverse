@@ -1,7 +1,7 @@
 [
   {
     "name": "NCIDrugDict_search",
-    "description": "Search the NCI (National Cancer Institute) Drug Dictionary for cancer drugs, agents, and therapeutic compounds. Returns drug names, definitions, NCI concept IDs, drug aliases (brand names, code names, chemical names), and links to drug information summaries. Supports searching by drug name, brand name, or chemical name. The NCI Drug Dictionary contains over 9000 drug entries used in cancer treatment and clinical trials.",
+    "description": "Search the NCI (National Cancer Institute) Drug Dictionary for cancer drugs, agents, and therapeutic compounds. Results use exact offset pagination: start with offset=0 and continue with metadata.next_offset while metadata.has_more is true; metadata.total_results is the complete match count. Returns names, definitions, NCI concept IDs, aliases, and drug-information links.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -11,21 +11,37 @@
         },
         "matchType": {
           "type": "string",
+          "enum": [
+            "Begins",
+            "Contains"
+          ],
           "default": "Begins",
           "description": "Match type: 'Begins' (starts with) or 'Contains' (default: Begins)"
         },
         "size": {
           "type": "integer",
+          "minimum": 1,
           "default": 10,
-          "description": "Number of results to return (default 10)"
+          "description": "Number of results in this page (default 10)"
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based result offset. Continue with metadata.next_offset while metadata.has_more is true."
         }
       },
       "required": [
         "query"
-      ]
+      ],
+      "additionalProperties": false
     },
     "fields": {
-      "endpoint": "https://webapis.cancer.gov/drugdictionary/v1/Drugs/search"
+      "endpoint": "https://webapis.cancer.gov/drugdictionary/v1/Drugs/search",
+      "param_mapping": {
+        "offset": "from"
+      },
+      "pagination": "nci_drugdict_offset"
     },
     "type": "BaseRESTTool",
     "test_examples": [

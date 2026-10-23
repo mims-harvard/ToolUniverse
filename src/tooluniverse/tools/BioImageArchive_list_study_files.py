@@ -25,9 +25,9 @@ def BioImageArchive_list_study_files(
     accession : str
         BioImage Archive study accession. Format S-BIAD#### / S-BSST#### (e.g. 'S-BIA...
     limit : int
-        Maximum number of files to return (default 25, max 500).
+        Maximum number of files to return (default 25, max 500). Values outside this ...
     offset : int
-        Number of files to skip for pagination (default 0).
+        Number of files to skip for pagination (default 0). Continue with metadata.ne...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

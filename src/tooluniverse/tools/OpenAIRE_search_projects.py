@@ -1,7 +1,7 @@
 """
 OpenAIRE_search_projects
 
-Search OpenAIRE for funded research projects / grants (EU Horizon 2020, Horizon Europe, ERC, and ...
+Search OpenAIRE funded projects/grants with recoverable one-based pagination. Page size is 1-1000...
 """
 
 from typing import Any, Optional, Callable
@@ -11,6 +11,7 @@ from ._shared_client import get_shared_client
 def OpenAIRE_search_projects(
     query: str,
     max_results: Optional[int] = 10,
+    page: Optional[int] = 1,
     type_: Optional[str] = "projects",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -18,14 +19,16 @@ def OpenAIRE_search_projects(
     validate: bool = True,
 ) -> Any:
     """
-    Search OpenAIRE for funded research projects / grants (EU Horizon 2020, Horizon Europe, ERC, and ...
+    Search OpenAIRE funded projects/grants with recoverable one-based pagination. Page size is 1-1000...
 
     Parameters
     ----------
     query : str
         Keyword(s) to search project titles, acronyms, and metadata (e.g., 'cancer', ...
     max_results : int
-        Maximum number of projects to return on this page. Default 10, maximum 100. (...
+        Projects per page (1-1000). OpenAIRE exposes at most the first 10,000 matches.
+    page : int
+        One-based page. page * max_results must not exceed 10000.
     type_ : str
         Must be 'projects' for this tool.
     stream_callback : Callable, optional
@@ -44,7 +47,12 @@ def OpenAIRE_search_projects(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"query": query, "max_results": max_results, "type": type_}.items()
+        for k, v in {
+            "query": query,
+            "max_results": max_results,
+            "page": page,
+            "type": type_,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

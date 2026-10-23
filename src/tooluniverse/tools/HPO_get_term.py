@@ -1,7 +1,7 @@
 """
 HPO_get_term
 
-Get detailed information about a Human Phenotype Ontology (HPO) term by its ID. HPO provides stan...
+Get detailed information about an HPO term by ID, including complete synonyms, cross-references, ...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def HPO_get_term(
     validate: bool = True,
 ) -> Any:
     """
-    Get detailed information about a Human Phenotype Ontology (HPO) term by its ID. HPO provides stan...
+    Get detailed information about an HPO term by ID, including complete synonyms, cross-references, ...
 
     Parameters
     ----------

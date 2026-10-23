@@ -27,14 +27,17 @@ class ICiteSearchPublicationsTool(BaseRESTTool):
         api_key = self.credential("NCBI_API_KEY") or ""
         enforce_provider_rate_limit("ncbi", api_key, 10.0 if api_key else 3.0)
 
-    def _search_pubmed(self, query: str, limit: int) -> list:
-        """Search PubMed eSearch and return list of PMID strings."""
+    def _search_pubmed(
+        self, query: str, limit: int, offset: int
+    ) -> tuple[list, int | None]:
+        """Return one PubMed page and the exact global match count."""
         self._enforce_rate_limit()
         params = {
             "db": "pubmed",
             "term": query,
             "retmode": "json",
             "retmax": limit,
+            "retstart": offset,
             "sort": "relevance",
         }
         api_key = self.credential("NCBI_API_KEY")
@@ -60,7 +63,17 @@ class ICiteSearchPublicationsTool(BaseRESTTool):
         # as an actual error.
         resp.raise_for_status()
         data = resp.json()
-        return data.get("esearchresult", {}).get("idlist", [])
+        result = data.get("esearchresult", {})
+        ids = result.get("idlist", [])
+        # A real eSearch response honors retmax.  Retain compatibility with
+        # simple test/fallback responders that return the unpaged ID list.
+        if len(ids) > limit:
+            ids = ids[offset : offset + limit] if offset else ids[:limit]
+        try:
+            total = int(result["count"])
+        except (KeyError, TypeError, ValueError):
+            total = None
+        return ids, total
 
     def _fetch_icite(self, pmids: list) -> list:
         """Fetch iCite metrics for a list of PMIDs."""
@@ -84,26 +97,59 @@ class ICiteSearchPublicationsTool(BaseRESTTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         query = arguments.get("query", "")
-        limit = int(arguments.get("limit") or 10)
-        offset = int(arguments.get("offset") or 0)
+        raw_limit = arguments.get("limit", 10)
+        raw_offset = arguments.get("offset", 0)
 
         if not query:
             return {"status": "error", "error": "query parameter is required"}
+        if isinstance(raw_limit, bool) or not isinstance(raw_limit, int):
+            return {"status": "error", "error": "limit must be a positive integer"}
+        if isinstance(raw_offset, bool) or not isinstance(raw_offset, int):
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+            }
+        limit = raw_limit
+        offset = raw_offset
+        if limit < 1 or limit > 1000:
+            return {"status": "error", "error": "limit must be between 1 and 1000"}
+        if offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+            }
 
         try:
-            # Fetch more from PubMed to account for offset
-            fetch_count = min(limit + offset, 1000)
-            pmids = self._search_pubmed(query, fetch_count)
+            pmids, total_results = self._search_pubmed(query, limit, offset)
 
             if not pmids:
+                stalled = total_results is not None and offset < total_results
                 return {
                     "status": "success",
                     "data": [],
-                    "message": f"No PubMed results found for query: {query}",
+                    "message": (
+                        "PubMed reported additional matches but returned an empty page at this offset."
+                        if stalled
+                        else f"No PubMed results found for query: {query}"
+                    ),
+                    "metadata": {
+                        "query": query,
+                        "returned": 0,
+                        "total_results": total_results,
+                        "offset": offset,
+                        "limit": limit,
+                        "has_more": False,
+                        "next_offset": None,
+                        "pagination_stalled": stalled,
+                        "warning": (
+                            "Do not retry the same offset automatically; PubMed's count and page payload are inconsistent."
+                            if stalled
+                            else None
+                        ),
+                        "enrichment_complete": True,
+                        "sort_scope": "current PubMed relevance page",
+                    },
                 }
-
-            # Apply offset
-            pmids = pmids[offset:]
 
             # Batch iCite in chunks of 100
             all_pubs = []
@@ -116,8 +162,38 @@ class ICiteSearchPublicationsTool(BaseRESTTool):
 
             # Trim to requested limit
             all_pubs = all_pubs[:limit]
+            returned_pmids = {str(pub.get("pmid")) for pub in all_pubs}
+            missing_pmids = [pmid for pmid in pmids if str(pmid) not in returned_pmids]
+            if total_results is not None:
+                has_more = offset + len(pmids) < total_results
+            else:
+                has_more = len(pmids) == limit
 
-            return {"data": all_pubs}
+            return {
+                "status": "success",
+                "data": all_pubs,
+                "metadata": {
+                    "query": query,
+                    "returned": len(all_pubs),
+                    "pubmed_records_requested": len(pmids),
+                    "total_results": total_results,
+                    "offset": offset,
+                    "limit": limit,
+                    "has_more": has_more,
+                    "next_offset": offset + len(pmids) if has_more else None,
+                    "pagination_stalled": False,
+                    "truncated": offset > 0 or has_more,
+                    "result_set_complete": bool(
+                        total_results is not None
+                        and offset == 0
+                        and len(pmids) == total_results
+                        and not missing_pmids
+                    ),
+                    "enrichment_complete": not missing_pmids,
+                    "missing_icite_pmids": missing_pmids,
+                    "sort_scope": "current PubMed relevance page",
+                },
+            }
 
         except Exception as e:
             return {"status": "error", "error": f"iCite search error: {e}"}

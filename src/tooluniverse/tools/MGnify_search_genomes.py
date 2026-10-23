@@ -1,7 +1,7 @@
 """
 MGnify_search_genomes
 
-Search the MGnify genome catalog for metagenome-assembled genomes (MAGs) and isolate genomes. Fil...
+Search the MGnify genome catalog by GTDB taxonomy lineage with explicit page pagination. Returns ...
 """
 
 from typing import Any, Optional, Callable
@@ -10,24 +10,24 @@ from ._shared_client import get_shared_client
 
 def MGnify_search_genomes(
     taxonomy: Optional[str] = None,
-    page: Optional[int] = None,
-    page_size: Optional[int] = None,
+    page: Optional[int] = 1,
+    page_size: Optional[int] = 25,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search the MGnify genome catalog for metagenome-assembled genomes (MAGs) and isolate genomes. Fil...
+    Search the MGnify genome catalog by GTDB taxonomy lineage with explicit page pagination. Returns ...
 
     Parameters
     ----------
     taxonomy : str
         GTDB taxonomy lineage filter, matched anywhere in the lineage. Examples: 'Bac...
     page : int
-        Page number (default 1).
+        One-based result page. Continue with metadata.next_page.
     page_size : int
-        Results per page (default 25, max 100).
+        Results per page (default 25, range 1-100).
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

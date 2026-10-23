@@ -37,10 +37,14 @@ class GWASGeneSearch(BaseTool):
         # were anthropometric (hip/waist/BMI) while its 37 flagship type-2-
         # diabetes associations were hidden, misleading a clinician into thinking
         # it is not a T2D locus. Also matches the sibling trait-search default.
-        size = int(arguments.get("size") or arguments.get("limit") or 100)
+        size = min(
+            max(1, int(arguments.get("size") or arguments.get("limit") or 100)),
+            1000,
+        )
+        page = max(0, int(arguments.get("page") or 0))
 
         try:
-            associations, total = self._fetch(gene_name, size)
+            associations, total = self._fetch(gene_name, size, page)
             resolved_name = gene_name
 
             # `mapped_gene` matches the catalog's symbol literally, so writing an
@@ -50,10 +54,10 @@ class GWASGeneSearch(BaseTool):
             # the first attempt (HLA-A returns 107), so only retry after a miss --
             # and say which spelling produced the answer.
             fallback_note = None
-            if not associations and "-" in gene_name:
+            if total == 0 and "-" in gene_name:
                 candidate = gene_name.replace("-", "")
-                retry_associations, retry_total = self._fetch(candidate, size)
-                if retry_associations:
+                retry_associations, retry_total = self._fetch(candidate, size, page)
+                if retry_total:
                     associations, total = retry_associations, retry_total
                     resolved_name = candidate
                     fallback_note = (
@@ -67,6 +71,10 @@ class GWASGeneSearch(BaseTool):
                 "association_count": len(associations),
                 "associations": associations,
                 "total_found": total,
+                "page": page,
+                "page_size": size,
+                "has_more": (page + 1) * size < total,
+                "next_page": page + 1 if (page + 1) * size < total else None,
             }
             if fallback_note:
                 result["queried_gene_name"] = gene_name
@@ -78,19 +86,19 @@ class GWASGeneSearch(BaseTool):
         except Exception as e:
             return {"status": "error", "error": f"Unexpected error: {str(e)}"}
 
-    def _fetch(self, gene_name, size):
-        """Return (associations sorted by p-value, total matches) for a symbol."""
+    def _fetch(self, gene_name, size, page):
+        """Return one page sorted by p-value plus the true total for a symbol."""
         response = self.session.get(
             f"{self.base_url}/v2/associations",
-            params={"mapped_gene": gene_name, "size": size, "page": 0},
+            params={"mapped_gene": gene_name, "size": size, "page": page},
             timeout=30,
         )
         response.raise_for_status()
         data = response.json()
 
         associations = data.get("_embedded", {}).get("associations", [])
-        # The API does not order by significance, but the tool description
-        # promises the "strongest" associations -- sort the returned set by
-        # p-value (most significant first) so the top rows are the strongest.
+        # The API does not order by significance. Sort this page by p-value so
+        # its rows are deterministic, but do not imply that a page is a global
+        # top-N result across all associations.
         associations = sorted(associations, key=self._pvalue_sort_key)
         return associations, data.get("page", {}).get("totalElements", 0)

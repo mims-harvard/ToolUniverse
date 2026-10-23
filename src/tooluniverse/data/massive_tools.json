@@ -1,14 +1,22 @@
 [
     {
         "name": "MassIVE_search_datasets",
-        "description": "Search the MassIVE proteomics repository for mass spectrometry datasets. MassIVE hosts thousands of proteomics datasets accessible via the ProXI standard API. Returns dataset accessions, titles, species, instruments, and keywords. Optionally filter by NCBI taxonomy ID for species.",
+        "description": "Search the MassIVE proteomics repository for mass spectrometry datasets through ProXI. Page numbers start at 1 and page_size is strictly 1-100. Because ProXI exposes no total or next link, a short page proves completion while a full page only sets metadata.possible_more=true; continue with metadata.next_page until a short page is returned.",
         "parameter": {
             "type": "object",
             "properties": {
                 "page_size": {
                     "type": "integer",
+                    "minimum": 1,
+                    "maximum": 100,
                     "default": 10,
-                    "description": "Number of results to return (max 100)"
+                    "description": "Number of results to return (strictly 1-100; out-of-range values are rejected rather than silently clamped)."
+                },
+                "page_number": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "default": 1,
+                    "description": "One-based ProXI result page to return. Continue with metadata.next_page while metadata.possible_more is true."
                 },
                 "species": {
                     "type": ["string", "null"],

@@ -171,7 +171,7 @@
   },
   {
     "name": "UniRef_search_clusters",
-    "description": "Search UniProt UniRef protein sequence clusters by protein name, gene, organism, or keyword. UniRef clusters group related sequences to reduce redundancy: UniRef90 (default, 90% identity) clusters ~250 million sequences into ~150 million clusters. Useful for finding protein families, identifying sequence redundancy, and obtaining representative sequences for a protein of interest.",
+    "description": "Search UniProt UniRef protein sequence clusters with official cursor pagination. Metadata reports the true upstream total and next_cursor; pass that opaque cursor back for the next distinct page.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -181,11 +181,23 @@
         },
         "cluster_type": {
           "type": "string",
-          "description": "Cluster identity level: 'UniRef100' (identical), 'UniRef90' (90% identity, default), 'UniRef50' (50% identity). Lower identity = fewer, larger clusters."
+          "enum": [
+            "UniRef100",
+            "UniRef90",
+            "UniRef50"
+          ],
+          "default": "UniRef90",
+          "description": "Cluster identity level: 'UniRef100' (identical), 'UniRef90' (90% identity, default), 'UniRef50' (50% identity). Invalid values return an error rather than silently removing the identity filter."
         },
         "size": {
           "type": "integer",
-          "description": "Maximum number of results to return (default: 10, max: 25)."
+          "minimum": 1,
+          "maximum": 500,
+          "description": "Results per cursor page (default 10, official API maximum 500). Invalid values return an error rather than being silently clamped."
+        },
+        "cursor": {
+          "type": "string",
+          "description": "Opaque cursor from metadata.next_cursor. Omit for the first page."
         }
       },
       "required": [

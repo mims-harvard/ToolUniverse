@@ -1,7 +1,7 @@
 """
 BVBRC_search_protein_structures
 
-Search for pathogen protein structures in BV-BRC by organism (taxon_id), gene name, or experiment...
+Search for pathogen protein structures in BV-BRC by organism, gene, or method, with explicit pagi...
 """
 
 from typing import Any, Optional, Callable
@@ -13,13 +13,14 @@ def BVBRC_search_protein_structures(
     gene: Optional[str] = None,
     method: Optional[str] = None,
     limit: Optional[int] = None,
+    offset: Optional[int] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Search for pathogen protein structures in BV-BRC by organism (taxon_id), gene name, or experiment...
+    Search for pathogen protein structures in BV-BRC by organism, gene, or method, with explicit pagi...
 
     Parameters
     ----------
@@ -31,6 +32,8 @@ def BVBRC_search_protein_structures(
         Experimental method. Examples: 'X-ray diffraction', 'Electron microscopy', 'S...
     limit : int
         Maximum number of results. Default: 10. Max: 100.
+    offset : int
+        Zero-based result offset. Use metadata.next_offset to continue.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +55,7 @@ def BVBRC_search_protein_structures(
             "gene": gene,
             "method": method,
             "limit": limit,
+            "offset": offset,
         }.items()
         if v is not None
     }

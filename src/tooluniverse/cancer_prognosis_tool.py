@@ -245,6 +245,23 @@ class CancerPrognosisTool(BaseTool):
                 time.sleep(2**attempt)
         return None
 
+    def _api_get_all_pages(self, path, params=None, page_size=10000, timeout=60):
+        # type: (str, Optional[Dict], int, int) -> Optional[Tuple[List[Any], int]]
+        """Fetch every page from a cBioPortal list endpoint."""
+        records = []  # type: List[Any]
+        page_number = 0
+        while True:
+            page_params = dict(params or {})
+            page_params.update({"pageSize": page_size, "pageNumber": page_number})
+            page = self._api_get(path, params=page_params, timeout=timeout)
+            if page is None:
+                return None
+            records.extend(page)
+            page_number += 1
+            if len(page) < page_size:
+                break
+        return records, page_number
+
     def _get_expression_units(self, profile_id, profile_name=None):
         # type: (str, Optional[str]) -> str
         """Feature-49A-M1: Infer expression data type/units from the cBioPortal profile.
@@ -318,6 +335,7 @@ class CancerPrognosisTool(BaseTool):
             "study_id",
             "limit",
             "max_patients",
+            "patient_offset",
             "operation",
         }
         _unknown_survival = [k for k in arguments if k not in _known_survival_params]
@@ -359,20 +377,16 @@ class CancerPrognosisTool(BaseTool):
                 arguments = dict(arguments)
                 arguments["max_patients"] = arguments["limit"]
 
-        # Feature-47B-01: cBioPortal clinical-data endpoint does not paginate automatically.
-        # Large studies (e.g., BRCA with 50,926 clinical records) may have OS data for only a
-        # fraction of the pageSize=10000 chunk. We set pageSize conservatively; callers
-        # should be aware that n_patients_with_os_data may undercount the full cohort.
-        data = self._api_get(
+        page_result = self._api_get_all_pages(
             "/studies/{}/clinical-data".format(study_id),
             params={
                 "clinicalDataType": "PATIENT",
                 "projection": "SUMMARY",
-                "pageSize": _page_size,
             },
+            page_size=_page_size,
             timeout=60,
         )
-        if data is None:
+        if page_result is None:
             tcga_types = sorted(TCGA_STUDY_MAP.keys())
             return {
                 "status": "error",
@@ -383,6 +397,7 @@ class CancerPrognosisTool(BaseTool):
                     " available studies and confirm they include survival data."
                 ).format(cancer, study_id, ", ".join(tcga_types), cancer.lower()),
             }
+        data, clinical_pages_fetched = page_result
 
         # Extract survival-related fields
         os_months = {}  # type: Dict[str, float]
@@ -421,9 +436,11 @@ class CancerPrognosisTool(BaseTool):
         dfs_patients = sorted(set(dfs_months.keys()) & set(dfs_status.keys()))
 
         # Create OS patient-level list (up to 500 for reasonable response size)
-        max_patients = min(int(arguments.get("max_patients", 500)), 2000)
+        max_patients = min(max(int(arguments.get("max_patients", 500)), 1), 2000)
+        patient_offset = max(int(arguments.get("patient_offset", 0)), 0)
+        os_page = os_patients[patient_offset : patient_offset + max_patients]
         os_records = []
-        for pid in os_patients[:max_patients]:
+        for pid in os_page:
             rec = {
                 "patient_id": pid,
                 "os_months": os_months[pid],
@@ -440,8 +457,9 @@ class CancerPrognosisTool(BaseTool):
             os_records.append(rec)
 
         # Create DFS patient-level list
+        dfs_page = dfs_patients[patient_offset : patient_offset + max_patients]
         dfs_records = []
-        for pid in dfs_patients[:max_patients]:
+        for pid in dfs_page:
             rec = {
                 "patient_id": pid,
                 "dfs_months": dfs_months[pid],
@@ -478,16 +496,8 @@ class CancerPrognosisTool(BaseTool):
                     " or query the cBioPortal API directly for this study."
                 ).format(len(data), ", ".join(found))
 
-        # Feature-47B-01: detect possible truncation — clinical data API returns a single page.
-        # If we retrieved exactly 10,000 records total, there may be more data in the study.
-        truncation_warning = (
-            " WARNING: This study may have more clinical data than retrieved. "
-            "The cBioPortal API returns a single page of up to 10,000 clinical records; "
-            "for large cohorts (e.g., BRCA), this may cover fewer than 50% of patients. "
-            "OS patient count may undercount the full cohort."
-            if len(data) >= 10000
-            else ""
-        )
+        os_has_more = patient_offset + len(os_records) < len(os_patients)
+        dfs_has_more = patient_offset + len(dfs_records) < len(dfs_patients)
         result = {
             "status": "success",
             "data": {
@@ -496,20 +506,30 @@ class CancerPrognosisTool(BaseTool):
                 if cancer.upper() in TCGA_STUDY_MAP
                 else cancer,
                 "total_patients": len(all_patients),
+                "clinical_records_fetched": len(data),
+                "clinical_pages_fetched": clinical_pages_fetched,
+                "patient_offset": patient_offset,
                 "overall_survival": {
                     "total_patients_with_os_data": len(os_patients),
                     "n_patients": len(os_records),
                     "n_events": sum(1 for r in os_records if r["event"] == 1),
                     "patients": os_records,
+                    "has_more": os_has_more,
+                    "next_patient_offset": patient_offset + len(os_records)
+                    if os_has_more
+                    else None,
                 },
                 "disease_free_survival": {
                     "total_patients_with_dfs_data": len(dfs_patients),
                     "n_patients": len(dfs_records),
                     "n_events": sum(1 for r in dfs_records if r["event"] == 1),
                     "patients": dfs_records,
+                    "has_more": dfs_has_more,
+                    "next_patient_offset": patient_offset + len(dfs_records)
+                    if dfs_has_more
+                    else None,
                 },
                 "note": "Use Survival_kaplan_meier or Survival_log_rank_test tools for analysis of this data."
-                + truncation_warning
                 + nonstandard_warning,
             },
         }

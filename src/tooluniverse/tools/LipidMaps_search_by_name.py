@@ -1,7 +1,7 @@
 """
 LipidMaps_search_by_name
 
-Search for lipids by exact abbreviation in LIPID MAPS Structure Database. IMPORTANT: Only exact l...
+Search exact lipidomics abbreviations in LIPID MAPS. Sum compositions use abbrev (e.g. PC 34:1); ...
 """
 
 from typing import Any, Optional, Callable
@@ -17,7 +17,7 @@ def LipidMaps_search_by_name(
     validate: bool = True,
 ) -> Any:
     """
-    Search for lipids by exact abbreviation in LIPID MAPS Structure Database. IMPORTANT: Only exact l...
+    Search exact lipidomics abbreviations in LIPID MAPS. Sum compositions use abbrev (e.g. PC 34:1); ...
 
     Parameters
     ----------

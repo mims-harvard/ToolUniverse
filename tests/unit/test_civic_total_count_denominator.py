@@ -154,7 +154,7 @@ class TestEvidenceItemsDenominator(unittest.TestCase):
 
         sent = post.call_args.kwargs["json"]["query"]
         self.assertRegex(sent, r"evidenceItems\([^)]*\)\s*\{\s*totalCount")
-        self.assertIn("pageInfo { hasNextPage }", sent)
+        self.assertIn("pageInfo { hasNextPage", sent)
 
         block = result["data"]["evidenceItems"]
         self.assertEqual(block["totalCount"], 218)

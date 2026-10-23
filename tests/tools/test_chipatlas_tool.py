@@ -121,13 +121,11 @@ class TestChIPAtlasTools:
             "genome": "hg38"
         })
         
-        assert "status" in result
-        
-        # Tool may return error or handle gracefully
-        if result.get("status") == "error":
-            # If error, it should be properly formatted
-            assert "data" in result
-            assert "error" in result["data"]
+        # The schema now requires one of antigen/cell_type, so a request with
+        # neither is rejected up front instead of running an unfiltered search.
+        assert result["status"] == "error"
+        assert "error" in result
+        assert "validation failed" in str(result["error"]).lower()
 
 
 class TestChIPAtlasReturnSchemas:

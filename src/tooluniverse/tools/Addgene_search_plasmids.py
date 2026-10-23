@@ -14,6 +14,7 @@ def Addgene_search_plasmids(
     organism: Optional[str | Any] = None,
     vector_type: Optional[str | Any] = None,
     limit: Optional[int] = 10,
+    page: Optional[int] = 1,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -34,6 +35,8 @@ def Addgene_search_plasmids(
         Filter by vector type (e.g., 'AAV', 'Lentiviral', 'Retroviral', 'Mammalian Ex...
     limit : int
         Maximum number of results to return (default 10, max 100)
+    page : int
+        One-based Addgene result page. Use metadata.next_page_number to continue.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -56,6 +59,7 @@ def Addgene_search_plasmids(
                 "organism": organism,
                 "vector_type": vector_type,
                 "limit": limit,
+                "page": page,
             },
         },
         stream_callback=stream_callback,

@@ -174,11 +174,6 @@ class MedlinePlusRESTTool(BaseTool):
         return _HIGHLIGHT_SPAN_RE.sub("", value).strip()
 
     @staticmethod
-    def _truncate_summary(summary: Any) -> Any:
-        text = summary if isinstance(summary, str) else str(summary)
-        return text[:500] + "..." if len(text) > 500 else summary
-
-    @staticmethod
     def _split_document_content(doc: dict):
         """Split a <document>'s <content> nodes into the structured
         <health-topic> record (rettype=topic / all) and a name -> [text] map
@@ -247,7 +242,8 @@ class MedlinePlusRESTTool(BaseTool):
             "language": language,
             "rank": doc_rank,
             "also_called": also_called,
-            "summary": self._truncate_summary(full_summary),
+            "summary": full_summary,
+            "summary_length": len(str(full_summary)),
             "groups": groups,
         }
 
@@ -265,6 +261,7 @@ class MedlinePlusRESTTool(BaseTool):
         # brief carries no meta-desc; the search snippet is the equivalent
         # short description the service offers for this rettype.
         snippet = first("snippet")
+        full_summary = first("FullSummary")
         # brief carries no language attribute either; it is fixed by the db.
         if db.lower().endswith("spanish"):
             language = "Spanish"
@@ -284,7 +281,8 @@ class MedlinePlusRESTTool(BaseTool):
                 for v in flat.get("altTitle", [])
                 if self._strip_highlight(v)
             ],
-            "summary": self._truncate_summary(first("FullSummary")),
+            "summary": full_summary,
+            "summary_length": len(full_summary),
             "groups": [
                 self._strip_highlight(v)
                 for v in flat.get("groupName", [])
@@ -376,12 +374,8 @@ class MedlinePlusRESTTool(BaseTool):
                 return {"status": "error", "error": "nlmSearchResult node not found"}
 
             # Get document list
-            document_list = nlm_result.get("list", {}).get("document", [])
-            if not document_list:
-                return {
-                    "status": "error",
-                    "error": self._no_documents_error(arguments),
-                }
+            result_list = nlm_result.get("list", {})
+            document_list = result_list.get("document", [])
 
             # Ensure document_list is a list
             if isinstance(document_list, dict):
@@ -409,11 +403,37 @@ class MedlinePlusRESTTool(BaseTool):
                         self._format_brief_document(flat, doc_url, doc_rank, db)
                     )
 
-            return (
-                {"topics": formatted_topics}
-                if formatted_topics
-                else {"error": "Failed to parse health topic information"}
+            def parse_count(value, fallback):
+                try:
+                    return int(value)
+                except (TypeError, ValueError):
+                    return fallback
+
+            returned = len(formatted_topics)
+            total_available = parse_count(
+                nlm_result.get("count", result_list.get("@num")), returned
             )
+            offset = parse_count(
+                nlm_result.get("retstart", result_list.get("@start")), 0
+            )
+            limit = parse_count(
+                nlm_result.get("retmax", result_list.get("@per")), returned
+            )
+            if not document_list and total_available == 0:
+                return {
+                    "status": "error",
+                    "error": self._no_documents_error(arguments),
+                }
+            has_more = offset + returned < total_available
+            return {
+                "topics": formatted_topics,
+                "total_available": total_available,
+                "returned": returned,
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "next_offset": offset + returned if has_more else None,
+            }
 
         elif tool_name == "MedlinePlus_get_genetics_condition_by_name":
             inheritance = [
@@ -502,9 +522,8 @@ class MedlinePlusRESTTool(BaseTool):
                 formatted_responses.append(
                     {
                         "title": title,
-                        "summary": summary[:500] + "..."
-                        if len(summary) > 500
-                        else summary,
+                        "summary": summary,
+                        "summary_length": len(summary),
                         "url": url,
                     }
                 )
@@ -677,9 +696,22 @@ class MedlinePlusRESTTool(BaseTool):
 
     # Tool methods
     def search_topics_by_keyword(
-        self, term: str, db: str, rettype: str = "topic"
+        self,
+        term: str,
+        db: str,
+        rettype: str = "topic",
+        retstart: int = 0,
+        retmax: int = 10,
     ) -> Dict[str, Any]:
-        return self.run({"term": term, "db": db, "rettype": rettype})
+        return self.run(
+            {
+                "term": term,
+                "db": db,
+                "rettype": rettype,
+                "retstart": retstart,
+                "retmax": retmax,
+            }
+        )
 
     def connect_lookup_by_code(
         self,

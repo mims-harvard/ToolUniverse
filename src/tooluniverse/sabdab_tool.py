@@ -166,6 +166,21 @@ class SAbDabTool(BaseTool):
         if not operation:
             operation = self.get_schema_const_operation()
 
+        allowed_arguments = {
+            "search_structures": {"operation", "query", "antigen", "limit"},
+            "get_structure": {"operation", "pdb_id", "pdb_code"},
+            "get_structure_summary": {"operation", "pdb_id", "pdb_code", "pdb"},
+            # pdb/pdb_id were accepted here historically; keep them harmless.
+            "get_summary": {"operation", "pdb", "pdb_id"},
+        }
+        if operation in allowed_arguments:
+            unknown = sorted(set(arguments) - allowed_arguments[operation])
+            if unknown:
+                return {
+                    "status": "error",
+                    "error": f"Unknown parameter(s) for {operation}: {', '.join(unknown)}",
+                }
+
         if operation == "search_structures":
             return self._search_structures(arguments)
         elif operation == "get_structure":

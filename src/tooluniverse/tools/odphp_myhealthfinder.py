@@ -1,7 +1,7 @@
 """
 odphp_myhealthfinder
 
-This tool provides personalized preventive-care recommendations and it is helpful for different a...
+Retrieve personalized preventive-care recommendations from the ODPHP MyHealthfinder v4 API. The r...
 """
 
 from typing import Any, Optional, Callable
@@ -13,14 +13,14 @@ def odphp_myhealthfinder(
     age: int,
     sex: str,
     pregnant: str,
-    strip_html: Optional[bool] = None,
+    strip_html: Optional[bool] = False,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    This tool provides personalized preventive-care recommendations and it is helpful for different a...
+    Retrieve personalized preventive-care recommendations from the ODPHP MyHealthfinder v4 API. The r...
 
     Parameters
     ----------

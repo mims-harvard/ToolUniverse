@@ -1,7 +1,7 @@
 [
   {
     "name": "MedlinePlus_search_topics_by_keyword",
-    "description": "Search MedlinePlus health topics by keyword via NLM's wsearch Web Service. IMPORTANT: although the db parameter accepts seven historical database names, the live service only returns results for healthTopics (English) and healthTopicsSpanish (Spanish); drugs, drugsSpanish, genetics, medicalTests and medicalEncyclopedia are accepted but always answer with zero results. Use MedlinePlus_get_genetics_gene_by_name / MedlinePlus_get_genetics_condition_by_name for genetics, and MedlinePlus_connect_lookup_by_code for drug/test codes.",
+    "description": "Search MedlinePlus health topics by keyword via NLM's wsearch Web Service. IMPORTANT: although the db parameter accepts seven historical database names, the live service only returns results for healthTopics (English) and healthTopicsSpanish (Spanish); drugs, drugsSpanish, genetics, medicalTests and medicalEncyclopedia are accepted but always answer with zero results. Use MedlinePlus_get_genetics_gene_by_name / MedlinePlus_get_genetics_condition_by_name for genetics, and MedlinePlus_connect_lookup_by_code for drug/test codes. Exposes upstream retstart/retmax pagination and reports total_available, returned, has_more, and next_offset so agents can retrieve all matches instead of silently receiving only the first page. Topic summaries are returned in full with summary_length.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -31,6 +31,18 @@
           ],
           "description": "Result return format (default: topic). topic returns the full structured health-topic record (title, meta description, aliases, full summary, topic groups). brief returns the condensed search-result fields (title, alternate title, full summary, group names and a match snippet, which is surfaced as meta_desc); it carries no language attribute, so the language is derived from db. all returns the brief fields plus the same structured record as topic, and is parsed identically to topic. All three produce the same output keys.",
           "default": "topic"
+        },
+        "retstart": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Zero-based offset of the first result to return. Use next_offset from the preceding response to retrieve the next page.",
+          "default": 0
+        },
+        "retmax": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum number of matching records requested from MedlinePlus for this page.",
+          "default": 10
         }
       },
       "required": [
@@ -39,9 +51,9 @@
       ]
     },
     "fields": {
-      "endpoint": "https://wsearch.nlm.nih.gov/ws/query?db={db}&term={term}&rettype={rettype}",
-      "input_description": "Input parameters:\n- term: keyword to search (URL encoded);\n- db: database name; only healthTopics and healthTopicsSpanish return results (the other enum values are accepted but always yield zero results);\n- rettype: return format, options: topic (default), brief, all.",
-      "output_description": "Returns {\"topics\": [...]} where each entry has title, meta_desc, url, language, rank, also_called, summary and groups, parsed from the wsearch XML. The same keys are produced for all three rettype values. On zero results the tool returns an error naming the cause, including an explicit note when the requested db is one that MedlinePlus wsearch does not serve."
+      "endpoint": "https://wsearch.nlm.nih.gov/ws/query?db={db}&term={term}&rettype={rettype}&retstart={retstart}&retmax={retmax}",
+      "input_description": "Input parameters:\n- term: keyword to search (URL encoded);\n- db: database name; only healthTopics and healthTopicsSpanish return results (the other enum values are accepted but always yield zero results);\n- rettype: return format, options: topic (default), brief, all;\n- retstart: zero-based result offset;\n- retmax: requested page size.",
+      "output_description": "Returns {\"topics\": [...]} where each entry has title, meta_desc, url, language, rank, also_called, summary (complete, with summary_length) and groups, parsed from the wsearch XML, plus pagination metadata: total_available, returned, offset, limit, has_more, and next_offset. The same keys are produced for all three rettype values. On zero results the tool returns an error naming the cause, including an explicit note when the requested db is one that MedlinePlus wsearch does not serve."
     },
     "type": "MedlinePlusRESTTool",
     "test_examples": [
@@ -86,7 +98,12 @@
                 }
               },
               "summary": {
-                "type": "string"
+                "type": "string",
+                "description": "Complete upstream topic summary without wrapper-side truncation"
+              },
+              "summary_length": {
+                "type": "integer",
+                "description": "Exact number of characters in summary"
               },
               "groups": {
                 "type": "array",
@@ -96,13 +113,40 @@
               }
             }
           }
+        },
+        "total_available": {
+          "type": "integer",
+          "description": "Total number of upstream matches for the query"
+        },
+        "returned": {
+          "type": "integer",
+          "description": "Number of topics returned in this page"
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based offset of this page"
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Page size reported by MedlinePlus"
+        },
+        "has_more": {
+          "type": "boolean",
+          "description": "Whether more matches remain after this page"
+        },
+        "next_offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Offset to request for the next page, or null when complete"
         }
       }
     }
   },
   {
     "name": "MedlinePlus_connect_lookup_by_code",
-    "description": "Look up corresponding MedlinePlus page information through MedlinePlus Connect Web Service using clinical/drug/test codes (such as ICD-10 CM, RXCUI, LOINC, etc.), supports JSON or XML format return.",
+    "description": "Look up MedlinePlus pages through MedlinePlus Connect using clinical, drug, or test codes such as ICD-10-CM, RXCUI, and LOINC. Returns each complete upstream summary with summary_length; long evidence text is not limited to the former 500-character prefix. Supports JSON or XML upstream formats.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -173,6 +217,10 @@
               "summary": {
                 "type": "string",
                 "description": "Summary text of the matched page"
+              },
+              "summary_length": {
+                "type": "integer",
+                "description": "Exact number of characters in the complete upstream summary"
               },
               "url": {
                 "type": "string",

@@ -2,7 +2,7 @@
   {
     "type": "SCREENRESTTool",
     "name": "SCREEN_get_regulatory_elements",
-    "description": "Get candidate cis-regulatory elements (cCREs) from SCREEN database for specific genomic regions",
+    "description": "Resolve an official human gene symbol to its GRCh38 coordinates with Ensembl, then return genuine ENCODE SCREEN cCREs overlapping the gene interval plus a configurable flank (default 10 kb). Filters real cCRE classes: enhancer=pELS/dELS, promoter=PLS, insulator=CTCF-only. Results use exact client-side offset pagination. This reports genomic-window overlap only and explicitly does not claim the cCRE functionally regulates the gene.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -16,21 +16,52 @@
         },
         "element_type": {
           "type": "string",
-          "description": "Type of regulatory element (promoter, enhancer, insulator)",
-          "default": "enhancer"
+          "description": "cCRE class filter: enhancer (pELS+dELS), promoter (PLS), insulator (CTCF-only), all, or a raw SCREEN class (PLS, pELS, dELS, CTCF-only, DNase-H3K4me3).",
+          "default": "enhancer",
+          "enum": [
+            "enhancer",
+            "promoter",
+            "insulator",
+            "all",
+            "PLS",
+            "pELS",
+            "dELS",
+            "CTCF-only",
+            "DNase-H3K4me3"
+          ]
         },
         "limit": {
           "type": "integer",
-          "description": "Number of results to return",
+          "description": "Page size for filtered cCREs.",
           "default": 10,
           "minimum": 1,
-          "maximum": 50
+          "maximum": 200
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Zero-based filtered cCRE offset. Continue with metadata.next_offset while metadata.has_more is true.",
+          "default": 0,
+          "minimum": 0
+        },
+        "flank_bp": {
+          "type": "integer",
+          "description": "Base pairs added on both sides of the Ensembl gene interval (default 10000).",
+          "default": 10000,
+          "minimum": 0,
+          "maximum": 1000000
+        },
+        "assembly": {
+          "type": "string",
+          "const": "GRCh38",
+          "default": "GRCh38",
+          "description": "Genome assembly. This gene-symbol resolver currently supports human GRCh38 only."
         }
       },
       "required": []
     },
     "fields": {
-      "endpoint": "https://www.encodeproject.org/search/?type=Experiment&assay_title=ChIP-seq&target.label={gene_name}&biosample_ontology.classification=cell_line&format=json&limit={limit}",
+      "gene_lookup_endpoint": "https://rest.ensembl.org/lookup/symbol/homo_sapiens/{gene_name}",
+      "screen_endpoint": "https://ga.staging.wenglab.org/graphql",
       "return_format": "JSON"
     },
     "return_schema": {
@@ -39,6 +70,12 @@
           "type": "object",
           "properties": {
             "gene_name": {
+              "type": "string"
+            },
+            "requested_gene_name": {
+              "type": "string"
+            },
+            "ensembl_gene_id": {
               "type": "string"
             },
             "element_type": {
@@ -50,32 +87,94 @@
                 "number"
               ]
             },
+            "total_results": {
+              "type": "integer"
+            },
             "regulatory_elements": {
               "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
                   "accession": {
-                    "type": "string"
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
-                  "assay_title": {
-                    "type": "string"
+                  "chrom": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
-                  "target": {
-                    "type": "string"
+                  "start": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
                   },
-                  "biosample": {
-                    "type": "string"
+                  "end": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
                   },
-                  "status": {
-                    "type": "string"
+                  "element_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "is_proximal": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ]
+                  },
+                  "dnase_zscore": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "promoter_zscore": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "enhancer_zscore": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "ctcf_zscore": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
                   }
                 }
               }
+            },
+            "gene_coordinates": {
+              "type": "object"
+            },
+            "query_region": {
+              "type": "object"
+            },
+            "functional_association_claimed": {
+              "const": false
             }
           },
           "required": [
-            "gene_name"
+            "gene_name",
+            "ensembl_gene_id",
+            "regulatory_elements",
+            "gene_coordinates",
+            "query_region",
+            "functional_association_claimed"
           ]
         },
         {
@@ -95,7 +194,8 @@
       {
         "gene_name": "BRCA1",
         "element_type": "enhancer",
-        "limit": 5
+        "limit": 5,
+        "offset": 0
       },
       {
         "gene_name": "TP53",

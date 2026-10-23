@@ -138,7 +138,7 @@
     },
     {
         "name": "KEGG_get_compound",
-        "description": "Get KEGG compound/metabolite details including names, formula, molecular weight, associated pathways, enzymes, and database cross-references. Example: C00002 (ATP) has formula C10H16N5O13P3, molecular weight 507.18, and is involved in hundreds of metabolic reactions and pathways. Covers metabolites, cofactors, drugs, and other small molecules in the KEGG COMPOUND database.",
+        "description": "Get complete KEGG compound/metabolite details. In addition to names, formula, mass, pathways, enzymes, and cross-references, preserves REACTION, MODULE, NETWORK, BRITE, ATOM, BOND, every other KEGG flat-file field, and the raw record so uncommon sections are never silently omitted.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -199,6 +199,50 @@
                         "dblinks": {
                             "type": "object",
                             "description": "Cross-references to other databases (ChEBI, DrugBank, CAS, LIPIDMAPS, etc.). KEGG's PubChem cross-reference is a PubChem *substance* ID and is therefore returned as 'PubChem_SID' -- it is not a CID and must not be passed to CID-based tools. Resolve it first, e.g. PubChem PUG-REST /substance/sid/{sid}/cids."
+                        },
+                        "reactions": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "modules": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "networks": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "brite": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "atoms": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "bonds": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "raw_fields": {
+                            "type": "object",
+                            "description": "Complete parsed KEGG flat-file field map, including fields not explicitly modeled by this wrapper."
+                        },
+                        "raw_data": {
+                            "type": "string",
+                            "description": "Complete original KEGG flat-file record."
                         }
                     }
                 },
@@ -242,7 +286,16 @@
                 },
                 "max_results": {
                     "type": ["integer", "null"],
-                    "description": "Optional cap on the number of returned candidate compounds."
+                    "minimum": 1,
+                    "description": "Optional page size for candidate compounds. The complete upstream total is always reported."
+                },
+                "offset": {
+                    "type": [
+                        "integer",
+                        "null"
+                    ],
+                    "minimum": 0,
+                    "description": "Zero-based result offset. Use next_offset to continue."
                 }
             },
             "required": []
@@ -278,6 +331,25 @@
                         "count": {
                             "type": "integer",
                             "description": "Number of candidate compounds returned"
+                        },
+                        "total_results": {
+                            "type": "integer",
+                            "description": "Complete number of candidates returned by KEGG before local pagination"
+                        },
+                        "offset": {
+                            "type": "integer"
+                        },
+                        "has_more": {
+                            "type": "boolean"
+                        },
+                        "truncated": {
+                            "type": "boolean"
+                        },
+                        "next_offset": {
+                            "type": [
+                                "integer",
+                                "null"
+                            ]
                         },
                         "compounds": {
                             "type": "array",

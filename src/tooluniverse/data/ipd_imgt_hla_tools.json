@@ -2,7 +2,7 @@
     {
         "type": "IPDIMGTHLATool",
         "name": "IPD_search_hla_alleles",
-        "description": "Search the IPD-IMGT/HLA database for human HLA alleles by allele name prefix or substring (e.g. 'A*01:01', 'DRB1*15', 'B*07'). Returns matching alleles with their IPD accession (e.g. HLA00001) and full allele name. Use this to resolve an HLA type or partial type into specific allele accessions for follow-up detail lookups. Keyless EMBL-EBI API.",
+        "description": "Search the IPD-IMGT/HLA database for human HLA alleles by allele name prefix or substring with complete access through the official opaque cursor. Returns matching accessions and names plus exact total, has_more, and next_cursor; continue with the same name/match/limit and cursor=next_cursor. offset/page/skip are ignored by IPD and are therefore not exposed. Keyless EMBL-EBI API.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -23,7 +23,16 @@
                 "limit": {
                     "type": "integer",
                     "description": "Maximum number of alleles to return (default 10, max 100).",
-                    "default": 10
+                    "default": 10,
+                    "minimum": 1,
+                    "maximum": 100
+                },
+                "cursor": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Opaque continuation token from data.next_cursor. Repeat the same name, match, and limit when continuing."
                 }
             },
             "required": [
@@ -50,11 +59,11 @@
             }
         ],
         "return_schema": {
-          "oneOf": [
-            {
-              "type": "object",
-              "properties": {
-                "alleles": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "alleles": {
                   "type": "array",
                   "items": {
                     "type": "object",
@@ -68,21 +77,39 @@
                     }
                   }
                 },
-                "count": {
+                        "count": {
                   "type": "integer"
                 },
-                "total": {
+                        "total": {
                   "type": [
                     "integer",
                     "null"
                   ]
-                }
-              },
-              "required": [
+                },
+                        "has_more": {
+                            "type": "boolean"
+                        },
+                        "next_cursor": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "previous_cursor": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "result_set_complete": {
+                            "type": "boolean"
+                        }
+                    },
+                    "required": [
                 "alleles"
               ]
-            },
-            {
+                },
+                {
               "type": "object",
               "properties": {
                 "error": {
@@ -93,7 +120,7 @@
                 "error"
               ]
             }
-          ]
+            ]
         }
     },
     {
@@ -167,7 +194,7 @@
     {
         "type": "IPDIMGTHLATool",
         "name": "IPD_search_cells",
-        "description": "Search IPD cell lines (HLA reference cells with their HLA typing) by a field value. By default searches the cell's primary name; set 'field' to search other fields such as 'lab_of_origin'. Returns matching cells with their IPD cell id and primary name. Useful for finding HLA-typed reference cell lines. Keyless EMBL-EBI API.",
+        "description": "Search IPD cell lines (HLA reference cells with their HLA typing) by a field value with complete access through the official opaque cursor. Returns exact total, has_more, and next_cursor; continue with the same query/field/match/limit and cursor=next_cursor. Keyless EMBL-EBI API.",
         "parameter": {
             "type": "object",
             "properties": {
@@ -193,7 +220,16 @@
                 "limit": {
                     "type": "integer",
                     "description": "Maximum number of cells to return (default 10, max 100).",
-                    "default": 10
+                    "default": 10,
+                    "minimum": 1,
+                    "maximum": 100
+                },
+                "cursor": {
+                    "type": [
+                        "string",
+                        "null"
+                    ],
+                    "description": "Opaque continuation token from data.next_cursor. Repeat the same search controls when continuing."
                 }
             },
             "required": [
@@ -221,11 +257,11 @@
             }
         ],
         "return_schema": {
-          "oneOf": [
-            {
-              "type": "object",
-              "properties": {
-                "cells": {
+            "oneOf": [
+                {
+                    "type": "object",
+                    "properties": {
+                        "cells": {
                   "type": "array",
                   "items": {
                     "type": "object",
@@ -239,21 +275,39 @@
                     }
                   }
                 },
-                "count": {
+                        "count": {
                   "type": "integer"
                 },
-                "total": {
+                        "total": {
                   "type": [
                     "integer",
                     "null"
                   ]
-                }
-              },
-              "required": [
+                },
+                        "has_more": {
+                            "type": "boolean"
+                        },
+                        "next_cursor": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "previous_cursor": {
+                            "type": [
+                                "string",
+                                "null"
+                            ]
+                        },
+                        "result_set_complete": {
+                            "type": "boolean"
+                        }
+                    },
+                    "required": [
                 "cells"
               ]
-            },
-            {
+                },
+                {
               "type": "object",
               "properties": {
                 "error": {
@@ -264,7 +318,7 @@
                 "error"
               ]
             }
-          ]
+            ]
         }
     }
 ]

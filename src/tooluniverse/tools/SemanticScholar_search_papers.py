@@ -13,6 +13,8 @@ def SemanticScholar_search_papers(
     limit: Optional[int] = 5,
     year: Optional[str] = None,
     sort: Optional[str] = None,
+    offset: Optional[int] = None,
+    token: Optional[str] = None,
     include_abstract: Optional[bool] = False,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -27,11 +29,15 @@ def SemanticScholar_search_papers(
     query : str
         Search query for Semantic Scholar. Use keywords separated by spaces to refine...
     limit : int
-        Maximum number of papers to return from Semantic Scholar.
+        Maximum papers to return. Regular search allows up to 100; sorted bulk search...
     year : str
         Filter results by publication year. Use a single year (e.g., '2024') or a ran...
     sort : str
         Sort results. Options: 'citationCount:desc', 'citationCount:asc', 'publicatio...
+    offset : int
+        Regular search: server result offset (0-9999). Sorted search: local offset wi...
+    token : str
+        Opaque bulk-page token, valid only with sort. Omit for the first upstream pag...
     include_abstract : bool
         If true, best-effort fetches missing abstracts via the paper detail endpoint ...
     stream_callback : Callable, optional
@@ -55,6 +61,8 @@ def SemanticScholar_search_papers(
             "limit": limit,
             "year": year,
             "sort": sort,
+            "offset": offset,
+            "token": token,
             "include_abstract": include_abstract,
         }.items()
         if v is not None

@@ -1,7 +1,7 @@
 """
 SemanticScholar_get_paper_citations
 
-List the papers that CITE a given paper, with per-citation detail: the citation INTENTS (backgrou...
+List one page of papers that CITE a given paper, including citation intents, influence flag, cont...
 """
 
 from typing import Any, Optional, Callable
@@ -14,14 +14,14 @@ def SemanticScholar_get_paper_citations(
         str
     ] = "intents,isInfluential,contexts,title,year,authors,citationCount,externalIds,openAccessPdf",
     limit: Optional[int] = 20,
-    offset: Optional[int] = None,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    List the papers that CITE a given paper, with per-citation detail: the citation INTENTS (backgrou...
+    List one page of papers that CITE a given paper, including citation intents, influence flag, cont...
 
     Parameters
     ----------
@@ -32,7 +32,7 @@ def SemanticScholar_get_paper_citations(
     limit : int
         Maximum number of citing papers to return (default 20, max 1000).
     offset : int
-        Pagination offset into the citation list (default 0).
+        Zero-based citation offset (default 0). Continue with metadata.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

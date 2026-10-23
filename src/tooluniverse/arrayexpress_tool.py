@@ -95,11 +95,13 @@ class ArrayExpressRESTTool(BaseTool):
             # not the broader BioStudies repository
             params["collection"] = "arrayexpress"
 
-            # Map limit to pageSize
-            limit = args.get("limit", 10)
-            params["pageSize"] = min(limit, 100)
+            # Fetch a stable 100-row upstream window, then slice the exact
+            # caller offset in run(). Mapping offset directly with
+            # ``offset // limit`` silently rounded arbitrary offsets down
+            # (offset=5, limit=10 returned offset=0 verbatim).
+            params["pageSize"] = 100
 
-            # Map offset to page number (BioStudies uses 1-based page numbers)
+            # BioStudies uses 1-based page numbers (page=0 is normalized to 1).
             offset = args.get("offset", 0)
             page_size = params["pageSize"]
             params["page"] = (offset // page_size) + 1
@@ -109,9 +111,31 @@ class ArrayExpressRESTTool(BaseTool):
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the BioStudies API call for ArrayExpress data"""
         try:
+            tool_name = self.tool_config.get("name", "")
+            if tool_name == "arrayexpress_search_experiments":
+                limit = arguments.get("limit", 10)
+                offset = arguments.get("offset", 0)
+                if (
+                    isinstance(limit, bool)
+                    or not isinstance(limit, int)
+                    or not 1 <= limit <= 100
+                ):
+                    return {
+                        "status": "error",
+                        "error": "limit must be an integer between 1 and 100",
+                    }
+                if (
+                    isinstance(offset, bool)
+                    or not isinstance(offset, int)
+                    or offset < 0
+                ):
+                    return {
+                        "status": "error",
+                        "error": "offset must be a non-negative integer",
+                    }
+
             url = self._build_url(arguments)
             params = self._build_params(arguments)
-            tool_name = self.tool_config.get("name", "")
 
             response = self.session.get(url, params=params, timeout=self.timeout)
             response.raise_for_status()
@@ -131,16 +155,77 @@ class ArrayExpressRESTTool(BaseTool):
             if tool_name == "arrayexpress_search_experiments":
                 # BioStudies search response
                 hits = data.get("hits", [])
+                upstream_page_size = params["pageSize"]
+                within_page = offset % upstream_page_size
+                required = within_page + limit
+                combined_hits = list(hits)
+                total_hits = int(data.get("totalHits", len(combined_hits)))
+                total_hits_exact = bool(data.get("isTotalHitsExact", False))
+                last_page_hits = hits
+                upstream_start = (params["page"] - 1) * upstream_page_size
+                if (
+                    required > len(combined_hits)
+                    and upstream_start + len(combined_hits) < total_hits
+                ):
+                    next_params = dict(params, page=params["page"] + 1)
+                    next_response = self.session.get(
+                        url, params=next_params, timeout=self.timeout
+                    )
+                    next_response.raise_for_status()
+                    next_content_type = next_response.headers.get("content-type", "")
+                    if "json" not in next_content_type.lower():
+                        return {
+                            "status": "error",
+                            "error": f"API returned non-JSON content: {next_content_type}",
+                            "url": next_response.url,
+                        }
+                    next_data = next_response.json()
+                    last_page_hits = next_data.get("hits", [])
+                    combined_hits.extend(last_page_hits)
+                    total_hits = max(
+                        total_hits,
+                        int(next_data.get("totalHits", total_hits)),
+                    )
+                    total_hits_exact = total_hits_exact or bool(
+                        next_data.get("isTotalHitsExact", False)
+                    )
+                selected_hits = combined_hits[within_page : within_page + limit]
+                covered_through = upstream_start + len(combined_hits)
+                total_hits = max(total_hits, covered_through)
+                buffered_more = within_page + len(selected_hits) < len(combined_hits)
+                has_more = (
+                    offset + len(selected_hits) < total_hits
+                    if total_hits_exact
+                    else (
+                        buffered_more
+                        or len(last_page_hits) == upstream_page_size
+                        or offset + len(selected_hits) < total_hits
+                    )
+                )
                 transformed_data = {
-                    "experiments": hits,
-                    "totalHits": data.get("totalHits", 0),
-                    "page": data.get("page", 1),
-                    "pageSize": data.get("pageSize", len(hits)),
+                    "experiments": selected_hits,
+                    "totalHits": total_hits,
+                    "totalHitsExact": total_hits_exact,
+                    "totalHitsRelation": "exact" if total_hits_exact else "lower_bound",
+                    "returned": len(selected_hits),
+                    "offset": offset,
+                    "limit": limit,
+                    "has_more": has_more,
+                    "next_offset": offset + len(selected_hits) if has_more else None,
+                    "result_set_complete": offset == 0 and not has_more,
+                    "page": data.get("page", params["page"]),
+                    "pageSize": limit,
                 }
+                if not total_hits_exact:
+                    transformed_data["totalHitsWarning"] = (
+                        "BioStudies reports isTotalHitsExact=false; totalHits is a "
+                        "lower bound that can increase on later pages. Continue "
+                        "with next_offset while has_more is true."
+                    )
                 return {
                     "status": "success",
                     "data": transformed_data,
-                    "count": len(hits),
+                    "count": len(selected_hits),
                     "url": response.url,
                 }
 

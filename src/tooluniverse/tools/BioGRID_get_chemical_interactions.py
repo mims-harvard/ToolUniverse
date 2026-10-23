@@ -14,6 +14,7 @@ def BioGRID_get_chemical_interactions(
     organism: Optional[str] = "9606",
     interaction_action: Optional[str] = None,
     limit: Optional[int] = 100,
+    offset: Optional[int] = 0,
     include_evidence: Optional[bool] = True,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -34,7 +35,9 @@ def BioGRID_get_chemical_interactions(
     interaction_action : str
         Filter by interaction action type (e.g., 'inhibitor', 'activator', 'antagonis...
     limit : int
-        Maximum number of chemical interactions to return (default: 100, max: 10000)
+        Maximum upstream interactions on this page (default: 100, max: 9999).
+    offset : int
+        Zero-based BioGRID upstream record offset. Continue with metadata.next_offset.
     include_evidence : bool
         Include detailed evidence and publication information (default: true)
     stream_callback : Callable, optional
@@ -59,6 +62,7 @@ def BioGRID_get_chemical_interactions(
             "organism": organism,
             "interaction_action": interaction_action,
             "limit": limit,
+            "offset": offset,
             "include_evidence": include_evidence,
         }.items()
         if v is not None

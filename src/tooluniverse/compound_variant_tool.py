@@ -457,8 +457,19 @@ class CompoundVariantAnnotationTool(BaseTool):
         # If the specific change isn't found (ClinVar titles use HGVS), still return
         # the top gene-level variants as context rather than a misleading empty result.
         variants_out = matched if matched else [_row(v) for v in rows[:10]]
+        total = data.get("total_count", 0)
+        has_more = data.get("has_more")
+        if not isinstance(has_more, bool):
+            has_more = isinstance(total, int) and len(rows) < total
+        next_offset = data.get("next_offset")
+        if next_offset is None and has_more:
+            next_offset = len(rows)
         return {
-            "total_gene_variants": data.get("total_count", 0),
+            "total_gene_variants": total,
+            "gene_variants_examined": len(rows),
+            "gene_results_truncated": has_more,
+            "gene_result_set_complete": not has_more,
+            "next_gene_offset": next_offset,
             "matched": len(matched),
             "exact_match": bool(matched),
             "variants": variants_out[:10],
@@ -484,9 +495,8 @@ class CompoundVariantAnnotationTool(BaseTool):
             return {"raw": str(result)[:200]}
         # civic_get_variants_by_gene returns data.gene.variants.nodes (a list).
         gene = (result.get("data") or {}).get("gene") or {}
-        nodes = ((gene.get("variants") or {}) if isinstance(gene, dict) else {}).get(
-            "nodes", []
-        )
+        variants_block = (gene.get("variants") or {}) if isinstance(gene, dict) else {}
+        nodes = variants_block.get("nodes", [])
         nodes = nodes if isinstance(nodes, list) else []
         rows = [v for v in nodes if isinstance(v, dict)]
 
@@ -515,8 +525,17 @@ class CompoundVariantAnnotationTool(BaseTool):
             and _title_matches(v.get("name", v.get("variant_name", "")), variant_token)
         ]
         variants_out = matched if matched else [_row(v) for v in rows[:20]]
+        total = variants_block.get("totalCount")
+        if not isinstance(total, int) or isinstance(total, bool):
+            total = len(nodes)
+        page_info = variants_block.get("pageInfo") or {}
+        has_more = bool(page_info.get("hasNextPage")) or len(nodes) < total
         return {
-            "total_gene_variants": len(nodes),
+            "total_gene_variants": total,
+            "gene_variants_examined": len(nodes),
+            "gene_results_truncated": has_more,
+            "gene_result_set_complete": not has_more,
+            "next_gene_cursor": page_info.get("endCursor") if has_more else None,
             "matched": len(matched),
             "exact_match": bool(matched),
             "variants": variants_out[:20],

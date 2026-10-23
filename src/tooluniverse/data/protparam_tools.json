@@ -2,7 +2,7 @@
   {
     "name": "ProtParam_calculate",
     "type": "ProtParamTool",
-    "description": "Calculate physicochemical properties of a protein from its amino acid sequence (similar to ExPASy ProtParam). Returns molecular weight, isoelectric point (pI), amino acid composition, extinction coefficients at 280 nm, instability index, aliphatic index, and GRAVY (grand average of hydropathicity). No external API needed.",
+    "description": "Calculate physicochemical properties of a protein locally from its amino acid sequence (similar to ExPASy ProtParam). Returns molecular weight, isoelectric point (pI), amino acid composition, extinction coefficients at 280 nm, instability index, aliphatic index, and GRAVY (grand average of hydropathicity). stability_classification is a ToolUniverse-derived Guruprasad instability-index heuristic, not a retrieved experimental observation; stability_interpretation reports its metric, value, threshold, exact rule, provenance, and scope. No external API needed.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -27,7 +27,65 @@
           }
         },
         "instability_index": {"type": "number"},
-        "stability_classification": {"type": "string"},
+        "stability_classification": {
+          "type": "string",
+          "enum": [
+            "stable",
+            "unstable"
+          ],
+          "description": "Backward-compatible derived label; see stability_interpretation for its rule and provenance."
+        },
+        "stability_interpretation": {
+          "type": "object",
+          "properties": {
+            "classification": {
+              "type": "string",
+              "enum": [
+                "stable",
+                "unstable"
+              ]
+            },
+            "derived": {
+              "type": "boolean",
+              "const": true
+            },
+            "derived_by": {
+              "type": "string",
+              "const": "ToolUniverse"
+            },
+            "metric": {
+              "type": "string",
+              "const": "instability_index"
+            },
+            "metric_value": {
+              "type": "number"
+            },
+            "threshold": {
+              "type": "number",
+              "const": 40.0
+            },
+            "rule": {
+              "type": "string"
+            },
+            "method_basis": {
+              "type": "string"
+            },
+            "scope_note": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "classification",
+            "derived",
+            "derived_by",
+            "metric",
+            "metric_value",
+            "threshold",
+            "rule",
+            "method_basis",
+            "scope_note"
+          ]
+        },
         "aliphatic_index": {"type": "number"},
         "gravy": {"type": "number"},
         "positively_charged_residues": {"type": "integer"},

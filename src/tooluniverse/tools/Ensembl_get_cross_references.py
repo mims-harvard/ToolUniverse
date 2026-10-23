@@ -1,7 +1,7 @@
 """
 Ensembl_get_cross_references
 
-Get all external database cross-references for an Ensembl stable identifier. Returns linked recor...
+Get external database cross-references for an Ensembl stable identifier with exact local offset p...
 """
 
 from typing import Any, Optional, Callable
@@ -11,13 +11,15 @@ from ._shared_client import get_shared_client
 def Ensembl_get_cross_references(
     ensembl_id: str,
     external_db: Optional[str] = None,
+    limit: Optional[int] = 500,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> Any:
     """
-    Get all external database cross-references for an Ensembl stable identifier. Returns linked recor...
+    Get external database cross-references for an Ensembl stable identifier with exact local offset p...
 
     Parameters
     ----------
@@ -25,6 +27,10 @@ def Ensembl_get_cross_references(
         Ensembl stable identifier. Can be gene (ENSG*), transcript (ENST*), or transl...
     external_db : str
         Optional: filter by external database name. Examples: 'HGNC', 'EntrezGene', '...
+    limit : int
+        Maximum xrefs returned from the complete response (default 500).
+    offset : int
+        Zero-based xref offset. Continue with metadata.next_offset.
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -41,7 +47,12 @@ def Ensembl_get_cross_references(
     # Strip None values so optional parameters don't trigger schema validation errors
     _args = {
         k: v
-        for k, v in {"ensembl_id": ensembl_id, "external_db": external_db}.items()
+        for k, v in {
+            "ensembl_id": ensembl_id,
+            "external_db": external_db,
+            "limit": limit,
+            "offset": offset,
+        }.items()
         if v is not None
     }
     return get_shared_client().run_one_function(

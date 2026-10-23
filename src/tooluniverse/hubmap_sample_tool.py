@@ -129,6 +129,46 @@ class HuBMAPSampleTool(BaseTool):
         return resp.json()
 
     @staticmethod
+    def _paging(arguments: dict[str, Any]) -> tuple[int, int, dict[str, Any] | None]:
+        limit = arguments.get("limit", 10)
+        offset = arguments.get("offset", 0)
+        if (
+            isinstance(limit, bool)
+            or not isinstance(limit, int)
+            or not 1 <= limit <= 50
+        ):
+            return (
+                0,
+                0,
+                {
+                    "status": "error",
+                    "error": "limit must be an integer between 1 and 50",
+                    "parameter": "limit",
+                },
+            )
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return (
+                0,
+                0,
+                {
+                    "status": "error",
+                    "error": "offset must be a non-negative integer",
+                    "parameter": "offset",
+                },
+            )
+        return limit, offset, None
+
+    @staticmethod
+    def _total_value(data: dict[str, Any]) -> int:
+        total = data.get("hits", {}).get("total", 0)
+        if isinstance(total, dict):
+            total = total.get("value", 0)
+        try:
+            return int(total)
+        except (TypeError, ValueError):
+            return 0
+
+    @staticmethod
     def _first_organ_code(src: dict[str, Any]) -> str | None:
         """Return the first mapped organ code from origin_samples, or None."""
         for s in src.get("origin_samples", []):
@@ -191,7 +231,9 @@ class HuBMAPSampleTool(BaseTool):
         organ = arguments.get("organ")
         sample_category = arguments.get("sample_category")
         registered_only = arguments.get("registered_only", False)
-        limit = min(int(arguments.get("limit", 10) or 10), 50)
+        limit, offset, paging_error = self._paging(arguments)
+        if paging_error:
+            return paging_error
 
         must: list[dict[str, Any]] = [{"match": {"entity_type": "Sample"}}]
         if organ:
@@ -203,6 +245,7 @@ class HuBMAPSampleTool(BaseTool):
 
         body = {
             "size": limit,
+            "from": offset,
             "query": {"bool": {"must": must}},
             "_source": [
                 "hubmap_id",
@@ -218,7 +261,7 @@ class HuBMAPSampleTool(BaseTool):
         }
         data = self._post(body)
         hits = data.get("hits", {}).get("hits", [])
-        total = data.get("hits", {}).get("total", {}).get("value", 0)
+        total = self._total_value(data)
 
         samples = []
         for h in hits:
@@ -244,6 +287,18 @@ class HuBMAPSampleTool(BaseTool):
                 "total": total,
                 "returned": len(samples),
                 "samples": samples,
+            },
+            "metadata": {
+                "offset": offset,
+                "limit": limit,
+                "returned": len(samples),
+                "total_results": total,
+                "total_results_is_exact": True,
+                "has_more": offset + len(samples) < total,
+                "next_offset": offset + len(samples)
+                if len(samples) and offset + len(samples) < total
+                else None,
+                "result_set_complete": offset == 0 and len(samples) == total,
             },
         }
 
@@ -296,7 +351,9 @@ class HuBMAPSampleTool(BaseTool):
     def _search_donors(self, arguments: dict[str, Any]) -> dict[str, Any]:
         group_name = arguments.get("group_name")
         query_text = arguments.get("query")
-        limit = min(int(arguments.get("limit", 10) or 10), 50)
+        limit, offset, paging_error = self._paging(arguments)
+        if paging_error:
+            return paging_error
 
         must: list[dict[str, Any]] = [{"match": {"entity_type": "Donor"}}]
         if group_name:
@@ -318,6 +375,7 @@ class HuBMAPSampleTool(BaseTool):
 
         body = {
             "size": limit,
+            "from": offset,
             "query": {"bool": {"must": must}},
             "_source": [
                 "hubmap_id",
@@ -330,7 +388,7 @@ class HuBMAPSampleTool(BaseTool):
         }
         data = self._post(body)
         hits = data.get("hits", {}).get("hits", [])
-        total = data.get("hits", {}).get("total", {}).get("value", 0)
+        total = self._total_value(data)
 
         donors = []
         for h in hits:
@@ -350,5 +408,17 @@ class HuBMAPSampleTool(BaseTool):
                 "total": total,
                 "returned": len(donors),
                 "donors": donors,
+            },
+            "metadata": {
+                "offset": offset,
+                "limit": limit,
+                "returned": len(donors),
+                "total_results": total,
+                "total_results_is_exact": True,
+                "has_more": offset + len(donors) < total,
+                "next_offset": offset + len(donors)
+                if len(donors) and offset + len(donors) < total
+                else None,
+                "result_set_complete": offset == 0 and len(donors) == total,
             },
         }

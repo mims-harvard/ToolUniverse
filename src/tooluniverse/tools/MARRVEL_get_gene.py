@@ -1,7 +1,7 @@
 """
 MARRVEL_get_gene
 
-Get aggregated identity and annotation for a human gene by symbol from MARRVEL: cross-references ...
+Get a complete normalized MARRVEL human-gene record by symbol: HGNC/Ensembl/Entrez/UniProt cross-...
 """
 
 from typing import Any, Optional, Callable
@@ -18,16 +18,16 @@ def MARRVEL_get_gene(
     validate: bool = True,
 ) -> Any:
     """
-    Get aggregated identity and annotation for a human gene by symbol from MARRVEL: cross-references ...
+    Get a complete normalized MARRVEL human-gene record by symbol: HGNC/Ensembl/Entrez/UniProt cross-...
 
     Parameters
     ----------
     symbol : str
-        HGNC gene symbol, e.g. 'CFTR', 'BRCA1'.
+        HGNC gene symbol, e.g. 'CFTR', 'BRCA1'. Input is normalized to uppercase beca...
     gene_symbol : str
-        Alias for symbol.
+        Alias for symbol. If multiple aliases are supplied, all must identify the sam...
     gene : str
-        Alias for symbol.
+        Alias for symbol. If multiple aliases are supplied, all must identify the sam...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False

@@ -82,8 +82,20 @@ class OrthoDBTool(BaseTool):
         species = arguments.get("species")
         level = arguments.get("level")
         limit = arguments.get("limit", 10)
+        offset = arguments.get("offset", 0)
+        if (
+            isinstance(limit, bool)
+            or not isinstance(limit, int)
+            or not 1 <= limit <= 50
+        ):
+            return {"status": "error", "error": "limit must be an integer from 1 to 50"}
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {"status": "error", "error": "offset must be a non-negative integer"}
 
-        params = {"query": query, "limit": min(limit, 50)}
+        # OrthoDB v12 ignores `limit` and always returns a 100-record search
+        # window, but its `skip` parameter works. Start that window at the
+        # requested offset, then take the caller's page size locally.
+        params = {"query": query, "limit": 100, "skip": offset}
         if species:
             params["species"] = species
         if level:
@@ -94,7 +106,11 @@ class OrthoDBTool(BaseTool):
         response.raise_for_status()
         data = response.json()
 
-        group_ids = data.get("data", [])
+        group_ids = (data.get("data") or [])[:limit]
+        try:
+            total_groups = int(data.get("count", len(group_ids)))
+        except (TypeError, ValueError):
+            total_groups = len(group_ids)
 
         # /search only returns bare group ids -- name/level_taxid require a
         # separate per-group /tab lookup (confirmed live: OrthoDB has no
@@ -103,8 +119,9 @@ class OrthoDBTool(BaseTool):
         # 9 of 10 results as bare {"group_id": ...} with no way to tell
         # them apart without a follow-up call per group.
         groups = []
-        for gid in group_ids[:limit]:
-            group = {"group_id": gid}
+        enrichment_failures = []
+        for gid in group_ids:
+            group = {"group_id": gid, "enrichment_status": "unavailable"}
             try:
                 tab_resp = requests.get(
                     f"{ORTHODB_BASE_URL}/tab",
@@ -118,8 +135,30 @@ class OrthoDBTool(BaseTool):
                         if len(cols) >= 2:
                             group["name"] = cols[1]
                             group["level_taxid"] = cols[2] if len(cols) > 2 else None
-            except Exception:
-                pass
+                            group["enrichment_status"] = "complete"
+                        else:
+                            group["enrichment_error"] = (
+                                "OrthoDB /tab row had fewer than two columns"
+                            )
+                    else:
+                        group["enrichment_error"] = (
+                            "OrthoDB /tab returned no member row"
+                        )
+                else:
+                    group["enrichment_error"] = (
+                        f"OrthoDB /tab returned HTTP {tab_resp.status_code}"
+                    )
+            except Exception as exc:
+                group["enrichment_error"] = f"OrthoDB /tab request failed: {exc}"
+            if group["enrichment_status"] != "complete":
+                enrichment_failures.append(
+                    {
+                        "group_id": gid,
+                        "error": group.get(
+                            "enrichment_error", "Unknown enrichment failure"
+                        ),
+                    }
+                )
             groups.append(group)
 
         return {
@@ -127,11 +166,30 @@ class OrthoDBTool(BaseTool):
             "data": {
                 "query": query,
                 "groups": groups,
-                "total_groups": len(group_ids),
+                "total_groups": total_groups,
+                "returned": len(groups),
+                "offset": offset,
+                "limit": limit,
+                "has_more": offset + len(groups) < total_groups,
+                "next_offset": (
+                    offset + len(groups)
+                    if offset + len(groups) < total_groups
+                    else None
+                ),
+                "result_set_complete": offset == 0 and len(groups) == total_groups,
             },
             "metadata": {
                 "source": "OrthoDB v12 - Search",
                 "query": query,
+                "total_results": total_groups,
+                "total_results_is_exact": True,
+                "group_enrichment": {
+                    "attempted": len(groups),
+                    "complete": len(groups) - len(enrichment_failures),
+                    "failed": len(enrichment_failures),
+                    "all_complete": not enrichment_failures,
+                    "failures": enrichment_failures,
+                },
             },
         }
 
@@ -154,21 +212,36 @@ class OrthoDBTool(BaseTool):
         if not group_data:
             return {"status": "error", "error": f"No data found for group {group_id}"}
 
-        # Extract GO terms
+        # OrthoDB v12 split the old `GO` array into ontology-aspect keys.
+        # Read both schemas, preserve the aspect, and de-duplicate terms that
+        # also appear in the upstream "unclassified GO terms" bucket.
         go_terms = []
-        for go in (group_data.get("GO") or [])[:20]:
-            go_terms.append(
-                {
-                    "id": go.get("id"),
-                    "description": go.get("description"),
-                    "category": go.get("type"),
-                    "count": go.get("count"),
-                }
-            )
+        seen_go_ids = set()
+        go_sources = [
+            ("biological_process", group_data.get("biological_process") or []),
+            ("cellular_component", group_data.get("cellular_component") or []),
+            ("molecular_function", group_data.get("molecular_function") or []),
+            ("unclassified", group_data.get("unclassified GO terms") or []),
+            (None, group_data.get("GO") or []),
+        ]
+        for category, annotations in go_sources:
+            for go in annotations:
+                go_id = go.get("id")
+                if go_id in seen_go_ids:
+                    continue
+                seen_go_ids.add(go_id)
+                go_terms.append(
+                    {
+                        "id": go_id,
+                        "description": go.get("description"),
+                        "category": category or go.get("type"),
+                        "count": go.get("count"),
+                    }
+                )
 
         # Extract KEGG pathways
         kegg_pathways = []
-        for k in (group_data.get("KEGGpathway") or [])[:20]:
+        for k in group_data.get("KEGGpathway") or []:
             kegg_pathways.append(
                 {
                     "id": k.get("id"),
@@ -179,7 +252,10 @@ class OrthoDBTool(BaseTool):
 
         # Extract InterPro domains
         interpro = []
-        for ip in (group_data.get("InterPro") or [])[:20]:
+        interpro_source = (
+            group_data.get("interpro_domains") or group_data.get("InterPro") or []
+        )
+        for ip in interpro_source:
             interpro.append(
                 {
                     "id": ip.get("id"),
@@ -198,10 +274,24 @@ class OrthoDBTool(BaseTool):
                 "go_terms": go_terms if go_terms else None,
                 "kegg_pathways": kegg_pathways if kegg_pathways else None,
                 "interpro_domains": interpro if interpro else None,
+                "ec_numbers": group_data.get("ECnumber") or None,
+                "functional_categories": group_data.get("functional_category") or None,
+                "phyletic_profile": group_data.get("phyletic_profile"),
+                "evolutionary_rate": group_data.get("evolutionary_rate"),
+                "gene_architecture": group_data.get("gene_architecture"),
             },
             "metadata": {
                 "source": "OrthoDB v12 - Group Details",
                 "group_id": group_id,
+                "annotation_counts": {
+                    "go_terms": len(go_terms),
+                    "kegg_pathways": len(kegg_pathways),
+                    "interpro_domains": len(interpro),
+                    "ec_numbers": len(group_data.get("ECnumber") or []),
+                    "functional_categories": len(
+                        group_data.get("functional_category") or []
+                    ),
+                },
             },
         }
 
@@ -214,10 +304,31 @@ class OrthoDBTool(BaseTool):
                 "error": "group_id parameter is required (e.g., '727649at7742')",
             }
         species = arguments.get("species")
+        limit = arguments.get("limit", 100)
+        offset = arguments.get("offset", 0)
+        if (
+            isinstance(limit, bool)
+            or not isinstance(limit, int)
+            or not 1 <= limit <= 1000
+        ):
+            return {
+                "status": "error",
+                "error": "limit must be an integer from 1 to 1000",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+            }
 
-        # Use tab endpoint which gives structured gene list
+        # OrthoDB v12's /tab endpoint does not expose working pagination:
+        # `skip` is rejected by its schema and `offset` silently returns an
+        # empty HTTP-200 response. Fetch a bounded complete window once, then
+        # page it locally so records after the former hard limit remain
+        # reachable.
         url = f"{ORTHODB_BASE_URL}/tab"
-        params = {"id": group_id, "limit": 100}
+        upstream_limit = 5000
+        params = {"id": group_id, "limit": upstream_limit}
         if species:
             params["species"] = species
 
@@ -234,11 +345,11 @@ class OrthoDBTool(BaseTool):
         # Parse header
         lines[0].split("\t")
 
-        orthologs = []
-        for line in lines[1:101]:
+        all_orthologs = []
+        for line in lines[1:]:
             cols = line.split("\t")
             if len(cols) >= 6:
-                orthologs.append(
+                all_orthologs.append(
                     {
                         "group_id": cols[0] if len(cols) > 0 else None,
                         "group_name": cols[1] if len(cols) > 1 else None,
@@ -249,6 +360,12 @@ class OrthoDBTool(BaseTool):
                         "description": cols[6] if len(cols) > 6 else None,
                     }
                 )
+
+        orthologs = all_orthologs[offset : offset + limit]
+        total_orthologs = len(all_orthologs)
+        total_is_lower_bound = total_orthologs >= upstream_limit
+        has_more = offset + len(orthologs) < total_orthologs
+        accessible_window_complete = not total_is_lower_bound
 
         # Summarize by organism
         organisms = {}
@@ -261,12 +378,32 @@ class OrthoDBTool(BaseTool):
             "data": {
                 "group_id": group_id,
                 "orthologs": orthologs,
-                "total_orthologs": len(orthologs),
+                "total_orthologs": total_orthologs,
+                "returned": len(orthologs),
+                "offset": offset,
+                "limit": limit,
+                "has_more": has_more,
+                "next_offset": offset + len(orthologs) if has_more else None,
+                "truncated": offset > 0 or has_more or total_is_lower_bound,
+                "result_set_complete": bool(
+                    offset == 0
+                    and len(orthologs) == total_orthologs
+                    and accessible_window_complete
+                ),
                 "organisms_summary": organisms,
             },
             "metadata": {
                 "source": "OrthoDB v12 - Orthologs",
                 "group_id": group_id,
+                "api_result_window_limit": upstream_limit,
+                "total_is_lower_bound": total_is_lower_bound,
+                "accessible_window_complete": accessible_window_complete,
+                "upstream_truncated": total_is_lower_bound,
+                "warning": (
+                    "OrthoDB returned the 5,000-record API window; additional orthologs may exist upstream."
+                    if total_is_lower_bound
+                    else None
+                ),
             },
         }
 
@@ -281,6 +418,18 @@ class OrthoDBTool(BaseTool):
 
         species = arguments.get("species")
         limit = arguments.get("limit", 50)
+        offset = arguments.get("offset", 0)
+        if (
+            isinstance(limit, bool)
+            or not isinstance(limit, int)
+            or not 1 <= limit <= 500
+        ):
+            return {
+                "status": "error",
+                "error": "limit must be an integer from 1 to 500",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {"status": "error", "error": "offset must be a non-negative integer"}
 
         url = f"{ORTHODB_BASE_URL}/fasta"
         params = {"id": group_id}
@@ -300,7 +449,8 @@ class OrthoDBTool(BaseTool):
                 ),
             }
 
-        sequences = self._parse_fasta(text, min(limit, 500))
+        all_sequences = self._parse_fasta(text)
+        sequences = all_sequences[offset : offset + limit]
 
         if not sequences:
             return {
@@ -313,18 +463,28 @@ class OrthoDBTool(BaseTool):
             "data": {
                 "group_id": group_id,
                 "sequences": sequences,
-                "total_sequences": len(sequences),
+                "total_sequences": len(all_sequences),
+                "returned": len(sequences),
+                "offset": offset,
+                "limit": limit,
+                "has_more": offset + len(sequences) < len(all_sequences),
+                "next_offset": (
+                    offset + len(sequences)
+                    if offset + len(sequences) < len(all_sequences)
+                    else None
+                ),
                 "fasta": text,
             },
             "metadata": {
                 "source": "OrthoDB v12 - FASTA",
                 "group_id": group_id,
                 "species": species,
+                "fasta_contains_all_sequences": True,
             },
         }
 
     @staticmethod
-    def _parse_fasta(text: str, limit: int) -> list:
+    def _parse_fasta(text: str, limit: int | None = None) -> list:
         """Parse OrthoDB FASTA: each header carries JSON-encoded metadata."""
         sequences = []
         record_id = None
@@ -351,7 +511,7 @@ class OrthoDBTool(BaseTool):
 
         for line in text.splitlines():
             if line.startswith(">"):
-                if len(sequences) >= limit:
+                if limit is not None and len(sequences) >= limit:
                     break
                 _flush()
                 seq_lines = []
@@ -370,7 +530,7 @@ class OrthoDBTool(BaseTool):
             else:
                 seq_lines.append(line.strip())
 
-        if len(sequences) < limit:
+        if limit is None or len(sequences) < limit:
             _flush()
 
         return sequences

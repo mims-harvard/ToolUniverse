@@ -115,6 +115,8 @@ class VDJDBTool(BaseTool):
 
     def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Execute the VDJdb API tool with given arguments."""
+        if not isinstance(arguments, dict):
+            return {"status": "error", "error": "arguments must be an object"}
         operation = arguments.get("operation")
         if not operation:
             return {"status": "error", "error": "Missing required parameter: operation"}
@@ -213,6 +215,14 @@ class VDJDBTool(BaseTool):
         match_type = arguments.get("match_type", "exact")
         page = arguments.get("page", 0)
         page_size = arguments.get("page_size", 25)
+        if match_type not in {"exact", "fuzzy", "pattern"}:
+            return {
+                "status": "error",
+                "error": "match_type must be exact, fuzzy, or pattern",
+            }
+        error = self._validate_controls(page, page_size, species, gene)
+        if error:
+            return error
 
         filters = []
 
@@ -276,6 +286,9 @@ class VDJDBTool(BaseTool):
             return {"status": "error", "error": result["error"]}
 
         raw = result["data"]
+        error = self._validate_page(raw, page, page_size)
+        if error:
+            return error
         records = [
             _parse_row(row["entries"], row.get("metadata", {}))
             for row in raw.get("rows", [])
@@ -289,6 +302,9 @@ class VDJDBTool(BaseTool):
                 "page": raw.get("page", -1),
                 "page_size": raw.get("pageSize", -1),
                 "page_count": raw.get("pageCount", -1),
+                "has_more": page + 1 < raw["pageCount"],
+                "next_page": page + 1 if page + 1 < raw["pageCount"] else None,
+                "result_set_complete": raw["recordsFound"] == len(records),
             },
         }
 
@@ -304,6 +320,20 @@ class VDJDBTool(BaseTool):
         min_score = arguments.get("min_score")
         page = arguments.get("page", 0)
         page_size = arguments.get("page_size", 25)
+        error = self._validate_controls(page, page_size, species, gene)
+        if error:
+            return error
+        if mhc_class not in {None, "MHCI", "MHCII"}:
+            return {"status": "error", "error": "mhc_class must be MHCI or MHCII"}
+        if min_score is not None and (
+            isinstance(min_score, bool)
+            or not isinstance(min_score, int)
+            or not 0 <= min_score <= 3
+        ):
+            return {
+                "status": "error",
+                "error": "min_score must be an integer from 0 to 3",
+            }
 
         filters = [
             {
@@ -359,6 +389,9 @@ class VDJDBTool(BaseTool):
             return {"status": "error", "error": result["error"]}
 
         raw = result["data"]
+        error = self._validate_page(raw, page, page_size)
+        if error:
+            return error
         records = [
             _parse_row(row["entries"], row.get("metadata", {}))
             for row in raw.get("rows", [])
@@ -372,8 +405,46 @@ class VDJDBTool(BaseTool):
                 "page": raw.get("page", -1),
                 "page_size": raw.get("pageSize", -1),
                 "page_count": raw.get("pageCount", -1),
+                "has_more": page + 1 < raw["pageCount"],
+                "next_page": page + 1 if page + 1 < raw["pageCount"] else None,
+                "result_set_complete": raw["recordsFound"] == len(records),
             },
         }
+
+    @staticmethod
+    def _validate_controls(page, page_size, species, gene):
+        if isinstance(page, bool) or not isinstance(page, int) or page < 0:
+            return {"status": "error", "error": "page must be a non-negative integer"}
+        if (
+            isinstance(page_size, bool)
+            or not isinstance(page_size, int)
+            or not 1 <= page_size <= 100
+        ):
+            return {
+                "status": "error",
+                "error": "page_size must be an integer from 1 to 100",
+            }
+        if species not in {None, "HomoSapiens", "MusMusculus", "MacacaMulatta"}:
+            return {"status": "error", "error": "species is not supported by VDJdb"}
+        if gene not in {None, "TRA", "TRB"}:
+            return {"status": "error", "error": "gene must be TRA or TRB"}
+        return None
+
+    @staticmethod
+    def _validate_page(raw, page, page_size):
+        if (
+            not isinstance(raw, dict)
+            or raw.get("page") != page
+            or raw.get("pageSize") != page_size
+            or not isinstance(raw.get("rows"), list)
+            or not isinstance(raw.get("recordsFound"), int)
+            or not isinstance(raw.get("pageCount"), int)
+        ):
+            return {
+                "status": "error",
+                "error": "VDJdb returned inconsistent pagination metadata",
+            }
+        return None
 
     def _get_database_summary(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get VDJdb database metadata and column information."""
