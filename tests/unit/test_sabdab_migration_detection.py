@@ -69,16 +69,15 @@ def test_an_html_200_is_never_reported_as_data(operation):
 
 
 def test_search_survives_an_html_200_without_claiming_results():
-    """Search makes a request only for the catalogue size, so it degrades."""
+    """An HTML 200 where the search JSON should be is an error, not 0 hits."""
     with patch(
         "tooluniverse.sabdab_tool.requests.get", return_value=_HtmlResponse()
     ):
         result = _tool("search_structures").run(
-            {"operation": "search_structures", "query": "anti-CD20"}
+            {"operation": "search_structures", "query": "lysozyme"}
         )
 
-    assert result["status"] == "success"
-    assert result["data"]["searched"] is False
-    assert result["data"]["catalogue_size"] is None, (
-        "an unreachable count must be null, not a stale or invented number"
+    assert result["status"] == "error", (
+        "a page that is not the API must not be reported as an empty search"
     )
+    assert "data" not in result

@@ -24,7 +24,7 @@ from unittest.mock import patch
 
 import pytest
 
-from tooluniverse.sabdab_tool import SAbDabTool
+from tooluniverse.sabdab_tool import SABDAB_API_URL, SAbDabTool
 
 pytestmark = pytest.mark.unit
 
@@ -194,20 +194,19 @@ def test_get_structure_says_where_coordinates_come_from():
     assert "rcsb" in data["coordinates"].lower()
 
 
-def test_search_reports_that_it_did_not_search():
-    """Every filter parameter on /api/pdb is accepted and ignored."""
+def test_search_reads_antibody_instances_not_pdb():
+    """/api/pdb ignores every filter; /api/antibody-instances applies them."""
+    seen = {}
     data = _run(
         "search_structures",
-        {"query": "anti-CD20"},
-        _Response(200, {"total": 11667, "limit": 1, "offset": 0, "results": []}),
+        {"query": "lysozyme"},
+        _Response(200, {"total": 123, "limit": 20, "offset": 0, "results": []}),
+        capture=seen,
     )["data"]
 
-    assert data["searched"] is False, (
-        "an empty answer from a search that never ran must not look like "
-        "evidence of absence"
-    )
-    assert data["catalogue_size"] == 11667
-    assert data["next_steps"]
+    assert seen["urls"] == [f"{SABDAB_API_URL}/antibody-instances"]
+    assert data["total_matches"] == 123
+    assert data["filters_applied"] == {"binds_to_antigen": "lysozyme"}
 
 
 def test_the_summary_counts_come_from_the_api_not_a_hardcoded_string():
