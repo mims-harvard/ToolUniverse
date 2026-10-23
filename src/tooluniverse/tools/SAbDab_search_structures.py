@@ -1,7 +1,7 @@
 """
 SAbDab_search_structures
 
-Search SAbDab structural antibody database. Returns a direct browse URL to matching antibody stru...
+Search SAbDab (Structural Antibody Database) for antibody structures by the antigen they bind, an...
 """
 
 from typing import Any, Optional, Callable
@@ -12,25 +12,46 @@ def SAbDab_search_structures(
     operation: Optional[str] = "search_structures",
     query: Optional[str] = None,
     antigen: Optional[str] = None,
-    limit: Optional[int] = 50,
+    limit: Optional[int] = 20,
+    species: Optional[str] = None,
+    method: Optional[str] = None,
+    resolution_max: Optional[float] = None,
+    antigen_type: Optional[str] = None,
+    antibody_type: Optional[str] = None,
+    pdb_id: Optional[str] = None,
+    offset: Optional[int] = 0,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search SAbDab structural antibody database. Returns a direct browse URL to matching antibody stru...
+    Search SAbDab (Structural Antibody Database) for antibody structures by the antigen they bind, an...
 
     Parameters
     ----------
     operation : str
 
     query : str
-        Search query - antigen name, species, or keywords (e.g., 'HER2', 'anti-CD20')
+        Part of the bound antigen's name as deposited in the PDB, case-insensitive, a...
     antigen : str
-        Alias for query. Antigen name to search (e.g., 'EGFR', 'HER2').
+        Alias for query.
     limit : int
-        Maximum results (default: 50)
+        Rows per page (1-100, default 20).
+    species : str
+        Substring of the antibody's source organism scientific name (e.g. 'Homo sapie...
+    method : str
+        Experimental method of the structure (case-insensitive).
+    resolution_max : float
+        Keep structures determined at this resolution (angstroms) or better.
+    antigen_type : str
+        Kind of antigen bound (case-insensitive).
+    antibody_type : str
+        Antibody format: FV, FAB, FAB+FC, FV*, SD-H (heavy-chain single domain, e.g. ...
+    pdb_id : str
+        Restrict to one PDB entry (4-character code, e.g. '3hfm').
+    offset : int
+        Zero-based row offset; continue with data.next_offset while data.has_more is ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -52,6 +73,13 @@ def SAbDab_search_structures(
             "query": query,
             "antigen": antigen,
             "limit": limit,
+            "species": species,
+            "method": method,
+            "resolution_max": resolution_max,
+            "antigen_type": antigen_type,
+            "antibody_type": antibody_type,
+            "pdb_id": pdb_id,
+            "offset": offset,
         }.items()
         if v is not None
     }
