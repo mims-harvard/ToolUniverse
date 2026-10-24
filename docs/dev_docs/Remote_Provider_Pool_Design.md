@@ -169,40 +169,60 @@ malformed.
 ### Admitting on memory, not just on count
 
 `--max-active` is a count, and a count cannot express that two small models fit where one
-large one does not. Memory can, but nothing declares what a reviewed provider costs: there
-is no `provider.toml`, no figure in any of the thirty READMEs, and no field on
-`RemoteDeployment`. Writing a table of numbers would be guessing about other people's
-hardware.
+large one does not. Memory can, and two sources answer what a model costs:
 
-So the pool measures instead. Free VRAM before a start, free VRAM once the provider
-answers, and the difference is what that model costs *on this machine*. `FootprintStore`
-caches it beside the schema snapshots. A provider's first load is therefore admitted on
-count alone — there is nothing to reason with yet — and every later one can be admitted on
-memory.
+- **The provider's own manifest.** `[gpu] vram_budget_gb` is a measured peak — `tu remote
+  room` prints 27 of them — measured on the machine that verified that provider, which
+  makes it a prior anywhere else and not a reading. That is what it is used as.
+- **This host's own measurement.** Free memory before a start, free memory once the
+  provider answers, and the difference is what the model costs *here*. `FootprintStore`
+  caches it beside the schema snapshots.
 
-Three decisions worth keeping:
+Admission decides on the **larger of the two**, because each one can be the low one and
+either being low overcommits the machine:
 
-- **The largest measurement wins.** A model that allocates lazily looks smaller on a run
-  that only initialised it, and admitting on that smaller number overcommits the GPU the
-  next time it is really used.
-- **Freed memory is estimated from the victims' own measurements, not re-read from the
-  driver.** A stopped process does not return its VRAM immediately, so a fresh reading
-  straight after a kill reports the memory as still in use. A victim nobody has measured
-  yet counts as freeing nothing, which can refuse an admission that would have fit —
+- a declared budget can be low here, because this is not the machine it was measured on;
+- a local measurement can be low because a resident provider loads its model on the FIRST
+  REQUEST and not when its server binds. `wait_until_ready` returns once `tools/list`
+  matches the reviewed contract, which it does with the card still empty, so the
+  difference measured across a start can be the server's CUDA context rather than the
+  model. For a resident provider, "learn the cost from a load" therefore never arrives on
+  its own — which is why reading the manifests is what makes the memory ceiling apply to
+  the 31 resident providers at all, and not merely sooner.
+
+A provider that declares nothing and has never been loaded here is still admitted on count
+alone: 28 of the 59 reviewed slugs declare no budget, and `[gpu] policy = "none"` declares
+0, so count-only admission stays a normal mode of operation rather than a fallback.
+
+Decisions worth keeping:
+
+- **The largest figure wins**, for both of the reasons above. A model that allocates lazily
+  also looks smaller on a run that only initialised it.
+- **Freed memory is estimated from the victims' own footprints, not re-read from the
+  driver.** A stopped process does not return its memory immediately, so a fresh reading
+  straight after a kill reports it as still in use. A victim whose cost nobody declared or
+  measured counts as freeing nothing, which can refuse an admission that would have fit —
   preferred over the opposite error.
-- **The most free device is reported, never the sum.** One provider lands on one GPU, so a
-  sum would claim room no single model can use. The pool does not choose placement, so
-  this is an upper bound on what the next model can expect rather than a guarantee.
+- **Free memory is read per machine, not per card.** `admission.pool_free_gib` answers with
+  a discrete device's own `memory.free` (the most free device, never the sum: one provider
+  lands on one GPU), with `MemAvailable` on unified memory where the device has no memory
+  of its own, and with nothing at all where there is no NVIDIA driver. The unified case is
+  not hypothetical: a machine used to develop this answers `[N/A]` to `memory.free`, which
+  this module first read as "do not reason about memory" — so on a host with 121 GiB worth
+  reasoning about, no memory ceiling applied. Admitting against the `[N/A]` would have been
+  worse than ignoring it; asking the pool the allocation actually comes out of is the third
+  option, and `capacity_gib` was already making that distinction one layer down.
+- **A model larger than the machine is refused up front.** Capacity does not move, so it is
+  read once and a provider needing more than this machine's whole pool is refused before
+  anything is evicted — and reported as permanent rather than as "at capacity, retry
+  shortly", which would send a caller into a loop that cannot succeed.
 
 Memory pressure never evicts a provider with a call in flight, exactly like the count
 ceiling: the caller is told to retry instead of having a running GPU job killed under it.
 
-Reading the GPU degrades to "do not reason about VRAM" rather than to "no memory": no
-`nvidia-smi`, a non-zero exit, or a reading that is not a number. That last case is not
-hypothetical — a machine used to develop this has `nvidia-smi` present and answering
-`[N/A]` for `memory.free`, and admitting against that would be worse than ignoring it.
-Twenty of the thirty reviewed providers need no GPU at all, so count-only admission stays
-a normal mode of operation rather than a fallback.
+Reading the machine still degrades to "do not reason about memory" rather than to "no
+memory": no `nvidia-smi`, a non-zero exit, a reading that is neither a number nor `[N/A]`,
+or one device answering while another does not.
 
 ### Waiting out a cold model
 

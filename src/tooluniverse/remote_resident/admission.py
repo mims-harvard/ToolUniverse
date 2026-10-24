@@ -143,6 +143,70 @@ def capacity_gib() -> Tuple[Optional[float], str]:
         return None, f"no device total and no MemTotal ({exc})"
 
 
+def pool_free_gib(timeout: float = 15.0) -> Tuple[Optional[float], str]:
+    """How much of that one pool is free right now, and where the figure came from.
+
+    The mirror of `capacity_gib`, for the same reason and across the same three
+    machines. A discrete card knows what it has free and that is the answer. On
+    unified memory `nvidia-smi` returns `[N/A]` for `memory.free` exactly as it
+    does for `memory.total`, and the honest reading is `MemAvailable`, because
+    the model's allocation and the page cache come out of one 121 GiB pool.
+
+    A host with no NVIDIA driver at all gets `(None, reason)` rather than its
+    free RAM: a machine with no device is not a machine with an empty device,
+    and reporting host RAM as free VRAM would admit a model onto hardware that
+    cannot hold it. `None` means DO NOT REASON ABOUT MEMORY, which a caller has
+    to handle as its own case rather than compare against zero.
+    """
+    try:
+        out = subprocess.run(
+            ["nvidia-smi", "--query-gpu=memory.free", "--format=csv,noheader,nounits"],
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+        )
+    except (OSError, subprocess.SubprocessError) as exc:
+        return None, f"nvidia-smi did not run ({type(exc).__name__})"
+    if out.returncode != 0:
+        # A driver that errors is not a card that is empty. Falling through to
+        # MemAvailable here would report host RAM as free VRAM on a discrete box
+        # and admit a model the card cannot hold -- so a failed query is the
+        # "do not reason" answer, not the unified-memory one.
+        return None, f"nvidia-smi exited {out.returncode}"
+
+    values: list[int] = []
+    unavailable = False
+    for line in (out.stdout or "").splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        if "N/A" in line:
+            unavailable = True
+            continue
+        try:
+            values.append(int(line))
+        except ValueError:
+            return None, "nvidia-smi answered with neither a number nor [N/A]"
+
+    if values and unavailable:
+        # One device answered and another did not: admitting on half a view of
+        # the hardware is worse than not reasoning about memory at all.
+        return None, "nvidia-smi answered for some devices and [N/A] for others"
+    if values:
+        # The most free device, not the sum: one worker lands on one card, so a
+        # sum would offer room that no single model can use.
+        return max(values) / 1024.0, "nvidia-smi memory.free (discrete device)"
+    if not unavailable:
+        return None, "nvidia-smi listed no devices"
+    try:
+        return (
+            meminfo_gib()["MemAvailable"],
+            "/proc/meminfo MemAvailable (unified memory)",
+        )
+    except (OSError, RuntimeError) as exc:
+        return None, f"no device free and no MemAvailable ({exc})"
+
+
 def _nvidia_pids() -> int:
     """How many processes the driver says are holding the card right now.
 
@@ -288,6 +352,12 @@ def _declared_budget(slug: str) -> Optional[float]:
     if m.vram_budget_gb is None and (m.gpu_policy or "").lower() == "none":
         return 0.0
     return m.vram_budget_gb
+
+
+# The public name for the same reading. `_declared_budget` stays because this
+# module and its tests call it by that name; anything outside the package asks
+# for a declared budget rather than reaching for a private helper.
+declared_budget_gb = _declared_budget
 
 
 def decide(

@@ -25,13 +25,18 @@ it is not already up, and proxies the call. Providers idle longer than ``idle_tt
 are stopped, and ``max_active`` bounds how many run at once with least-recently-used
 eviction, so one host can advertise more models than its GPU could hold together.
 
-The pool deliberately does not reach past what a local endpoint can do. It cannot be
-asked to prewarm before a call arrives, because the tunnel carries only HTTP
-request/response frames and has no control plane; a call that lands while a provider
-is still starting gets 503 with Retry-After rather than being queued across the
-relay. Admission counts providers, not VRAM. See
-``docs/dev_docs/Remote_Provider_Pool_Design.md`` for why those belong to a later
-protocol change rather than here.
+A call that lands while a provider is still starting gets 503 with Retry-After rather
+than being queued across the relay; ``control`` answers ``prewarm``/``stop``/``status``
+for a relay that offers a control plane, which ``tu serve`` wires up only when the
+installed ``RelayAgent`` takes one.
+
+Admission applies two ceilings. ``max_active`` is a count and always applies. Memory
+applies wherever the machine can be read, and the reading is per machine rather than
+per card: a discrete device's own ``memory.free``, ``MemAvailable`` on unified memory
+where the device has no memory of its own, and nothing at all on a host with no NVIDIA
+driver, which stays count-only. What a model costs is the larger of its manifest's
+measured ``[gpu] vram_budget_gb`` and what this host has measured it to cost here. See
+``docs/dev_docs/Remote_Provider_Pool_Design.md``.
 """
 
 from __future__ import annotations
@@ -50,6 +55,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 
+from .remote_resident import admission
 from .remote_runtime import (
     REMOTE_BY_SLUG,
     ManagedRemoteProcess,
@@ -102,6 +108,14 @@ class ProviderStarting(PoolError):
     """A provider is being started by another in-flight request."""
 
 
+class ProviderTooLarge(PoolError):
+    """This machine could not hold this provider even with nothing else resident.
+
+    Separate from the other refusals because it is permanent: no eviction and no
+    retry changes it, so telling the caller to come back shortly would be wrong.
+    """
+
+
 def build_tool_index(slugs: Iterable[str]) -> dict[str, RemoteDeployment]:
     """Map every advertised tool name to the provider that serves it.
 
@@ -127,58 +141,76 @@ def build_tool_index(slugs: Iterable[str]) -> dict[str, RemoteDeployment]:
     return index
 
 
-def gpu_free_mib(timeout: float = 5.0) -> int | None:
-    """Free VRAM on the most free visible GPU, or None when there is no GPU to ask.
+def pool_free_mib(timeout: float = 15.0) -> int | None:
+    """Free memory in the pool the next model allocates from, on whatever machine this is.
 
-    Reports the maximum across devices rather than the sum: one provider lands on one
-    GPU, so the sum would claim room that no single model can use. The pool does not
-    choose placement -- CUDA_VISIBLE_DEVICES and the provider do -- so this is an upper
-    bound on what the next model can expect, not a guarantee.
+    Delegates to :func:`admission.pool_free_gib`, where this fleet's three kinds of
+    machine are already told apart for the resident gate. Asking the device directly
+    was this module's first answer and it stopped applying silently on unified memory:
+    ``nvidia-smi --query-gpu=memory.free`` prints ``[N/A]`` on this fleet's GB10 --
+    measured, not reasoned -- so the reading was None, so every ceiling built on it was
+    skipped, on a host with 121 GiB worth reasoning about.
 
-    None means "do not reason about VRAM": no nvidia-smi, no driver, or a machine with no
-    GPU at all, which is the case for twenty of the thirty reviewed providers.
+    None still means "do not reason about memory". That is the right answer on a host
+    with no NVIDIA driver, where admission is the count alone, and the wrong answer to
+    reach by accident on a host with memory it could have read.
     """
 
-    try:
-        completed = subprocess.run(
-            [
-                "nvidia-smi",
-                "--query-gpu=memory.free",
-                "--format=csv,noheader,nounits",
-            ],
-            capture_output=True,
-            text=True,
-            timeout=timeout,
-            check=False,
-        )
-    except (OSError, subprocess.SubprocessError):
+    free_gib, _source = admission.pool_free_gib(timeout=timeout)
+    if free_gib is None:
         return None
-    if completed.returncode != 0:
+    return int(round(free_gib * 1024))
+
+
+def pool_capacity_mib() -> int | None:
+    """The size of that pool, which bounds what this machine can ever hold.
+
+    A provider measured at 38.63 GiB on the machine that verified it cannot run on a
+    24 GiB card, and a count ceiling has no way to say so: it starts the model, waits
+    out the load, and hands the caller whatever the kit says when the allocation fails.
+    Capacity is the one memory fact that does not move, so it is read once and the
+    refusal it supports is raised before anything is started or stopped.
+    """
+
+    capacity_gib, _source = admission.capacity_gib()
+    if capacity_gib is None:
         return None
-    values: list[int] = []
-    for line in completed.stdout.splitlines():
-        line = line.strip()
-        if not line:
-            continue
-        try:
-            values.append(int(line))
-        except ValueError:
-            # A driver error string in place of a number: treat the whole reading as
-            # unavailable rather than admitting on a partial view of the hardware.
-            return None
-    return max(values) if values else None
+    return int(round(capacity_gib * 1024))
+
+
+def declared_footprint_mib(slug: str) -> int | None:
+    """What a provider's own manifest says it costs, as a prior for this machine.
+
+    ``[gpu] vram_budget_gb`` is a measured peak -- ``tu remote room`` prints 27 of them
+    -- but measured on the machine that verified the provider, which makes it a prior
+    anywhere else and not a reading. It is what lets a provider's FIRST load here be
+    admitted on memory instead of on count alone, and it never stands in for a larger
+    local measurement.
+
+    0 is an answer, not a gap: a manifest declaring ``[gpu] policy = "none"`` holds no
+    device memory at all, so no memory ceiling applies to it and it evicts nobody.
+    None means nothing declares this provider's cost -- 28 of the 59 reviewed slugs,
+    all of them older non-resident providers -- and those are admitted on count alone,
+    exactly as every provider was before this.
+    """
+
+    budget_gb = admission.declared_budget_gb(slug)
+    if budget_gb is None:
+        return None
+    return int(round(budget_gb * 1024))
 
 
 @dataclass
 class FootprintStore:
-    """Measured VRAM cost per provider, cached on disk.
+    """What THIS host measured a provider to cost, cached on disk.
 
-    Nothing declares how much memory a reviewed provider needs -- no provider.toml, no
-    README figure, nothing in RemoteDeployment -- so inventing a table would be guessing
-    about other people's hardware. Instead the pool measures: free VRAM before a start,
-    free VRAM once the provider answers, and the difference is what that model costs on
-    this machine. The first load of a provider is therefore admitted on count alone, and
-    every later one can be admitted on memory.
+    The local reading, which is a different thing from the declared one. 27 manifests
+    carry a measured ``[gpu] vram_budget_gb`` that :func:`declared_footprint_mib` reads,
+    and that figure was measured on the machine which verified the provider -- so it is
+    what makes a first load here memory-aware, and this store is what the pool learns
+    about this machine: free memory before a start, free memory once the provider
+    answers, and the difference. Admission uses the larger of the two, because each can
+    be the low one (see :meth:`ProviderPool.footprint_mib`).
 
     Measurements keep the largest value seen. A model that allocates lazily looks smaller
     on a run that only initialised it, and admitting on that smaller number would
@@ -339,7 +371,9 @@ class ProviderPool:
     extra_env: tuple[str, ...] = ()
     footprints: FootprintStore | None = None
     vram_headroom_mib: int = DEFAULT_VRAM_HEADROOM_MIB
-    read_free_vram: Callable[[], int | None] = gpu_free_mib
+    read_free_vram: Callable[[], int | None] = pool_free_mib
+    read_capacity: Callable[[], int | None] = pool_capacity_mib
+    declared_footprint: Callable[[str], int | None] = declared_footprint_mib
     ensure: Callable[..., tuple[ManagedRemoteProcess | None, dict[str, Any]]] = (
         ensure_provider
     )
@@ -349,6 +383,7 @@ class ProviderPool:
 
     _active: dict[str, _ActiveProvider] = field(default_factory=dict, init=False)
     _starting: set[str] = field(default_factory=set, init=False)
+    _capacity_cache: int | None = field(default=None, init=False)
     _lock: threading.Lock = field(default_factory=threading.Lock, init=False)
 
     def __post_init__(self) -> None:
@@ -454,10 +489,11 @@ class ProviderPool:
                     f"provider '{deployment.slug}' is still starting; retry shortly"
                 )
 
-        # Read the GPU before taking the admission lock: nvidia-smi is a subprocess, and
-        # holding the lock across it would serialize every other caller behind a driver
-        # that can hang. The reading can go stale between here and the decision below;
-        # the headroom is what absorbs that.
+        # Both readings happen before the admission lock: each is a subprocess, and
+        # holding the lock across one would serialize every other caller behind a driver
+        # that can hang. The free reading can go stale between here and the decision
+        # below; the headroom is what absorbs that.
+        self._refuse_if_larger_than_the_machine(deployment)
         free_before = self._free_vram_for(deployment)
 
         with self._lock:
@@ -504,14 +540,74 @@ class ProviderPool:
             active.in_flight = max(0, active.in_flight - 1)
             active.last_used = self.clock()
 
-    def _free_vram_for(self, deployment: RemoteDeployment) -> int | None:
-        """Current free VRAM, but only when it could change this admission.
+    def footprint_mib(self, slug: str) -> int | None:
+        """What this provider is expected to cost here, or None when nobody has said.
 
-        Skipped entirely when nothing has measured this provider yet, so a first load
-        never pays for an nvidia-smi call it cannot act on.
+        The larger of the manifest's declared budget and this host's own measurement,
+        and taking the maximum is deliberate in both directions:
+
+        * a DECLARED budget can be low here, because it was measured on the machine
+          that verified the provider and this is not that machine;
+        * a MEASURED footprint can be low, because a resident provider loads its model
+          on the first request rather than when its server binds -- ``wait_until_ready``
+          waits for ``tools/list`` to match the reviewed contract, which it does with
+          the card still empty -- so the difference across a start can be a fraction of
+          what the model holds a second later.
+
+        Neither is wrong often, and either being low overcommits the machine, so the
+        conservative answer is the larger.
         """
 
-        if self.footprints is None or self.footprints.get(deployment.slug) is None:
+        measured = self.footprints.get(slug) if self.footprints is not None else None
+        declared = self.declared_footprint(slug)
+        if measured is None:
+            return declared
+        if declared is None:
+            return measured
+        return max(measured, declared)
+
+    def _capacity_mib(self) -> int | None:
+        """This machine's pool size. Read once; a failed reading is not cached.
+
+        Capacity does not move, but a driver that was briefly unavailable must not
+        leave this pool admitting on count alone for the rest of its life.
+        """
+
+        if self._capacity_cache is None:
+            try:
+                self._capacity_cache = self.read_capacity()
+            except (OSError, ValueError):
+                return None
+        return self._capacity_cache
+
+    def _refuse_if_larger_than_the_machine(self, deployment: RemoteDeployment) -> None:
+        """Refuse what this machine could not hold with nothing else resident.
+
+        Raised before anything is evicted, because evicting first and failing anyway
+        would cost someone else's loaded model for nothing. Silent when the capacity
+        cannot be read, which keeps a host with no readable device on count alone.
+        """
+
+        needed = self.footprint_mib(deployment.slug)
+        capacity = self._capacity_mib()
+        if not needed or capacity is None:
+            return
+        if needed + self.vram_headroom_mib > capacity:
+            raise ProviderTooLarge(
+                f"provider '{deployment.slug}' needs {needed} MiB plus "
+                f"{self.vram_headroom_mib} MiB headroom, and this machine's memory "
+                f"pool is {capacity} MiB; nothing it could evict would make room"
+            )
+
+    def _free_vram_for(self, deployment: RemoteDeployment) -> int | None:
+        """Current free memory, but only when it could change this admission.
+
+        Skipped when nothing declares or has measured this provider, so a load whose
+        cost is unknown never pays for a reading it could not act on, and skipped for a
+        provider that holds no device memory at all.
+        """
+
+        if not self.footprint_mib(deployment.slug):
             return None
         try:
             return self.read_free_vram()
@@ -524,6 +620,12 @@ class ProviderPool:
         """Learn what this provider costs, by difference across its own start."""
 
         if self.footprints is None:
+            return
+        if self.declared_footprint(deployment.slug) == 0:
+            # Declared to hold no device memory. A difference measured across this
+            # start would be whatever else on the machine allocated meanwhile,
+            # attributed to a provider that cannot have been the cause -- and then
+            # held against it as a ceiling on every later admission.
             return
         if free_before is None:
             # No reading was taken before the start (the usual case on a first load), so
@@ -552,14 +654,15 @@ class ProviderPool:
         retry rather than having a running job killed under it.
 
         Two independent ceilings. ``max_active`` is a count, and applies always. Memory
-        applies only once this provider has been measured and a GPU answered: two small
+        applies once this provider's cost is known -- declared by its manifest or measured
+        here, whichever is larger -- and the machine answered a free reading: two small
         models may fit where one large one does not, which a count can never express.
 
-        Freed memory is estimated from the victims' own measurements rather than re-read
-        from the driver, because a stopped process does not return its VRAM immediately --
-        a fresh reading straight after a kill reports the memory as still in use. A victim
-        nobody has measured yet counts as freeing nothing, so admission stays conservative
-        instead of optimistic.
+        Freed memory is estimated from the victims' own footprints rather than re-read
+        from the driver, because a stopped process does not return its memory immediately
+        -- a fresh reading straight after a kill reports it as still in use. A victim whose
+        cost nobody declared or measured counts as freeing nothing, so admission stays
+        conservative instead of optimistic.
         """
 
         def lru_idle_victim() -> _ActiveProvider:
@@ -573,21 +676,31 @@ class ProviderPool:
         while len(self._active) + len(self._starting) >= self.max_active:
             self._stop_locked(lru_idle_victim().deployment.slug)
 
-        if free_mib is None or self.footprints is None:
+        if free_mib is None:
             return
-        needed = self.footprints.get(incoming.slug)
-        if needed is None:
+        needed = self.footprint_mib(incoming.slug)
+        if not needed:
             return
         required = needed + self.vram_headroom_mib
         while free_mib < required:
             if not any(active.in_flight == 0 for active in self._active.values()):
+                # "Every resident provider is busy" is vacuously true of an empty
+                # pool, and an operator reading that in a log would go looking for a
+                # resident model that was never there. With nothing to evict, the
+                # memory is being held by something this pool did not start.
+                why = (
+                    "every resident provider is busy"
+                    if self._active
+                    else "nothing of this pool's is resident to evict, so the memory "
+                    "is held by something else on the machine"
+                )
                 raise PoolError(
                     f"provider '{incoming.slug}' needs {needed} MiB plus "
                     f"{self.vram_headroom_mib} MiB headroom and only {free_mib} MiB is "
-                    "free; every resident provider is busy, so retry shortly"
+                    f"free; {why}, so retry shortly"
                 )
             victim = lru_idle_victim()
-            free_mib += self.footprints.get(victim.deployment.slug) or 0
+            free_mib += self.footprint_mib(victim.deployment.slug) or 0
             self._stop_locked(victim.deployment.slug)
 
     def _stop_locked(self, slug: str) -> None:
@@ -628,6 +741,28 @@ class ProviderPool:
             ]
             starting = sorted(self._starting)
         return rows + [{"provider": slug, "starting": True} for slug in starting]
+
+    def memory_plan(self) -> dict[str, Any]:
+        """What the memory ceiling will decide on, for an operator to read at startup.
+
+        Said once at startup rather than discovered through a refused call, because the
+        declared budgets were measured on the machines that verified the providers: a
+        host smaller than one of those is exactly where that difference surfaces, and
+        `too_large` is the list a caller would otherwise find one 503 at a time.
+        """
+
+        capacity = self._capacity_mib()
+        expected = {slug: self.footprint_mib(slug) for slug in self.allow}
+        too_large = tuple(
+            slug
+            for slug, mib in expected.items()
+            if mib and capacity is not None and mib + self.vram_headroom_mib > capacity
+        )
+        return {
+            "capacity_mib": capacity,
+            "expected_mib": expected,
+            "too_large": too_large,
+        }
 
     # ── control plane ────────────────────────────────────────────────────────────
 
@@ -717,6 +852,17 @@ class ProviderPool:
                 except (OSError, ValueError):
                     free = None
                 answer["free_vram_mib"] = free
+            # What admission will actually decide on, which is not the measured map: it
+            # includes the manifests' declared budgets, and an operator comparing a
+            # refusal against `measured_vram_mib` alone would be reading the wrong
+            # column.
+            expected = {}
+            for slug in self.allow:
+                mib = self.footprint_mib(slug)
+                if mib is not None:
+                    expected[slug] = mib
+            answer["expected_vram_mib"] = expected
+            answer["pool_capacity_mib"] = self._capacity_mib()
             return answer
         slug = args.get("provider")
         if not isinstance(slug, str) or not slug:
@@ -986,6 +1132,20 @@ class PoolMCPHandler(BaseHTTPRequestHandler):
                 503,
                 {"detail": "the provider is loading this model; retry shortly"},
                 {"Retry-After": "15"},
+            )
+            return
+        except ProviderTooLarge as exc:
+            # Not a 503: this model does not fit on this host and will not fit later, so
+            # a Retry-After would send the caller into a loop that cannot succeed. The
+            # numbers stay in the operator's log for the same reason as below.
+            print(f"  Refused {deployment.slug}: {exc}", flush=True)
+            self._respond(
+                200,
+                _jsonrpc_error(
+                    request_id,
+                    _JSONRPC_INTERNAL_ERROR,
+                    f"provider '{deployment.slug}' cannot run on this host",
+                ),
             )
             return
         except PoolError as exc:
