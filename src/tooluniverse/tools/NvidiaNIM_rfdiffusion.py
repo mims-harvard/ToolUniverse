@@ -18,7 +18,7 @@ def NvidiaNIM_rfdiffusion(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     De novo protein design using RFdiffusion via NVIDIA NIM. Generate novel protein structures, binde...
 
@@ -43,20 +43,26 @@ def NvidiaNIM_rfdiffusion(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "contigs": contigs,
+            "input_pdb": input_pdb,
+            "hotspot_res": hotspot_res,
+            "diffusion_steps": diffusion_steps,
+            "random_seed": random_seed,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "NvidiaNIM_rfdiffusion",
-            "arguments": {
-                "contigs": contigs,
-                "input_pdb": input_pdb,
-                "hotspot_res": hotspot_res,
-                "diffusion_steps": diffusion_steps,
-                "random_seed": random_seed,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

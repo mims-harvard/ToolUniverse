@@ -21,7 +21,7 @@ def NvidiaNIM_diffdock(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Blind molecular docking using DiffDock via NVIDIA NIM. Predict ligand binding poses without speci...
 
@@ -52,23 +52,29 @@ def NvidiaNIM_diffdock(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "protein": protein,
+            "ligand": ligand,
+            "ligand_file_type": ligand_file_type,
+            "num_poses": num_poses,
+            "time_divisions": time_divisions,
+            "steps": steps,
+            "save_trajectory": save_trajectory,
+            "is_staged": is_staged,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "NvidiaNIM_diffdock",
-            "arguments": {
-                "protein": protein,
-                "ligand": ligand,
-                "ligand_file_type": ligand_file_type,
-                "num_poses": num_poses,
-                "time_divisions": time_divisions,
-                "steps": steps,
-                "save_trajectory": save_trajectory,
-                "is_staged": is_staged,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

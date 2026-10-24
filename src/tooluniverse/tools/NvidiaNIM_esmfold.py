@@ -14,7 +14,7 @@ def NvidiaNIM_esmfold(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> Optional[str]:
     """
     Fast alignment-free protein structure prediction using ESMFold via NVIDIA NIM. No MSA required - ...
 
@@ -31,12 +31,17 @@ def NvidiaNIM_esmfold(
 
     Returns
     -------
-    Any
+    Optional[str]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {k: v for k, v in {"sequence": sequence}.items() if v is not None}
     return get_shared_client().run_one_function(
-        {"name": "NvidiaNIM_esmfold", "arguments": {"sequence": sequence}},
+        {
+            "name": "NvidiaNIM_esmfold",
+            "arguments": _args,
+        },
         stream_callback=stream_callback,
         use_cache=use_cache,
         validate=validate,

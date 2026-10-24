@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2887 scientific tools.
+Type-safe Python interface to 2888 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -1740,6 +1740,7 @@ from .NvidiaNIM_msa_search import NvidiaNIM_msa_search
 from .NvidiaNIM_openfold2 import NvidiaNIM_openfold2
 from .NvidiaNIM_openfold3 import NvidiaNIM_openfold3
 from .NvidiaNIM_proteinmpnn import NvidiaNIM_proteinmpnn
+from .NvidiaNIM_rfd4_proteina import NvidiaNIM_rfd4_proteina
 from .NvidiaNIM_rfdiffusion import NvidiaNIM_rfdiffusion
 from .NvidiaNIM_vista3d import NvidiaNIM_vista3d
 from .OBIS_search_occurrences import OBIS_search_occurrences
@@ -4905,6 +4906,7 @@ __all__ = [
     "NvidiaNIM_openfold2",
     "NvidiaNIM_openfold3",
     "NvidiaNIM_proteinmpnn",
+    "NvidiaNIM_rfd4_proteina",
     "NvidiaNIM_rfdiffusion",
     "NvidiaNIM_vista3d",
     "OBIS_search_occurrences",

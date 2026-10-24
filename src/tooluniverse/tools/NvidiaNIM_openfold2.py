@@ -16,7 +16,7 @@ def NvidiaNIM_openfold2(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Predict protein structure from sequence and MSA using OpenFold2 via NVIDIA NIM. PyTorch reimpleme...
 
@@ -37,19 +37,25 @@ def NvidiaNIM_openfold2(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
     if selected_models is None:
         selected_models = [1, 2]
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "sequence": sequence,
+            "alignments": alignments,
+            "selected_models": selected_models,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "NvidiaNIM_openfold2",
-            "arguments": {
-                "sequence": sequence,
-                "alignments": alignments,
-                "selected_models": selected_models,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

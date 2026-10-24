@@ -19,7 +19,7 @@ def NvidiaNIM_genmol(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Generate molecules using GenMol via NVIDIA NIM. Input: SMILES/SAFE template with masked regions. ...
 
@@ -46,21 +46,27 @@ def NvidiaNIM_genmol(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "smiles": smiles,
+            "num_molecules": num_molecules,
+            "temperature": temperature,
+            "noise": noise,
+            "step_size": step_size,
+            "scoring": scoring,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "NvidiaNIM_genmol",
-            "arguments": {
-                "smiles": smiles,
-                "num_molecules": num_molecules,
-                "temperature": temperature,
-                "noise": noise,
-                "step_size": step_size,
-                "scoring": scoring,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

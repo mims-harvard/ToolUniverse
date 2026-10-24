@@ -19,7 +19,7 @@ def NvidiaNIM_msa_search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     GPU-accelerated multiple sequence alignment search using ColabFold/MMseqs2 via NVIDIA NIM. Input:...
 
@@ -46,22 +46,28 @@ def NvidiaNIM_msa_search(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
     if output_alignment_formats is None:
         output_alignment_formats = ["a3m"]
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "sequence": sequence,
+            "e_value": e_value,
+            "iterations": iterations,
+            "output_alignment_formats": output_alignment_formats,
+            "databases": databases,
+            "max_msa_sequences": max_msa_sequences,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "NvidiaNIM_msa_search",
-            "arguments": {
-                "sequence": sequence,
-                "e_value": e_value,
-                "iterations": iterations,
-                "output_alignment_formats": output_alignment_formats,
-                "databases": databases,
-                "max_msa_sequences": max_msa_sequences,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

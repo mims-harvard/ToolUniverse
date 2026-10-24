@@ -19,7 +19,7 @@ def NvidiaNIM_boltz2(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Predict multi-molecular complex structure (proteins, DNA, RNA, ligands) using Boltz2 via NVIDIA N...
 
@@ -46,21 +46,27 @@ def NvidiaNIM_boltz2(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "polymers": polymers,
+            "ligands": ligands,
+            "recycling_steps": recycling_steps,
+            "sampling_steps": sampling_steps,
+            "diffusion_samples": diffusion_samples,
+            "output_format": output_format,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "NvidiaNIM_boltz2",
-            "arguments": {
-                "polymers": polymers,
-                "ligands": ligands,
-                "recycling_steps": recycling_steps,
-                "sampling_steps": sampling_steps,
-                "diffusion_samples": diffusion_samples,
-                "output_format": output_format,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
