@@ -122,9 +122,10 @@ exists, and the harness deleted that script in favour of its own
 pushed somewhere. It has been
 ([tooluniverse/tooluniverse-harness#26](https://github.com/tooluniverse/tooluniverse-harness/pull/26)),
 so the copy here is gone. It had drifted to 26 numbered mistakes against the
-harness copy's 66, and two files in this repository already cited mistakes
-55, 58 and 59 -- numbers the copy here did not contain. A reader who found it
-first got the stale one with nothing saying so.
+harness copy's 67 as of 2026-10-24 -- that list only grows, so any figure
+quoted here is a snapshot -- and two files in this repository already cited
+mistakes 55, 58 and 59, numbers the copy here did not contain. A reader who
+found it first got the stale one with nothing saying so.
 
 ## Skill Structure
 
