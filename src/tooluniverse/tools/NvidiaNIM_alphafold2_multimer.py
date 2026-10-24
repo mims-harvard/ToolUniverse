@@ -16,7 +16,7 @@ def NvidiaNIM_alphafold2_multimer(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Predict multi-chain protein complex structure using AlphaFold2-Multimer via NVIDIA NIM. Input: se...
 
@@ -37,19 +37,25 @@ def NvidiaNIM_alphafold2_multimer(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
     if databases is None:
         databases = ["uniref90", "small_bfd"]
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "sequences": sequences,
+            "databases": databases,
+            "relax_prediction": relax_prediction,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "NvidiaNIM_alphafold2_multimer",
-            "arguments": {
-                "sequences": sequences,
-                "databases": databases,
-                "relax_prediction": relax_prediction,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

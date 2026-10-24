@@ -16,7 +16,7 @@ def NvidiaNIM_molmim(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Controlled molecule generation using MolMIM via NVIDIA NIM. Generates molecules with optimized pr...
 
@@ -37,18 +37,24 @@ def NvidiaNIM_molmim(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "smi": smi,
+            "num_molecules": num_molecules,
+            "algorithm": algorithm,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "NvidiaNIM_molmim",
-            "arguments": {
-                "smi": smi,
-                "num_molecules": num_molecules,
-                "algorithm": algorithm,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

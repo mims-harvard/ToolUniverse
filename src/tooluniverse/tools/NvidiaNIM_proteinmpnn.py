@@ -18,7 +18,7 @@ def NvidiaNIM_proteinmpnn(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Design protein sequences for a given backbone structure using ProteinMPNN via NVIDIA NIM (inverse...
 
@@ -43,21 +43,27 @@ def NvidiaNIM_proteinmpnn(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
     if sampling_temp is None:
         sampling_temp = [0.1]
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "input_pdb": input_pdb,
+            "ca_only": ca_only,
+            "use_soluble_model": use_soluble_model,
+            "sampling_temp": sampling_temp,
+            "num_seq_per_target": num_seq_per_target,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "NvidiaNIM_proteinmpnn",
-            "arguments": {
-                "input_pdb": input_pdb,
-                "ca_only": ca_only,
-                "use_soluble_model": use_soluble_model,
-                "sampling_temp": sampling_temp,
-                "num_seq_per_target": num_seq_per_target,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,

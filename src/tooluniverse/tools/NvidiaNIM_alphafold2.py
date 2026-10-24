@@ -20,7 +20,7 @@ def NvidiaNIM_alphafold2(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Predict protein 3D structure from amino acid sequence using DeepMind's AlphaFold2 via NVIDIA NIM....
 
@@ -49,23 +49,29 @@ def NvidiaNIM_alphafold2(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
     if databases is None:
         databases = ["small_bfd"]
+    # Strip None values so optional parameters don't trigger schema validation errors
+    _args = {
+        k: v
+        for k, v in {
+            "sequence": sequence,
+            "algorithm": algorithm,
+            "databases": databases,
+            "e_value": e_value,
+            "iterations": iterations,
+            "relax_prediction": relax_prediction,
+            "skip_template_search": skip_template_search,
+        }.items()
+        if v is not None
+    }
     return get_shared_client().run_one_function(
         {
             "name": "NvidiaNIM_alphafold2",
-            "arguments": {
-                "sequence": sequence,
-                "algorithm": algorithm,
-                "databases": databases,
-                "e_value": e_value,
-                "iterations": iterations,
-                "relax_prediction": relax_prediction,
-                "skip_template_search": skip_template_search,
-            },
+            "arguments": _args,
         },
         stream_callback=stream_callback,
         use_cache=use_cache,
