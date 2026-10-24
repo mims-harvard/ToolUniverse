@@ -3386,6 +3386,24 @@ def cmd_remote_pool(args: argparse.Namespace) -> None:
             "discover what this host shares."
         )
 
+    # What the memory ceiling will decide on, before a caller discovers it through a
+    # refusal. A provider's budget was measured on the machine that verified it, so a
+    # smaller host is where that shows up -- and it should show up here.
+    plan = pool.memory_plan()
+    sized = {slug: mib for slug, mib in plan["expected_mib"].items() if mib}
+    if plan["capacity_mib"] is not None and sized:
+        print(
+            f"  Memory: this machine's pool is {plan['capacity_mib'] / 1024:.1f} GiB; "
+            f"{len(sized)} model(s) sized "
+            f"{min(sized.values()) / 1024:.1f}-{max(sized.values()) / 1024:.1f} GiB "
+            f"(each one's manifest budget, or more if this host measured more)."
+        )
+    for slug in plan["too_large"]:
+        print(
+            f"  {slug} needs {sized[slug] / 1024:.1f} GiB and will be refused on this "
+            f"machine rather than started."
+        )
+
     try:
         server = serve_pool(pool, port=args.port)
     except OSError as exc:
@@ -4445,10 +4463,10 @@ def build_parser() -> argparse.ArgumentParser:
         default=1024,
         metavar="MIB",
         help=(
-            "GPU memory left spare when admitting a measured provider, for fragmentation "
-            "and the CUDA context (default: 1024 MiB). Memory-based admission only "
-            "applies once a provider has been loaded here at least once; nothing "
-            "declares a provider's footprint, so the pool measures it"
+            "memory left spare when admitting a provider, for fragmentation and the "
+            "CUDA context (default: 1024 MiB). A provider's cost is the larger of its "
+            "manifest's measured budget and what this host measured; a provider with "
+            "neither is admitted on --max-active alone"
         ),
     )
     p.add_argument(
@@ -4612,7 +4630,10 @@ def build_parser() -> argparse.ArgumentParser:
         type=_bounded_int(0, 65536),
         default=1024,
         metavar="MIB",
-        help="GPU memory left spare when admitting a measured model (default: 1024)",
+        help=(
+            "memory left spare when admitting a model, on top of what its manifest "
+            "or this host measured it to cost (default: 1024)"
+        ),
     )
     pool_group.add_argument(
         "--pass-env",

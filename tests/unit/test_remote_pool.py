@@ -22,8 +22,11 @@ from tooluniverse.remote_pool import (
     PoolError,
     ProviderPool,
     ProviderStarting,
+    ProviderTooLarge,
     SchemaStore,
     build_tool_index,
+    declared_footprint_mib,
+    pool_free_mib,
     serve_pool,
 )
 from tooluniverse.remote_runtime import REMOTE_BY_SLUG
@@ -699,6 +702,11 @@ class FakeGPU:
 def vram_pool(tmp_path, slugs, gpu, lifecycle=None, **kwargs):
     from tooluniverse.remote_pool import FootprintStore
 
+    # Nothing declared and no capacity unless the test is about one of those: these
+    # cases are about what the pool measures here, and reading the real manifests
+    # would quietly change what each one is asserting.
+    kwargs.setdefault("declared_footprint", lambda slug: None)
+    kwargs.setdefault("read_capacity", lambda: None)
     pool = make_pool(
         tmp_path,
         slugs,
@@ -710,13 +718,13 @@ def vram_pool(tmp_path, slugs, gpu, lifecycle=None, **kwargs):
     return pool
 
 
-def test_nothing_declares_a_provider_footprint_so_the_first_load_is_count_only(
+def test_a_provider_nothing_declares_has_its_first_load_admitted_on_count(
     tmp_path,
 ):
-    """No provider.toml, no README figure, no RemoteDeployment field declares this.
+    """28 of the 59 reviewed slugs declare no budget, and nothing changes for them.
 
-    Inventing a table would be guessing about other people's hardware, so the pool
-    admits the first load on count and learns the cost from that load.
+    The pool admits that first load on count and learns the cost from it, which is
+    what every provider got before the resident manifests carried a measured figure.
     """
     gpu = FakeGPU(free=100)  # Far too little for anything, yet the load must proceed.
     pool = vram_pool(tmp_path, ["boltz"], gpu)
@@ -929,68 +937,277 @@ def test_a_corrupt_footprint_file_is_ignored(tmp_path):
     assert FootprintStore(tmp_path / "fp").get("boltz") is None
 
 
-# ── reading the GPU ─────────────────────────────────────────────────────────────
+# ── reading the machine ─────────────────────────────────────────────────────────
 
 
-def test_the_most_free_device_is_reported_not_the_sum(monkeypatch):
-    """One provider lands on one GPU, so a sum would claim room nothing can use."""
+def test_the_pool_reads_the_machine_rather_than_the_device(tmp_path, monkeypatch):
+    """The default reader is per-machine, and that is the whole portability claim.
+
+    This module's first reader asked the device: `nvidia-smi --query-gpu=memory.free`.
+    On unified memory that answers `[N/A]`, so the reading was None, so every memory
+    ceiling built on it was skipped -- on a host with 121 GiB to reason about. The
+    matrix of machines (discrete, several cards, unified, mixed, broken driver, no
+    driver) is checked in `test_remote_resident.py::TestAdmission`; what belongs here
+    is that the pool uses that reader and keeps its MiB vocabulary.
+    """
     import subprocess as sp
 
     from tooluniverse import remote_pool
 
-    monkeypatch.setattr(
-        remote_pool.subprocess,
-        "run",
-        lambda *a, **k: sp.CompletedProcess(
-            a, 0, stdout="8000\n23000\n1000\n", stderr=""
-        ),
-    )
-
-    assert remote_pool.gpu_free_mib() == 23_000
-
-
-def test_a_partial_or_non_numeric_reading_is_discarded(monkeypatch):
-    """Admitting on half a view of the hardware is worse than not reasoning at all."""
-    import subprocess as sp
-
-    from tooluniverse import remote_pool
+    assert make_pool(tmp_path, ["boltz"]).read_free_vram is pool_free_mib
 
     monkeypatch.setattr(
-        remote_pool.subprocess,
+        remote_pool.admission.subprocess,
         "run",
-        lambda *a, **k: sp.CompletedProcess(a, 0, stdout="8000\n[N/A]\n", stderr=""),
+        lambda *a, **k: sp.CompletedProcess(a, 0, "[N/A]\n", ""),
     )
-
-    assert remote_pool.gpu_free_mib() is None
-
-
-@pytest.mark.parametrize(
-    "outcome",
-    [FileNotFoundError("nvidia-smi"), OSError("boom")],
-)
-def test_a_machine_without_nvidia_smi_reports_no_gpu(monkeypatch, outcome):
-    from tooluniverse import remote_pool
-
-    def explode(*a, **k):
-        raise outcome
-
-    monkeypatch.setattr(remote_pool.subprocess, "run", explode)
-
-    assert remote_pool.gpu_free_mib() is None
-
-
-def test_a_failing_nvidia_smi_reports_no_gpu(monkeypatch):
-    import subprocess as sp
-
-    from tooluniverse import remote_pool
-
     monkeypatch.setattr(
-        remote_pool.subprocess,
-        "run",
-        lambda *a, **k: sp.CompletedProcess(a, 9, stdout="", stderr="driver error"),
+        remote_pool.admission,
+        "meminfo_gib",
+        lambda: {"MemTotal": 121.6, "MemFree": 90.0, "MemAvailable": 101.1},
     )
 
-    assert remote_pool.gpu_free_mib() is None
+    assert pool_free_mib() == 103_526
+
+    def missing(*_a, **_k):
+        raise FileNotFoundError("nvidia-smi")
+
+    monkeypatch.setattr(remote_pool.admission.subprocess, "run", missing)
+    assert pool_free_mib() is None, "a host with no driver stays count-only"
+
+
+# ── the budgets the manifests already carry ─────────────────────────────────────
+
+
+def declared_pool(tmp_path, slugs, gpu, capacity=None, **kwargs):
+    """A pool reading the real manifests, which is what a host actually runs.
+
+    `boltz` declares 5.54 GiB, `atlasfold` 38.63, `proteinmpnn` 0.0 (CPU-only) and
+    `esm` nothing at all, so the four of them cover every case without inventing a
+    fixture the shipped providers would not match.
+    """
+    kwargs.setdefault("declared_footprint", declared_footprint_mib)
+    kwargs.setdefault("read_capacity", lambda: capacity)
+    return vram_pool(tmp_path, slugs, gpu, **kwargs)
+
+
+def test_a_declared_budget_makes_a_first_load_memory_aware(tmp_path):
+    """The hole this closes.
+
+    boltz's manifest carries a measured 5.54 GiB, and the pool started it anyway on
+    a machine with 2 GiB free, because nothing had been measured HERE yet. For a
+    resident provider "learn it from a load" never arrives on its own: the start
+    measures the MCP server, not the model.
+    """
+    # The same machine, the same model, the only difference being whether the
+    # manifest is read: this is the before and after, not a reading of the fixture.
+    blind = vram_pool(tmp_path / "blind", ["boltz"], FakeGPU(free=2_000))
+    blind.acquire(blind.provider_for_tool("boltz2_docking"))
+    assert blind.lifecycle.started == ["boltz"], "what shipped: admitted on count"
+
+    gpu = FakeGPU(free=2_000)
+    pool = declared_pool(tmp_path / "declared", ["boltz"], gpu)
+
+    with pytest.raises(PoolError, match="needs 5673 MiB"):
+        pool.acquire(pool.provider_for_tool("boltz2_docking"))
+
+    assert pool.lifecycle.started == [], "a model that cannot fit must not be launched"
+
+
+def test_a_local_measurement_overrides_a_smaller_declared_budget(tmp_path):
+    """This machine is the authority on this machine.
+
+    The manifest's figure was measured on the machine that verified the provider,
+    which makes it a prior here and not a reading.
+    """
+    pool = declared_pool(tmp_path, ["boltz"], FakeGPU(free=10_000))
+    pool.footprints.record("boltz", 20_000)
+
+    with pytest.raises(PoolError, match="needs 20000 MiB"):
+        pool.acquire(pool.provider_for_tool("boltz2_docking"))
+
+
+def test_a_declared_budget_overrides_a_smaller_local_measurement(tmp_path):
+    """A resident provider's start measures its server, not its model.
+
+    `wait_until_ready` returns when `tools/list` matches the reviewed contract, which
+    it does with the card still empty, so the difference measured across a start can
+    be a few hundred MiB for a model that holds gigabytes a second later. Admitting
+    on that number is how a 5.5 GiB model gets admitted into 3 GiB.
+    """
+    pool = declared_pool(tmp_path, ["boltz"], FakeGPU(free=3_000))
+    pool.footprints.record("boltz", 300)  # the server's context, not the model
+
+    with pytest.raises(PoolError, match="needs 5673 MiB"):
+        pool.acquire(pool.provider_for_tool("boltz2_docking"))
+
+
+def test_a_cpu_only_provider_has_no_memory_ceiling(tmp_path):
+    """0.0 is a declared answer, not a missing one.
+
+    proteinmpnn declares `[gpu] policy = "none"`, so it holds no device memory: it
+    cannot be refused for lack of it, it frees nothing when evicted, and measuring it
+    by difference would attribute whatever else allocated meanwhile to a provider
+    that cannot have been the cause.
+    """
+    gpu = FakeGPU(free=16)
+    pool = declared_pool(tmp_path, ["proteinmpnn"], gpu)
+
+    pool.acquire(pool.provider_for_tool("proteinmpnn_design"))
+
+    assert pool.lifecycle.started == ["proteinmpnn"]
+    assert gpu.reads == 0, "a provider holding no device memory needs no reading"
+    assert pool.footprints.get("proteinmpnn") is None
+
+
+def test_a_provider_no_manifest_declares_is_still_admitted_on_count(tmp_path):
+    """esm is one of the 28 older slugs with no manifest: unchanged behaviour."""
+    gpu = FakeGPU(free=100)
+    pool = declared_pool(tmp_path, ["esm"], gpu)
+
+    pool.acquire(pool.provider_for_tool("esm_embed_sequence"))
+
+    assert pool.lifecycle.started == ["esm"]
+    assert gpu.reads == 1, "one post-start reading, as the baseline for next time"
+
+
+def test_a_model_larger_than_the_machine_is_refused_before_anything_is_evicted(
+    tmp_path,
+):
+    """atlasfold measured 38.63 GiB. On a 24 GiB machine no eviction helps.
+
+    So the resident model is not spent on a start that cannot succeed, and the
+    refusal is its own kind rather than "at capacity, retry shortly".
+    """
+    pool = declared_pool(
+        tmp_path,
+        ["atlasfold", "boltz"],
+        FakeGPU(free=24_000),
+        capacity=24_576,
+        max_active=4,
+    )
+    boltz = pool.provider_for_tool("boltz2_docking")
+    pool.acquire(boltz)
+    pool.release(boltz)
+
+    with pytest.raises(ProviderTooLarge, match="39557 MiB"):
+        pool.acquire(pool.provider_for_tool("atlasfold_predict"))
+
+    assert [row["provider"] for row in pool.status()] == ["boltz"]
+    assert pool.lifecycle.started == ["boltz"]
+
+
+def test_a_machine_whose_capacity_cannot_be_read_still_admits(tmp_path):
+    """A host with no readable device is the count-only host, not a refusing one."""
+    pool = declared_pool(tmp_path, ["atlasfold"], FakeGPU(free=None), capacity=None)
+
+    pool.acquire(pool.provider_for_tool("atlasfold_predict"))
+
+    assert pool.lifecycle.started == ["atlasfold"]
+
+
+def test_a_capacity_reading_that_failed_is_not_cached(tmp_path):
+    """A driver briefly unavailable must not leave this pool count-only for life."""
+    readings = [OSError("driver busy"), 24_576]
+
+    def read_capacity():
+        value = readings.pop(0)
+        if isinstance(value, Exception):
+            raise value
+        return value
+
+    pool = declared_pool(
+        tmp_path, ["atlasfold"], FakeGPU(free=None), read_capacity=read_capacity
+    )
+    deployment = pool.provider_for_tool("atlasfold_predict")
+
+    pool.acquire(deployment)  # unreadable capacity: admitted
+    pool.release(deployment)
+    pool.unload("atlasfold")
+
+    with pytest.raises(ProviderTooLarge):
+        pool.acquire(deployment)  # the second reading answers, and it is used
+
+
+def test_status_reports_the_cost_admission_will_decide_on(tmp_path):
+    """`measured_vram_mib` is this host's measurements; admission decides on more.
+
+    An operator reading a refusal against the measured column alone would be looking
+    at the wrong number -- 200 MiB, for a model refused at 5673.
+    """
+    pool = declared_pool(
+        tmp_path, ["boltz", "esm"], FakeGPU(free=31_000), capacity=124_546
+    )
+    pool.footprints.record("boltz", 200)
+
+    answer = pool.control("status", {})
+
+    assert answer["measured_vram_mib"] == {"boltz": 200}
+    assert answer["expected_vram_mib"] == {"boltz": 5673}, "esm declares nothing"
+    assert answer["pool_capacity_mib"] == 124_546
+
+
+def test_a_refusal_with_nothing_resident_does_not_blame_a_busy_provider(tmp_path):
+    """A 24 GiB machine with 4 GiB free, and this pool holding nothing.
+
+    boltz does not fit right now, which is transient and not permanent -- so it is a
+    retry and not a `ProviderTooLarge` -- and the reason is not a busy provider of
+    this pool's, because it has none.
+    """
+    pool = declared_pool(tmp_path, ["boltz"], FakeGPU(free=4_096), capacity=24_576)
+
+    with pytest.raises(PoolError, match="held by something else on the machine"):
+        pool.acquire(pool.provider_for_tool("boltz2_docking"))
+
+    assert pool.lifecycle.started == []
+
+
+def test_the_memory_plan_names_what_cannot_run_here(tmp_path):
+    """`tu serve` prints this at startup, so a host learns before a caller does."""
+    pool = declared_pool(
+        tmp_path,
+        ["atlasfold", "boltz", "esm"],
+        FakeGPU(free=None),
+        capacity=24_576,
+        max_active=3,
+    )
+
+    plan = pool.memory_plan()
+
+    assert plan["capacity_mib"] == 24_576
+    assert plan["expected_mib"] == {"atlasfold": 39_557, "boltz": 5_673, "esm": None}
+    assert plan["too_large"] == ("atlasfold",)
+
+
+def test_a_model_that_cannot_fit_is_not_answered_with_a_retry(tmp_path, capsys):
+    """503 + Retry-After means "come back"; this model will never fit here.
+
+    The caller is told the provider cannot run on this host -- the slug is already
+    public, it is how the call arrived -- and the numbers stay in the operator's log.
+    """
+    pool = declared_pool(tmp_path, ["atlasfold"], FakeGPU(free=None), capacity=24_576)
+    server = serve_pool(pool, port=0)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    port = server.server_address[1]
+    try:
+        status, body = _rpc(
+            port,
+            {
+                "jsonrpc": "2.0",
+                "id": 7,
+                "method": "tools/call",
+                "params": {"name": "atlasfold_predict", "arguments": {}},
+            },
+        )
+    finally:
+        server.shutdown()
+        server.server_close()
+
+    message = body["error"]["message"]
+    assert status == 200, "a permanent refusal is not a 503 the caller should retry"
+    assert "cannot run on this host" in message
+    assert "39557" not in message and "24576" not in message, message
+    assert "39557 MiB" in capsys.readouterr().out
 
 
 # ── what a caller is allowed to learn about the host ────────────────────────────

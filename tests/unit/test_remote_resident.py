@@ -1893,6 +1893,73 @@ class TestAdmission:
         assert cap is None
         assert "nvidia-smi did not run" in source
 
+    def test_free_memory_is_read_per_machine_not_per_card(self, monkeypatch):
+        """`pool_free_gib` is `capacity_gib`'s mirror, so it answers on all three.
+
+        Faked rather than live, for the reason the capacity test above gives: a
+        test that asserts this host checks one of the three machines and claims
+        to have checked the reader.
+        """
+        import subprocess as sp
+
+        from tooluniverse.remote_resident import admission
+
+        def answering(value, rc=0):
+            def run(*_args, **_kwargs):
+                return sp.CompletedProcess([], rc, value, "")
+
+            return run
+
+        # A discrete card knows what it has free, and that is the answer.
+        monkeypatch.setattr(admission.subprocess, "run", answering("23000\n"))
+        free, source = admission.pool_free_gib()
+        assert free == pytest.approx(23000 / 1024)
+        assert "memory.free" in source
+
+        # Several cards: the most free one, because one worker lands on one card
+        # and a sum would offer room no single model can use.
+        monkeypatch.setattr(
+            admission.subprocess, "run", answering("8000\n23000\n1000\n")
+        )
+        free, _ = admission.pool_free_gib()
+        assert free == pytest.approx(23000 / 1024)
+
+        # Unified memory answers `[N/A]` here exactly as it does for the total,
+        # and MemAvailable is then the honest reading. This is the case that was
+        # silently unhandled: the pool read None and skipped every memory ceiling
+        # on a host with 121 GiB to reason about.
+        monkeypatch.setattr(admission.subprocess, "run", answering("[N/A]\n"))
+        monkeypatch.setattr(
+            admission,
+            "meminfo_gib",
+            lambda: {"MemTotal": 121.6, "MemFree": 90.0, "MemAvailable": 101.1},
+        )
+        free, source = admission.pool_free_gib()
+        assert free == pytest.approx(101.1)
+        assert "MemAvailable" in source
+
+        # One device answered and another did not: half a view of the hardware
+        # is worse than not reasoning about memory at all.
+        monkeypatch.setattr(admission.subprocess, "run", answering("8000\n[N/A]\n"))
+        assert admission.pool_free_gib()[0] is None
+
+        # A driver that errors is not a card that is empty. Falling back to
+        # MemAvailable here would report host RAM as free VRAM on a discrete box.
+        monkeypatch.setattr(admission.subprocess, "run", answering("", rc=9))
+        free, source = admission.pool_free_gib()
+        assert free is None
+        assert "exited 9" in source
+
+        # No driver at all stays None: a machine with no device is not a machine
+        # with an empty device.
+        def missing(*_args, **_kwargs):
+            raise FileNotFoundError("nvidia-smi")
+
+        monkeypatch.setattr(admission.subprocess, "run", missing)
+        free, source = admission.pool_free_gib()
+        assert free is None
+        assert "nvidia-smi did not run" in source
+
     def test_the_reason_always_carries_the_numbers(self):
         """Section 8: a refusal names what happened, not that something did."""
         import re
