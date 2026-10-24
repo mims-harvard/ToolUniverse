@@ -44,6 +44,47 @@ SABDAB_LIGHT_TYPES = frozenset({"K", "L"})
 SABDAB_SINGLE_CHAIN_TYPES = frozenset({"M"})
 SABDAB_ANTIGEN_TYPES = frozenset({"N"})
 
+# /api/antibody-instances filters, as its openapi.json (SAbDab 2.1.5) declares
+# them. `binds_to_antigen` is a case-insensitive substring of the antigen's
+# name as deposited in the PDB, and the API rejects it above 25 characters
+# (HTTP 422), so a full UniProt name such as "Receptor tyrosine-protein kinase
+# erbB-2" cannot be sent; "erbB-2" matches 31 instances. A gene symbol or
+# shorthand usually matches nothing: "HER2" and "PD-1" both return 0, while
+# "cell death protein 1" returns 51.
+SABDAB_ANTIGEN_QUERY_MAX = 25
+SABDAB_SEARCH_LIMIT_MAX = 100
+SABDAB_EXPERIMENTAL_METHODS = (
+    "X-ray diffraction",
+    "electron microscopy",
+    "electron crystallography",
+    "solution NMR",
+    "solid-state NMR",
+    "neutron diffraction",
+    "fiber diffraction",
+    "powder diffraction",
+    "solution scattering",
+    "fluorescence transfer",
+    "infrared spectroscopy",
+    "EPR",
+    "theoretical model",
+)
+SABDAB_ANTIGEN_KINDS = (
+    "PROTEIN",
+    "PEPTIDE",
+    "DNA",
+    "RNA",
+    "NUCLEOTIDE",
+    "PEPTIDE_NUCLEIC_ACID",
+    "SUGAR",
+    "HAPTEN",
+    "ION",
+    "CHEMICAL_ELEMENT",
+    "WATER",
+    "UNKNOWN",
+    "OTHER",
+)
+SABDAB_ANTIBODY_KINDS = ("FV", "FAB", "FAB+FC", "FV*", "SD-H", "SD-L", "VNAR")
+
 
 @register_tool("SAbDabTool")
 class SAbDabTool(BaseTool):
@@ -149,12 +190,8 @@ class SAbDabTool(BaseTool):
                     "antibody_id": instance.get("antibody_id"),
                     "type": instance.get("type"),
                     "pairing_distance": instance.get("pairing_distance"),
-                    "any_cdr_coords_resolved": instance.get(
-                        "any_cdr_coords_resolved"
-                    ),
-                    "all_cdr_coords_resolved": instance.get(
-                        "all_cdr_coords_resolved"
-                    ),
+                    "any_cdr_coords_resolved": instance.get("any_cdr_coords_resolved"),
+                    "all_cdr_coords_resolved": instance.get("all_cdr_coords_resolved"),
                 }
             )
         return rows
@@ -167,7 +204,19 @@ class SAbDabTool(BaseTool):
             operation = self.get_schema_const_operation()
 
         allowed_arguments = {
-            "search_structures": {"operation", "query", "antigen", "limit"},
+            "search_structures": {
+                "operation",
+                "query",
+                "antigen",
+                "species",
+                "method",
+                "resolution_max",
+                "antigen_type",
+                "antibody_type",
+                "pdb_id",
+                "limit",
+                "offset",
+            },
             "get_structure": {"operation", "pdb_id", "pdb_code"},
             "get_structure_summary": {"operation", "pdb_id", "pdb_code", "pdb"},
             # pdb/pdb_id were accepted here historically; keep them harmless.
@@ -195,52 +244,179 @@ class SAbDabTool(BaseTool):
                 "error": f"Unknown operation: {operation}. Supported: search_structures, get_structure, get_structure_summary, get_summary",
             }
 
+    @staticmethod
+    def _choice(value, choices, name):
+        """Match `value` to one of `choices` ignoring case; (choice, error)."""
+        if value in (None, ""):
+            return None, None
+        by_key = {choice.lower(): choice for choice in choices}
+        choice = by_key.get(str(value).strip().lower())
+        if choice is None:
+            return None, f"{name} must be one of: {', '.join(choices)}"
+        return choice, None
+
+    @staticmethod
+    def _segment_row(segment: dict) -> dict:
+        """The CDRs and germline of one chain, without the residue numbering."""
+        return {
+            "chain": segment.get("sabdab_auth_asym_id"),
+            "chain_type": segment.get("type"),
+            "cdr1": segment.get("cdr1"),
+            "cdr2": segment.get("cdr2"),
+            "cdr3": segment.get("cdr3"),
+            "v_gene": segment.get("v_gene"),
+            "j_gene": segment.get("j_gene"),
+        }
+
+    def _instance_row(self, instance: dict) -> dict:
+        """One antibody instance, compact: a full record carries the residue
+        numbering of both chains, so a 500-row page is 3.4 MB."""
+        entry = instance.get("pdb_entry") or {}
+        heavy = instance.get("heavy_like_segment")
+        light = instance.get("light_like_segment")
+        extended = entry.get("id") or ""
+        return {
+            "instance_id": instance.get("id"),
+            "pdb_id": extended[len("pdb_0000") :]
+            if extended.startswith("pdb_0000")
+            else extended,
+            "structure_name": entry.get("name"),
+            "antibody_id": instance.get("antibody_id"),
+            "antibody_type": instance.get("type"),
+            "resolution": entry.get("resolution"),
+            "structure_method": entry.get("structure_method"),
+            "release_date": entry.get("release_date"),
+            "heavy": self._segment_row(heavy) if isinstance(heavy, dict) else None,
+            "light": self._segment_row(light) if isinstance(light, dict) else None,
+            "antigen_instance_ids": [
+                binding.get("antigen_instance_id")
+                for binding in instance.get("antigen_bindings") or []
+            ],
+        }
+
     def _search_structures(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
-        """SAbDab 2 has no search route, so say so with the facts attached.
+        """Search antibody instances through /api/antibody-instances.
 
-        Checked exhaustively against /api/pdb: name, head, keywords,
-        name__contains, filter, text, search, q, resolution__lte and
-        structure_method are all accepted and all ignored -- `total` comes back
-        as the full catalogue size every time. Filtering locally is not viable
-        either: `limit` is capped (1000 is rejected 422) and a 200-row page is
-        2.0 MB over 1.7 s, so the 11,667 entries would be 59 requests and
-        ~117 MB for one tool call.
-
-        The previous version returned a browse URL with the claim that "SAbDab
-        search does not expose a JSON API", which is no longer true and left
-        the caller nowhere to go. This says nothing was searched -- so an empty
-        answer is not evidence of absence -- and names the routes that work.
+        #701 found no search route because it looked on /api/pdb, where every
+        filter is accepted and ignored. /api/antibody-instances does filter:
+        on 2026-10-23 no filter gave `total` 22671, `binds_to_antigen=lysozyme`
+        123, "spike glycoprotein" 2008 and a made-up name 0.
         """
         query = (arguments.get("query") or arguments.get("antigen") or "").strip()
+        if len(query) > SABDAB_ANTIGEN_QUERY_MAX:
+            return {
+                "status": "error",
+                "error": (
+                    f"query is {len(query)} characters; SAbDab matches antigen "
+                    f"names on at most {SABDAB_ANTIGEN_QUERY_MAX}. Send a "
+                    "distinctive part of the name instead, e.g. 'erbB-2' for "
+                    "Receptor tyrosine-protein kinase erbB-2, or 'cell death "
+                    "protein 1' for PD-1."
+                ),
+                "parameter": "query",
+            }
 
-        totals, failure = self._api_get("/pdb", params={"limit": 1})
-        catalogue_size = None if failure is not None else (totals or {}).get("total")
+        limit = arguments.get("limit", 20)
+        offset = arguments.get("offset", 0)
+        if (
+            isinstance(limit, bool)
+            or not isinstance(limit, int)
+            or not 1 <= limit <= SABDAB_SEARCH_LIMIT_MAX
+        ):
+            return {
+                "status": "error",
+                "error": f"limit must be an integer from 1 to {SABDAB_SEARCH_LIMIT_MAX}",
+                "parameter": "limit",
+            }
+        if isinstance(offset, bool) or not isinstance(offset, int) or offset < 0:
+            return {
+                "status": "error",
+                "error": "offset must be a non-negative integer",
+                "parameter": "offset",
+            }
 
-        browse = f"{SABDAB_BASE_URL}/search/"
+        resolution = arguments.get("resolution_max")
+        if resolution is not None and (
+            isinstance(resolution, bool)
+            or not isinstance(resolution, (int, float))
+            or resolution <= 0
+        ):
+            return {
+                "status": "error",
+                "error": "resolution_max must be a positive number of angstroms",
+                "parameter": "resolution_max",
+            }
+
+        filters = {}
+        for name, key, choices in (
+            ("method", "experimental_method", SABDAB_EXPERIMENTAL_METHODS),
+            ("antigen_type", "antigen_type", SABDAB_ANTIGEN_KINDS),
+            ("antibody_type", "antibody_type", SABDAB_ANTIBODY_KINDS),
+        ):
+            choice, error = self._choice(arguments.get(name), choices, name)
+            if error:
+                return {"status": "error", "error": error, "parameter": name}
+            if choice:
+                filters[key] = choice
+        if query:
+            filters["binds_to_antigen"] = query
+        species = (arguments.get("species") or "").strip()
+        if species:
+            filters["organism_scientific"] = species
+        if resolution is not None:
+            filters["resolution"] = resolution
+        pdb_id = (arguments.get("pdb_id") or "").strip()
+        if pdb_id:
+            filters["pdb_entry"] = self._extended_pdb_id(pdb_id)
+
+        payload, failure = self._api_get(
+            "/antibody-instances", params={**filters, "limit": limit, "offset": offset}
+        )
+        if failure is not None:
+            return failure
+        results = payload.get("results") if isinstance(payload, dict) else None
+        total = payload.get("total") if isinstance(payload, dict) else None
+        if (
+            not isinstance(results, list)
+            or isinstance(total, bool)
+            or not isinstance(total, int)
+        ):
+            return {
+                "status": "error",
+                "error": "SAbDab returned a search response without results and total",
+                "url": f"{SABDAB_API_URL}/antibody-instances",
+            }
+
+        rows = [self._instance_row(item) for item in results if isinstance(item, dict)]
+        next_offset = offset + len(rows)
+        has_more = next_offset < total
+        data = {
+            "query": query,
+            "filters_applied": filters,
+            "structures": rows,
+            "count": len(rows),
+            "total_matches": total,
+            "offset": offset,
+            "limit": limit,
+            "has_more": has_more,
+            "next_offset": next_offset if has_more else None,
+            "result_set_complete": offset == 0 and not has_more,
+        }
+        if total == 0 and query:
+            data["note"] = (
+                f"No antibody binds an antigen whose name contains {query!r}. "
+                "SAbDab matches the antigen's name as deposited in the PDB, so "
+                "gene symbols and shorthand often miss: 'HER2' finds nothing "
+                "where 'erbB-2' finds 31. Try a distinctive part of the full "
+                "protein name."
+            )
         return {
             "status": "success",
-            "data": {
-                "query": query,
-                "searched": False,
-                "reason": (
-                    "The SAbDab 2 API exposes entry and collection routes but "
-                    "no search route: every filter parameter is accepted and "
-                    "ignored. Nothing was searched, so an empty result here is "
-                    "not evidence that the structure is absent."
-                ),
-                "catalogue_size": catalogue_size,
-                "browse_url": f"{browse}?q={query}" if query else browse,
-                "next_steps": [
-                    "With a PDB ID, use SAbDab_get_structure_summary or "
-                    "SAbDab_get_structure for the curated annotations.",
-                    "To find candidate PDB IDs by text, search RCSB (the "
-                    "rcsb_pdb tools) and look each one up here; SAbDab holds "
-                    "antibody and nanobody structures only.",
-                ],
-            },
+            "data": data,
             "metadata": {
                 "source": "SAbDab 2 API",
-                "url": f"{SABDAB_API_URL}/pdb",
+                "url": f"{SABDAB_API_URL}/antibody-instances",
+                "details": "SAbDab_get_structure_summary takes a pdb_id from these rows",
             },
         }
 
@@ -330,9 +506,7 @@ class SAbDabTool(BaseTool):
         chains = self._chain_rows(entry)
         heavy = [c for c in chains if c.get("chain_type") in SABDAB_HEAVY_TYPES]
         light = [c for c in chains if c.get("chain_type") in SABDAB_LIGHT_TYPES]
-        single = [
-            c for c in chains if c.get("chain_type") in SABDAB_SINGLE_CHAIN_TYPES
-        ]
+        single = [c for c in chains if c.get("chain_type") in SABDAB_SINGLE_CHAIN_TYPES]
         # Only N is the antigen side. Treating "not heavy or light" as antigen
         # files kappa chains and scFv constructs as antigen, and a chain type
         # SAbDab adds later would silently join them.
@@ -369,10 +543,18 @@ class SAbDabTool(BaseTool):
                 "light_chains": [c["chain"] for c in light],
                 "single_chain_constructs": [c["chain"] for c in single],
                 "heavy_chain_species": sorted(
-                    {c["organism_scientific"] for c in heavy if c.get("organism_scientific")}
+                    {
+                        c["organism_scientific"]
+                        for c in heavy
+                        if c.get("organism_scientific")
+                    }
                 ),
                 "light_chain_species": sorted(
-                    {c["organism_scientific"] for c in light if c.get("organism_scientific")}
+                    {
+                        c["organism_scientific"]
+                        for c in light
+                        if c.get("organism_scientific")
+                    }
                 ),
                 "antigen_chains": [
                     {

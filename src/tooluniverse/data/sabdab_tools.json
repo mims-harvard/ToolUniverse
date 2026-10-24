@@ -1,7 +1,7 @@
 [
   {
     "name": "SAbDab_search_structures",
-    "description": "Search SAbDab structural antibody database. Returns a direct browse URL to matching antibody structures \u2014 SAbDab's search endpoint does not expose a JSON API, so use SAbDab_get_structure with a known PDB ID for structured data. Tip: retrieve the full SAbDab summary TSV from https://opig.stats.ox.ac.uk/webapps/sabdab-sabpred/sabdab/summary/?all=true for bulk filtering.",
+    "description": "Search SAbDab (Structural Antibody Database) for antibody structures by the antigen they bind, antibody source organism, experimental method, resolution, antigen type or antibody format. Returns one compact row per antibody instance: PDB ID, structure name, antibody format, resolution, heavy and light chain CDR1-3 with V/J genes, and the bound antigen instance IDs. 'query' is matched as a case-insensitive substring of the antigen's name as deposited in the PDB, at most 25 characters: gene symbols and shorthand usually miss ('HER2' and 'PD-1' find nothing), so use a distinctive part of the full protein name ('erbB-2', 'cell death protein 1', 'spike glycoprotein', 'lysozyme'). Results are paginated: data.total_matches is the full count, data.count is the rows on this page, and data.next_offset continues while data.has_more is true. Use SAbDab_get_structure_summary with a returned pdb_id for the full entry.",
     "type": "SAbDabTool",
     "parameter": {
       "type": "object",
@@ -13,16 +13,88 @@
         },
         "query": {
           "type": "string",
-          "description": "Search query - antigen name, species, or keywords (e.g., 'HER2', 'anti-CD20')"
+          "description": "Part of the bound antigen's name as deposited in the PDB, case-insensitive, at most 25 characters (e.g. 'erbB-2', 'lysozyme', 'spike glycoprotein'). Gene symbols such as 'HER2' usually match nothing. Omit to list all antibody instances matching the other filters."
         },
         "antigen": {
           "type": "string",
-          "description": "Alias for query. Antigen name to search (e.g., 'EGFR', 'HER2')."
+          "description": "Alias for query."
         },
         "limit": {
           "type": "integer",
-          "description": "Maximum results (default: 50)",
-          "default": 50
+          "minimum": 1,
+          "maximum": 100,
+          "default": 20,
+          "description": "Rows per page (1-100, default 20)."
+        },
+        "species": {
+          "type": "string",
+          "description": "Substring of the antibody's source organism scientific name (e.g. 'Homo sapiens', 'Lama glama')."
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "X-ray diffraction",
+            "electron microscopy",
+            "electron crystallography",
+            "solution NMR",
+            "solid-state NMR",
+            "neutron diffraction",
+            "fiber diffraction",
+            "powder diffraction",
+            "solution scattering",
+            "fluorescence transfer",
+            "infrared spectroscopy",
+            "EPR",
+            "theoretical model"
+          ],
+          "description": "Experimental method of the structure (case-insensitive)."
+        },
+        "resolution_max": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "description": "Keep structures determined at this resolution (angstroms) or better."
+        },
+        "antigen_type": {
+          "type": "string",
+          "enum": [
+            "PROTEIN",
+            "PEPTIDE",
+            "DNA",
+            "RNA",
+            "NUCLEOTIDE",
+            "PEPTIDE_NUCLEIC_ACID",
+            "SUGAR",
+            "HAPTEN",
+            "ION",
+            "CHEMICAL_ELEMENT",
+            "WATER",
+            "UNKNOWN",
+            "OTHER"
+          ],
+          "description": "Kind of antigen bound (case-insensitive)."
+        },
+        "antibody_type": {
+          "type": "string",
+          "enum": [
+            "FV",
+            "FAB",
+            "FAB+FC",
+            "FV*",
+            "SD-H",
+            "SD-L",
+            "VNAR"
+          ],
+          "description": "Antibody format: FV, FAB, FAB+FC, FV*, SD-H (heavy-chain single domain, e.g. nanobody), SD-L or VNAR (case-insensitive)."
+        },
+        "pdb_id": {
+          "type": "string",
+          "description": "Restrict to one PDB entry (4-character code, e.g. '3hfm')."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based row offset; continue with data.next_offset while data.has_more is true."
         }
       },
       "required": []
@@ -34,13 +106,65 @@
           "type": "string"
         },
         "data": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string"
+            },
+            "filters_applied": {
+              "type": "object"
+            },
+            "structures": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              }
+            },
+            "count": {
+              "type": "integer",
+              "description": "Rows on this page"
+            },
+            "total_matches": {
+              "type": "integer",
+              "description": "All antibody instances matching the filters"
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "result_set_complete": {
+              "type": "boolean"
+            },
+            "note": {
+              "type": "string"
+            }
+          }
+        },
+        "metadata": {
           "type": "object"
         }
       }
     },
     "test_examples": [
       {
-        "query": "anti-CD20"
+        "query": "lysozyme",
+        "limit": 5
+      },
+      {
+        "query": "spike glycoprotein",
+        "antibody_type": "SD-H",
+        "limit": 5
       }
     ],
     "fields": {
