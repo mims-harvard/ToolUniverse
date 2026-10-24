@@ -1183,5 +1183,144 @@
         }
       }
     ]
+  },
+  {
+    "name": "NvidiaNIM_rfd4_proteina",
+    "description": "De novo biomolecular design with RFD4-Proteina (NVIDIA + UW Institute for Protein Design) via NVIDIA NIM. One model covers seven design tasks: generation (de novo monomers and conditional designs, including protein and DNA binders), motif_scaffolding, enzyme_design, small_molecule_binder, antibody_design (CDR redesign on a fixed Ig framework, also TCRs), partial_diffusion and inverse_folding. 'task' selects how the sampler runs the trajectory, not the design problem: a binder against a target is 'generation' with the target held by coordinate and sequence conditioning and its epitope marked as hotspots. The design conditions live in the input, not in these parameters -- supply an annotated mmCIF (format 'annotated_cif'), which an ordinary unannotated structure is not. Design length is up to 1024 tokens. Returns designed structures in annotated mmCIF with per-design metrics. Long-running async operation.",
+    "type": "NvidiaNIMTool",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "task": {
+          "type": "string",
+          "description": "How the sampler runs the trajectory. Ask the deployment which tasks it serves if unsure.",
+          "enum": [
+            "generation",
+            "motif_scaffolding",
+            "enzyme_design",
+            "small_molecule_binder",
+            "antibody_design",
+            "partial_diffusion",
+            "inverse_folding"
+          ],
+          "default": "generation"
+        },
+        "input": {
+          "type": "object",
+          "description": "The design specification: a named structure file carried inline in the request body, never a filesystem path.",
+          "properties": {
+            "format": {
+              "type": "string",
+              "description": "Input dialect. 'annotated_cif' carries the conditioning inside the file; 'condition_spec' states it as selections beside the file.",
+              "enum": [
+                "annotated_cif",
+                "condition_spec"
+              ]
+            },
+            "example_id": {
+              "type": "string",
+              "description": "Optional label for the request, echoed back with the result."
+            },
+            "file": {
+              "type": "object",
+              "description": "The attached structure. Examples run 3 KB to 725 KB of mmCIF text.",
+              "properties": {
+                "filename": {
+                  "type": "string",
+                  "description": "Name of the attached file, e.g. 'monomer.cif'."
+                },
+                "content": {
+                  "type": "string",
+                  "description": "The mmCIF text itself, inline."
+                }
+              },
+              "required": [
+                "filename",
+                "content"
+              ]
+            }
+          },
+          "required": [
+            "format",
+            "file"
+          ]
+        },
+        "sampling": {
+          "type": "object",
+          "description": "Sampler budget. The three recycle schedules differ only in trunk passes over 60 steps: low 120, medium 180, high 300.",
+          "properties": {
+            "recycle_strategy": {
+              "type": "string",
+              "description": "Compute preset.",
+              "enum": [
+                "thinking_low",
+                "thinking_medium",
+                "thinking_high"
+              ],
+              "default": "thinking_medium"
+            },
+            "num_replicates": {
+              "type": "integer",
+              "description": "Independent designs to generate. Each replicate holds the GPU for a whole rollout, so raise it and the client timeout together.",
+              "default": 1
+            }
+          }
+        },
+        "metrics": {
+          "type": "object",
+          "description": "Which in-repository metrics to compute. Oracle-backed refolding metrics need an operator-mounted structure-prediction model and are not part of the hosted deployment.",
+          "properties": {
+            "tags": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Metric tag selection, e.g. ['design']."
+            }
+          }
+        }
+      },
+      "required": [
+        "task",
+        "input"
+      ]
+    },
+    "fields": {
+      "endpoint": "ipd/rfd4-proteina/generative",
+      "async_expected": true,
+      "poll_seconds": 300,
+      "response_type": "json",
+      "timeout": 600
+    },
+    "required_api_keys": [
+      "NVIDIA_API_KEY"
+    ],
+    "return_schema": {
+      "type": "object",
+      "description": "RFD4-Proteina design result: the task echoed back, duration_ms, any warnings, and a 'designs' list whose entries carry design_id, the generated sequence, the designed structure as annotated mmCIF, and per-design metrics such as clash fraction, bond-length violations and sequence adherence.",
+      "additionalProperties": true
+    },
+    "test_examples": [
+      {
+        "task": "generation",
+        "input": {
+          "format": "annotated_cif",
+          "example_id": "monomer_100",
+          "file": {
+            "filename": "monomer.cif",
+            "content": "data_monomer-short.cif\n#\n_entry.id       monomer-short.cif\n_entry.author   rib7\n_entry.date     2026-08-28\n_entry.time     19:44:50\n#\n_entity.id                 0\n_entity.type               polymer\n_entity.pdbx_description   .\n#\n_entity_poly.entity_id                      0\n_entity_poly.type                           polypeptide(L)\n_entity_poly.nstd_linkage                   no\n_entity_poly.nstd_monomer                   yes\n_entity_poly.pdbx_seq_one_letter_code       X\n_entity_poly.pdbx_seq_one_letter_code_can   X\n_entity_poly.pdbx_strand_id                 A\n_entity_poly.pdbx_target_identifier         ?\n#\n_entity_poly_seq.entity_id   0\n_entity_poly_seq.hetero      n\n_entity_poly_seq.mon_id      100-100\n_entity_poly_seq.num         1\n#\n_chem_comp.id                        100-100\n_chem_comp.name                      100-100\n_chem_comp.type                      NON-POLYMER\n_chem_comp.formula                   ?\n_chem_comp.mon_nstd_parent_comp_id   ?\n_chem_comp.pdbx_synonyms             ?\n_chem_comp.formula_weight            ?\n#\n_atom_site.group_PDB                         HETATM\n_atom_site.type_symbol                       X\n_atom_site.label_atom_id                     UNK\n_atom_site.label_alt_id                      .\n_atom_site.label_comp_id                     100-100\n_atom_site.label_asym_id                     A\n_atom_site.label_entity_id                   0\n_atom_site.label_seq_id                      1\n_atom_site.pdbx_PDB_ins_code                 .\n_atom_site.auth_seq_id                       1\n_atom_site.auth_comp_id                      100-100\n_atom_site.auth_asym_id                      A\n_atom_site.auth_atom_id                      UNK\n_atom_site.B_iso_or_equiv                    nan\n_atom_site.occupancy                         0.0\n_atom_site.pdbx_formal_charge                ?\n_atom_site.annotation_expsegmax_1_residue    100\n_atom_site.mask_expsegmin_1_residue          True\n_atom_site.mask_expsegmax_1_residue          True\n_atom_site.annotation_expsegmin_1_residue    100\n_atom_site.condition_hbond_1_atom            0\n_atom_site.condition_index-group_1_token     0\n_atom_site.mask_index_1_residue              True\n_atom_site.mask_coordinate_1_atom            False\n_atom_site.mask_sequence_1_residue           False\n_atom_site.annotation_src-component_1_atom   .\n_atom_site.atom_array_index                  0\n_atom_site.Cartn_x                           nan\n_atom_site.Cartn_y                           nan\n_atom_site.Cartn_z                           nan\n_atom_site.pdbx_PDB_model_num                1\n_atom_site.id                                1\n#\n_rfd_design.sampled_contig   100-100\n#\n_chem_comp_atom.comp_id                    100-100\n_chem_comp_atom.atom_id                    UNK\n_chem_comp_atom.type_symbol                X\n_chem_comp_atom.charge                     0\n_chem_comp_atom.pdbx_aromatic_flag         N\n_chem_comp_atom.pdbx_leaving_atom_flag     N\n_chem_comp_atom.pdbx_model_Cartn_x_ideal   nan\n_chem_comp_atom.pdbx_model_Cartn_y_ideal   nan\n_chem_comp_atom.pdbx_model_Cartn_z_ideal   nan\n#\n"
+          }
+        },
+        "sampling": {
+          "recycle_strategy": "thinking_low",
+          "num_replicates": 1
+        },
+        "metrics": {
+          "tags": [
+            "design"
+          ]
+        }
+      }
+    ]
   }
 ]
