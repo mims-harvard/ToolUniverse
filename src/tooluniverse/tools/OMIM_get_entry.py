@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def OMIM_get_entry(
     mim_number: str,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_entry",
     include: Optional[str] = "text,clinicalSynopsis,geneMap",
     *,
     stream_callback: Optional[Callable[[str], None]] = None,

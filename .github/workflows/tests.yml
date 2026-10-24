@@ -139,6 +139,37 @@ jobs:
           pytest tests/unit/test_protein_pka_tool.py -q --no-cov \
             -k "delivered_pka_sdk_accepts_all_declared_parameters or sdk_forwards_retained_components"
 
+      # "Generate SDK" below rewrites every wrapper and hash, so by the time
+      # pytest runs, a wrapper a commit forgot has been created and a stale
+      # hash rewritten: test_generated_tool_wrappers_in_sync.py then compares
+      # regenerated files against regenerated files and cannot fail. #617,
+      # #671, #672 and #808 all went green that way. Ask the commit itself,
+      # here, before a cache restore can supply the missing file.
+      - name: Are the committed generated files up to date?
+        run: |
+          set -o pipefail
+          python scripts/build_tools.py --force
+          python src/tooluniverse/generate_lazy_registry.py
+          python scripts/gen_api_key_catalog.py
+          paths="src/tooluniverse/tools \
+                 src/tooluniverse/_lazy_registry_static.py \
+                 src/tooluniverse/data/api_keys_catalog.json \
+                 .env.template"
+          stale=$(git status --porcelain -- $paths)
+          if [ -n "$stale" ]; then
+            echo "::error::A generator rewrote files the commit does not carry."
+            echo "$stale"
+            echo
+            echo "Run these three and commit what they change:"
+            echo "  python scripts/build_tools.py --force"
+            echo "  python src/tooluniverse/generate_lazy_registry.py"
+            echo "  python scripts/gen_api_key_catalog.py"
+            echo
+            git --no-pager diff --stat -- $paths
+            exit 1
+          fi
+          echo "committed generated files match their generators"
+
       - name: Cache SDK generation
         uses: actions/cache@v3
         with:

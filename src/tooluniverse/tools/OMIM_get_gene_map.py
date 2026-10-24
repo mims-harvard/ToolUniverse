@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def OMIM_get_gene_map(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_gene_map",
     mim_number: Optional[str] = None,
     chromosome: Optional[str] = None,
     limit: Optional[int] = 50,

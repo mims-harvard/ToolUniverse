@@ -15,13 +15,15 @@ at runtime, such as ``_echo_tool``. Only the intersection is the set that
 should have wrappers.
 """
 
+import subprocess
 from pathlib import Path
 
 import pytest
 
 pytestmark = pytest.mark.unit
 
-TOOLS_DIR = Path(__file__).resolve().parents[2] / "src/tooluniverse/tools"
+REPO_ROOT = Path(__file__).resolve().parents[2]
+TOOLS_DIR = REPO_ROOT / "src/tooluniverse/tools"
 
 
 @pytest.fixture(scope="module")
@@ -66,4 +68,46 @@ def test_every_builtin_tool_is_importable_from_the_sdk(builtin_tool_names):
     assert not missing, (
         f"{len(missing)} built-in tools are not exported by tooluniverse.tools; "
         f"run `python scripts/build_tools.py`. First few: {missing[:10]}"
+    )
+
+
+def _wrapper_names_git_has():
+    """Wrapper module names that are *committed*, not merely present on disk.
+
+    ``.exists()`` cannot answer the question this module exists to ask once a
+    generator has run in the same checkout: ``.github/workflows/tests.yml``
+    runs ``python scripts/build_tools.py`` as a step before pytest, so by the
+    time the two tests above execute, a wrapper the commit forgot has already
+    been created and they compare regenerated files against regenerated files.
+    Git still knows the difference -- a file the generator just made is
+    untracked -- and that is what this asks.
+    """
+    try:
+        done = subprocess.run(
+            ["git", "ls-files", "-z", "--", "src/tooluniverse/tools"],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            timeout=120,
+            check=True,
+        )
+    except (OSError, subprocess.SubprocessError):
+        pytest.skip("no usable git checkout to ask what is committed")
+    names = {
+        Path(entry).stem
+        for entry in done.stdout.split("\0")
+        if entry.endswith(".py") and not entry.endswith("/__init__.py")
+    }
+    if not names:
+        pytest.skip("git lists no wrapper modules; not a source checkout")
+    return names
+
+
+def test_every_builtin_tool_wrapper_is_committed(builtin_tool_names):
+    uncommitted = sorted(builtin_tool_names - _wrapper_names_git_has())
+    assert not uncommitted, (
+        f"{len(uncommitted)} built-in tools have a wrapper on disk that no commit "
+        "carries, so `from tooluniverse.tools import ...` raises ImportError for "
+        "anyone installing the wheel. Run `python scripts/build_tools.py` and "
+        f"`git add src/tooluniverse/tools`. First few: {uncommitted[:10]}"
     )

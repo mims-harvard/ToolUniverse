@@ -1,7 +1,7 @@
 """
 DisGeNET_search_disease
 
-Search DisGeNET for genes associated with a disease. Query by disease name or UMLS CUI (e.g., C00...
+Search DisGeNET for genes associated with a disease. Requires a UMLS CUI, NOT a free-text disease...
 """
 
 from typing import Any, Optional, Callable
@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def DisGeNET_search_disease(
     disease: str,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "search_disease",
     limit: Optional[int] = 10,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
@@ -18,14 +18,14 @@ def DisGeNET_search_disease(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search DisGeNET for genes associated with a disease. Query by disease name or UMLS CUI (e.g., C00...
+    Search DisGeNET for genes associated with a disease. Requires a UMLS CUI, NOT a free-text disease...
 
     Parameters
     ----------
     operation : str
         Operation type (fixed: search_disease)
     disease : str
-        Disease name or UMLS CUI (e.g., C0006142, breast cancer)
+        UMLS CUI for the disease, e.g. 'C0006142' (breast cancer). Free-text disease ...
     limit : int
         Maximum associations to return (default: 10)
     stream_callback : Callable, optional

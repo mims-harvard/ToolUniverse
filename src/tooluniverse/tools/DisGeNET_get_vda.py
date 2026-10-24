@@ -9,7 +9,7 @@ from ._shared_client import get_shared_client
 
 
 def DisGeNET_get_vda(
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_vda",
     variant: Optional[str] = None,
     gene: Optional[str] = None,
     limit: Optional[int] = 25,

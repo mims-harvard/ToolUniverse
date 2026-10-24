@@ -10,7 +10,7 @@ from ._shared_client import get_shared_client
 
 def DisGeNET_get_disease_genes(
     disease: str,
-    operation: Optional[str] = None,
+    operation: Optional[str] = "get_disease_genes",
     min_score: Optional[float] = None,
     limit: Optional[int] = 50,
     *,
