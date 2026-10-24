@@ -16,6 +16,8 @@ Compare semantic request identity: exact sequences and component stoichiometry, 
 
 A queue admission deadline is a resource decision. If it expires before a model starts, report **not started / queue expired**, with zero model calls. Do not report it as running, a prediction failure or a biological negative. Keep the last completed checkpoint and the missing work explicit.
 
+Reuse must reach downstream analysis, not just the scheduler. Persist a request-to-verified-artifact mapping including the original result location and hashes. Readers must resolve that mapping instead of assuming every result exists in the newest round directory. Check required artifacts at the reused source; a reused successful result must not become pending merely because no new output folder was created. Keep incomplete or ambiguous matches unresolved and do not launch a duplicate to bypass a reader defect.
+
 ## Observe usable memory
 
 Inspect current device allocatable/free memory, host available/free memory, other processes and disk space. Unified-memory systems may have high host available RAM while CUDA allocations fail. Hardware totals or `nvidia-smi` alone may not provide admission evidence.
@@ -26,6 +28,8 @@ After OOM/reboot, distinguish killed workers, startup failures, partial outputs 
 
 Prefer smaller workloads, serialization or bounded retries of owned jobs. Do not restart a shared machine, kill unrelated processes or globally drop caches to rescue the campaign.
 
+An old PID, status file or free lock alone does not establish ownership or live execution. Verify the command, working directory, child processes and terminal receipts. To supersede an owned queued coordinator, first confirm it has no native worker or in-flight call; retain source/input hashes, original policy and a supersession receipt. Do not edit a live worker's source or policy silently. CPU-only admission thresholds require their own measured profile and do not relax a GPU job's guard. A sum of process RSS is not unique physical memory.
+
 A per-file page-cache eviction hint can be considered for a **known, finished, read-only checkpoint** after confirming no active worker needs it. It is advisory and filesystem-dependent, not a universal recovery step. Measure device memory before/after and verify file identity/content; do not mutate checkpoints. Use only when safer recovery is insufficient and the action is authorized.
 
 ## Verify artifacts
@@ -35,6 +39,8 @@ Check nonempty output, format, sequence/chains, atoms and hashes. HTTP success m
 Preserve inputs/outputs, versions, parameters, seeds, mappings and scoring-code revisions. Distinguish active snapshots from final snapshots. Use candidate/round-specific paths; copied generic summary names can overwrite other results.
 
 Write corrections as versioned results with supersession links. Verify archive entry counts/hashes before deleting sources or claiming a backup is complete. Resume from verified completed stages after a reset.
+
+Snapshot a live queue's logs and status into a historical namespace. Never copy a stale local snapshot over live remote status. Separate completed analysis, queued validation and the overall objective: archiving one completed phase does not complete the campaign.
 
 ## Convert defects to public fixes
 

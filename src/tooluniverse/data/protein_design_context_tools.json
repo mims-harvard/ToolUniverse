@@ -1,0 +1,581 @@
+[
+  {
+    "name": "Protein_compare_receptor_context",
+    "description": "Compare conditional sequence preferences with matched receptor deletion on fixed ligand backbones. Local, normalized log-probability inputs; use NvidiaNIM_proteinmpnn for generation. Reports per-pose context effects, not affinity.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "position": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100000,
+          "description": "One-based parent ligand sequence index, not a PDB residue number."
+        },
+        "parent_residue": {
+          "type": "string",
+          "enum": [
+            "A",
+            "C",
+            "D",
+            "E",
+            "F",
+            "G",
+            "H",
+            "I",
+            "K",
+            "L",
+            "M",
+            "N",
+            "P",
+            "Q",
+            "R",
+            "S",
+            "T",
+            "V",
+            "W",
+            "Y"
+          ]
+        },
+        "mutant_residue": {
+          "type": "string",
+          "enum": [
+            "A",
+            "C",
+            "D",
+            "E",
+            "F",
+            "G",
+            "H",
+            "I",
+            "K",
+            "L",
+            "M",
+            "N",
+            "P",
+            "Q",
+            "R",
+            "S",
+            "T",
+            "V",
+            "W",
+            "Y"
+          ]
+        },
+        "alphabet": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 21,
+          "description": "All 20 canonical amino acids, optionally X, once each in score-vector order; X is included in normalization but cannot be proposed."
+        },
+        "scoring_mode": {
+          "type": "string",
+          "enum": [
+            "conditional_on_other_residues"
+          ],
+          "description": "Score the selected site conditioned on the other parent residues; backbone-only/unconditional outputs are not accepted."
+        },
+        "scorer_family": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "description": "Inverse-folding architecture family, e.g. ProteinMPNN. Checkpoints are related weights, never independent scorer families."
+        },
+        "expected_poses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source_family": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "pose_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              }
+            },
+            "required": [
+              "source_family",
+              "pose_sha256"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1,
+          "maxItems": 128,
+          "description": "Declare all sampled source-family/coordinate-hash pairs before analysis. Deduplicate aliases within family using coordinate identity, not file bytes."
+        },
+        "expected_checkpoints": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "minItems": 1,
+          "maxItems": 8,
+          "uniqueItems": true
+        },
+        "contexts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "source_family": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 200
+              },
+              "pose_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "checkpoint_sha256": {
+                "type": "string",
+                "pattern": "^[0-9a-f]{64}$"
+              },
+              "full_complex": {
+                "type": "object",
+                "properties": {
+                  "ligand_backbone_sha256": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$",
+                    "description": "Canonical ligand backbone coordinate digest; identical across the matched deletion pair."
+                  },
+                  "ligand_sequence_sha256": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$",
+                    "description": "Exact parent ligand sequence digest, shared by every context."
+                  },
+                  "protocol_sha256": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$",
+                    "description": "Digest of common conditional-scoring settings, atom-hash convention and software version; exclude receptor presence, pose, checkpoint and decoding seed."
+                  },
+                  "design_positions": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 100000
+                    },
+                    "minItems": 1,
+                    "maxItems": 10000,
+                    "uniqueItems": true,
+                    "description": "Actual effective design mask, using one-based ligand sequence indices, shared across all contexts."
+                  },
+                  "receptor_present": {
+                    "type": "boolean",
+                    "description": "True for full_complex, false for receptor_deleted; declared by caller, not coordinate-verified."
+                  },
+                  "log_probabilities": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 100,
+                    "items": {
+                      "type": "array",
+                      "minItems": 20,
+                      "maxItems": 21,
+                      "items": {
+                        "type": "number",
+                        "maximum": 0
+                      }
+                    },
+                    "description": "Natural-log probabilities at the selected position for each decoding sample. Each row follows alphabet and must normalize over all symbols (tolerance 1e-5 in log-sum-exp). No masked zero rows."
+                  }
+                },
+                "required": [
+                  "ligand_backbone_sha256",
+                  "ligand_sequence_sha256",
+                  "protocol_sha256",
+                  "design_positions",
+                  "receptor_present",
+                  "log_probabilities"
+                ],
+                "additionalProperties": false
+              },
+              "receptor_deleted": {
+                "type": "object",
+                "properties": {
+                  "ligand_backbone_sha256": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$",
+                    "description": "Canonical ligand backbone coordinate digest; identical across the matched deletion pair."
+                  },
+                  "ligand_sequence_sha256": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$",
+                    "description": "Exact parent ligand sequence digest, shared by every context."
+                  },
+                  "protocol_sha256": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{64}$",
+                    "description": "Digest of common conditional-scoring settings, atom-hash convention and software version; exclude receptor presence, pose, checkpoint and decoding seed."
+                  },
+                  "design_positions": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 100000
+                    },
+                    "minItems": 1,
+                    "maxItems": 10000,
+                    "uniqueItems": true,
+                    "description": "Actual effective design mask, using one-based ligand sequence indices, shared across all contexts."
+                  },
+                  "receptor_present": {
+                    "type": "boolean",
+                    "description": "True for full_complex, false for receptor_deleted; declared by caller, not coordinate-verified."
+                  },
+                  "log_probabilities": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 100,
+                    "items": {
+                      "type": "array",
+                      "minItems": 20,
+                      "maxItems": 21,
+                      "items": {
+                        "type": "number",
+                        "maximum": 0
+                      }
+                    },
+                    "description": "Natural-log probabilities at the selected position for each decoding sample. Each row follows alphabet and must normalize over all symbols (tolerance 1e-5 in log-sum-exp). No masked zero rows."
+                  }
+                },
+                "required": [
+                  "ligand_backbone_sha256",
+                  "ligand_sequence_sha256",
+                  "protocol_sha256",
+                  "design_positions",
+                  "receptor_present",
+                  "log_probabilities"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "required": [
+              "source_family",
+              "pose_sha256",
+              "checkpoint_sha256",
+              "full_complex",
+              "receptor_deleted"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 1,
+          "maxItems": 1024,
+          "description": "Exactly one matched full/deleted result for each declared pose crossed with each scorer checkpoint. Keep independently decoded sample rows separate."
+        }
+      },
+      "required": [
+        "position",
+        "parent_residue",
+        "mutant_residue",
+        "alphabet",
+        "scoring_mode",
+        "scorer_family",
+        "expected_poses",
+        "expected_checkpoints",
+        "contexts"
+      ],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "success"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "rows": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "source_family": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 200
+                      },
+                      "pose_sha256": {
+                        "type": "string",
+                        "pattern": "^[0-9a-f]{64}$"
+                      },
+                      "checkpoint_sha256": {
+                        "type": "string",
+                        "pattern": "^[0-9a-f]{64}$"
+                      },
+                      "full_mutation_delta_nats": {
+                        "type": "array",
+                        "items": {
+                          "type": "number"
+                        }
+                      },
+                      "deleted_mutation_delta_nats": {
+                        "type": "array",
+                        "items": {
+                          "type": "number"
+                        }
+                      },
+                      "full_mean_delta_nats": {
+                        "type": "number"
+                      },
+                      "deleted_mean_delta_nats": {
+                        "type": "number"
+                      },
+                      "receptor_context_effect_nats": {
+                        "type": "number"
+                      },
+                      "unpaired_sample_range_nats": {
+                        "type": "array",
+                        "items": {
+                          "type": "number"
+                        },
+                        "minItems": 2,
+                        "maxItems": 2
+                      }
+                    },
+                    "required": [
+                      "source_family",
+                      "pose_sha256",
+                      "checkpoint_sha256",
+                      "full_mutation_delta_nats",
+                      "deleted_mutation_delta_nats",
+                      "full_mean_delta_nats",
+                      "deleted_mean_delta_nats",
+                      "receptor_context_effect_nats",
+                      "unpaired_sample_range_nats"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "family_checkpoint_summary": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "source_family": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 200
+                      },
+                      "checkpoint_sha256": {
+                        "type": "string",
+                        "pattern": "^[0-9a-f]{64}$"
+                      },
+                      "pose_count": {
+                        "type": "integer",
+                        "minimum": 1
+                      },
+                      "equal_pose_mean_context_effect_nats": {
+                        "type": "number"
+                      },
+                      "all_pose_sample_ranges_positive": {
+                        "type": "boolean"
+                      },
+                      "all_pose_sample_ranges_negative": {
+                        "type": "boolean"
+                      }
+                    },
+                    "required": [
+                      "source_family",
+                      "checkpoint_sha256",
+                      "pose_count",
+                      "equal_pose_mean_context_effect_nats",
+                      "all_pose_sample_ranges_positive",
+                      "all_pose_sample_ranges_negative"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "coverage": {
+                  "type": "object",
+                  "properties": {
+                    "declared_pose_count": {
+                      "type": "integer"
+                    },
+                    "source_family_count": {
+                      "type": "integer"
+                    },
+                    "scorer_family": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 200
+                    },
+                    "scorer_family_count": {
+                      "const": 1
+                    },
+                    "checkpoint_count": {
+                      "type": "integer"
+                    },
+                    "matched_context_count": {
+                      "type": "integer"
+                    },
+                    "declared_matrix_complete": {
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "declared_pose_count",
+                    "source_family_count",
+                    "scorer_family",
+                    "scorer_family_count",
+                    "checkpoint_count",
+                    "matched_context_count",
+                    "declared_matrix_complete"
+                  ],
+                  "additionalProperties": false
+                },
+                "input_sha256": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$"
+                },
+                "coordinate_identity_verified": {
+                  "const": false
+                },
+                "binding_verified": {
+                  "const": false
+                },
+                "limitations": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": [
+                "rows",
+                "family_checkpoint_summary",
+                "coverage",
+                "input_sha256",
+                "coordinate_identity_verified",
+                "binding_verified",
+                "limitations"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "status",
+            "data"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "status": {
+              "const": "error"
+            },
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "status",
+            "error"
+          ],
+          "additionalProperties": true
+        }
+      ]
+    },
+    "test_examples": [
+      {
+        "position": 1,
+        "parent_residue": "A",
+        "mutant_residue": "V",
+        "alphabet": "ACDEFGHIKLMNPQRSTVWY",
+        "scoring_mode": "conditional_on_other_residues",
+        "scorer_family": "ProteinMPNN",
+        "expected_poses": [
+          {
+            "source_family": "analytic-coordinate-control",
+            "pose_sha256": "48700b967f79ad9079961e37987976de61d7943c0952c65c73dc0520a7a6805f"
+          }
+        ],
+        "expected_checkpoints": [
+          "b5c7bff4602d6811e97c86582a73e47e9babf5a0943af8e10e65a1236cbdbc5b"
+        ],
+        "contexts": [
+          {
+            "source_family": "analytic-coordinate-control",
+            "pose_sha256": "48700b967f79ad9079961e37987976de61d7943c0952c65c73dc0520a7a6805f",
+            "checkpoint_sha256": "b5c7bff4602d6811e97c86582a73e47e9babf5a0943af8e10e65a1236cbdbc5b",
+            "full_complex": {
+              "ligand_backbone_sha256": "0aeb131b1d755fced2b6b9b9b3535244117fbccfe306590a0fe0f5654e5bbf49",
+              "ligand_sequence_sha256": "a2796e5ff476229507c40f38a4e9168ff779b8a6544d5f4da9edef64cc1bddc5",
+              "protocol_sha256": "afb6255bfe0d071bc737641f7ef3e12c59905baade798312155c7d771bfe035c",
+              "design_positions": [
+                1
+              ],
+              "receptor_present": true,
+              "log_probabilities": [
+                [
+                  -2.995732273553991,
+                  -3.0528906873939397,
+                  -3.0528906873939397,
+                  -3.0528906873939397,
+                  -3.0528906873939397,
+                  -3.0528906873939397,
+                  -3.0528906873939397,
+                  -3.0528906873939397,
+                  -3.0528906873939397,
+                  -3.0528906873939397,
+                  -3.0528906873939397,
+                  -3.0528906873939397,
+                  -3.0528906873939397,
+                  -3.0528906873939397,
+                  -3.0528906873939397,
+                  -3.0528906873939397,
+                  -3.0528906873939397,
+                  -2.3025850929940455,
+                  -3.0528906873939397,
+                  -3.0528906873939397
+                ]
+              ]
+            },
+            "receptor_deleted": {
+              "ligand_backbone_sha256": "0aeb131b1d755fced2b6b9b9b3535244117fbccfe306590a0fe0f5654e5bbf49",
+              "ligand_sequence_sha256": "a2796e5ff476229507c40f38a4e9168ff779b8a6544d5f4da9edef64cc1bddc5",
+              "protocol_sha256": "afb6255bfe0d071bc737641f7ef3e12c59905baade798312155c7d771bfe035c",
+              "design_positions": [
+                1
+              ],
+              "receptor_present": false,
+              "log_probabilities": [
+                [
+                  -2.995732273553991,
+                  -2.9957322735539913,
+                  -2.9957322735539913,
+                  -2.9957322735539913,
+                  -2.9957322735539913,
+                  -2.9957322735539913,
+                  -2.9957322735539913,
+                  -2.9957322735539913,
+                  -2.9957322735539913,
+                  -2.9957322735539913,
+                  -2.9957322735539913,
+                  -2.9957322735539913,
+                  -2.9957322735539913,
+                  -2.9957322735539913,
+                  -2.9957322735539913,
+                  -2.9957322735539913,
+                  -2.9957322735539913,
+                  -2.995732273553991,
+                  -2.9957322735539913,
+                  -2.9957322735539913
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "type": "ProteinDesignContextTool"
+  }
+]

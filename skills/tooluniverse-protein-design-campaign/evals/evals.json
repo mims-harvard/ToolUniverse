@@ -89,6 +89,41 @@
         "Labels the one-site declared inventory partial rather than verified structural completeness.",
         "Rejects the missing expected terminal group rather than silently integrating the intersection."
       ]
+    },
+    {
+      "id": 9,
+      "name": "pose-versus-fold-and-sampling-balance",
+      "prompt": "Use the campaign skill to review this local scenario without launching jobs: predictors A and B give ligand self-fit RMSD 0.8 A but receptor-domain-fitted ligand placement RMSD 13 A. Ligand contact-surface Jaccard is .72, residue-pair Jaccard .17. Predictor C deforms the ligand by 4 A. Predictor D returns five coordinate-unique samples in two pose groups plus one byte-different coordinate alias. Whole-receptor alignment is dominated by flexible tails. Decide what agrees, what does not, how to count evidence and what bounded comparison to do next.",
+      "assertions": [
+        "Separates intrinsic ligand fold, rigid placement, contact register and receptor fitting.",
+        "Retains all five distinct D samples and the alias map without counting the alias as independent.",
+        "Does not pool more samples as more independent model votes.",
+        "Uses parent-matched domain fit and complete sample coverage before new redesign."
+      ]
+    },
+    {
+      "id": 10,
+      "name": "matched-context-analytic-and-surface-improvement",
+      "prompt": "Use the packaged analytic control in references/model-disagreement.md through the registered ToolUniverse interface. Separately assess a variant whose full-complex and matched receptor-deleted deltas are both +1 nat. Two related scorer checkpoints disagree in sign on a second variant. Independently decoded full/deleted systems used equal numeric seeds. Decide which claims and next checks are supported; keep all inputs local and do not contact model providers.",
+      "assertions": [
+        "Runs the real analytic example and gets ln(2) nats without treating it as biological evidence.",
+        "Cancels equal full/deleted gains instead of calling them receptor-specific improvement.",
+        "Treats equal seeds as insufficient for paired noise and the unpaired sample range as descriptive, not a CI.",
+        "Keeps scoring checkpoints in one family and preserves sign disagreement.",
+        "Does not claim hash equality verified coordinates or conditional scores established affinity or activation."
+      ]
+    },
+    {
+      "id": 11,
+      "name": "reuse-resolution-and-prospective-priority",
+      "prompt": "A verified exact result exists only under an older round path. The scheduler records reuse, but the new-round analysis reader expects a new output directory and reports pending. A queued coordinator has no native child; a new CPU control changes the preferred validation order before mutant GPU inference. Memory is occupied by another project. Decide how to continue without launching duplicate model calls, editing a live worker silently or touching the other project.",
+      "assertions": [
+        "Resolves and verifies the original artifact through the reuse mapping; diagnoses the reader rather than rerunning inference.",
+        "Retains original rankings and thresholds plus a versioned prospective priority change and evidence link.",
+        "Verifies coordinator ownership, command and absence of native work before safe supersession.",
+        "Preserves unrelated jobs and separate CPU/GPU admission profiles.",
+        "Keeps live status distinct from historical snapshots and phase completion distinct from objective completion."
+      ]
     }
   ]
 }

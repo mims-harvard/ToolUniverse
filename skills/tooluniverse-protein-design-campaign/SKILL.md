@@ -21,8 +21,8 @@ For competitions, verify the live challenge, account track, deadlines, novelty d
 2. Test known positive controls through the **same preparation and scoring pipeline**. If a known binder fails, diagnose the pipeline before treating the cutoff as a candidate veto. Keep the original result and any revised criterion separate.
 3. Before attributing a parent/mutant difference to sequence, re-prepare both unchanged predicted starting poses with the same hydrogenation, force field and restraints. Compare this preparation effect with the mutation effect. See the structure reference.
 4. Spend compute on distinct uncertainty: foldability, complex pose, receptor/glycan compatibility, protonation mechanism, or cross-species compatibility. More seeds assess sampling but do not supply another model family.
-5. When models disagree, compare constructs, component retention, protonation conventions and coordinate preparation. Do not average unrelated units into an apparent consensus.
-6. Keep an experimental route visible: matched SPR/BLI or an equivalent binding assay at the specified pHs, with receptor species and construct controls. Computation cannot establish an assay detection threshold.
+5. When models disagree, separate ligand deformation from rigid pose, receptor-domain alignment and contact-register changes. Keep every coordinate-unique sample and summarize within family before comparing families. For conditional sequence scores, test matched receptor deletion before calling an increase an interface improvement. Read [model-disagreement.md](references/model-disagreement.md) for the controls and local analysis tool.
+6. Keep an experimental route visible: matched SPR/BLI or an equivalent binding assay at the specified pHs, with receptor species and construct controls. For receptor agonists, distinguish binding from activation and require a relevant functional assay. Computation cannot establish an assay detection threshold.
 
 Use [structure-validation.md](references/structure-validation.md) for identity mapping, sidechains, glycans and controls. Read [ph-selectivity.md](references/ph-selectivity.md) for conditional binding. Read [compute-and-provenance.md](references/compute-and-provenance.md) before restarting failed jobs or scaling model coverage.
 
@@ -34,13 +34,14 @@ Do not call a design an experimentally supported binder based on pLDDT, pTM, low
 |---|---|---|
 | Independent monomer folds and core checks | Foldability and sampled agreement | A bound pose or affinity |
 | Complex predictions with calibrated controls | A model-dependent pose hypothesis | Measured binding or success probability |
+| Matched-backbone receptor deletion | A learned receptor-context sequence preference | Binding free energy, affinity, pose probability or activation |
 | Receptor/glycan geometry checks | Compatibility in explicitly sampled contexts | All native glycoforms or binding energy |
 | Restrained physical preparation | Local geometry under specified force fields | Equilibrium stability or convergence without diagnostics |
 | Complete bound/free pKa analysis | A protonation-linked hypothesis | Measured pH selectivity, KD, or no detectable binding |
 | Partner-species analysis | Compatibility with the evaluated construct | Experimental cross-reactivity |
 | Matched experimental assays | Binding within tested conditions | Generalization to untested constructs |
 
-Report unique sequences, model families, seeds, conformers, prepared contexts and controls separately. State attempts planned, started, successful, failed and skipped. Near-identical variants and correlated structures are not independent replications.
+Report unique sequences, model families, checkpoints, seeds, conformers, prepared contexts and controls separately. Distinguish native inference from postprocessing and score-table enumeration. State attempts planned, started, successful, failed and skipped. Near-identical variants, coordinate aliases and related weights are not independent replications.
 
 ## Maintain recoverable evidence
 

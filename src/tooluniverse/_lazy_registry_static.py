@@ -613,6 +613,7 @@ STATIC_LAZY_REGISTRY = {
     "ProtVarPopulationTool": "protvar_tool",
     "ProtVarTool": "protvar_tool",
     "ProtacDBTool": "protacdb_tool",
+    "ProteinDesignContextTool": "protein_design_context_tool",
     "ProteinMSAInventoryTool": "protein_msa_tool",
     "ProteinPHLinkageTool": "protein_ph_linkage_tool",
     "ProteinPKAITool": "protein_pkai_tool",
