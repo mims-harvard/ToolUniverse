@@ -2,7 +2,6 @@
 
 import copy
 import json
-import logging
 
 import pytest
 
@@ -315,16 +314,12 @@ class _AppendHook(OutputHook):
         return result + self.config["suffix"]
 
 
-def test_hook_failures_are_isolated_and_priority_is_stable(caplog, monkeypatch):
+def test_hook_failures_are_isolated_and_priority_is_stable(caplog):
     """A hook that raises must not take the result with it, and order is by priority.
 
-    `caplog` reads records at the ROOT logger, and `logging_config` sets
-    `propagate = False` on the `tooluniverse` logger the first time anything in the
-    package initialises logging -- so this assertion used to depend on no earlier test
-    in the same process having done that. Under `pytest -n 6` that depends on which
-    tests share a worker, which is why it failed in some runs and not others.
+    This asserts on `caplog`, which `tests/conftest.py` keeps reachable: see
+    `_let_package_logs_reach_caplog` for why that is not automatic.
     """
-    monkeypatch.setattr(logging.getLogger("tooluniverse"), "propagate", True)
     manager = object.__new__(HookManager)
     manager.enabled = True
     manager.config = {}

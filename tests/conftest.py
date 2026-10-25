@@ -118,6 +118,38 @@ def tooluniverse_instance():
 
 
 @pytest.fixture(autouse=True)
+def _let_package_logs_reach_caplog():
+    """Keep `caplog` able to see this package's log records.
+
+    `caplog` reads records at the ROOT logger, and `logging_config` sets
+    `propagate = False` on the `tooluniverse` logger the first time anything in
+    the package initialises logging -- deliberately, so that a CLI user sees
+    each line once rather than twice. Any test that asserts on `caplog.text`
+    then sees nothing, and which tests those are is not the point: whether it
+    happens depends on whether some EARLIER test in the same process triggered
+    that initialisation.
+
+    Under `pytest -n 6` that depends on which files share a worker, so the same
+    assertion passed and failed across runs of the same commit, in
+    `test_extended_hooks.py` and `test_ux_error_hints_r3.py`. Reproduced
+    deterministically by setting `propagate = False` before collection, which
+    fails both on its own with no parallelism involved.
+
+    Autouse, per test, and restoring what it found: the initialisation can
+    happen at any point in a run, and no test asserts that propagation is off.
+    """
+    import logging
+
+    logger = logging.getLogger("tooluniverse")
+    previous = logger.propagate
+    logger.propagate = True
+    try:
+        yield
+    finally:
+        logger.propagate = previous
+
+
+@pytest.fixture(autouse=True)
 def _reset_faers_report_total_memo():
     """Keep the FAERS report-total memo from leaking between tests.
 
