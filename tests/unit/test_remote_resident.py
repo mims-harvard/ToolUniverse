@@ -2233,12 +2233,23 @@ class TestMachineWideHoldings:
         "resident/{slug}_resident_worker.py --socket /run/user/1000/x.sock --slug {slug}"
     )
 
-    def _holdings(self, *lines, budgets=None):
+    def _holdings(self, *lines, budgets=None, parents=None):
+        """`ps -eo pid,ppid,args`, one pid per line, parented to init by default.
+
+        `parents` maps a line's index to the index of the line that forked it,
+        which is the shape a launcher that forks leaves in the process table.
+        """
         from tooluniverse.remote_resident import admission
 
         budgets = budgets or {}
+        parents = parents or {}
+        rows = [
+            f"{1000 + index:>7} {1000 + parents[index] if index in parents else 1:>7} "
+            f"{line}"
+            for index, line in enumerate(lines)
+        ]
         return admission.machine_holdings(
-            ps_output="\n".join(lines), budget_of=lambda s: budgets.get(s)
+            ps_output="\n".join(rows), budget_of=lambda s: budgets.get(s)
         )
 
     def test_a_worker_in_this_tree_is_keyed_by_slug(self):
@@ -2294,17 +2305,54 @@ class TestMachineWideHoldings:
         held = self._holdings(self.WORKER.format(slug="somethingelse"), budgets={})
         assert held == {"somethingelse": None}
 
-    def test_room_for_releases_only_its_own_trees_budget(self):
-        """Restarting mine frees mine; another tree's worker is still holding."""
+    def test_a_launcher_that_forks_is_one_residency_and_not_two(self):
+        """Boltz's launcher forks, and both halves carry the worker's command line.
+
+        Measured live with one worker up: `{'boltz': 5.54, 'boltz#2': 5.54}`, so
+        the gate summed 11.08 GiB for a model holding 5.54 and could refuse an
+        admission that would have fit. The PPID is what tells this apart from
+        two independent workers, which the test above keeps.
+        """
+        held = self._holdings(
+            self.WORKER.format(slug="boltz"),
+            self.WORKER.format(slug="boltz"),
+            budgets={"boltz": 5.54},
+            parents={1: 0},
+        )
+
+        assert held == {"boltz": 5.54}, f"double-counted as {held}"
+
+    def test_a_row_that_is_not_a_pid_ppid_args_row_is_not_a_process(self):
+        """A shell carrying a worker's whole command line passes every other test.
+
+        Real slug, real `--socket`, a `/resident/` token in its arguments -- the
+        shape tests above all let it through, and one was in this machine's own
+        process table while this was being written. What it does not have is a
+        pid and a ppid where a `ps -eo pid,ppid,args` row has them, which is also
+        what excludes `ps`'s header.
+        """
         from tooluniverse.remote_resident import admission
 
+        worker = (
+            "/home/u/ws/tooluniverse/ToolUniverse/src/tooluniverse/remote/boltz/"
+            "resident/boltz_resident_worker.py"
+        )
         ps = "\n".join(
             [
-                self.WORKER.format(slug="boltz"),
-                self.FOREIGN.format(slug="boltz", tree="other"),
+                "    PID    PPID COMMAND",
+                f"/bin/sh -c {worker} --socket /run/user/1000/x.sock --slug boltz",
             ]
         )
-        held = admission.machine_holdings(ps_output=ps, budget_of=lambda s: 5.54)
+
+        assert admission.machine_holdings(ps_output=ps, budget_of=lambda s: 5.54) == {}
+
+    def test_room_for_releases_only_its_own_trees_budget(self):
+        """Restarting mine frees mine; another tree's worker is still holding."""
+        held = self._holdings(
+            self.WORKER.format(slug="boltz"),
+            self.FOREIGN.format(slug="boltz", tree="other"),
+            budgets={"boltz": 5.54},
+        )
         held.pop("boltz", None)  # what room_for does
         assert held == {"boltz@other": 5.54}, (
             "a restart must not release another checkout's budget"

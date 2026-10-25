@@ -298,22 +298,41 @@ def machine_holdings(
     Values are the DECLARED budget from the local manifest, because that is what
     a budget is for; a slug this checkout does not have returns None, which
     `decide` refuses on rather than treating as free.
+
+    The PPID is read with the command line because a launcher that FORKS is one
+    residency and not two: boltz's worker is started through
+    `boltz2_opt.worker_launch`, and parent and child both carry the worker path
+    and `--socket`, so one 5.54 GiB residency read as
+    `{'boltz': 5.54, 'boltz#2': 5.54}` -- measured live on this machine -- and
+    this gate refused admissions that would have fit. A match whose parent is
+    also a match is therefore dropped. Two INDEPENDENT workers of one slug are
+    still two holders, because neither is the other's child, and that is the case
+    that wedged this host.
     """
     if ps_output is None:
         try:
             ps_output = subprocess.run(
-                ["ps", "-eo", "args"], capture_output=True, text=True, timeout=20
+                ["ps", "-eo", "pid,ppid,args"],
+                capture_output=True,
+                text=True,
+                timeout=20,
             ).stdout
         except (OSError, subprocess.SubprocessError):
             return {}
     if budget_of is None:
         budget_of = _declared_budget
 
-    out: Dict[str, Optional[float]] = {}
+    matches: list[Tuple[str, str, str, Optional[str]]] = []
     for line in (ps_output or "").splitlines():
         if "resident_worker.py" not in line or "--socket" not in line:
             continue
-        worker = next((tok for tok in line.split() if "/resident/" in tok), "")
+        fields = line.split(None, 2)
+        if len(fields) < 3 or not (fields[0].isdigit() and fields[1].isdigit()):
+            # Not a `pid,ppid,args` row, so not a process: the header, or output
+            # from somewhere this function does not read.
+            continue
+        pid, ppid, args = fields
+        worker = next((tok for tok in args.split() if "/resident/" in tok), "")
         if not worker:
             continue  # a shell wrapper that merely mentions the worker
         slug, tree = _holder_of(worker)
@@ -329,6 +348,13 @@ def machine_holdings(
             continue
         if tree is not None and not SLUG_RE.match(tree.replace("-", "_")):
             tree = None
+        matches.append((pid, ppid, slug, tree))
+
+    holders = {pid for pid, _ppid, _slug, _tree in matches}
+    out: Dict[str, Optional[float]] = {}
+    for _pid, ppid, slug, tree in matches:
+        if ppid in holders:
+            continue  # the other half of one forked launcher, counted already
         key = f"{slug}@{tree}" if tree else slug
         # Two processes of the same slug in the same tree are two holders: the
         # second is exactly what made 12 GiB into a wedged host.

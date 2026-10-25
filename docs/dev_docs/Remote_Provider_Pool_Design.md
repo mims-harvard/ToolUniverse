@@ -337,7 +337,11 @@ A call can be answered without a model ever loading — a rejected argument, a c
 answer. For the 32 providers that keep a worker, the process table says which happened
 (`admission.machine_holdings`, keyed by the bare slug for this checkout's own workers;
 `admission.declares_resident_worker` is what asks whether to look), and a call that left
-no worker running measures nothing. For a provider holding its model in its own server
+no worker running measures nothing. That scan reads `ps -eo pid,ppid,args` and drops a
+match whose parent is also a match, because a launcher that forks leaves two rows for one
+residency: boltz's did, so one 5.54 GiB worker read as 11.08 GiB and the resident gate
+could refuse a load that would have fit. Two workers neither of which is the other's child
+are still two holders — that is the case that wedged this host. For a provider holding its model in its own server
 process there is no such evidence to be had, so a call that loaded nothing records
 something small, and `FootprintStore.record` keeping the largest figure it has ever seen
 is what corrects that on the first call that does load.
@@ -420,6 +424,11 @@ before it and `null` after, this machine answering `pool_is_shared_with_the_host
 True, and `--max-active 0` then held one of them resident at a time instead of both. Their
 servers cost 135 MiB of the pool to bind a port — the ~10 GiB their manifests measure is
 what an answered call holds, which is why the figure is learned from one.
+
+The fork rule is verified against real `ps -eo pid,ppid,args` output with a real
+parent/child pair present (a launcher that forks and holds for six seconds, loading
+nothing): four rows mention the worker path, two of them carry `--socket`, and
+`machine_holdings` returns one holder at the manifest's 5.54 GiB.
 
 Per-provider interpreters are verified in the same place, by reading
 `/proc/<pid>/cmdline` of the processes the pool actually started: with
