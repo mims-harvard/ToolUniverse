@@ -1,0 +1,109 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "rfd4_proteina_design",
+    "description": "Design biomolecules with RFD4-Proteina. The input is an annotated mmCIF whose annotations ARE the design specification: what to hold fixed by coordinate and by sequence, which residues are hotspots, which regions to generate. One call covers every task upstream serves -- de novo monomers, protein and DNA binders, motif scaffolding, enzyme active-site scaffolding, small-molecule binders, antibody and TCR CDR redesign, partial diffusion and inverse folding -- because which one you get is a property of the annotations, not of a mode. Returns each design's per-chain sequence; the mmCIF text itself is opt-in.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "input_cif": {
+          "type": "string",
+          "description": "The annotated mmCIF text. An ordinary unannotated structure is not a design specification and will be refused. Upstream's examples/ directory has one per design shape."
+        },
+        "num_replicates": {
+          "type": "integer",
+          "description": "Independent designs from the one specification, 1 to 8. Each holds the GPU for a whole rollout, so this multiplies the wall clock.",
+          "default": 1
+        },
+        "recycle_strategy": {
+          "type": "string",
+          "description": "Compute preset. The three differ only in how often the trunk is recycled over 60 steps: thinking_low 120 trunk passes, thinking_medium 180, thinking_high 300.",
+          "enum": [
+            "thinking_low",
+            "thinking_medium",
+            "thinking_high"
+          ],
+          "default": "thinking_medium"
+        },
+        "inference_backend": {
+          "type": "string",
+          "description": "'native' runs the workflow in torch; 'bioir' runs it through NVIDIA's BioNeMo Inference Runtime, which captures a CUDA graph. See this provider's README for what each measured on the verified card before choosing.",
+          "enum": [
+            "native",
+            "bioir"
+          ],
+          "default": "native"
+        },
+        "seed": {
+          "type": "integer",
+          "description": "Random seed. Omit for a random one."
+        },
+        "return_structures": {
+          "type": "boolean",
+          "description": "Return the designed mmCIF text as well as the sequences. Off by default: replicates of mmCIF are megabytes, and a transport truncates an oversized reply into invalid JSON rather than refusing it.",
+          "default": false
+        }
+      },
+      "required": [
+        "input_cif"
+      ],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "n_designs": {
+          "type": "integer"
+        },
+        "designs": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "structures_note": {
+          "type": "string"
+        },
+        "recycle_strategy": {
+          "type": "string"
+        },
+        "inference_backend": {
+          "type": "string"
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "timing": {
+          "type": "object"
+        },
+        "weights_held_by": {
+          "type": "string"
+        },
+        "peak_reserved_gib": {
+          "type": "number"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "RFD4ProteinaDesignTool",
+      "url": "https://huggingface.co/nvidia/RFD4-Proteina",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/rfd4_proteina",
+      "mcp_tool_name": "rfd4_proteina_design"
+    },
+    "test_examples": [
+      {
+        "input_cif": "data_monomer-short.cif\n#\n_entry.id       monomer-short.cif\n_entry.author   rib7\n_entry.date     2026-08-28\n_entry.time     19:44:50\n#\n_entity.id                 0\n_entity.type               polymer\n_entity.pdbx_description   .\n#\n_entity_poly.entity_id                      0\n_entity_poly.type                           polypeptide(L)\n_entity_poly.nstd_linkage                   no\n_entity_poly.nstd_monomer                   yes\n_entity_poly.pdbx_seq_one_letter_code       X\n_entity_poly.pdbx_seq_one_letter_code_can   X\n_entity_poly.pdbx_strand_id                 A\n_entity_poly.pdbx_target_identifier         ?\n#\n_entity_poly_seq.entity_id   0\n_entity_poly_seq.hetero      n\n_entity_poly_seq.mon_id      100-100\n_entity_poly_seq.num         1\n#\n_chem_comp.id                        100-100\n_chem_comp.name                      100-100\n_chem_comp.type                      NON-POLYMER\n_chem_comp.formula                   ?\n_chem_comp.mon_nstd_parent_comp_id   ?\n_chem_comp.pdbx_synonyms             ?\n_chem_comp.formula_weight            ?\n#\n_atom_site.group_PDB                         HETATM\n_atom_site.type_symbol                       X\n_atom_site.label_atom_id                     UNK\n_atom_site.label_alt_id                      .\n_atom_site.label_comp_id                     100-100\n_atom_site.label_asym_id                     A\n_atom_site.label_entity_id                   0\n_atom_site.label_seq_id                      1\n_atom_site.pdbx_PDB_ins_code                 .\n_atom_site.auth_seq_id                       1\n_atom_site.auth_comp_id                      100-100\n_atom_site.auth_asym_id                      A\n_atom_site.auth_atom_id                      UNK\n_atom_site.B_iso_or_equiv                    nan\n_atom_site.occupancy                         0.0\n_atom_site.pdbx_formal_charge                ?\n_atom_site.annotation_expsegmax_1_residue    100\n_atom_site.mask_expsegmin_1_residue          True\n_atom_site.mask_expsegmax_1_residue          True\n_atom_site.annotation_expsegmin_1_residue    100\n_atom_site.condition_hbond_1_atom            0\n_atom_site.condition_index-group_1_token     0\n_atom_site.mask_index_1_residue              True\n_atom_site.mask_coordinate_1_atom            False\n_atom_site.mask_sequence_1_residue           False\n_atom_site.annotation_src-component_1_atom   .\n_atom_site.atom_array_index                  0\n_atom_site.Cartn_x                           nan\n_atom_site.Cartn_y                           nan\n_atom_site.Cartn_z                           nan\n_atom_site.pdbx_PDB_model_num                1\n_atom_site.id                                1\n#\n_rfd_design.sampled_contig   100-100\n#\n_chem_comp_atom.comp_id                    100-100\n_chem_comp_atom.atom_id                    UNK\n_chem_comp_atom.type_symbol                X\n_chem_comp_atom.charge                     0\n_chem_comp_atom.pdbx_aromatic_flag         N\n_chem_comp_atom.pdbx_leaving_atom_flag     N\n_chem_comp_atom.pdbx_model_Cartn_x_ideal   nan\n_chem_comp_atom.pdbx_model_Cartn_y_ideal   nan\n_chem_comp_atom.pdbx_model_Cartn_z_ideal   nan\n#\n",
+        "num_replicates": 1,
+        "seed": 0
+      }
+    ]
+  }
+]

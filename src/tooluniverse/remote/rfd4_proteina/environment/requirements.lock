@@ -1,0 +1,261 @@
+# RFD4-Proteina's model environment — the exact stack the provider in
+# ../provider.toml was installed and verified on, as
+# `uv pip freeze --exclude-editable` of it.
+#
+# Python 3.12.13, torch 2.14.1+cu132, numpy 2.2.6. This stack coexists with none
+# of the other providers' and none of ToolUniverse's, which is the whole reason
+# for the two-environment split in STANDARD section 2.
+#
+# THE FIRST PROVIDER HERE WITH NOTHING EDITABLE ON TOP. The others install a
+# kit (`<slug>_opt`) and often `opt_core` over the frozen list, and those are
+# deliberately absent from their freezes. There is no kit for this model, so
+# this list is the whole environment.
+#
+# Rebuild (an NVIDIA driver the stack's CUDA build needs; no compiler and no
+# source build — every line below has a wheel, aarch64 included):
+#
+#   uv venv --seed --managed-python --python 3.12.13 ~/rfd4-proteina-venv
+#   export TOOLUNIVERSE_RFD4_PROTEINA_PYTHON=~/rfd4-proteina-venv/bin/python
+#   $TOOLUNIVERSE_RFD4_PROTEINA_PYTHON -m pip install --no-deps \
+#       --extra-index-url https://download.pytorch.org/whl/cu132 \
+#       -r requirements.lock
+#   tu remote setup rfd4_proteina          # the weights
+#
+# --no-deps is deliberate: the list is complete, and letting a resolver
+# re-derive it is how a stack stops being the one that was measured.
+#
+# TWO THINGS A RESOLVER GETS WRONG HERE, recorded because both cost a run:
+#
+#  1. `uv pip install "rfd4-proteina[all-cuda13]"` with the extra index
+#     upstream documents fails to resolve. uv considers only the first index
+#     that carries a package at all, and download.pytorch.org carries `idna`
+#     and `cuda-python` at versions below what atomworks and rfd4-proteina
+#     require. The fix is `--index-strategy unsafe-best-match`; plain pip
+#     does not have the behaviour. `--no-deps` above sidesteps it entirely.
+#  2. Upstream's quickstart names the extra `[metrics-cuda13]`. The published
+#     wheel declares `all-cuda12`, `all-cuda13` and `docs`, and nothing else.
+#
+# NOT IN THIS LIST, DELIBERATELY: the AlphaFold2/AlphaFold3 refolding oracles.
+# They are a separate download with their own environment and weights, and
+# this provider computes no oracle-backed metrics (the worker passes
+# `~metrics`). Upstream's hosted deployment makes the same choice and says so:
+# "Oracle-backed refolding metrics require an operator-mounted
+# structure-prediction model and are not part of the default deployment."
+#
+accelerate==1.15.0
+aiohappyeyeballs==2.7.1
+aiohttp==3.14.5
+aiohttp-cors==0.8.1
+aiosignal==1.4.0
+anarcii==2.0.8
+annotated-doc==0.0.5
+annotated-types==0.8.0
+antlr4-python3-runtime==4.9.3
+anyio==4.15.1
+apache-tvm-ffi==0.1.15.post0
+assertpy==1.1
+astor==0.8.1
+atomworks==3.0.4
+attrs==26.1.0
+attrs-strict==1.0.1
+beartype==0.23.1
+bionemo-ir==0.2.0
+biopython==1.88
+biotite==1.6.0
+biotraj==1.2.2
+boto3==1.43.118
+botocore==1.43.118
+cattrs==26.2.1
+certifi==2026.10.23
+cffi==2.1.1
+charset-normalizer==3.5.2
+click==8.5.0
+cloudpickle==3.1.2
+colorful==0.5.8
+contourpy==1.4.0
+cryptography==50.0.2
+cuda-bindings==13.4.4
+cuda-core==1.2.2
+cuda-pathfinder==1.8.4
+cuda-python==13.4.4
+cuda-toolkit==13.2.2
+cuequivariance==0.13.0
+cuequivariance-ops-cu13==0.13.0
+cuequivariance-ops-torch-cu13==0.13.0
+cuequivariance-torch==0.13.0
+cwevals==0.0.1b1
+cycler==0.12.1
+cython==3.3.0
+cytoolz==1.2.0
+datasets==5.0.1
+decorator==5.3.1
+dill==0.4.1
+distlib==0.4.4
+distro==1.9.0
+einops==0.8.2
+environs==11.2.1
+fastapi==0.162.0
+filelock==4.2.4
+fire==0.7.1
+flexcache==0.3
+flexparser==0.4
+fonttools==4.67.0
+frozendict==2.4.7
+frozenlist==1.8.0
+fsspec==2026.6.0
+gemmi==0.6.5
+google-api-core==2.43.0
+google-auth==2.62.0
+googleapis-common-protos==1.76.0
+grpcio==1.84.1
+h11==0.16.0
+hf-xet==1.7.0
+httpcore==1.0.9
+httptools==0.9.0
+httpx==0.28.1
+huggingface-hub==1.33.0
+hydra-core==1.3.7
+idna==3.20
+ihm==2.12
+jaxtyping==0.3.11
+jinja2==3.1.6
+jmespath==1.1.0
+joblib==1.6.0
+jsonschema==4.26.0
+jsonschema-specifications==2025.9.1
+kalign-python==3.6.0
+kiwisolver==1.5.1
+lightning==2.6.6
+lightning-utilities==0.15.3
+llvmlite==0.50.0
+loguru==0.7.3
+lru-dict==1.4.1
+markdown-it-py==4.2.0
+markupsafe==3.0.4
+marshmallow==4.3.1
+matplotlib==3.11.2
+mdurl==0.1.2
+mmh3==5.3.1
+modelcif==1.6
+mpmath==1.3.0
+msgpack==1.2.3
+multidict==7.1.0
+multiprocess==0.70.19
+mypy-extensions==1.1.0
+narwhals==2.27.1
+networkx==3.7
+numba==0.68.0
+numpy==2.2.6
+nvidia-cublas==13.4.1.3
+nvidia-cuda-cupti==13.2.86
+nvidia-cuda-nvrtc==13.2.86
+nvidia-cuda-runtime==13.2.86
+nvidia-cudnn-cu13==9.24.0.43
+nvidia-cudnn-frontend==1.23.0
+nvidia-cufft==12.2.0.57
+nvidia-cufile==1.17.1.22
+nvidia-curand==10.4.2.66
+nvidia-cusolver==12.2.0.11
+nvidia-cusparse==12.7.10.12
+nvidia-cusparselt-cu13==0.8.1
+nvidia-cutlass-dsl==4.5.2
+nvidia-cutlass-dsl-libs-base==4.5.2
+nvidia-cutlass-dsl-libs-cu13==4.5.2
+nvidia-ml-py==13.615.71
+nvidia-nccl-cu13==2.30.7
+nvidia-nvjitlink==13.4.92
+nvidia-nvshmem-cu13==3.4.5
+nvidia-nvtx==13.2.86
+omegaconf==2.3.1
+openbabel-wheel==3.1.1.23
+opencensus==0.11.4
+opencensus-context==0.1.3
+opentelemetry-api==1.45.1
+opentelemetry-exporter-http-transport==0.66b1
+opentelemetry-exporter-otlp-common==0.66b1
+opentelemetry-exporter-otlp-proto-common==1.45.1
+opentelemetry-exporter-otlp-proto-http==1.45.1
+opentelemetry-exporter-prometheus==0.66b1
+opentelemetry-proto==1.45.1
+opentelemetry-sdk==1.45.1
+opentelemetry-semantic-conventions==0.66b1
+opt-einsum==3.4.0
+packaging==26.3
+pandas==2.3.3
+peft==0.21.2
+pillow==13.0.0
+pint==0.26.2
+platformdirs==4.13.5
+posebusters==0.6.5
+prometheus-client==0.26.0
+propcache==0.5.4
+proto-plus==1.29.0
+protobuf==7.36.2
+psutil==7.2.2
+py-spy==0.4.2
+py3dmol==2.5.5
+pyarrow==26.0.0
+pyasn1==0.6.4
+pyasn1-modules==0.4.2
+pycparser==3.12
+pydantic==2.14.1
+pydantic-core==2.50.1
+pygments==2.21.0
+pymol-remote==1.1.0
+pyparsing==3.3.3
+python-dateutil==2.9.0.post0
+python-discovery==1.6.4
+python-dotenv==1.2.4
+pytorch-lightning==2.6.6
+pytz==2026.5
+pyyaml==6.0.3
+ray==2.56.1
+rdkit==2025.9.6
+referencing==0.37.0
+regex==2026.9.29
+requests==2.34.2
+rfd4-proteina==0.0.3
+rich==15.0.0
+rootutils==1.0.7
+rpds-py==2026.9.1
+s3transfer==0.19.3
+safetensors==0.8.0
+scikit-learn==1.9.1
+scipy==1.13.1
+setuptools==84.2.1
+shellingham==1.5.4
+six==1.17.0
+smart-open==8.0.4
+sniffio==1.3.1
+sortedcontainers==2.4.0
+sparse==0.19.2
+starlette==1.9.0
+sympy==1.14.0
+termcolor==3.3.0
+threadpoolctl==3.7.0
+tmol==0.2.0
+tmol-ops-cu13==0.2.0
+tokenizers==0.23.3
+toolz==1.2.0
+torch==2.14.1+cu132
+torchmetrics==1.9.0
+tqdm==4.70.1
+transformers==5.20.2
+triton==3.8.0
+typer==0.27.3
+typing-extensions==4.16.0
+typing-inspect==0.9.0
+typing-inspection==0.4.4
+tzdata==2026.5
+urllib3==2.8.0
+uvicorn==0.54.0
+uvloop==0.21.0
+virtualenv==21.14.13
+wadler-lindig==0.1.7
+wandb==0.31.0
+watchfiles==1.3.0
+websockets==17.3
+wrapt==2.5.1
+xxhash==4.0.2
+yarl==1.25.1
+zstandard==0.25.0

@@ -362,6 +362,13 @@ DEPLOYMENTS = (
         ("TOOLUNIVERSE_PROTENIX_V1_PYTHON",),
     ),
     Deployment(
+        "rfd4_proteina",
+        8062,
+        ("rfd4_proteina_design",),
+        ("TOOLUNIVERSE_RFD4_PROTEINA_PYTHON",),
+        path_env=("RFD4_PROTEINA_HF_HOME",),
+    ),
+    Deployment(
         "rfdiffusion3",
         8040,
         ("rfdiffusion3_design",),
