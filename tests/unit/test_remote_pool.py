@@ -1245,6 +1245,31 @@ def test_which_kind_of_machine_this_is_is_read_once_and_not_once_per_decision(tm
     assert len(asked) == 1
 
 
+def test_the_machine_kind_is_never_read_while_the_lock_is_held(tmp_path):
+    """A subprocess under the lock puts every caller behind a driver that can hang.
+
+    This module keeps its free and capacity readings outside the lock for exactly that
+    reason, and the memory ceiling reaches this third one from INSIDE it, through
+    `footprint_mib` in `_evict_for_locked`. That is safe only because `acquire` asks
+    before it takes the lock, which makes it an ordering property worth asserting rather
+    than commenting: `Condition._is_owned()` says whether this thread holds it.
+    """
+    owned = []
+    pool = None
+
+    def read_kind():
+        owned.append(pool._lock._is_owned())
+        return True
+
+    pool = unified_pool(
+        tmp_path, ["esm"], FakeGPU(free=40_000), pool_shares_host_memory=read_kind
+    )
+
+    pool.acquire(esm_of(pool))
+
+    assert owned == [False], "the machine was read once, and not under the lock"
+
+
 def test_a_machine_kind_that_could_not_be_read_is_asked_again(tmp_path):
     """A driver busy for a second must not decide this for the rest of a pool's life."""
     machine = {"shared": None}

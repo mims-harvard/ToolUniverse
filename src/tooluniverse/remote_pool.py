@@ -725,6 +725,14 @@ class ProviderPool:
         an ``nvidia-smi``, so one answer is kept. A reading that failed is not kept, for
         the reason :meth:`_capacity_mib` gives: a driver that was briefly unavailable must
         not decide how this pool reasons for the rest of its life.
+
+        :meth:`_evict_for_locked` reaches this through :meth:`footprint_mib` WITH THE LOCK
+        HELD, and a subprocess under the lock is what this module keeps its two other
+        machine readings out of the lock to avoid. It is safe because the cache is always
+        warm by then: :meth:`acquire` calls :meth:`_refuse_if_larger_than_the_machine` and
+        :meth:`_free_vram_for` first, both outside the lock and both of which ask. Keep it
+        that way -- a first reading taken under the lock would put every caller behind a
+        driver that can hang for the subprocess timeout.
         """
 
         if self._shared_pool_cache is None:
