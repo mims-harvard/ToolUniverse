@@ -191,7 +191,7 @@ malformed.
 large one does not. Memory can, and two sources answer what a model costs:
 
 - **The provider's own manifest.** `[gpu] vram_budget_gb` is a measured peak — `tu remote
-  room` prints 27 of them — measured on the machine that verified that provider, which
+  room` prints 28 of them — measured on the machine that verified that provider, which
   makes it a prior anywhere else and not a reading. That is what it is used as.
 - **This host's own measurement.** Free memory before the provider started, free memory
   once its model is actually in memory, and the difference is what it costs *here*.
@@ -208,11 +208,11 @@ either being low overcommits the machine:
   server process. `wait_until_ready` returns once `tools/list` matches the reviewed
   contract, which it does with the card still empty, so a difference measured across a
   start is the server's own memory rather than the model's. Reading the manifests is what
-  makes the memory ceiling apply to the 31 resident providers at all, and not merely
+  makes the memory ceiling apply to the 32 resident providers at all, and not merely
   sooner.
 
 A provider that declares nothing and has never been loaded here is still admitted on count
-alone: 28 of the 59 reviewed slugs declare no budget, and `[gpu] policy = "none"` declares
+alone: 28 of the 60 reviewed slugs declare no budget, and `[gpu] policy = "none"` declares
 0, so count-only admission stays a normal mode of operation rather than a fallback.
 
 Decisions worth keeping:
@@ -248,18 +248,18 @@ A difference is only a model's cost if the model was loaded between the two read
 
 | provider | where its model lives | when it loads |
 |---|---|---|
-| resident manifest (31 slugs, e.g. `boltz`) | a worker process of its own | on the first request, which starts the worker |
+| resident manifest (32 slugs, e.g. `boltz`) | a worker process of its own | on the first request, which starts the worker |
 | no resident manifest (28 slugs, e.g. `esm`) | the MCP server process | on the first request too — lazily, which is how it can serve `tools/list` before its weights exist |
 
 So every measurement is taken after a call the provider answered, against the free reading
 taken before its server started. Measuring across the start is what the pool used to do,
-and it recorded the MCP server's own memory for all 59. `footprint_mib` taking the larger
-of declared and measured covered the 27 providers that declare a budget; for a provider
+and it recorded the MCP server's own memory for all 60. `footprint_mib` taking the larger
+of declared and measured covered the 28 providers that declare a budget; for a provider
 that declares none, the small figure was the only one admission had — and being optimistic
 about a model's cost ends in an out-of-memory, where being pessimistic ends in a refusal.
 
 A call can be answered without a model ever loading — a rejected argument, a cached
-answer. For the 31 providers that keep a worker, the process table says which happened
+answer. For the 32 providers that keep a worker, the process table says which happened
 (`admission.machine_holdings`, keyed by the bare slug for this checkout's own workers;
 `admission.declares_resident_worker` is what asks whether to look), and a call that left
 no worker running measures nothing. For a provider holding its model in its own server

@@ -908,7 +908,7 @@ def vram_pool(tmp_path, slugs, gpu, lifecycle=None, **kwargs):
 def test_a_provider_nothing_declares_has_its_first_load_admitted_on_count(
     tmp_path,
 ):
-    """28 of the 59 reviewed slugs declare no budget, and nothing changes for them.
+    """28 of the 60 reviewed slugs declare no budget, and nothing changes for them.
 
     The pool admits that first load on count and learns the cost from it, which is
     what every provider got before the resident manifests carried a measured figure.
