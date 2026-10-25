@@ -71,6 +71,11 @@ def boltz2_docking(
 
 
 if __name__ == "__main__":
+    # Load the model now if whoever started this server asked for that; a no-op
+    # otherwise. `tu remote pool`'s prewarm is what asks.
+    from tooluniverse.remote_resident.backend import warm_if_requested
+
+    warm_if_requested()
     run_fastmcp_server(
         server,
         host=os.getenv("TOOLUNIVERSE_MCP_HOST", "127.0.0.1"),

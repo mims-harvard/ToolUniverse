@@ -21,6 +21,92 @@ from tooluniverse.remote_runtime import (
 )
 
 
+def provider_module_source(module: str) -> tuple[Path, str]:
+    """A reviewed provider's entry module, as text, without importing it.
+
+    Importing one would pull in a model stack this environment does not have, and the
+    questions below are about what the file says, not about what it does.
+    """
+    path = (
+        Path(__file__).resolve().parents[2] / "src" / (module.replace(".", "/") + ".py")
+    )
+    return path, path.read_text(encoding="utf-8")
+
+
+def test_a_provider_entry_point_serves_the_port_the_catalog_waits_on():
+    """The failure this catches is silent on both sides.
+
+    `register_mcp_tool` reads the server's address from `mcp_config`; the tool config
+    beside it is handed to the tool and never read as server configuration. Three
+    providers -- proteinmpnn, borzoi_calico and enformer_deepmind -- declared
+    `server_name`, `host`, `port` and `transport` in the tool config, so they bound the
+    default port 8000 while `tu remote run` and the provider pool polled the reviewed
+    port and timed out with nothing to name. Verified by starting proteinmpnn's module,
+    which bound 8000 for 8049, and again after the fix, which bound 8049 and matched the
+    reviewed contract.
+
+    A literal port must be the reviewed one; a computed one (evo2 reads an environment
+    variable) is left to the provider, since the point here is that the key is where the
+    registry looks at all.
+    """
+    import ast
+
+    wrong_dict, wrong_port, positional = [], [], []
+    for deployment in REMOTE_DEPLOYMENTS:
+        path, source = provider_module_source(deployment.module)
+        tree = ast.parse(source, filename=str(path))
+        # Five providers keep their server configuration in a module-level `_MCP`, so a
+        # name has to be followed to the dict it was assigned before anything can be
+        # said about it.
+        module_dicts = {
+            node.targets[0].id: node.value
+            for node in tree.body
+            if isinstance(node, ast.Assign)
+            and len(node.targets) == 1
+            and isinstance(node.targets[0], ast.Name)
+            and isinstance(node.value, ast.Dict)
+        }
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Call):
+                continue
+            called = node.func.id if isinstance(node.func, ast.Name) else None
+            if called == "start_mcp_server" and node.args:
+                # `start_mcp_server(__file__)` passes a path as the port, which the
+                # registry reports as "no tools registered for port <path>" and then
+                # serves nothing at all.
+                positional.append(deployment.slug)
+            if called != "register_mcp_tool":
+                continue
+            keywords = {kw.arg: kw.value for kw in node.keywords}
+            server = keywords.get("mcp_config")
+            if isinstance(server, ast.Name):
+                server = module_dicts.get(server.id)
+            if not isinstance(server, ast.Dict):
+                wrong_dict.append(deployment.slug)
+                continue
+            ports = [
+                value
+                for key, value in zip(server.keys, server.values)
+                if isinstance(key, ast.Constant) and key.value == "port"
+            ]
+            if not ports:
+                wrong_dict.append(deployment.slug)
+            elif (
+                isinstance(ports[0], ast.Constant) and ports[0].value != deployment.port
+            ):
+                wrong_port.append(
+                    f"{deployment.slug}: {ports[0].value} != {deployment.port}"
+                )
+
+    assert positional == [], (
+        f"start_mcp_server was given a port it cannot use: {positional}"
+    )
+    assert wrong_dict == [], (
+        f"no mcp_config port, so these serve port 8000: {wrong_dict}"
+    )
+    assert wrong_port == [], f"serving a port the catalog does not call: {wrong_port}"
+
+
 def test_ports_are_unique():
     """No two deployments may claim the same port.
 

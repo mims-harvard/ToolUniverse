@@ -49,12 +49,24 @@ class Lifecycle:
     def __init__(self) -> None:
         self.started: list[str] = []
         self.stopped: list[str] = []
+        self.warmed: list[str] = []
         self.fail: set[str] = set()
 
-    def ensure(self, deployment, *, python, log_dir, startup_timeout, extra_env=()):
+    def ensure(
+        self,
+        deployment,
+        *,
+        python,
+        log_dir,
+        startup_timeout,
+        extra_env=(),
+        warm_model=False,
+    ):
         if deployment.slug in self.fail:
             raise RuntimeError(f"boom: {deployment.slug}")
         self.started.append(deployment.slug)
+        if warm_model:
+            self.warmed.append(deployment.slug)
         return object(), {"endpoint": deployment.endpoint, "ok": True}
 
     def stop(self, managed) -> None:
@@ -63,6 +75,13 @@ class Lifecycle:
 
 def make_pool(tmp_path: Path, slugs, lifecycle=None, **kwargs) -> ProviderPool:
     lifecycle = lifecycle or Lifecycle()
+    # Whether a worker is up is read from the process table, and free memory from the
+    # driver or from /proc: both are readings of this machine, and a test about routing
+    # or eviction must not depend on what else is running on it -- nor pay for an
+    # `nvidia-smi` subprocess per start. The tests that are about memory build their
+    # pools with `vram_pool`, which injects a machine they control.
+    kwargs.setdefault("read_holdings", lambda: {})
+    kwargs.setdefault("read_free_vram", lambda: None)
     pool = ProviderPool(
         allow=tuple(slugs),
         python="/nonexistent/python",
@@ -220,8 +239,8 @@ def test_a_provider_with_a_call_in_flight_is_never_evicted(tmp_path):
     assert [row["provider"] for row in pool.status()] == ["boltz"]
 
 
-def test_a_second_request_while_a_provider_starts_is_told_to_retry(tmp_path):
-    """Two concurrent first-calls must not both launch the same model."""
+def blocking_lifecycle():
+    """A lifecycle whose start blocks until the test lets it finish."""
     release = threading.Event()
     entered = threading.Event()
     lifecycle = Lifecycle()
@@ -229,10 +248,26 @@ def test_a_second_request_while_a_provider_starts_is_told_to_retry(tmp_path):
 
     def blocking_ensure(deployment, **kwargs):
         entered.set()
-        release.wait(5)
+        release.wait(10)
         return real_ensure(deployment, **kwargs)
 
     lifecycle.ensure = blocking_ensure  # type: ignore[assignment]
+    return lifecycle, entered, release
+
+
+def test_by_default_a_start_in_progress_is_refused_at_once(tmp_path):
+    """Behind a relay, waiting is worse than a 503, and that is measured.
+
+    boltz's MCP server takes 12.5 s on this project's GB10 to bind its port, and a relay
+    agent abandons a local request after 25 s -- a timeout that takes the tunnel down for
+    every caller on the host, not just this one. So a wait long enough to cover a real
+    start is most of the way to an outage, while the platform re-dispatches a 503 after
+    2 s, 4 s and 8 s and costs one round trip.
+    """
+    from tooluniverse.remote_pool import DEFAULT_START_WAIT_S
+
+    assert DEFAULT_START_WAIT_S == 0.0
+    lifecycle, entered, release = blocking_lifecycle()
     pool = make_pool(tmp_path, ["boltz"], lifecycle=lifecycle)
     deployment = pool.provider_for_tool("boltz2_docking")
 
@@ -244,9 +279,81 @@ def test_a_second_request_while_a_provider_starts_is_told_to_retry(tmp_path):
             pool.acquire(deployment)
     finally:
         release.set()
-        thread.join(5)
+        thread.join(10)
+
+
+def test_a_host_that_asks_to_wait_has_its_second_request_served(tmp_path):
+    """Opt-in, for a pool serving its own endpoint rather than a shared tunnel.
+
+    The second of two near-simultaneous first-calls is waiting for a CPU-only process to
+    bind a port, and a client whose timeout is its operator's own business can afford to
+    wait for it instead of being handed a 503 to retry.
+    """
+    lifecycle, entered, release = blocking_lifecycle()
+    pool = make_pool(tmp_path, ["boltz"], lifecycle=lifecycle, start_wait_s=30)
+    deployment = pool.provider_for_tool("boltz2_docking")
+
+    first = threading.Thread(target=lambda: pool.acquire(deployment))
+    first.start()
+    assert entered.wait(5)
+    answers: list[object] = []
+    second = threading.Thread(target=lambda: answers.append(pool.acquire(deployment)))
+    second.start()
+    release.set()
+    first.join(10)
+    second.join(10)
+
+    assert answers == [deployment.endpoint], "the waiting call must be served"
+    assert lifecycle.started == ["boltz"], "only one start may happen"
+    assert pool.status()[0]["in_flight"] == 2, "both callers hold a slot"
+
+
+def test_a_start_that_outlasts_the_wait_is_told_to_retry(tmp_path):
+    """The case waiting cannot absorb: a model loading, which is minutes."""
+    lifecycle, entered, release = blocking_lifecycle()
+    pool = make_pool(tmp_path, ["boltz"], lifecycle=lifecycle, start_wait_s=0.2)
+    deployment = pool.provider_for_tool("boltz2_docking")
+
+    thread = threading.Thread(target=lambda: pool.acquire(deployment))
+    thread.start()
+    assert entered.wait(5)
+    try:
+        with pytest.raises(ProviderStarting):
+            pool.acquire(deployment)
+    finally:
+        release.set()
+        thread.join(10)
 
     assert lifecycle.started == ["boltz"], "only one start may happen"
+
+
+def test_a_waiting_call_is_released_by_a_start_that_fails(tmp_path):
+    """A failed start must wake its waiters rather than hold them for the whole wait.
+
+    The waiter then starts the provider itself and gets the real failure, which is a
+    better answer than a 503 about a start that is already over.
+    """
+    lifecycle, entered, release = blocking_lifecycle()
+    lifecycle.fail.add("boltz")
+    pool = make_pool(tmp_path, ["boltz"], lifecycle=lifecycle, start_wait_s=30)
+    deployment = pool.provider_for_tool("boltz2_docking")
+
+    def start_and_swallow() -> None:
+        try:
+            pool.acquire(deployment)
+        except RuntimeError:
+            pass  # the start this test arranged to fail; the assertion is below
+
+    thread = threading.Thread(target=start_and_swallow)
+    thread.start()
+    assert entered.wait(5)
+    release.set()
+    started = time.monotonic()
+    with pytest.raises(RuntimeError, match="boom"):
+        pool.acquire(deployment)
+    thread.join(10)
+
+    assert time.monotonic() - started < 10, "it waited out the whole start window"
 
 
 # ── idle reaping ────────────────────────────────────────────────────────────────
@@ -475,6 +582,71 @@ def test_a_tools_call_starts_the_owning_provider(served, monkeypatch):
     assert seen["endpoint"] == REMOTE_BY_SLUG["boltz"].endpoint
 
 
+def measuring_pool(tmp_path, holdings):
+    """A pool over a machine whose free memory and worker list the test decides."""
+    from tooluniverse.remote_pool import FootprintStore
+
+    return make_pool(
+        tmp_path,
+        ["boltz"],
+        footprints=FootprintStore(tmp_path / "fp"),
+        read_free_vram=falling_gpu(40_000, 24_000),
+        read_holdings=lambda: holdings,
+    )
+
+
+def rpc_through(pool, payload):
+    server = serve_pool(pool, port=0)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    try:
+        return _rpc(server.server_address[1], payload)
+    finally:
+        server.shutdown()
+        server.server_close()
+
+
+CALL = {
+    "jsonrpc": "2.0",
+    "id": 9,
+    "method": "tools/call",
+    "params": {"name": "boltz2_docking", "arguments": {}},
+}
+
+
+def test_an_answered_call_is_where_the_model_gets_measured(tmp_path, monkeypatch):
+    """The wiring an injected lifecycle cannot show: nothing else in the request path
+    takes the reading, so if the handler does not, a resident provider is never measured
+    on this host at all."""
+    monkeypatch.setattr(
+        "tooluniverse.remote_pool.proxy_call",
+        lambda endpoint, payload, timeout=0: (
+            200,
+            json.dumps({"jsonrpc": "2.0", "id": 9, "result": {"ok": True}}).encode(),
+        ),
+    )
+    pool = measuring_pool(tmp_path, {"boltz": 5.54})
+
+    status, body = rpc_through(pool, CALL)
+
+    assert (status, body["result"]) == (200, {"ok": True})
+    assert pool.footprints.get("boltz") == 16_000
+
+
+def test_a_call_the_provider_never_answered_measures_nothing(tmp_path, monkeypatch):
+    """A provider that did not answer may be holding anything or nothing."""
+
+    def dead(endpoint, payload, timeout=0):
+        raise OSError("connection reset")
+
+    monkeypatch.setattr("tooluniverse.remote_pool.proxy_call", dead)
+    pool = measuring_pool(tmp_path, {"boltz": 5.54})
+
+    status, body = rpc_through(pool, CALL)
+
+    assert status == 200 and body["error"]["code"] == -32603
+    assert pool.footprints.get("boltz") is None
+
+
 def test_an_unknown_tool_is_a_method_error_not_a_dead_tunnel(served):
     """A 404/405/410 on POST makes the relay agent tear the tunnel down for everyone."""
     _, port = served
@@ -597,6 +769,8 @@ def test_prewarm_is_refused_for_a_provider_this_host_does_not_share(tmp_path):
 
 
 def test_prewarm_loads_the_model_before_any_call_arrives(tmp_path):
+    """Loads the MODEL. Starting the server is seconds and hides nothing: the weights
+    load in a worker on the first request unless the start asks for them."""
     pool = make_pool(tmp_path, ["boltz"])
 
     acknowledged = pool.control("prewarm", {"provider": "boltz"})
@@ -604,6 +778,17 @@ def test_prewarm_loads_the_model_before_any_call_arrives(tmp_path):
     assert acknowledged == {"provider": "boltz", "state": "starting"}
     assert wait_until(lambda: pool.lifecycle.started == ["boltz"])
     assert wait_until(lambda: [r["provider"] for r in pool.status()] == ["boltz"])
+    assert pool.lifecycle.warmed == ["boltz"], "the start did not ask for the model"
+
+
+def test_a_call_does_not_ask_for_a_warm_start(tmp_path):
+    """It is the request that loads the model, so asking would mean loading it twice."""
+    pool = make_pool(tmp_path, ["boltz"])
+
+    pool.acquire(pool.provider_for_tool("boltz2_docking"))
+
+    assert pool.lifecycle.started == ["boltz"]
+    assert pool.lifecycle.warmed == []
 
 
 def test_a_prewarmed_provider_holds_no_slot_so_it_can_still_be_reaped(tmp_path):
@@ -611,7 +796,9 @@ def test_a_prewarmed_provider_holds_no_slot_so_it_can_still_be_reaped(tmp_path):
     clock = FakeClock()
     pool = make_pool(tmp_path, ["boltz"], idle_ttl=100, clock=clock)
     pool.control("prewarm", {"provider": "boltz"})
-    assert wait_until(lambda: len(pool.status()) == 1)
+    # Resident, not merely claimed: `status` lists a provider that is still starting too,
+    # and waiting only for a row let this read the starting one and find no `in_flight`.
+    assert wait_until(lambda: any(not r.get("starting") for r in pool.status()))
 
     assert pool.status()[0]["in_flight"] == 0
     clock.advance(100)
@@ -735,20 +922,124 @@ def test_a_provider_nothing_declares_has_its_first_load_admitted_on_count(
     assert pool.footprints.get("boltz") is None, "nothing was measurable yet"
 
 
-def test_a_start_is_measured_by_difference_and_reused_next_time(tmp_path):
-    readings = [40_000, 24_000]  # before the start, then after it
-    gpu = FakeGPU(free=None)
-    gpu.__call__ = lambda: readings.pop(0) if readings else 24_000  # type: ignore
-    pool = vram_pool(
-        tmp_path, ["boltz"], lambda: readings.pop(0) if readings else 24_000
-    )
-    deployment = pool.provider_for_tool("boltz2_docking")
-    pool.footprints.record("boltz", 1)  # make the pool take a before-reading
+def falling_gpu(*readings):
+    """A machine whose free memory takes these values in turn, then stays at the last."""
+    remaining = list(readings)
+    last = [readings[-1]]
+
+    def read() -> int | None:
+        if remaining:
+            last[0] = remaining.pop(0)
+        return last[0]
+
+    return read
+
+
+@pytest.mark.parametrize("slug, tool", [("boltz", "boltz2_docking"), ("esm", None)])
+def test_no_providers_start_is_measured_as_its_model(tmp_path, slug, tool):
+    """The bug, and it was not only the resident providers.
+
+    boltz keeps its model in a worker that its start does not touch. esm keeps its
+    model in the server process -- and loads it on the first request too, lazily, as
+    its own source says ("lazy load on first use"), which is how anything answers
+    `tools/list` before its weights exist. So the 16 GiB difference below is not either
+    provider's model, and recording it would hand admission a figure that is either far
+    too small for a model or, as here, somebody else's allocation entirely --
+    `FootprintStore` then keeps whichever figure was largest for the life of the host.
+    """
+    tool = tool or REMOTE_BY_SLUG[slug].operations[0]
+    pool = vram_pool(tmp_path, [slug], falling_gpu(40_000, 24_000))
+
+    pool.acquire(pool.provider_for_tool(tool))
+
+    assert pool.footprints.get(slug) is None, "nothing had loaded to measure"
+
+
+def test_a_provider_holding_its_model_in_its_server_is_measured_after_a_call(tmp_path):
+    """esm has no worker to look for, so an answered call is all the evidence there is.
+
+    A call that answered without loading anything therefore records something small,
+    and the first call that does load corrects it, because the store keeps the largest
+    figure it has seen.
+    """
+    pool = vram_pool(tmp_path, ["esm"], falling_gpu(40_000, 24_000))
+    deployment = pool.provider_for_tool(REMOTE_BY_SLUG["esm"].operations[0])
 
     pool.acquire(deployment)
+    pool.learn_footprint(deployment)
 
-    # 40000 - 24000, recorded because it is larger than the seeded 1 MiB.
+    assert pool.footprints.get("esm") == 16_000
+
+
+def test_a_resident_provider_is_measured_after_the_call_that_loaded_it(tmp_path):
+    """The same two readings, taken where the model is actually in memory."""
+    pool = vram_pool(
+        tmp_path,
+        ["boltz"],
+        falling_gpu(40_000, 24_000),
+        read_holdings=lambda: {"boltz": 5.54},
+    )
+    deployment = pool.provider_for_tool("boltz2_docking")
+
+    pool.acquire(deployment)
+    assert pool.footprints.get("boltz") is None, "the start on its own measures nothing"
+    pool.learn_footprint(deployment)
+
     assert pool.footprints.get("boltz") == 16_000
+
+
+def test_a_call_answered_without_the_worker_loading_records_nothing(tmp_path):
+    """A rejected argument is answered by the server and never reaches the worker.
+
+    For a provider that keeps one, the process table says which happened, so an answer
+    alone is not taken as evidence that a model loaded.
+    """
+    pool = vram_pool(
+        tmp_path, ["boltz"], falling_gpu(40_000, 24_000), read_holdings=lambda: {}
+    )
+    deployment = pool.provider_for_tool("boltz2_docking")
+
+    pool.acquire(deployment)
+    pool.learn_footprint(deployment)
+
+    assert pool.footprints.get("boltz") is None
+
+
+def test_another_checkouts_worker_is_not_this_pools_measurement(tmp_path):
+    """`machine_holdings` keys a worker from another checkout as `slug@tree`.
+
+    Charging their load to this pool's model is how a figure measured on someone else's
+    minutes becomes this host's permanent ceiling.
+    """
+    pool = vram_pool(
+        tmp_path,
+        ["boltz"],
+        falling_gpu(40_000, 24_000),
+        read_holdings=lambda: {"boltz@tu-other": 5.54},
+    )
+    deployment = pool.provider_for_tool("boltz2_docking")
+
+    pool.acquire(deployment)
+    pool.learn_footprint(deployment)
+
+    assert pool.footprints.get("boltz") is None
+
+
+def test_a_residency_is_measured_once_and_not_once_per_call(tmp_path):
+    """Every later call would be measured against a baseline from before the load."""
+    pool = vram_pool(
+        tmp_path,
+        ["boltz"],
+        falling_gpu(40_000, 24_000, 8_000),
+        read_holdings=lambda: {"boltz": 5.54},
+    )
+    deployment = pool.provider_for_tool("boltz2_docking")
+
+    pool.acquire(deployment)
+    pool.learn_footprint(deployment)
+    pool.learn_footprint(deployment)
+
+    assert pool.footprints.get("boltz") == 16_000, "the second call re-measured"
 
 
 def test_a_measured_provider_is_refused_when_the_gpu_cannot_hold_it(tmp_path):
@@ -853,14 +1144,20 @@ def test_a_driver_error_is_treated_as_no_reading_rather_than_no_memory(tmp_path)
     assert pool.lifecycle.started == ["boltz"]
 
 
-def test_the_gpu_is_not_consulted_before_anything_has_been_measured(tmp_path):
-    """A first load must not pay for a reading it cannot act on."""
+def test_a_first_load_takes_one_reading_and_keeps_it_as_its_baseline(tmp_path):
+    """One reading per start, and nothing is decided on it.
+
+    boltz's cost is unknown to this pool, so there is no admission decision to make
+    here; the reading is taken anyway because it is the only baseline the measurement
+    after the first call can be taken against, and it cannot be taken afterwards.
+    """
     gpu = FakeGPU(free=50_000)
     pool = vram_pool(tmp_path, ["boltz"], gpu)
 
     pool.acquire(pool.provider_for_tool("boltz2_docking"))
 
-    assert gpu.reads == 1, f"expected one post-start reading, got {gpu.reads}"
+    assert gpu.reads == 1, f"expected one reading, got {gpu.reads}"
+    assert pool.lifecycle.started == ["boltz"], "and nothing refused on it"
 
 
 def test_status_reports_only_measurements_that_exist(tmp_path):
@@ -872,6 +1169,37 @@ def test_status_reports_only_measurements_that_exist(tmp_path):
     assert answer["measured_vram_mib"] == {"boltz": 12_000}
     assert answer["free_vram_mib"] == 31_000
     assert answer["vram_headroom_mib"] == 1024
+
+
+def test_status_says_whether_a_resident_provider_holds_its_model_yet(tmp_path):
+    """Up and loaded are two different facts, and prewarm is the reason to tell them
+    apart: a provider reported ready is still minutes from answering if its worker has
+    not started."""
+    pool = make_pool(tmp_path, ["boltz"], read_holdings=lambda: {})
+    pool.acquire(pool.provider_for_tool("boltz2_docking"))
+
+    assert pool.status()[0]["model_loaded"] is False
+
+    pool.read_holdings = lambda: {"boltz": 5.54}
+    assert pool.status()[0]["model_loaded"] is True
+
+
+def test_status_asks_nothing_about_a_model_a_provider_does_not_hold(tmp_path):
+    """esm has no worker to look for: its server being up IS its model being loaded."""
+    pool = make_pool(tmp_path, ["esm"], read_holdings=lambda: {})
+    pool.acquire(pool.provider_for_tool("esm_embed_sequence"))
+
+    assert "model_loaded" not in pool.status()[0]
+
+
+def test_status_leaves_the_model_out_when_the_process_table_cannot_be_read(tmp_path):
+    def broken():
+        raise OSError("ps is not on this machine")
+
+    pool = make_pool(tmp_path, ["boltz"], read_holdings=broken)
+    pool.acquire(pool.provider_for_tool("boltz2_docking"))
+
+    assert "model_loaded" not in pool.status()[0], "unknown is not False"
 
 
 def test_a_pool_without_a_footprint_store_reports_no_vram_fields(tmp_path):
@@ -954,7 +1282,16 @@ def test_the_pool_reads_the_machine_rather_than_the_device(tmp_path, monkeypatch
 
     from tooluniverse import remote_pool
 
-    assert make_pool(tmp_path, ["boltz"]).read_free_vram is pool_free_mib
+    # A pool built as the CLI builds one, not through `make_pool`: the helper injects a
+    # machine so that the other tests do not read this one, which would make this
+    # assertion about the helper.
+    plain = ProviderPool(
+        allow=("boltz",),
+        python="/nonexistent/python",
+        log_dir=tmp_path / "logs",
+        schemas=SchemaStore(tmp_path / "schemas"),
+    )
+    assert plain.read_free_vram is pool_free_mib
 
     monkeypatch.setattr(
         remote_pool.admission.subprocess,
@@ -1068,7 +1405,7 @@ def test_a_provider_no_manifest_declares_is_still_admitted_on_count(tmp_path):
     pool.acquire(pool.provider_for_tool("esm_embed_sequence"))
 
     assert pool.lifecycle.started == ["esm"]
-    assert gpu.reads == 1, "one post-start reading, as the baseline for next time"
+    assert gpu.reads == 1, "one reading, the baseline a later measurement needs"
 
 
 def test_a_model_larger_than_the_machine_is_refused_before_anything_is_evicted(

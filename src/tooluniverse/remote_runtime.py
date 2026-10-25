@@ -25,6 +25,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from .remote_resident.backend import WARM_ON_START_ENV
+
 
 @dataclass(frozen=True)
 class RemoteDeployment:
@@ -836,7 +838,11 @@ def explain_environment_failure(
     return reasons
 
 def child_environment(
-    python: str, deployment: RemoteDeployment, *, extra_env: Iterable[str] = ()
+    python: str,
+    deployment: RemoteDeployment,
+    *,
+    extra_env: Iterable[str] = (),
+    warm_model: bool = False,
 ) -> dict[str, str]:
     """Build a provider environment from an allowlist rather than by inheritance.
 
@@ -868,6 +874,12 @@ def child_environment(
     environment["PYTHONUNBUFFERED"] = "1"
     environment["TOOLUNIVERSE_MCP_HOST"] = "127.0.0.1"
     environment["TOOLUNIVERSE_MCP_PORT"] = str(deployment.port)
+    if warm_model:
+        # A fixed name with a fixed value, not a mapping the caller fills in: this
+        # function builds a provider's environment from an allowlist precisely so that
+        # nothing can be passed into it by accident, and a prewarm needs to say exactly
+        # one thing.
+        environment[WARM_ON_START_ENV] = "1"
     return environment
 
 
@@ -1376,8 +1388,13 @@ def start_provider(
     python: str,
     log_dir: str | Path,
     extra_env: Iterable[str] = (),
+    warm_model: bool = False,
 ) -> ManagedRemoteProcess:
-    """Start one reviewed provider module with output redirected to a log."""
+    """Start one reviewed provider module with output redirected to a log.
+
+    ``warm_model`` asks a provider that keeps a resident worker to load its model as it
+    starts, instead of on the first request. Binding the port does not wait for it.
+    """
 
     directory = Path(log_dir).expanduser().resolve()
     directory.mkdir(parents=True, exist_ok=True)
@@ -1387,7 +1404,9 @@ def start_provider(
     try:
         process = subprocess.Popen(
             command,
-            env=child_environment(python, deployment, extra_env=extra_env),
+            env=child_environment(
+                python, deployment, extra_env=extra_env, warm_model=warm_model
+            ),
             stdin=subprocess.DEVNULL,
             stdout=log_handle,
             stderr=subprocess.STDOUT,
@@ -1467,8 +1486,14 @@ def ensure_provider(
     log_dir: str | Path,
     startup_timeout: float,
     extra_env: Iterable[str] = (),
+    warm_model: bool = False,
 ) -> tuple[ManagedRemoteProcess | None, dict[str, Any]]:
-    """Reuse an exact endpoint or start a provider and validate it."""
+    """Reuse an exact endpoint or start a provider and validate it.
+
+    ``warm_model`` reaches a provider only when this call is the one that starts it: an
+    endpoint already serving the reviewed tool set is returned as it is, model loaded or
+    not, because restarting someone else's provider to warm it is not a warm.
+    """
 
     current = discover_endpoint(deployment, timeout=2)
     if current.get("reachable"):
@@ -1479,7 +1504,11 @@ def ensure_provider(
         return None, current
 
     managed = start_provider(
-        deployment, python=python, log_dir=log_dir, extra_env=extra_env
+        deployment,
+        python=python,
+        log_dir=log_dir,
+        extra_env=extra_env,
+        warm_model=warm_model,
     )
     try:
         ready = wait_until_ready(deployment, managed, timeout=startup_timeout)

@@ -257,6 +257,13 @@ def _design(doc: Dict[str, Any]) -> Dict[str, Any]:
             },
             "required": ["structure"],
         },
+    },
+    mcp_config={
+        # WHERE THE REGISTRY ACTUALLY READS THE SERVER'S ADDRESS. These four keys sat in
+        # the tool config above, which `register_mcp_tool` hands to the tool and never
+        # reads as server configuration, so this provider bound port 8000 -- the default
+        # -- while `tu remote run` and the provider pool waited on the reviewed port and
+        # timed out. Verified by starting proteinmpnn's module, which did exactly that.
         "server_name": "ProteinMPNN Sequence Design MCP Server",
         "host": "127.0.0.1",
         "port": 8049,
@@ -274,4 +281,4 @@ class ProteinMPNNDesignTool:
 
 
 if __name__ == "__main__":
-    start_mcp_server(__file__)
+    start_mcp_server()
