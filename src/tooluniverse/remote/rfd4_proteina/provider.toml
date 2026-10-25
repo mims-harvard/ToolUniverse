@@ -1,0 +1,170 @@
+# RFD4-Proteina — joint sequence/structure design, held resident.
+#
+# THE FIRST PROVIDER ON THIS STANDARD WITH NO OPTIMIZATION KIT. The thirty-one
+# before it pin a commit of `anthropics/uplifting-biomolecular-modeling` and
+# spend most of their worker and all of their [kit] table on arming one. There
+# is no kit for this model. Upstream publishes the inference runtime itself as
+# `rfd4-proteina` on PyPI, and the levers a kit would add are configuration it
+# already owns: `inference_backend` (native torch, or NVIDIA's BioNeMo
+# Inference Runtime with CUDA graph capture) and `compile_lengths` (token
+# buckets, each compiled the first time it is touched).
+#
+# That absence is why there is no [kit] table below and why `launch.py` is
+# local rather than `kit_launch:build_command` — which would refuse this
+# provider while describing a kit that does not exist. The manifest loader
+# treats [kit] as optional (`kit = doc.get("kit", {})`), so nothing else had to
+# change to accept the shape.
+#
+# WHAT RESIDENCY BUYS, AND WHY THE USUAL ARGUMENT IS THE WEAKEST ONE HERE.
+# The weights are 1.74 GB and `Proteina.from_pretrained` returned in 2-17 s
+# from a warm Hub cache across the runs here, so "a held worker saves a long
+# load" is nearly false for this model. What a held worker actually collects is
+# everything the FIRST request of a process defers, and that gap is large and
+# survives the whole stack: through the MCP endpoint, 185.9 s cold against
+# 49.6 s warm; through the socket, 297.9 s cold against 28-45 s warm.
+#
+# THE BACKEND COMPARISON BELOW IS PROVISIONAL AND ITS RANKING IS NOT
+# ESTABLISHED. Three configurations were run as four-request ladders in one
+# process -- one unconditional 100-residue monomer, `num_replicates=1`,
+# `~metrics` -- but every one of them was measured on a host carrying a load
+# average between 30 and 70 from unrelated CPU jobs, and that load rose across
+# the session rather than holding still. The same request under the same
+# configuration has since been observed at 128 s and at 298 s. These numbers
+# are therefore upper bounds measured under contention, recorded so a later
+# measurement has something to compare against, and NOT grounds for preferring
+# one backend to another:
+#
+# | configuration                       | req 0 | req 1 | req 2 | req 3 |
+# |-------------------------------------|-------|-------|-------|-------|
+# | native, compile off                 | 44.9  | 24.1  | 20.9  | 23.2  |
+# | native, released `compile_lengths`  | 128.1 | 26.3  | 35.5  | 25.4  |
+# | bioir, `cuda_graph: true`           | 169.5 | 34.8  | 29.5  | 28.1  |
+#
+# What the table does support is that the accelerated paths cost substantially
+# MORE on the first request -- 83 s and 125 s more, differences far larger than
+# any plausible noise -- and that neither visibly repaid it within four
+# requests at this size. That is a reason to measure before enabling one, not a
+# finding that they lose. CUDA graph capture is capped at 511 tokens and
+# upstream's own figures were taken on an H100 across a range of sizes, so a
+# crossover at larger designs is likely and nobody has measured where.
+# `compile_lengths` is therefore left at upstream's default rather than
+# switched off, and the backend is a per-request argument so a caller can
+# measure at the size that matters to them.
+
+[provider]
+slug = "rfd4_proteina"
+description = "RFD4-Proteina joint sequence and structure design from an annotated mmCIF specification"
+operations = ["rfd4_proteina_design"]
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 128 GB unified), driver
+580.173.02, host zgx, 2026-10-25, through this provider's own path rather than
+a bare process.
+
+`tu remote setup rfd4_proteina --only smoke` returned OK in 169 s (95.8 s in
+run_generation), peak reserved 1.89 GiB, and wrote
+inference_samples/input/input_generated.cif -- matched by the `outputs` glob
+rather than counted, which is the check openfold3 taught this standard to make.
+
+Through launch.py, the worker and the Unix socket with the payload shape the
+smoke step and the MCP tool both send: four requests, each producing one
+100-residue design, peak 1.89-1.90 GiB; 297.9 s cold then 44.5, 31.2, 28.4 s.
+Through the live MCP endpoint on 8062: discovery is exactly
+{rfd4_proteina_design}, two designs returned at 862 and 825 atoms in 185.9 s
+cold and 49.6 s warm, and three malformed inputs were refused by name rather
+than by traceback.
+
+THE WALL-CLOCK FIGURES ARE UPPER BOUNDS, NOT THE MODEL'S SPEED. The host
+carried a load average of 30-45 from unrelated CPU jobs for every measurement
+above, and the same request has been observed at 128 s and at 298 s on this
+card under different load. Peak VRAM and every functional result are unaffected
+by that; no ranking between configurations should be read out of these numbers,
+and the header's three-arm table says the same thing in more detail.
+
+ONE MODE OF SEVEN WAS EXERCISED. Every run above is the unconditional
+100-residue monomer in smoke/. Binder design, motif scaffolding, enzyme active
+sites, small-molecule binders, antibody/TCR redesign, partial diffusion and
+inverse folding are all the same call with different annotations -- which is
+why there is one tool -- but "the same call" is an argument about the interface,
+not evidence that those inputs run. None of them has been run here.
+
+DESIGN QUALITY IS UNVALIDATED, and nothing in this provider is checking it.
+Refolding metrics are off (`~metrics`), so no oracle sees the output. The
+unconditional input yields strikingly charged, repetitive helical sequences:
+glutamate ran 29-68% of residues across four samples against roughly 6% in
+natural proteins, one of them opening with 26 consecutive E. That reproduces
+identically in a bare process with no part of this provider involved, so it is
+the model on this input and not a defect in the path -- but a caller must not
+read "verified" as a statement about the designs.
+
+Concurrency, recovery, long inputs, the bioir backend through this path, public
+publication and independent-caller isolation are untested."""
+
+[runtime]
+mode = "resident"
+worker = "resident/rfd4_proteina_resident_worker.py"
+launch = "tooluniverse.remote.rfd4_proteina.launch:build_command"
+worker_args = ["--socket", "{socket}", "--slug", "{slug}"]
+# The BioIR backend's first request built its engine for ~170 s on the verified
+# card, and that is inside a request rather than at start, so the request
+# timeout has to cover it with room for a larger input.
+start_timeout_s = 900.0
+request_timeout_s = 7200.0
+idle_timeout_s = 900.0
+# Upstream writes `<example>_generated.cif` per design, uncompressed unless
+# `compress_outputs` is set, which this provider leaves at its default.
+outputs = ["*_generated.cif"]
+smoke = "smoke/monomer.cif"
+smoke_timeout_s = 3600.0
+
+[gpu]
+policy = "required"
+# Measured peaks were 1.86-1.90 GiB (native, 100 residues) and 2.73 GiB (bioir,
+# which holds a captured graph). The budget is deliberately above the largest
+# observation rather than fitted to it, and it is NOT a measured ceiling for
+# long inputs: upstream caps a design at 1024 tokens and the ladder here stops
+# at 100 residues. Raising the input ceiling means re-measuring first.
+vram_budget_gb = 6.0
+driver_min = 580
+driver_min_reason = "its pinned stack is CUDA 13.2 (torch 2.14.1+cu132)"
+shareable = true
+isolation = "process"
+
+[env]
+kind = "venv"
+python = "$TOOLUNIVERSE_RFD4_PROTEINA_PYTHON"
+lock = "environment/requirements.lock"
+verify = "import torch, rfproteina, atomworks, cuequivariance_torch; import importlib.metadata as m; assert m.version('rfd4-proteina') == '0.0.3'; assert torch.__version__.startswith('2.14.1')"
+
+[weights]
+# The Hub cache, not a directory of loose checkpoints: the model is loaded with
+# `hf_ckpt_path` + `hf_ckpt_revision`, so what has to be present is the pinned
+# revision's snapshot. launch.py points HF_HOME here.
+root_env = "RFD4_PROTEINA_HF_HOME"
+root_default = "~/.cache/tooluniverse/rfd4_proteina-hf"
+fetch = "{python} -c \"import os; os.environ.setdefault('HF_HOME', '{weights_root}'); from huggingface_hub import snapshot_download; snapshot_download('nvidia/RFD4-Proteina', revision='a06e2509c7033b010fc43614e9fd840303588502', allow_patterns=['config.json','model.safetensors','*.json'])\""
+
+# THE PAIR IS MATCHED AND MUST NOT BE MIXED. Upstream: the autoencoder defines
+# the latent space the flow model generates in, and pairing one release's flow
+# model with another's autoencoder "produces nonsense rather than an error".
+# The bundle at the repository root IS the matched pair, re-prefixed into one
+# safetensors file, which is why two digests cover what three .ckpt files
+# carry elsewhere in that repository.
+#
+# Both digests below are upstream's own, read from release-checkpoints.json at
+# the pinned revision (`bundle_sha256` and `bundle_config_sha256`), and both
+# were confirmed against the bytes this provider was measured on rather than
+# copied on trust. `verify_weights` is what stops a launch when either moves.
+[[weights.files]]
+name = "hub/models--nvidia--RFD4-Proteina/snapshots/a06e2509c7033b010fc43614e9fd840303588502/model.safetensors"
+size = 1742660596
+sha256 = "5b549dd61adb2f6c6b5cb95bda13f40f5e31556b4e6c755edc0ca6f011c68fb0"
+
+# config.json is checked too, and it is not a formality: it carries the latent
+# dimension and the residue vocabulary size, which are exactly what differ
+# between the 2026-10-19 pair and the one it supersedes (32 vs 16, 147 vs 33).
+# A stale config against current weights is the mixing upstream warns about,
+# arriving through a file small enough that nobody would think to look at it.
+[[weights.files]]
+name = "hub/models--nvidia--RFD4-Proteina/snapshots/a06e2509c7033b010fc43614e9fd840303588502/config.json"
+size = 7270
+sha256 = "154ea927ab8005b7eac2d047a792147fb4606ab4878e496aa8414b6b40dad368"

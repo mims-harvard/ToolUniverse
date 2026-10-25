@@ -486,6 +486,15 @@ REMOTE_DEPLOYMENTS = (
         gpu_policy="required",
     ),
     RemoteDeployment(
+        "rfd4_proteina",
+        "tooluniverse.remote.rfd4_proteina.rfd4_proteina_tool",
+        8062,
+        ("rfd4_proteina_design",),
+        ("TOOLUNIVERSE_RFD4_PROTEINA_PYTHON",),
+        ("RFD4_PROTEINA_HF_HOME",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
         "rfdiffusion3",
         "tooluniverse.remote.rfdiffusion3.rfdiffusion3_tool",
         8040,
