@@ -228,6 +228,51 @@ def test_pass_env_is_wired_through_both_entry_points(monkeypatch):
         )
 
 
+def test_the_pool_is_left_to_resolve_each_providers_interpreter(monkeypatch):
+    """`--allow boltz,esm` used to start esm under the interpreter resolved for boltz.
+
+    The command resolved ONE interpreter, from the first allowed provider, and handed it
+    to the pool for all of them -- while the environment check it prints "environment ok"
+    from resolves each provider's own. So it is handed None unless the operator named one,
+    and an interpreter they did name is resolved here, before anything starts.
+    """
+    seen: dict = {}
+
+    class StopAfterConstruction(Exception):
+        """Raised to end the command once the pool has been built with its kwargs."""
+
+    class Recorder:
+        def __init__(self, **kwargs):
+            seen.update(kwargs)
+
+        def __getattr__(self, name):
+            raise StopAfterConstruction(name)
+
+    parser = build_parser()
+    monkeypatch.setattr("tooluniverse.remote_pool.ProviderPool", Recorder)
+    monkeypatch.setattr(
+        "tooluniverse.remote_runtime.check_environment",
+        lambda *a, **k: {"ok": True, "checks": []},
+    )
+    monkeypatch.setattr(
+        "tooluniverse.remote_runtime.resolve_python",
+        lambda *a, **k: "/resolved/by/the/command",
+    )
+
+    for argv, expected in (
+        (["serve", "--allow", "boltz,esm"], None),
+        (
+            ["serve", "--allow", "boltz,esm", "--python", "/named"],
+            "/resolved/by/the/command",
+        ),
+    ):
+        seen.clear()
+        args = parser.parse_args(argv)
+        with pytest.raises((StopAfterConstruction, SystemExit)):
+            args.func(args)
+        assert seen.get("python", "absent") == expected, argv
+
+
 def test_a_bare_namespace_still_reaches_the_stdio_server(monkeypatch):
     """Programmatic callers pass a Namespace with none of the CLI's fields.
 

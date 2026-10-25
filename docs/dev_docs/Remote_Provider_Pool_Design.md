@@ -90,14 +90,34 @@ models than fit together never needs them resident together. Sharing implies war
 any provider that has no snapshot, because a manifest missing those tools would publish
 an online server that does not list what it can actually run.
 
+### One interpreter per provider
+
+A provider's environment is its own: `tu remote run` resolves
+`TOOLUNIVERSE_REMOTE_<SLUG>_PYTHON`, then `TOOLUNIVERSE_REMOTE_PYTHON`, then
+`.venvs/<slug>/bin/python` — per provider, and so does `check_environment`, which is what
+`tu serve` prints "environment ok" from. The pool resolves it the same way, for each
+provider it starts.
+
+It used to resolve one interpreter, from the first name in `--allow`, and start every
+provider with that. Measured on this project's GB10 with
+`TOOLUNIVERSE_REMOTE_ENFORMER_DEEPMIND_PYTHON` pointing at a second environment: the
+check read it, the start ignored it, and `enformer_deepmind`'s server ran in the
+interpreter resolved for `borzoi_calico`. So sharing two providers whose pinned stacks do
+not coexist — which is why a resident provider splits its server from its model at all —
+was the one thing a pool could not do, and it surfaced as a missing import inside the
+second provider rather than as anything about the pool.
+
+`--python` is still one interpreter for all of them, resolved before anything starts,
+because naming one is what asks for that.
+
 ### Admission and eviction
 
 `--max-active` bounds how many providers are resident; the default is 1, because one
 large model usually fills a GPU. Admitting a new provider evicts the
-least-recently-used **idle** one. `--max-active 0` drops the count and lets the memory
-ceiling decide alone — see "Letting memory decide alone" below. A provider with a call in flight is never evicted —
-the caller is told to retry instead, since the alternative is killing a running GPU job
-to admit a new one.
+least-recently-used **idle** one, and `--max-active 0` drops the count and lets the
+memory ceiling decide alone (see "Letting memory decide alone"). A provider with a call
+in flight is never evicted — the caller is told to retry instead, since the alternative
+is killing a running GPU job to admit a new one.
 
 `--idle-ttl` (default 900s) stops providers that stop being called, returning their
 memory without operator involvement.
@@ -400,6 +420,12 @@ before it and `null` after, this machine answering `pool_is_shared_with_the_host
 True, and `--max-active 0` then held one of them resident at a time instead of both. Their
 servers cost 135 MiB of the pool to bind a port — the ~10 GiB their manifests measure is
 what an answered call holds, which is why the figure is learned from one.
+
+Per-provider interpreters are verified in the same place, by reading
+`/proc/<pid>/cmdline` of the processes the pool actually started: with
+`TOOLUNIVERSE_REMOTE_ENFORMER_DEEPMIND_PYTHON` set to a second environment, both
+providers ran under the first one's interpreter before the change and each under its own
+after it.
 
 End-to-end against two real provider subprocesses over real HTTP, counting actual
 process launches: nothing starts at boot; `tools/list` stays empty and starts nothing;

@@ -50,6 +50,7 @@ class Lifecycle:
         self.started: list[str] = []
         self.stopped: list[str] = []
         self.warmed: list[str] = []
+        self.interpreters: dict[str, str] = {}
         self.fail: set[str] = set()
 
     def ensure(
@@ -65,6 +66,7 @@ class Lifecycle:
         if deployment.slug in self.fail:
             raise RuntimeError(f"boom: {deployment.slug}")
         self.started.append(deployment.slug)
+        self.interpreters[deployment.slug] = python
         if warm_model:
             self.warmed.append(deployment.slug)
         return object(), {"endpoint": deployment.endpoint, "ok": True}
@@ -90,9 +92,9 @@ def make_pool(tmp_path: Path, slugs, lifecycle=None, **kwargs) -> ProviderPool:
     # meaning "free", so a test that says nothing about that gets a discrete device,
     # where a manifest's 0 is the whole answer.
     kwargs.setdefault("pool_shares_host_memory", lambda: False)
+    kwargs.setdefault("python", "/nonexistent/python")
     pool = ProviderPool(
         allow=tuple(slugs),
-        python="/nonexistent/python",
         log_dir=tmp_path / "logs",
         schemas=SchemaStore(tmp_path / "schemas"),
         ensure=lifecycle.ensure,
@@ -1081,6 +1083,78 @@ def test_two_small_models_coexist_where_a_count_of_one_would_not(tmp_path):
     pool.acquire(pool.provider_for_tool(esm_tool))
 
     assert sorted(row["provider"] for row in pool.status()) == ["boltz", "esm"]
+
+
+# ── one interpreter per provider, not one per pool ──────────────────────────────
+
+
+def per_provider(_explicit, deployment):
+    """What `resolve_python` does with no override, with the filesystem left out."""
+    return f"/envs/{deployment.slug}/bin/python"
+
+
+def test_each_provider_is_started_under_its_own_interpreter(tmp_path):
+    """A provider's environment is its own, and this pool used to pick the first one's.
+
+    `tu remote run` resolves `TOOLUNIVERSE_REMOTE_<SLUG>_PYTHON` per provider, and so
+    does the environment check that `tu serve` prints "environment ok" from -- and then
+    every provider was started with the interpreter resolved for the FIRST name in
+    `--allow`. Sharing boltz and esm from one host ran esm's server inside boltz's
+    environment, which is the one place their manifests say the two cannot coexist.
+    """
+    pool = make_pool(
+        tmp_path,
+        ["boltz", "esm"],
+        max_active=2,
+        python=None,
+        resolve_interpreter=per_provider,
+    )
+
+    pool.acquire(pool.provider_for_tool("boltz2_docking"))
+    pool.acquire(pool.provider_for_tool(REMOTE_BY_SLUG["esm"].operations[0]))
+
+    assert pool.lifecycle.interpreters == {
+        "boltz": "/envs/boltz/bin/python",
+        "esm": "/envs/esm/bin/python",
+    }
+
+
+def test_warming_uses_each_providers_own_interpreter_too(tmp_path):
+    """`--warm` starts every provider in turn, and takes the same route to each one."""
+    pool = make_pool(
+        tmp_path,
+        ["boltz", "esm"],
+        python=None,
+        resolve_interpreter=per_provider,
+        discover=lambda deployment: [{"name": deployment.operations[0]}],
+    )
+
+    pool.warm()
+
+    assert pool.lifecycle.interpreters == {
+        "boltz": "/envs/boltz/bin/python",
+        "esm": "/envs/esm/bin/python",
+    }
+
+
+def test_an_interpreter_the_operator_named_is_used_for_all_of_them(tmp_path):
+    """Naming one with `--python` is asking for one, so it is not resolved away."""
+
+    def never(*_args):
+        raise AssertionError("an explicit --python must not be re-resolved")
+
+    pool = make_pool(
+        tmp_path,
+        ["boltz", "esm"],
+        max_active=2,
+        python="/named/by/the/operator",
+        resolve_interpreter=never,
+    )
+
+    pool.acquire(pool.provider_for_tool("boltz2_docking"))
+    pool.acquire(pool.provider_for_tool(REMOTE_BY_SLUG["esm"].operations[0]))
+
+    assert set(pool.lifecycle.interpreters.values()) == {"/named/by/the/operator"}
 
 
 # ── what a declared zero is worth on unified memory ─────────────────────────────

@@ -3329,7 +3329,11 @@ def cmd_remote_pool(args: argparse.Namespace) -> None:
     try:
         pool = ProviderPool(
             allow=tuple(usable),
-            python=resolve_python(args.python, REMOTE_BY_SLUG[usable[0]]),
+            # None, so the pool starts each provider under its own interpreter, the way
+            # the environment check above resolved each one. An explicit --python is one
+            # interpreter for all of them, resolved here so a path that does not exist is
+            # refused before anything starts.
+            python=resolve_python(args.python) if args.python else None,
             log_dir=args.log_dir,
             schemas=SchemaStore(args.schema_dir),
             extra_env=tuple(passed_env),

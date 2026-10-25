@@ -72,6 +72,7 @@ from .remote_runtime import (
     ManagedRemoteProcess,
     RemoteDeployment,
     ensure_provider,
+    resolve_python,
     stop_provider,
 )
 
@@ -399,13 +400,14 @@ class _ActiveProvider:
 class ProviderPool:
     """Start reviewed providers on demand and stop them when they go idle.
 
-    ``python`` is the interpreter from the provider environment, exactly as
-    ``tu remote run`` resolves it. The lifecycle callables are injected so the routing,
-    admission and eviction rules can be tested without a GPU or a real provider.
+    ``python`` is an interpreter to start EVERY provider with, for an operator who named
+    one; None means each provider is started under its own, which is how a host can share
+    models whose pinned stacks do not coexist. The lifecycle callables are injected so the
+    routing, admission and eviction rules can be tested without a GPU or a real provider.
     """
 
     allow: tuple[str, ...]
-    python: str
+    python: str | None
     log_dir: Path
     schemas: SchemaStore
     max_active: int = DEFAULT_MAX_ACTIVE
@@ -433,6 +435,10 @@ class ProviderPool:
     # the measurement rules can be tested without a provider environment.
     holds_model_in_worker: Callable[[str], bool] = admission.declares_resident_worker
     read_holdings: Callable[[], Mapping[str, float | None]] = admission.machine_holdings
+    # How a provider's own interpreter is found, which is `tu remote run`'s rule and
+    # `check_environment`'s: `TOOLUNIVERSE_REMOTE_<SLUG>_PYTHON`, then
+    # `TOOLUNIVERSE_REMOTE_PYTHON`, then `.venvs/<slug>`, then this interpreter.
+    resolve_interpreter: Callable[[str | None, RemoteDeployment], str] = resolve_python
     ensure: Callable[..., tuple[ManagedRemoteProcess | None, dict[str, Any]]] = (
         ensure_provider
     )
@@ -521,10 +527,31 @@ class ProviderPool:
             results[deployment.slug] = f"cached {len(tools)} tools"
         return results
 
+    def _python_for(self, deployment: RemoteDeployment) -> str:
+        """The interpreter THIS provider's server is started under.
+
+        WHY IT IS NOT ONE INTERPRETER FOR THE POOL. A provider's environment is its own:
+        ``tu remote run`` resolves ``TOOLUNIVERSE_REMOTE_<SLUG>_PYTHON`` per provider and
+        so does :func:`check_environment`, which is what ``tu serve`` prints
+        "environment ok" from -- and then this pool used to start every provider with the
+        interpreter resolved for the FIRST name in ``--allow``. Sharing boltz and esm from
+        one host therefore ran esm's server in boltz's environment, which is the one place
+        the two are documented never to coexist. Measured: with
+        ``TOOLUNIVERSE_REMOTE_ENFORMER_DEEPMIND_PYTHON`` set, the check read it and the
+        start ignored it.
+
+        An explicit ``--python`` is still one interpreter for all of them, because that is
+        what naming one asks for.
+        """
+
+        if self.python is not None:
+            return self.python
+        return self.resolve_interpreter(None, deployment)
+
     def _snapshot(self, deployment: RemoteDeployment) -> list[dict[str, Any]]:
         managed, _ = self.ensure(
             deployment,
-            python=self.python,
+            python=self._python_for(deployment),
             log_dir=self.log_dir,
             startup_timeout=self.startup_timeout,
             extra_env=self.extra_env,
@@ -582,7 +609,7 @@ class ProviderPool:
         try:
             managed, _ = self.ensure(
                 deployment,
-                python=self.python,
+                python=self._python_for(deployment),
                 log_dir=self.log_dir,
                 startup_timeout=self.startup_timeout,
                 extra_env=self.extra_env,
