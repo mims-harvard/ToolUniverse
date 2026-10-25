@@ -203,7 +203,7 @@ def pool_capacity_mib() -> int | None:
 def declared_footprint_mib(slug: str) -> int | None:
     """What a provider's own manifest says it costs, as a prior for this machine.
 
-    ``[gpu] vram_budget_gb`` is a measured peak -- ``tu remote room`` prints 27 of them
+    ``[gpu] vram_budget_gb`` is a measured peak -- ``tu remote room`` prints 28 of them
     -- but measured on the machine that verified the provider, which makes it a prior
     anywhere else and not a reading. It is what lets a provider's FIRST load here be
     admitted on memory instead of on count alone, and it never stands in for a larger
@@ -211,7 +211,7 @@ def declared_footprint_mib(slug: str) -> int | None:
 
     0 is an answer, not a gap: a manifest declaring ``[gpu] policy = "none"`` holds no
     device memory at all, so no memory ceiling applies to it and it evicts nobody.
-    None means nothing declares this provider's cost -- 28 of the 59 reviewed slugs,
+    None means nothing declares this provider's cost -- 28 of the 60 reviewed slugs,
     all of them older non-resident providers -- and those are admitted on count alone,
     exactly as every provider was before this.
     """
@@ -226,7 +226,7 @@ def declared_footprint_mib(slug: str) -> int | None:
 class FootprintStore:
     """What THIS host measured a provider to cost, cached on disk.
 
-    The local reading, which is a different thing from the declared one. 27 manifests
+    The local reading, which is a different thing from the declared one. 28 manifests
     carry a measured ``[gpu] vram_budget_gb`` that :func:`declared_footprint_mib` reads,
     and that figure was measured on the machine which verified the provider -- so it is
     what makes a first load here memory-aware, and this store is what the pool learns
@@ -706,7 +706,7 @@ class ProviderPool:
         model in the server process -- and loads it on the first request too, lazily:
         ``esm_tool`` says so in as many words ("lazy load on first use"), which is how
         anything serves `tools/list` before its weights exist. So the figure recorded
-        was the MCP server's own memory, every time. The 27 providers whose manifest
+        was the MCP server's own memory, every time. The 28 providers whose manifest
         declares a budget were covered by :meth:`footprint_mib` taking the larger of the
         two; for a provider with nothing declared that small number was the only figure
         admission had, and being optimistic about a model's cost is the one direction
