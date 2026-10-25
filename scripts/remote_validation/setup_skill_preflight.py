@@ -109,6 +109,13 @@ DEPLOYMENTS = (
         ("BOLTZGEN_CACHE", "TOOLUNIVERSE_BOLTZGEN_PYTHON"),
         path_env=("BOLTZGEN_CACHE",),
     ),
+    Deployment(
+        "carbonx",
+        8064,
+        ("carbonx_ask_dna",),
+        ("TOOLUNIVERSE_CARBONX_PYTHON",),
+        path_env=("CARBONX_HOME",),
+    ),
     Deployment("borzoi", 8012, ("run_borzoi_predict", "run_borzoi_variant_effect")),
     Deployment(
         "borzoi_calico",

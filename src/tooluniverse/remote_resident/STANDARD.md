@@ -286,6 +286,34 @@ JAX took it from the device and does not return it. `peak_bytes_in_use` answers
 "what does this input cost"; the pool answers "what does holding this provider
 cost everyone else", and a budget exists for the second question.
 
+**A third kind of figure, and the one case where a point reading is the whole
+story.** carbonx serves Carbon-X from a `llama-server` child process and has no
+torch to ask. llama.cpp allocates weights, KV cache and compute buffers when
+the model loads and does not grow afterwards, so the footprint is fixed by
+`-c` and `-np` rather than by what a request did: four requests spanning 72 bp
+to 8,208 bp moved it by 0.16 GiB, which was the shared unified pool breathing.
+Two readings exist for it and they differ. `nvidia-smi
+--query-compute-apps=pid,used_memory` gives the driver's view of the engine
+process, 15.46 GiB, and is what the worker reports — on this card it is the
+only reading a worker without torch can take, since `--query-gpu=memory.used`
+returns N/A on unified memory. `torch.cuda.mem_get_info` from outside gives
+the whole-pool delta, 17.11 GiB, which is larger because the engine's own RSS
+counts against the same pool. **The budget is set from the larger one**, since
+the question a budget answers is what holding this provider costs everyone
+else. The margin above it can be smaller than a torch provider's — 7% rather
+than 25-30% — because there is no allocator high-water mark to cover, only
+measurement noise; that is a property of the runtime, not a licence.
+
+**A GPU provider whose own interpreter does not hold the card says so.**
+`[gpu] driven_by` names what does. Setup's toolchain probe otherwise asks the
+model environment's torch whether it can drive this GPU, which is the right
+question for almost every provider and an impossible one for a provider with
+no torch in that environment at all; without the key a correct install is
+refused as `torch_arch_unsupported`. That refusal has now been wrong twice for
+the same reason — `_arch_problem` already carries a jax branch because af3_jax
+pins a CPU-only torch while jax drives the card — so the third case is
+declared by the provider rather than guessed at by the probe.
+
 **A budget may err high. It may never err low.** Two providers here disagreed
 with their own declarations in opposite directions, and only one of them was a
 defect. complexa declares 20.25 GiB and a quiet-machine corner measurement read

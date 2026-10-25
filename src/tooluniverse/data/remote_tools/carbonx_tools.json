@@ -1,0 +1,104 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "carbonx_ask_dna",
+    "description": "Ask Carbon-X a question about DNA sequences you supply. It is a 14.8B language model trained jointly on DNA and English: give it named sequences and a question and it answers in prose, with its reasoning. It is strongest on variant effects (is this change benign or pathogenic), sequence features (enhancer vs promoter, organism group, motifs, transcription-factor binding sites) and next-base prediction. It is WEAK on splice sites and histone marks, it miscounts bases and coordinates, and it was not trained to design sequences. The answer is a model prediction, NOT clinically validated, and must not drive a medical decision. Sequences are DNA only; 'sequences' is required, because this tool answers questions about DNA rather than acting as a general assistant. The prompt is limited to about 7,168 tokens (roughly 43 kbp of DNA); a longer one is refused by name with its real token count.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "question": {
+          "type": "string",
+          "description": "What to ask about the sequences. Put everything in one question: Carbon-X was trained and evaluated with the sequence and the question in a single message. For a variant, give the position and the reference and alternate base, computed in code rather than left to the model to locate."
+        },
+        "sequences": {
+          "type": "object",
+          "description": "The DNA to ask about, as name -> sequence. Names are how the question refers to them ('reference', 'variant', 'promoter'). IUPAC ambiguity codes are accepted but cost resolution: only A, C, G and T form 6-mer tokens, and any 6-mer containing another character collapses into one <oov> token. At most {...} sequences.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "context": {
+          "type": "string",
+          "description": "What is already known: gene, strand, assembly, coordinates, annotations. Placed before the question. Upstream's strongest prompting advice -- without it the model may invent a sequence's identity or function."
+        },
+        "max_tokens": {
+          "type": "integer",
+          "description": "Ceiling on the answer, 1 to {...}. Generation measured about 12-14 tokens per second on the verified card, so this is the main thing that sets how long a call takes. The reply says whether the answer was truncated.",
+          "default": 1024
+        },
+        "seed": {
+          "type": "integer",
+          "description": "Random seed. Carbon-X's published results use sampling (temperature 0.6, top-p 0.95, top-k 20), so answers vary; pass a seed to repeat one."
+        }
+      },
+      "required": [
+        "question",
+        "sequences"
+      ],
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "answer": {
+          "type": "string"
+        },
+        "truncated": {
+          "type": "boolean"
+        },
+        "sequences": {
+          "type": "object"
+        },
+        "prompt_tokens": {
+          "type": "integer"
+        },
+        "completion_tokens": {
+          "type": "integer"
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "max_tokens": {
+          "type": "integer"
+        },
+        "timing": {
+          "type": "object"
+        },
+        "weights_held_by": {
+          "type": "string"
+        },
+        "peak_reserved_gib": {
+          "type": "number"
+        },
+        "engine_device_gib": {
+          "type": "number"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "CarbonXAskDnaTool",
+      "url": "https://huggingface.co/HuggingFaceBio/Carbon-X-GGUF",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/carbonx",
+      "mcp_tool_name": "carbonx_ask_dna"
+    },
+    "test_examples": [
+      {
+        "question": "Is this sequence more likely coding or non-coding? Answer in one or two sentences.",
+        "sequences": {
+          "hbb_start": "ATGGTGCATCTGACTCCTGAGGAGAAGTCTGCCGTTACTGCCCTGTGGGGCAAGG"
+        },
+        "context": "Human HBB (beta-globin), the first 55 bases of the coding sequence on the plus strand.",
+        "max_tokens": 160,
+        "seed": 0
+      }
+    ]
+  }
+]

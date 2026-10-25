@@ -108,6 +108,7 @@ _SECTIONS = {
         "isolation",
         "driver_min",
         "driver_min_reason",
+        "driven_by",
     },
     "env": {
         "python",
@@ -259,6 +260,13 @@ class ProviderManifest:
     # and writes no files at all.
     outputs: tuple = ()
     output_keys: tuple = ()
+    # What holds the card, when it is not torch. Absent for every provider
+    # whose model lives in this interpreter; set by one whose GPU work happens
+    # somewhere the toolchain probe cannot see -- carbonx drives it from a
+    # llama.cpp child process and has no torch at all. `setup` reads it to stop
+    # `torch_arch_unsupported` refusing an environment that is correct, the
+    # same false refusal `_arch_problem` already carries a jax branch for.
+    gpu_driven_by: Optional[str] = None
     mode: str = "resident"
     mode_reason: str = ""
     worker: Optional[str] = None
@@ -547,6 +555,7 @@ def load(path: os.PathLike | str) -> ProviderManifest:
         verified_on=prov.get("verified_on", ""),
         outputs=outputs,
         output_keys=output_keys,
+        gpu_driven_by=gpu.get("driven_by"),
         mode=mode,
         mode_reason=rt.get("mode_reason", ""),
         worker=rt.get("worker"),

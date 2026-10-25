@@ -167,6 +167,15 @@ REMOTE_DEPLOYMENTS = (
         gpu_policy="none",
     ),
     RemoteDeployment(
+        "carbonx",
+        "tooluniverse.remote.carbonx.carbonx_tool",
+        8064,
+        ("carbonx_ask_dna",),
+        ("TOOLUNIVERSE_CARBONX_PYTHON",),
+        ("CARBONX_HOME",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
         "cell2location",
         "tooluniverse.remote.cell2location.cell2location_tool",
         8019,

@@ -1306,11 +1306,26 @@ class TestOrderedInstallPasses:
         _, passes = self._batches("a==1\n# just a comment\nb==2\n")
         assert passes == [["a==1", "b==2"]]
 
+    # A lock that installs nothing is almost always a lock someone emptied by
+    # accident, which is why the sweep below exists. It is not always that:
+    # carbonx's worker is the standard library and its model is a GGUF file
+    # read by a pinned llama.cpp binary, so there is genuinely nothing for a
+    # resolver to pin, and the things that ARE pinned live in
+    # [[weights.files]] and in a .pins table beside the lock. Such a lock has
+    # to SAY so in this exact phrase, so that an accident still fails.
+    NO_PACKAGES = "# THIS FILE PINS NO PACKAGES ON PURPOSE."
+
     def test_every_shipped_lock_still_parses_to_at_least_one_pass(self):
         import glob
 
         for f in sorted(glob.glob("src/tooluniverse/remote/*/environment/*.lock")):
-            _, passes = self._batches(Path(f).read_text())
+            text = Path(f).read_text()
+            _, passes = self._batches(text)
+            if self.NO_PACKAGES in text:
+                assert not passes, (
+                    f"{f} says it pins no packages and then pins some"
+                )
+                continue
             assert passes, f"{f} parsed to no installable pass"
 
 

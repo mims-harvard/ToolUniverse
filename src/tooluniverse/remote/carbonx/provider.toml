@@ -1,0 +1,273 @@
+# Carbon-X — a 14.8B DNA/English language model, held resident behind llama.cpp.
+#
+# THE FIRST PROVIDER ON THIS STANDARD WHOSE MODEL LIVES IN A CHILD PROCESS.
+# Every sibling imports a Python stack and builds the model in the worker's
+# own address space. This one holds upstream's `llama-server` and talks to it
+# over a second Unix socket, because the quantized weights are the point and
+# there is no Python binding that can load them:
+#
+#   * bf16 is 29.7 GB. Q8_0 is 15.8 GB, and the vendor's own re-run of
+#     FrontierVEP (69.1 vs 70.4) and NextBase (39.7 vs 39.4) puts it within
+#     the stated standard error of the unquantized model served by vLLM.
+#   * Carbon-X's DNA tokenizer is custom Python loaded with
+#     `trust_remote_code=True`, which no GGUF runtime can execute. llama.cpp
+#     grew a native `HybridDNATokenizer` in **b11742**; older builds load the
+#     same file and tokenize DNA wrongly without saying so. b11742 is
+#     therefore a floor, and this provider pins it.
+#   * There is no llama-cpp-python at b11742, and building one would mean
+#     compiling CUDA for `sm_121` from source. The published
+#     `ubuntu-cuda-13.4-arm64` tarball already carries an `sm_121a` cubin —
+#     checked with `cuobjdump --list-elf`, not assumed.
+#
+# SO THE ENGINE IS PINNED LIKE A WEIGHT, AND NOT IN THIS FILE. `[[weights.files]]`
+# is one list and cannot vary by architecture; the aarch64 tarball ships 16
+# loadable files and the x86_64 one 22, with different names and digests, so
+# listing either would make the manifest refuse the other machine. The GGUF,
+# which is identical everywhere, is pinned below. The engine is pinned in
+# `environment/llamacpp-b11742.pins` — one line per file per architecture —
+# and launch.py checks the host's own set before starting anything. These
+# files are EXECUTED, which is a stronger reason to pin them than the one
+# that already justifies pinning a hydra config.
+#
+# MEASURED ENVELOPE, and the thing that makes it unlike every other provider
+# here. llama.cpp allocates weights, KV cache and compute buffers at LOAD, so
+# the footprint is set by `-c` and does not move afterwards. Each row is a
+# whole session: load, then four requests of 72 bp, 2 kbp, 8,208 bp and the
+# same 8,208 bp again.
+#
+# | -c    | load  | at load | across four requests | low → high    |
+# |-------|-------|---------|----------------------|---------------|
+# |  8192 | 11.1s | 17.11   | flat                 | 17.07 → 17.23 |
+# | 16384 | 13.8s | 18.12   | flat                 | 18.01 → 18.20 |
+# | 40960 | 14.9s | 21.95   | flat                 | 22.02 → 22.20 |
+#
+# THERE IS NO SESSION RATCHET HERE, and that is worth saying because the
+# previous provider on this standard was budgeted wrongly twice by assuming
+# there was none. BioEmu-2 reserved 18.04 GiB for a request as a fresh
+# worker's first and 21.15 GiB for the identical request as its second,
+# because torch's caching allocator keeps a high-water mark. llama.cpp has no
+# such allocator in the path: the 0.16 GiB of drift above is other processes
+# on a shared 128 GB unified pool, not growth. The budget can therefore sit
+# much closer to the measurement than a torch provider's can.
+#
+# WHY `-c 8192` AND NOT THE MODEL'S FULL 40,960. The pool reserves the
+# declared budget on EVERY request, large or small, so context bought "just in
+# case" is paid for by every co-tenant all the time. 40,960 costs 4.8 GiB more
+# than 8,192 — a 28% permanent surcharge — to serve input lengths upstream has
+# not evaluated: mid-training used 8,192-token sequences and post-training
+# stayed below 16k, and the model card says inputs much longer than that are
+# untested. Meanwhile the longest input in the vendor's own hardest benchmark,
+# FrontierVEP, is 8,192 BASES, which is 1,406 tokens here. 8,192 tokens of
+# context leaves 7,168 for a prompt — roughly 43 kbp of DNA, five times that
+# benchmark — and 1,024 for an answer.
+#
+# SPEED IS THE HONEST WEAKNESS. Generation measured 11.9–13.9 tokens per
+# second across all three contexts; prompt evaluation ran 300–770 tokens per
+# second. A 1,024-token answer therefore takes about 80 s. That is memory
+# bandwidth on this card, not a configuration mistake, and it is why
+# `max_tokens` is the main lever a caller has over latency.
+
+[provider]
+slug = "carbonx"
+description = "Carbon-X Q8_0 answers questions about DNA sequences in English — variant effects, sequence features, next-base prediction"
+operations = ["carbonx_ask_dna"]
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 128 GB unified), driver
+580.173.02, host zgx, 2026-10-25, through this provider's own path rather than
+a bare llama-server.
+
+`tu remote setup carbonx` ran all four steps: preflight OK; environment
+present against [env] verify, which for this provider is a stdlib-only venv
+(Python 3.12.13) with no packages installed at all; weights 1/1 at their pin
+after an independent fetch that downloaded the 15.8 GB GGUF and the engine
+tarball and took 5 min 12 s, with the GGUF's sha256 equal to the `lfs.oid` the
+Hub API publishes for it; smoke OK in 14 s, recording 15.46 GiB to
+`~/.cache/tooluniverse/measured/carbonx.json`.
+
+THE ENGINE WAS IDENTIFIED RATHER THAN ASSUMED. `cuobjdump --list-elf` on the
+pinned `libggml-cuda.so` reports an **sm_121a** cubin, so the GB10 runs native
+kernels rather than JIT-compiled PTX. And the tokenizer -- the thing that is
+silently wrong on an older build -- splits `Describe this sequence:
+ACGTACGATTCA` into exactly the nine tokens the model card prints for the
+Python tokenizer, ending `<dna>`, `ACGTAC`, `GATTCA`, `</dna>`.
+
+Socket acceptance, 9/9 through launch.py, the worker and the Unix socket, with
+the payload shape the smoke step and the MCP tool both send: a cold smoke
+request in 3.9 s, an identical repeat in 4.2 s, a two-sequence variant
+question in 6.9 s, a 7,033-token prompt (42 kbp of DNA) in 13.2 s, then four
+refusals by name -- the over-ceiling one naming 7,697 tokens against the 7,168
+ceiling, plus a protein sequence, an empty `sequences` and an out-of-range
+`max_tokens` -- and a tenth request after all four that still worked. The
+engine's device footprint, read from `nvidia-smi --query-compute-apps`, was
+15.46-15.47 GiB across every one of them.
+
+The whole-pool figure the budget is set from was measured separately, with
+`torch.cuda.mem_get_info` from outside this environment: 17.11 GiB at load and
+17.07-17.23 GiB across four requests at `-c 8192`, against 18.12 at 16384 and
+21.95 at 40960. The two numbers differ by about 1.7 GiB because the engine's
+own RSS counts against the same unified pool; the budget covers the larger one.
+
+Live MCP on 8064: discovery is exactly {carbonx_ask_dna}; three calls returned
+the keys `return_schema` declares; six malformed requests were refused by name,
+four by the tool and two by the published schema itself -- the required list
+and `additionalProperties` rejecting them before `run()` was reached. No
+traceback reached a caller. ONE BUG WAS FOUND BY THAT RUN AND NOT BY REVIEW:
+`run()` first returned the supervisor's whole `{"ok", "result"}` envelope, so a
+caller reading `answer` got an empty string with no error to explain it. It now
+projects onto the declared keys.
+
+The orphan watchdog was observed, and here it has a second half no sibling
+has. With the MCP server stopped and the worker reparented to init, the worker
+logged `orphaned (parent gone) and idle 122s >= 120s: releasing the GPU and
+exiting` -- and its `llama-server` child died with it, leaving nothing on the
+card. `PR_SET_PDEATHSIG` was also tested in isolation on all three paths: the
+child dies when the parent calls `os._exit(0)`, dies when the parent is
+SIGKILLed, and SURVIVES `os._exit(0)` without the flag. Note that `os._exit(0)`
+skips cleanup by design, so the engine's socket file outlives it: judge
+liveness by PID or by `nvidia-smi`, not by `ls`.
+
+ACCURACY IS NOT VALIDATED HERE AND TWO MEASURED ANSWERS WERE WRONG. On the
+smoke sequence the model was right and checkably so -- it translated the
+55 bases to `MVHLTPEEKSAVTALWGK`, which is beta-globin's N-terminus. On the
+model card's OWN variant example, HBB GAG->GTG (Glu->Val, the sickle-cell
+substitution), it called the variant **benign on 4 of 5 seeds** when the two
+sequences were passed as named `sequences` with the position given in
+`context`, and pathogenic on 3 of 3 when the card's own "Reference: /
+Variant:" wording was written into the question instead. Two of the benign
+answers named the Glu->Val change correctly and then asserted it is not the
+sickle substitution. Asked which organism the same 55 bases came from, it
+answered "a positive-sense single-stranded RNA virus such as a coronavirus".
+These inputs are 55 bases, far shorter than anything in the benchmarks the
+model card reports (FrontierVEP uses up to 8,192), and upstream lists invented
+identity and function among its known limitations. NOTHING HERE DISTINGUISHES
+THE QUANTIZATION FROM THE MODEL: the vendor's own re-run of FrontierVEP and
+NextBase through llama-server is the only evidence on that question and it
+shows no measurable loss. A caller must not read "verified" as a claim about
+the answers.
+
+WHAT HAS NOT BEEN RUN. The likelihood `compare` operation upstream documents
+is absent, because it needs vLLM's `prompt_logprobs` and llama-server b11742
+returns `"logprobs": null` for the OpenAI-style equivalent -- checked against
+the running engine. Only `-c 8192` has been served through the provider. The
+x86_64 engine digests in `environment/llamacpp-b11742.pins` were computed from
+the published tarball, but that binary has never been executed here, so this
+provider is MEASURED on aarch64 only. A repeated prompt prefix makes the
+engine's reported `prompt_eval_per_s` meaningless, because llama.cpp reuses
+the cached prefix and still divides by elapsed time. Concurrency, recovery,
+public publication and independent-caller isolation are untested."""
+
+[runtime]
+mode = "resident"
+worker = "resident/carbonx_resident_worker.py"
+launch = "tooluniverse.remote.carbonx.launch:build_command"
+worker_args = [
+  "--socket", "{socket}",
+  "--slug", "{slug}",
+  "--gguf", "{gguf}",
+  "--engine", "{engine}",
+  "--ctx", "8192",
+  "--max-input-tokens", "7168",
+  "--max-output-tokens", "4096",
+]
+# The engine loaded in 11–15 s with a warm page cache; the timeout covers
+# reading 15.8 GB off a cold disk on a loaded host.
+start_timeout_s = 900.0
+# 4,096 output tokens at the measured 11.9 tokens per second is 344 s, plus
+# prompt evaluation. This is four times that.
+request_timeout_s = 1800.0
+idle_timeout_s = 900.0
+# This provider writes no files; `output_keys` is the check for a provider
+# that answers with values. `answer` alone would pass on an empty string,
+# which is why the token counts are here too.
+output_keys = ["answer", "prompt_tokens", "completion_tokens"]
+smoke = "smoke/hbb_coding.json"
+smoke_timeout_s = 1800.0
+
+[gpu]
+policy = "required"
+# The highest figure ever observed at `-c 8192`: **17.23 GiB**, in a session
+# that loaded the model and answered four requests from 72 bp to 8,208 bp.
+# 18.5 is that plus 7%.
+#
+# A SMALLER MARGIN THAN A TORCH PROVIDER'S, ON PURPOSE. The siblings carry
+# 25–30% because a caching allocator's peak depends on what a request did and
+# on what the requests before it did. Here every allocation is made at load
+# from `-c` and `-np`, and four requests spanning two orders of magnitude of
+# input moved the total by 0.16 GiB — which is the shared unified pool
+# breathing, not this process growing. The margin covers that noise and the
+# difference between one host's CUDA context and another's; it does not need
+# to cover a ratchet, because the measurement says there is not one.
+vram_budget_gb = 18.5
+driver_min = 580
+driver_min_reason = "the pinned engine is llama.cpp b11742 built against CUDA 13.4, and CUDA 13.x needs a 580-series driver"
+shareable = true
+isolation = "process"
+# THE CARD IS NOT HELD BY THIS PROVIDER'S INTERPRETER, and `setup` has to be
+# told so. Its toolchain probe asks the model environment's torch whether it
+# can drive the GPU, which is the right question for every sibling and an
+# impossible one here: there is no torch in that environment, and the CUDA
+# context belongs to a llama.cpp child process. Without this key the
+# environment step refuses a correct install with `torch_arch_unsupported` --
+# the same false refusal af3_jax hit when jax held the card.
+driven_by = "llama.cpp b11742 (CUDA 13.4), in a child process"
+
+[env]
+# STDLIB ONLY, WHICH IS NOT A SHORTCUT — IT IS THE WHOLE POINT. The model is
+# not in this interpreter. The worker's job is to start the engine, keep it
+# alive, count tokens with the engine's own tokenizer and move JSON over two
+# sockets, and every one of those is standard library. So the lock below pins
+# no packages: there is nothing to pin, and a dependency added here would be
+# one more thing that can break a provider whose model is a 15.8 GB file and
+# a 150 MB binary.
+kind = "venv"
+python = "$TOOLUNIVERSE_CARBONX_PYTHON"
+lock = "environment/requirements.lock"
+verify = "import ctypes, http.client, json, socket, subprocess, sys; assert sys.version_info >= (3, 9); ctypes.CDLL('libc.so.6')"
+
+[weights]
+root_env = "CARBONX_HOME"
+root_default = "~/.cache/tooluniverse/carbonx"
+# Two downloads, one pinned list. The GGUF is pinned in [[weights.files]]
+# below and re-checked on every launch; the engine tarball is checked against
+# its GitHub release digest HERE, at fetch time, and its extracted files are
+# re-checked on every launch against environment/llamacpp-b11742.pins.
+#
+# An architecture with no pinned tarball exits 3 — a refusal, not a failure.
+# Guessing which build to trust is exactly the decision a pin exists to
+# remove, and this provider has been measured on aarch64 only.
+fetch = """
+set -eu
+mkdir -p "{weights_root}"
+cd "{weights_root}"
+arch="$(uname -m)"
+case "$arch" in
+  aarch64)
+    asset=llama-b11742-bin-ubuntu-cuda-13.4-arm64.tar.gz
+    sha=85517d63fc5d1fdd55a2cced2459868c8e7cb3df4a0dacd9f1727f20305a3da8
+    ;;
+  x86_64)
+    asset=llama-b11742-bin-ubuntu-cuda-13.4-x64.tar.gz
+    sha=4812701570b9f11e732460a3846a7c9c865a799027afae843b46c8a944ece5f9
+    ;;
+  *)
+    echo "carbonx: no llama.cpp b11742 build is pinned for $arch; this provider ships digests for linux aarch64 and x86_64 only" >&2
+    exit 3
+    ;;
+esac
+curl -fL --retry 3 -C - -o carbon-x-q8_0.gguf.part "https://huggingface.co/HuggingFaceBio/Carbon-X-GGUF/resolve/main/carbon-x-q8_0.gguf"
+mv -f carbon-x-q8_0.gguf.part carbon-x-q8_0.gguf
+curl -fL --retry 3 -o "$asset" "https://github.com/ggml-org/llama.cpp/releases/download/b11742/$asset"
+echo "$sha  $asset" | sha256sum -c -
+rm -rf llama.cpp-b11742
+mkdir -p llama.cpp-b11742
+tar -xzf "$asset" -C llama.cpp-b11742 --strip-components=1
+rm -f "$asset"
+"""
+
+[[weights.files]]
+name = "carbon-x-q8_0.gguf"
+size = 15755742080
+# Upstream's own digest: this is the `lfs.oid` the Hub API publishes for the
+# file, confirmed equal to the sha256 of the bytes this provider was measured
+# on rather than copied on trust.
+sha256 = "48241178b67ab5423a74f65552dd04628ac16f2fa5d1a60dc94019d86fa6f453"
