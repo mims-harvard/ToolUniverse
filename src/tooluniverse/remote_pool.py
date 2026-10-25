@@ -43,7 +43,10 @@ where the device has no memory of its own, and nothing at all on a host with no 
 driver, which stays count-only. What a model costs is the larger of its manifest's
 measured ``[gpu] vram_budget_gb`` and what this host has measured it to cost here --
 and the local measurement is taken after a call the provider answered, because nothing
-in this catalog has its model in memory when its port starts answering. See
+in this catalog has its model in memory when its port starts answering. A manifest
+declaring ``[gpu] policy = "none"`` costs nothing only where the pool is the device's
+own: on unified memory the host RSS it does hold comes out of the pool being read, so
+there its cost is unknown until this host has measured it. See
 ``docs/dev_docs/Remote_Provider_Pool_Design.md``.
 """
 
@@ -221,7 +224,11 @@ def declared_footprint_mib(slug: str) -> int | None:
     local measurement.
 
     0 is an answer, not a gap: a manifest declaring ``[gpu] policy = "none"`` holds no
-    device memory at all, so no memory ceiling applies to it and it evicts nobody.
+    device memory at all, so no memory ceiling applies to it and it evicts nobody --
+    WHERE THE POOL IS A DEVICE'S OWN MEMORY. This function reports the manifest;
+    :meth:`ProviderPool._declared_cost` is where that answer meets the machine, because
+    on unified memory a provider holding no device memory is still holding host RSS from
+    the pool this pool reads.
     None means nothing declares this provider's cost -- 28 of the 60 reviewed slugs,
     all of them older non-resident providers -- and those are admitted on count alone,
     exactly as every provider was before this.
@@ -414,6 +421,12 @@ class ProviderPool:
     read_free_vram: Callable[[], int | None] = pool_free_mib
     read_capacity: Callable[[], int | None] = pool_capacity_mib
     declared_footprint: Callable[[str], int | None] = declared_footprint_mib
+    # Whether this machine spends a model's memory from the same pool as everything else,
+    # which is what decides whether a manifest's declared 0 is a cost or a gap. Injected
+    # like the readings above, and read once per pool: it runs `nvidia-smi`.
+    pool_shares_host_memory: Callable[[], bool | None] = (
+        admission.pool_is_shared_with_the_host
+    )
     # Whether a provider keeps its model in a worker of its own, which is what decides
     # WHEN this pool can measure what that model costs, and `machine_holdings`, which
     # says whether such a worker is up right now. Injected like the readings above so
@@ -430,6 +443,8 @@ class ProviderPool:
     _active: dict[str, _ActiveProvider] = field(default_factory=dict, init=False)
     _starting: set[str] = field(default_factory=set, init=False)
     _capacity_cache: int | None = field(default=None, init=False)
+    # A one-tuple so that "not read yet" and "read, and the answer was None" stay apart.
+    _shared_pool_cache: tuple[bool | None] | None = field(default=None, init=False)
     # A condition rather than a plain lock: it still guards every read and write of the
     # two collections above, and it is also where a call waits for a start another call
     # is already running, instead of being refused the moment it finds one in progress.
@@ -655,7 +670,7 @@ class ProviderPool:
         """
 
         measured = self.footprints.get(slug) if self.footprints is not None else None
-        declared = self.declared_footprint(slug)
+        declared = self._declared_cost(slug)
         if measured is None:
             return declared
         if declared is None:
@@ -675,6 +690,50 @@ class ProviderPool:
             except (OSError, ValueError):
                 return None
         return self._capacity_cache
+
+    def _pool_is_shared_with_the_host(self) -> bool | None:
+        """Whether a declared 0 is a real 0 here. Read once; a failed reading is not cached.
+
+        Which kind of machine this is does not change while a pool runs, and asking costs
+        an ``nvidia-smi``, so one answer is kept. A reading that failed is not kept, for
+        the reason :meth:`_capacity_mib` gives: a driver that was briefly unavailable must
+        not decide how this pool reasons for the rest of its life.
+        """
+
+        if self._shared_pool_cache is None:
+            try:
+                answer = self.pool_shares_host_memory()
+            except (OSError, ValueError):
+                return None
+            if answer is None:
+                return None
+            self._shared_pool_cache = (answer,)
+        return self._shared_pool_cache[0]
+
+    def _declared_cost(self, slug: str) -> int | None:
+        """What this provider's manifest says it costs FROM THE POOL THIS POOL READS.
+
+        The manifest's own answer everywhere except one case, and it is a case this
+        fleet is actually made of. ``[gpu] policy = "none"`` is a measurement -- three
+        of these providers have no GPU-capable wheel for this architecture and hold no
+        device memory at all -- and one of their manifests draws the obvious conclusion:
+        it can be "admitted while the card is full". On a discrete-GPU host that is
+        right and worth having. On unified memory the same provider's ~10 GiB of host
+        RSS is spent from the very pool this pool reads to decide, so treating it as
+        free is admitting a 10 GiB resident as though it were nothing -- and
+        :meth:`learn_footprint` used to skip it for the same reason, which left the
+        figure unlearnable as well as unknown.
+
+        So on unified memory a declared 0 becomes None: nobody has said what this costs
+        HERE. That makes it a provider of unknown cost -- measured after the first call
+        it answers, and bounded one at a time by :meth:`_evict_for_locked` until then --
+        rather than a provider known to be free.
+        """
+
+        declared = self.declared_footprint(slug)
+        if declared == 0 and self._pool_is_shared_with_the_host() is True:
+            return None
+        return declared
 
     def _refuse_if_larger_than_the_machine(self, deployment: RemoteDeployment) -> None:
         """Refuse what this machine could not hold with nothing else resident.
@@ -709,7 +768,7 @@ class ProviderPool:
         cost is unknown -- nothing to decide and nowhere to put a reading.
         """
 
-        if self.declared_footprint(deployment.slug) == 0:
+        if self._declared_cost(deployment.slug) == 0:
             return None
         if self.footprints is None and not self.footprint_mib(deployment.slug):
             return None
@@ -755,10 +814,13 @@ class ProviderPool:
         if self.footprints is None:
             return
         slug = deployment.slug
-        if self.declared_footprint(slug) == 0:
-            # Declared to hold no device memory, so a difference here would be whatever
-            # else on the machine allocated meanwhile, attributed to a provider that
-            # cannot have been the cause -- and then held against it as a ceiling.
+        if self._declared_cost(slug) == 0:
+            # Known to hold nothing from this machine's pool, so a difference here would
+            # be whatever else allocated meanwhile, attributed to a provider that cannot
+            # have been the cause -- and then held against it as a ceiling. On unified
+            # memory a declared 0 is not that, and `_declared_cost` is what tells them
+            # apart: there the provider does hold host RSS from this pool, and this is
+            # the only place its real cost here can be learned.
             return
         with self._lock:
             active = self._active.get(slug)

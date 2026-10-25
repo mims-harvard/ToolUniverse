@@ -86,6 +86,10 @@ def make_pool(tmp_path: Path, slugs, lifecycle=None, **kwargs) -> ProviderPool:
     # 0` is refused when it cannot be read, so a test that says nothing about memory
     # gets a machine large enough to hold anything in the catalog rather than this host.
     kwargs.setdefault("read_capacity", lambda: 1 << 20)
+    # And so is which kind of machine this is: on unified memory a declared 0 stops
+    # meaning "free", so a test that says nothing about that gets a discrete device,
+    # where a manifest's 0 is the whole answer.
+    kwargs.setdefault("pool_shares_host_memory", lambda: False)
     pool = ProviderPool(
         allow=tuple(slugs),
         python="/nonexistent/python",
@@ -1079,6 +1083,114 @@ def test_two_small_models_coexist_where_a_count_of_one_would_not(tmp_path):
     assert sorted(row["provider"] for row in pool.status()) == ["boltz", "esm"]
 
 
+# ── what a declared zero is worth on unified memory ─────────────────────────────
+
+
+def unified_pool(tmp_path, slugs, gpu, **kwargs):
+    """A pool of CPU-only providers on a machine with one pool for host and device."""
+    kwargs.setdefault("read_capacity", lambda: 1 << 20)
+    kwargs.setdefault("pool_shares_host_memory", lambda: True)
+    kwargs.setdefault("declared_footprint", lambda slug: 0)
+    return vram_pool(tmp_path, slugs, gpu, **kwargs)
+
+
+def esm_of(pool):
+    return pool.provider_for_tool(REMOTE_BY_SLUG["esm"].operations[0])
+
+
+def test_a_cpu_only_provider_on_unified_memory_is_measured_and_not_assumed_free(
+    tmp_path,
+):
+    """`policy = "none"` says "no device memory", which here is not "no memory".
+
+    Three manifests declare it, each off a measurement -- their kit has no GPU-capable
+    wheel for this architecture -- and one of them draws the conclusion that it can
+    therefore be "admitted while the card is full". On a discrete-GPU host that is right
+    and worth having. On unified memory its ~10 GiB of host RSS comes out of the pool
+    admission reads, and the old answer skipped the measurement as well as the ceiling,
+    so the figure stayed unlearnable rather than merely unknown.
+    """
+    pool = unified_pool(tmp_path, ["esm"], falling_gpu(40_000, 30_000))
+    deployment = esm_of(pool)
+
+    pool.acquire(deployment)
+    pool.learn_footprint(deployment)
+
+    assert pool.footprints.get("esm") == 10_000
+
+
+def test_on_a_discrete_device_a_declared_zero_costs_nothing_and_is_read_for_nothing(
+    tmp_path,
+):
+    """The same manifest on the machine its claim is about: no ceiling, no reading."""
+    gpu = FakeGPU(free=40_000)
+    pool = unified_pool(tmp_path, ["esm"], gpu, pool_shares_host_memory=lambda: False)
+    deployment = esm_of(pool)
+
+    pool.acquire(deployment)
+    pool.learn_footprint(deployment)
+
+    assert pool.footprints.get("esm") is None
+    assert gpu.reads == 0, "a provider known to hold nothing is measured for nothing"
+
+
+def test_a_machine_that_cannot_say_which_kind_it_is_keeps_the_manifests_answer(
+    tmp_path,
+):
+    """None is "cannot tell", and such a machine cannot read its free memory either.
+
+    There is no memory ceiling to protect on a host that answers nothing, so the
+    manifest's 0 is left as the answer rather than turned into a provider this pool
+    would then bound one at a time for no gain.
+    """
+    gpu = FakeGPU(free=40_000)
+    pool = unified_pool(tmp_path, ["esm"], gpu, pool_shares_host_memory=lambda: None)
+    deployment = esm_of(pool)
+
+    pool.acquire(deployment)
+    pool.learn_footprint(deployment)
+
+    assert pool.footprints.get("esm") is None
+    assert gpu.reads == 0
+
+
+def test_which_kind_of_machine_this_is_is_read_once_and_not_once_per_decision(tmp_path):
+    """It cannot change while a pool runs, and asking costs an `nvidia-smi`."""
+    asked = []
+    pool = unified_pool(
+        tmp_path,
+        ["boltz", "esm"],
+        FakeGPU(free=40_000),
+        pool_shares_host_memory=lambda: asked.append(1) or True,
+    )
+
+    pool.acquire(esm_of(pool))
+    pool.release(esm_of(pool))
+    pool.acquire(pool.provider_for_tool("boltz2_docking"))
+
+    assert len(asked) == 1
+
+
+def test_a_machine_kind_that_could_not_be_read_is_asked_again(tmp_path):
+    """A driver busy for a second must not decide this for the rest of a pool's life."""
+    machine = {"shared": None}
+    gpu = FakeGPU(free=40_000)
+    pool = unified_pool(
+        tmp_path, ["esm"], gpu, pool_shares_host_memory=lambda: machine["shared"]
+    )
+    deployment = esm_of(pool)
+
+    pool.acquire(deployment)
+    assert gpu.reads == 0, "unreadable: the manifest's 0 stands"
+
+    machine["shared"] = True
+    pool.release(deployment)
+    pool.control("stop", {"provider": "esm"})
+    pool.acquire(deployment)
+
+    assert gpu.reads == 1, "asked again, and this time the cost is unknown here"
+
+
 # ── no count ceiling: --max-active 0 ────────────────────────────────────────────
 
 
@@ -1187,6 +1299,23 @@ def test_a_measured_provider_stops_being_bounded_one_at_a_time(tmp_path):
 
     assert sorted(row["provider"] for row in pool.status()) == ["boltz", "esm"]
     assert pool.lifecycle.stopped == [], "both fit, so nothing had to be stopped"
+
+
+def test_cpu_only_providers_on_unified_memory_are_not_all_admitted_unmeasured(tmp_path):
+    """Both new rules at once, which is the case this fleet's GB10 actually is.
+
+    Nothing has costed these providers HERE -- their manifests speak about a card they
+    do not touch -- so with the count ceiling gone they are admitted one at a time
+    until a call each of them answered has been measured.
+    """
+    pool = unified_pool(tmp_path, ["boltz", "esm"], FakeGPU(free=40_000), max_active=0)
+    esm = esm_of(pool)
+
+    pool.acquire(esm)
+    pool.release(esm)
+    pool.acquire(pool.provider_for_tool("boltz2_docking"))
+
+    assert [row["provider"] for row in pool.status()] == ["boltz"]
 
 
 def test_a_provider_declaring_it_holds_no_device_memory_is_costed_and_not_unknown(

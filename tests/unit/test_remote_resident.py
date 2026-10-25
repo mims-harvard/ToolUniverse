@@ -1961,6 +1961,40 @@ class TestAdmission:
         assert free is None
         assert "nvidia-smi did not run" in source
 
+    def test_which_pool_a_model_allocates_from_is_answered_for_all_three_machines(
+        self, monkeypatch
+    ):
+        """What `[gpu] policy = "none"` is worth as a cost depends on this answer.
+
+        A provider holding no device memory is free on a discrete card and is not free
+        on unified memory, where its host RSS comes out of the same pool the next
+        model's weights do. Decided by which machine `capacity_gib` answered from, so
+        the two can never disagree about what kind of machine this is.
+        """
+        import subprocess as sp
+
+        from tooluniverse.remote_resident import admission
+
+        def answering(value):
+            def run(*_args, **_kwargs):
+                return sp.CompletedProcess([], 0, value, "")
+
+            return run
+
+        monkeypatch.setattr(admission.subprocess, "run", answering("[N/A]\n"))
+        assert admission.pool_is_shared_with_the_host() is True
+
+        monkeypatch.setattr(admission.subprocess, "run", answering("81920\n"))
+        assert admission.pool_is_shared_with_the_host() is False
+
+        def missing(*_args, **_kwargs):
+            raise FileNotFoundError("nvidia-smi")
+
+        monkeypatch.setattr(admission.subprocess, "run", missing)
+        assert admission.pool_is_shared_with_the_host() is None, (
+            "a machine that cannot be read is neither kind"
+        )
+
     def test_the_reason_always_carries_the_numbers(self):
         """Section 8: a refusal names what happened, not that something did."""
         import re

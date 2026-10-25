@@ -108,6 +108,35 @@ def meminfo_gib() -> Dict[str, float]:
     return want  # type: ignore[return-value]
 
 
+# Where a capacity figure came from, named because callers act on the difference and not
+# only on the number: on unified memory a model's weights, a CPU-only provider's RSS and
+# the page cache are all spent from the one pool, and on a discrete card they are not.
+DEVICE_CAPACITY_SOURCE = "nvidia-smi memory.total (discrete device)"
+UNIFIED_CAPACITY_SOURCE = "/proc/meminfo MemTotal (unified memory)"
+
+
+def pool_is_shared_with_the_host() -> Optional[bool]:
+    """Whether a model's memory and this machine's RAM come out of one pool.
+
+    WHICH DECIDES WHAT ``[gpu] policy = "none"`` IS WORTH AS A COST. Three of this
+    catalog's manifests declare it, each off a measurement: their kit has no
+    GPU-capable wheel for this architecture, so they hold no device memory at all. One
+    of them says in as many words that it is therefore "admitted while the card is
+    full", and on a discrete-GPU host that is exactly right. On unified memory it is
+    not: that provider's ~10 GiB of host RSS is spent from the same pool the next
+    model's weights are, so "no device memory" stops meaning "no cost".
+
+    True on unified memory, False on a discrete device, None where the machine cannot
+    be read -- the same three machines :func:`capacity_gib` answers for, decided by
+    which of them it answered from rather than by a second detection that could drift
+    from the first.
+    """
+    capacity, source = capacity_gib()
+    if capacity is None:
+        return None
+    return source == UNIFIED_CAPACITY_SOURCE
+
+
 def capacity_gib() -> Tuple[Optional[float], str]:
     """The size of the one pool a budget is spent from, and where the figure came from.
 
@@ -132,13 +161,13 @@ def capacity_gib() -> Tuple[Optional[float], str]:
     value = first[0].strip() if first else ""
     if value and "N/A" not in value:
         try:
-            return float(value) / 1024.0, "nvidia-smi memory.total (discrete device)"
+            return float(value) / 1024.0, DEVICE_CAPACITY_SOURCE
         except ValueError:
             pass
     # `[N/A]` is the unified-memory answer, not an error: the device has no total
     # of its own because it is sharing the host's.
     try:
-        return meminfo_gib()["MemTotal"], "/proc/meminfo MemTotal (unified memory)"
+        return meminfo_gib()["MemTotal"], UNIFIED_CAPACITY_SOURCE
     except (OSError, RuntimeError) as exc:
         return None, f"no device total and no MemTotal ({exc})"
 

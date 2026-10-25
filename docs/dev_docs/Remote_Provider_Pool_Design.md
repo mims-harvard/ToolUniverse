@@ -213,8 +213,31 @@ either being low overcommits the machine:
   sooner.
 
 A provider that declares nothing and has never been loaded here is still admitted on count
-alone: 28 of the 60 reviewed slugs declare no budget, and `[gpu] policy = "none"` declares
-0, so count-only admission stays a normal mode of operation rather than a fallback.
+alone: 28 of the 60 reviewed slugs declare no budget, so count-only admission stays a
+normal mode of operation rather than a fallback.
+
+#### What a declared zero is worth, and on which machine
+
+`[gpu] policy = "none"` is a measurement: three of these providers' kits publish no
+GPU-capable wheel for this architecture, so they hold no device memory at all, and
+`borzoi_calico`'s manifest draws the conclusion — ~10 GiB of host RSS and no VRAM, so it
+"is admitted while the card is full, which is what a variant-scoring job wants to be when
+a folding model owns the GPU". On a discrete-GPU host that is exactly right.
+
+On unified memory it is not. `pool_free_gib` answers there with `MemAvailable`, because
+the weights, the host RSS and the page cache all come out of one 121 GiB pool — so the
+10 GiB that provider holds is spent from the pool admission is reading, and calling it
+free admits a 10 GiB resident as though it were nothing. The old answer skipped the
+*measurement* for the same providers, so the figure stayed unlearnable as well as
+unknown.
+
+So `admission.pool_is_shared_with_the_host()` decides what the declaration is worth, off
+which machine `capacity_gib` answered from rather than a second detection that could
+drift from it: on unified memory a declared 0 becomes **unknown** — measured after the
+first call the provider answers, bounded one at a time until then — and on a discrete
+device it stays 0, read for nothing and recorded for nothing. A machine that cannot say
+which kind it is keeps the manifest's answer, since it has no free reading to protect
+either. The answer is read once per pool; a failed reading is not kept.
 
 #### Letting memory decide alone
 
@@ -239,9 +262,10 @@ Two things keep that from meaning "unbounded":
   been loaded here there is none, so with the count gone their loads would be admitted
   on no evidence at all. Those keep the ceiling every provider used to have until a call
   one of them answered has been measured here, and then memory speaks for them like
-  anything else. The bound is on ignorance and not on size — a 6 GiB model and a 38 GiB
-  model both have a figure — and `[gpu] policy = "none"`'s 0 is a figure too, so a
-  CPU-only provider is never one of these.
+  anything else. The bound is on ignorance and not on size: a 6 GiB model and a 38 GiB
+  model both have a figure, and memory is allowed to decide about both. A `[gpu] policy =
+  "none"` provider has a figure on a discrete-GPU host and has none on unified memory, for
+  the reason "What a declared zero is worth" gives above.
 
 The default stays 1. 0 is a statement about the machine, and the person running the
 command is the one who knows whether this machine has room for several models.
@@ -369,6 +393,13 @@ project's GB10, driving the real `ProviderPool`: with the count gone both stayed
 (`borzoi_calico` then `enformer_deepmind`, up in 4.2 s and 4.9 s), and the same pair at
 `--max-active 1` evicted the first to admit the second. A pool built with a capacity
 reading of None refused to start and said to pass a count.
+
+The same two providers are what "What a declared zero is worth" is about, and the change
+is visible in the same live run: `memory_plan` reported `expected_mib` of 0 for both
+before it and `null` after, this machine answering `pool_is_shared_with_the_host()` with
+True, and `--max-active 0` then held one of them resident at a time instead of both. Their
+servers cost 135 MiB of the pool to bind a port — the ~10 GiB their manifests measure is
+what an answered call holds, which is why the figure is learned from one.
 
 End-to-end against two real provider subprocesses over real HTTP, counting actual
 process launches: nothing starts at boot; `tools/list` stays empty and starts nothing;
