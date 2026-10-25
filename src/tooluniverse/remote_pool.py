@@ -26,16 +26,21 @@ are stopped, and ``max_active`` bounds how many run at once with least-recently-
 eviction, so one host can advertise more models than its GPU could hold together.
 
 A call that lands while a provider is still starting gets 503 with Retry-After rather
-than being queued across the relay; ``control`` answers ``prewarm``/``stop``/``status``
-for a relay that offers a control plane, which ``tu serve`` wires up only when the
-installed ``RelayAgent`` takes one.
+than being queued across the relay, which the relay's own 25-second limit on a local
+request makes the only safe answer there; ``start_wait_s`` lets a host serving its own
+endpoint wait for that start instead, and is 0 by default. ``control`` answers
+``prewarm``/``stop``/``status`` for a relay that offers a control plane, which
+``tu serve`` wires up only when the installed ``RelayAgent`` takes one, and ``prewarm``
+loads the model rather than only starting the server that will load it.
 
 Admission applies two ceilings. ``max_active`` is a count and always applies. Memory
 applies wherever the machine can be read, and the reading is per machine rather than
 per card: a discrete device's own ``memory.free``, ``MemAvailable`` on unified memory
 where the device has no memory of its own, and nothing at all on a host with no NVIDIA
 driver, which stays count-only. What a model costs is the larger of its manifest's
-measured ``[gpu] vram_budget_gb`` and what this host has measured it to cost here. See
+measured ``[gpu] vram_budget_gb`` and what this host has measured it to cost here --
+and the local measurement is taken after a call the provider answered, because nothing
+in this catalog has its model in memory when its port starts answering. See
 ``docs/dev_docs/Remote_Provider_Pool_Design.md``.
 """
 
@@ -87,6 +92,23 @@ DEFAULT_POOL_PORT = 7999
 DEFAULT_IDLE_TTL = 900.0
 DEFAULT_MAX_ACTIVE = 1
 DEFAULT_STARTUP_TIMEOUT = 600.0
+
+# How long a call waits for a provider another call is already starting, and ZERO IS THE
+# DEFAULT, which is the answer a measurement produced rather than the cautious-looking
+# one. Waiting is the obvious improvement: the second of two near-simultaneous first-calls
+# is refused while a CPU-only process binds a port, and it could simply have waited. The
+# numbers say otherwise behind a relay. Starting boltz's MCP server on this project's GB10
+# takes 12.5 s to bind (measured, and most of it is importing ToolUniverse in the child),
+# while a relay agent abandons a local request after 25 s and that timeout takes the
+# tunnel down for every caller on the host. So a wait long enough to be useful is most of
+# the way to an outage, and the platform already absorbs the same delay the safe way, by
+# re-dispatching a 503 after 2 s, 4 s and 8 s.
+#
+# It is a field rather than nothing at all because the cliff belongs to the relay, not to
+# the pool: a host serving its own MCP endpoint without `--share` has a client whose
+# timeout is its own business, and there a few seconds of waiting turn a failed first call
+# into an answered one.
+DEFAULT_START_WAIT_S = 0.0
 
 # Proxied tool calls can be long GPU jobs. The platform enforces each call's own deadline and
 # caps every one at 15 minutes, so this only prevents a wedged provider from pinning a pool
@@ -208,9 +230,9 @@ class FootprintStore:
     carry a measured ``[gpu] vram_budget_gb`` that :func:`declared_footprint_mib` reads,
     and that figure was measured on the machine which verified the provider -- so it is
     what makes a first load here memory-aware, and this store is what the pool learns
-    about this machine: free memory before a start, free memory once the provider
-    answers, and the difference. Admission uses the larger of the two, because each can
-    be the low one (see :meth:`ProviderPool.footprint_mib`).
+    about this machine: free memory before the provider started, free memory once it has
+    answered a call, and the difference. Admission uses the larger of the two, because
+    each can be the low one (see :meth:`ProviderPool.footprint_mib`).
 
     Measurements keep the largest value seen. A model that allocates lazily looks smaller
     on a run that only initialised it, and admitting on that smaller number would
@@ -347,6 +369,12 @@ class _ActiveProvider:
     managed: ManagedRemoteProcess | None
     last_used: float
     in_flight: int = 0
+    # Free memory as it was just before this provider's server started, and whether
+    # what it holds has been measured against that baseline yet. Both belong to one
+    # residency: a provider that is stopped and started again is measured again, from
+    # a new baseline, because the machine around it has moved on.
+    baseline_free_mib: int | None = None
+    measured: bool = False
 
 
 @dataclass
@@ -365,6 +393,7 @@ class ProviderPool:
     max_active: int = DEFAULT_MAX_ACTIVE
     idle_ttl: float = DEFAULT_IDLE_TTL
     startup_timeout: float = DEFAULT_STARTUP_TIMEOUT
+    start_wait_s: float = DEFAULT_START_WAIT_S
     # Names an operator chose to let providers see beyond what each one declares. Empty by
     # default: a provider's own declaration is the contract, and widening it is a decision
     # the machine's owner makes explicitly.
@@ -374,6 +403,12 @@ class ProviderPool:
     read_free_vram: Callable[[], int | None] = pool_free_mib
     read_capacity: Callable[[], int | None] = pool_capacity_mib
     declared_footprint: Callable[[str], int | None] = declared_footprint_mib
+    # Whether a provider keeps its model in a worker of its own, which is what decides
+    # WHEN this pool can measure what that model costs, and `machine_holdings`, which
+    # says whether such a worker is up right now. Injected like the readings above so
+    # the measurement rules can be tested without a provider environment.
+    holds_model_in_worker: Callable[[str], bool] = admission.declares_resident_worker
+    read_holdings: Callable[[], Mapping[str, float | None]] = admission.machine_holdings
     ensure: Callable[..., tuple[ManagedRemoteProcess | None, dict[str, Any]]] = (
         ensure_provider
     )
@@ -384,7 +419,10 @@ class ProviderPool:
     _active: dict[str, _ActiveProvider] = field(default_factory=dict, init=False)
     _starting: set[str] = field(default_factory=set, init=False)
     _capacity_cache: int | None = field(default=None, init=False)
-    _lock: threading.Lock = field(default_factory=threading.Lock, init=False)
+    # A condition rather than a plain lock: it still guards every read and write of the
+    # two collections above, and it is also where a call waits for a start another call
+    # is already running, instead of being refused the moment it finds one in progress.
+    _lock: threading.Condition = field(default_factory=threading.Condition, init=False)
 
     def __post_init__(self) -> None:
         if not self.allow:
@@ -395,6 +433,8 @@ class ProviderPool:
             raise PoolError("--max-active must be at least 1")
         if self.idle_ttl <= 0:
             raise PoolError("--idle-ttl must be positive")
+        if self.start_wait_s < 0:
+            raise PoolError("--start-wait must not be negative")
         if not MIN_STARTUP_TIMEOUT <= self.startup_timeout <= MAX_STARTUP_TIMEOUT:
             raise PoolError(
                 f"--startup-timeout must be between {MIN_STARTUP_TIMEOUT:.0f} and "
@@ -475,19 +515,18 @@ class ProviderPool:
             raise PoolError(f"no shared provider serves tool '{tool_name}'")
         return deployment
 
-    def acquire(self, deployment: RemoteDeployment) -> str:
-        """Make a provider ready and claim one in-flight slot on it."""
+    def acquire(self, deployment: RemoteDeployment, *, warm_model: bool = False) -> str:
+        """Make a provider ready and claim one in-flight slot on it.
+
+        ``warm_model`` asks the provider to load its model as it starts rather than on
+        the first request that needs it. Only :meth:`prewarm` passes it: a real call
+        loads the model by being the request that loads it.
+        """
 
         with self._lock:
-            active = self._active.get(deployment.slug)
-            if active is not None:
-                active.in_flight += 1
-                active.last_used = self.clock()
-                return deployment.endpoint
-            if deployment.slug in self._starting:
-                raise ProviderStarting(
-                    f"provider '{deployment.slug}' is still starting; retry shortly"
-                )
+            endpoint = self._claim_locked(deployment)
+            if endpoint is not None:
+                return endpoint
 
         # Both readings happen before the admission lock: each is a subprocess, and
         # holding the lock across one would serialize every other caller behind a driver
@@ -497,15 +536,9 @@ class ProviderPool:
         free_before = self._free_vram_for(deployment)
 
         with self._lock:
-            active = self._active.get(deployment.slug)
-            if active is not None:
-                active.in_flight += 1
-                active.last_used = self.clock()
-                return deployment.endpoint
-            if deployment.slug in self._starting:
-                raise ProviderStarting(
-                    f"provider '{deployment.slug}' is still starting; retry shortly"
-                )
+            endpoint = self._claim_locked(deployment)
+            if endpoint is not None:
+                return endpoint
             self._evict_for_locked(deployment, free_before)
             self._starting.add(deployment.slug)
 
@@ -516,12 +549,15 @@ class ProviderPool:
                 log_dir=self.log_dir,
                 startup_timeout=self.startup_timeout,
                 extra_env=self.extra_env,
+                warm_model=warm_model,
             )
         except BaseException:
             with self._lock:
                 self._starting.discard(deployment.slug)
+                # Whoever was waiting for this start is better off attempting its own
+                # than waiting out a start that is already over.
+                self._lock.notify_all()
             raise
-        self._record_footprint(deployment, free_before)
         with self._lock:
             self._starting.discard(deployment.slug)
             self._active[deployment.slug] = _ActiveProvider(
@@ -529,8 +565,46 @@ class ProviderPool:
                 managed=managed,
                 last_used=self.clock(),
                 in_flight=1,
+                baseline_free_mib=free_before,
             )
+            self._lock.notify_all()
         return deployment.endpoint
+
+    def _claim_locked(self, deployment: RemoteDeployment) -> str | None:
+        """Claim an in-flight slot on this provider, waiting out a start in progress.
+
+        Called with the lock held. Returns the endpoint when a slot was claimed, and
+        None when this caller is the one that has to start the provider.
+
+        WHY THIS WAITS AT ALL. Two calls for the same cold provider arrive seconds
+        apart all the time -- a platform fan-out, an agent retrying its own tool call --
+        and the second one used to be refused the moment it found the first one's start
+        in progress. Nothing was wrong with the pool at that moment: a CPU-only process
+        was binding a port, which takes seconds. So the caller waits for it instead, up
+        to ``start_wait_s``, and is told to retry only if the start is still running
+        after that -- the case waiting cannot absorb, which is a model being loaded on
+        a provider nobody prewarmed.
+
+        The deadline is real time rather than ``clock``: ``clock`` is injected so that
+        idle accounting can be driven by a test, and a wait honouring a frozen clock
+        would never end.
+        """
+
+        deadline = time.monotonic() + self.start_wait_s
+        while True:
+            active = self._active.get(deployment.slug)
+            if active is not None:
+                active.in_flight += 1
+                active.last_used = self.clock()
+                return deployment.endpoint
+            if deployment.slug not in self._starting:
+                return None
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise ProviderStarting(
+                    f"provider '{deployment.slug}' is still starting; retry shortly"
+                )
+            self._lock.wait(remaining)
 
     def release(self, deployment: RemoteDeployment) -> None:
         with self._lock:
@@ -600,49 +674,108 @@ class ProviderPool:
             )
 
     def _free_vram_for(self, deployment: RemoteDeployment) -> int | None:
-        """Current free memory, but only when it could change this admission.
+        """This machine's free memory, read once for this start, or None.
 
-        Skipped when nothing declares or has measured this provider, so a load whose
-        cost is unknown never pays for a reading it could not act on, and skipped for a
-        provider that holds no device memory at all.
+        Two things want it, and between them they are why it is not conditional on the
+        provider's cost being known: the admission decision, which only a known cost
+        can use, and the baseline this residency's own measurement is taken against,
+        which is wanted precisely when the cost is NOT known yet.
+
+        None for a provider that declares it holds no device memory: it can be refused
+        for nothing and measured for nothing, so the reading would be spent to be
+        discarded. None too when this pool records no measurements and this provider's
+        cost is unknown -- nothing to decide and nowhere to put a reading.
         """
 
-        if not self.footprint_mib(deployment.slug):
+        if self.declared_footprint(deployment.slug) == 0:
+            return None
+        if self.footprints is None and not self.footprint_mib(deployment.slug):
             return None
         try:
             return self.read_free_vram()
         except (OSError, ValueError):
             return None
 
-    def _record_footprint(
-        self, deployment: RemoteDeployment, free_before: int | None
-    ) -> None:
-        """Learn what this provider costs, by difference across its own start."""
+    def learn_footprint(self, deployment: RemoteDeployment) -> None:
+        """Measure what this provider costs, now that it has answered a call.
+
+        WHERE THIS USED TO BE AND WHY IT MOVED. Every measurement this pool took was a
+        difference across a provider's START, and NOTHING IN THIS CATALOG HAS ITS MODEL
+        IN MEMORY WHEN ITS PORT STARTS ANSWERING. A resident provider loads its weights
+        in a worker, started by the first request. A provider with no manifest holds its
+        model in the server process -- and loads it on the first request too, lazily:
+        ``esm_tool`` says so in as many words ("lazy load on first use"), which is how
+        anything serves `tools/list` before its weights exist. So the figure recorded
+        was the MCP server's own memory, every time. The 27 providers whose manifest
+        declares a budget were covered by :meth:`footprint_mib` taking the larger of the
+        two; for a provider with nothing declared that small number was the only figure
+        admission had, and being optimistic about a model's cost is the one direction
+        that ends in an out-of-memory instead of a refusal.
+
+        Measured here instead: after a call this provider answered, while it is still up
+        and still holding what the call made it allocate. The baseline is the reading
+        taken before its server started, so a model loaded at import is inside the
+        difference as surely as one loaded by the call. That makes the figure a residency
+        cost and not a request peak -- the peak is what a manifest's ``vram_budget_gb``
+        carries, measured deliberately rather than off whichever call happened to be
+        first.
+
+        Once per residency. A call can be answered without a model ever loading -- a
+        rejected argument, a cached answer -- and for a provider that keeps a worker the
+        process table says which happened, so that is checked. For a provider holding its
+        model in the server process there is no such evidence to be had: a call that
+        loaded nothing records a small figure, and ``FootprintStore.record`` keeping the
+        largest value ever seen is what corrects it on the first call that does load.
+        That same rule makes a reading inflated by another tenant's allocation sticky,
+        which is the conservative direction to be wrong in.
+        """
 
         if self.footprints is None:
             return
-        if self.declared_footprint(deployment.slug) == 0:
-            # Declared to hold no device memory. A difference measured across this
-            # start would be whatever else on the machine allocated meanwhile,
-            # attributed to a provider that cannot have been the cause -- and then
-            # held against it as a ceiling on every later admission.
+        slug = deployment.slug
+        if self.declared_footprint(slug) == 0:
+            # Declared to hold no device memory, so a difference here would be whatever
+            # else on the machine allocated meanwhile, attributed to a provider that
+            # cannot have been the cause -- and then held against it as a ceiling.
             return
-        if free_before is None:
-            # No reading was taken before the start (the usual case on a first load), so
-            # take one now and measure against it on the next start instead of inventing
-            # a delta from a baseline we never had.
-            try:
-                self.read_free_vram()
-            except (OSError, ValueError):
-                pass
+        with self._lock:
+            active = self._active.get(slug)
+            if active is None or active.measured:
+                return
+            baseline = active.baseline_free_mib
+        if baseline is None:
+            return
+        if self.holds_model_in_worker(slug) and not self._worker_is_up(slug):
             return
         try:
-            free_after = self.read_free_vram()
+            free_now = self.read_free_vram()
         except (OSError, ValueError):
             return
-        if free_after is None:
+        if free_now is None:
             return
-        self.footprints.record(deployment.slug, free_before - free_after)
+        with self._lock:
+            active = self._active.get(slug)
+            if active is None or active.measured:
+                return
+            active.measured = True
+        self.footprints.record(slug, baseline - free_now)
+
+    def _worker_is_up(self, slug: str) -> bool:
+        """Whether a resident worker for ``slug`` is running on this machine.
+
+        From the process table rather than from the worker's socket, for the reason
+        ``admission.machine_holdings`` sets out: a stale socket outlives its worker, so a
+        socket is evidence of a past one. Only a worker from THIS checkout counts --
+        those are keyed by the bare slug, another checkout's by ``slug@tree`` -- because
+        a difference measured while someone else's copy of the same provider is loading
+        would charge their memory to this pool's model.
+        """
+
+        try:
+            holdings = self.read_holdings()
+        except (OSError, ValueError, RuntimeError):
+            return False
+        return slug in holdings
 
     def _evict_for_locked(
         self, incoming: RemoteDeployment, free_mib: int | None = None
@@ -728,6 +861,17 @@ class ProviderPool:
                 self._stop_locked(slug)
 
     def status(self) -> list[dict[str, Any]]:
+        """What is resident, what is starting, and which of them hold their model.
+
+        ``model_loaded`` is the fact ``prewarm`` would otherwise be taken on trust for.
+        A resident provider counts as up once its server answers ``tools/list``, which
+        it does with the card still empty, so "the provider is running" and "the model
+        is in memory" are two different answers and anything deciding what to prewarm
+        needs the second one. Present only for providers that keep a worker -- for the
+        rest, running IS loaded -- and left out entirely when the process table cannot
+        be read, rather than guessed at.
+        """
+
         now = self.clock()
         with self._lock:
             rows = [
@@ -740,6 +884,17 @@ class ProviderPool:
                 for slug, active in sorted(self._active.items())
             ]
             starting = sorted(self._starting)
+        with_worker = [
+            row for row in rows if self.holds_model_in_worker(row["provider"])
+        ]
+        if with_worker:
+            try:
+                holdings: Mapping[str, float | None] | None = self.read_holdings()
+            except (OSError, ValueError, RuntimeError):
+                holdings = None
+            if holdings is not None:
+                for row in with_worker:
+                    row["model_loaded"] = row["provider"] in holdings
         return rows + [{"provider": slug, "starting": True} for slug in starting]
 
     def memory_plan(self) -> dict[str, Any]:
@@ -781,9 +936,18 @@ class ProviderPool:
     def prewarm(self, slug: str) -> dict[str, Any]:
         """Start a provider ahead of the call that needs it, without waiting for it.
 
-        Loading a model takes minutes and a control call is bounded in seconds, so this
-        reports what it set in motion and leaves readiness to ``status``. A prewarm that
-        is already resident is a no-op rather than a restart.
+        AND LOAD ITS MODEL. Starting a resident provider's server is seconds and loading
+        its weights is minutes, and this used to do only the first: the server bound its
+        port, ``status`` reported the provider ready, and the next real call still paid
+        the whole load. So a prewarm asks for a warm start -- the provider loads its
+        model as it comes up -- and ``status`` reports ``model_loaded`` for anything that
+        keeps a worker, which is what tells the difference.
+
+        Loading takes minutes and a control call is bounded in seconds, so this reports
+        what it set in motion and leaves readiness to ``status``. A prewarm of a provider
+        that is already running is a no-op rather than a restart, and that includes one
+        whose server is up without its model: restarting it would be the one way to warm
+        it, and it is also the way to kill a call that is about to arrive.
         """
 
         deployment = self.deployment_for_slug(slug)
@@ -795,7 +959,7 @@ class ProviderPool:
 
         def load() -> None:
             try:
-                self.acquire(deployment)
+                self.acquire(deployment, warm_model=True)
             except (PoolError, OSError, RuntimeError, ValueError):
                 # acquire already unwound its own state; the next status call reports the
                 # provider as absent, which is the honest answer.
@@ -1127,7 +1291,9 @@ class PoolMCPHandler(BaseHTTPRequestHandler):
             endpoint = self.pool.acquire(deployment)
         except ProviderStarting:
             # 503 rather than a JSON-RPC error: the caller should retry the same call, and
-            # a protocol-level error would read as "this tool is broken".
+            # a protocol-level error would read as "this tool is broken". `acquire` has
+            # already waited `start_wait_s` for that start, so what is left really is a
+            # model being loaded and not a port being bound.
             self._respond(
                 503,
                 {"detail": "the provider is loading this model; retry shortly"},
@@ -1187,6 +1353,12 @@ class PoolMCPHandler(BaseHTTPRequestHandler):
                 ),
             )
             return
+        else:
+            # The provider has answered, so a resident one is holding its model now:
+            # this is the moment its cost on this machine can be measured, and the slot
+            # is still in flight, so nothing can stop it between the reading and the
+            # record.
+            self.pool.learn_footprint(deployment)
         finally:
             self.pool.release(deployment)
         self._respond_raw(status, body)

@@ -102,7 +102,9 @@ to admit a new one.
 memory without operator involvement.
 
 Two concurrent first-calls for the same model must not both launch it, so a slug being
-started is tracked and the second caller gets `ProviderStarting`.
+started is tracked and the second caller gets `ProviderStarting` — or waits for that start
+to finish, where the host has asked for it (`start_wait_s`, 0 by default; see "Waiting out
+a cold model").
 
 ### Failure semantics
 
@@ -142,13 +144,30 @@ no second transport.
 
 | op | who | effect |
 |---|---|---|
-| `status` | owner or member | what the host shares, what is loaded, `max_active`, `idle_ttl` |
-| `prewarm` | owner or member | start a provider before the call that needs it |
+| `status` | owner or member | what the host shares, what is loaded (`model_loaded` per provider that keeps a worker), `max_active`, `idle_ttl` |
+| `prewarm` | owner or member | start a provider **and load its model** before the call that needs it |
 | `stop` | **owner only** | unload a provider; refuses while a call is in flight |
 
 `prewarm` returns as soon as it has started loading, because a model takes minutes and a
 control call is bounded in seconds; readiness is read back through `status`. A prewarmed
 provider deliberately holds no in-flight slot, or it could never be evicted or reaped.
+
+**A prewarm loads the model, which it did not used to.** Starting a resident provider's
+server is not warming it: the server is a CPU-only process that binds its port and waits,
+and the weights go in when the first request starts the worker. Measured on this project's
+GB10, `boltz`'s port answered 12.5 s after the prewarm and its model was in memory 31.3 s
+after it — so a prewarm that stopped at the port hid 12.5 s of a 31 s wait and reported the
+provider ready for the other 19. So the pool now starts a prewarmed provider with
+`TOOLUNIVERSE_REMOTE_WARM_MODEL=1` in its environment, and
+`remote_resident.backend.warm_if_requested` — reached by both shapes of provider server,
+the shared `mcp_tool_registry.start_mcp_server` and a hand-written FastMCP one — loads the
+model in a thread while the port binds. A real call never sets it: the call loads the model
+by being the request that loads it.
+
+Because "running" and "holding its model" are now different states, `status` reports
+`model_loaded` for every provider that keeps a worker, read from the process table. It is
+absent, rather than `false`, for a provider with no worker to look for and on a host whose
+process table cannot be read.
 
 Three rules carry the safety of this path:
 
@@ -174,21 +193,23 @@ large one does not. Memory can, and two sources answer what a model costs:
 - **The provider's own manifest.** `[gpu] vram_budget_gb` is a measured peak — `tu remote
   room` prints 27 of them — measured on the machine that verified that provider, which
   makes it a prior anywhere else and not a reading. That is what it is used as.
-- **This host's own measurement.** Free memory before a start, free memory once the
-  provider answers, and the difference is what the model costs *here*. `FootprintStore`
-  caches it beside the schema snapshots.
+- **This host's own measurement.** Free memory before the provider started, free memory
+  once its model is actually in memory, and the difference is what it costs *here*.
+  `FootprintStore` caches it beside the schema snapshots. *When* the second reading is
+  taken depends on where the provider keeps its model, and that is the whole of it: see
+  "Measuring the model and not the server" below.
 
 Admission decides on the **larger of the two**, because each one can be the low one and
 either being low overcommits the machine:
 
 - a declared budget can be low here, because this is not the machine it was measured on;
-- a local measurement can be low because a resident provider loads its model on the FIRST
-  REQUEST and not when its server binds. `wait_until_ready` returns once `tools/list`
-  matches the reviewed contract, which it does with the card still empty, so the
-  difference measured across a start can be the server's CUDA context rather than the
-  model. For a resident provider, "learn the cost from a load" therefore never arrives on
-  its own — which is why reading the manifests is what makes the memory ceiling apply to
-  the 31 resident providers at all, and not merely sooner.
+- a local measurement can be low because a provider loads its model on the FIRST REQUEST
+  and not when its server binds — a resident one in its worker, the rest lazily in the
+  server process. `wait_until_ready` returns once `tools/list` matches the reviewed
+  contract, which it does with the card still empty, so a difference measured across a
+  start is the server's own memory rather than the model's. Reading the manifests is what
+  makes the memory ceiling apply to the 31 resident providers at all, and not merely
+  sooner.
 
 A provider that declares nothing and has never been loaded here is still admitted on count
 alone: 28 of the 59 reviewed slugs declare no budget, and `[gpu] policy = "none"` declares
@@ -220,6 +241,45 @@ Decisions worth keeping:
 Memory pressure never evicts a provider with a call in flight, exactly like the count
 ceiling: the caller is told to retry instead of having a running GPU job killed under it.
 
+#### Measuring the model and not the server
+
+A difference is only a model's cost if the model was loaded between the two readings, and
+**nothing in this catalog has its model in memory when its port starts answering**:
+
+| provider | where its model lives | when it loads |
+|---|---|---|
+| resident manifest (31 slugs, e.g. `boltz`) | a worker process of its own | on the first request, which starts the worker |
+| no resident manifest (28 slugs, e.g. `esm`) | the MCP server process | on the first request too — lazily, which is how it can serve `tools/list` before its weights exist |
+
+So every measurement is taken after a call the provider answered, against the free reading
+taken before its server started. Measuring across the start is what the pool used to do,
+and it recorded the MCP server's own memory for all 59. `footprint_mib` taking the larger
+of declared and measured covered the 27 providers that declare a budget; for a provider
+that declares none, the small figure was the only one admission had — and being optimistic
+about a model's cost ends in an out-of-memory, where being pessimistic ends in a refusal.
+
+A call can be answered without a model ever loading — a rejected argument, a cached
+answer. For the 31 providers that keep a worker, the process table says which happened
+(`admission.machine_holdings`, keyed by the bare slug for this checkout's own workers;
+`admission.declares_resident_worker` is what asks whether to look), and a call that left
+no worker running measures nothing. For a provider holding its model in its own server
+process there is no such evidence to be had, so a call that loaded nothing records
+something small, and `FootprintStore.record` keeping the largest figure it has ever seen
+is what corrects that on the first call that does load.
+
+A measurement is taken once per residency — every later call would be measured against a
+baseline from before the load — and it is a residency cost plus whatever that one call
+still holds, which is not the request peak the manifests carry.
+
+On a unified-memory host the local reading is frequently worthless, and that is a reason
+the declared budget exists rather than a reason to distrust the design: measured live on
+this project's GB10 with `boltz` prewarmed, `MemAvailable` *rose* by 1.3 GiB across the
+load — something else on the machine released more than the model was taking, and with
+one pool for host and device there is nothing in the reading to tell them apart. A
+difference of zero or less is recorded as nothing, so admission went on using the
+manifest's 5673 MiB. The measurement is worth taking where it is reliable, and worth
+nothing where it is not — which is why it is never the only figure.
+
 Reading the machine still degrades to "do not reason about memory" rather than to "no
 memory": no `nvidia-smi`, a non-zero exit, a reading that is neither a number nor `[N/A]`,
 or one device answering while another does not.
@@ -238,9 +298,16 @@ qualifies — it is the one status that says the tool did not run, so a retry ca
 duplicate a side effect, whereas 502 and 504 can both mean the call executed and its
 answer was lost.
 
-That is why the pool deliberately has no pre-wait of its own. A few seconds there would
-spare one round trip on a fast load, at the cost of moving every request closer to the
-25-second cliff.
+That is why the pool deliberately has no pre-wait of its own, and measuring the start
+confirmed it rather than softening it: `boltz`'s MCP server takes **12.5 s** to bind its
+port on this project's GB10 (most of it importing ToolUniverse in the child), so a wait
+long enough to cover a real start spends half the relay's budget before the call begins.
+The platform's backoff absorbs the same delay without putting the tunnel at risk.
+
+`ProviderPool.start_wait_s` exists for the case where the cliff does not: a host serving
+its own endpoint without `--share` answers to a client whose timeout is its operator's
+own business, and there a few seconds of waiting turn a failed first call into an answered
+one. **It is 0 by default**, so nothing behind a relay waits unless its owner says so.
 
 Control dispatch is local-connection only. The Redis coordinator forwards request frames
 between replicas and has no control representation, so a control call for an agent on
@@ -248,11 +315,23 @@ another replica reports no agent rather than silently doing nothing.
 
 ## Verified
 
-Unit tests (`tests/unit/test_remote_pool.py`, 35 cases) drive routing, admission,
-eviction, idle reaping, snapshot invalidation and the HTTP surface with injected
-lifecycle callables — no GPU, no provider environment, no network. Mutation-checked:
-replacing LRU selection with an arbitrary pick, dropping the in-flight guard, or
-dropping the concurrent-start guard each fail their own test.
+Unit tests (`tests/unit/test_remote_pool.py`, 94 cases) drive routing, admission,
+eviction, idle reaping, snapshot invalidation, the measurement rules and the HTTP surface
+with injected lifecycle callables — no GPU, no provider environment, no network, and
+since the readings are injected there, no dependence on what else is running on the
+machine. Mutation-checked: replacing LRU selection with an arbitrary pick, dropping the
+in-flight guard, or dropping the concurrent-start guard each fail their own test.
+
+The warm path is covered on both sides: `test_remote_resident.py::TestWarmOnStart` for the
+server half (nothing loads unasked, a request loads in a thread, a provider with no
+manifest has nothing to warm, a failed load leaves a working server) and
+`test_remote_pool.py` for the pool half (a prewarm asks for the model, a call does not).
+
+Live on this project's GB10, driving the real `ProviderPool` against the real `boltz`
+provider: a prewarm bound the port in 12.5 s with `model_loaded` false, and the weights
+were in memory at 31.3 s with `machine_holdings` naming the worker; `memory_plan` sized it
+at the manifest's 5673 MiB; `MemAvailable` moved the wrong way across the load, so the
+local measurement was discarded rather than recorded as a ceiling.
 
 End-to-end against two real provider subprocesses over real HTTP, counting actual
 process launches: nothing starts at boot; `tools/list` stays empty and starts nothing;

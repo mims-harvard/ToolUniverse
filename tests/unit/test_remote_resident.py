@@ -21,6 +21,7 @@ import pytest
 from tooluniverse.remote_resident import protocol as P
 from tooluniverse.remote_resident import manifest as M
 from tooluniverse.remote_resident import setup as S
+from tooluniverse.remote_resident import admission, backend
 from tooluniverse.remote_resident.supervisor import (
     ResidentWorker,
     WorkerRequestError,
@@ -3204,3 +3205,104 @@ class TestARefusalEndsTheWorkerAndSaysSo:
             / "src/tooluniverse/remote_resident/supervisor.py"
         ).read_text()
         assert src.count("that is a refusal (exit 3)") == 1
+
+
+class TestWhichProvidersKeepAWorker:
+    """Who keeps their model in a process of its own.
+
+    Which is what decides whether a scheduler can check that a model loaded at all:
+    a worker is in the process table, a model inside an MCP server is not.
+    """
+
+    def test_a_resident_manifest_is_told_from_a_server_that_holds_its_own_model(self):
+        assert admission.declares_resident_worker("boltz") is True
+        assert admission.declares_resident_worker("esm") is False, "no manifest"
+        assert admission.declares_resident_worker("not-a-provider") is False
+
+    def test_a_cpu_only_resident_provider_still_keeps_a_worker(self):
+        """proteinmpnn declares `policy = "none"`, which is about memory and not
+        about where the model lives: it is still a worker, started on a request."""
+        assert admission.declares_resident_worker("proteinmpnn") is True
+        assert admission.declared_budget_gb("proteinmpnn") == 0.0
+
+
+class TestWarmOnStart:
+    """Starting a provider's server is not loading its model.
+
+    The server is a CPU-only process that binds a port in seconds; the weights go in
+    when `backend.worker_for_provider_dir(...).ensure_started()` runs, which nothing
+    does until the first request. So a scheduler that prewarms by starting servers
+    reports a provider ready and leaves the whole load to the caller it was meant to
+    spare. These cover the other half of a prewarm.
+    """
+
+    BOLTZ = str(Path(admission.manifest_path("boltz")).parent)
+
+    def fake_worker(self, monkeypatch, fail=False):
+        loaded = threading.Event()
+
+        class FakeWorker:
+            slug = "boltz"
+
+            def ensure_started(self) -> None:
+                loaded.set()
+                if fail:
+                    raise RuntimeError("no room on this machine")
+
+        monkeypatch.setattr(backend, "worker_for", lambda path: FakeWorker())
+        return loaded
+
+    def test_nothing_is_loaded_unless_the_start_was_asked_to(self, monkeypatch):
+        loaded = self.fake_worker(monkeypatch)
+        monkeypatch.delenv(backend.WARM_ON_START_ENV, raising=False)
+
+        assert backend.warm_if_requested(provider_dir=self.BOLTZ) is None
+        assert not loaded.is_set()
+
+    def test_a_warm_request_loads_the_model_without_blocking_the_server(
+        self, monkeypatch
+    ):
+        """In a thread, because the port is what the caller of this is waiting for:
+        `wait_until_ready` polls `tools/list`, and a load holds the process for
+        minutes."""
+        loaded = self.fake_worker(monkeypatch)
+        monkeypatch.setenv(backend.WARM_ON_START_ENV, "1")
+
+        assert backend.warm_if_requested(provider_dir=self.BOLTZ) == "boltz"
+        assert loaded.wait(5), "the model was never asked for"
+
+    def test_a_provider_with_no_manifest_has_nothing_to_warm(self, monkeypatch):
+        loaded = self.fake_worker(monkeypatch)
+        monkeypatch.setenv(backend.WARM_ON_START_ENV, "1")
+        esm = str(Path(admission.manifest_path("esm")).parent)
+
+        assert backend.warm_if_requested(provider_dir=esm) is None
+        assert not loaded.is_set()
+
+    def test_a_load_that_fails_is_not_the_servers_failure(self, monkeypatch, capsys):
+        """A refused or broken warm must leave a server that still answers: the
+        provider is then exactly as warm as it was before, which is a working
+        provider."""
+        loaded = self.fake_worker(monkeypatch, fail=True)
+        monkeypatch.setenv(backend.WARM_ON_START_ENV, "1")
+
+        assert backend.warm_if_requested(provider_dir=self.BOLTZ) == "boltz"
+        assert loaded.wait(5)
+        for _ in range(50):
+            if "warm start failed" in capsys.readouterr().out:
+                return
+            time.sleep(0.1)
+        pytest.fail("the failed load said nothing in the log")
+
+    def test_the_request_reaches_a_provider_through_its_environment(self):
+        """The whole seam: the pool builds the environment, the provider's server
+        reads this one name out of it. A provider's environment is an allowlist, so
+        nothing else of the pool's gets in."""
+        from tooluniverse import remote_runtime as RT
+
+        deployment = RT.REMOTE_BY_SLUG["boltz"]
+        warm = RT.child_environment("/usr/bin/python3", deployment, warm_model=True)
+        cold = RT.child_environment("/usr/bin/python3", deployment)
+
+        assert warm[backend.WARM_ON_START_ENV] == "1"
+        assert backend.WARM_ON_START_ENV not in cold

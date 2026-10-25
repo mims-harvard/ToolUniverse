@@ -554,6 +554,16 @@ def start_mcp_server(port: Optional[int] = None, **kwargs):
         print("❌ SMCP not available. Cannot start MCP server.")
         return
 
+    # A reviewed remote provider whose model lives in a resident worker loads it on the
+    # first request unless it was asked to load it now. `tu remote pool` asks when it
+    # prewarms; for every other server this function starts, this returns without doing
+    # anything.
+    from .remote_resident.backend import warm_if_requested
+
+    warmed = warm_if_requested()
+    if warmed:
+        print(f"🔥 Loading {warmed}'s model while the server comes up")
+
     if port is not None:
         # Start server for specific port
         if port in _mcp_server_configs:

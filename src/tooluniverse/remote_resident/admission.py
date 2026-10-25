@@ -312,6 +312,29 @@ def machine_holdings(
     return out
 
 
+def manifest_path(slug: str) -> str:
+    """Where this checkout keeps `slug`'s manifest, whether or not it has one."""
+    return os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+        "remote",
+        slug,
+        "provider.toml",
+    )
+
+
+def _manifest(slug: str):
+    """`slug`'s loaded manifest, or None when this checkout has none to load."""
+    from . import manifest as M
+
+    path = manifest_path(slug)
+    if not os.path.exists(path):
+        return None
+    try:
+        return M.load(path)
+    except Exception:  # noqa: BLE001 - a broken manifest is `tu remote check`'s to report
+        return None
+
+
 def _declared_budget(slug: str) -> Optional[float]:
     """`[gpu] vram_budget_gb` from this checkout's manifest for `slug`.
 
@@ -335,19 +358,8 @@ def _declared_budget(slug: str) -> Optional[float]:
     different figure; using the local one assumes the checkouts agree, which is
     worth stating because it is an assumption and not a reading.
     """
-    from . import manifest as M
-
-    path = os.path.join(
-        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-        "remote",
-        slug,
-        "provider.toml",
-    )
-    if not os.path.exists(path):
-        return None
-    try:
-        m = M.load(path)
-    except Exception:  # noqa: BLE001 - a broken manifest is `tu remote check`'s to report
+    m = _manifest(slug)
+    if m is None:
         return None
     if m.vram_budget_gb is None and (m.gpu_policy or "").lower() == "none":
         return 0.0
@@ -358,6 +370,26 @@ def _declared_budget(slug: str) -> Optional[float]:
 # module and its tests call it by that name; anything outside the package asks
 # for a declared budget rather than reaching for a private helper.
 declared_budget_gb = _declared_budget
+
+
+def declares_resident_worker(slug: str) -> bool:
+    """Whether `slug` holds its model in a worker process of its own.
+
+    WHICH IS WHAT DECIDES WHETHER A LOADED MODEL CAN BE SEEN FROM OUTSIDE, and that
+    is the only reason anything outside this module asks. Neither kind of provider
+    has its model in memory when its port starts answering -- a resident one loads
+    in a worker that the first request starts, and a provider without a manifest
+    loads lazily in the server process, on the first request too. The difference is
+    the evidence: a worker is a process, so `machine_holdings` can say whether it is
+    up, where a model inside an MCP server leaves nothing a scheduler can read.
+
+    So a scheduler measuring what a provider costs uses this to know whether it can
+    check that a model loaded at all, rather than attributing an empty process to a
+    model. False for the 28 reviewed slugs with no manifest, and for a manifest that
+    declares any other mode.
+    """
+    m = _manifest(slug)
+    return bool(m is not None and m.mode == "resident")
 
 
 def decide(
