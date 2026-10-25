@@ -96,6 +96,13 @@ DEPLOYMENTS = (
         path_env=("AF3_TORCH_PARAMS_DIR", "AF3_TORCH_JAX_REPO"),
     ),
     Deployment(
+        "bioemu2",
+        8063,
+        ("bioemu2_sample_structures",),
+        ("TOOLUNIVERSE_BIOEMU2_PYTHON",),
+        path_env=("BIOEMU2_HF_HOME",),
+    ),
+    Deployment(
         "boltzgen",
         8035,
         ("boltzgen_design",),

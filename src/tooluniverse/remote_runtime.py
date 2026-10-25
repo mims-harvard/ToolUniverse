@@ -123,6 +123,15 @@ REMOTE_DEPLOYMENTS = (
         gpu_policy="required",
     ),
     RemoteDeployment(
+        "bioemu2",
+        "tooluniverse.remote.bioemu2.bioemu2_tool",
+        8063,
+        ("bioemu2_sample_structures",),
+        ("TOOLUNIVERSE_BIOEMU2_PYTHON",),
+        ("BIOEMU2_HF_HOME",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
         "boltzgen",
         "tooluniverse.remote.boltzgen.boltzgen_tool",
         8035,

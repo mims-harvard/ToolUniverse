@@ -1,0 +1,233 @@
+# BioEmu-2 — all-atom conformational ensembles, held resident.
+#
+# THE SECOND PROVIDER ON THIS STANDARD WITH NO OPTIMIZATION KIT, after
+# rfd4_proteina. There is no `anthropics/uplifting-biomolecular-modeling` kit
+# for this model: upstream publishes the inference runtime itself as `bioemu2`
+# on PyPI. So there is no [kit] table, and `launch.py` is local rather than
+# `kit_launch:build_command` — which would refuse this provider while
+# describing a kit that does not exist. The levers a kit would add are already
+# arguments upstream owns (`precision`, `matmul_precision`, `batch_size`,
+# `num_steps`, `compile_denoiser`, and the tiled cuEquivariance kernels that
+# live in the checkpoint's own config.yaml).
+#
+# WHAT RESIDENCY BUYS, AND WHY IT IS THE OPPOSITE BALANCE FROM RFD4-PROTEINA.
+# There the weights loaded in 2-17 s and warm-up was everything. Here
+# `load_model()` measured **49.9 s and 44.6 s** across two processes on the
+# verified card and leaves 1.92 GiB resident, which is longer than most of the
+# requests it then serves; warm-up adds about 8 s on top (35.6 s first request
+# against 27.3 s for an identical second). A worker that exits pays the 50 s
+# again for every caller.
+#
+# THE THIRD SAVING IS BUILT IN THE WORKER, NOT INHERITED. Upstream's cost model
+# puts the trunk at `O(RN^2 + N^3)` run ONCE per system, and says that above
+# roughly 600 tokens embedding one sequence costs more than denoising one
+# sample. An `EmuSession` holds those embeddings, so the worker caches exactly
+# one session keyed by (system, MSA, mode) and a repeat request skips the
+# trunk. One and not several: the pair representations are `O(N^2)` of GPU
+# memory, and a cache of several would put the footprint somewhere the budget
+# below does not cover.
+#
+# THE DEFAULT MSA PATH LEAVES THIS MACHINE, AND THAT IS A PROPERTY OF THE
+# MODEL, NOT A CHOICE MADE HERE. With no `msa` in the request, BioEmu-2 queries
+# the **public ColabFold server** on a cache miss. Upstream asks callers to
+# query serially from one IP, which the one-request-at-a-time serve loop
+# happens to guarantee, and `launch.py` points `BIOEMU2_MSA_CACHE` under the
+# weights root so an alignment fetched by one worker survives into the next.
+# A request that must not touch the network carries its own `msa`; the smoke
+# input does exactly that, so `tu remote setup --only smoke` depends on no
+# third party.
+#
+# MEASURED ENVELOPE. Tokens are `AllAtomStructure.num_tokens`. Peak ALLOCATED
+# is the per-request figure; peak RESERVED is a session high-water mark that
+# never shrinks, and is therefore the one a HELD worker must be budgeted
+# against. Rows marked "worker" went through this provider's own socket; the
+# others are a bare process.
+#
+# | path   | system            | tokens | MSA     | smp | alloc  | reserved |
+# |--------|-------------------|--------|---------|-----|--------|----------|
+# | bare   | 1UBQ ubiquitin    |     76 | deep    |  16 |  3.03  |   3.73   |
+# | bare   | 1AKE from PDB     |    271 | deep    |  16 |  6.07  |   8.76   |
+# | bare   | 6LU7 Mpro + N3    |    676 | shallow |   8 |  7.66  |  12.25   |
+# | worker | 2 x adenylate k.  |    428 | deep    |   4 |  8.56  |  12.38   |
+# | worker | 3 x adenylate k.  |    642 | deep    |   4 | 12.40  |  18.04   |
+# | worker | the same, 2nd req |    642 | deep    |   4 | 13.23  |  21.15   |
+#
+# TOKENS ARE NOT THE ONLY AXIS, AND BUILDING A CEILING ON THEM ALONE WAS
+# WRONG. Trunk memory is `O(RN + N^2)`, and R -- the alignment depth -- is the
+# term that is easy to forget. 676 tokens with a 234 KB A3M cost LESS than 428
+# tokens with a 3.2 MB one. An earlier draft of this file set the ceiling at
+# 704 tokens from the 6LU7 row and declared 14.0 GiB; the 642-token row above
+# is what that would actually have cost, and the admission pool would have
+# been oversold by 4 GiB on a realistic request.
+#
+# AND THE SAME REQUEST COSTS MORE LATER IN A SESSION. The 642-token request
+# reserved 18.04 GiB as the first request of a fresh worker and 21.15 GiB as
+# the second, because the caching allocator's high-water mark never shrinks.
+# A budget read off a single-request measurement is the rfdiffusion3 mistake
+# in a new place.
+#
+# BUT INSIDE THE CEILING BELOW, THE RATCHET DOES NOT APPEAR. Three different
+# shapes in one worker session -- 428 tokens at 4 samples, 214 at 16, 428 at 8
+# -- all reported exactly 12.38 GiB reserved, flat. That is what makes 448 a
+# ceiling rather than a guess: every admitted request has been measured, in
+# sequence, on the real path.
+#
+# BATCH SIZE BARELY MOVES THE PEAK. 1UBQ at 1 and at 16 samples both peaked at
+# 3.03 GiB; the 214-token request above used 16 samples and allocated LESS
+# than the 428-token one at 4. The `O(N^2)` pair representation dominates the
+# `O(BN)` term throughout this range, so `num_samples` costs wall clock, not
+# memory.
+
+[provider]
+slug = "bioemu2"
+description = "BioEmu-2 all-atom conformational ensembles for proteins, nucleic acids and ligand complexes"
+operations = ["bioemu2_sample_structures"]
+status = "verified"
+verified_on = """NVIDIA GB10 (aarch64, cc 12.1, 128 GB unified), driver
+580.173.02, host zgx, 2026-10-25, through this provider's own path rather than
+a bare process.
+
+`tu remote setup bioemu2` ran all four steps: preflight OK; environment
+present against [env] verify; weights 2/2 at their pins under the weights root
+(1.9 GiB) after an independent fetch, with the checkpoint's sha256 equal to
+the `lfs.oid` the Hub API publishes for it; smoke OK in 89 s (generate 20.4 s),
+peak reserved 2.06 GiB, writing topology.cif and samples.xtc -- matched by the
+`outputs` globs rather than counted, which is the check openfold3 taught this
+standard to make.
+
+Through launch.py, the worker and the Unix socket, with the payload shape the
+smoke step and the MCP tool both send: 4/4 requests, each producing all three
+declared files and passing every physicality frame. Cold 15.4 s, an identical
+repeat 11.1 s with `embeddings_reused` true, a different system 13.3 s which
+evicted the cached session, and the first system again 14.5 s which did not
+find it -- the one-entry cache behaving as specified in both directions.
+
+Larger systems on the same socket, with a real ColabFold query rather than a
+supplied alignment: 428 tokens over two chains in 315 s, and 642 tokens over
+three in 413-489 s, every frame physical. A three-shape session at and below
+the 448-token ceiling (428/4 samples, 214/16, 428/8) held peak reserved flat
+at 12.38 GiB.
+
+Through the live MCP endpoint on 8063: discovery is exactly
+{bioemu2_sample_structures}; two `structure` calls and one `equilibrium` call
+at 4 samples returned 4/4 physical frames; four malformed requests were
+refused by name by the tool and two more by the published schema itself, the
+enum and `additionalProperties` rejecting them before `run()` was reached. No
+traceback reached a caller.
+
+The orphan watchdog was observed rather than assumed. With the MCP server
+stopped and the worker reparented to init, it logged `orphaned (parent gone)
+and idle 122s >= 120s: releasing the GPU and exiting` and left no process on
+the card. Note that `os._exit(0)` skips cleanup by design, so the socket file
+survives the exit: judge liveness by process or by nvidia-smi, not by `ls`.
+
+NO TIMING HERE IS THE MODEL'S SPEED. Every figure above was measured under a
+host load average between 26 and 45 from unrelated jobs, and they are upper
+bounds. In particular NO SAVING FROM TRUNK REUSE IS ESTABLISHED: through the
+socket an identical repeat ran 15.4 s then 11.1 s, and through MCP the same
+comparison ran 22.3 s then 23.6 s -- opposite signs, both inside the noise, at
+20 tokens where the trunk has almost nothing to skip. The cache demonstrably
+works; its benefit at the sizes where `O(RN^2 + N^3)` would make it matter has
+not been measured on this path.
+
+PROPAGATION IS NOT EXPOSED. Stepping a conformation forward 1 ns to 1 us is
+the capability this model has that nothing else here does, and it needs a
+starting ensemble handed back in. Nothing in this provider has run it, so it
+is absent rather than untested.
+
+WHAT HAS NOT BEEN RUN THROUGH THIS PROVIDER: ligands, RNA and DNA, which
+upstream supports and which the `system_yaml` argument exists to carry -- only
+protein chains have gone through the worker. Contact conditioning, steering
+samplers, and every `physicality` mode except high_quality are likewise
+untouched. Concurrency, recovery, public publication and independent-caller
+isolation are untested.
+
+ENSEMBLE ACCURACY IS UNVALIDATED and nothing in this provider checks it. The
+physicality report is geometry -- chain breaks, clashes, bond lengths -- and
+says nothing about whether a conformation is one the molecule actually adopts.
+Upstream lists uncalibrated ensembles among its known limitations: sampling
+frequency is not a Boltzmann probability, and a caller must not read
+"verified" as a claim about the structures."""
+
+[runtime]
+mode = "resident"
+worker = "resident/bioemu2_resident_worker.py"
+launch = "tooluniverse.remote.bioemu2.launch:build_command"
+worker_args = [
+  "--socket", "{socket}",
+  "--slug", "{slug}",
+  "--max-samples", "16",
+  "--max-tokens", "448",
+]
+# The checkpoint is 2.05 GB and load measured 44.6-49.9 s; the timeout covers a
+# cold page cache on a loaded host.
+start_timeout_s = 900.0
+# A request can include a ColabFold query for a system nobody has aligned
+# before, and that is a third party's queue rather than this card's work.
+request_timeout_s = 3600.0
+idle_timeout_s = 900.0
+# `save_frames()` writes exactly these two, and the CIF is the one that proves
+# a structure was produced rather than an empty trajectory.
+outputs = ["topology.cif", "samples.xtc"]
+smoke = "smoke/trp_cage.yaml"
+smoke_timeout_s = 1800.0
+
+[gpu]
+policy = "required"
+# Above the largest observation that this provider will ever admit, measured
+# on its own socket in a multi-request session: **12.38 GiB reserved**, flat
+# across three different shapes at and below the 448-token ceiling. 16.0 is
+# that figure plus 29%.
+#
+# THE CEILING IS WHERE IT IS BECAUSE OF WHAT HAPPENS JUST ABOVE IT. At 642
+# tokens the same path reserved 18.04 GiB fresh and 21.15 GiB as a session's
+# second request. Admitting that size would mean declaring ~24 GiB, and the
+# pool reserves the declared figure on EVERY request, large or small -- so a
+# ceiling raised for the occasional big system is paid for by every co-tenant
+# all the time. Raising `--max-tokens` is therefore a scheduling decision as
+# much as a measurement one, and it needs both.
+vram_budget_gb = 16.0
+driver_min = 580
+driver_min_reason = "its pinned stack is CUDA 13.0 (torch 2.13.0+cu130)"
+shareable = true
+isolation = "process"
+
+[env]
+kind = "venv"
+python = "$TOOLUNIVERSE_BIOEMU2_PYTHON"
+lock = "environment/requirements.lock"
+verify = "import torch, bioemu2, cuequivariance_torch, yaml; import importlib.metadata as m; assert m.version('bioemu2') == '0.1.0rc0'; assert torch.__version__.startswith('2.13.0')"
+
+[weights]
+# The Hub cache, not a directory of loose checkpoints: `load_model()` resolves
+# the checkpoint by name from `microsoft/bioemu2`, so what has to be present is
+# the pinned revision's snapshot. launch.py points HF_HOME here.
+root_env = "BIOEMU2_HF_HOME"
+root_default = "~/.cache/tooluniverse/bioemu2-hf"
+fetch = "{python} -c \"import os; os.environ.setdefault('HF_HOME', '{weights_root}'); from huggingface_hub import snapshot_download; snapshot_download('microsoft/bioemu2', revision='dd4b0c1b69984b68edcb6200a544213be4d75242', allow_patterns=['checkpoints/bioemu2-preview/*'])\""
+
+# THE CONFIG IS PINNED FOR A SECURITY REASON, NOT ONLY A REPRODUCIBLE ONE.
+# `load_model()` builds the network by handing this config.yaml to
+# `hydra.utils.instantiate()`, and hydra's own warning on that call is explicit:
+# "config-controlled targets can execute arbitrary code. This warning will
+# become an error in Hydra 1.5." A `_target_` is an import path hydra will
+# import and call. So a config.yaml that has moved off its pin is a refusal in
+# launch.py rather than something to load and hope about, and the revision is
+# pinned in the fetch above so a cache miss fetches that exact commit.
+[[weights.files]]
+name = "hub/models--microsoft--bioemu2/snapshots/dd4b0c1b69984b68edcb6200a544213be4d75242/checkpoints/bioemu2-preview/checkpoint.ckpt"
+size = 2047661181
+# Upstream's own digest: this is the `lfs.oid` the Hub API reports for the
+# file, confirmed equal to the sha256 of the bytes this provider was measured
+# on rather than copied on trust.
+sha256 = "3b4ba9236b7b458f47b40b694847b6bb4110c744becd6d2c53de7b1d04c07a81"
+
+[[weights.files]]
+name = "hub/models--microsoft--bioemu2/snapshots/dd4b0c1b69984b68edcb6200a544213be4d75242/checkpoints/bioemu2-preview/config.yaml"
+size = 1672
+# This one is NOT upstream's published digest. config.yaml is under the Hub's
+# LFS threshold, so the API reports only a git blob oid, which is a sha1 over a
+# different preimage and cannot be compared to a content sha256. The value
+# below was computed here from the bytes at the pinned revision. It pins what
+# was measured; it does not independently corroborate it.
+sha256 = "90326e3b77e524420f5aad68a777355ecbbbe07bc006ddf88f7ee921b0f772e3"

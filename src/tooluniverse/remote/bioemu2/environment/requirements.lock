@@ -1,0 +1,138 @@
+# BioEmu-2's model environment — the exact stack the provider in
+# ../provider.toml was installed and verified on, as
+# `uv pip freeze --exclude-editable` of it with five prereleases corrected
+# to their stable releases and one transitive dependency added.
+#
+# Python 3.12.13, torch 2.13.0+cu130, numpy 2.4.6. This stack coexists with
+# none of the other providers' and none of ToolUniverse's, which is the whole
+# reason for the two-environment split in STANDARD section 2.
+#
+# THE SECOND PROVIDER HERE WITH NOTHING EDITABLE ON TOP, after rfd4_proteina.
+# There is no `anthropics/uplifting-biomolecular-modeling` kit for this model —
+# upstream publishes the inference runtime itself — so this list is the whole
+# environment rather than the base a kit is installed over.
+#
+# Rebuild (an NVIDIA driver the stack's CUDA build needs; no compiler. Every
+# line below has an aarch64 wheel except `antlr4-python3-runtime`, which is
+# published as an sdist at every version — it is pure Python, so setuptools
+# builds it without a toolchain):
+#
+#   uv venv --seed --managed-python --python 3.12.13 ~/bioemu2-venv
+#   export TOOLUNIVERSE_BIOEMU2_PYTHON=~/bioemu2-venv/bin/python
+#   $TOOLUNIVERSE_BIOEMU2_PYTHON -m pip install --no-deps -r requirements.lock
+#   tu remote setup bioemu2            # the checkpoint
+#
+# --no-deps is deliberate: the list is complete, and letting a resolver
+# re-derive it is how a stack stops being the one that was measured. It is
+# load-bearing here for a second reason — see the prerelease note below.
+#
+# THREE THINGS A RESOLVER GETS WRONG HERE, recorded because each cost a run:
+#
+#  1. `bioemu2` is published only as `0.1.0rc0`, so any install of it needs
+#     `--prerelease allow`. That flag is GLOBAL in uv, and with it the
+#     resolver also takes prereleases of five packages that have perfectly
+#     good stable releases: einops 0.9.0.dev0, hf-xet 1.8.0.dev0, hydra-core
+#     1.4.0rc2, numba 0.68.1rc2 and omegaconf 2.4.1rc1. The first probe
+#     environment here carried all five for no reason other than that flag.
+#     The versions below are the stable ones, and `--no-deps` is what keeps a
+#     resolver from reaching for the prereleases again.
+#  2. `hydra-core` 1.3.7 declares `omegaconf<2.4`, so the stable pair is
+#     1.3.7 + 2.3.0 and NOT 1.3.7 + 2.4.0. Taking the newest stable of each
+#     independently produces a combination upstream's own metadata forbids.
+#     Pinning omegaconf back to 2.3.0 then needs `antlr4-python3-runtime`
+#     added BY HAND: 2.3.0 depends on it and 2.4.x dropped it, so under
+#     `--no-deps` the downgrade silently leaves it out and every import of
+#     hydra dies on `ModuleNotFoundError: No module named 'antlr4'`. That is
+#     the cost of `--no-deps` and it is paid here rather than by a resolver.
+#  3. The `cuda` extra's cuEquivariance packages are CUDA 13 builds, and the
+#     ones that matter here (`cuequivariance-ops-cu13`,
+#     `cuequivariance-ops-torch-cu13`) do publish aarch64 wheels —
+#     `manylinux_2_26_aarch64` — so nothing is built from source. The GB10's
+#     compute capability is covered by name: `cuobjdump --list-elf` on
+#     `libcue_ops.so` reports an **sm_121a** cubin among sm_75 through sm_120.
+#
+# AND ONE THING THE PIN LOOKS LIKE A PROBLEM AND IS NOT. `bioemu2` requires
+# `torch<2.14,>=2.11`, while every other provider on this card runs 2.14.x.
+# PyPI's `torch==2.13.0` aarch64 wheel is a **+cu130** build whose arch list is
+# sm_80, sm_90, sm_100, sm_110, sm_120 — it does not name sm_121 — and it
+# drives this card anyway, through CUDA 13's family compatibility. That was
+# measured (a 1024x1024 matmul on the device), not inferred, because the
+# inference went the other way once before: see the aarch64-torch note that
+# torch 2.5.1 reports `is_available True` and then raises "no kernel image is
+# available" on the first device allocation.
+annotated-types==0.8.0
+antlr4-python3-runtime==4.9.3
+anyio==4.15.1
+bioemu2==0.1.0rc0
+biopython==1.88
+biotite==2.0.0
+biotraj==1.2.2
+certifi==2026.10.23
+charset-normalizer==3.5.2
+click==8.5.0
+cuda-bindings==13.4.4
+cuda-pathfinder==1.8.4
+cuda-toolkit==13.0.3.0
+cuequivariance==0.11.1
+cuequivariance-ops-cu13==0.11.1
+cuequivariance-ops-torch-cu13==0.11.1
+cuequivariance-torch==0.11.1
+einops==0.8.2
+filelock==4.2.4
+fsspec==2026.9.0
+h11==0.16.0
+hf-xet==1.7.0
+httpcore2==2.16.0
+httpx2==2.16.0
+huggingface-hub==2.3.0
+hydra-core==1.3.7
+idna==3.20
+jinja2==3.1.6
+llvmlite==0.50.0
+markupsafe==3.0.4
+mdtraj==1.11.2
+mpmath==1.3.0
+msgpack==1.2.3
+networkx==3.7
+numba==0.68.0
+numpy==2.4.6
+nvidia-cublas==13.1.1.3
+nvidia-cuda-cupti==13.0.85
+nvidia-cuda-nvrtc==13.0.88
+nvidia-cuda-runtime==13.0.96
+nvidia-cudnn-cu13==9.20.0.48
+nvidia-cufft==12.0.0.61
+nvidia-cufile==1.15.1.6
+nvidia-curand==10.4.0.35
+nvidia-cusolver==12.0.4.66
+nvidia-cusparse==12.6.3.3
+nvidia-cusparselt-cu13==0.8.1
+nvidia-ml-py==13.615.71
+nvidia-nccl-cu13==2.29.7
+nvidia-nvjitlink==13.4.92
+nvidia-nvshmem-cu13==3.4.5
+nvidia-nvtx==13.0.85
+omegaconf==2.3.0
+openmm==8.6.1
+opt-einsum==3.4.0
+packaging==26.3
+pdbecif==1.5
+pillow==13.0.0
+platformdirs==4.13.5
+pydantic==2.14.1
+pydantic-core==2.50.1
+pyparsing==3.3.2
+pyyaml==6.0.3
+rdkit==2026.9.1
+requests==2.34.2
+scipy==1.18.1
+setuptools==84.2.1
+sympy==1.14.0
+tenacity==9.2.1
+torch==2.13.0
+tqdm==4.70.1
+triton==3.7.1
+truststore==0.10.5
+typing-extensions==4.16.0
+typing-inspection==0.4.4
+urllib3==2.8.0

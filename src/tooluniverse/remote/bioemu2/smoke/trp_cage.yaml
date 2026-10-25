@@ -1,0 +1,23 @@
+# Trp-cage (PDB 1L2Y), 20 residues: the smallest system upstream ships as an
+# example, chosen so `tu remote setup --only smoke` exercises the whole path
+# without becoming the longest step of a setup.
+#
+# THE `msa:` BLOCK IS WHAT MAKES THIS SMOKE NETWORK-FREE. Without it BioEmu-2
+# queries the public ColabFold server on a cache miss, and a smoke test that
+# depends on a third party's availability reports that party's outage as this
+# provider's failure. A single-sequence alignment is a real degradation of the
+# model -- upstream says quality falls for shallow MSAs -- so it is right for a
+# smoke and wrong for a result anyone reads.
+system:
+  entities:
+    - entity_type: protein
+      asym_ids: [A]
+      sequence: NLYIQWLKDGGPSSGRPPPS
+      mods: []
+  bonds: []
+mode: structure
+num_samples: 1
+msa:
+  A: |
+    >query
+    NLYIQWLKDGGPSSGRPPPS
