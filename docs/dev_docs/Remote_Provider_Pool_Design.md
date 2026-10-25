@@ -94,7 +94,8 @@ an online server that does not list what it can actually run.
 
 `--max-active` bounds how many providers are resident; the default is 1, because one
 large model usually fills a GPU. Admitting a new provider evicts the
-least-recently-used **idle** one. A provider with a call in flight is never evicted —
+least-recently-used **idle** one. `--max-active 0` drops the count and lets the memory
+ceiling decide alone — see "Letting memory decide alone" below. A provider with a call in flight is never evicted —
 the caller is told to retry instead, since the alternative is killing a running GPU job
 to admit a new one.
 
@@ -215,6 +216,36 @@ A provider that declares nothing and has never been loaded here is still admitte
 alone: 28 of the 60 reviewed slugs declare no budget, and `[gpu] policy = "none"` declares
 0, so count-only admission stays a normal mode of operation rather than a fallback.
 
+#### Letting memory decide alone
+
+`--max-active 0` means "no count ceiling, memory decides". It exists because the default
+of 1 is the one setting an operator cannot tune honestly: on a 121 GiB machine sharing
+five 6 GiB models, a count of 1 leaves four of them being loaded and unloaded against a
+pool that could have held all five, and a count of 5 is a promise about sizes the
+operator would have to keep re-checking as manifests change. Memory already knows both
+halves of that — what the machine has and what each model costs — so 0 hands it the
+decision rather than asking for a number that stands in for one.
+
+Two things keep that from meaning "unbounded":
+
+- **It is refused where memory cannot be read.** If `capacity_gib` cannot answer — no
+  NVIDIA driver, no unified memory to fall back on — then dropping the count would leave
+  nothing deciding at all, so the pool refuses to start and says to pass a count.
+  Capacity rather than the free reading, because both come from the same detection of
+  which kind of machine this is and capacity is the one that does not move: a pool is
+  not refused over a driver that was busy for a second.
+- **A provider nobody has costed is still admitted one at a time.** Memory can only
+  judge a provider with a figure, and for the 28 that declare nothing and have never
+  been loaded here there is none, so with the count gone their loads would be admitted
+  on no evidence at all. Those keep the ceiling every provider used to have until a call
+  one of them answered has been measured here, and then memory speaks for them like
+  anything else. The bound is on ignorance and not on size — a 6 GiB model and a 38 GiB
+  model both have a figure — and `[gpu] policy = "none"`'s 0 is a figure too, so a
+  CPU-only provider is never one of these.
+
+The default stays 1. 0 is a statement about the machine, and the person running the
+command is the one who knows whether this machine has room for several models.
+
 Decisions worth keeping:
 
 - **The largest figure wins**, for both of the reasons above. A model that allocates lazily
@@ -332,6 +363,12 @@ provider: a prewarm bound the port in 12.5 s with `model_loaded` false, and the 
 were in memory at 31.3 s with `machine_holdings` naming the worker; `memory_plan` sized it
 at the manifest's 5673 MiB; `MemAvailable` moved the wrong way across the load, so the
 local measurement was discarded rather than recorded as a ceiling.
+
+`--max-active 0` is verified live against two real provider subprocesses on this
+project's GB10, driving the real `ProviderPool`: with the count gone both stayed resident
+(`borzoi_calico` then `enformer_deepmind`, up in 4.2 s and 4.9 s), and the same pair at
+`--max-active 1` evicted the first to admit the second. A pool built with a capacity
+reading of None refused to start and said to pass a count.
 
 End-to-end against two real provider subprocesses over real HTTP, counting actual
 process launches: nothing starts at boot; `tools/list` stays empty and starts nothing;

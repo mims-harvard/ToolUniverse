@@ -24,6 +24,7 @@ reviewed catalog, which :func:`build_tool_index` asserts -- starts that provider
 it is not already up, and proxies the call. Providers idle longer than ``idle_ttl``
 are stopped, and ``max_active`` bounds how many run at once with least-recently-used
 eviction, so one host can advertise more models than its GPU could hold together.
+``max_active`` 0 drops that count and leaves the decision to the memory ceiling below.
 
 A call that lands while a provider is still starting gets 503 with Retry-After rather
 than being queued across the relay, which the relay's own 25-second limit on a local
@@ -33,7 +34,9 @@ endpoint wait for that start instead, and is 0 by default. ``control`` answers
 ``tu serve`` wires up only when the installed ``RelayAgent`` takes one, and ``prewarm``
 loads the model rather than only starting the server that will load it.
 
-Admission applies two ceilings. ``max_active`` is a count and always applies. Memory
+Admission applies two ceilings. ``max_active`` is a count, and ``--max-active 0`` drops
+it so memory decides alone -- refused on a machine whose memory cannot be read, where
+dropping it would leave nothing deciding at all. Memory
 applies wherever the machine can be read, and the reading is per machine rather than
 per card: a discrete device's own ``memory.free``, ``MemAvailable`` on unified memory
 where the device has no memory of its own, and nothing at all on a host with no NVIDIA
@@ -91,6 +94,14 @@ DEFAULT_VRAM_HEADROOM_MIB = 1024
 DEFAULT_POOL_PORT = 7999
 DEFAULT_IDLE_TTL = 900.0
 DEFAULT_MAX_ACTIVE = 1
+
+# ``--max-active 0``: no count ceiling, let memory decide. A count is the wrong unit for
+# the question it is asked -- it cannot say that two 6 GiB models fit where one 38 GiB
+# model does not -- and it was the only unit this pool had before it could read the
+# machine. 0 is refused where the machine cannot be read, because that would leave
+# nothing deciding at all, and it still bounds providers whose cost nobody knows: see
+# :meth:`ProviderPool._evict_for_locked`.
+NO_COUNT_CEILING = 0
 DEFAULT_STARTUP_TIMEOUT = 600.0
 
 # How long a call waits for a provider another call is already starting, and ZERO IS THE
@@ -429,8 +440,19 @@ class ProviderPool:
             raise PoolError("--allow must name at least one reviewed provider")
         self.tool_index = build_tool_index(self.allow)
         self.deployments = tuple(REMOTE_BY_SLUG[slug] for slug in self.allow)
-        if self.max_active < 1:
-            raise PoolError("--max-active must be at least 1")
+        if self.max_active < NO_COUNT_CEILING:
+            raise PoolError("--max-active must not be negative")
+        if self.max_active == NO_COUNT_CEILING and self._capacity_mib() is None:
+            # Capacity rather than the free reading: both come from the same detection of
+            # which kind of machine this is, and capacity is the one that does not move,
+            # so a pool is not refused over a driver that was busy for a second. If this
+            # answers, memory is readable here and is a ceiling; if it does not, there is
+            # no second ceiling to fall back on and "0" would mean "unbounded".
+            raise PoolError(
+                "--max-active 0 leaves the decision to memory, and this machine's "
+                "memory pool cannot be read, so nothing would bound what runs at "
+                "once; pass a count instead"
+            )
         if self.idle_ttl <= 0:
             raise PoolError("--idle-ttl must be positive")
         if self.start_wait_s < 0:
@@ -786,7 +808,8 @@ class ProviderPool:
         requests in flight is never evicted; if nothing can be freed the caller is told to
         retry rather than having a running job killed under it.
 
-        Two independent ceilings. ``max_active`` is a count, and applies always. Memory
+        Two independent ceilings. ``max_active`` is a count, and ``--max-active 0`` drops
+        it in favour of the one below. Memory
         applies once this provider's cost is known -- declared by its manifest or measured
         here, whichever is larger -- and the machine answered a free reading: two small
         models may fit where one large one does not, which a count can never express.
@@ -796,18 +819,53 @@ class ProviderPool:
         -- a fresh reading straight after a kill reports it as still in use. A victim whose
         cost nobody declared or measured counts as freeing nothing, so admission stays
         conservative instead of optimistic.
+
+        WHAT BOUNDS A POOL WITH NO COUNT CEILING. Memory can only decide about a provider
+        somebody has costed, and 28 of the 60 reviewed slugs declare nothing: for those
+        :meth:`footprint_mib` is None, the memory ceiling returns early, and with the
+        count gone nothing at all would stop the next one. So an UNCOSTED provider keeps
+        the ceiling every provider used to have -- one at a time -- until a call it
+        answered has been measured here and memory can speak for it. That bound is on
+        ignorance and not on size: a 6 GiB model and a 38 GiB model both have a figure,
+        and memory is allowed to decide about both.
         """
 
-        def lru_idle_victim() -> _ActiveProvider:
-            idle = [active for active in self._active.values() if active.in_flight == 0]
+        def lru_idle_victim(
+            among: Iterable[_ActiveProvider] | None = None,
+        ) -> _ActiveProvider:
+            candidates = self._active.values() if among is None else among
+            idle = [active for active in candidates if active.in_flight == 0]
             if not idle:
                 raise PoolError(
-                    f"all {self.max_active} provider slot(s) are busy; retry shortly"
+                    f"provider '{incoming.slug}' needs room, and every provider that "
+                    "could make room for it is busy with a request in flight; retry "
+                    "shortly"
                 )
             return min(idle, key=lambda active: active.last_used)
 
-        while len(self._active) + len(self._starting) >= self.max_active:
-            self._stop_locked(lru_idle_victim().deployment.slug)
+        def uncosted(slug: str) -> bool:
+            # None is "nobody has said", which is not 0: a manifest declaring
+            # `policy = "none"` says this provider holds no device memory, and that is
+            # knowledge, not a gap. See :func:`declared_footprint_mib`.
+            return self.footprint_mib(slug) is None
+
+        if self.max_active == NO_COUNT_CEILING:
+            while uncosted(incoming.slug) and (
+                any(uncosted(slug) for slug in self._active)
+                or any(uncosted(slug) for slug in self._starting)
+            ):
+                resident = [
+                    active
+                    for active in self._active.values()
+                    if uncosted(active.deployment.slug)
+                ]
+                # Nothing resident to evict means the other uncosted provider is still
+                # starting, and lru_idle_victim turns that into "retry shortly" rather
+                # than killing a start in progress.
+                self._stop_locked(lru_idle_victim(resident).deployment.slug)
+        else:
+            while len(self._active) + len(self._starting) >= self.max_active:
+                self._stop_locked(lru_idle_victim().deployment.slug)
 
         if free_mib is None:
             return

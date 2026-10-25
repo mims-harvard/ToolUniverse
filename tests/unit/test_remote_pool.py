@@ -82,6 +82,10 @@ def make_pool(tmp_path: Path, slugs, lifecycle=None, **kwargs) -> ProviderPool:
     # pools with `vram_pool`, which injects a machine they control.
     kwargs.setdefault("read_holdings", lambda: {})
     kwargs.setdefault("read_free_vram", lambda: None)
+    # Capacity is a reading of this machine as much as the two above, and `--max-active
+    # 0` is refused when it cannot be read, so a test that says nothing about memory
+    # gets a machine large enough to hold anything in the catalog rather than this host.
+    kwargs.setdefault("read_capacity", lambda: 1 << 20)
     pool = ProviderPool(
         allow=tuple(slugs),
         python="/nonexistent/python",
@@ -487,7 +491,7 @@ def test_a_provider_with_no_snapshot_still_routes_its_calls(tmp_path):
 @pytest.mark.parametrize(
     "kwargs, message",
     [
-        ({"max_active": 0}, "--max-active"),
+        ({"max_active": -1}, "--max-active"),
         ({"idle_ttl": 0}, "--idle-ttl"),
         ({"startup_timeout": 1}, "--startup-timeout"),
         ({"startup_timeout": 10_000}, "--startup-timeout"),
@@ -1073,6 +1077,146 @@ def test_two_small_models_coexist_where_a_count_of_one_would_not(tmp_path):
     pool.acquire(pool.provider_for_tool(esm_tool))
 
     assert sorted(row["provider"] for row in pool.status()) == ["boltz", "esm"]
+
+
+# ── no count ceiling: --max-active 0 ────────────────────────────────────────────
+
+
+def countless_pool(tmp_path, slugs, gpu, **kwargs):
+    """A pool with no count ceiling, on a machine whose memory it can read."""
+    kwargs.setdefault("read_capacity", lambda: 1 << 20)
+    return vram_pool(tmp_path, slugs, gpu, max_active=0, **kwargs)
+
+
+def test_no_count_ceiling_is_refused_where_memory_cannot_be_read(tmp_path):
+    """Dropping the count where there is no second ceiling leaves no ceiling at all.
+
+    A capacity reading of None is `pool_capacity_mib`'s "do not reason about memory" --
+    a host with no NVIDIA driver and no unified memory to fall back on. Admitting on
+    nothing is worse than admitting on a count, so the operator is told at startup,
+    while they can still pass one, rather than by an out-of-memory later.
+    """
+    with pytest.raises(PoolError, match="--max-active 0"):
+        vram_pool(tmp_path, ["boltz"], FakeGPU(free=40_000), max_active=0)
+
+
+def test_without_a_count_ceiling_memory_still_evicts(tmp_path):
+    """0 does not mean "admit everything": the ceiling it drops is the count."""
+    pool = countless_pool(tmp_path, ["boltz", "esm"], FakeGPU(free=10_000))
+    esm = pool.provider_for_tool(REMOTE_BY_SLUG["esm"].operations[0])
+    boltz = pool.provider_for_tool("boltz2_docking")
+    pool.footprints.record("esm", 6_000)
+    pool.footprints.record("boltz", 14_000)
+
+    pool.acquire(esm)
+    pool.release(esm)
+    pool.acquire(boltz)  # 10000 free + 6000 reclaimed = 16000 >= 14000 + 1024
+
+    assert [row["provider"] for row in pool.status()] == ["boltz"]
+
+
+def test_a_provider_nobody_has_costed_is_still_admitted_one_at_a_time(tmp_path):
+    """The 28 undeclared slugs are what the count ceiling was really covering.
+
+    Memory cannot judge a provider whose cost nobody has said -- `footprint_mib` is
+    None and the memory ceiling returns early on it -- so with the count gone its load
+    would be admitted on no evidence, and so would the next one, and the machine would
+    find out how many fit by running out.
+    """
+    pool = countless_pool(tmp_path, ["boltz", "esm"], FakeGPU(free=40_000))
+    esm = pool.provider_for_tool(REMOTE_BY_SLUG["esm"].operations[0])
+
+    pool.acquire(esm)
+    pool.release(esm)
+    pool.acquire(pool.provider_for_tool("boltz2_docking"))
+
+    assert [row["provider"] for row in pool.status()] == ["boltz"], (
+        "two providers of unknown cost must not be resident together"
+    )
+
+
+def test_an_uncosted_provider_mid_call_is_a_retry_and_not_an_eviction(tmp_path):
+    """Same rule as every other ceiling: a running GPU job is not collateral."""
+    pool = countless_pool(tmp_path, ["boltz", "esm"], FakeGPU(free=40_000))
+    pool.acquire(pool.provider_for_tool(REMOTE_BY_SLUG["esm"].operations[0]))  # held
+
+    with pytest.raises(PoolError, match="busy"):
+        pool.acquire(pool.provider_for_tool("boltz2_docking"))
+
+    assert [row["provider"] for row in pool.status()] == ["esm"]
+
+
+def test_a_second_uncosted_provider_is_refused_while_the_first_is_starting(tmp_path):
+    """Nothing is resident to evict, because the other one is still coming up.
+
+    Killing a start in progress is not eviction -- the call that asked for it is still
+    waiting on it -- so the answer is the same retry a busy provider gets.
+    """
+    lifecycle, entered, release = blocking_lifecycle()
+    pool = countless_pool(
+        tmp_path, ["boltz", "esm"], FakeGPU(free=40_000), lifecycle=lifecycle
+    )
+    esm = pool.provider_for_tool(REMOTE_BY_SLUG["esm"].operations[0])
+
+    thread = threading.Thread(target=lambda: pool.acquire(esm))
+    thread.start()
+    assert entered.wait(5)
+    try:
+        with pytest.raises(PoolError, match="busy"):
+            pool.acquire(pool.provider_for_tool("boltz2_docking"))
+    finally:
+        release.set()
+        thread.join(10)
+
+
+def test_a_measured_provider_stops_being_bounded_one_at_a_time(tmp_path):
+    """The bound is on ignorance, and one answered call is what ends it.
+
+    The same two providers as the test above, with the one difference that this host
+    has measured what they cost -- which is what `learn_footprint` records after a call
+    each of them answered. Memory can speak for them now, and it says both fit.
+    """
+    pool = countless_pool(tmp_path, ["boltz", "esm"], FakeGPU(free=40_000))
+    pool.footprints.record("esm", 4_000)
+    pool.footprints.record("boltz", 4_000)
+    esm = pool.provider_for_tool(REMOTE_BY_SLUG["esm"].operations[0])
+
+    pool.acquire(esm)
+    pool.release(esm)
+    pool.acquire(pool.provider_for_tool("boltz2_docking"))
+
+    assert sorted(row["provider"] for row in pool.status()) == ["boltz", "esm"]
+    assert pool.lifecycle.stopped == [], "both fit, so nothing had to be stopped"
+
+
+def test_a_provider_declaring_it_holds_no_device_memory_is_costed_and_not_unknown(
+    tmp_path,
+):
+    """`[gpu] policy = "none"` is knowledge, not a gap, and 0 is not None.
+
+    A provider that holds no device memory can share the machine with anything, and it
+    would be the one hurt most by a bound meant for providers nobody has costed.
+    """
+    pool = countless_pool(
+        tmp_path,
+        ["boltz", "esm"],
+        FakeGPU(free=40_000),
+        declared_footprint=lambda slug: 0,
+    )
+    esm = pool.provider_for_tool(REMOTE_BY_SLUG["esm"].operations[0])
+
+    pool.acquire(esm)
+    pool.release(esm)
+    pool.acquire(pool.provider_for_tool("boltz2_docking"))
+
+    assert sorted(row["provider"] for row in pool.status()) == ["boltz", "esm"]
+
+
+def test_the_count_ceiling_a_pool_was_given_is_what_status_reports(tmp_path):
+    """An operator reading `status` needs to see which ceiling is in force."""
+    pool = countless_pool(tmp_path, ["boltz"], FakeGPU(free=40_000))
+
+    assert pool.control("status", {})["max_active"] == 0
 
 
 def test_a_large_model_evicts_an_idle_one_to_make_memory_room(tmp_path):

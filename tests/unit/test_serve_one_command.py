@@ -166,6 +166,20 @@ def test_serve_exposes_every_input_in_one_help(capsys):
     assert {name for name, _ in SERVE_INPUTS} == {"files", "forward", "allow"}
 
 
+def test_zero_is_a_value_of_max_active_and_not_a_rejected_count():
+    """`--max-active 0` asks for no count ceiling, so the parser must not floor it at 1.
+
+    The bound used to start at 1, which made the one value that means "let memory
+    decide" an argparse error -- and an operator reading the help has no other way to
+    reach that behaviour.
+    """
+    parser = build_parser()
+
+    for spelling in (["serve"], ["remote", "pool"]):
+        args = parser.parse_args([*spelling, "--allow", "boltz", "--max-active", "0"])
+        assert args.max_active == 0, spelling
+
+
 # ── a flag that parses but does nothing is worse than no flag ────────────────────
 
 

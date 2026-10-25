@@ -3376,9 +3376,16 @@ def cmd_remote_pool(args: argparse.Namespace) -> None:
         )
 
     tools = pool.known_tools()
+    # "0 resident at a time" is the opposite of what --max-active 0 asks for, and this
+    # line is the only place an operator sees the ceiling they chose.
+    resident = (
+        "as many resident as memory allows"
+        if args.max_active == 0
+        else f"{args.max_active} resident at a time"
+    )
     print(
         f"Pool ready: {len(usable)} provider(s), {len(tools)} tool(s) advertised, "
-        f"{args.max_active} resident at a time, idle stop after {args.idle_ttl:.0f}s."
+        f"{resident}, idle stop after {args.idle_ttl:.0f}s."
     )
     if not tools:
         print(
@@ -4433,11 +4440,12 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p.add_argument(
         "--max-active",
-        type=_bounded_int(1, 16),
+        type=_bounded_int(0, 16),
         default=1,
         help=(
             "providers kept resident at once; the rest are stopped least-recently-used "
-            "first (default: 1, because one large model usually fills a GPU)"
+            "first (default: 1, because one large model usually fills a GPU). 0 sets no "
+            "count limit and lets free memory decide"
         ),
     )
     p.add_argument(
@@ -4466,7 +4474,8 @@ def build_parser() -> argparse.ArgumentParser:
             "memory left spare when admitting a provider, for fragmentation and the "
             "CUDA context (default: 1024 MiB). A provider's cost is the larger of its "
             "manifest's measured budget and what this host measured; a provider with "
-            "neither is admitted on --max-active alone"
+            "neither has no memory ceiling to be judged by, so it is admitted on the "
+            "count, one at a time under --max-active 0"
         ),
     )
     p.add_argument(
@@ -4615,9 +4624,13 @@ def build_parser() -> argparse.ArgumentParser:
     )
     pool_group.add_argument(
         "--max-active",
-        type=_bounded_int(1, 16),
+        type=_bounded_int(0, 16),
         default=1,
-        help="models kept loaded at once (default: 1, because one large model fills a GPU)",
+        help=(
+            "models kept loaded at once (default: 1, because one large model fills a "
+            "GPU). 0 sets no count limit and lets free memory decide, which is the "
+            "better ceiling on a machine with room for several of them"
+        ),
     )
     pool_group.add_argument(
         "--idle-ttl",
