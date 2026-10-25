@@ -1,0 +1,148 @@
+[
+  {
+    "type": "RemoteTool",
+    "name": "bioemu2_sample_structures",
+    "description": "Sample all-atom 3D structures of a biomolecular system with BioEmu-2. Give it the composition -- protein chains as sequences, or a system definition that may also contain ligands, RNA, DNA, modified residues and non-standard bonds -- and it returns an ensemble of conformations, not a single structure. 'structure' mode asks for one accurate fold; 'equilibrium' mode asks for a spread of conformations from the modelled equilibrium ensemble. Sampling frequency is NOT a calibrated Boltzmann probability and the model predicts neither sequences nor binding affinities. Structures are written to the worker's output directory; per-frame physicality checks come back either way. The system must be at most 448 tokens, which is BioEmu-2's own count and includes a ligand's atoms, so it is larger than the residue count; a bigger system is refused by name.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "sequences": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "One one-letter amino-acid sequence per protein chain, lettered A, B, C... in the order given. Identical sequences become one entity with several chains. Use 'system_yaml' instead for anything that is not a plain protein chain."
+        },
+        "system_yaml": {
+          "type": "string",
+          "description": "BioEmu-2's own system YAML, as written by System.to_yaml(): an 'entities' list and a 'bonds' list. This is the way to describe ligands by CCD code or SMILES, nucleic acids, modified residues, explicit chain ids and covalent bonds. Mutually exclusive with 'sequences'."
+        },
+        "mode": {
+          "type": "string",
+          "description": "'structure' sharpens towards one accurate fold; 'equilibrium' samples the modelled ensemble without sharpening. They differ in the sampler, not in what they accept.",
+          "enum": [
+            "structure",
+            "equilibrium"
+          ],
+          "default": "structure"
+        },
+        "num_samples": {
+          "type": "integer",
+          "description": "Conformations to generate, 1 to {...}. On the verified card this barely moved peak memory at 76 residues but it does cost wall-clock.",
+          "default": 1
+        },
+        "msa_a3m": {
+          "type": "object",
+          "description": "Optional alignment per chain id, as A3M text whose first record is that chain's query sequence. OMITTING THIS SENDS A QUERY TO THE PUBLIC COLABFOLD SERVER on a cache miss, which leaves this machine and depends on a third party. Supply your own to stay local; a query-only alignment is valid A3M and degrades the model rather than failing.",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "seed": {
+          "type": "integer",
+          "description": "Random seed. Omit for a random one."
+        },
+        "physicality": {
+          "type": "string",
+          "description": "Which geometry checks to report per frame: chain breaks, clashes and bond lengths. Failing frames are still returned and still saved; this only labels them.",
+          "enum": [
+            "no_filter",
+            "no_violations",
+            "high_quality",
+            "high_quality_per_residue"
+          ],
+          "default": "high_quality"
+        },
+        "return_topology": {
+          "type": "boolean",
+          "description": "Return the topology.cif text in the reply as well as writing it. Off by default: a transport truncates an oversized reply into invalid JSON rather than refusing it. The trajectory frames are never inlined.",
+          "default": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "model": {
+          "type": "string"
+        },
+        "mode": {
+          "type": "string"
+        },
+        "num_samples": {
+          "type": "integer"
+        },
+        "tokens": {
+          "type": "integer"
+        },
+        "chains": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "msa": {
+          "type": "string"
+        },
+        "seed": {
+          "type": "integer"
+        },
+        "physicality": {
+          "type": "object"
+        },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "output_dir": {
+          "type": "string"
+        },
+        "topology_cif": {
+          "type": "string"
+        },
+        "structures_note": {
+          "type": "string"
+        },
+        "timing": {
+          "type": "object"
+        },
+        "weights_held_by": {
+          "type": "string"
+        },
+        "peak_reserved_gib": {
+          "type": "number"
+        },
+        "peak_allocated_gib": {
+          "type": "number"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "remote_info": {
+      "server_type": "MCP",
+      "transport": "http",
+      "original_type": "BioEmu2SampleStructuresTool",
+      "url": "https://huggingface.co/microsoft/bioemu2",
+      "code_url": "https://github.com/mims-harvard/ToolUniverse/tree/main/src/tooluniverse/remote/bioemu2",
+      "mcp_tool_name": "bioemu2_sample_structures"
+    },
+    "test_examples": [
+      {
+        "sequences": [
+          "NLYIQWLKDGGPSSGRPPPS"
+        ],
+        "mode": "structure",
+        "num_samples": 1,
+        "seed": 0,
+        "msa_a3m": {
+          "A": ">query\nNLYIQWLKDGGPSSGRPPPS\n"
+        }
+      }
+    ]
+  }
+]
