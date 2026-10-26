@@ -1391,6 +1391,102 @@ class TestArchCheckAcrossFrameworks:
         compile(prog, "<probe>", "exec")
 
 
+class TestTheCardMayBeHeldOutsideThisInterpreter:
+    """`[gpu] driven_by`: the fourth false refusal from one framework's view.
+
+    STANDARD section 6. carbonx has no torch anywhere -- Carbon-X is served by
+    a `llama-server` child process -- so every gate that asks "can this
+    interpreter's torch reach the card" has to be told not to ask. The
+    evidence table already carries "Fixing one framework-naming gate is not
+    fixing it", and this is that lesson a third time: the predicate went into
+    `setup`, `tu remote check` kept its own copy of the question, and a
+    provider that installed and served correctly still printed
+    `x implementation` with `CUDA tensor check: failed`.
+
+    So the predicate lives on the manifest and both layers read it. These
+    tests hold that, including the part that is easy to let drift back: that
+    no gate re-derives the question locally.
+    """
+
+    def _manifest(self, slug):
+        return M.load(
+            os.path.join(
+                os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+                "src", "tooluniverse", "remote", slug, "provider.toml",
+            )
+        )
+
+    def test_a_provider_that_names_what_drives_the_card_exempts_its_own_torch(self):
+        m = self._manifest("carbonx")
+        assert m.gpu_policy == "required"
+        assert m.gpu_driven_by and "llama.cpp" in m.gpu_driven_by
+        assert m.torch_must_see_the_gpu is False
+
+    def test_an_ordinary_gpu_provider_is_still_judged_by_its_own_torch(self):
+        m = self._manifest("boltz")
+        assert m.gpu_policy == "required" and m.gpu_driven_by is None
+        assert m.torch_must_see_the_gpu is True
+
+    def test_the_model_environment_verdict_reads_the_manifest_not_torch(
+        self, monkeypatch
+    ):
+        """The layer that was missed. A probe reporting no torch at all must
+
+        not fail a provider that declared the card is held elsewhere -- and
+        must still fail one that did not.
+        """
+        import subprocess as _sp
+        import tooluniverse.remote_runtime as RR
+
+        # Both manifests name their interpreter by variable, as section 5
+        # requires. Point them at this one: the probe below is canned, so
+        # which interpreter it is never matters -- only that it resolves to a
+        # file, since `check_model_environment` answers on that before it ever
+        # reaches the GPU verdict under test.
+        for name in ("TOOLUNIVERSE_CARBONX_PYTHON", "TOOLUNIVERSE_BOLTZ_PYTHON"):
+            monkeypatch.setenv(name, sys.executable)
+
+        probe = json.dumps(
+            {
+                "python_version": [3, 12, 13],
+                "commands": {},
+                "gpu": {
+                    "torch_available": False,
+                    "cuda_available": False,
+                    "error": "ModuleNotFoundError: No module named 'torch'",
+                },
+            }
+        )
+
+        class _Done:
+            returncode = 0
+            stdout = probe
+            stderr = ""
+
+        verdicts = {}
+        for slug in ("carbonx", "boltz"):
+            m = self._manifest(slug)
+            monkeypatch.setattr(_sp, "run", lambda *a, **k: _Done())
+            verdicts[slug] = RR.check_model_environment(m)["ok"]
+        assert verdicts["carbonx"] is True, "a declared driven_by was ignored"
+        assert verdicts["boltz"] is False, "a torchless torch provider passed"
+
+    def test_no_gate_keeps_a_private_copy_of_the_question(self):
+        """One definition, because the last one was duplicated and diverged."""
+        import inspect
+
+        import tooluniverse.remote_runtime as RR
+
+        for module in (S, RR):
+            src = inspect.getsource(module)
+            assert "def _torch_must_see_the_gpu" not in src, (
+                f"{module.__name__} re-derives a predicate the manifest owns"
+            )
+            assert "torch_must_see_the_gpu" in src, (
+                f"{module.__name__} gates on the GPU without asking the manifest"
+            )
+
+
 class TestRefusalsExitThree:
     """STANDARD section 8: `0` ok, `1` failed, `2` usage, `3` refused.
 

@@ -116,6 +116,23 @@ traceback reached a caller. ONE BUG WAS FOUND BY THAT RUN AND NOT BY REVIEW:
 caller reading `answer` got an empty string with no error to explain it. It now
 projects onto the declared keys.
 
+`scripts/remote_validation/verify_provider.py carbonx --lengths
+600,6000,24000,42000 --repeats 4` exits 0 on 2026-10-26: four ascending rungs,
+four mixed shapes and four consecutive identical requests, 12 of 12 answered,
+with the device footprint reading 15.46 GiB at the 600 nt rung and 15.47 GiB
+at every one of the other eleven. That is a 70x range of input over one held
+engine moving the figure by 0.01 GiB, which is the static-footprint claim
+above measured through the standard's own harness rather than a private
+script. A rung here is BASES: the ceiling is in tokens and one DNA token is
+six bases, so 42,000 nt is ~7,000 tokens, just under the 7,168 ceiling.
+
+`tu remote check carbonx` exits 0 and prints `GPU: held by llama.cpp b11742
+(CUDA 13.4), in a child process, not by this interpreter`, and `tu remote run
+carbonx` starts and serves. Both are recorded because for one commit neither
+did: `[gpu] driven_by` was read by setup and by nothing else, so a provider
+that installed, served and passed its smoke still reported `x implementation`
+with `CUDA tensor check: failed`.
+
 The orphan watchdog was observed, and here it has a second half no sibling
 has. With the MCP server stopped and the worker reparented to init, the worker
 logged `orphaned (parent gone) and idle 122s >= 120s: releasing the GPU and

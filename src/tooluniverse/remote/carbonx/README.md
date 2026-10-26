@@ -221,7 +221,14 @@ vendor ran one through `llama-server` and found no measurable loss.
 > prompt in 13.2 s and four refusals by name, with the device footprint flat
 > at 15.46–15.47 GiB throughout; the live MCP endpoint on 8064 returned the
 > declared keys for three calls and named refusals for six malformed ones,
-> four from the tool and two from the published schema. The orphan watchdog
+> four from the tool and two from the published schema. The standard's own
+> acceptance harness — `verify_provider.py carbonx --lengths
+> 600,6000,24000,42000 --repeats 4` — exits 0 on 2026-10-26, answering 12 of
+> 12 requests across an ascending ladder, mixed shapes and four identical
+> repeats, with the footprint reading 15.46 GiB at one rung and 15.47 at the
+> other eleven. `tu remote check carbonx` and `tu remote run carbonx` both
+> exit 0; `check` prints `GPU: held by llama.cpp b11742 (CUDA 13.4), in a
+> child process` rather than a CUDA tensor check. The orphan watchdog
 > released the card 122 s after the server stopped **and its llama-server
 > child died with it**. **Accuracy is unvalidated here and two measured
 > answers were wrong**: on the model card's own sickle-cell variant the model

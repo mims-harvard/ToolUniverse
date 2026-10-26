@@ -311,6 +311,26 @@ class ProviderManifest:
     def directory(self) -> Path:
         return self.path.parent
 
+    @property
+    def torch_must_see_the_gpu(self) -> bool:
+        """Whether this provider's own interpreter is expected to drive the card.
+
+        Almost always yes, and then torch not seeing the GPU is the refusal
+        that saves an hour. But `[gpu] driven_by` names the providers where the
+        card is held somewhere a probe of that interpreter cannot look: carbonx
+        has no torch at all and serves Carbon-X from a llama.cpp child process.
+        Judging it by what torch says is the af3_jax false refusal again, which
+        `_arch_problem` already carries a branch for.
+
+        It lives on the manifest because two layers ask it -- `setup`, where
+        the answer is a refusal, and `tu remote check`, where it is a red line
+        in the report -- and a predicate defined twice is a predicate that
+        drifts. It was in fact defined once and the second caller was missed,
+        which is how a provider that installs and serves correctly still
+        printed a failing `tu remote check` after a clean `tu remote setup`.
+        """
+        return self.gpu_policy == "required" and not self.gpu_driven_by
+
     def weights_root(self) -> Optional[Path]:
         if self.weights_root_env and os.environ.get(self.weights_root_env):
             return Path(os.environ[self.weights_root_env]).expanduser()

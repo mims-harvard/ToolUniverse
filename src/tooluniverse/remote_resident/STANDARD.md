@@ -314,6 +314,20 @@ the same reason — `_arch_problem` already carries a jax branch because af3_jax
 pins a CPU-only torch while jax drives the card — so the third case is
 declared by the provider rather than guessed at by the probe.
 
+**And declaring it in one gate is not declaring it.** The key went into
+`setup`, carbonx installed clean, and `tu remote check` — which §1 calls part
+of the normal path rather than a debugging step — still printed
+`✗ implementation: carbonx` with `CUDA tensor check: failed`, because
+`check_model_environment` asked the same question in its own words. That is
+the row this table already carries as "fixing one framework-naming gate is not
+fixing it", earned a second time, and the shape of the mistake is the giveaway:
+a predicate written as a private helper beside the first gate that needed it.
+It now lives on the manifest as `torch_must_see_the_gpu`, both gates read it,
+and a test asserts neither module re-derives it — because the thing that
+failed here was not the logic, which was right, but there being two places for
+it to be. A report that reads `GPU: held by <driven_by>, not by this
+interpreter` also tells an operator something the green tick would not.
+
 **A budget may err high. It may never err low.** Two providers here disagreed
 with their own declarations in opposite directions, and only one of them was a
 defect. complexa declares 20.25 GiB and a quiet-machine corner measurement read
@@ -808,6 +822,8 @@ card, the way out was a flag its CLI already offered -- atlasfold's
 | A config switch can exist and be unreachable | measured: `use_glu_kernel` is a function default no call site passes |
 | The fix may be upstream's own flag | measured: `--tokamax_autotuning_cache_miss_fallback=autotune` |
 | An arch gate must ask every framework, not torch | measured: af3_jax refused while JAX drove the card |
+| ...and a provider may have no framework to ask | measured: carbonx drives the card from a llama.cpp child; `[gpu] driven_by` says so |
+| A predicate with two homes has one that is stale | measured: `driven_by` honoured by `setup` and ignored by `tu remote check` |
 | A JAX budget is coarse; a torch one is not | measured: af3_jax 2.0/4.0/4.0/8.0 over 2.00/2.32/3.38/6.37 |
 | ...and not by powers of two | measured: af2ig reports 0.5/1.0/2.0/6.0, which refuted the rule and its mechanism |
 | An equivalence check needs determinism ON | measured: two XLA processes differ in the 5th figure; --det 1 gives one sha256 across three routes |

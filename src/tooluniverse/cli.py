@@ -2750,8 +2750,15 @@ def _print_remote_check(result: dict, *, as_json: bool) -> None:
         # reads as a defect -- and this block ran before `gpu_policy` was even
         # read, so it could not tell the difference.
         model_gpu_policy = result.get("gpu_policy")
+        driven_by = (result.get("manifest") or {}).get("driven_by")
         if model_gpu_policy == "none":
             print("    GPU: not used (policy = none)")
+        elif driven_by:
+            # The card is held somewhere this probe cannot look. Printing
+            # "CUDA tensor check: failed" at a provider that declared exactly
+            # that is the af3_jax false refusal in report form -- and what an
+            # operator needs here is the name of the thing that does hold it.
+            print(f"    GPU: held by {driven_by}, not by this interpreter")
         else:
             if mgpu.get("error") and mgpu.get("jax_backend") != "gpu":
                 print(f"    GPU error: {mgpu['error']}")

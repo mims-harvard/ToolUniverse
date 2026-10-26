@@ -474,20 +474,6 @@ def _probe_arch(exec_env) -> Optional[Dict[str, Any]]:
     return None
 
 
-def _torch_must_see_the_gpu(manifest) -> bool:
-    """Whether a GPU provider's own interpreter is expected to drive the card.
-
-    Almost always yes, and then torch not seeing the GPU is the refusal that
-    saves an hour. But `[gpu] driven_by` names the providers where the card is
-    held somewhere this probe cannot look: carbonx has no torch at all and
-    serves Carbon-X from a llama.cpp child process. Refusing it for what torch
-    says would be the af3_jax false refusal again, which `_arch_problem`
-    already carries a branch for -- this is the same lesson one layer up,
-    where a provider can state it instead of the probe having to guess.
-    """
-    return manifest.gpu_policy == "required" and not manifest.gpu_driven_by
-
-
 def _toolchain_problems(exec_env, gpu_required: bool) -> tuple:
     """``(refusal, reason, notes)``: torch's cubins refuse; Triton's two stages note."""
     info = _probe_arch(exec_env)
@@ -786,7 +772,7 @@ def step_environment(manifest: ProviderManifest) -> StepResult:
             from .exec_env import from_manifest
 
             problem, why, notes = _toolchain_problems(
-                from_manifest(manifest), _torch_must_see_the_gpu(manifest)
+                from_manifest(manifest), manifest.torch_must_see_the_gpu
             )
             if problem:
                 return StepResult(
@@ -886,7 +872,7 @@ def step_environment(manifest: ProviderManifest) -> StepResult:
     from .exec_env import from_manifest
 
     problem, why, notes = _toolchain_problems(
-        from_manifest(manifest), _torch_must_see_the_gpu(manifest)
+        from_manifest(manifest), manifest.torch_must_see_the_gpu
     )
     if problem:
         return StepResult(

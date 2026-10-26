@@ -64,6 +64,17 @@ reads it. Without that key a correct install is refused with
 `torch_arch_unsupported` — the same false refusal af3_jax hit when jax held
 the card.
 
+`tu remote check carbonx` reads the same key, and a correct machine prints
+
+~~~
+  ✓ model environment: ~/carbonx-venv/bin/python
+    GPU: held by llama.cpp b11742 (CUDA 13.4), in a child process, not by this interpreter
+~~~
+
+rather than a CUDA tensor check. If it instead prints
+`GPU error: No module named 'torch'` and `CUDA tensor check: failed`, the
+install is fine and the checkout predates that fix.
+
 **This provider wraps no optimization kit**, so its setup has four steps
 rather than five. Upstream publishes the inference runtime itself, as a
 llama.cpp release.
