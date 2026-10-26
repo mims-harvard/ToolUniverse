@@ -435,6 +435,7 @@ class ProviderPool:
     # the measurement rules can be tested without a provider environment.
     holds_model_in_worker: Callable[[str], bool] = admission.declares_resident_worker
     read_holdings: Callable[[], Mapping[str, float | None]] = admission.machine_holdings
+    read_tree_rss: Callable[[int], float | None] = admission.process_tree_rss_gib
     # How a provider's own interpreter is found, which is `tu remote run`'s rule and
     # `check_environment`'s: `TOOLUNIVERSE_REMOTE_<SLUG>_PYTHON`, then
     # `TOOLUNIVERSE_REMOTE_PYTHON`, then `.venvs/<slug>`, then this interpreter.
@@ -836,6 +837,12 @@ class ProviderPool:
         carries, measured deliberately rather than off whichever call happened to be
         first.
 
+        AND MEASURED FROM THE PROVIDER'S PROCESS TREE WHERE THERE IS ONE, because a
+        difference in free memory is not this provider's cost on a machine whose pool
+        is its own RAM -- see :meth:`_tree_measurement` for the two readings that say
+        so. The difference remains the answer where the tree is not available: a
+        discrete device, an adopted endpoint, a process table that cannot be read.
+
         Once per residency. A call can be answered without a model ever loading -- a
         rejected argument, a cached answer -- and for a provider that keeps a worker the
         process table says which happened, so that is checked. For a provider holding its
@@ -862,22 +869,62 @@ class ProviderPool:
             if active is None or active.measured:
                 return
             baseline = active.baseline_free_mib
-        if baseline is None:
-            return
+            managed = active.managed
         if self.holds_model_in_worker(slug) and not self._worker_is_up(slug):
             return
-        try:
-            free_now = self.read_free_vram()
-        except (OSError, ValueError):
-            return
-        if free_now is None:
-            return
+
+        measurement = self._tree_measurement(managed)
+        if measurement is None:
+            if baseline is None:
+                return
+            try:
+                free_now = self.read_free_vram()
+            except (OSError, ValueError):
+                return
+            if free_now is None:
+                return
+            measurement = baseline - free_now
+
         with self._lock:
             active = self._active.get(slug)
             if active is None or active.measured:
                 return
             active.measured = True
-        self.footprints.record(slug, baseline - free_now)
+        self.footprints.record(slug, measurement)
+
+    def _tree_measurement(self, managed: ManagedRemoteProcess | None) -> int | None:
+        """What this provider's processes hold, where that is what the pool spends.
+
+        A DIFFERENCE IN FREE MEMORY IS NOT THIS PROVIDER'S COST ON A UNIFIED-MEMORY
+        HOST, and the two readings taken here say so in both directions: across one
+        boltz residency measured on 2026-10-26 `MemAvailable` fell 14.9 GiB where the
+        provider's tree held 11.67, and the design doc records an earlier load across
+        which it ROSE by 1.3 GiB because something else released more than the model
+        took. With one pool for host and device there is nothing in that reading to
+        tell a model's pages from a page cache's. `FootprintStore.record` keeps the
+        largest figure it has ever seen, so an over-attributed difference is not one
+        bad measurement, it is a ceiling for the life of the store.
+
+        The process tree is attributable by construction, and it is the right unit
+        here for the same reason the holdings are: a provider's residency is a tree,
+        not a process. Boltz's worker forks, and its first call starts a second model
+        server -- `boltz2_opt.affinity_leg --serve`, 4.94 GiB, reused by later calls --
+        which no reading of one pid would see.
+
+        None where the tree is not the answer, and then the caller falls back to the
+        difference: on a discrete device, because host RSS is not device memory there;
+        for an ADOPTED endpoint, because this pool did not start it and has no pid for
+        it; and when the table cannot be read at all.
+        """
+
+        if managed is None:
+            return None
+        if self._pool_is_shared_with_the_host() is not True:
+            return None
+        held = self.read_tree_rss(managed.process.pid)
+        if held is None:
+            return None
+        return int(held * 1024)
 
     def _worker_is_up(self, slug: str) -> bool:
         """Whether a resident worker for ``slug`` is running on this machine.

@@ -43,14 +43,34 @@ class FakeClock:
         self.now += seconds
 
 
+class FakeProcess:
+    """Just the pid, which is what the pool reads a managed process for.
+
+    `ManagedRemoteProcess` wraps a `subprocess.Popen`, and the pool asks it for
+    one thing: the root of the process tree to cost. A started provider here
+    therefore has a distinct pid, so a test can give each tree its own reading.
+    """
+
+    def __init__(self, pid: int) -> None:
+        self.pid = pid
+
+
+class FakeManaged:
+    def __init__(self, pid: int) -> None:
+        self.process = FakeProcess(pid)
+
+
 class Lifecycle:
     """Records provider start/stop instead of launching anything."""
+
+    FIRST_PID = 4000
 
     def __init__(self) -> None:
         self.started: list[str] = []
         self.stopped: list[str] = []
         self.warmed: list[str] = []
         self.interpreters: dict[str, str] = {}
+        self.pids: dict[str, int] = {}
         self.fail: set[str] = set()
 
     def ensure(
@@ -69,7 +89,8 @@ class Lifecycle:
         self.interpreters[deployment.slug] = python
         if warm_model:
             self.warmed.append(deployment.slug)
-        return object(), {"endpoint": deployment.endpoint, "ok": True}
+        pid = self.pids.setdefault(deployment.slug, self.FIRST_PID + len(self.pids))
+        return FakeManaged(pid), {"endpoint": deployment.endpoint, "ok": True}
 
     def stop(self, managed) -> None:
         self.stopped.append("stopped")
@@ -92,6 +113,10 @@ def make_pool(tmp_path: Path, slugs, lifecycle=None, **kwargs) -> ProviderPool:
     # meaning "free", so a test that says nothing about that gets a discrete device,
     # where a manifest's 0 is the whole answer.
     kwargs.setdefault("pool_shares_host_memory", lambda: False)
+    # A provider's process tree is a reading of this machine too, and the tests that
+    # predate it were written against the difference in free memory, so the default
+    # says "no tree reading here" and they keep measuring the way they describe.
+    kwargs.setdefault("read_tree_rss", lambda pid: None)
     kwargs.setdefault("python", "/nonexistent/python")
     pool = ProviderPool(
         allow=tuple(slugs),
@@ -1206,6 +1231,153 @@ def test_on_a_discrete_device_a_declared_zero_costs_nothing_and_is_read_for_noth
 
     assert pool.footprints.get("esm") is None
     assert gpu.reads == 0, "a provider known to hold nothing is measured for nothing"
+
+
+# ---------------------------------------------------------------------------
+# What a residency costs: the tree, not a difference in free memory
+#
+# Measured on this project's GB10 on 2026-10-26, boltz answering one call. Its
+# worker forks, and the call started a second model server
+# (`boltz2_opt.affinity_leg --serve`, 4.94 GiB) that the next call reused:
+#
+#     worker 5.73 + fork 1.00 + affinity leg 4.94  =  11.67 GiB  held
+#     MemAvailable 110.1 -> 95.2                   =  14.90 GiB  "measured"
+#
+# The difference is 3.23 GiB of other tenants and kernel accounting, charged to
+# boltz and then kept forever, because `FootprintStore.record` keeps the largest
+# figure it has ever seen. The same reading has gone the other way too: the
+# design doc records a boltz load across which `MemAvailable` ROSE by 1.3 GiB.
+# ---------------------------------------------------------------------------
+
+TREE_GIB = 11.67
+TREE_MIB = int(TREE_GIB * 1024)
+
+
+def test_on_a_shared_pool_a_cost_is_measured_from_the_tree_and_not_the_difference(
+    tmp_path,
+):
+    """Both readings are available and the tree is the one recorded.
+
+    The machine here would answer 10,000 MiB by difference. That figure is not
+    this provider's, and on this hardware it has been wrong in both directions.
+    """
+    pool = unified_pool(
+        tmp_path,
+        ["esm"],
+        falling_gpu(40_000, 30_000),
+        read_tree_rss=lambda pid: TREE_GIB,
+    )
+    deployment = esm_of(pool)
+
+    pool.acquire(deployment)
+    pool.learn_footprint(deployment)
+
+    assert pool.footprints.get("esm") == TREE_MIB
+
+
+def test_the_tree_is_rooted_at_the_process_this_pool_started(tmp_path):
+    """Not at a pid found by pattern: this pool knows which process it launched."""
+    lifecycle = Lifecycle()
+    asked: list[int] = []
+    pool = unified_pool(
+        tmp_path,
+        ["esm"],
+        falling_gpu(40_000, 30_000),
+        lifecycle=lifecycle,
+        read_tree_rss=lambda pid: asked.append(pid) or TREE_GIB,
+    )
+    deployment = esm_of(pool)
+
+    pool.acquire(deployment)
+    pool.learn_footprint(deployment)
+
+    assert asked == [lifecycle.pids["esm"]]
+
+
+def test_a_tree_reading_needs_no_baseline(tmp_path):
+    """A difference needs two readings; a tree needs none of them.
+
+    This is the case the old measurement could not take at all: a machine whose
+    free memory did not answer when the provider started has no baseline, so the
+    cost stayed unknown however many calls it served.
+    """
+    pool = unified_pool(
+        tmp_path,
+        ["esm"],
+        lambda: None,
+        read_tree_rss=lambda pid: TREE_GIB,
+    )
+    deployment = esm_of(pool)
+
+    pool.acquire(deployment)
+    pool.learn_footprint(deployment)
+
+    assert pool.footprints.get("esm") == TREE_MIB
+
+
+def test_a_tree_is_not_read_on_a_discrete_device(tmp_path):
+    """Host RSS is not device memory there, so it is not a candidate at all."""
+    asked: list[int] = []
+    pool = vram_pool(
+        tmp_path,
+        ["esm"],
+        falling_gpu(40_000, 30_000),
+        pool_shares_host_memory=lambda: False,
+        read_tree_rss=lambda pid: asked.append(pid) or TREE_GIB,
+    )
+    deployment = esm_of(pool)
+
+    pool.acquire(deployment)
+    pool.learn_footprint(deployment)
+
+    assert asked == []
+    assert pool.footprints.get("esm") == 10_000
+
+
+def test_an_adopted_endpoint_is_measured_by_the_difference(tmp_path):
+    """There is no pid to root a tree at, and a pattern would find the wrong one.
+
+    `ensure` adopts an endpoint already serving the reviewed tool set rather than
+    restarting it, and such a provider is `managed=None`: started by another
+    session, in another checkout, possibly under another interpreter. The
+    difference is a worse figure and it is the only one available.
+    """
+    lifecycle = Lifecycle()
+    lifecycle.ensure = lambda deployment, **kw: (
+        None,
+        {"endpoint": deployment.endpoint, "ok": True},
+    )
+    asked: list[int] = []
+    pool = unified_pool(
+        tmp_path,
+        ["esm"],
+        falling_gpu(40_000, 30_000),
+        lifecycle=lifecycle,
+        read_tree_rss=lambda pid: asked.append(pid) or TREE_GIB,
+    )
+    deployment = esm_of(pool)
+
+    pool.acquire(deployment)
+    pool.learn_footprint(deployment)
+
+    assert asked == []
+    assert pool.footprints.get("esm") == 10_000
+
+
+def test_a_tree_that_cannot_be_read_falls_back_to_the_difference(tmp_path):
+    """`ps` failing is a reason to use the worse figure, not to learn nothing."""
+    pool = unified_pool(
+        tmp_path,
+        ["esm"],
+        falling_gpu(40_000, 30_000),
+        read_tree_rss=lambda pid: None,
+    )
+    deployment = esm_of(pool)
+
+    pool.acquire(deployment)
+    pool.learn_footprint(deployment)
+
+    assert pool.footprints.get("esm") == 10_000
 
 
 def test_a_machine_that_cannot_say_which_kind_it_is_keeps_the_manifests_answer(

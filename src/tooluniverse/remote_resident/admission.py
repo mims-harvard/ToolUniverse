@@ -274,6 +274,108 @@ def _holder_of(path: str) -> Tuple[str, Optional[str]]:
     return slug, tree
 
 
+PS_COLUMNS = ["ps", "-eo", "pid,ppid,rss,args"]
+
+
+def _read_ps() -> Optional[str]:
+    """One snapshot of the process table, or None if `ps` could not be run."""
+
+    try:
+        return subprocess.run(
+            PS_COLUMNS,
+            capture_output=True,
+            text=True,
+            timeout=20,
+        ).stdout
+    except (OSError, subprocess.SubprocessError):
+        return None
+
+
+def _process_rows(ps_output: str) -> list[Tuple[str, str, int, str]]:
+    """`(pid, ppid, rss KiB, args)` for each real row of a `PS_COLUMNS` snapshot.
+
+    A row is four fields with three leading integers. That excludes `ps`'s own
+    header, and it excludes a shell whose command line merely quotes a worker's
+    -- one was in this machine's process table while this was being written, and
+    it passed every other test a holder is given. The field count is also a
+    guard and not only a filter: the four names below are unpacked from it, so a
+    shorter row would raise rather than be ignored, and this module returning
+    nothing is the wedged host it exists to prevent.
+    """
+
+    rows = []
+    for line in (ps_output or "").splitlines():
+        fields = line.split(None, 3)
+        if len(fields) < 4 or not all(f.isdigit() for f in fields[:3]):
+            continue
+        pid, ppid, rss, args = fields
+        rows.append((pid, ppid, int(rss), args))
+    return rows
+
+
+def _tree_rss_gib(root: str, rows: list[Tuple[str, str, int, str]]) -> float:
+    """This process and everything under it, from one snapshot of the table.
+
+    ONE SNAPSHOT AND NOT A /PROC WALK PER PROCESS: a walk reads a different
+    moment for each one, and a child that exits between two of them makes the
+    sum describe no instant that ever existed. The gate decides in one moment,
+    so it reads one.
+
+    A cycle cannot occur in a parent/child relation, but a snapshot can still
+    disagree with itself -- a process reparented to init between two columns --
+    so `seen` is what keeps this from looping.
+    """
+
+    rss = {pid: kib for pid, _ppid, kib, _args in rows}
+    children: Dict[str, list[str]] = {}
+    for pid, ppid, _kib, _args in rows:
+        children.setdefault(ppid, []).append(pid)
+
+    total, seen, frontier = 0, set(), [root]
+    while frontier:
+        current = frontier.pop()
+        if current in seen:
+            continue
+        seen.add(current)
+        total += rss.get(current, 0)
+        frontier.extend(children.get(current, ()))
+    return total / (1024 * 1024)
+
+
+def process_tree_rss_gib(
+    pid: int, *, ps_output: Optional[str] = None
+) -> Optional[float]:
+    """What `pid` and its descendants hold, or None if the table cannot be read.
+
+    This is what a provider costs on a machine whose pool is its own RAM, and
+    `ProviderPool` measures with it instead of a difference in `MemAvailable`.
+    That difference is not this provider's: measured live here across one boltz
+    residency it was 14.9 GiB where the tree held 11.67, and the design doc
+    records an earlier load across which `MemAvailable` ROSE by 1.3 GiB because
+    something else released more than the model took. One pool for host and
+    device leaves nothing in that reading to tell a model's pages from a page
+    cache's, and `FootprintStore.record` keeps the largest figure it ever saw --
+    so an over-attributed reading is not a bad measurement once, it is a ceiling
+    forever. A process tree is attributable by construction.
+
+    None rather than 0.0 when `ps` could not be run, because a provider holding
+    nothing and a machine that cannot say are different answers and only one of
+    them is safe to admit against.
+    """
+
+    if ps_output is None:
+        ps_output = _read_ps()
+        if ps_output is None:
+            return None
+    rows = _process_rows(ps_output)
+    if not any(row[0] == str(pid) for row in rows):
+        # The process is gone, which is not the same as holding nothing: a
+        # provider that exited between the call it answered and this reading has
+        # no cost to learn, and recording a 0 for it would be a measurement.
+        return None
+    return _tree_rss_gib(str(pid), rows)
+
+
 def machine_holdings(
     *,
     ps_output: Optional[str] = None,
@@ -342,32 +444,17 @@ def machine_holdings(
     holder that owns it.
     """
     if ps_output is None:
-        try:
-            ps_output = subprocess.run(
-                ["ps", "-eo", "pid,ppid,rss,args"],
-                capture_output=True,
-                text=True,
-                timeout=20,
-            ).stdout
-        except (OSError, subprocess.SubprocessError):
+        ps_output = _read_ps()
+        if ps_output is None:
             return {}
     if budget_of is None:
         budget_of = _declared_budget
     if pool_is_shared is None:
         pool_is_shared = pool_is_shared_with_the_host
 
-    rss_kib: Dict[str, int] = {}
-    children: Dict[str, list[str]] = {}
+    rows = _process_rows(ps_output)
     matches: list[Tuple[str, str, str, Optional[str]]] = []
-    for line in (ps_output or "").splitlines():
-        fields = line.split(None, 3)
-        if len(fields) < 4 or not all(f.isdigit() for f in fields[:3]):
-            # Not a `pid,ppid,rss,args` row, so not a process: the header, or
-            # output from somewhere this function does not read.
-            continue
-        pid, ppid, rss, args = fields
-        rss_kib[pid] = int(rss)
-        children.setdefault(ppid, []).append(pid)
+    for pid, ppid, _rss, args in rows:
         if "resident_worker.py" not in args or "--socket" not in args:
             continue
         worker = next((tok for tok in args.split() if "/resident/" in tok), "")
@@ -388,26 +475,6 @@ def machine_holdings(
             tree = None
         matches.append((pid, ppid, slug, tree))
 
-    def tree_rss_gib(pid: str) -> float:
-        """This process and everything under it, from the one `ps` snapshot.
-
-        One snapshot and not a /proc walk per holder: a walk reads a different
-        moment per process, and the moment that matters is the one the gate is
-        deciding in. A cycle cannot occur in a parent/child relation, but a
-        snapshot can still disagree with itself -- a process reparented to init
-        between columns -- so `seen` is what keeps this from looping.
-        """
-
-        total, seen, frontier = 0, set(), [pid]
-        while frontier:
-            current = frontier.pop()
-            if current in seen:
-                continue
-            seen.add(current)
-            total += rss_kib.get(current, 0)
-            frontier.extend(children.get(current, ()))
-        return total / (1024 * 1024)
-
     shared = pool_is_shared()
     holders = {pid for pid, _ppid, _slug, _tree in matches}
     out: Dict[str, Optional[float]] = {}
@@ -426,7 +493,7 @@ def machine_holdings(
         if shared is not True:
             out[key] = declared
             continue
-        held = tree_rss_gib(pid)
+        held = _tree_rss_gib(pid, rows)
         out[key] = held if declared is None else max(declared, held)
     return out
 

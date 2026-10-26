@@ -402,14 +402,24 @@ A measurement is taken once per residency — every later call would be measured
 baseline from before the load — and it is a residency cost plus whatever that one call
 still holds, which is not the request peak the manifests carry.
 
-On a unified-memory host the local reading is frequently worthless, and that is a reason
-the declared budget exists rather than a reason to distrust the design: measured live on
-this project's GB10 with `boltz` prewarmed, `MemAvailable` *rose* by 1.3 GiB across the
-load — something else on the machine released more than the model was taking, and with
-one pool for host and device there is nothing in the reading to tell them apart. A
-difference of zero or less is recorded as nothing, so admission went on using the
-manifest's 5673 MiB. The measurement is worth taking where it is reliable, and worth
-nothing where it is not — which is why it is never the only figure.
+**On a unified-memory host a difference in free memory is not the provider's cost**, and
+it has been wrong in both directions here. With `boltz` prewarmed, `MemAvailable` *rose*
+by 1.3 GiB across the load — something else released more than the model was taking. On
+2026-10-26, across one boltz residency, it fell 14.9 GiB where the provider's tree held
+11.67: 3.2 GiB of other tenants and kernel accounting, charged to boltz and then kept,
+because `FootprintStore.record` keeps the largest figure it has ever seen. An
+over-attributed difference is not one bad measurement; it is a ceiling for the life of
+the store.
+
+So where the pool is the host's own memory the measurement is **the resident set of the
+provider's process tree**, rooted at the process this pool started — attributable by
+construction, and the only reading that sees a forked worker or a second model server.
+The difference is still what answers where a tree is not available: on a discrete device,
+because host RSS is not device memory there; for an **adopted** endpoint, because the pool
+did not start it and has no pid for it; and when the process table cannot be read. It
+needs no baseline, which is the case the old measurement could not take at all — a
+machine whose free memory did not answer at start-up left the cost unknown however many
+calls the provider went on to serve.
 
 Reading the machine still degrades to "do not reason about memory" rather than to "no
 memory": no `nvidia-smi`, a non-zero exit, a reading that is neither a number nor `[N/A]`,
