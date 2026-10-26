@@ -78,7 +78,10 @@ class Verdict:
     budget_gb: Optional[float] = None
     capacity_gib: Optional[float] = None
     capacity_source: str = ""
-    declared_held_gb: float = 0.0
+    # `held_gb`, not `declared_held_gb`: on a machine whose pool is its own RAM
+    # the holdings are read from the process table, and only on a discrete device
+    # is this sum the declared budgets it was originally named for.
+    held_gb: float = 0.0
     free_gib: Optional[float] = None
     available_gib: Optional[float] = None
     gate: str = ""
@@ -605,7 +608,7 @@ def decide(
     held = dict(held or {})
     held.pop(slug, None)  # restarting what is already held frees its own budget
     unknown = tuple(sorted(k for k, v in held.items() if v is None))
-    declared = sum(v for v in held.values() if v is not None)
+    held_total = sum(v for v in held.values() if v is not None)
 
     cap, cap_source = capacity if capacity is not None else capacity_gib()
     m = dict(mem) if mem is not None else meminfo_gib()
@@ -621,7 +624,7 @@ def decide(
         budget_gb=budget_gb,
         capacity_gib=cap,
         capacity_source=cap_source,
-        declared_held_gb=round(declared, 2),
+        held_gb=round(held_total, 2),
         free_gib=None if free is None else round(free, 1),
         available_gib=None if avail is None else round(avail, 1),
         gate=gate,
@@ -657,11 +660,11 @@ def decide(
         )
         return v
 
-    wanted = declared + budget_gb + reserve_gb
+    wanted = held_total + budget_gb + reserve_gb
     if wanted > cap:
         v.reason = (
-            f"{slug} needs {budget_gb} GiB and {declared} GiB is already declared "
-            f"held by {len(held)} worker(s); with {reserve_gb} GiB left for the "
+            f"{slug} needs {budget_gb} GiB and {round(held_total, 2)} GiB is "
+            f"already held by {len(held)} worker(s); with {reserve_gb} GiB left for the "
             f"host that is {round(wanted, 2)} GiB against a pool of "
             f"{round(cap, 1)} GiB ({cap_source}). Stop a resident provider, or "
             f"run this one on a quieter machine -- do not start it anyway: that "
@@ -686,7 +689,7 @@ def decide(
             "reclaim is not a race"
         )
         v.reason = (
-            f"the pool is big enough on paper -- {declared} GiB declared held of "
+            f"the pool is big enough on paper -- {round(held_total, 2)} GiB held of "
             f"{round(cap, 1)} -- but the machine does not have the room right "
             f"now: {detail}. {slug} needs {budget_gb} GiB plus {reserve_gb} GiB "
             f"for the host. {why}. Wait for a co-tenant to finish; "
@@ -697,7 +700,7 @@ def decide(
 
     v.admit = True
     v.reason = (
-        f"{slug} fits: {budget_gb} GiB on top of {declared} GiB declared held, "
+        f"{slug} fits: {budget_gb} GiB on top of {round(held_total, 2)} GiB held, "
         f"{round(wanted, 2)} of {round(cap, 1)} GiB ({cap_source}), and "
         f"{gate} reads {round(gate_value, 1)} GiB with {tenants} process(es) on "
         f"the card."

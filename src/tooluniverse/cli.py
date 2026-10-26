@@ -2054,7 +2054,9 @@ def _connection_key_for_share(service: str, *, no_browser: bool = False) -> str:
                 # The variable wins over a stored sign-in, so logging in again would not help.
                 raise RuntimeError(
                     f"the key in TOOLUNIVERSE_SERVICE_KEY is no longer accepted ({exc}). "
-                    "Remove it from this shell and from " + str(_global_env_path()) + ", or replace it "
+                    "Remove it from this shell and from "
+                    + str(_global_env_path())
+                    + ", or replace it "
                     "with a current key, then run this command again."
                 ) from exc
             raise RuntimeError(
@@ -2308,9 +2310,7 @@ def cmd_remote_login(args: argparse.Namespace) -> None:
     import getpass
 
     if getattr(args, "detach", False):
-        _run_detached(
-            "login", ("Code:", "Remote login verified"), wait_seconds=60
-        )
+        _run_detached("login", ("Code:", "Remote login verified"), wait_seconds=60)
         return
 
     try:
@@ -2611,9 +2611,7 @@ def cmd_serve(args: argparse.Namespace) -> None:
         )
         return
     try:
-        chosen = [
-            label for name, label in SERVE_INPUTS if getattr(args, name, None)
-        ]
+        chosen = [label for name, label in SERVE_INPUTS if getattr(args, name, None)]
         if len(chosen) > 1:
             raise ValueError(
                 f"choose one thing to share, not {len(chosen)}: {', '.join(chosen)}"
@@ -2903,9 +2901,7 @@ def cmd_remote_room(args):
                 {
                     "capacity_gib": None if cap is None else round(cap, 2),
                     "capacity_source": cap_source,
-                    "declared_held_gb": round(
-                        sum(x for x in held.values() if x is not None), 2
-                    ),
+                    "held_gb": round(sum(x for x in held.values() if x is not None), 2),
                     "held": held,
                     "mem_free_gib": round(mem["MemFree"], 1),
                     "mem_available_gib": round(mem["MemAvailable"], 1),
@@ -2918,16 +2914,22 @@ def cmd_remote_room(args):
         )
         return
 
-    declared = sum(x for x in held.values() if x is not None)
+    held_total = sum(x for x in held.values() if x is not None)
     gate = "MemFree" if tenants else "MemAvailable"
     print(
         f"pool {'unknown' if cap is None else f'{cap:.1f} GiB'} ({cap_source}); "
-        f"{declared:.2f} GiB declared held by {len(held)} worker(s); "
+        f"{held_total:.2f} GiB held by {len(held)} worker(s); "
         f"{gate} {mem[gate]:.1f} GiB; {tenants} process(es) on the card; "
         f"{args.reserve} GiB reserved for the host"
     )
     if held:
-        print("  holding: " + ", ".join(f"{k}={v}" for k, v in sorted(held.items())))
+        print(
+            "  holding: "
+            + ", ".join(
+                f"{k}={'?' if v is None else format(v, '.2f')}"
+                for k, v in sorted(held.items())
+            )
+        )
     print()
     for row in rows:
         mark = "fits" if row["fits"] else "NO"
@@ -3174,9 +3176,7 @@ def default_server_name(suffix: str = "") -> str:
     return f"{host}{suffix}"
 
 
-def unset_pass_env_warning(
-    names: Sequence[str], environment: Mapping[str, str]
-) -> str:
+def unset_pass_env_warning(names: Sequence[str], environment: Mapping[str, str]) -> str:
     """Warn about --pass-env names that are not set, or return "" when all of them are.
 
     --pass-env names a variable to hand through to a model, and a name that is not set hands
@@ -3212,7 +3212,11 @@ def background_command_for_pool(args: argparse.Namespace, server_name: str) -> s
     Only non-default options are included: a line carrying every flag at its default value is
     harder to read and no more faithful.
     """
-    quoted = server_name if server_name.replace("-", "").replace("_", "").isalnum() else f'"{server_name}"'
+    quoted = (
+        server_name
+        if server_name.replace("-", "").replace("_", "").isalnum()
+        else f'"{server_name}"'
+    )
     parts = [
         "tuplatform-service install",
         f"--allow {args.allow}",
@@ -3351,9 +3355,7 @@ def cmd_remote_pool(args: argparse.Namespace) -> None:
     # would be invisible to callers even though the pool can route to it. Sharing without
     # a manifest publishes an online server with zero tools, so fill the gaps first.
     if args.warm or (args.share and pool.missing_snapshots()):
-        pending = (
-            pool.deployments if args.warm else pool.missing_snapshots()
-        )
+        pending = pool.deployments if args.warm else pool.missing_snapshots()
         print(f"Warming {len(pending)} provider(s) to snapshot their tool schemas.")
         if args.warm:
             for deployment in pending:
@@ -3440,7 +3442,9 @@ def cmd_remote_pool(args: argparse.Namespace) -> None:
                     f"  Either stop that one, or give this one a free port:  --port {spare}"
                 )
             else:
-                lines.append("  Stop that one, or pass --port with a port nothing is using.")
+                lines.append(
+                    "  Stop that one, or pass --port with a port nothing is using."
+                )
             print("\n".join(lines), file=sys.stderr)
             raise SystemExit(2) from exc
         raise
@@ -3471,7 +3475,10 @@ def cmd_remote_pool(args: argparse.Namespace) -> None:
             )
         try:
             server_name = args.name or default_server_name("-models")
-            if "background_command" in inspect.signature(RelayAgent.__init__).parameters:
+            if (
+                "background_command"
+                in inspect.signature(RelayAgent.__init__).parameters
+            ):
                 # Older tuplatform-connect simply does not print the hint.
                 relay_kwargs["background_command"] = background_command_for_pool(
                     args, server_name
@@ -3635,8 +3642,10 @@ def _borrower_api_key(
     the identical error, because that key is stored in a file this never read -- and could not
     have used, since it is the computer-only kind.
     """
-    in_shell = {name: bool(os.getenv(name, "").strip())
-                for name in (BORROWER_KEY_ENV, "TOOLUNIVERSE_SERVICE_KEY")}
+    in_shell = {
+        name: bool(os.getenv(name, "").strip())
+        for name in (BORROWER_KEY_ENV, "TOOLUNIVERSE_SERVICE_KEY")
+    }
     # Workspace file, then the global one, neither overriding the shell -- the precedence
     # ToolUniverse itself uses. Loaded directly rather than through _load_global_dotenv,
     # which skips the global file when it is the same path as the workspace one on the
@@ -3669,7 +3678,7 @@ def _borrower_api_key(
             "join another one."
         )
     # The page's own button reads "Create a connection key"; naming it is how someone finds it.
-    lines.append(f"  Create one at {page} (click \"Create a connection key\").")
+    lines.append(f'  Create one at {page} (click "Create a connection key").')
     if not sys.stdin.isatty():
         lines.append(
             f"  Then save it once so every terminal has it: add the line "
@@ -3790,7 +3799,9 @@ def cmd_connect(args: argparse.Namespace) -> None:
         for name in listed[:10]:
             print(f"  {name}")
         if len(listed) > 10:
-            print(f"  ... and {len(listed) - 10} more: tu grep {connection.get('prefix', '')}")
+            print(
+                f"  ... and {len(listed) - 10} more: tu grep {connection.get('prefix', '')}"
+            )
     if connection.get("kind") == "platform":
         # Connecting to a published tool needs no key -- its description is public -- but
         # calling it does. Without this the connect succeeded silently and the key was first
@@ -3845,7 +3856,10 @@ def _after_connect_lines(connection: dict, listed: list[str]) -> list[str]:
         lines += ["Try it here:", f"  tu info {listed[0]}"]
     else:
         prefix = connection.get("prefix", "")
-        lines += [f"Its tools are named {prefix}...; list them with:", f"  tu grep {prefix}"]
+        lines += [
+            f"Its tools are named {prefix}...; list them with:",
+            f"  tu grep {prefix}",
+        ]
     lines += [
         "",
         "Use it from an AI assistant: restart any assistant that already runs ToolUniverse",
@@ -3869,7 +3883,9 @@ def cmd_connections(args: argparse.Namespace) -> None:
         print("No remote tool connections saved.")
         # Most people arrive holding a share code or a marketplace link, not an MCP URL.
         print("Add one with any of:")
-        print("  tu connect TU-SHARE-...      a code someone sent you to use their machine")
+        print(
+            "  tu connect TU-SHARE-...      a code someone sent you to use their machine"
+        )
         print("  tu connect <tool page link>  a tool from the marketplace")
         print("  tu connect <MCP-URL>         your own or another MCP server")
         return

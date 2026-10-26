@@ -1806,7 +1806,7 @@ class TestAdmission:
         v = self._decide(slug="ef2inv", budget_gb=28.0, held={}, mem=self.WEDGE)
         assert v.gate == "MemAvailable"
 
-    def test_a_full_pool_is_refused_on_the_declared_sum_alone(self):
+    def test_a_full_pool_is_refused_on_the_holdings_sum_alone(self):
         """The machine looks idle; the budgets say it is not. Both gates matter."""
         v = self._decide(
             slug="opendde",
@@ -1820,7 +1820,7 @@ class TestAdmission:
             },
         )
         assert not v
-        assert "103.53 GiB is already declared held" in v.reason
+        assert "103.53 GiB is already held" in v.reason
         assert v.available_gib == 110.0, "refused with the machine looking empty"
 
     def test_an_undeclared_held_budget_is_not_treated_as_zero(self):
@@ -1842,7 +1842,7 @@ class TestAdmission:
             slug="complexa", budget_gb=20.25, held={"complexa": 20.25, "boltz": 5.54}
         )
         assert v
-        assert v.declared_held_gb == 5.54
+        assert v.held_gb == 5.54
 
     def test_an_unknown_capacity_refuses_rather_than_assuming(self):
         v = self._decide(
@@ -2152,7 +2152,7 @@ class TestRemoteRoomCommand:
     def test_it_lists_every_gpu_resident_provider_with_a_verdict(self):
         code, out, _ = self._run()
         assert code == 0
-        assert "declared held by" in out, "the header must show what is held"
+        assert "GiB held by" in out, "the header must show what is held"
         lines = [ln for ln in out.splitlines() if " GiB   " in ln]
         assert len(lines) >= 20, f"only {len(lines)} providers judged"
         for ln in lines:
@@ -2186,7 +2186,7 @@ class TestRemoteRoomCommand:
         for key in (
             "capacity_gib",
             "capacity_source",
-            "declared_held_gb",
+            "held_gb",
             "held",
             "mem_free_gib",
             "mem_available_gib",
@@ -2199,6 +2199,28 @@ class TestRemoteRoomCommand:
         assert {"slug", "fits", "reason", "vram_budget_gb", "status"} <= set(
             doc["providers"][0]
         )
+
+    def test_a_holding_is_printed_to_two_decimals(self, monkeypatch):
+        """A tree reading is not a two-decimal manifest figure.
+
+        Holdings used to be declared budgets, which a manifest writes as 5.54,
+        so printing them raw read fine. A reading off the process table does not:
+        the first run of this line said `boltz=11.338134765625`. The machine-
+        readable `held` keeps full precision; the line a person reads does not.
+        """
+        import re
+
+        from tooluniverse.remote_resident import admission
+
+        monkeypatch.setattr(
+            admission, "machine_holdings", lambda: {"boltz": 11.338134765625}
+        )
+        code, out, _ = self._run()
+
+        assert code == 0
+        line = next(ln for ln in out.splitlines() if "holding:" in ln)
+        assert "boltz=11.34" in line, line
+        assert not re.search(r"\d\.\d{3}", line), line
 
     def test_a_bigger_reserve_can_only_narrow_what_fits(self):
         """The reserve is the host's room, so raising it never admits more."""
@@ -2620,7 +2642,7 @@ class TestTheCliAndTheGateAgree:
 
         doc = json.loads(_run_room("--json"))
         assert calls, "the command did not consult machine_holdings"
-        assert doc["declared_held_gb"] == 100.0
+        assert doc["held_gb"] == 100.0
         assert doc["held"] == {"ghost@elsewhere": 100.0}
         # The largest provider, because that one cannot fit under any reading:
         # 100 held + 38.63 + 4 reserved is past a 121.6 GiB pool. Asserting
@@ -2628,7 +2650,7 @@ class TestTheCliAndTheGateAgree:
         # 5.54 + 4 still leaves the sum under the pool, and it genuinely fits.
         biggest = max(doc["providers"], key=lambda r: r["vram_budget_gb"] or 0)
         assert not biggest["fits"], f"{biggest['slug']} fits with 100 GiB held"
-        assert "already declared held" in biggest["reason"]
+        assert "already held" in biggest["reason"]
 
         before = len(calls)
         v = admission.room_for("boltz", 5.54)
@@ -2636,7 +2658,7 @@ class TestTheCliAndTheGateAgree:
         # That the patched holdings reached the decision, not that boltz is
         # refused -- 100 held plus 5.54 plus 4 is still under a 121.6 pool, so
         # it fits, and asserting otherwise was arithmetic by intuition twice.
-        assert v.declared_held_gb == 100.0
+        assert v.held_gb == 100.0
 
     def test_they_produce_the_same_verdict_for_the_same_provider(self):
         """The same logic over the same numbers, not two reads of a moving host.
@@ -2677,7 +2699,7 @@ class TestTheCliAndTheGateAgree:
         # and the holdings both sides read come from the process table, which is
         # the point of the pairing: a fresh CLI process has no backend state.
         held = admission.machine_holdings()
-        assert doc["declared_held_gb"] == pytest.approx(
+        assert doc["held_gb"] == pytest.approx(
             round(sum(x for x in held.values() if x is not None), 2), abs=0.01
         )
 
@@ -2744,7 +2766,7 @@ class TestACpuProviderIsZeroNotUnknown:
             co_tenants=0,
         )
         assert v.admit, v.reason
-        assert v.declared_held_gb == 0.0
+        assert v.held_gb == 0.0
         assert "cannot be summed" not in v.reason
 
     def test_an_undeclared_budget_still_refuses(self):
