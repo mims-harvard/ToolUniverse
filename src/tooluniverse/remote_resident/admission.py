@@ -275,7 +275,10 @@ def _holder_of(path: str) -> Tuple[str, Optional[str]]:
 
 
 def machine_holdings(
-    *, ps_output: Optional[str] = None, budget_of=None
+    *,
+    ps_output: Optional[str] = None,
+    budget_of=None,
+    pool_is_shared=None,
 ) -> Dict[str, Optional[float]]:
     """Every resident worker on this machine, not only this process's.
 
@@ -295,24 +298,53 @@ def machine_holdings(
 
     Keys are `slug` for a holder in this tree and `slug@tree` for one elsewhere,
     so a restart can release its own budget without releasing someone else's.
-    Values are the DECLARED budget from the local manifest, because that is what
-    a budget is for; a slug this checkout does not have returns None, which
-    `decide` refuses on rather than treating as free.
+
+    WHAT A HOLDER COSTS, AND WHY A DECLARED BUDGET IS NOT IT ON THIS MACHINE.
+    A declared `[gpu] vram_budget_gb` is one process's peak DEVICE allocation,
+    measured on the machine that verified the provider. Where the pool is the
+    host's own memory -- which `pool_is_shared_with_the_host` answers -- what
+    admission spends is the RESIDENT SET OF THE WHOLE PROCESS TREE, and those two
+    are not the same number by a factor of two. Measured live here on
+    2026-10-26, boltz answering one call:
+
+        boltz_mcp_server                        0.07 GiB
+        worker_launch (the worker)              5.70 GiB
+          worker_launch (its fork)              1.00 GiB
+          boltz2_opt.affinity_leg --serve       4.91 GiB
+                                      worker's tree 11.61 GiB
+
+    against `vram_budget_gb = 5.54`. The affinity leg is a SECOND model server,
+    started by the first call and still up 400 s later, reused by the second
+    call rather than restarted -- so it is residency, and the
+    `*_resident_worker.py --socket` pattern cannot see it. Twelve of the resident
+    workers in this catalog spawn children.
+
+    So on a shared pool a holder costs the LARGER of its declared budget and its
+    tree's RSS, read from the same `ps` snapshot that found it. The declared
+    figure still matters: it is a PEAK and the reading is the residency of this
+    moment, so a worker that has not been called yet is costed at what it will
+    need rather than at the little it holds. On a discrete device the reading is
+    not a candidate at all -- host RSS is not device memory there, and the
+    declared budget is the only figure that is.
+
+    A slug this checkout does not have, on a machine where the tree cannot be
+    costed, returns None, which `decide` refuses on rather than treating as free.
 
     The PPID is read with the command line because a launcher that FORKS is one
     residency and not two: boltz's worker is started through
     `boltz2_opt.worker_launch`, and parent and child both carry the worker path
-    and `--socket`, so one 5.54 GiB residency read as
-    `{'boltz': 5.54, 'boltz#2': 5.54}` -- measured live on this machine -- and
-    this gate refused admissions that would have fit. A match whose parent is
-    also a match is therefore dropped. Two INDEPENDENT workers of one slug are
-    still two holders, because neither is the other's child, and that is the case
-    that wedged this host.
+    and `--socket`, so one residency read as `{'boltz': 5.54, 'boltz#2': 5.54}`
+    -- measured live on this machine -- and this gate refused admissions that
+    would have fit. A match whose parent is also a match is therefore dropped.
+    Two INDEPENDENT workers of one slug are still two holders, because neither is
+    the other's child, and that is the case that wedged this host. A dropped fork
+    is still inside its parent's tree, so its memory is counted once and by the
+    holder that owns it.
     """
     if ps_output is None:
         try:
             ps_output = subprocess.run(
-                ["ps", "-eo", "pid,ppid,args"],
+                ["ps", "-eo", "pid,ppid,rss,args"],
                 capture_output=True,
                 text=True,
                 timeout=20,
@@ -321,17 +353,23 @@ def machine_holdings(
             return {}
     if budget_of is None:
         budget_of = _declared_budget
+    if pool_is_shared is None:
+        pool_is_shared = pool_is_shared_with_the_host
 
+    rss_kib: Dict[str, int] = {}
+    children: Dict[str, list[str]] = {}
     matches: list[Tuple[str, str, str, Optional[str]]] = []
     for line in (ps_output or "").splitlines():
-        if "resident_worker.py" not in line or "--socket" not in line:
+        fields = line.split(None, 3)
+        if len(fields) < 4 or not all(f.isdigit() for f in fields[:3]):
+            # Not a `pid,ppid,rss,args` row, so not a process: the header, or
+            # output from somewhere this function does not read.
             continue
-        fields = line.split(None, 2)
-        if len(fields) < 3 or not (fields[0].isdigit() and fields[1].isdigit()):
-            # Not a `pid,ppid,args` row, so not a process: the header, or output
-            # from somewhere this function does not read.
+        pid, ppid, rss, args = fields
+        rss_kib[pid] = int(rss)
+        children.setdefault(ppid, []).append(pid)
+        if "resident_worker.py" not in args or "--socket" not in args:
             continue
-        pid, ppid, args = fields
         worker = next((tok for tok in args.split() if "/resident/" in tok), "")
         if not worker:
             continue  # a shell wrapper that merely mentions the worker
@@ -350,9 +388,30 @@ def machine_holdings(
             tree = None
         matches.append((pid, ppid, slug, tree))
 
+    def tree_rss_gib(pid: str) -> float:
+        """This process and everything under it, from the one `ps` snapshot.
+
+        One snapshot and not a /proc walk per holder: a walk reads a different
+        moment per process, and the moment that matters is the one the gate is
+        deciding in. A cycle cannot occur in a parent/child relation, but a
+        snapshot can still disagree with itself -- a process reparented to init
+        between columns -- so `seen` is what keeps this from looping.
+        """
+
+        total, seen, frontier = 0, set(), [pid]
+        while frontier:
+            current = frontier.pop()
+            if current in seen:
+                continue
+            seen.add(current)
+            total += rss_kib.get(current, 0)
+            frontier.extend(children.get(current, ()))
+        return total / (1024 * 1024)
+
+    shared = pool_is_shared()
     holders = {pid for pid, _ppid, _slug, _tree in matches}
     out: Dict[str, Optional[float]] = {}
-    for _pid, ppid, slug, tree in matches:
+    for pid, ppid, slug, tree in matches:
         if ppid in holders:
             continue  # the other half of one forked launcher, counted already
         key = f"{slug}@{tree}" if tree else slug
@@ -363,7 +422,12 @@ def machine_holdings(
         while key in out:
             key = f"{base}#{suffix}"
             suffix += 1
-        out[key] = budget_of(slug)
+        declared = budget_of(slug)
+        if shared is not True:
+            out[key] = declared
+            continue
+        held = tree_rss_gib(pid)
+        out[key] = held if declared is None else max(declared, held)
     return out
 
 

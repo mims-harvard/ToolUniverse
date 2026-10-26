@@ -259,6 +259,51 @@ device it stays 0, read for nothing and recorded for nothing. A machine that can
 which kind it is keeps the manifest's answer, since it has no free reading to protect
 either. The answer is read once per pool; a failed reading is not kept.
 
+#### What one residency actually holds
+
+A declared `vram_budget_gb` is **one process's peak device allocation**, measured on the
+machine that verified the provider. Where the pool is the host's own memory, what
+admission spends is **the resident set of the whole process tree** — and on this project's
+GB10 those two numbers differ by a factor of two. Measured live on 2026-10-26, `boltz`
+answering one call, every figure read from `/proc/<pid>/status`:
+
+| process | VmRSS | VmHWM |
+|---|---|---|
+| `boltz_mcp_server` | 0.07 GiB | 0.08 GiB |
+| `worker_launch` — the worker | 5.73 GiB | 6.33 GiB |
+| `worker_launch` — the half it forked | 1.00 GiB | 1.06 GiB |
+| `boltz2_opt.affinity_leg --serve` | 4.94 GiB | 5.32 GiB |
+| **the worker's tree** | **11.67 GiB** | |
+
+against a declared 5.54. The affinity leg is a **second model server**, started by the
+first call 65 s after the worker and still up 400 s later, and the second call reused it
+rather than starting another — so it is residency, and the `*_resident_worker.py
+--socket` pattern that finds holders cannot see it. Twelve of this catalog's resident
+workers spawn children.
+
+So on a shared pool a holder costs the **larger** of its declared budget and its tree's
+RSS, summed from the same `ps` snapshot that found it. Both figures are needed and in
+that order:
+
+* the **declared** budget is a peak, so a worker whose model has not loaded yet — every
+  provider here loads on the first request — is costed at what it will need rather than
+  at the few hundred MiB of interpreter it holds meanwhile;
+* the **reading** is this moment's truth, and it is the only figure that sees a child
+  process, a second model server, or a provider whose checkout is gone and whose manifest
+  can no longer declare anything.
+
+On a discrete device the reading is not a candidate at all: host RSS is not device memory
+there, and the declared budget is the only figure that is.
+
+A fork is dropped as a holder and kept as memory. Those are not in tension —
+`{'boltz': 5.54, 'boltz#2': 5.54}` was one residency reported as two, and the fix for it
+must not also lose the 1.00 GiB that half is holding inside its parent's tree. Counting
+the row once and its pages once is the same rule stated about two different things.
+
+One `ps` snapshot and not a `/proc` walk per holder: a walk reads a different moment for
+each process, and a worker that exits between two of them makes the sum describe no
+instant that ever existed. The gate decides in one moment, so it reads one.
+
 #### Letting memory decide alone
 
 `--max-active 0` means "no count ceiling, memory decides". It exists because the default
@@ -337,11 +382,18 @@ A call can be answered without a model ever loading — a rejected argument, a c
 answer. For the 32 providers that keep a worker, the process table says which happened
 (`admission.machine_holdings`, keyed by the bare slug for this checkout's own workers;
 `admission.declares_resident_worker` is what asks whether to look), and a call that left
-no worker running measures nothing. That scan reads `ps -eo pid,ppid,args` and drops a
+no worker running measures nothing. That scan reads `ps -eo pid,ppid,rss,args` and drops a
 match whose parent is also a match, because a launcher that forks leaves two rows for one
-residency: boltz's did, so one 5.54 GiB worker read as 11.08 GiB and the resident gate
-could refuse a load that would have fit. Two workers neither of which is the other's child
-are still two holders — that is the case that wedged this host. For a provider holding its model in its own server
+residency: boltz's did, so one worker read as `{'boltz': 5.54, 'boltz#2': 5.54}`. Two
+workers neither of which is the other's child are still two holders — that is the case
+that wedged this host.
+
+Worth recording about that double count, because the correction is not the whole story:
+11.08 GiB was **nearly right by accident**. One boltz residency really holds 11.67 GiB
+(above), so the buggy figure was 0.59 GiB from the truth and the corrected declared one,
+5.54, is 6.13 GiB below it. Reporting a holder's tree is what makes the fix an improvement
+rather than a more principled way to be wrong; a fork counted twice is still a bug,
+because what the code claims to count is holders. For a provider holding its model in its own server
 process there is no such evidence to be had, so a call that loaded nothing records
 something small, and `FootprintStore.record` keeping the largest figure it has ever seen
 is what corrects that on the first call that does load.
