@@ -133,6 +133,48 @@ did: `[gpu] driven_by` was read by setup and by nothing else, so a provider
 that installed, served and passed its smoke still reported `x implementation`
 with `CUDA tensor check: failed`.
 
+WHAT THE ANSWERS ARE WORTH, measured 2026-10-27 and not on the day this
+provider was accepted. The acceptance above proves the deployment and says
+nothing about whether the model is right, which for a model whose whole
+purpose is answering questions is most of what a user needs. Against ground
+truth nobody here chose -- 50 real ClinVar missense SNVs, 25 pathogenic and
+25 benign, each window pulled from UCSC hg38 and VERIFIED so its centre base
+is the reference allele ClinVar names (54 candidates, 0 dropped) -- the
+shipped MCP tool scores 40/50 at an 8,001-base window -- 80%, 95% CI
+[67%, 89%] -- beside the card's own 74.9% on BioReason Coding and 70.4% on
+FrontierVEP.
+
+THE CALLER'S WINDOW LENGTH IS THE LEVER, AND NOTHING IN THE API ENFORCES IT:
+52% [39%, 65%] at 55 bases, 76% [63%, 86%] at 1,001, 80% [67%, 89%] at
+8,001. Those intervals matter more than the point estimates: 55 bases is
+distinguishably worse, and 1,001 versus 8,001 is NOT distinguishable at
+n=50, so the apparent 4-point gain is noise and this does not establish that
+longer is better -- only that much shorter is worse. Short windows fail
+asymmetrically -- sensitivity holds at 19/25 while specificity collapses to
+7/25 -- so a short window does not degrade gracefully, it turns the model
+into something that calls almost everything pathogenic. Prompt layout, which
+was suspected first, is not the lever: the card's own `Reference:/Variant:`
+wording and this worker's named-sequence rendering differ by 2 points.
+
+AND THE WINDOW IS ALSO AN INSTABILITY. The verdict changes on 8 of 50
+variants between 1,001 and 8,001 bases, so the 4-point gain is the net of
+larger offsetting flips, and the canonical sickle-cell variant (ClinVar
+15333, Pathogenic, multiple submitters, no conflicts) is called pathogenic
+5/5 at 1,001 bases and benign 5/5 at 8,001. Sampling is not the source: 20 of
+20 variants are unanimous across 5 seeds, so a wrong answer is reproducibly
+wrong and repeating a call buys nothing.
+
+Two other capabilities are weaker than that headline. Translation is accurate
+but not exact -- 98-99 residues per 100 by alignment, 0 of 5 transcripts
+exactly right at 100 amino acids, because it drops or repeats one residue and
+then continues correctly. Organism group, asked as GenomeQA poses it
+(multiple choice, the shape the card's 93.2% is scored in), was 4/8 at 2,001
+bases and 1/8 at 300; eight items cannot settle that gap but they are enough
+not to build on it. The tool's own description was corrected accordingly --
+it had listed organism group among the model's strengths. Nothing here
+distinguishes Q8_0 from the model, and none of it is clinical validation.
+Reproduce with `scripts/remote_validation/carbonx_capability_eval.py`.
+
 The orphan watchdog was observed, and here it has a second half no sibling
 has. With the MCP server stopped and the worker reparented to init, the worker
 logged `orphaned (parent gone) and idle 122s >= 120s: releasing the GPU and

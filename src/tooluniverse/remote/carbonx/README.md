@@ -230,13 +230,32 @@ vendor ran one through `llama-server` and found no measurable loss.
 > exit 0; `check` prints `GPU: held by llama.cpp b11742 (CUDA 13.4), in a
 > child process` rather than a CUDA tensor check. The orphan watchdog
 > released the card 122 s after the server stopped **and its llama-server
-> child died with it**. **Accuracy is unvalidated here and two measured
-> answers were wrong**: on the model card's own sickle-cell variant the model
-> answered benign on 4 of 5 seeds with the named-sequence layout (and
-> pathogenic on 3 of 3 with the card's own wording), and it placed the human
-> HBB fragment in a coronavirus. Those inputs are 55 bases, far shorter than
-> the benchmarks the card reports, and nothing here distinguishes the
-> quantization from the model. The likelihood `compare` operation upstream
+> child died with it**. **Accuracy is measured rather than anecdotal as of
+> 2026-10-27, and it is uneven.** On 50 real ClinVar missense SNVs — 25
+> pathogenic, 25 benign, every window pulled from UCSC hg38 and checked so
+> its centre base is the reference allele ClinVar names — the shipped MCP
+> tool scores 40/50 — 80%, 95% CI [67%, 89%] — at an 8,001-base window,
+> beside the card's own 74.9% on BioReason Coding and 70.4% on FrontierVEP.
+> **Window length, not prompt layout, is what moves it**: 52% [39%, 65%] at
+> 55 bases, 76% [63%, 86%] at 1,001 and 80% [67%, 89%] at 8,001, while the
+> card's own `Reference:/Variant:` wording and this provider's
+> named-sequence layout differ by 2 points. Read those intervals before the
+> point estimates: **55 bases is distinguishably worse and 1,001 versus
+> 8,001 is not distinguishable at n=50** — the apparent 4-point gain is
+> within noise. What is not within noise is the churn underneath it: the
+> verdict changes on 8 of 50 variants between those two windows, and
+> the canonical sickle-cell variant (ClinVar 15333, pathogenic, multiple
+> submitters, no conflicts) is called pathogenic 5/5 at 1,001 bases and
+> benign 5/5 at 8,001. Sampling is not the source: 20 of 20 variants are
+> unanimous across 5 seeds. Two further capabilities are weaker than that
+> headline. Translation is accurate but not exact — 98–99 residues right per
+> 100 by alignment, and 0 of 5 transcripts exactly right at 100 amino acids,
+> because it drops or repeats one residue and then continues correctly.
+> Organism group, asked as GenomeQA poses it (multiple choice), is 4/8 at
+> 2,001 bases against the card's 93.2%; **that gap is unmeasured at a useful
+> n** and 8 items cannot settle it. Nothing here distinguishes the
+> quantization from the model. Reproduce with
+> `scripts/remote_validation/carbonx_capability_eval.py`. The likelihood `compare` operation upstream
 > documents is **not** exposed: it needs vLLM's `prompt_logprobs`, which
 > llama-server b11742 does not implement. Only `-c 8192` has been served; the
 > x86_64 engine digests are pinned from the published tarball but that binary

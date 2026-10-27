@@ -244,6 +244,64 @@ behavior, and absence of paths, secrets, and traces.
 Carbon-X number is scored on what it says. There is no confidence score to
 read, and a tool that returned one would be inventing it.
 
+**The 55-base variant snippet above is a SHAPE, not a usage pattern.** It is
+short so the example can be read and checked by hand. Sized that way for a
+real question it is in the regime measured below as unreliable.
+
+## What it is measured to do, and the one rule that decides it
+
+Measured 2026-10-27 on the GB10, through this MCP tool, against ground truth
+nobody here chose: 50 real ClinVar missense SNVs, 25 pathogenic and 25
+benign, each reference window pulled from UCSC hg38 and checked so its centre
+base is the reference allele ClinVar names. Reproduce with
+`python scripts/remote_validation/carbonx_capability_eval.py`.
+
+| window around the site | accuracy | 95% CI | sensitivity | specificity |
+|---|---|---|---|---|
+| 55 bases | 52% | [39%, 65%] | 19/25 | 7/25 |
+| 1,001 bases | 76% | [63%, 86%] | 19/25 | 19/25 |
+| 8,001 bases | 80% | [67%, 89%] | 19/25 | 21/25 |
+
+**Read the intervals before the point estimates.** Fifty items is a small
+sample. 55 bases is distinguishably worse than either longer window; 1,001
+versus 8,001 is **not** distinguishable at this n, so the apparent 4-point
+gain is noise and "longer is better" is not what this measured. An
+independent 22-variant draw at 1,001 bases, run by the same script with
+`--per-gene 1`, scored 68% [47%, 84%] — consistent, and a useful reminder of
+how wide these intervals are.
+
+- **GIVE IT THOUSANDS OF BASES AROUND THE SITE, NOT TENS.** This is the
+  single most consequential thing a caller controls, and nothing in the API
+  enforces it. Short windows fail *asymmetrically*: sensitivity holds at
+  19/25 while specificity collapses to 7/25, so a 55-base window does not
+  degrade gracefully — it turns the model into something that calls almost
+  everything pathogenic, which is the failure mode that looks like caution
+  and is not.
+- **Prompt layout is not the lever it looks like.** The model card's own
+  `Reference:/Variant:` wording and this provider's named-sequence layout
+  differ by 2 points at an adequate window (78% vs 80%). This was tested
+  because an early anecdote suggested the opposite; it did not survive.
+- **Treat one call as one opinion.** The verdict changes on 8 of 50 variants
+  between 1,001 and 8,001 bases. That churn is the finding, not the 4-point
+  difference it nets out to: the same variant gets a different answer
+  because the caller chose a different window, with no accuracy gain to show
+  for it. The canonical sickle-cell variant (ClinVar 15333) is
+  called pathogenic 5/5 at 1,001 bases and benign 5/5 at 8,001 — the longest
+  window gets the most famous pathogenic variant in medicine wrong.
+- **It is not the sampler.** 20 of 20 variants are unanimous across 5 seeds.
+  When it is wrong it is confidently and reproducibly wrong, so repeating a
+  call buys nothing; changing the window changes the answer.
+- **It reads DNA accurately but not exactly.** Translating a CDS it gets
+  98–99 residues per 100 right by alignment, and 0 of 5 transcripts exactly
+  right at 100 amino acids: it drops or repeats one residue and then
+  continues correctly. Use it to read, never to transcribe.
+- **Do not use it for organism group.** Asked as GenomeQA poses it — multiple
+  choice, which is the shape the card's 93.2% is scored in — it was 4/8 at
+  2,001 bases and 1/8 at 300. Eight items cannot settle the gap to 93.2%, but
+  they are enough not to build on it.
+- Every number here is one card, one quantization and one day. Nothing in it
+  distinguishes Q8_0 from the model, and none of it is clinical validation.
+
 ## Tune GPU and concurrency
 
 - Use one worker. The resident worker serves one request at a time by design; a second in-flight request queues on its lock rather than doubling peak VRAM. `llama-server` is started with `-np 1` for the same reason: its default of four slots would split `-c` four ways and make every co-tenant pay for KV cache no request can use.
