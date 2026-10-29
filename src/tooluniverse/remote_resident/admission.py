@@ -78,7 +78,10 @@ class Verdict:
     budget_gb: Optional[float] = None
     capacity_gib: Optional[float] = None
     capacity_source: str = ""
-    declared_held_gb: float = 0.0
+    # `held_gb`, not `declared_held_gb`: on a machine whose pool is its own RAM
+    # the holdings are read from the process table, and only on a discrete device
+    # is this sum the declared budgets it was originally named for.
+    held_gb: float = 0.0
     free_gib: Optional[float] = None
     available_gib: Optional[float] = None
     gate: str = ""
@@ -108,6 +111,35 @@ def meminfo_gib() -> Dict[str, float]:
     return want  # type: ignore[return-value]
 
 
+# Where a capacity figure came from, named because callers act on the difference and not
+# only on the number: on unified memory a model's weights, a CPU-only provider's RSS and
+# the page cache are all spent from the one pool, and on a discrete card they are not.
+DEVICE_CAPACITY_SOURCE = "nvidia-smi memory.total (discrete device)"
+UNIFIED_CAPACITY_SOURCE = "/proc/meminfo MemTotal (unified memory)"
+
+
+def pool_is_shared_with_the_host() -> Optional[bool]:
+    """Whether a model's memory and this machine's RAM come out of one pool.
+
+    WHICH DECIDES WHAT ``[gpu] policy = "none"`` IS WORTH AS A COST. Three of this
+    catalog's manifests declare it, each off a measurement: their kit has no
+    GPU-capable wheel for this architecture, so they hold no device memory at all. One
+    of them says in as many words that it is therefore "admitted while the card is
+    full", and on a discrete-GPU host that is exactly right. On unified memory it is
+    not: that provider's ~10 GiB of host RSS is spent from the same pool the next
+    model's weights are, so "no device memory" stops meaning "no cost".
+
+    True on unified memory, False on a discrete device, None where the machine cannot
+    be read -- the same three machines :func:`capacity_gib` answers for, decided by
+    which of them it answered from rather than by a second detection that could drift
+    from the first.
+    """
+    capacity, source = capacity_gib()
+    if capacity is None:
+        return None
+    return source == UNIFIED_CAPACITY_SOURCE
+
+
 def capacity_gib() -> Tuple[Optional[float], str]:
     """The size of the one pool a budget is spent from, and where the figure came from.
 
@@ -132,13 +164,13 @@ def capacity_gib() -> Tuple[Optional[float], str]:
     value = first[0].strip() if first else ""
     if value and "N/A" not in value:
         try:
-            return float(value) / 1024.0, "nvidia-smi memory.total (discrete device)"
+            return float(value) / 1024.0, DEVICE_CAPACITY_SOURCE
         except ValueError:
             pass
     # `[N/A]` is the unified-memory answer, not an error: the device has no total
     # of its own because it is sharing the host's.
     try:
-        return meminfo_gib()["MemTotal"], "/proc/meminfo MemTotal (unified memory)"
+        return meminfo_gib()["MemTotal"], UNIFIED_CAPACITY_SOURCE
     except (OSError, RuntimeError) as exc:
         return None, f"no device total and no MemTotal ({exc})"
 
@@ -245,8 +277,113 @@ def _holder_of(path: str) -> Tuple[str, Optional[str]]:
     return slug, tree
 
 
+PS_COLUMNS = ["ps", "-eo", "pid,ppid,rss,args"]
+
+
+def _read_ps() -> Optional[str]:
+    """One snapshot of the process table, or None if `ps` could not be run."""
+
+    try:
+        return subprocess.run(
+            PS_COLUMNS,
+            capture_output=True,
+            text=True,
+            timeout=20,
+        ).stdout
+    except (OSError, subprocess.SubprocessError):
+        return None
+
+
+def _process_rows(ps_output: str) -> list[Tuple[str, str, int, str]]:
+    """`(pid, ppid, rss KiB, args)` for each real row of a `PS_COLUMNS` snapshot.
+
+    A row is four fields with three leading integers. That excludes `ps`'s own
+    header, and it excludes a shell whose command line merely quotes a worker's
+    -- one was in this machine's process table while this was being written, and
+    it passed every other test a holder is given. The field count is also a
+    guard and not only a filter: the four names below are unpacked from it, so a
+    shorter row would raise rather than be ignored, and this module returning
+    nothing is the wedged host it exists to prevent.
+    """
+
+    rows = []
+    for line in (ps_output or "").splitlines():
+        fields = line.split(None, 3)
+        if len(fields) < 4 or not all(f.isdigit() for f in fields[:3]):
+            continue
+        pid, ppid, rss, args = fields
+        rows.append((pid, ppid, int(rss), args))
+    return rows
+
+
+def _tree_rss_gib(root: str, rows: list[Tuple[str, str, int, str]]) -> float:
+    """This process and everything under it, from one snapshot of the table.
+
+    ONE SNAPSHOT AND NOT A /PROC WALK PER PROCESS: a walk reads a different
+    moment for each one, and a child that exits between two of them makes the
+    sum describe no instant that ever existed. The gate decides in one moment,
+    so it reads one.
+
+    A cycle cannot occur in a parent/child relation, but a snapshot can still
+    disagree with itself -- a process reparented to init between two columns --
+    so `seen` is what keeps this from looping.
+    """
+
+    rss = {pid: kib for pid, _ppid, kib, _args in rows}
+    children: Dict[str, list[str]] = {}
+    for pid, ppid, _kib, _args in rows:
+        children.setdefault(ppid, []).append(pid)
+
+    total, seen, frontier = 0, set(), [root]
+    while frontier:
+        current = frontier.pop()
+        if current in seen:
+            continue
+        seen.add(current)
+        total += rss.get(current, 0)
+        frontier.extend(children.get(current, ()))
+    return total / (1024 * 1024)
+
+
+def process_tree_rss_gib(
+    pid: int, *, ps_output: Optional[str] = None
+) -> Optional[float]:
+    """What `pid` and its descendants hold, or None if the table cannot be read.
+
+    This is what a provider costs on a machine whose pool is its own RAM, and
+    `ProviderPool` measures with it instead of a difference in `MemAvailable`.
+    That difference is not this provider's: measured live here across one boltz
+    residency it was 14.9 GiB where the tree held 11.67, and the design doc
+    records an earlier load across which `MemAvailable` ROSE by 1.3 GiB because
+    something else released more than the model took. One pool for host and
+    device leaves nothing in that reading to tell a model's pages from a page
+    cache's, and `FootprintStore.record` keeps the largest figure it ever saw --
+    so an over-attributed reading is not a bad measurement once, it is a ceiling
+    forever. A process tree is attributable by construction.
+
+    None rather than 0.0 when `ps` could not be run, because a provider holding
+    nothing and a machine that cannot say are different answers and only one of
+    them is safe to admit against.
+    """
+
+    if ps_output is None:
+        ps_output = _read_ps()
+        if ps_output is None:
+            return None
+    rows = _process_rows(ps_output)
+    if not any(row[0] == str(pid) for row in rows):
+        # The process is gone, which is not the same as holding nothing: a
+        # provider that exited between the call it answered and this reading has
+        # no cost to learn, and recording a 0 for it would be a measurement.
+        return None
+    return _tree_rss_gib(str(pid), rows)
+
+
 def machine_holdings(
-    *, ps_output: Optional[str] = None, budget_of=None
+    *,
+    ps_output: Optional[str] = None,
+    budget_of=None,
+    pool_is_shared=None,
 ) -> Dict[str, Optional[float]]:
     """Every resident worker on this machine, not only this process's.
 
@@ -266,25 +403,64 @@ def machine_holdings(
 
     Keys are `slug` for a holder in this tree and `slug@tree` for one elsewhere,
     so a restart can release its own budget without releasing someone else's.
-    Values are the DECLARED budget from the local manifest, because that is what
-    a budget is for; a slug this checkout does not have returns None, which
-    `decide` refuses on rather than treating as free.
+
+    WHAT A HOLDER COSTS, AND WHY A DECLARED BUDGET IS NOT IT ON THIS MACHINE.
+    A declared `[gpu] vram_budget_gb` is one process's peak DEVICE allocation,
+    measured on the machine that verified the provider. Where the pool is the
+    host's own memory -- which `pool_is_shared_with_the_host` answers -- what
+    admission spends is the RESIDENT SET OF THE WHOLE PROCESS TREE, and those two
+    are not the same number by a factor of two. Measured live here on
+    2026-10-26, boltz answering one call:
+
+        boltz_mcp_server                        0.07 GiB
+        worker_launch (the worker)              5.70 GiB
+          worker_launch (its fork)              1.00 GiB
+          boltz2_opt.affinity_leg --serve       4.91 GiB
+                                      worker's tree 11.61 GiB
+
+    against `vram_budget_gb = 5.54`. The affinity leg is a SECOND model server,
+    started by the first call and still up 400 s later, reused by the second
+    call rather than restarted -- so it is residency, and the
+    `*_resident_worker.py --socket` pattern cannot see it. Twelve of the resident
+    workers in this catalog spawn children.
+
+    So on a shared pool a holder costs the LARGER of its declared budget and its
+    tree's RSS, read from the same `ps` snapshot that found it. The declared
+    figure still matters: it is a PEAK and the reading is the residency of this
+    moment, so a worker that has not been called yet is costed at what it will
+    need rather than at the little it holds. On a discrete device the reading is
+    not a candidate at all -- host RSS is not device memory there, and the
+    declared budget is the only figure that is.
+
+    A slug this checkout does not have, on a machine where the tree cannot be
+    costed, returns None, which `decide` refuses on rather than treating as free.
+
+    The PPID is read with the command line because a launcher that FORKS is one
+    residency and not two: boltz's worker is started through
+    `boltz2_opt.worker_launch`, and parent and child both carry the worker path
+    and `--socket`, so one residency read as `{'boltz': 5.54, 'boltz#2': 5.54}`
+    -- measured live on this machine -- and this gate refused admissions that
+    would have fit. A match whose parent is also a match is therefore dropped.
+    Two INDEPENDENT workers of one slug are still two holders, because neither is
+    the other's child, and that is the case that wedged this host. A dropped fork
+    is still inside its parent's tree, so its memory is counted once and by the
+    holder that owns it.
     """
     if ps_output is None:
-        try:
-            ps_output = subprocess.run(
-                ["ps", "-eo", "args"], capture_output=True, text=True, timeout=20
-            ).stdout
-        except (OSError, subprocess.SubprocessError):
+        ps_output = _read_ps()
+        if ps_output is None:
             return {}
     if budget_of is None:
         budget_of = _declared_budget
+    if pool_is_shared is None:
+        pool_is_shared = pool_is_shared_with_the_host
 
-    out: Dict[str, Optional[float]] = {}
-    for line in (ps_output or "").splitlines():
-        if "resident_worker.py" not in line or "--socket" not in line:
+    rows = _process_rows(ps_output)
+    matches: list[Tuple[str, str, str, Optional[str]]] = []
+    for pid, ppid, _rss, args in rows:
+        if "resident_worker.py" not in args or "--socket" not in args:
             continue
-        worker = next((tok for tok in line.split() if "/resident/" in tok), "")
+        worker = next((tok for tok in args.split() if "/resident/" in tok), "")
         if not worker:
             continue  # a shell wrapper that merely mentions the worker
         slug, tree = _holder_of(worker)
@@ -300,6 +476,14 @@ def machine_holdings(
             continue
         if tree is not None and not SLUG_RE.match(tree.replace("-", "_")):
             tree = None
+        matches.append((pid, ppid, slug, tree))
+
+    shared = pool_is_shared()
+    holders = {pid for pid, _ppid, _slug, _tree in matches}
+    out: Dict[str, Optional[float]] = {}
+    for pid, ppid, slug, tree in matches:
+        if ppid in holders:
+            continue  # the other half of one forked launcher, counted already
         key = f"{slug}@{tree}" if tree else slug
         # Two processes of the same slug in the same tree are two holders: the
         # second is exactly what made 12 GiB into a wedged host.
@@ -308,7 +492,12 @@ def machine_holdings(
         while key in out:
             key = f"{base}#{suffix}"
             suffix += 1
-        out[key] = budget_of(slug)
+        declared = budget_of(slug)
+        if shared is not True:
+            out[key] = declared
+            continue
+        held = _tree_rss_gib(pid, rows)
+        out[key] = held if declared is None else max(declared, held)
     return out
 
 
@@ -419,7 +608,7 @@ def decide(
     held = dict(held or {})
     held.pop(slug, None)  # restarting what is already held frees its own budget
     unknown = tuple(sorted(k for k, v in held.items() if v is None))
-    declared = sum(v for v in held.values() if v is not None)
+    held_total = sum(v for v in held.values() if v is not None)
 
     cap, cap_source = capacity if capacity is not None else capacity_gib()
     m = dict(mem) if mem is not None else meminfo_gib()
@@ -435,7 +624,7 @@ def decide(
         budget_gb=budget_gb,
         capacity_gib=cap,
         capacity_source=cap_source,
-        declared_held_gb=round(declared, 2),
+        held_gb=round(held_total, 2),
         free_gib=None if free is None else round(free, 1),
         available_gib=None if avail is None else round(avail, 1),
         gate=gate,
@@ -471,11 +660,11 @@ def decide(
         )
         return v
 
-    wanted = declared + budget_gb + reserve_gb
+    wanted = held_total + budget_gb + reserve_gb
     if wanted > cap:
         v.reason = (
-            f"{slug} needs {budget_gb} GiB and {declared} GiB is already declared "
-            f"held by {len(held)} worker(s); with {reserve_gb} GiB left for the "
+            f"{slug} needs {budget_gb} GiB and {round(held_total, 2)} GiB is "
+            f"already held by {len(held)} worker(s); with {reserve_gb} GiB left for the "
             f"host that is {round(wanted, 2)} GiB against a pool of "
             f"{round(cap, 1)} GiB ({cap_source}). Stop a resident provider, or "
             f"run this one on a quieter machine -- do not start it anyway: that "
@@ -500,7 +689,7 @@ def decide(
             "reclaim is not a race"
         )
         v.reason = (
-            f"the pool is big enough on paper -- {declared} GiB declared held of "
+            f"the pool is big enough on paper -- {round(held_total, 2)} GiB held of "
             f"{round(cap, 1)} -- but the machine does not have the room right "
             f"now: {detail}. {slug} needs {budget_gb} GiB plus {reserve_gb} GiB "
             f"for the host. {why}. Wait for a co-tenant to finish; "
@@ -511,7 +700,7 @@ def decide(
 
     v.admit = True
     v.reason = (
-        f"{slug} fits: {budget_gb} GiB on top of {declared} GiB declared held, "
+        f"{slug} fits: {budget_gb} GiB on top of {round(held_total, 2)} GiB held, "
         f"{round(wanted, 2)} of {round(cap, 1)} GiB ({cap_source}), and "
         f"{gate} reads {round(gate_value, 1)} GiB with {tenants} process(es) on "
         f"the card."

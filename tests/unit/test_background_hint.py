@@ -52,6 +52,13 @@ def test_what_the_person_tuned_is_carried_over():
         assert expected in command, command
 
 
+def test_asking_for_no_count_ceiling_is_carried_over():
+    """0 is a choice and the opposite of the default, so the service must inherit it."""
+    command = built(max_active=0)
+
+    assert "--max-active 0" in command, command
+
+
 def test_a_default_is_not_repeated_as_though_it_were_a_choice():
     command = built(max_active=1, idle_ttl=900.0, vram_headroom=1024)
 

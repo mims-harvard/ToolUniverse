@@ -24,6 +24,7 @@ reviewed catalog, which :func:`build_tool_index` asserts -- starts that provider
 it is not already up, and proxies the call. Providers idle longer than ``idle_ttl``
 are stopped, and ``max_active`` bounds how many run at once with least-recently-used
 eviction, so one host can advertise more models than its GPU could hold together.
+``max_active`` 0 drops that count and leaves the decision to the memory ceiling below.
 
 A call that lands while a provider is still starting gets 503 with Retry-After rather
 than being queued across the relay, which the relay's own 25-second limit on a local
@@ -33,14 +34,19 @@ endpoint wait for that start instead, and is 0 by default. ``control`` answers
 ``tu serve`` wires up only when the installed ``RelayAgent`` takes one, and ``prewarm``
 loads the model rather than only starting the server that will load it.
 
-Admission applies two ceilings. ``max_active`` is a count and always applies. Memory
+Admission applies two ceilings. ``max_active`` is a count, and ``--max-active 0`` drops
+it so memory decides alone -- refused on a machine whose memory cannot be read, where
+dropping it would leave nothing deciding at all. Memory
 applies wherever the machine can be read, and the reading is per machine rather than
 per card: a discrete device's own ``memory.free``, ``MemAvailable`` on unified memory
 where the device has no memory of its own, and nothing at all on a host with no NVIDIA
 driver, which stays count-only. What a model costs is the larger of its manifest's
 measured ``[gpu] vram_budget_gb`` and what this host has measured it to cost here --
 and the local measurement is taken after a call the provider answered, because nothing
-in this catalog has its model in memory when its port starts answering. See
+in this catalog has its model in memory when its port starts answering. A manifest
+declaring ``[gpu] policy = "none"`` costs nothing only where the pool is the device's
+own: on unified memory the host RSS it does hold comes out of the pool being read, so
+there its cost is unknown until this host has measured it. See
 ``docs/dev_docs/Remote_Provider_Pool_Design.md``.
 """
 
@@ -66,6 +72,7 @@ from .remote_runtime import (
     ManagedRemoteProcess,
     RemoteDeployment,
     ensure_provider,
+    resolve_python,
     stop_provider,
 )
 
@@ -91,6 +98,14 @@ DEFAULT_VRAM_HEADROOM_MIB = 1024
 DEFAULT_POOL_PORT = 7999
 DEFAULT_IDLE_TTL = 900.0
 DEFAULT_MAX_ACTIVE = 1
+
+# ``--max-active 0``: no count ceiling, let memory decide. A count is the wrong unit for
+# the question it is asked -- it cannot say that two 6 GiB models fit where one 38 GiB
+# model does not -- and it was the only unit this pool had before it could read the
+# machine. 0 is refused where the machine cannot be read, because that would leave
+# nothing deciding at all, and it still bounds providers whose cost nobody knows: see
+# :meth:`ProviderPool._evict_for_locked`.
+NO_COUNT_CEILING = 0
 DEFAULT_STARTUP_TIMEOUT = 600.0
 
 # How long a call waits for a provider another call is already starting, and ZERO IS THE
@@ -210,7 +225,11 @@ def declared_footprint_mib(slug: str) -> int | None:
     local measurement.
 
     0 is an answer, not a gap: a manifest declaring ``[gpu] policy = "none"`` holds no
-    device memory at all, so no memory ceiling applies to it and it evicts nobody.
+    device memory at all, so no memory ceiling applies to it and it evicts nobody --
+    WHERE THE POOL IS A DEVICE'S OWN MEMORY. This function reports the manifest;
+    :meth:`ProviderPool._declared_cost` is where that answer meets the machine, because
+    on unified memory a provider holding no device memory is still holding host RSS from
+    the pool this pool reads.
     None means nothing declares this provider's cost -- 28 of the 60 reviewed slugs,
     all of them older non-resident providers -- and those are admitted on count alone,
     exactly as every provider was before this.
@@ -381,13 +400,14 @@ class _ActiveProvider:
 class ProviderPool:
     """Start reviewed providers on demand and stop them when they go idle.
 
-    ``python`` is the interpreter from the provider environment, exactly as
-    ``tu remote run`` resolves it. The lifecycle callables are injected so the routing,
-    admission and eviction rules can be tested without a GPU or a real provider.
+    ``python`` is an interpreter to start EVERY provider with, for an operator who named
+    one; None means each provider is started under its own, which is how a host can share
+    models whose pinned stacks do not coexist. The lifecycle callables are injected so the
+    routing, admission and eviction rules can be tested without a GPU or a real provider.
     """
 
     allow: tuple[str, ...]
-    python: str
+    python: str | None
     log_dir: Path
     schemas: SchemaStore
     max_active: int = DEFAULT_MAX_ACTIVE
@@ -403,12 +423,23 @@ class ProviderPool:
     read_free_vram: Callable[[], int | None] = pool_free_mib
     read_capacity: Callable[[], int | None] = pool_capacity_mib
     declared_footprint: Callable[[str], int | None] = declared_footprint_mib
+    # Whether this machine spends a model's memory from the same pool as everything else,
+    # which is what decides whether a manifest's declared 0 is a cost or a gap. Injected
+    # like the readings above, and read once per pool: it runs `nvidia-smi`.
+    pool_shares_host_memory: Callable[[], bool | None] = (
+        admission.pool_is_shared_with_the_host
+    )
     # Whether a provider keeps its model in a worker of its own, which is what decides
     # WHEN this pool can measure what that model costs, and `machine_holdings`, which
     # says whether such a worker is up right now. Injected like the readings above so
     # the measurement rules can be tested without a provider environment.
     holds_model_in_worker: Callable[[str], bool] = admission.declares_resident_worker
     read_holdings: Callable[[], Mapping[str, float | None]] = admission.machine_holdings
+    read_tree_rss: Callable[[int], float | None] = admission.process_tree_rss_gib
+    # How a provider's own interpreter is found, which is `tu remote run`'s rule and
+    # `check_environment`'s: `TOOLUNIVERSE_REMOTE_<SLUG>_PYTHON`, then
+    # `TOOLUNIVERSE_REMOTE_PYTHON`, then `.venvs/<slug>`, then this interpreter.
+    resolve_interpreter: Callable[[str | None, RemoteDeployment], str] = resolve_python
     ensure: Callable[..., tuple[ManagedRemoteProcess | None, dict[str, Any]]] = (
         ensure_provider
     )
@@ -419,6 +450,8 @@ class ProviderPool:
     _active: dict[str, _ActiveProvider] = field(default_factory=dict, init=False)
     _starting: set[str] = field(default_factory=set, init=False)
     _capacity_cache: int | None = field(default=None, init=False)
+    # A one-tuple so that "not read yet" and "read, and the answer was None" stay apart.
+    _shared_pool_cache: tuple[bool | None] | None = field(default=None, init=False)
     # A condition rather than a plain lock: it still guards every read and write of the
     # two collections above, and it is also where a call waits for a start another call
     # is already running, instead of being refused the moment it finds one in progress.
@@ -429,8 +462,19 @@ class ProviderPool:
             raise PoolError("--allow must name at least one reviewed provider")
         self.tool_index = build_tool_index(self.allow)
         self.deployments = tuple(REMOTE_BY_SLUG[slug] for slug in self.allow)
-        if self.max_active < 1:
-            raise PoolError("--max-active must be at least 1")
+        if self.max_active < NO_COUNT_CEILING:
+            raise PoolError("--max-active must not be negative")
+        if self.max_active == NO_COUNT_CEILING and self._capacity_mib() is None:
+            # Capacity rather than the free reading: both come from the same detection of
+            # which kind of machine this is, and capacity is the one that does not move,
+            # so a pool is not refused over a driver that was busy for a second. If this
+            # answers, memory is readable here and is a ceiling; if it does not, there is
+            # no second ceiling to fall back on and "0" would mean "unbounded".
+            raise PoolError(
+                "--max-active 0 leaves the decision to memory, and this machine's "
+                "memory pool cannot be read, so nothing would bound what runs at "
+                "once; pass a count instead"
+            )
         if self.idle_ttl <= 0:
             raise PoolError("--idle-ttl must be positive")
         if self.start_wait_s < 0:
@@ -484,10 +528,31 @@ class ProviderPool:
             results[deployment.slug] = f"cached {len(tools)} tools"
         return results
 
+    def _python_for(self, deployment: RemoteDeployment) -> str:
+        """The interpreter THIS provider's server is started under.
+
+        WHY IT IS NOT ONE INTERPRETER FOR THE POOL. A provider's environment is its own:
+        ``tu remote run`` resolves ``TOOLUNIVERSE_REMOTE_<SLUG>_PYTHON`` per provider and
+        so does :func:`check_environment`, which is what ``tu serve`` prints
+        "environment ok" from -- and then this pool used to start every provider with the
+        interpreter resolved for the FIRST name in ``--allow``. Sharing boltz and esm from
+        one host therefore ran esm's server in boltz's environment, which is the one place
+        the two are documented never to coexist. Measured: with
+        ``TOOLUNIVERSE_REMOTE_ENFORMER_DEEPMIND_PYTHON`` set, the check read it and the
+        start ignored it.
+
+        An explicit ``--python`` is still one interpreter for all of them, because that is
+        what naming one asks for.
+        """
+
+        if self.python is not None:
+            return self.python
+        return self.resolve_interpreter(None, deployment)
+
     def _snapshot(self, deployment: RemoteDeployment) -> list[dict[str, Any]]:
         managed, _ = self.ensure(
             deployment,
-            python=self.python,
+            python=self._python_for(deployment),
             log_dir=self.log_dir,
             startup_timeout=self.startup_timeout,
             extra_env=self.extra_env,
@@ -545,7 +610,7 @@ class ProviderPool:
         try:
             managed, _ = self.ensure(
                 deployment,
-                python=self.python,
+                python=self._python_for(deployment),
                 log_dir=self.log_dir,
                 startup_timeout=self.startup_timeout,
                 extra_env=self.extra_env,
@@ -633,7 +698,7 @@ class ProviderPool:
         """
 
         measured = self.footprints.get(slug) if self.footprints is not None else None
-        declared = self.declared_footprint(slug)
+        declared = self._declared_cost(slug)
         if measured is None:
             return declared
         if declared is None:
@@ -653,6 +718,58 @@ class ProviderPool:
             except (OSError, ValueError):
                 return None
         return self._capacity_cache
+
+    def _pool_is_shared_with_the_host(self) -> bool | None:
+        """Whether a declared 0 is a real 0 here. Read once; a failed reading is not cached.
+
+        Which kind of machine this is does not change while a pool runs, and asking costs
+        an ``nvidia-smi``, so one answer is kept. A reading that failed is not kept, for
+        the reason :meth:`_capacity_mib` gives: a driver that was briefly unavailable must
+        not decide how this pool reasons for the rest of its life.
+
+        :meth:`_evict_for_locked` reaches this through :meth:`footprint_mib` WITH THE LOCK
+        HELD, and a subprocess under the lock is what this module keeps its two other
+        machine readings out of the lock to avoid. It is safe because the cache is always
+        warm by then: :meth:`acquire` calls :meth:`_refuse_if_larger_than_the_machine` and
+        :meth:`_free_vram_for` first, both outside the lock and both of which ask. Keep it
+        that way -- a first reading taken under the lock would put every caller behind a
+        driver that can hang for the subprocess timeout.
+        """
+
+        if self._shared_pool_cache is None:
+            try:
+                answer = self.pool_shares_host_memory()
+            except (OSError, ValueError):
+                return None
+            if answer is None:
+                return None
+            self._shared_pool_cache = (answer,)
+        return self._shared_pool_cache[0]
+
+    def _declared_cost(self, slug: str) -> int | None:
+        """What this provider's manifest says it costs FROM THE POOL THIS POOL READS.
+
+        The manifest's own answer everywhere except one case, and it is a case this
+        fleet is actually made of. ``[gpu] policy = "none"`` is a measurement -- three
+        of these providers have no GPU-capable wheel for this architecture and hold no
+        device memory at all -- and one of their manifests draws the obvious conclusion:
+        it can be "admitted while the card is full". On a discrete-GPU host that is
+        right and worth having. On unified memory the same provider's ~10 GiB of host
+        RSS is spent from the very pool this pool reads to decide, so treating it as
+        free is admitting a 10 GiB resident as though it were nothing -- and
+        :meth:`learn_footprint` used to skip it for the same reason, which left the
+        figure unlearnable as well as unknown.
+
+        So on unified memory a declared 0 becomes None: nobody has said what this costs
+        HERE. That makes it a provider of unknown cost -- measured after the first call
+        it answers, and bounded one at a time by :meth:`_evict_for_locked` until then --
+        rather than a provider known to be free.
+        """
+
+        declared = self.declared_footprint(slug)
+        if declared == 0 and self._pool_is_shared_with_the_host() is True:
+            return None
+        return declared
 
     def _refuse_if_larger_than_the_machine(self, deployment: RemoteDeployment) -> None:
         """Refuse what this machine could not hold with nothing else resident.
@@ -687,7 +804,7 @@ class ProviderPool:
         cost is unknown -- nothing to decide and nowhere to put a reading.
         """
 
-        if self.declared_footprint(deployment.slug) == 0:
+        if self._declared_cost(deployment.slug) == 0:
             return None
         if self.footprints is None and not self.footprint_mib(deployment.slug):
             return None
@@ -720,6 +837,12 @@ class ProviderPool:
         carries, measured deliberately rather than off whichever call happened to be
         first.
 
+        AND MEASURED FROM THE PROVIDER'S PROCESS TREE WHERE THERE IS ONE, because a
+        difference in free memory is not this provider's cost on a machine whose pool
+        is its own RAM -- see :meth:`_tree_measurement` for the two readings that say
+        so. The difference remains the answer where the tree is not available: a
+        discrete device, an adopted endpoint, a process table that cannot be read.
+
         Once per residency. A call can be answered without a model ever loading -- a
         rejected argument, a cached answer -- and for a provider that keeps a worker the
         process table says which happened, so that is checked. For a provider holding its
@@ -733,32 +856,75 @@ class ProviderPool:
         if self.footprints is None:
             return
         slug = deployment.slug
-        if self.declared_footprint(slug) == 0:
-            # Declared to hold no device memory, so a difference here would be whatever
-            # else on the machine allocated meanwhile, attributed to a provider that
-            # cannot have been the cause -- and then held against it as a ceiling.
+        if self._declared_cost(slug) == 0:
+            # Known to hold nothing from this machine's pool, so a difference here would
+            # be whatever else allocated meanwhile, attributed to a provider that cannot
+            # have been the cause -- and then held against it as a ceiling. On unified
+            # memory a declared 0 is not that, and `_declared_cost` is what tells them
+            # apart: there the provider does hold host RSS from this pool, and this is
+            # the only place its real cost here can be learned.
             return
         with self._lock:
             active = self._active.get(slug)
             if active is None or active.measured:
                 return
             baseline = active.baseline_free_mib
-        if baseline is None:
-            return
+            managed = active.managed
         if self.holds_model_in_worker(slug) and not self._worker_is_up(slug):
             return
-        try:
-            free_now = self.read_free_vram()
-        except (OSError, ValueError):
-            return
-        if free_now is None:
-            return
+
+        measurement = self._tree_measurement(managed)
+        if measurement is None:
+            if baseline is None:
+                return
+            try:
+                free_now = self.read_free_vram()
+            except (OSError, ValueError):
+                return
+            if free_now is None:
+                return
+            measurement = baseline - free_now
+
         with self._lock:
             active = self._active.get(slug)
             if active is None or active.measured:
                 return
             active.measured = True
-        self.footprints.record(slug, baseline - free_now)
+        self.footprints.record(slug, measurement)
+
+    def _tree_measurement(self, managed: ManagedRemoteProcess | None) -> int | None:
+        """What this provider's processes hold, where that is what the pool spends.
+
+        A DIFFERENCE IN FREE MEMORY IS NOT THIS PROVIDER'S COST ON A UNIFIED-MEMORY
+        HOST, and the two readings taken here say so in both directions: across one
+        boltz residency measured on 2026-10-26 `MemAvailable` fell 14.9 GiB where the
+        provider's tree held 11.67, and the design doc records an earlier load across
+        which it ROSE by 1.3 GiB because something else released more than the model
+        took. With one pool for host and device there is nothing in that reading to
+        tell a model's pages from a page cache's. `FootprintStore.record` keeps the
+        largest figure it has ever seen, so an over-attributed difference is not one
+        bad measurement, it is a ceiling for the life of the store.
+
+        The process tree is attributable by construction, and it is the right unit
+        here for the same reason the holdings are: a provider's residency is a tree,
+        not a process. Boltz's worker forks, and its first call starts a second model
+        server -- `boltz2_opt.affinity_leg --serve`, 4.94 GiB, reused by later calls --
+        which no reading of one pid would see.
+
+        None where the tree is not the answer, and then the caller falls back to the
+        difference: on a discrete device, because host RSS is not device memory there;
+        for an ADOPTED endpoint, because this pool did not start it and has no pid for
+        it; and when the table cannot be read at all.
+        """
+
+        if managed is None:
+            return None
+        if self._pool_is_shared_with_the_host() is not True:
+            return None
+        held = self.read_tree_rss(managed.process.pid)
+        if held is None:
+            return None
+        return int(held * 1024)
 
     def _worker_is_up(self, slug: str) -> bool:
         """Whether a resident worker for ``slug`` is running on this machine.
@@ -786,7 +952,8 @@ class ProviderPool:
         requests in flight is never evicted; if nothing can be freed the caller is told to
         retry rather than having a running job killed under it.
 
-        Two independent ceilings. ``max_active`` is a count, and applies always. Memory
+        Two independent ceilings. ``max_active`` is a count, and ``--max-active 0`` drops
+        it in favour of the one below. Memory
         applies once this provider's cost is known -- declared by its manifest or measured
         here, whichever is larger -- and the machine answered a free reading: two small
         models may fit where one large one does not, which a count can never express.
@@ -796,18 +963,53 @@ class ProviderPool:
         -- a fresh reading straight after a kill reports it as still in use. A victim whose
         cost nobody declared or measured counts as freeing nothing, so admission stays
         conservative instead of optimistic.
+
+        WHAT BOUNDS A POOL WITH NO COUNT CEILING. Memory can only decide about a provider
+        somebody has costed, and 28 of the 60 reviewed slugs declare nothing: for those
+        :meth:`footprint_mib` is None, the memory ceiling returns early, and with the
+        count gone nothing at all would stop the next one. So an UNCOSTED provider keeps
+        the ceiling every provider used to have -- one at a time -- until a call it
+        answered has been measured here and memory can speak for it. That bound is on
+        ignorance and not on size: a 6 GiB model and a 38 GiB model both have a figure,
+        and memory is allowed to decide about both.
         """
 
-        def lru_idle_victim() -> _ActiveProvider:
-            idle = [active for active in self._active.values() if active.in_flight == 0]
+        def lru_idle_victim(
+            among: Iterable[_ActiveProvider] | None = None,
+        ) -> _ActiveProvider:
+            candidates = self._active.values() if among is None else among
+            idle = [active for active in candidates if active.in_flight == 0]
             if not idle:
                 raise PoolError(
-                    f"all {self.max_active} provider slot(s) are busy; retry shortly"
+                    f"provider '{incoming.slug}' needs room, and every provider that "
+                    "could make room for it is busy with a request in flight; retry "
+                    "shortly"
                 )
             return min(idle, key=lambda active: active.last_used)
 
-        while len(self._active) + len(self._starting) >= self.max_active:
-            self._stop_locked(lru_idle_victim().deployment.slug)
+        def uncosted(slug: str) -> bool:
+            # None is "nobody has said", which is not 0: a manifest declaring
+            # `policy = "none"` says this provider holds no device memory, and that is
+            # knowledge, not a gap. See :func:`declared_footprint_mib`.
+            return self.footprint_mib(slug) is None
+
+        if self.max_active == NO_COUNT_CEILING:
+            while uncosted(incoming.slug) and (
+                any(uncosted(slug) for slug in self._active)
+                or any(uncosted(slug) for slug in self._starting)
+            ):
+                resident = [
+                    active
+                    for active in self._active.values()
+                    if uncosted(active.deployment.slug)
+                ]
+                # Nothing resident to evict means the other uncosted provider is still
+                # starting, and lru_idle_victim turns that into "retry shortly" rather
+                # than killing a start in progress.
+                self._stop_locked(lru_idle_victim(resident).deployment.slug)
+        else:
+            while len(self._active) + len(self._starting) >= self.max_active:
+                self._stop_locked(lru_idle_victim().deployment.slug)
 
         if free_mib is None:
             return

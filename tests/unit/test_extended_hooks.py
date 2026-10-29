@@ -315,6 +315,11 @@ class _AppendHook(OutputHook):
 
 
 def test_hook_failures_are_isolated_and_priority_is_stable(caplog):
+    """A hook that raises must not take the result with it, and order is by priority.
+
+    This asserts on `caplog`, which `tests/conftest.py` keeps reachable: see
+    `_let_package_logs_reach_caplog` for why that is not automatic.
+    """
     manager = object.__new__(HookManager)
     manager.enabled = True
     manager.config = {}

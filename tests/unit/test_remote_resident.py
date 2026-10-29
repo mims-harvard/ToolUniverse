@@ -1806,7 +1806,7 @@ class TestAdmission:
         v = self._decide(slug="ef2inv", budget_gb=28.0, held={}, mem=self.WEDGE)
         assert v.gate == "MemAvailable"
 
-    def test_a_full_pool_is_refused_on_the_declared_sum_alone(self):
+    def test_a_full_pool_is_refused_on_the_holdings_sum_alone(self):
         """The machine looks idle; the budgets say it is not. Both gates matter."""
         v = self._decide(
             slug="opendde",
@@ -1820,7 +1820,7 @@ class TestAdmission:
             },
         )
         assert not v
-        assert "103.53 GiB is already declared held" in v.reason
+        assert "103.53 GiB is already held" in v.reason
         assert v.available_gib == 110.0, "refused with the machine looking empty"
 
     def test_an_undeclared_held_budget_is_not_treated_as_zero(self):
@@ -1842,7 +1842,7 @@ class TestAdmission:
             slug="complexa", budget_gb=20.25, held={"complexa": 20.25, "boltz": 5.54}
         )
         assert v
-        assert v.declared_held_gb == 5.54
+        assert v.held_gb == 5.54
 
     def test_an_unknown_capacity_refuses_rather_than_assuming(self):
         v = self._decide(
@@ -1960,6 +1960,40 @@ class TestAdmission:
         free, source = admission.pool_free_gib()
         assert free is None
         assert "nvidia-smi did not run" in source
+
+    def test_which_pool_a_model_allocates_from_is_answered_for_all_three_machines(
+        self, monkeypatch
+    ):
+        """What `[gpu] policy = "none"` is worth as a cost depends on this answer.
+
+        A provider holding no device memory is free on a discrete card and is not free
+        on unified memory, where its host RSS comes out of the same pool the next
+        model's weights do. Decided by which machine `capacity_gib` answered from, so
+        the two can never disagree about what kind of machine this is.
+        """
+        import subprocess as sp
+
+        from tooluniverse.remote_resident import admission
+
+        def answering(value):
+            def run(*_args, **_kwargs):
+                return sp.CompletedProcess([], 0, value, "")
+
+            return run
+
+        monkeypatch.setattr(admission.subprocess, "run", answering("[N/A]\n"))
+        assert admission.pool_is_shared_with_the_host() is True
+
+        monkeypatch.setattr(admission.subprocess, "run", answering("81920\n"))
+        assert admission.pool_is_shared_with_the_host() is False
+
+        def missing(*_args, **_kwargs):
+            raise FileNotFoundError("nvidia-smi")
+
+        monkeypatch.setattr(admission.subprocess, "run", missing)
+        assert admission.pool_is_shared_with_the_host() is None, (
+            "a machine that cannot be read is neither kind"
+        )
 
     def test_the_reason_always_carries_the_numbers(self):
         """Section 8: a refusal names what happened, not that something did."""
@@ -2118,7 +2152,7 @@ class TestRemoteRoomCommand:
     def test_it_lists_every_gpu_resident_provider_with_a_verdict(self):
         code, out, _ = self._run()
         assert code == 0
-        assert "declared held by" in out, "the header must show what is held"
+        assert "GiB held by" in out, "the header must show what is held"
         lines = [ln for ln in out.splitlines() if " GiB   " in ln]
         assert len(lines) >= 20, f"only {len(lines)} providers judged"
         for ln in lines:
@@ -2152,7 +2186,7 @@ class TestRemoteRoomCommand:
         for key in (
             "capacity_gib",
             "capacity_source",
-            "declared_held_gb",
+            "held_gb",
             "held",
             "mem_free_gib",
             "mem_available_gib",
@@ -2165,6 +2199,28 @@ class TestRemoteRoomCommand:
         assert {"slug", "fits", "reason", "vram_budget_gb", "status"} <= set(
             doc["providers"][0]
         )
+
+    def test_a_holding_is_printed_to_two_decimals(self, monkeypatch):
+        """A tree reading is not a two-decimal manifest figure.
+
+        Holdings used to be declared budgets, which a manifest writes as 5.54,
+        so printing them raw read fine. A reading off the process table does not:
+        the first run of this line said `boltz=11.338134765625`. The machine-
+        readable `held` keeps full precision; the line a person reads does not.
+        """
+        import re
+
+        from tooluniverse.remote_resident import admission
+
+        monkeypatch.setattr(
+            admission, "machine_holdings", lambda: {"boltz": 11.338134765625}
+        )
+        code, out, _ = self._run()
+
+        assert code == 0
+        line = next(ln for ln in out.splitlines() if "holding:" in ln)
+        assert "boltz=11.34" in line, line
+        assert not re.search(r"\d\.\d{3}", line), line
 
     def test_a_bigger_reserve_can_only_narrow_what_fits(self):
         """The reserve is the host's room, so raising it never admits more."""
@@ -2199,12 +2255,32 @@ class TestMachineWideHoldings:
         "resident/{slug}_resident_worker.py --socket /run/user/1000/x.sock --slug {slug}"
     )
 
-    def _holdings(self, *lines, budgets=None):
+    def _holdings(self, *lines, budgets=None, parents=None, rss=None, shared=False):
+        """`ps -eo pid,ppid,rss,args`, one pid per line, parented to init by default.
+
+        `parents` maps a line's index to the index of the line that forked it,
+        which is the shape a launcher that forks leaves in the process table.
+        `rss` maps an index to that process's resident set in KiB, defaulting to
+        0 so the cases that are about keys and budgets stay about those.
+        `shared` is whether the pool is the host's own memory, which is what
+        decides whether an RSS reading is a candidate for the cost at all; it is
+        False by default because the declared budget is the whole answer on a
+        discrete device and most of these cases predate the reading.
+        """
         from tooluniverse.remote_resident import admission
 
         budgets = budgets or {}
+        parents = parents or {}
+        rss = rss or {}
+        rows = [
+            f"{1000 + index:>7} {1000 + parents[index] if index in parents else 1:>7} "
+            f"{rss.get(index, 0):>9} {line}"
+            for index, line in enumerate(lines)
+        ]
         return admission.machine_holdings(
-            ps_output="\n".join(lines), budget_of=lambda s: budgets.get(s)
+            ps_output="\n".join(rows),
+            budget_of=lambda s: budgets.get(s),
+            pool_is_shared=lambda: shared,
         )
 
     def test_a_worker_in_this_tree_is_keyed_by_slug(self):
@@ -2260,17 +2336,260 @@ class TestMachineWideHoldings:
         held = self._holdings(self.WORKER.format(slug="somethingelse"), budgets={})
         assert held == {"somethingelse": None}
 
-    def test_room_for_releases_only_its_own_trees_budget(self):
-        """Restarting mine frees mine; another tree's worker is still holding."""
+    def test_a_launcher_that_forks_is_one_residency_and_not_two(self):
+        """Boltz's launcher forks, and both halves carry the worker's command line.
+
+        Measured live with one worker up: `{'boltz': 5.54, 'boltz#2': 5.54}`, so
+        the gate summed 11.08 GiB for a model holding 5.54 and could refuse an
+        admission that would have fit. The PPID is what tells this apart from
+        two independent workers, which the test above keeps.
+        """
+        held = self._holdings(
+            self.WORKER.format(slug="boltz"),
+            self.WORKER.format(slug="boltz"),
+            budgets={"boltz": 5.54},
+            parents={1: 0},
+        )
+
+        assert held == {"boltz": 5.54}, f"double-counted as {held}"
+
+    def test_a_row_that_is_not_a_pid_ppid_rss_args_row_is_not_a_process(self):
+        """A shell carrying a worker's whole command line passes every other test.
+
+        Real slug, real `--socket`, a `/resident/` token in its arguments -- the
+        shape tests above all let it through, and one was in this machine's own
+        process table while this was being written. What it does not have is a
+        pid, a ppid and an rss where a `ps -eo pid,ppid,rss,args` row has them,
+        which is also what excludes `ps`'s header.
+        """
+        from tooluniverse.remote_resident import admission
+
+        worker = (
+            "/home/u/ws/tooluniverse/ToolUniverse/src/tooluniverse/remote/boltz/"
+            "resident/boltz_resident_worker.py"
+        )
+        ps = "\n".join(
+            [
+                "    PID    PPID       RSS COMMAND",
+                f"/bin/sh -c {worker} --socket /run/user/1000/x.sock --slug boltz",
+            ]
+        )
+
+        assert admission.machine_holdings(ps_output=ps, budget_of=lambda s: 5.54) == {}
+
+    # The three numbers below are one live reading, on this project's GB10 on
+    # 2026-10-26, of boltz answering a call: the worker, the half its launcher
+    # forked, and the `boltz2_opt.affinity_leg --serve` the call started and the
+    # next call reused. `vram_budget_gb` for boltz is 5.54.
+    BOLTZ_WORKER_KIB = 6006132
+    BOLTZ_FORK_KIB = 1046100
+    BOLTZ_AFFINITY_KIB = 5182108
+    BOLTZ_TREE_GIB = (BOLTZ_WORKER_KIB + BOLTZ_FORK_KIB + BOLTZ_AFFINITY_KIB) / 1048576
+
+    AFFINITY_LEG = (
+        "/home/u/boltz2-venv/bin/python -s -m boltz2_opt.affinity_leg --serve"
+    )
+
+    def test_a_holder_on_a_shared_pool_costs_what_its_whole_tree_holds(self):
+        """A declared budget is one process's device peak; the tree is what is spent.
+
+        Where the pool is the host's own memory, boltz's residency is four
+        processes and the `*_resident_worker.py --socket` pattern sees one of
+        them. The affinity leg alone is 4.94 GiB that nothing was charging for.
+        """
+        held = self._holdings(
+            self.WORKER.format(slug="boltz"),
+            self.WORKER.format(slug="boltz"),
+            self.AFFINITY_LEG,
+            budgets={"boltz": 5.54},
+            rss={
+                0: self.BOLTZ_WORKER_KIB,
+                1: self.BOLTZ_FORK_KIB,
+                2: self.BOLTZ_AFFINITY_KIB,
+            },
+            parents={1: 0, 2: 0},
+            shared=True,
+        )
+        assert set(held) == {"boltz"}
+        assert held["boltz"] == pytest.approx(self.BOLTZ_TREE_GIB, abs=0.01)
+        assert held["boltz"] > 5.54 * 2, (
+            "one boltz residency holds 11.67 GiB against a declared 5.54, and "
+            "reporting the declared figure under-counts it by more than half"
+        )
+
+    def test_the_same_tree_on_a_discrete_device_costs_its_declared_budget(self):
+        """Host RSS is not device memory there, so it is not a candidate at all."""
+        rows = dict(
+            budgets={"boltz": 5.54},
+            rss={
+                0: self.BOLTZ_WORKER_KIB,
+                1: self.BOLTZ_FORK_KIB,
+                2: self.BOLTZ_AFFINITY_KIB,
+            },
+            parents={1: 0, 2: 0},
+        )
+        held = self._holdings(
+            self.WORKER.format(slug="boltz"),
+            self.WORKER.format(slug="boltz"),
+            self.AFFINITY_LEG,
+            shared=False,
+            **rows,
+        )
+        assert held == {"boltz": 5.54}
+
+    def test_a_declared_peak_outweighs_a_residency_that_has_not_grown_into_it(self):
+        """A worker that has not been called yet is costed at what it will need.
+
+        Every provider in this catalog loads its model on the first request, so
+        between `tools/list` answering and that request the reading is a few
+        hundred MiB of interpreter. Admitting a second model against that is how
+        the first version of this gate overcommitted: the declared figure is a
+        peak and the reading is this moment, and the larger is the safe one.
+        """
+        held = self._holdings(
+            self.WORKER.format(slug="boltz"),
+            budgets={"boltz": 5.54},
+            rss={0: 812_000},
+            shared=True,
+        )
+        assert held == {"boltz": 5.54}
+
+    def test_a_forked_half_is_counted_inside_its_parents_tree_and_not_twice(self):
+        """The fork is dropped as a holder and kept as memory, which is once each.
+
+        Dropping the row and its RSS together would lose 1.00 GiB of the 11.67
+        that boltz holds; keeping it as a holder was the double count this gate
+        was refusing admissions over.
+        """
+        held = self._holdings(
+            self.WORKER.format(slug="boltz"),
+            self.WORKER.format(slug="boltz"),
+            budgets={"boltz": 5.54},
+            rss={0: self.BOLTZ_WORKER_KIB, 1: self.BOLTZ_FORK_KIB},
+            parents={1: 0},
+            shared=True,
+        )
+        expected = (self.BOLTZ_WORKER_KIB + self.BOLTZ_FORK_KIB) / 1048576
+        assert set(held) == {"boltz"}
+        assert held["boltz"] == pytest.approx(expected, abs=0.01)
+
+    def test_two_independent_workers_are_two_holders_each_costed_by_its_own_tree(self):
+        """Neither is the other's child, so neither tree swallows the other.
+
+        Both readings are above boltz's declared 5.54 so that each key is
+        answered by its own tree and not by the figure they share.
+        """
+        other = self.BOLTZ_WORKER_KIB + self.BOLTZ_AFFINITY_KIB
+        held = self._holdings(
+            self.WORKER.format(slug="boltz"),
+            self.FOREIGN.format(slug="boltz", tree="tnf_alpha"),
+            budgets={"boltz": 5.54},
+            rss={0: self.BOLTZ_WORKER_KIB, 1: other},
+            shared=True,
+        )
+        assert set(held) == {"boltz", "boltz@tnf_alpha"}
+        assert held["boltz"] == pytest.approx(self.BOLTZ_WORKER_KIB / 1048576, abs=0.01)
+        assert held["boltz@tnf_alpha"] == pytest.approx(other / 1048576, abs=0.01)
+
+    def test_a_slug_this_checkout_lacks_is_costed_where_its_tree_can_be_read(self):
+        """None was the only answer available before; now the machine has one.
+
+        A worker from a checkout that no longer exists has no manifest to
+        declare anything, and `decide` refuses on None. Its resident set is
+        still readable, and refusing to admit anything because of a provider
+        whose cost is sitting in the process table is a worse answer than the
+        reading.
+        """
+        held = self._holdings(
+            self.WORKER.format(slug="somethingelse"),
+            budgets={},
+            rss={0: self.BOLTZ_WORKER_KIB},
+            shared=True,
+        )
+        assert held["somethingelse"] == pytest.approx(
+            self.BOLTZ_WORKER_KIB / 1048576, abs=0.01
+        )
+
+    def test_a_row_with_numbers_but_no_command_does_not_raise(self):
+        """The field count is a guard and not only a way to skip `ps`'s header.
+
+        `pid ppid rss args` is unpacked into four names, so a row with three
+        fields raises `ValueError` rather than being ignored -- and this gate
+        returning nothing is a wedged host, which is what it exists to prevent.
+        Nothing is known to print such a row; the cost of not finding out the
+        hard way is one assertion.
+        """
         from tooluniverse.remote_resident import admission
 
         ps = "\n".join(
             [
-                self.WORKER.format(slug="boltz"),
-                self.FOREIGN.format(slug="boltz", tree="other"),
+                "    PID    PPID       RSS COMMAND",
+                "   1000       1   6006132",
+                f"   1001       1   6006132 {self.WORKER.format(slug='boltz')}",
             ]
         )
-        held = admission.machine_holdings(ps_output=ps, budget_of=lambda s: 5.54)
+
+        held = admission.machine_holdings(
+            ps_output=ps,
+            budget_of=lambda s: 5.54,
+            pool_is_shared=lambda: True,
+        )
+        assert set(held) == {"boltz"}
+
+    def test_a_tree_is_summed_from_one_snapshot_and_not_re_read_per_holder(self):
+        """One `ps` call, because the gate decides in one moment and not several.
+
+        A /proc walk per holder reads a different moment per process, and a
+        worker that exits between two of them makes the sum describe no instant
+        that ever existed.
+        """
+        from tooluniverse.remote_resident import admission
+
+        calls = []
+
+        def fake_run(argv, **kwargs):
+            calls.append(argv)
+
+            class Result:
+                stdout = ""
+
+            return Result()
+
+        original = admission.subprocess.run
+        admission.subprocess.run = fake_run
+        try:
+            admission.machine_holdings(pool_is_shared=lambda: True)
+        finally:
+            admission.subprocess.run = original
+
+        assert len(calls) == 1, calls
+        assert calls[0] == ["ps", "-eo", "pid,ppid,rss,args"]
+
+    def test_the_live_machine_answers_in_the_unit_its_pool_is_read_in(self):
+        """Whatever is running, a holding is never below what the machine says it is.
+
+        The point of the reading is that a declared budget can be lower than the
+        truth; this says the two are compared in the direction that cannot
+        overcommit, against whatever happens to be resident when it runs.
+        """
+        from tooluniverse.remote_resident import admission
+
+        if admission.pool_is_shared_with_the_host() is not True:
+            pytest.skip("the reading is only a candidate where the pool is the host's")
+        live = admission.machine_holdings()
+        declared = admission.machine_holdings(pool_is_shared=lambda: False)
+        assert set(live) == set(declared)
+        for slug, value in declared.items():
+            if value is not None:
+                assert live[slug] >= value - 0.01, (slug, live[slug], value)
+
+    def test_room_for_releases_only_its_own_trees_budget(self):
+        """Restarting mine frees mine; another tree's worker is still holding."""
+        held = self._holdings(
+            self.WORKER.format(slug="boltz"),
+            self.FOREIGN.format(slug="boltz", tree="other"),
+            budgets={"boltz": 5.54},
+        )
         held.pop("boltz", None)  # what room_for does
         assert held == {"boltz@other": 5.54}, (
             "a restart must not release another checkout's budget"
@@ -2323,7 +2642,7 @@ class TestTheCliAndTheGateAgree:
 
         doc = json.loads(_run_room("--json"))
         assert calls, "the command did not consult machine_holdings"
-        assert doc["declared_held_gb"] == 100.0
+        assert doc["held_gb"] == 100.0
         assert doc["held"] == {"ghost@elsewhere": 100.0}
         # The largest provider, because that one cannot fit under any reading:
         # 100 held + 38.63 + 4 reserved is past a 121.6 GiB pool. Asserting
@@ -2331,7 +2650,7 @@ class TestTheCliAndTheGateAgree:
         # 5.54 + 4 still leaves the sum under the pool, and it genuinely fits.
         biggest = max(doc["providers"], key=lambda r: r["vram_budget_gb"] or 0)
         assert not biggest["fits"], f"{biggest['slug']} fits with 100 GiB held"
-        assert "already declared held" in biggest["reason"]
+        assert "already held" in biggest["reason"]
 
         before = len(calls)
         v = admission.room_for("boltz", 5.54)
@@ -2339,7 +2658,7 @@ class TestTheCliAndTheGateAgree:
         # That the patched holdings reached the decision, not that boltz is
         # refused -- 100 held plus 5.54 plus 4 is still under a 121.6 pool, so
         # it fits, and asserting otherwise was arithmetic by intuition twice.
-        assert v.declared_held_gb == 100.0
+        assert v.held_gb == 100.0
 
     def test_they_produce_the_same_verdict_for_the_same_provider(self):
         """The same logic over the same numbers, not two reads of a moving host.
@@ -2380,7 +2699,7 @@ class TestTheCliAndTheGateAgree:
         # and the holdings both sides read come from the process table, which is
         # the point of the pairing: a fresh CLI process has no backend state.
         held = admission.machine_holdings()
-        assert doc["declared_held_gb"] == pytest.approx(
+        assert doc["held_gb"] == pytest.approx(
             round(sum(x for x in held.values() if x is not None), 2), abs=0.01
         )
 
@@ -2447,7 +2766,7 @@ class TestACpuProviderIsZeroNotUnknown:
             co_tenants=0,
         )
         assert v.admit, v.reason
-        assert v.declared_held_gb == 0.0
+        assert v.held_gb == 0.0
         assert "cannot be summed" not in v.reason
 
     def test_an_undeclared_budget_still_refuses(self):
