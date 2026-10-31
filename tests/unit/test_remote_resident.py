@@ -3417,3 +3417,163 @@ class TestWarmOnStart:
 
         assert warm[backend.WARM_ON_START_ENV] == "1"
         assert backend.WARM_ON_START_ENV not in cold
+
+
+class TestADeadEngineIsAVerdictNotAFailedRequest:
+    """carbonx's model lives in a child process, and the child can die.
+
+    Every sibling on this standard builds its model inside the worker, so a
+    model that dies takes the worker with it and the supervisor -- whose
+    `is_running()` polls the WORKER's pid -- rebuilds it. carbonx breaks that
+    equivalence: `llama-server` is a separate process, and killing it leaves a
+    perfectly healthy worker that cannot answer anything.
+
+    MEASURED BEFORE THE FIX, 2026-10-31. SIGKILL the engine and the worker
+    stayed up with its socket bound, `ping` kept answering `ready: True`, and
+    every request after that failed in 0.0 s with `ConnectionRefusedError:
+    [Errno 111] Connection refused` -- permanently, because `_spawn_engine`
+    runs once in `__main__` and nothing respawns it. `_ready()` did report
+    `engine_alive: False`; nothing in the repo read that key. So the provider
+    held its port, passed for healthy, and could never answer again.
+
+    The fix does not build a second recovery path. Killing the WORKER was
+    measured in the same session and the supervisor rebuilt worker and engine
+    correctly, so the engine's death is converted into the death the
+    supervisor can already see: `_EngineGone` is a `SystemExit`, `serve` names
+    it to the caller through `_fatal_reply` and exits, and the next request
+    rebuilds. Measured after the fix: one named failure in 1.0 s, then a
+    correct answer on the next request.
+    """
+
+    WORKER = (
+        Path(__file__).resolve().parents[2]
+        / "src/tooluniverse/remote/carbonx/resident/carbonx_resident_worker.py"
+    )
+
+    class _Proc:
+        """Just enough of `Popen` for the question being asked."""
+
+        def __init__(self, rc=None):
+            self.returncode = rc
+            self._rc = rc
+
+        def poll(self):
+            return self._rc
+
+    @classmethod
+    def _worker(cls, monkeypatch):
+        """The worker module, which parses argv at import and holds no model."""
+        import importlib.util
+
+        monkeypatch.setattr(
+            sys,
+            "argv",
+            ["worker", "--socket", "/tmp/unused.sock",
+             "--gguf", "/tmp/unused.gguf", "--engine", "/tmp/unused-engine"],
+        )
+        spec = importlib.util.spec_from_file_location("_cx_worker", cls.WORKER)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return mod
+
+    def test_startup_still_owns_a_refused_connection(self, monkeypatch):
+        """Refused is the EXPECTED answer while the engine is loading.
+
+        `_spawn_engine` polls `/health` through exactly this error for up to
+        600 s. Making it fatal would turn a provider that is merely slow to
+        read 15.8 GB off a cold disk into one that reports itself broken.
+        """
+        m = self._worker(monkeypatch)
+        m._ENGINE.update({"load_s": None, "proc": self._Proc(None)})
+        exc = ConnectionRefusedError(111, "Connection refused")
+
+        assert m._engine_gone_or(exc) is exc
+
+    def test_a_refused_socket_after_load_does_not_wait_to_win_a_race(
+        self, monkeypatch
+    ):
+        """The first version of this fix asked `poll()`, and lost.
+
+        Measured: the first request after a SIGKILL saw `poll() is None` --
+        the child was killed but not yet reaped -- so it was reported as an
+        ordinary `request_failed` and the worker stayed up; only the SECOND
+        request saw `exit -9`. One death cost two failures. ECONNREFUSED on an
+        `AF_UNIX` path cannot mean a busy engine the way it could over TCP, so
+        the socket is the evidence and no race is run.
+        """
+        m = self._worker(monkeypatch)
+        m._ENGINE.update({"load_s": 11.1, "proc": self._Proc(None)})
+
+        verdict = m._engine_gone_or(ConnectionRefusedError(111, "Connection refused"))
+
+        assert isinstance(verdict, m._EngineGone)
+        assert isinstance(verdict, SystemExit)
+        # STANDARD section 8: 1 is "failed". Nothing was refused -- a child died.
+        assert verdict.code == 1
+        assert "llama-server" in verdict.reason
+
+    def test_a_timeout_on_a_living_engine_is_still_one_failed_request(
+        self, monkeypatch
+    ):
+        """A wedged-but-living engine must not cost the model.
+
+        The whole reason `serve` has two except clauses is that a bad request
+        must not spend the minutes it took to load. A timeout is not evidence
+        that the child is gone.
+        """
+        m = self._worker(monkeypatch)
+        m._ENGINE.update({"load_s": 11.1, "proc": self._Proc(None)})
+        exc = TimeoutError("timed out")
+
+        assert m._engine_gone_or(exc) is exc
+
+    def test_a_reaped_child_is_fatal_whatever_the_error_said(self, monkeypatch):
+        """`poll()` is still read -- it is just no longer the only evidence."""
+        m = self._worker(monkeypatch)
+        m._ENGINE.update({"load_s": 11.1, "proc": self._Proc(-9)})
+
+        verdict = m._engine_gone_or(TimeoutError("timed out"))
+
+        assert isinstance(verdict, m._EngineGone)
+        assert "exit -9" in verdict.reason
+
+    def test_the_caller_is_told_by_name_before_the_worker_goes(self, monkeypatch):
+        """The half this reuses: `_fatal_reply`, which already existed.
+
+        A right code behind no message is the contract broken from the other
+        end -- the mistake section 8 records for the kits' `KernelsRefused`.
+        """
+        m = self._worker(monkeypatch)
+        try:
+            raise m._EngineGone("the llama-server child is gone (exit -9)")
+        except SystemExit as exc:
+            reply = m.WB._fatal_reply(exc)
+
+        assert reply["ok"] is False
+        assert reply["reason"] == "worker_exiting"
+        assert reply["exit_code"] == 1
+        assert "llama-server" in reply["error"]
+
+    def test_every_socket_error_on_the_engine_routes_through_the_verdict(self):
+        """One funnel, because a second engine route would bypass a second gate.
+
+        `_engine_call` is the only place this worker touches the engine, so
+        wiring the decision there covers `/health`, `/props`, `/tokenize`,
+        `/apply-template` and `/v1/chat/completions` at once. This reads the
+        source because the drift to guard against is a new helper that opens
+        its own connection -- the "one predicate, two homes" defect this
+        provider has already shipped once.
+        """
+        src = self.WORKER.read_text()
+        body = src.split("def _engine_call")[1].split("\ndef ")[0]
+
+        assert "except OSError as exc:" in body
+        assert "raise _engine_gone_or(exc) from exc" in body
+        # Nothing else may open a socket to the engine. The class statement
+        # names it too, so only instantiations are counted.
+        opens = [
+            line
+            for line in src.splitlines()
+            if "_UnixHTTP(" in line and not line.lstrip().startswith("class ")
+        ]
+        assert len(opens) == 1, opens

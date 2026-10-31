@@ -260,8 +260,26 @@ vendor ran one through `llama-server` and found no measurable loss.
 > llama-server b11742 does not implement. Only `-c 8192` has been served; the
 > x86_64 engine digests are pinned from the published tarball but that binary
 > has never been run here, so this provider is measured on aarch64 only.
-> Public publication, cross-user isolation, concurrency and recovery are
-> untested; keep this deployment private.
+> Public publication and cross-user isolation are untested; keep this
+> deployment private.
+>
+> **Concurrency and recovery were measured on 2026-10-31, and recovery was
+> broken.** Independent MCP clients asking different questions at once were
+> each answered with their own work -- 100% identity to own input against 15%
+> and 5% to the others at three callers, and 8 of 8 attributed correctly at
+> eight. Eight returned on an even staircase about 1.3-1.5 s apart, nothing
+> was dropped or timed out, and the footprint stayed at 15.46 GiB: queueing is
+> what this design gives instead of parallelism. **Order is not FIFO** -- one
+> burst completed in submission order and the next served its first caller
+> last, at 10.4 s against its neighbours' 1.4 -- so every caller is served and
+> none starves, but position is not promised. Recovery did not hold. **SIGKILL the
+> `llama-server` child and the worker stayed up, kept its socket, kept
+> answering `ping` with `ready: True`, and failed every request forever in
+> 0.0 s** -- the engine is spawned once in `__main__` and nothing respawned
+> it, while the supervisor's liveness check polls the worker's pid and so saw
+> nothing wrong. It now converts that into the death the supervisor can see:
+> one named refusal naming `llama-server` in 1.0 s, the worker exits, and the
+> next request answers correctly after an 8.7-49.2 s rebuild.
 
 - Operation: `carbonx_ask_dna`
 - Start: `python -m tooluniverse.remote.carbonx.carbonx_tool`

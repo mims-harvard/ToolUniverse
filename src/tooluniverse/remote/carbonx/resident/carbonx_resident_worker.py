@@ -148,6 +148,79 @@ class _EngineError(RuntimeError):
     """The engine answered, and what it said was a failure."""
 
 
+class _EngineGone(SystemExit):
+    """The engine process is gone, so this worker must not answer again.
+
+    Exit **1** -- "failed" in STANDARD section 8 -- and not 3: nothing was
+    refused, a child died. It is a ``SystemExit`` so that `serve` reads it as a
+    verdict about the PROCESS rather than about the request, which is what
+    `_fatal_reply` exists for: the caller is told by name, and then the worker
+    exits instead of holding a queue it can no longer answer.
+
+    THIS EXISTS BECAUSE THE WORKER HAD NO WAY TO SAY IT. Measured 2026-10-31:
+    SIGKILL the llama-server child and the worker stays up with its socket
+    bound, `ping` keeps answering `ready: True`, and every request after that
+    fails in 0.0 s with `ConnectionRefusedError: [Errno 111] Connection
+    refused` -- forever, because `_spawn_engine` runs once in `__main__` and
+    nothing respawns it. The supervisor could not see it either: its
+    `is_running()` polls the WORKER's pid, so it finds a live process and a
+    bound socket and returns without rebuilding. `_ready()` did report
+    `engine_alive: False`, to nobody -- that key had no reader in the repo.
+
+    So recovery is not rebuilt here, it is HANDED to the path that already
+    works. Killing the worker instead was measured in the same session: the
+    supervisor rebuilt worker and engine and answered correctly in 8.7 s. This
+    turns the death it cannot see into the death it can.
+    """
+
+    def __init__(self, reason: str):
+        super().__init__(1)
+        self.reason = reason
+
+
+def _engine_gone_or(exc: OSError) -> BaseException:
+    """``exc``, unless the engine is dead -- then the fatal verdict instead.
+
+    The distinction is the whole point, because one
+    ``ConnectionRefusedError`` means two opposite things. While the engine is
+    STARTING, refused is the expected answer and `_spawn_engine` polls through
+    it; making that fatal would turn a provider that is merely slow to load
+    into a provider that reports itself broken. Once it has loaded, refused
+    means the child is not there any more.
+
+    ``load_s`` is the discriminator for that, because it is set exactly once,
+    after ``/health`` first answers ok. "Has this engine ever been healthy" is
+    therefore already recorded and nothing new has to be tracked to ask it.
+    Before that moment startup owns the error, and its refusal exits 3.
+
+    AFTER IT, THE SOCKET ITSELF IS THE EVIDENCE -- NOT ``poll()``. On an
+    ``AF_UNIX`` socket ECONNREFUSED means no process is accepting on that path
+    and ENOENT means the path is gone; neither can be a busy or slow engine,
+    the way they could be over TCP. That matters because asking the child
+    instead loses a race: measured 2026-10-31, the first request after a
+    SIGKILL got ``poll() is None`` -- the child was killed but not yet reaped
+    -- and so was reported as an ordinary ``request_failed``, and only the
+    SECOND request saw ``exit -9`` and took the worker down. One death cost
+    two failures. Reading the socket is race-free, and `poll()` is kept only
+    for the OTHER errors: a timeout or a reset mid-request can mean a wedged
+    but living engine, which is a failed request and not a verdict, unless the
+    child is demonstrably gone.
+    """
+    proc = _ENGINE.get("proc")
+    if _ENGINE.get("load_s") is None:
+        return exc
+    nobody_listening = isinstance(exc, (ConnectionRefusedError, FileNotFoundError))
+    reaped = proc is not None and proc.poll() is not None
+    if not (nobody_listening or reaped):
+        return exc
+    rc = proc.returncode if proc is not None else None
+    how = f"exit {rc}" if rc is not None else f"not listening: {exc}"
+    return _EngineGone(
+        f"the llama-server child is gone ({how}); this worker cannot start "
+        "another, so it exits and the supervisor rebuilds both"
+    )
+
+
 _ENGINE: dict = {"proc": None, "sock": None, "dir": None, "build": None, "load_s": None}
 
 # PR_SET_PDEATHSIG from <linux/prctl.h>. Hard-coded because this worker has no
@@ -190,9 +263,15 @@ def _engine_call(method: str, route: str, body=None, timeout: float = 3600.0) ->
     conn = _UnixHTTP(_ENGINE["sock"], timeout)
     try:
         payload = json.dumps(body).encode() if body is not None else None
-        conn.request(method, route, payload, {"Content-Type": "application/json"})
-        response = conn.getresponse()
-        raw = response.read()
+        try:
+            conn.request(method, route, payload, {"Content-Type": "application/json"})
+            response = conn.getresponse()
+            raw = response.read()
+        except OSError as exc:
+            # A socket error here is either an engine that has not come up yet
+            # or one that is never coming back. `_engine_gone_or` is where that
+            # is told apart, and why it has to be.
+            raise _engine_gone_or(exc) from exc
         if response.status != 200:
             raise _EngineError(
                 f"llama-server answered {response.status} on {route}: "
@@ -570,6 +649,11 @@ def _ready() -> dict:
         "model": "HuggingFaceBio/Carbon-X-GGUF:Q8_0",
         "engine": _ENGINE.get("build"),
         "engine_pid": proc.pid if proc else None,
+        # DIAGNOSTIC, NOT A GATE, and it was mistaken for one. Nothing reads
+        # this key -- it reported `false` at a provider that was refusing
+        # every request and no caller noticed, because there is no caller.
+        # An engine death is handled where it is detected instead: see
+        # `_EngineGone`. Left in because an operator reading a ping wants it.
         "engine_alive": bool(proc and proc.poll() is None),
         "engine_load_s": _ENGINE.get("load_s"),
         "n_ctx": _ENGINE.get("n_ctx"),

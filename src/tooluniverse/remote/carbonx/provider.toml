@@ -212,8 +212,92 @@ x86_64 engine digests in `environment/llamacpp-b11742.pins` were computed from
 the published tarball, but that binary has never been executed here, so this
 provider is MEASURED on aarch64 only. A repeated prompt prefix makes the
 engine's reported `prompt_eval_per_s` meaningless, because llama.cpp reuses
-the cached prefix and still divides by elapsed time. Concurrency, recovery,
-public publication and independent-caller isolation are untested."""
+the cached prefix and still divides by elapsed time. Public publication, and
+independent-caller AUTHORIZATION, are untested -- eight simultaneous loopback
+callers were measured and is not the same question.
+
+CONCURRENCY AND RECOVERY WERE MEASURED ON 2026-10-31, AND RECOVERY WAS BROKEN.
+
+Concurrency holds, and what was checked is ATTRIBUTION rather than speed. The
+worker answers serially by construction -- `worker_base.serve` accepts and
+answers one request at a time and callers queue -- and the engine runs with
+`-np 1`, so the thing that can actually go wrong is not slowness but two
+callers sharing one engine being answered with each other's work. Three
+independent MCP clients, each on its own connection, asked for three
+different human CDS starts simultaneously. Every answer matched its own input
+at 100% identity and the other two at 15% and 5%, so nothing crossed.
+Translation was chosen for exactly that reason: the answer is a deterministic
+function of the input, so a misattributed answer falls to chance instead of
+being merely slightly wrong. The three finished 1.4 s, 2.7 s and 4.0 s after
+a simultaneous start -- a 1.3 s staircase, which is the queue made visible --
+and the engine's device footprint stayed at 15.46 GiB across all of it.
+
+Saturation was then taken to eight simultaneous callers, four times what the
+relay would ever send (`tu remote run --workers` caps itself at 2). All eight
+were answered, all eight were attributed to their own input, and they
+completed on an even staircase about 1.3-1.5 s apart -- nothing was dropped,
+nothing timed out, and the footprint read 15.46 GiB at both ends of the burst.
+
+THE ORDER IS NOT FIRST-IN-FIRST-OUT, and the first run of this read as though
+it were. One burst of eight completed in submission order and the next
+completed 1,2,3,4,5,6,7,0 -- the caller that arrived first was served last,
+after 10.4 s against its neighbours' 1.4. The three-caller burst had done the
+same thing and it was misread as a queue. So what is measured is that every
+caller is served, none starves and the spacing is even; a caller's POSITION is
+not promised, and a client that needs one must not infer it from this. The
+cause is not investigated here: `serve` accepts connections one at a time and
+asyncio's gather starts them in no guaranteed order, so the arrival order at
+`accept()` is not the order the callers were created in. What
+this does NOT test is authorization: every caller here is the same uid on
+loopback, so it says the queue is fair and says nothing about whether one
+tenant may send the request at all.
+
+Recovery had a hole exactly where this provider differs from every sibling.
+The others build their model inside the worker, so a dead model is a dead
+worker and `Supervisor.is_running()`, which polls the WORKER's pid, rebuilds
+it. Here the model is a separate process. SIGKILL the engine and the worker
+stayed up with its socket bound, `ping` kept answering `ready: True`, and
+every request after that failed in 0.0 s with `ConnectionRefusedError: [Errno
+111] Connection refused` -- permanently, because `_spawn_engine` runs once in
+`__main__` and nothing respawns it. Two things were right: the card was
+released, so nothing leaked, and the failure was named instead of hanging for
+the 1800 s request timeout. The rest was not. The provider held its port and
+passed for healthy while being unable to ever answer again, and `_ready()`
+reported `engine_alive: False` to nobody -- that key had no reader anywhere in
+the repo.
+
+Killing the WORKER instead was measured in the same session and worked: the
+supervisor rebuilt worker and engine and answered correctly. So the engine's
+death is now CONVERTED into the death the supervisor can already see, rather
+than given a second recovery path of its own. `_EngineGone` is a
+`SystemExit(1)` -- section 8's "failed", because nothing was refused, a child
+died -- `serve` names it to the caller through the `_fatal_reply` path the
+kits' refusals already use, and the worker exits. Measured after the fix: the
+request that meets the dead engine is refused in 1.0 s, naming `llama-server`
+and pointing at the transcript; the worker exits; the NEXT request answers
+correctly. Rebuild cost 8.7 s, 29.6 s and 49.2 s across three observations,
+all with a warm page cache. The spread is the engine reading 15.8 GB against
+whatever else holds the pool, and all three are recorded rather than the
+best one.
+
+THE FIRST VERSION OF THAT FIX WAS WRONG IN A WAY WORTH KEEPING HERE. It asked
+`proc.poll()` whether the child was gone, and the first request after a
+SIGKILL saw `None` -- killed but not yet reaped -- so it was reported as an
+ordinary `request_failed`, the worker stayed up, and only the SECOND request
+saw `exit -9` and took it down. One death cost two failures. ECONNREFUSED on
+an `AF_UNIX` path cannot mean a busy engine the way it could over TCP, so the
+socket is the evidence now and `poll()` decides only the other errors, where a
+timeout can still mean a wedged but living engine and must not cost the
+model.
+
+BOTH OF THOSE ARE REPRODUCIBLE, which is the only reason to believe them a
+second time: `scripts/remote_validation/carbonx_resilience_check.py --callers
+8 --crash-the-engine` exits 0 on 2026-10-31 against this provider, printing
+8/8 attributed at 100% to their own input and then a named `worker_exiting`
+verdict in 0.3 s followed by a correct answer 7.9 s later. Its ground truth is
+built at run time from Ensembl and the standard genetic code rather than
+pasted in, and the crash is behind a flag that says what it does, because a
+check that kills a process should not be the default."""
 
 [runtime]
 mode = "resident"

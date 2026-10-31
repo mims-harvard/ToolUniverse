@@ -92,13 +92,58 @@ pays the start-up cost on every request says why it must.
 
 **One request at a time per worker.** Two requests sharing one CUDA context
 interleave their allocations and make an out-of-memory attributable to neither.
-Callers queue; the supervisor holds a lock for the whole request.
+Callers queue; the supervisor holds a lock for the whole request. *Evidence:*
+measured — eight callers arriving at once on carbonx were answered 8/8 on an
+even staircase 1.3–1.5 s apart, each with the answer to its OWN input and none
+dropped. **Queueing is not ordering**: one burst completed in submission order
+and the next served its first caller last, so a worker owes every caller an
+answer and owes none of them a position. Attribution is the property worth checking here, not latency:
+a queue that crossed two callers' work would still look fast, and the failure
+would be a plausible answer to someone else's question. It is checkable only
+with a question whose answer is a function of the input, which is why that
+measurement translates DNA rather than asking anything open-ended.
 
 **A worker must not outlive what it serves.** It retires after `idle_timeout_s`
 with no requests, so an idle provider stops occupying the card, and it exits on
 its own when orphaned — being reparented to init plus a grace period is the
 signal. *Evidence:* measured — an MCP server killed with SIGKILL left two worker
 processes holding the GPU; with the watchdog they exit within the grace period.
+
+**And a worker must not outlive the MODEL it serves.** For every provider whose
+model is built in the worker's own address space those are one sentence, which
+is how supervision got away with half of it: `is_running()` polls the WORKER's
+pid, and a model that dies takes the worker down with it. carbonx breaks that
+equivalence — Carbon-X is served by a `llama-server` child process — and the
+missing half became visible immediately. *Evidence:* measured — SIGKILL the
+engine and the worker stayed up with its socket bound, kept answering `ping`
+with `ready: true`, and failed every request in 0.0 s with
+`ConnectionRefusedError` permanently, because the engine is spawned once at
+start-up and nothing respawned it. Two things were right: the card was released
+and the failure was named rather than hanging to the request timeout. The rest
+was not — the provider held its port and passed for healthy while being unable
+to answer again, and its own `_ready()` reported `engine_alive: false` to
+nobody, because no caller in this repo read that key.
+
+So a provider whose model is a separate process owes one more thing: **when the
+model dies, the worker dies too**, which puts the rebuild through the path that
+already works. A second recovery path inside the worker would be a second home
+for one question — the defect §6 records — and the supervisor cannot be given
+the job either, since it would then need its own answer to "is the model alive"
+for every provider that holds one differently. The worker is the only thing that
+knows, so the worker converts it: carbonx raises a `SystemExit(1)` from its
+engine call, `serve` names it through `_fatal_reply` and exits, and the next
+request rebuilds. *Evidence:* measured — one named refusal in 1.0 s, then a
+correct answer on the request after it, with the rebuild costing 8.7–49.2 s
+across three observations.
+
+**Liveness evidence comes from the thing that cannot lie, not from a proxy.**
+The first version of that fix asked the child's `poll()` and lost a race: the
+first request after a SIGKILL saw `None` — killed but not yet reaped — so it was
+reported as an ordinary failed request and only the SECOND request took the
+worker down. One death cost two failures. ECONNREFUSED on an `AF_UNIX` path
+cannot mean a busy server the way it could over TCP, so the socket is the
+evidence and `poll()` decides only the ambiguous errors, where a timeout may
+still mean a wedged but living model that must not cost the residency.
 
 ---
 
@@ -862,6 +907,10 @@ card, the way out was a flag its CLI already offered -- atlasfold's
 | Sockets undercount holders | measured: one socket per slug per uid, and a stale one outliving its worker |
 | Capacity on unified memory is MemTotal | measured: nvidia-smi memory.total answers [N/A] on this GB10 |
 | The operator-facing answer must share the gate's source | measured: `room` read backend.running() and would have promised what the gate refuses |
+| A dead model is a dead worker only when the model is IN the worker | measured: carbonx's engine SIGKILLed left a worker answering `ping` with `ready: true` and refusing every request forever |
+| A health key nothing reads is not a health check | measured: `engine_alive: false` was reported by `_ready()` and had no caller in the repo |
+| Liveness evidence is the socket, not the child's `poll()` | measured: the first request after a SIGKILL saw `poll() is None`, killed but unreaped, so one death cost two failures |
+| Concurrency's risk is attribution, not latency | measured: 8 simultaneous callers, every answer 100% identity to its own input; order is not FIFO and the first caller was once served last |
 
 ## 12. What providers twenty-four through twenty-seven changed: a budget has a direction, and a probe ran unprotected
 
