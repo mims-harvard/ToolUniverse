@@ -92,13 +92,58 @@ pays the start-up cost on every request says why it must.
 
 **One request at a time per worker.** Two requests sharing one CUDA context
 interleave their allocations and make an out-of-memory attributable to neither.
-Callers queue; the supervisor holds a lock for the whole request.
+Callers queue; the supervisor holds a lock for the whole request. *Evidence:*
+measured — eight callers arriving at once on carbonx were answered 8/8 on an
+even staircase 1.3–1.5 s apart, each with the answer to its OWN input and none
+dropped. **Queueing is not ordering**: one burst completed in submission order
+and the next served its first caller last, so a worker owes every caller an
+answer and owes none of them a position. Attribution is the property worth checking here, not latency:
+a queue that crossed two callers' work would still look fast, and the failure
+would be a plausible answer to someone else's question. It is checkable only
+with a question whose answer is a function of the input, which is why that
+measurement translates DNA rather than asking anything open-ended.
 
 **A worker must not outlive what it serves.** It retires after `idle_timeout_s`
 with no requests, so an idle provider stops occupying the card, and it exits on
 its own when orphaned — being reparented to init plus a grace period is the
 signal. *Evidence:* measured — an MCP server killed with SIGKILL left two worker
 processes holding the GPU; with the watchdog they exit within the grace period.
+
+**And a worker must not outlive the MODEL it serves.** For every provider whose
+model is built in the worker's own address space those are one sentence, which
+is how supervision got away with half of it: `is_running()` polls the WORKER's
+pid, and a model that dies takes the worker down with it. carbonx breaks that
+equivalence — Carbon-X is served by a `llama-server` child process — and the
+missing half became visible immediately. *Evidence:* measured — SIGKILL the
+engine and the worker stayed up with its socket bound, kept answering `ping`
+with `ready: true`, and failed every request in 0.0 s with
+`ConnectionRefusedError` permanently, because the engine is spawned once at
+start-up and nothing respawned it. Two things were right: the card was released
+and the failure was named rather than hanging to the request timeout. The rest
+was not — the provider held its port and passed for healthy while being unable
+to answer again, and its own `_ready()` reported `engine_alive: false` to
+nobody, because no caller in this repo read that key.
+
+So a provider whose model is a separate process owes one more thing: **when the
+model dies, the worker dies too**, which puts the rebuild through the path that
+already works. A second recovery path inside the worker would be a second home
+for one question — the defect §6 records — and the supervisor cannot be given
+the job either, since it would then need its own answer to "is the model alive"
+for every provider that holds one differently. The worker is the only thing that
+knows, so the worker converts it: carbonx raises a `SystemExit(1)` from its
+engine call, `serve` names it through `_fatal_reply` and exits, and the next
+request rebuilds. *Evidence:* measured — one named refusal in 1.0 s, then a
+correct answer on the request after it, with the rebuild costing 8.7–49.2 s
+across three observations.
+
+**Liveness evidence comes from the thing that cannot lie, not from a proxy.**
+The first version of that fix asked the child's `poll()` and lost a race: the
+first request after a SIGKILL saw `None` — killed but not yet reaped — so it was
+reported as an ordinary failed request and only the SECOND request took the
+worker down. One death cost two failures. ECONNREFUSED on an `AF_UNIX` path
+cannot mean a busy server the way it could over TCP, so the socket is the
+evidence and `poll()` decides only the ambiguous errors, where a timeout may
+still mean a wedged but living model that must not cost the residency.
 
 ---
 
@@ -285,6 +330,48 @@ against a pool of 12.0. The 1.79 GiB between them is not slack a host can lend:
 JAX took it from the device and does not return it. `peak_bytes_in_use` answers
 "what does this input cost"; the pool answers "what does holding this provider
 cost everyone else", and a budget exists for the second question.
+
+**A third kind of figure, and the one case where a point reading is the whole
+story.** carbonx serves Carbon-X from a `llama-server` child process and has no
+torch to ask. llama.cpp allocates weights, KV cache and compute buffers when
+the model loads and does not grow afterwards, so the footprint is fixed by
+`-c` and `-np` rather than by what a request did: four requests spanning 72 bp
+to 8,208 bp moved it by 0.16 GiB, which was the shared unified pool breathing.
+Two readings exist for it and they differ. `nvidia-smi
+--query-compute-apps=pid,used_memory` gives the driver's view of the engine
+process, 15.46 GiB, and is what the worker reports — on this card it is the
+only reading a worker without torch can take, since `--query-gpu=memory.used`
+returns N/A on unified memory. `torch.cuda.mem_get_info` from outside gives
+the whole-pool delta, 17.11 GiB, which is larger because the engine's own RSS
+counts against the same pool. **The budget is set from the larger one**, since
+the question a budget answers is what holding this provider costs everyone
+else. The margin above it can be smaller than a torch provider's — 7% rather
+than 25-30% — because there is no allocator high-water mark to cover, only
+measurement noise; that is a property of the runtime, not a licence.
+
+**A GPU provider whose own interpreter does not hold the card says so.**
+`[gpu] driven_by` names what does. Setup's toolchain probe otherwise asks the
+model environment's torch whether it can drive this GPU, which is the right
+question for almost every provider and an impossible one for a provider with
+no torch in that environment at all; without the key a correct install is
+refused as `torch_arch_unsupported`. That refusal has now been wrong twice for
+the same reason — `_arch_problem` already carries a jax branch because af3_jax
+pins a CPU-only torch while jax drives the card — so the third case is
+declared by the provider rather than guessed at by the probe.
+
+**And declaring it in one gate is not declaring it.** The key went into
+`setup`, carbonx installed clean, and `tu remote check` — which §1 calls part
+of the normal path rather than a debugging step — still printed
+`✗ implementation: carbonx` with `CUDA tensor check: failed`, because
+`check_model_environment` asked the same question in its own words. That is
+the row this table already carries as "fixing one framework-naming gate is not
+fixing it", earned a second time, and the shape of the mistake is the giveaway:
+a predicate written as a private helper beside the first gate that needed it.
+It now lives on the manifest as `torch_must_see_the_gpu`, both gates read it,
+and a test asserts neither module re-derives it — because the thing that
+failed here was not the logic, which was right, but there being two places for
+it to be. A report that reads `GPU: held by <driven_by>, not by this
+interpreter` also tells an operator something the green tick would not.
 
 **A budget may err high. It may never err low.** Two providers here disagreed
 with their own declarations in opposite directions, and only one of them was a
@@ -780,6 +867,8 @@ card, the way out was a flag its CLI already offered -- atlasfold's
 | A config switch can exist and be unreachable | measured: `use_glu_kernel` is a function default no call site passes |
 | The fix may be upstream's own flag | measured: `--tokamax_autotuning_cache_miss_fallback=autotune` |
 | An arch gate must ask every framework, not torch | measured: af3_jax refused while JAX drove the card |
+| ...and a provider may have no framework to ask | measured: carbonx drives the card from a llama.cpp child; `[gpu] driven_by` says so |
+| A predicate with two homes has one that is stale | measured: `driven_by` honoured by `setup` and ignored by `tu remote check` |
 | A JAX budget is coarse; a torch one is not | measured: af3_jax 2.0/4.0/4.0/8.0 over 2.00/2.32/3.38/6.37 |
 | ...and not by powers of two | measured: af2ig reports 0.5/1.0/2.0/6.0, which refuted the rule and its mechanism |
 | An equivalence check needs determinism ON | measured: two XLA processes differ in the 5th figure; --det 1 gives one sha256 across three routes |
@@ -818,6 +907,10 @@ card, the way out was a flag its CLI already offered -- atlasfold's
 | Sockets undercount holders | measured: one socket per slug per uid, and a stale one outliving its worker |
 | Capacity on unified memory is MemTotal | measured: nvidia-smi memory.total answers [N/A] on this GB10 |
 | The operator-facing answer must share the gate's source | measured: `room` read backend.running() and would have promised what the gate refuses |
+| A dead model is a dead worker only when the model is IN the worker | measured: carbonx's engine SIGKILLed left a worker answering `ping` with `ready: true` and refusing every request forever |
+| A health key nothing reads is not a health check | measured: `engine_alive: false` was reported by `_ready()` and had no caller in the repo |
+| Liveness evidence is the socket, not the child's `poll()` | measured: the first request after a SIGKILL saw `poll() is None`, killed but unreaped, so one death cost two failures |
+| Concurrency's risk is attribution, not latency | measured: 8 simultaneous callers, every answer 100% identity to its own input; order is not FIFO and the first caller was once served last |
 
 ## 12. What providers twenty-four through twenty-seven changed: a budget has a direction, and a probe ran unprotected
 

@@ -167,6 +167,15 @@ REMOTE_DEPLOYMENTS = (
         gpu_policy="none",
     ),
     RemoteDeployment(
+        "carbonx",
+        "tooluniverse.remote.carbonx.carbonx_tool",
+        8064,
+        ("carbonx_ask_dna",),
+        ("TOOLUNIVERSE_CARBONX_PYTHON",),
+        ("CARBONX_HOME",),
+        gpu_policy="required",
+    ),
+    RemoteDeployment(
         "cell2location",
         "tooluniverse.remote.cell2location.cell2location_tool",
         8019,
@@ -1169,7 +1178,12 @@ def check_model_environment(
             "exit_code": completed.returncode,
         }
     gpu = probe.get("gpu") or {}
-    gpu_ok = manifest.gpu_policy != "required" or (
+    # `torch_must_see_the_gpu` is false for a provider that declares `[gpu]
+    # driven_by`, whose card is held by something this interpreter has no
+    # handle on. Asking its torch would report a provider that installs and
+    # serves correctly as broken -- the same false refusal `setup` already
+    # learned not to make.
+    gpu_ok = not manifest.torch_must_see_the_gpu or (
         gpu.get("cuda_available") is True and gpu.get("tensor_sum") == 28.0
     )
     modules_ok = all(v is True for v in (probe.get("modules") or {}).values())
@@ -1326,6 +1340,7 @@ def check_environment(
                 "mode": manifest.mode,
                 "vram_budget_gb": manifest.vram_budget_gb,
                 "isolation": manifest.isolation,
+                "driven_by": manifest.gpu_driven_by,
                 "path": str(manifest.path),
             }
         ),

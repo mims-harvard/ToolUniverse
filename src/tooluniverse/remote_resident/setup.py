@@ -772,7 +772,7 @@ def step_environment(manifest: ProviderManifest) -> StepResult:
             from .exec_env import from_manifest
 
             problem, why, notes = _toolchain_problems(
-                from_manifest(manifest), manifest.gpu_policy == "required"
+                from_manifest(manifest), manifest.torch_must_see_the_gpu
             )
             if problem:
                 return StepResult(
@@ -872,7 +872,7 @@ def step_environment(manifest: ProviderManifest) -> StepResult:
     from .exec_env import from_manifest
 
     problem, why, notes = _toolchain_problems(
-        from_manifest(manifest), manifest.gpu_policy == "required"
+        from_manifest(manifest), manifest.torch_must_see_the_gpu
     )
     if problem:
         return StepResult(

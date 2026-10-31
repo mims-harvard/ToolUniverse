@@ -108,6 +108,7 @@ _SECTIONS = {
         "isolation",
         "driver_min",
         "driver_min_reason",
+        "driven_by",
     },
     "env": {
         "python",
@@ -259,6 +260,13 @@ class ProviderManifest:
     # and writes no files at all.
     outputs: tuple = ()
     output_keys: tuple = ()
+    # What holds the card, when it is not torch. Absent for every provider
+    # whose model lives in this interpreter; set by one whose GPU work happens
+    # somewhere the toolchain probe cannot see -- carbonx drives it from a
+    # llama.cpp child process and has no torch at all. `setup` reads it to stop
+    # `torch_arch_unsupported` refusing an environment that is correct, the
+    # same false refusal `_arch_problem` already carries a jax branch for.
+    gpu_driven_by: Optional[str] = None
     mode: str = "resident"
     mode_reason: str = ""
     worker: Optional[str] = None
@@ -302,6 +310,26 @@ class ProviderManifest:
     @property
     def directory(self) -> Path:
         return self.path.parent
+
+    @property
+    def torch_must_see_the_gpu(self) -> bool:
+        """Whether this provider's own interpreter is expected to drive the card.
+
+        Almost always yes, and then torch not seeing the GPU is the refusal
+        that saves an hour. But `[gpu] driven_by` names the providers where the
+        card is held somewhere a probe of that interpreter cannot look: carbonx
+        has no torch at all and serves Carbon-X from a llama.cpp child process.
+        Judging it by what torch says is the af3_jax false refusal again, which
+        `_arch_problem` already carries a branch for.
+
+        It lives on the manifest because two layers ask it -- `setup`, where
+        the answer is a refusal, and `tu remote check`, where it is a red line
+        in the report -- and a predicate defined twice is a predicate that
+        drifts. It was in fact defined once and the second caller was missed,
+        which is how a provider that installs and serves correctly still
+        printed a failing `tu remote check` after a clean `tu remote setup`.
+        """
+        return self.gpu_policy == "required" and not self.gpu_driven_by
 
     def weights_root(self) -> Optional[Path]:
         if self.weights_root_env and os.environ.get(self.weights_root_env):
@@ -547,6 +575,7 @@ def load(path: os.PathLike | str) -> ProviderManifest:
         verified_on=prov.get("verified_on", ""),
         outputs=outputs,
         output_keys=output_keys,
+        gpu_driven_by=gpu.get("driven_by"),
         mode=mode,
         mode_reason=rt.get("mode_reason", ""),
         worker=rt.get("worker"),

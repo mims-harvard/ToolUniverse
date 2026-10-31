@@ -1,0 +1,9 @@
+{
+  "question": "Is this sequence more likely coding or non-coding? Answer in one or two sentences.",
+  "sequences": {
+    "hbb_start": "ATGGTGCATCTGACTCCTGAGGAGAAGTCTGCCGTTACTGCCCTGTGGGGCAAGG"
+  },
+  "context": "Human HBB (beta-globin), the first 55 bases of the coding sequence on the plus strand.",
+  "max_tokens": 160,
+  "seed": 0
+}

@@ -1306,11 +1306,26 @@ class TestOrderedInstallPasses:
         _, passes = self._batches("a==1\n# just a comment\nb==2\n")
         assert passes == [["a==1", "b==2"]]
 
+    # A lock that installs nothing is almost always a lock someone emptied by
+    # accident, which is why the sweep below exists. It is not always that:
+    # carbonx's worker is the standard library and its model is a GGUF file
+    # read by a pinned llama.cpp binary, so there is genuinely nothing for a
+    # resolver to pin, and the things that ARE pinned live in
+    # [[weights.files]] and in a .pins table beside the lock. Such a lock has
+    # to SAY so in this exact phrase, so that an accident still fails.
+    NO_PACKAGES = "# THIS FILE PINS NO PACKAGES ON PURPOSE."
+
     def test_every_shipped_lock_still_parses_to_at_least_one_pass(self):
         import glob
 
         for f in sorted(glob.glob("src/tooluniverse/remote/*/environment/*.lock")):
-            _, passes = self._batches(Path(f).read_text())
+            text = Path(f).read_text()
+            _, passes = self._batches(text)
+            if self.NO_PACKAGES in text:
+                assert not passes, (
+                    f"{f} says it pins no packages and then pins some"
+                )
+                continue
             assert passes, f"{f} parsed to no installable pass"
 
 
@@ -1374,6 +1389,102 @@ class TestArchCheckAcrossFrameworks:
         prog = S._ARCH_PROBE
         assert "jax_backend" in prog and "local_devices" in prog
         compile(prog, "<probe>", "exec")
+
+
+class TestTheCardMayBeHeldOutsideThisInterpreter:
+    """`[gpu] driven_by`: the fourth false refusal from one framework's view.
+
+    STANDARD section 6. carbonx has no torch anywhere -- Carbon-X is served by
+    a `llama-server` child process -- so every gate that asks "can this
+    interpreter's torch reach the card" has to be told not to ask. The
+    evidence table already carries "Fixing one framework-naming gate is not
+    fixing it", and this is that lesson a third time: the predicate went into
+    `setup`, `tu remote check` kept its own copy of the question, and a
+    provider that installed and served correctly still printed
+    `x implementation` with `CUDA tensor check: failed`.
+
+    So the predicate lives on the manifest and both layers read it. These
+    tests hold that, including the part that is easy to let drift back: that
+    no gate re-derives the question locally.
+    """
+
+    def _manifest(self, slug):
+        return M.load(
+            os.path.join(
+                os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+                "src", "tooluniverse", "remote", slug, "provider.toml",
+            )
+        )
+
+    def test_a_provider_that_names_what_drives_the_card_exempts_its_own_torch(self):
+        m = self._manifest("carbonx")
+        assert m.gpu_policy == "required"
+        assert m.gpu_driven_by and "llama.cpp" in m.gpu_driven_by
+        assert m.torch_must_see_the_gpu is False
+
+    def test_an_ordinary_gpu_provider_is_still_judged_by_its_own_torch(self):
+        m = self._manifest("boltz")
+        assert m.gpu_policy == "required" and m.gpu_driven_by is None
+        assert m.torch_must_see_the_gpu is True
+
+    def test_the_model_environment_verdict_reads_the_manifest_not_torch(
+        self, monkeypatch
+    ):
+        """The layer that was missed. A probe reporting no torch at all must
+
+        not fail a provider that declared the card is held elsewhere -- and
+        must still fail one that did not.
+        """
+        import subprocess as _sp
+        import tooluniverse.remote_runtime as RR
+
+        # Both manifests name their interpreter by variable, as section 5
+        # requires. Point them at this one: the probe below is canned, so
+        # which interpreter it is never matters -- only that it resolves to a
+        # file, since `check_model_environment` answers on that before it ever
+        # reaches the GPU verdict under test.
+        for name in ("TOOLUNIVERSE_CARBONX_PYTHON", "TOOLUNIVERSE_BOLTZ_PYTHON"):
+            monkeypatch.setenv(name, sys.executable)
+
+        probe = json.dumps(
+            {
+                "python_version": [3, 12, 13],
+                "commands": {},
+                "gpu": {
+                    "torch_available": False,
+                    "cuda_available": False,
+                    "error": "ModuleNotFoundError: No module named 'torch'",
+                },
+            }
+        )
+
+        class _Done:
+            returncode = 0
+            stdout = probe
+            stderr = ""
+
+        verdicts = {}
+        for slug in ("carbonx", "boltz"):
+            m = self._manifest(slug)
+            monkeypatch.setattr(_sp, "run", lambda *a, **k: _Done())
+            verdicts[slug] = RR.check_model_environment(m)["ok"]
+        assert verdicts["carbonx"] is True, "a declared driven_by was ignored"
+        assert verdicts["boltz"] is False, "a torchless torch provider passed"
+
+    def test_no_gate_keeps_a_private_copy_of_the_question(self):
+        """One definition, because the last one was duplicated and diverged."""
+        import inspect
+
+        import tooluniverse.remote_runtime as RR
+
+        for module in (S, RR):
+            src = inspect.getsource(module)
+            assert "def _torch_must_see_the_gpu" not in src, (
+                f"{module.__name__} re-derives a predicate the manifest owns"
+            )
+            assert "torch_must_see_the_gpu" in src, (
+                f"{module.__name__} gates on the GPU without asking the manifest"
+            )
 
 
 class TestRefusalsExitThree:
@@ -3306,3 +3417,163 @@ class TestWarmOnStart:
 
         assert warm[backend.WARM_ON_START_ENV] == "1"
         assert backend.WARM_ON_START_ENV not in cold
+
+
+class TestADeadEngineIsAVerdictNotAFailedRequest:
+    """carbonx's model lives in a child process, and the child can die.
+
+    Every sibling on this standard builds its model inside the worker, so a
+    model that dies takes the worker with it and the supervisor -- whose
+    `is_running()` polls the WORKER's pid -- rebuilds it. carbonx breaks that
+    equivalence: `llama-server` is a separate process, and killing it leaves a
+    perfectly healthy worker that cannot answer anything.
+
+    MEASURED BEFORE THE FIX, 2026-10-31. SIGKILL the engine and the worker
+    stayed up with its socket bound, `ping` kept answering `ready: True`, and
+    every request after that failed in 0.0 s with `ConnectionRefusedError:
+    [Errno 111] Connection refused` -- permanently, because `_spawn_engine`
+    runs once in `__main__` and nothing respawns it. `_ready()` did report
+    `engine_alive: False`; nothing in the repo read that key. So the provider
+    held its port, passed for healthy, and could never answer again.
+
+    The fix does not build a second recovery path. Killing the WORKER was
+    measured in the same session and the supervisor rebuilt worker and engine
+    correctly, so the engine's death is converted into the death the
+    supervisor can already see: `_EngineGone` is a `SystemExit`, `serve` names
+    it to the caller through `_fatal_reply` and exits, and the next request
+    rebuilds. Measured after the fix: one named failure in 1.0 s, then a
+    correct answer on the next request.
+    """
+
+    WORKER = (
+        Path(__file__).resolve().parents[2]
+        / "src/tooluniverse/remote/carbonx/resident/carbonx_resident_worker.py"
+    )
+
+    class _Proc:
+        """Just enough of `Popen` for the question being asked."""
+
+        def __init__(self, rc=None):
+            self.returncode = rc
+            self._rc = rc
+
+        def poll(self):
+            return self._rc
+
+    @classmethod
+    def _worker(cls, monkeypatch):
+        """The worker module, which parses argv at import and holds no model."""
+        import importlib.util
+
+        monkeypatch.setattr(
+            sys,
+            "argv",
+            ["worker", "--socket", "/tmp/unused.sock",
+             "--gguf", "/tmp/unused.gguf", "--engine", "/tmp/unused-engine"],
+        )
+        spec = importlib.util.spec_from_file_location("_cx_worker", cls.WORKER)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        return mod
+
+    def test_startup_still_owns_a_refused_connection(self, monkeypatch):
+        """Refused is the EXPECTED answer while the engine is loading.
+
+        `_spawn_engine` polls `/health` through exactly this error for up to
+        600 s. Making it fatal would turn a provider that is merely slow to
+        read 15.8 GB off a cold disk into one that reports itself broken.
+        """
+        m = self._worker(monkeypatch)
+        m._ENGINE.update({"load_s": None, "proc": self._Proc(None)})
+        exc = ConnectionRefusedError(111, "Connection refused")
+
+        assert m._engine_gone_or(exc) is exc
+
+    def test_a_refused_socket_after_load_does_not_wait_to_win_a_race(
+        self, monkeypatch
+    ):
+        """The first version of this fix asked `poll()`, and lost.
+
+        Measured: the first request after a SIGKILL saw `poll() is None` --
+        the child was killed but not yet reaped -- so it was reported as an
+        ordinary `request_failed` and the worker stayed up; only the SECOND
+        request saw `exit -9`. One death cost two failures. ECONNREFUSED on an
+        `AF_UNIX` path cannot mean a busy engine the way it could over TCP, so
+        the socket is the evidence and no race is run.
+        """
+        m = self._worker(monkeypatch)
+        m._ENGINE.update({"load_s": 11.1, "proc": self._Proc(None)})
+
+        verdict = m._engine_gone_or(ConnectionRefusedError(111, "Connection refused"))
+
+        assert isinstance(verdict, m._EngineGone)
+        assert isinstance(verdict, SystemExit)
+        # STANDARD section 8: 1 is "failed". Nothing was refused -- a child died.
+        assert verdict.code == 1
+        assert "llama-server" in verdict.reason
+
+    def test_a_timeout_on_a_living_engine_is_still_one_failed_request(
+        self, monkeypatch
+    ):
+        """A wedged-but-living engine must not cost the model.
+
+        The whole reason `serve` has two except clauses is that a bad request
+        must not spend the minutes it took to load. A timeout is not evidence
+        that the child is gone.
+        """
+        m = self._worker(monkeypatch)
+        m._ENGINE.update({"load_s": 11.1, "proc": self._Proc(None)})
+        exc = TimeoutError("timed out")
+
+        assert m._engine_gone_or(exc) is exc
+
+    def test_a_reaped_child_is_fatal_whatever_the_error_said(self, monkeypatch):
+        """`poll()` is still read -- it is just no longer the only evidence."""
+        m = self._worker(monkeypatch)
+        m._ENGINE.update({"load_s": 11.1, "proc": self._Proc(-9)})
+
+        verdict = m._engine_gone_or(TimeoutError("timed out"))
+
+        assert isinstance(verdict, m._EngineGone)
+        assert "exit -9" in verdict.reason
+
+    def test_the_caller_is_told_by_name_before_the_worker_goes(self, monkeypatch):
+        """The half this reuses: `_fatal_reply`, which already existed.
+
+        A right code behind no message is the contract broken from the other
+        end -- the mistake section 8 records for the kits' `KernelsRefused`.
+        """
+        m = self._worker(monkeypatch)
+        try:
+            raise m._EngineGone("the llama-server child is gone (exit -9)")
+        except SystemExit as exc:
+            reply = m.WB._fatal_reply(exc)
+
+        assert reply["ok"] is False
+        assert reply["reason"] == "worker_exiting"
+        assert reply["exit_code"] == 1
+        assert "llama-server" in reply["error"]
+
+    def test_every_socket_error_on_the_engine_routes_through_the_verdict(self):
+        """One funnel, because a second engine route would bypass a second gate.
+
+        `_engine_call` is the only place this worker touches the engine, so
+        wiring the decision there covers `/health`, `/props`, `/tokenize`,
+        `/apply-template` and `/v1/chat/completions` at once. This reads the
+        source because the drift to guard against is a new helper that opens
+        its own connection -- the "one predicate, two homes" defect this
+        provider has already shipped once.
+        """
+        src = self.WORKER.read_text()
+        body = src.split("def _engine_call")[1].split("\ndef ")[0]
+
+        assert "except OSError as exc:" in body
+        assert "raise _engine_gone_or(exc) from exc" in body
+        # Nothing else may open a socket to the engine. The class statement
+        # names it too, so only instantiations are counted.
+        opens = [
+            line
+            for line in src.splitlines()
+            if "_UnixHTTP(" in line and not line.lstrip().startswith("class ")
+        ]
+        assert len(opens) == 1, opens

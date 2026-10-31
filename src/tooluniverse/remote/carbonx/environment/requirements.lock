@@ -1,0 +1,25 @@
+# Carbon-X's worker environment: Python 3.9+ and nothing else.
+#
+# THIS FILE PINS NO PACKAGES ON PURPOSE. The model is not in this interpreter.
+# It lives in a `llama-server` child process started by the worker, and
+# everything the worker itself does -- spawn that child with
+# PR_SET_PDEATHSIG, speak HTTP over two Unix sockets, count tokens through the
+# engine's own `/tokenize`, validate a request and move JSON -- is standard
+# library. `ctypes`, `http.client`, `json`, `socket` and `subprocess` are what
+# [env] verify checks for.
+#
+# What IS pinned, and where:
+#
+#   * the weights -- `carbon-x-q8_0.gguf`, by size and sha256, in
+#     provider.toml's [[weights.files]];
+#   * the engine -- every llama.cpp b11742 file the server loads, by size and
+#     sha256 per architecture, in `llamacpp-b11742.pins` beside this file,
+#     checked by launch.py before the worker starts.
+#
+# So "rebuild the environment" here means `uv venv`, and the thing that makes
+# this reproducible is not a resolver.
+#
+#   uv venv --seed --managed-python --python 3.12.13 ~/carbonx-venv
+#   export TOOLUNIVERSE_CARBONX_PYTHON=~/carbonx-venv/bin/python
+#
+# Measured on: Python 3.12.13, NVIDIA GB10 (aarch64), driver 580.173.02.

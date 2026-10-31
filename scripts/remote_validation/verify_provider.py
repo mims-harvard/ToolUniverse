@@ -1053,6 +1053,16 @@ SHAPERS = {
     "openfold3_ob0": lambda t, n: _json_seq(
         t, n, ["queries", "smoke", "chains", 0, "sequence"]
     ),
+    # carbonx's rungs are BASES, and they have to be large ones: 800 bases is
+    # 134 DNA tokens against a 7,168-token ceiling, so the default ladder
+    # would run four requests the engine cannot tell apart. Run it as
+    # `--lengths 600,6000,24000,42000`; the last is ~7,000 tokens, just under
+    # the ceiling. What it establishes is not a memory envelope -- llama.cpp
+    # fixes weights, KV cache and compute buffers at load from `-c` and `-np`
+    # and does not grow afterwards, which is why this provider's budget is a
+    # static figure measured once -- but that the tokenizer, the ceiling and
+    # the context agree across two orders of magnitude of input.
+    "carbonx": lambda t, n: _json_seq(t, n, ["sequences", "hbb_start"], base=DNA),
     "esmfold2": lambda t, n: _json_seq(t, n, [0, "sequences", 0, "sequence"]),
     "esmc": lambda t, n: _tile(PROT, n),
     "e1": _e1_fasta,
@@ -1165,6 +1175,12 @@ UNITS = {
     "complexa": "res",
     "evo2": "nt",
     "gpnstar": "nt",
+    # Bases, and the distinction is load-bearing here rather than pedantic:
+    # Carbon-X's ceiling is in TOKENS and one DNA token is six bases, so a
+    # rung read as residues understates the input by 6x and would put the
+    # 42,000 rung nowhere near the 7,168-token ceiling it actually sits just
+    # under.
+    "carbonx": "nt",
 }
 
 
