@@ -75,10 +75,18 @@ jobs:
         with:
           python-version: "3.12"
 
+      # `ubuntu-latest` moved to 26.04 (resolute) and two of these packages
+      # stopped existing there, so apt exited 100 and the job died before it
+      # could run anything. Checked on Ubuntu's own package index rather than
+      # guessed: `libatlas-base-dev` and `libgdk-pixbuf2.0-dev` are both gone,
+      # and `libgdk-pixbuf-2.0-dev` is the current spelling of the second.
+      # ATLAS is dropped rather than replaced because it is one implementation
+      # of the BLAS/LAPACK interface this list already installs via
+      # `libblas-dev liblapack-dev`.
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential libffi-dev libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev libncurses5-dev libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev liblzma-dev libjpeg-dev libpng-dev libtiff-dev libwebp-dev libopenjp2-7-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libfontconfig1-dev libblas-dev liblapack-dev libatlas-base-dev gfortran libpoppler-cpp-dev libpoppler-dev libhdf5-dev libnetcdf-dev libgl1 libglib2.0-0 libsm6 libxext6 libxrender-dev libgomp1 libcairo2-dev libpango1.0-dev libpangocairo-1.0-0 libgdk-pixbuf2.0-dev shared-mime-info graphviz libgraphviz-dev
+          sudo apt-get install -y build-essential libffi-dev libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev libncurses5-dev libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev liblzma-dev libjpeg-dev libpng-dev libtiff-dev libwebp-dev libopenjp2-7-dev libharfbuzz-dev libfribidi-dev libfreetype6-dev libfontconfig1-dev libblas-dev liblapack-dev gfortran libpoppler-cpp-dev libpoppler-dev libhdf5-dev libnetcdf-dev libgl1 libglib2.0-0 libsm6 libxext6 libxrender-dev libgomp1 libcairo2-dev libpango1.0-dev libpangocairo-1.0-0 libgdk-pixbuf-2.0-dev shared-mime-info graphviz libgraphviz-dev
 
       - name: Install uv
         uses: astral-sh/setup-uv@v3
