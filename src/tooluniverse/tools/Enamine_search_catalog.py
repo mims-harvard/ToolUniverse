@@ -1,7 +1,7 @@
 """
 Enamine_search_catalog
 
-Search Enamine compound catalog by keyword or name when the Enamine Store API is available. The t...
+DEPRECATED / non-functional (verified 2026-11-01): the Enamine Store API this tool calls has been...
 """
 
 from typing import Any, Optional, Callable
@@ -20,7 +20,7 @@ def Enamine_search_catalog(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search Enamine compound catalog by keyword or name when the Enamine Store API is available. The t...
+    DEPRECATED / non-functional (verified 2026-11-01): the Enamine Store API this tool calls has been...
 
     Parameters
     ----------

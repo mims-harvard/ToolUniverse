@@ -4,6 +4,25 @@ Enamine tool for ToolUniverse.
 Enamine is a leading supplier of make-on-demand compounds, building
 blocks, and screening libraries for drug discovery.
 
+DEPRECATED / non-functional as of 2026-11-01. Every operation here calls the
+Enamine Store API, and that API has been withdrawn:
+
+* https://new.enaminestore.com/api/<path> answers 302 to
+  https://enaminestore.com/api/<path>, which answers 404 for every path this
+  module uses (catalog/search, catalog/compound/{id}, catalog/structure-search,
+  libraries).
+* https://enaminestore.com/ itself is 200: a Next.js application that ships no
+  API host in its HTML and exposes no documented public API.
+* https://enamine.net/api/ is 200 but serves the Joomla API bootstrap PHP
+  source, not a catalogue.
+
+The operations are left in place, returning their explicit errors rather than
+guessed web URLs, so a caller is told the catalogue is unreachable instead of
+being handed an empty success. The verified substitute is PubChem, which holds
+5,199,802 Enamine substances as a depositor source: look a catalog number up by
+name (EN300-00002 -> CID 220107) or list the source's substances
+(source='Enamine').
+
 Website: https://enamine.net/
 """
 

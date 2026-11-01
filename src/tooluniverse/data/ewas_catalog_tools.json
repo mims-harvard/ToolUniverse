@@ -2,7 +2,7 @@
   {
     "name": "EWASCatalog_search_by_cpg",
     "type": "EWASCatalogTool",
-    "description": "NOTE (checked 2026-10-09): ewascatalog.org has answered HTTP 503 site-wide since at least 2026-10-05; if this tool returns HTTP 503, use EWASAtlas_get_probe (EWAS Atlas, curated independently) instead. Look up all published epigenome-wide association study (EWAS) results for one CpG methylation site from the EWAS Catalog (MRC-IEU). Returns trait, effect size, tissue, cohort, and publication for every association, ranked by significance. Example: cpg_id='cg05575921' (AHRR, the strongest known smoking-methylation signal).",
+    "description": "NOTE (re-checked 2026-11-01): the 503 reported on 2026-10-09 is gone, but the catalogue is now HTTPS-only -- the old http://ewascatalog.org/api/ answers 404, and this tool has been moved to https://. Look up all published epigenome-wide association study (EWAS) results for one CpG methylation site from the EWAS Catalog (MRC-IEU). Returns trait, effect size, tissue, cohort, and publication for every association, ranked by significance. Example: cpg_id='cg05575921' (AHRR, the strongest known smoking-methylation signal).",
     "fields": {
       "operation": "search_by_cpg"
     },
@@ -57,7 +57,7 @@
   {
     "name": "EWASCatalog_search_by_gene",
     "type": "EWASCatalogTool",
-    "description": "NOTE (checked 2026-10-09): ewascatalog.org has answered HTTP 503 site-wide since at least 2026-10-05; if this tool returns HTTP 503, use EWASAtlas_search_by_gene (EWAS Atlas, curated independently) instead. Look up all published epigenome-wide association study (EWAS) results annotated to one gene from the EWAS Catalog (MRC-IEU), across every CpG site mapped to it. Returns trait, effect size, tissue, cohort, and publication for each, ranked by significance. Example: gene_symbol='AHRR' (the smoking-methylation gene).",
+    "description": "NOTE (re-checked 2026-11-01): the 503 reported on 2026-10-09 is gone, but the catalogue is now HTTPS-only (the old http:// form answers 404) and it cannot deliver its largest gene payloads: gene=AHRR announces Content-Length 2751412 and the connection is closed after 1.57-1.85 MB, at a different offset on every attempt, so that one result set is unobtainable and the tool says so rather than failing to parse. Use EWASAtlas_search_by_gene (EWAS Atlas, curated independently) for a gene this one truncates. Look up all published epigenome-wide association study (EWAS) results annotated to one gene from the EWAS Catalog (MRC-IEU), across every CpG site mapped to it. Returns trait, effect size, tissue, cohort, and publication for each, ranked by significance. Example: gene_symbol='CPT1A' (a canonical smoking/metabolic methylation locus, 1941 associations).",
     "fields": {
       "operation": "search_by_gene"
     },
@@ -106,7 +106,7 @@
     },
     "test_examples": [
       {"gene_symbol": "TP53", "limit": 10},
-      {"gene_symbol": "AHRR", "limit": 5}
+      {"gene_symbol": "CPT1A", "limit": 5}
     ]
   }
 ]

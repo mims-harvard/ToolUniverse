@@ -1,7 +1,7 @@
 """
 Enamine_get_libraries
 
-Retrieve the live Enamine library catalog when its Store API is available. If upstream is unavail...
+DEPRECATED / non-functional (verified 2026-11-01): the Enamine Store API this tool calls has been...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def Enamine_get_libraries(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Retrieve the live Enamine library catalog when its Store API is available. If upstream is unavail...
+    DEPRECATED / non-functional (verified 2026-11-01): the Enamine Store API this tool calls has been...
 
     Parameters
     ----------
