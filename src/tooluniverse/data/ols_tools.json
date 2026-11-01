@@ -189,6 +189,9 @@
     "test_examples": [
       {
         "ontology_id": "efo"
+      },
+      {
+        "ontology_id": "go"
       }
     ],
     "return_schema": {
@@ -207,7 +210,8 @@
           "type": "string"
         },
         "domain": {
-          "type": "null"
+          "type": ["string", "null"],
+          "description": "Subject domain, e.g. 'biological systems'. Measured for 'go'. Null for ontologies whose config does not set one."
         },
         "homepage": {
           "type": "string"
@@ -222,7 +226,8 @@
           "type": "integer"
         },
         "repository": {
-          "type": "null"
+          "type": ["string", "null"],
+          "description": "Source repository URL. Measured for 'go'. Null for ontologies whose config does not set one."
         }
       }
     },

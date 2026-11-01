@@ -375,6 +375,9 @@
     "test_examples": [
       {
         "pdb_id": "1CRN"
+      },
+      {
+        "pdb_id": "6VXX"
       }
     ],
     "return_schema": {
@@ -416,7 +419,8 @@
                         "type": "string"
                       },
                       "rcsb_ORCID_identifiers": {
-                        "type": "null"
+                        "type": ["array", "null"],
+                        "description": "ORCID identifiers of the citation's authors, in author order. Measured on 6VXX. Null for entries whose depositors supplied none."
                       }
                     }
                   },
@@ -427,7 +431,8 @@
                         "type": "string"
                       },
                       "rcsb_pubmed_mesh_descriptors_lineage": {
-                        "type": "null"
+                        "type": ["array", "null"],
+                        "description": "MeSH descriptor lineage for the primary citation's PubMed record. Measured on 6VXX. Null when the citation is not MeSH-indexed."
                       }
                     }
                   }
@@ -748,6 +753,9 @@
     "test_examples": [
       {
         "pdb_id": "7BV2"
+      },
+      {
+        "pdb_id": "3J3Q"
       }
     ],
     "return_schema": {
@@ -765,7 +773,8 @@
                     "type": "string"
                   },
                   "em_3d_fitting_list": {
-                    "type": "null"
+                    "type": ["array", "null"],
+                    "description": "Model-fitting records for a cryo-EM entry. Measured on 3J3Q. Null for entries that report no fitting."
                   },
                   "em_3d_reconstruction": {
                     "type": "array",
@@ -776,34 +785,39 @@
                           "type": "string"
                         },
                         "algorithm": {
-                          "type": "null"
+                          "type": ["string", "null"],
+                          "description": "Reconstruction algorithm, e.g. 'FOURIER SPACE'. Measured on 7A4M. Null when the entry does not report one."
                         },
                         "method": {
-                          "type": "null"
+                          "type": ["string", "null"],
+                          "description": "Reconstruction method, e.g. 'SIRT'. Measured on 3J3Q. Null when the entry does not report one."
                         },
                         "details": {
-                          "type": "null"
+                          "type": ["string", "null"],
+                          "description": "Free-text reconstruction details. Measured on 5A1A. Null when the entry does not report any."
                         },
                         "nominal_pixel_size": {
-                          "type": "null"
+                          "type": ["number", "null"],
+                          "description": "Nominal pixel size in Angstroms, e.g. 0.637. Measured on 5A1A. Null when the entry does not report it."
                         },
                         "actual_pixel_size": {
-                          "type": "null"
+                          "type": ["number", "null"],
+                          "description": "Actual pixel size in Angstroms, e.g. 0.637. Measured on 5A1A. Null when the entry does not report it."
                         },
                         "resolution": {
-                          "type": "number"
+                          "type": ["number", "null"],
+                          "description": "Reported resolution in Angstroms. Measured null on 3J3Q, which reports a reconstruction without one."
                         },
                         "resolution_method": {
-                          "type": "string"
+                          "type": ["string", "null"],
+                          "description": "How the reported resolution was determined. Measured null on 3J3Q, where the entry gives a resolution without naming a method."
                         },
                         "symmetry_type": {
                           "type": "string"
                         },
                         "num_particles": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
+                          "type": ["integer", "number", "null"],
+                          "description": "Number of particles in the reconstruction. Measured null for entries that do not report it."
                         },
                         "num_class_averages": {
                           "type": "null"
@@ -986,6 +1000,9 @@
     "test_examples": [
       {
         "pdb_id": "1CRN"
+      },
+      {
+        "pdb_id": "5A1A"
       }
     ],
     "return_schema": {
@@ -1019,7 +1036,8 @@
                           "type": "object",
                           "properties": {
                             "method_details": {
-                              "type": "null"
+                              "type": ["string", "null"],
+                              "description": "How the assembly was determined, e.g. 'PISA'. Measured on 5A1A. Null when the entry does not report it."
                             },
                             "details": {
                               "type": "string"
@@ -1254,6 +1272,9 @@
     "test_examples": [
       {
         "pdb_id": "1HSG"
+      },
+      {
+        "pdb_id": "6VXX"
       }
     ],
     "return_schema": {
@@ -1281,7 +1302,8 @@
                             "type": "object",
                             "properties": {
                               "host_org_common_name": {
-                                "type": "null"
+                                "type": ["string", "null"],
+                                "description": "Common name of the expression host, e.g. 'Human'. Measured on 6VXX. Null when only the scientific name was deposited."
                               },
                               "pdbx_host_org_scientific_name": {
                                 "type": [
@@ -2582,6 +2604,9 @@
     "test_examples": [
       {
         "pdb_id": "1CRN"
+      },
+      {
+        "pdb_id": "2RH1"
       }
     ],
     "return_schema": {
@@ -2607,10 +2632,12 @@
                           "type": "string"
                         },
                         "version": {
-                          "type": "null"
+                          "type": ["string", "null"],
+                          "description": "Software version, e.g. '5.8.0352'. Measured on 8SPL. Null for entries that name software without a version."
                         },
                         "type": {
-                          "type": "null"
+                          "type": ["string", "null"],
+                          "description": "Software classification, e.g. 'package'. Measured on 2RH1. Null when the entry does not classify it."
                         }
                       }
                     }
@@ -2872,6 +2899,9 @@
     "test_examples": [
       {
         "pdb_id": "6LU7"
+      },
+      {
+        "pdb_id": "3EML"
       }
     ],
     "return_schema": {
@@ -2918,10 +2948,12 @@
                           ]
                         },
                         "solvent_model_param_bsol": {
-                          "type": "null"
+                          "type": ["number", "null"],
+                          "description": "Bulk-solvent B parameter, e.g. 78.49. Measured on 3EML. Null when refinement did not use a bulk-solvent model or did not report it."
                         },
                         "solvent_model_param_ksol": {
-                          "type": "null"
+                          "type": ["number", "null"],
+                          "description": "Bulk-solvent K parameter, e.g. 0.33. Measured on 3EML. Null when refinement did not use a bulk-solvent model or did not report it."
                         }
                       }
                     }

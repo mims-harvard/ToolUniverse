@@ -39,6 +39,14 @@
       },
       {
         "sstr": "433"
+      },
+      {
+        "sstr": "1P",
+        "phys-par": "true"
+      },
+      {
+        "sstr": "Bennu",
+        "phys-par": "true"
       }
     ],
     "return_schema": {
@@ -56,10 +64,8 @@
                   "type": "null"
                 },
                 "n_dop_obs_used": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
+                  "type": ["integer", "number", "null"],
+                  "description": "Number of Doppler (radar) observations used in the fit. Measured null for bodies with none."
                 },
                 "soln_date": {
                   "type": "string"
@@ -186,19 +192,19 @@
                   "type": "string"
                 },
                 "n_del_obs_used": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
+                  "type": ["integer", "number", "null"],
+                  "description": "Number of delay (radar) observations used in the fit. Measured null for 1P/Halley, which has none."
                 },
                 "equinox": {
                   "type": "string"
                 },
                 "condition_code": {
-                  "type": "string"
+                  "type": ["string", "null"],
+                  "description": "Orbit condition code. Measured null for solutions that do not carry one."
                 },
                 "comment": {
-                  "type": "null"
+                  "type": ["string", "null"],
+                  "description": "Note on the orbit solution, e.g. 'See Farnocchia et al. 2021'. Measured for Bennu. Null for solutions without one."
                 }
               }
             },
@@ -240,7 +246,8 @@
                   "type": "string"
                 },
                 "prefix": {
-                  "type": "null"
+                  "type": ["string", "null"],
+                  "description": "Designation prefix, 'P' for a periodic comet or 'C' for a non-periodic one. Measured for 1P (Halley). Null for asteroids."
                 },
                 "pha": {
                   "type": "boolean"

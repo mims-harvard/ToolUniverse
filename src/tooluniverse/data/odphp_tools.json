@@ -203,7 +203,8 @@
                                   "type": "object",
                                   "properties": {
                                     "Title": {
-                                      "type": "string"
+                                      "type": ["string", "null"],
+                                      "description": "Section heading. Measured null for age 35, female, pregnant, where a section is delivered without one."
                                     },
                                     "Content": {
                                       "type": "string"
@@ -231,7 +232,8 @@
                               "type": "object",
                               "properties": {
                                 "Title": {
-                                  "type": "string"
+                                  "type": ["string", "null"],
+                                  "description": "Section heading in the plain-text rendering. Measured null where a section is delivered without one."
                                 },
                                 "PlainContent": {
                                   "type": "string"
@@ -294,10 +296,12 @@
                             "type": "string"
                           },
                           "RelatedItems": {
-                            "type": "null"
+                            "type": ["object", "null"],
+                            "description": "Related topics for the resource. Measured for age 35, female, pregnant. Null for resources with none."
                           },
                           "Sections": {
-                            "type": "null"
+                            "type": ["object", "null"],
+                            "description": "Body sections of the resource. Measured for age 35, female, pregnant. Null for resources delivered without sections."
                           },
                           "HealthfinderLogo": {
                             "type": "string"
@@ -342,6 +346,13 @@
         "age": 1,
         "sex": "female",
         "pregnant": "no",
+        "strip_html": true
+      },
+      {
+        "lang": "en",
+        "age": 35,
+        "sex": "female",
+        "pregnant": "yes",
         "strip_html": true
       }
     ]
