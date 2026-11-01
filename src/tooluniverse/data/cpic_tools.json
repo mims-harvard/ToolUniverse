@@ -37,6 +37,9 @@
       },
       {
         "symbol": "CYP2C19"
+      },
+      {
+        "symbol": "CYP2C9"
       }
     ],
     "return_schema": {
@@ -89,13 +92,15 @@
                 ]
               },
               "notesondiplotype": {
-                "type": "null"
+                "type": ["string", "null"],
+                "description": "CPIC note on diplotype-to-phenotype translation, e.g. the CYP2C9 note. Null for genes where CPIC publishes no such note."
               },
               "url": {
                 "type": "string"
               },
               "functionmethods": {
-                "type": "null"
+                "type": ["string", "null"],
+                "description": "CPIC's description of how allele function was assigned, e.g. the CYP2C9 literature-search methods. Null for genes where CPIC publishes no methods note."
               },
               "notesonallelenaming": {
                 "type": "string"

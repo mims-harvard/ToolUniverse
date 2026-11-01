@@ -2030,6 +2030,9 @@
     "test_examples": [
       {
         "pdb_id": "1CRN"
+      },
+      {
+        "pdb_id": "4HHB"
       }
     ],
     "return_schema": {
@@ -2052,10 +2055,16 @@
                       "type": "object",
                       "properties": {
                         "ls_R_factor_R_free": {
-                          "type": "null"
+                          "type": [
+                            "number",
+                            "null"
+                          ]
                         },
                         "ls_R_factor_R_work": {
-                          "type": "null"
+                          "type": [
+                            "number",
+                            "null"
+                          ]
                         }
                       }
                     }
