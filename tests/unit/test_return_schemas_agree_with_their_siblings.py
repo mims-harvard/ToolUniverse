@@ -325,3 +325,129 @@ def test_no_field_is_null_in_one_tool_and_typed_in_its_sibling():
                     f"typed in {sorted(typed)[0]}={list(next(iter(typed.values())))}"
                 )
     assert not offenders, "\n".join(offenders)
+
+
+# ----------------------------------------------------- the envelope census
+
+# A tool answers {"status", "data"} and the runner validates the payload --
+# unless the schema declares `status` and `data` together, which is how
+# test_envelope_schema_discriminator.py tells an envelope from a payload that
+# has its own `data` field (IDR, the Art Institute). A schema declaring `data`
+# and not `status` falls between the two: it describes the envelope, is not
+# recognised as one, and is therefore checked against the inner payload, where
+# its one declared property is absent -- and nothing being required, it accepts
+# whatever came back.
+#
+# Measured on 2026-11-01: for 71 of 71 such tools the intersection of the
+# schema's top-level properties with the payload's actual keys was empty. The
+# check was reaching nothing.
+#
+#     civic_search_genes            declared {data}          payload {genes}
+#     OpenTargets_get_disease_ids*  declared {data}          payload {search}
+#     ClinGen_search_actionability  declared {data, adult_count, source, ...}
+#                                   payload {Adult, Pediatric}
+#
+# 74 schemas now declare `status`, following ChEMBL's precedent
+# ({"type": "string"}), so the discriminator recognises them and the runner
+# validates the envelope -- which leaves everything they already declared in
+# force. After the change: 71 recognised, 82 of 82 live example responses
+# validate, and a type-violating corruption of a declared payload field is
+# rejected in 82 of 82 where it passed before. (A first count said 79: that
+# probe replaced a string with another string.)
+#
+# Hoisting the `data` subschema to the top was the other way to fix this, and
+# two existing tests rejected it. test_opentargets_row_truncation_disclosure
+# requires `metadata` to be declared, because those tools emit
+# metadata.truncation_note on every truncated response, and
+# test_opentargets_disease_known_drugs_schema reads
+# return_schema["properties"]["data"] directly. For these tools describing the
+# envelope is deliberate; what was missing was the `status` that says so.
+#
+# 40 schemas still declare top-level `data` without `status`, and that is
+# correct: their tools answer with no `status` key, so the runner validates the
+# whole result and the declaration applies. 39 are rcsb_pdb, whose GraphQL
+# payload really is {"data": {"entries": [...]}}, plus
+# cellosaurus_get_cell_line_info ({"accession", "data", "format", "success"}).
+#
+# The 3 ICD11 tools need WHO credentials this host does not have. icd_tool.py
+# returns {"status", "data", "metadata"}, so they are the same case,
+# established from the source rather than from a response.
+SCHEMAS_DESCRIBING_A_PAYLOADS_OWN_DATA_KEY = 40
+
+NOW_DECLARE_STATUS = [
+    ("opentarget_tools", "OpenTargets_get_associated_targets_by_disease_efoId"),
+    ("civic_tools", "civic_search_genes"),
+    ("dgidb_tools", "DGIdb_get_drug_gene_interactions"),
+    ("idmap_tools", "OpenTargets_get_disease_ids_by_name"),
+    ("spliceai_tools", "SpliceAI_predict_splice"),
+    ("clingen_tools", "ClinGen_search_actionability"),
+    ("icd_tools", "ICD11_get_entity"),
+]
+
+
+def _describes_envelope(schema):
+    import sys
+
+    scripts = Path(__file__).resolve().parents[2] / "scripts"
+    sys.path.insert(0, str(scripts))
+    try:
+        from test_new_tools import schema_describes_envelope
+    finally:
+        sys.path.remove(str(scripts))
+    return schema_describes_envelope(schema)
+
+
+@pytest.mark.parametrize("stem,tool", NOW_DECLARE_STATUS)
+def test_an_envelope_schema_says_it_is_one(stem, tool):
+    schema = _tool(stem, tool)["return_schema"]
+    props = schema.get("properties") or {}
+    assert "data" in props, f"{tool} no longer declares data"
+    assert props.get("status", {}).get("type") == "string", (
+        f"{tool} declares data without status, so the runner unwraps and the "
+        "declaration is checked against nothing"
+    )
+    assert _describes_envelope(schema)
+
+
+def test_the_truncation_disclosure_stays_declared():
+    """Why the data subschema was not hoisted instead: these tools document
+    metadata.truncation_note as part of every truncated response."""
+    for tool in (
+        "OpenTargets_get_associated_targets_by_disease_efoId",
+        "OpenTargets_get_diseases_phenotypes_by_target_ensembl",
+        "OpenTargets_get_publications_by_disease_efoId",
+    ):
+        props = _tool("opentarget_tools", tool)["return_schema"]["properties"]
+        assert "metadata" in props, f"{tool} dropped its metadata declaration"
+
+
+def test_no_schema_describes_the_envelope_without_saying_so():
+    """Counts schemas declaring top-level `data` while not recognised as an
+    envelope. Each is either a payload with its own `data` key (fine) or a
+    schema checked against nothing (not fine), so the number is pinned rather
+    than driven to zero."""
+    declaring = []
+    for path in sorted(DATA.glob("*.json")):
+        try:
+            entries = json.loads(path.read_text())
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            continue
+        if not isinstance(entries, list):
+            continue
+        for entry in entries:
+            if not isinstance(entry, dict):
+                continue
+            schema = entry.get("return_schema")
+            if not isinstance(schema, dict):
+                continue
+            if "data" not in (schema.get("properties") or {}):
+                continue
+            if _describes_envelope(schema):
+                continue
+            declaring.append(f"{path.name}:{entry.get('name')}")
+    assert len(declaring) <= SCHEMAS_DESCRIBING_A_PAYLOADS_OWN_DATA_KEY, (
+        f"{len(declaring)} schemas declare top-level `data` without `status`, "
+        f"was {SCHEMAS_DESCRIBING_A_PAYLOADS_OWN_DATA_KEY}. A new one is either "
+        f"a payload with its own `data` key or a schema checked against "
+        f"nothing: {sorted(declaring)[:8]}"
+    )

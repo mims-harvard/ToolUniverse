@@ -41,6 +41,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -162,6 +166,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -283,6 +291,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -395,6 +407,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -499,6 +515,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -552,6 +572,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -656,6 +680,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -821,6 +849,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -913,6 +945,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -1005,6 +1041,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -1085,6 +1125,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -1284,6 +1328,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -1339,6 +1387,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -1402,6 +1454,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -1465,6 +1521,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -1528,6 +1588,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -1616,6 +1680,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -1697,6 +1765,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -1781,6 +1853,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -1865,6 +1941,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -1937,6 +2017,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -2008,6 +2092,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -2078,6 +2166,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -2171,6 +2263,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -2238,6 +2334,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -2325,6 +2425,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -2589,6 +2693,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -2659,6 +2767,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -2729,6 +2841,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -2779,6 +2895,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -2846,6 +2966,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -2908,6 +3032,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -3199,6 +3327,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -3363,6 +3495,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -3427,6 +3563,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -3483,6 +3623,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -3556,6 +3700,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -3620,6 +3768,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -3673,6 +3825,10 @@
             "type": "object",
             "description": "Drug name information including generic name, trade names, and synonyms",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "description": "GraphQL response data",
@@ -3775,6 +3931,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -4022,6 +4182,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -4143,6 +4307,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -4219,6 +4387,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -4606,6 +4778,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -4712,6 +4888,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -4981,6 +5161,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -5250,6 +5434,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
@@ -5493,6 +5681,10 @@
         "return_schema": {
             "type": "object",
             "properties": {
+                "status": {
+                  "type": "string",
+                  "description": "\"success\" or \"error\"."
+                },
                 "data": {
                     "type": "object",
                     "properties": {
