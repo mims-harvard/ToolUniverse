@@ -16,7 +16,7 @@ from urllib.parse import quote
 
 import requests
 
-from .base_tool import BaseTool
+from .base_tool import BaseTool, resolve_configured_operation
 from .tool_registry import register_tool
 
 LOVD_BASE_URL = "https://databases.lovd.nl/shared/api/rest.php"
@@ -70,9 +70,27 @@ class LOVDTool(BaseTool):
             return None, "gene_symbol must be a non-empty string"
         return value.strip().upper(), None
 
-    @staticmethod
-    def _unknown_arguments(arguments: Dict[str, Any], allowed: set[str]) -> list[str]:
-        return sorted(set(arguments) - allowed)
+    def _unknown_arguments(
+        self, arguments: Dict[str, Any], allowed: set[str]
+    ) -> list[str]:
+        # ToolUniverse fills `operation` into `arguments` from this tool's own
+        # config before the tool runs (`ToolUniverse._apply_operation_default`),
+        # so the caller never sent it and cannot remove it. Without this, every
+        # LOVD call answered "Unrecognized parameter(s): operation" and named a
+        # parameter the caller did not pass. base_tool.py drops the same key for
+        # the same reason; both resolve the value through
+        # `resolve_configured_operation` so the injection and the recognitions
+        # of it cannot drift apart. A caller-supplied `operation` that says
+        # anything else is a genuine mistake and stays in the report.
+        unknown = set(arguments) - allowed
+        configured = resolve_configured_operation(self.tool_config)
+        if (
+            "operation" in unknown
+            and configured
+            and arguments.get("operation") == configured
+        ):
+            unknown.discard("operation")
+        return sorted(unknown)
 
     @staticmethod
     def _validate_variant_records(data: Any, gene_symbol: str) -> str | None:
