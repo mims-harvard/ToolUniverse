@@ -187,6 +187,9 @@
         }
       ]
     },
+    "required_packages": [
+      "pKAI"
+    ],
     "test_examples": [
       {
         "pdb_id": "1UBQ",

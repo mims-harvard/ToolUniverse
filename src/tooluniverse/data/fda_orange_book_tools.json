@@ -140,6 +140,7 @@
   {
     "type": "FDAOrangeBookTool",
     "name": "FDA_OrangeBook_get_patent_info",
+    "requires_local_input": true,
     "description": "Get the patents FDA lists in the Orange Book for a drug product: patent number, expiration date, drug substance/drug product flags, every patent use code, delist request and submission date, per product. Reads FDA's monthly Orange Book data files from a local copy: download the zip from https://www.fda.gov/drugs/drug-approvals-and-databases/orange-book-data-files and set TOOLUNIVERSE_ORANGE_BOOK_DATA to the zip or its extracted folder; returns an error when it is not set. The file date is returned in source.files_dated. Search by application_number (e.g. 'NDA021695', 'N021695' or '021695') or exact brand_name. Covers NDA/ANDA drug products, not biologics. Use for patent expiry and generic entry questions. For product details and marketing status without local data files, use FDA_OrangeBook_search_drug; for therapeutic equivalence codes, use FDA_OrangeBook_get_te_code.",
     "parameter": {
       "type": "object",
@@ -271,6 +272,7 @@
   {
     "type": "FDAOrangeBookTool",
     "name": "FDA_OrangeBook_get_exclusivity",
+    "requires_local_input": true,
     "description": "Get the exclusivity codes and expiration dates FDA lists in the Orange Book for a drug product (e.g. NCE, ODE orphan, PED pediatric, I-nnn new indication), every listed date per code, per product. Reads FDA's monthly Orange Book data files from a local copy: download the zip from https://www.fda.gov/drugs/drug-approvals-and-databases/orange-book-data-files and set TOOLUNIVERSE_ORANGE_BOOK_DATA to the zip or its extracted folder; returns an error when it is not set. The file date is returned in source.files_dated. Search by application_number (e.g. 'NDA212306') or exact brand_name. Covers NDA/ANDA drug products, not biologics. Use for generic launch planning. For product details and marketing status without local data files, use FDA_OrangeBook_search_drug; for therapeutic equivalence codes, use FDA_OrangeBook_get_te_code.",
     "parameter": {
       "type": "object",
