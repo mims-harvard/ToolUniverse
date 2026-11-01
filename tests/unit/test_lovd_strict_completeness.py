@@ -140,3 +140,53 @@ def test_non_json_response_is_structured_error_not_exception():
         result = _tool("get_gene").run({"gene_symbol": "TP53"})
     assert result["status"] == "error"
     assert "invalid JSON" in result["error"]
+
+
+# ToolUniverse fills `operation` into `arguments` from the tool's own config
+# before the tool runs, so a real call always carries it. Every test above
+# passes `arguments` without it, which is why none of them noticed that the
+# strict unknown-argument check rejected it: all three LOVD tools answered
+# "Unrecognized parameter(s): operation" for every call, naming a parameter
+# the caller never sent and could not remove.
+
+
+@pytest.mark.parametrize(
+    "operation,arguments",
+    [
+        ("get_gene", {"gene_symbol": "TP53"}),
+        ("get_variants", {"gene_symbol": "TP53"}),
+        ("search_variants", {"gene_symbol": "TP53", "variant_dbid": "TP53_010464"}),
+    ],
+)
+def test_the_operation_tooluniverse_injects_is_not_an_unknown_argument(
+    operation, arguments
+):
+    payload = (
+        {"symbol": "TP53", "hgnc_id": 11998}
+        if operation == "get_gene"
+        else [_variant()]
+    )
+    with patch.object(LOVDTool, "_make_request", return_value=_response(payload)):
+        result = _tool(operation).run({**arguments, "operation": operation})
+    assert result["status"] == "success", result
+    assert "Unrecognized" not in str(result)
+
+
+def test_an_operation_the_caller_invented_is_still_reported():
+    with patch("tooluniverse.lovd_tool.requests.get") as get:
+        result = _tool("get_gene").run(
+            {"gene_symbol": "TP53", "operation": "not_the_configured_one"}
+        )
+    assert result["status"] == "error"
+    assert "Unrecognized parameter(s): operation" in result["error"]
+    get.assert_not_called()
+
+
+def test_the_injected_operation_does_not_excuse_other_unknown_arguments():
+    with patch("tooluniverse.lovd_tool.requests.get") as get:
+        result = _tool("get_gene").run(
+            {"gene_symbol": "TP53", "operation": "get_gene", "page": 2}
+        )
+    assert result["status"] == "error"
+    assert "Unrecognized parameter(s): page" in result["error"]
+    get.assert_not_called()
