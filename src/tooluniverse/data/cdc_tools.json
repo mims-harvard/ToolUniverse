@@ -834,111 +834,16 @@
                               "type": "object",
                               "properties": {
                                 "tableColumnId": {
-                                  "type": "object",
-                                  "properties": {
-                                    "18597387": {
-                                      "type": [
-                                        "integer",
-                                        "number"
-                                      ]
-                                    },
-                                    "18588514": {
-                                      "type": [
-                                        "integer",
-                                        "number"
-                                      ]
-                                    },
-                                    "18305543": {
-                                      "type": [
-                                        "integer",
-                                        "number"
-                                      ]
-                                    },
-                                    "18305385": {
-                                      "type": [
-                                        "integer",
-                                        "number"
-                                      ]
-                                    },
-                                    "17071854": {
-                                      "type": [
-                                        "integer",
-                                        "number"
-                                      ]
-                                    },
-                                    "17069086": {
-                                      "type": [
-                                        "integer",
-                                        "number"
-                                      ]
-                                    },
-                                    "16385308": {
-                                      "type": [
-                                        "integer",
-                                        "number"
-                                      ]
-                                    },
-                                    "16385114": {
-                                      "type": [
-                                        "integer",
-                                        "number"
-                                      ]
-                                    },
-                                    "15821117": {
-                                      "type": [
-                                        "integer",
-                                        "number"
-                                      ]
-                                    },
-                                    "15820938": {
-                                      "type": [
-                                        "integer",
-                                        "number"
-                                      ]
-                                    },
-                                    "15425966": {
-                                      "type": [
-                                        "integer",
-                                        "number"
-                                      ]
-                                    },
-                                    "15425931": {
-                                      "type": [
-                                        "integer",
-                                        "number"
-                                      ]
-                                    },
-                                    "14919580": {
-                                      "type": [
-                                        "integer",
-                                        "number"
-                                      ]
-                                    },
-                                    "14768094": {
-                                      "type": [
-                                        "integer",
-                                        "number"
-                                      ]
-                                    },
-                                    "1595946": {
-                                      "type": [
-                                        "integer",
-                                        "number"
-                                      ]
-                                    },
-                                    "1595912": {
-                                      "type": [
-                                        "integer",
-                                        "number"
-                                      ]
-                                    },
-                                    "1595906": {
-                                      "type": [
-                                        "integer",
-                                        "number"
-                                      ]
-                                    },
-                                    "1553919": {
+                                  "type": [
+                                    "object",
+                                    "integer",
+                                    "number",
+                                    "string",
+                                    "null"
+                                  ],
+                                  "description": "Socrata column id for the filter, or a map of column id -> id when the filter spans several. The ids belong to the datasets the query matched, so they cannot be enumerated.",
+                                  "patternProperties": {
+                                    "^[0-9]+$": {
                                       "type": [
                                         "integer",
                                         "number"
