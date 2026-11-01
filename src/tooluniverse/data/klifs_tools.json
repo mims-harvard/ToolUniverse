@@ -233,12 +233,20 @@
                 "description": "PDB chain identifier"
               },
               "resolution": {
-                "type": "string",
-                "description": "Crystal resolution in Angstroms"
+                "type": [
+                  "number",
+                  "integer",
+                  "null"
+                ],
+                "description": "Crystal resolution in Angstroms. KLIFS sends a number."
               },
               "quality_score": {
-                "type": "string",
-                "description": "KLIFS quality score (higher is better)"
+                "type": [
+                  "number",
+                  "integer",
+                  "null"
+                ],
+                "description": "KLIFS quality score (higher is better). A number, integral for most structures and fractional for some (7.6)."
               },
               "ligand": {
                 "type": [
@@ -331,7 +339,12 @@
                 "type": "string"
               },
               "ligand": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "integer",
+                  "null"
+                ],
+                "description": "Bound ligand PDB 3-letter code ('0GS' = no ligand, 0 = no ligand)."
               },
               "DFG": {
                 "type": "string"
@@ -340,10 +353,20 @@
                 "type": "string"
               },
               "resolution": {
-                "type": "string"
+                "type": [
+                  "number",
+                  "integer",
+                  "null"
+                ],
+                "description": "Crystal resolution in Angstroms. KLIFS sends a number."
               },
               "quality_score": {
-                "type": "string"
+                "type": [
+                  "number",
+                  "integer",
+                  "null"
+                ],
+                "description": "KLIFS quality score (higher is better). A number, integral for most structures and fractional for some (7.6)."
               }
             }
           }

@@ -1284,7 +1284,10 @@
                                 "type": "null"
                               },
                               "pdbx_host_org_scientific_name": {
-                                "type": "null"
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
                               }
                             }
                           }
@@ -1636,7 +1639,10 @@
                     "type": "string"
                   },
                   "exptl_crystal_grow": {
-                    "type": "null"
+                    "type": [
+                      "array",
+                      "null"
+                    ]
                   }
                 }
               }
@@ -2265,7 +2271,10 @@
                     "type": "object",
                     "properties": {
                       "emdb_ids": {
-                        "type": "null"
+                        "type": [
+                          "array",
+                          "null"
+                        ]
                       }
                     }
                   }
@@ -2380,7 +2389,10 @@
                     "type": "string"
                   },
                   "exptl_crystal_grow": {
-                    "type": "null"
+                    "type": [
+                      "array",
+                      "null"
+                    ]
                   }
                 }
               }
@@ -2727,7 +2739,10 @@
                     "type": "string"
                   },
                   "rcsb_binding_affinity": {
-                    "type": "null"
+                    "type": [
+                      "array",
+                      "null"
+                    ]
                   }
                 }
               }
@@ -2870,10 +2885,16 @@
                       "type": "object",
                       "properties": {
                         "ls_R_factor_R_work": {
-                          "type": "null"
+                          "type": [
+                            "number",
+                            "null"
+                          ]
                         },
                         "ls_R_factor_R_free": {
-                          "type": "null"
+                          "type": [
+                            "number",
+                            "null"
+                          ]
                         },
                         "occupancy_max": {
                           "type": "null"
@@ -2882,7 +2903,10 @@
                           "type": "null"
                         },
                         "pdbx_overall_phase_error": {
-                          "type": "null"
+                          "type": [
+                            "number",
+                            "null"
+                          ]
                         },
                         "solvent_model_param_bsol": {
                           "type": "null"
@@ -2967,7 +2991,10 @@
                       "type": "object",
                       "properties": {
                         "rcsb_target_cofactors": {
-                          "type": "null"
+                          "type": [
+                            "array",
+                            "null"
+                          ]
                         }
                       }
                     }
@@ -3039,7 +3066,10 @@
                     "type": "string"
                   },
                   "nonpolymer_entities": {
-                    "type": "null"
+                    "type": [
+                      "array",
+                      "null"
+                    ]
                   }
                 }
               }
@@ -3103,7 +3133,10 @@
                     "type": "string"
                   },
                   "nonpolymer_entities": {
-                    "type": "null"
+                    "type": [
+                      "array",
+                      "null"
+                    ]
                   }
                 }
               }

@@ -1123,7 +1123,10 @@
                 "type": "string"
               },
               "subsetGroup": {
-                "type": "null"
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
           }

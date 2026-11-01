@@ -754,7 +754,10 @@
               "type": "string"
             },
             "gene_synonym": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             },
             "ensembl_id": {
               "type": "string"

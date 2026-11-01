@@ -565,7 +565,10 @@
                   "type": "null"
                 },
                 "Keyword": {
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "Age": {
                   "type": "null"
