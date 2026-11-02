@@ -32,6 +32,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "type": "object",
           "description": "GraphQL response with datasets list and pagination info",
           "properties": {
@@ -120,6 +125,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "type": "object",
           "description": "GraphQL response with dataset details",
           "properties": {
@@ -206,6 +216,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "type": "object",
           "description": "GraphQL response with dataset snapshots",
           "properties": {
@@ -309,6 +324,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "type": "object",
           "description": "GraphQL response with filtered datasets",
           "properties": {
@@ -415,6 +435,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "type": "object",
           "description": "GraphQL response with the snapshot file manifest",
           "properties": {
@@ -508,6 +533,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "type": "object",
           "description": "GraphQL response with BIDS validation status",
           "properties": {
@@ -672,6 +702,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "type": "object",
           "description": "GraphQL response with participant count and faceted dataset search",
           "properties": {

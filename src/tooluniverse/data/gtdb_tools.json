@@ -64,6 +64,11 @@
               "type": "integer",
               "description": "Number of matches"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -194,6 +199,11 @@
                 }
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -297,6 +307,11 @@
               ],
               "description": "Full lineage from domain (d) to species (s), keys: d, p, c, o, f, g, s"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -440,6 +455,11 @@
               "type": "integer",
               "description": "Number of results on this page"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -554,6 +574,11 @@
                 }
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

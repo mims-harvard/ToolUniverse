@@ -90,6 +90,11 @@
             "statusCode": {
               "type": "integer"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -212,6 +217,11 @@
                 }
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

@@ -79,6 +79,11 @@
             "skipped_sets": {
               "type": "array"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

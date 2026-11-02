@@ -70,6 +70,11 @@
               ],
               "description": "Number of similar proteins in PDB"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -302,6 +307,11 @@
               "type": "string",
               "description": "Explains the truncation and how to raise max_ligands to see all results"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -506,6 +516,11 @@
               "type": "string",
               "description": "Explains the truncation and how to raise max_partners to see all results"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -713,6 +728,11 @@
                 "null"
               ]
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

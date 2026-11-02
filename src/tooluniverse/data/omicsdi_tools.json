@@ -81,6 +81,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "type": "object",
           "description": "OmicsDI search results",
           "properties": {
@@ -185,6 +190,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "type": "object",
           "description": "Detailed dataset information",
           "properties": {

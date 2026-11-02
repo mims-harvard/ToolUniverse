@@ -99,6 +99,11 @@
             "translation_count": {
               "type": "integer"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -363,6 +368,11 @@
                 }
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -457,6 +467,11 @@
                 }
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -649,6 +664,11 @@
                 }
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

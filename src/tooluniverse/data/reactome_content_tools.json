@@ -125,6 +125,11 @@
                 }
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -260,6 +265,11 @@
                 }
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -358,6 +368,11 @@
               "type": "array",
               "description": "Key literature references with PubMed IDs"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

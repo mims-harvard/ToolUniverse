@@ -75,6 +75,11 @@
               "type": "string",
               "description": "Human-readable status message"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -138,6 +143,11 @@
               "type": "boolean",
               "description": "True if job encountered an error"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -213,6 +223,11 @@
               "type": "string",
               "description": "Job status if not FINISHED yet"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

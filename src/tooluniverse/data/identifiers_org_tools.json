@@ -95,6 +95,11 @@
                 }
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -172,6 +177,11 @@
             "deprecated": {
               "type": "boolean"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -282,6 +292,11 @@
                 }
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -392,6 +407,11 @@
                 }
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

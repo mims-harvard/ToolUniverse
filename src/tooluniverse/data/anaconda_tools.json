@@ -285,6 +285,11 @@
               ],
               "description": "Total download count"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

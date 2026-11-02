@@ -45,6 +45,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "type": "object",
           "description": "Historical COVID-19 timeline data",
           "properties": {
@@ -144,6 +149,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "type": "object",
           "description": "Vaccine coverage timeline data",
           "properties": {

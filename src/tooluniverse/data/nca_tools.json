@@ -62,6 +62,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "type": "object",
           "properties": {
             "Cmax": {"type": "number", "description": "Maximum concentration"},
@@ -147,6 +152,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "type": "object",
           "properties": {
             "model": {"type": "string"},
@@ -210,6 +220,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "type": "object",
           "properties": {
             "bioavailability_F": {"type": "number", "description": "Absolute bioavailability as fraction (0-1)"},

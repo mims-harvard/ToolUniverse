@@ -109,6 +109,11 @@
             "overall_drug_likeness": {
               "type": "string"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -208,6 +213,11 @@
             "interpretation": {
               "type": "string"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -323,6 +333,11 @@
             "recommendation": {
               "type": "string"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

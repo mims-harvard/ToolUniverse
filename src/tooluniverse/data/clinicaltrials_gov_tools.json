@@ -1528,6 +1528,11 @@
             "reference_count": {
               "type": "integer"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -1700,6 +1705,11 @@
                 }
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -1866,6 +1876,11 @@
                 }
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -2163,6 +2178,11 @@
               ],
               "description": "Prose stating how many studies are excluded from the facet, whether rows double-count studies, and which figure may be used as a denominator. Read before quoting any percentage."
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

@@ -221,6 +221,11 @@
             "query": {
               "type": "string"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

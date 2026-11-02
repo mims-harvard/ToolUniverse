@@ -144,6 +144,11 @@
                 "null"
               ]
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -271,6 +276,11 @@
                 }
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -366,6 +376,11 @@
               "type": "string",
               "description": "Only present on a redirect. Human-readable explanation naming both accessions and the relationship between them (secondary/merged id of the returned primary entry, or an unexplained substitution when the requested accession is not among the primary entry's secondary_ids). Absent on a direct hit."
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -455,6 +470,11 @@
               "type": "string",
               "description": "Only present on a redirect. Human-readable explanation naming both accessions and the relationship between them (secondary/merged id of the returned primary entry, or an unexplained substitution when the requested accession is not among the primary entry's secondary_ids). Absent on a direct hit."
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

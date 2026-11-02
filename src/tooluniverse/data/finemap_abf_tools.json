@@ -79,6 +79,11 @@
             "pip": {
               "type": "object"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

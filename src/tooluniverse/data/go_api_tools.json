@@ -80,6 +80,11 @@
               },
               "description": "Alternative/obsolete GO IDs"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

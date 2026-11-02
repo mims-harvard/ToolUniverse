@@ -93,6 +93,11 @@
                                 }
                             }
                         }
+                    },
+                    "not": {
+                        "required": [
+                            "error"
+                        ]
                     }
                 },
                 {
@@ -231,6 +236,11 @@
                         "go_terms": {
                             "type": "array"
                         }
+                    },
+                    "not": {
+                        "required": [
+                            "error"
+                        ]
                     }
                 },
                 {
@@ -391,6 +401,11 @@
                                 }
                             }
                         }
+                    },
+                    "not": {
+                        "required": [
+                            "error"
+                        ]
                     }
                 },
                 {
@@ -493,6 +508,11 @@
                                 }
                             }
                         }
+                    },
+                    "not": {
+                        "required": [
+                            "error"
+                        ]
                     }
                 },
                 {
@@ -591,6 +611,11 @@
                                 }
                             }
                         }
+                    },
+                    "not": {
+                        "required": [
+                            "error"
+                        ]
                     }
                 },
                 {
@@ -696,6 +721,11 @@
                                 }
                             }
                         }
+                    },
+                    "not": {
+                        "required": [
+                            "error"
+                        ]
                     }
                 },
                 {

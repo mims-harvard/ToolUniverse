@@ -29,6 +29,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "type": "object",
           "properties": {
             "comp_id": {
@@ -195,6 +200,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "type": "object",
           "properties": {
             "comp_id": {

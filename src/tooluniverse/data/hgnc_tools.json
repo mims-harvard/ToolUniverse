@@ -158,6 +158,11 @@
                 "type": "string"
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -254,6 +259,11 @@
                 "null"
               ]
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

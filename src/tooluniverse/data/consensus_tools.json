@@ -110,6 +110,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "type": "object",
           "description": "Search results with pagination metadata.",
           "properties": {
@@ -148,6 +153,9 @@
           }
         },
         {
+          "required": [
+            "error"
+          ],
           "type": "object",
           "description": "Error response.",
           "properties": {

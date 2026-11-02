@@ -97,6 +97,11 @@
               ],
               "description": "Alignment score"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -189,6 +194,11 @@
               "type": "integer",
               "description": "Number of FASTA records returned"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -442,6 +452,11 @@
               ],
               "description": "Raw Phobius output when no features could be parsed"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -523,6 +538,11 @@
               "type": "string",
               "description": "Search report in the service's native format"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

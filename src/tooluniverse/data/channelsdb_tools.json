@@ -453,6 +453,11 @@
               "type": "object",
               "description": "Channel data organized by detection method. Each channel has: Type (Tunnel/Pore), Id, Cavity, Properties (Charge, Hydrophobicity, Polarity, Mutability, NumPositives, NumNegatives), Profile (array of radius/distance/coordinate points along path), and Layers (residues lining the channel)."
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

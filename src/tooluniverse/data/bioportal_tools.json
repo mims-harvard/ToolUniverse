@@ -221,6 +221,11 @@
                             },
                             "description": "UMLS semantic types"
                         }
+                    },
+                    "not": {
+                        "required": [
+                            "error"
+                        ]
                     }
                 },
                 {

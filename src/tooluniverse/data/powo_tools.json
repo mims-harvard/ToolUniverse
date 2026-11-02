@@ -162,6 +162,11 @@
                 }
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -333,6 +338,11 @@
               ],
               "description": "Plant images with URLs"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

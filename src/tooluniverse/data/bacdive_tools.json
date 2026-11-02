@@ -295,6 +295,11 @@
               ],
               "description": "Biosafety risk group"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

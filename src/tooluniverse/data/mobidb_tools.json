@@ -215,6 +215,11 @@
                 "type": "string"
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -323,6 +328,11 @@
               "type": "object",
               "description": "Disorder-to-order and disorder-to-disorder binding transitions"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

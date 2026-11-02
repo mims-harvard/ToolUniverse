@@ -670,6 +670,11 @@
             "coverage": {
               "type": "object"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

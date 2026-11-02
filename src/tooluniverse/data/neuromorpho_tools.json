@@ -99,6 +99,11 @@
               "type": "string",
               "description": "URL to neuron image"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -344,6 +349,11 @@
               "type": "number",
               "description": "Total length (um)"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

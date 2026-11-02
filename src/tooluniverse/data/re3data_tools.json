@@ -255,6 +255,11 @@
               ],
               "description": "URL to the repository's mission statement"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

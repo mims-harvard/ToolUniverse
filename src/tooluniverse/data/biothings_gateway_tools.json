@@ -215,7 +215,12 @@
         {
           "type": "object",
           "description": "The full record; fields vary by API",
-          "properties": {}
+          "properties": {},
+          "not": {
+            "required": [
+              "error"
+            ]
+          }
         },
         {
           "type": "object",
@@ -325,6 +330,11 @@
                 "description": "Field name"
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

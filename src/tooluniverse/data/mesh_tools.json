@@ -211,6 +211,11 @@
               "type": "object",
               "description": "Complete unprojected JSON-LD descriptor record returned by NLM MeSH."
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

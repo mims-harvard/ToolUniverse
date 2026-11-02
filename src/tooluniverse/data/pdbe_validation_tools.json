@@ -86,6 +86,11 @@
               },
               "description": "Structure quality validation metrics with percentile scores"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -188,6 +193,11 @@
               },
               "description": "Molecules with outlier residues"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

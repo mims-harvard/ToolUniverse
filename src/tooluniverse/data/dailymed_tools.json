@@ -109,6 +109,11 @@
             "metadata": {
               "type": "object"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

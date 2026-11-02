@@ -69,6 +69,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "type": "object",
           "properties": {
             "medium_id": {"type": ["string", "integer", "null"]},
@@ -173,6 +178,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "type": "object",
           "properties": {
             "ingredient_id": {"type": ["integer", "string", "null"]},

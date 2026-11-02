@@ -64,6 +64,11 @@
             "geographic_origin": {
               "type": "string"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -315,6 +320,11 @@
                 "null"
               ]
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

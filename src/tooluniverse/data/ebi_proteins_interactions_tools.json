@@ -105,6 +105,11 @@
                 "null"
               ]
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -243,6 +248,11 @@
               },
               "description": "Subcellular location terms"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

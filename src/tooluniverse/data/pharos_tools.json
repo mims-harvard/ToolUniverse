@@ -300,6 +300,11 @@
         "return_schema": {
           "oneOf": [
             {
+              "not": {
+                "required": [
+                  "error"
+                ]
+              },
               "type": [
                 "object",
                 "null"
@@ -420,6 +425,11 @@
         "return_schema": {
           "oneOf": [
             {
+              "not": {
+                "required": [
+                  "error"
+                ]
+              },
               "type": [
                 "object",
                 "null"
@@ -534,6 +544,11 @@
         "return_schema": {
           "oneOf": [
             {
+              "not": {
+                "required": [
+                  "error"
+                ]
+              },
               "type": [
                 "object",
                 "null"

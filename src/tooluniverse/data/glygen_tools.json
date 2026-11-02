@@ -95,6 +95,11 @@
               "type": "integer",
               "description": "Number of associated publications"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -289,6 +294,11 @@
             "pathway_count": {
               "type": "integer"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -470,6 +480,11 @@
               "type": "array",
               "description": "SNVs at this position"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

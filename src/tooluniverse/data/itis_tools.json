@@ -322,6 +322,11 @@
               ],
               "description": "Taxonomic rank"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

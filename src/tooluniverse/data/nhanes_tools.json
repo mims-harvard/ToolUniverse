@@ -87,6 +87,11 @@
               "type": "string",
               "description": "Information about data format and access"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
