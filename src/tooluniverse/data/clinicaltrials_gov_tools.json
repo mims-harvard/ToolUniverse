@@ -1344,7 +1344,11 @@
               ]
             },
             "phases": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 10 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "enrollment": {
               "type": [
@@ -1359,13 +1363,65 @@
               ]
             },
             "conditions": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 23 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "interventions": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  }
+                }
+              },
+              "description": "Measured over 19 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "arms": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "intervention_names": {
+                    "type": "array"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "description",
+                  "intervention_names",
+                  "label",
+                  "type"
+                ]
+              },
+              "description": "Measured over 38 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "arm_count": {
               "type": "integer"
@@ -1374,7 +1430,30 @@
               "type": "integer"
             },
             "primary_outcomes": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "measure": {
+                    "type": "string"
+                  },
+                  "time_frame": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "description",
+                  "measure",
+                  "time_frame"
+                ]
+              },
+              "description": "Measured over 85 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "primary_outcome_count": {
               "type": "integer"
@@ -1392,13 +1471,59 @@
               ]
             },
             "locations": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "city": {
+                    "type": "string"
+                  },
+                  "country": {
+                    "type": "string"
+                  },
+                  "facility": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "city",
+                  "country",
+                  "facility",
+                  "status"
+                ]
+              },
+              "description": "Measured over 295 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "location_count": {
               "type": "integer"
             },
             "references": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "citation": {
+                    "type": "string"
+                  },
+                  "pmid": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "citation",
+                  "type"
+                ]
+              },
+              "description": "Measured over 59 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "reference_count": {
               "type": "integer"

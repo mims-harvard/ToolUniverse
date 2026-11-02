@@ -724,7 +724,11 @@
               }
             },
             "revoked_files": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 8 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "assembly": {
               "type": "array",
@@ -851,7 +855,11 @@
               "type": "string"
             },
             "fastq_signature": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 5 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "file_size": {
               "type": [

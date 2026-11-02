@@ -1690,7 +1690,11 @@
                   }
                 },
                 "cities_tags": {
-                  "type": "array"
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Measured over 3 items; the declaration was an array with no items, so nothing about its contents could fail validation."
                 },
                 "code": {
                   "type": "string"
@@ -3431,8 +3435,10 @@
                         "score": {
                           "type": [
                             "integer",
-                            "number"
-                          ]
+                            "number",
+                            "null"
+                          ],
+                          "description": "Null for products whose previous Eco-Score was withdrawn rather than rescored: an integer for 7 of the 12 products measured, null for 1, absent for 4."
                         }
                       }
                     },
@@ -4052,7 +4058,11 @@
                   "type": "string"
                 },
                 "emb_codes_hierarchy": {
-                  "type": "array"
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Measured over 6 items; the declaration was an array with no items, so nothing about its contents could fail validation."
                 },
                 "emb_codes_lc": {
                   "type": "string"
@@ -4061,7 +4071,11 @@
                   "type": "string"
                 },
                 "emb_codes_tags": {
-                  "type": "array"
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Measured over 6 items; the declaration was an array with no items, so nothing about its contents could fail validation."
                 },
                 "entry_dates_tags": {
                   "type": "array",
@@ -7129,7 +7143,11 @@
                         "type": "string"
                       },
                       "images": {
-                        "type": "array"
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "Measured over 17 items; the declaration was an array with no items, so nothing about its contents could fail validation."
                       },
                       "import_t": {
                         "type": [
@@ -7146,7 +7164,11 @@
                         ]
                       },
                       "name": {
-                        "type": "string"
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Null for 5 of the 91 source records measured across 12 products."
                       },
                       "source_licence": {
                         "type": "string"

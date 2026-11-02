@@ -130,16 +130,62 @@
           "type": "string"
         },
         "title": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Measured over 10 items; the declaration was an array with no items, so nothing about its contents could fail validation."
         },
         "abstract": {
           "type": "string"
         },
         "author": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "ORCID": {
+                "type": "string"
+              },
+              "affiliation": {
+                "type": "array"
+              },
+              "authenticated-orcid": {
+                "type": "boolean"
+              },
+              "family": {
+                "type": "string"
+              },
+              "given": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "role": {
+                "type": "array"
+              },
+              "sequence": {
+                "type": "string"
+              },
+              "suffix": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "affiliation",
+              "role",
+              "sequence"
+            ]
+          },
+          "description": "Measured over 351 items; the declaration was an array with no items, so nothing about its contents could fail validation."
         },
         "container-title": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Measured over 10 items; the declaration was an array with no items, so nothing about its contents could fail validation."
         },
         "published": {
           "type": "object"
@@ -154,13 +200,109 @@
           "type": "integer"
         },
         "reference": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "DOI": {
+                "type": "string"
+              },
+              "article-title": {
+                "type": "string"
+              },
+              "author": {
+                "type": "string"
+              },
+              "doi-asserted-by": {
+                "type": "string"
+              },
+              "first-page": {
+                "type": "string"
+              },
+              "issue": {
+                "type": "string"
+              },
+              "journal-title": {
+                "type": "string"
+              },
+              "key": {
+                "type": "string"
+              },
+              "series-title": {
+                "type": "string"
+              },
+              "unstructured": {
+                "type": "string"
+              },
+              "volume": {
+                "type": "string"
+              },
+              "volume-title": {
+                "type": "string"
+              },
+              "year": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "key"
+            ]
+          },
+          "description": "Measured over 738 items; the declaration was an array with no items, so nothing about its contents could fail validation."
         },
         "license": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "URL": {
+                "type": "string"
+              },
+              "content-version": {
+                "type": "string"
+              },
+              "delay-in-days": {
+                "type": "integer"
+              },
+              "start": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "URL",
+              "content-version",
+              "delay-in-days",
+              "start"
+            ]
+          },
+          "description": "Measured over 20 items; the declaration was an array with no items, so nothing about its contents could fail validation."
         },
         "funder": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "DOI": {
+                "type": "string"
+              },
+              "award": {
+                "type": "array"
+              },
+              "award-info": {
+                "type": "array"
+              },
+              "doi-asserted-by": {
+                "type": "string"
+              },
+              "id": {
+                "type": "array"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          },
+          "description": "Measured over 17 items; the declaration was an array with no items, so nothing about its contents could fail validation."
         }
       }
     },
