@@ -28,6 +28,42 @@ sample and 3,934 of the PDB's 37,607 electron-microscopy entries populate it.
 An undeclared property makes no claim at all, which is the honest position when
 33 bio.tools records show nothing but null for `credit.fundrefid`.
 
+Corrected after this batch was first pushed, which is the part worth reading.
+That version declared 49 arrays and left 47 alone, every one of the 47 recorded
+as "empty on every input". 23 of those 47 were reachable; 73 are declared now
+and 24 are left.
+
+ENCODE answers the question directly -- its index takes `field=*` and reports
+how many records carry a field, the same trick RCSB's search API allowed
+earlier in this branch. Asking it:
+
+    File       aliases               1,227,220 records
+    File       quality_metrics         264,016
+    File       dbxrefs                 130,508
+    File       flowcell_details        106,424
+    Biosample  applied_modifications    12,702
+    Experiment documents                16,873
+    Experiment related_files                 1
+
+Every one of ENCODE's 23 was populated, and ten sampled accessions had reached
+none of them. Measuring the records the index named declares 22 of the 23 and
+leaves related_files alone on a reason worth having: the archive holds exactly
+one record carrying it.
+
+The wording was the fault. "Empty on every input" is true of a field nothing in
+the archive populates and of a field 1.2 million records populate, and it reads
+the same either way. Each entry below now says which, and where an index
+answered, it says what the index said.
+
+Two other things the correction turned up. `articles->*->authors` is a loose
+array this batch created: declaring `articles` gave it an `authors` field typed
+`array` with nothing inside, one level deeper than anything the original scan
+counted -- so 1,011 is not a countdown, and each batch has to re-scan after
+applying. And the wider ENCODE inputs exposed three over-narrow fields in
+ENCODE_get_file with nothing to do with arrays -- assay_term_name (26 strings
+and 23 lists over 50 files), biosample_ontology (46 strings, 1 list) and
+target -- all declared plain strings.
+
 ChannelsDB is handled as one item type rather than twelve. Its twelve channel
 arrays hold the same thing: 53 channels across the 8 that were non-empty, every
 one carrying the same seven fields. Declaring them per array would have typed
@@ -316,6 +352,14 @@ DECLARED_OBJECT_ITEMS = [
     (
         "dbaasp_tools",
         "DBAASP_get_peptide",
+        "articles->*->authors",
+        ["description", "name"],
+        ["description", "name"],
+        343,
+    ),
+    (
+        "dbaasp_tools",
+        "DBAASP_get_peptide",
         "hemoliticCytotoxicActivities",
         [
             "activity",
@@ -360,6 +404,14 @@ DECLARED_OBJECT_ITEMS = [
             "smilesImageUrl",
         ],
         27,
+    ),
+    (
+        "dbaasp_tools",
+        "DBAASP_get_peptide",
+        "sourceGenes",
+        ["dblink", "gene", "id", "kingdom", "note", "source", "subkingdom"],
+        [],
+        12,
     ),
     (
         "dbaasp_tools",
@@ -412,6 +464,14 @@ DECLARED_OBJECT_ITEMS = [
         [],
         9,
     ),
+    (
+        "encode_tools",
+        "ENCODE_get_file",
+        "flowcell_details",
+        ["barcode", "flowcell", "lane", "machine"],
+        [],
+        9,
+    ),
 ]
 
 DECLARED_SCALAR_ITEMS = [
@@ -427,8 +487,35 @@ DECLARED_SCALAR_ITEMS = [
     ("clinicaltrials_gov_tools", "ClinicalTrials_get_study", "phases", "string", 10),
     ("crossref_tools", "Crossref_get_work", "container-title", "string", 10),
     ("crossref_tools", "Crossref_get_work", "title", "string", 10),
+    ("encode_tools", "ENCODE_get_biosample", "alternate_accessions", "string", 7),
+    ("encode_tools", "ENCODE_get_biosample", "applied_modifications", "string", 22),
+    ("encode_tools", "ENCODE_get_biosample", "characterizations", "string", 5),
+    ("encode_tools", "ENCODE_get_biosample", "genetic_modifications", "string", 10),
+    ("encode_tools", "ENCODE_get_biosample", "internal_tags", "string", 7),
+    (
+        "encode_tools",
+        "ENCODE_get_biosample",
+        "model_organism_donor_modifications",
+        "string",
+        12,
+    ),
+    ("encode_tools", "ENCODE_get_biosample", "parent_of", "string", 11),
+    ("encode_tools", "ENCODE_get_biosample", "references", "string", 7),
+    ("encode_tools", "ENCODE_get_biosample", "treatments", "string", 10),
+    ("encode_tools", "ENCODE_get_experiment", "alternate_accessions", "string", 7),
+    ("encode_tools", "ENCODE_get_experiment", "category_slims", "string", 21),
+    ("encode_tools", "ENCODE_get_experiment", "documents", "string", 42),
+    ("encode_tools", "ENCODE_get_experiment", "objective_slims", "string", 19),
     ("encode_tools", "ENCODE_get_experiment", "revoked_files", "string", 8),
+    ("encode_tools", "ENCODE_get_experiment", "superseded_by", "string", 5),
+    ("encode_tools", "ENCODE_get_experiment", "supersedes", "string", 14),
+    ("encode_tools", "ENCODE_get_experiment", "type_slims", "string", 7),
+    ("encode_tools", "ENCODE_get_file", "aliases", "string", 19),
+    ("encode_tools", "ENCODE_get_file", "alternate_accessions", "string", 9),
+    ("encode_tools", "ENCODE_get_file", "dbxrefs", "string", 18),
     ("encode_tools", "ENCODE_get_file", "fastq_signature", "string", 5),
+    ("encode_tools", "ENCODE_get_file", "quality_metrics", "string", 10),
+    ("encode_tools", "ENCODE_get_file", "superseded_by", "string", 6),
     ("hgnc_tools", "HGNC_fetch_gene_by_symbol", "alias_symbol", "string", 48),
     ("hgnc_tools", "HGNC_fetch_gene_by_symbol", "ccds_id", "string", 62),
     ("hgnc_tools", "HGNC_fetch_gene_by_symbol", "gene_group", "string", 38),
@@ -467,299 +554,177 @@ DECLARED_SCALAR_ITEMS = [
     ),
 ]
 
+# Still left alone -- the reason is the parameter, and it distinguishes
+# "the index says a million records carry it and none were sampled" from
+# "the index says one record in the archive carries it".
 LEFT_ALONE = [
     (
         "channelsdb_tools",
         "ChannelsDB_get_channels_pdb",
         "Channels->AlphaFillTunnels_Caver",
         0,
-        "empty on every input",
+        "the /channels/pdb/ route this tool calls does not serve these groups; ChannelsDB has a separate /channels/alphafill/ route the tool never calls",
     ),
     (
         "channelsdb_tools",
         "ChannelsDB_get_channels_pdb",
         "Channels->AlphaFillTunnels_MOLE",
         0,
-        "empty on every input",
+        "the /channels/pdb/ route this tool calls does not serve these groups; ChannelsDB has a separate /channels/alphafill/ route the tool never calls",
     ),
     (
         "channelsdb_tools",
         "ChannelsDB_get_channels_pdb",
         "Channels->CofactorTunnels_Caver",
         0,
-        "empty on every input",
+        "the /channels/pdb/ route this tool calls does not serve these groups; ChannelsDB has a separate /channels/alphafill/ route the tool never calls",
     ),
     (
         "channelsdb_tools",
         "ChannelsDB_get_channels_pdb",
         "Channels->TransmembranePores_Caver",
         0,
-        "empty on every input",
+        "the /channels/pdb/ route this tool calls does not serve these groups; ChannelsDB has a separate /channels/alphafill/ route the tool never calls",
     ),
     (
         "dbaasp_tools",
         "DBAASP_get_peptide",
         "antibiofilmActivities",
         0,
-        "empty on every input",
+        "0 items across 58 peptides",
     ),
     (
         "dbaasp_tools",
         "DBAASP_get_peptide",
         "pdbs",
-        1,
-        "only 1 observed, too few to type an object",
-    ),
-    (
-        "dbaasp_tools",
-        "DBAASP_get_peptide",
-        "sourceGenes",
-        3,
-        "only 3 observed, too few to type an object",
-    ),
-    (
-        "encode_tools",
-        "ENCODE_get_biosample",
-        "alternate_accessions",
-        0,
-        "empty on every input",
-    ),
-    (
-        "encode_tools",
-        "ENCODE_get_biosample",
-        "applied_modifications",
-        0,
-        "empty on every input",
-    ),
-    (
-        "encode_tools",
-        "ENCODE_get_biosample",
-        "characterizations",
-        0,
-        "empty on every input",
-    ),
-    (
-        "encode_tools",
-        "ENCODE_get_biosample",
-        "genetic_modifications",
-        0,
-        "empty on every input",
-    ),
-    (
-        "encode_tools",
-        "ENCODE_get_biosample",
-        "internal_tags",
-        0,
-        "empty on every input",
-    ),
-    (
-        "encode_tools",
-        "ENCODE_get_biosample",
-        "model_organism_donor_modifications",
-        0,
-        "empty on every input",
-    ),
-    ("encode_tools", "ENCODE_get_biosample", "parent_of", 0, "empty on every input"),
-    (
-        "encode_tools",
-        "ENCODE_get_biosample",
-        "references",
         2,
-        "only 2 observed, too few to claim the element type",
-    ),
-    ("encode_tools", "ENCODE_get_biosample", "treatments", 0, "empty on every input"),
-    (
-        "encode_tools",
-        "ENCODE_get_experiment",
-        "alternate_accessions",
-        0,
-        "empty on every input",
-    ),
-    (
-        "encode_tools",
-        "ENCODE_get_experiment",
-        "category_slims",
-        1,
-        "only 1 observed, too few to claim the element type",
-    ),
-    ("encode_tools", "ENCODE_get_experiment", "documents", 0, "empty on every input"),
-    (
-        "encode_tools",
-        "ENCODE_get_experiment",
-        "objective_slims",
-        1,
-        "only 1 observed, too few to claim the element type",
+        "2 items across 58 peptides",
     ),
     (
         "encode_tools",
         "ENCODE_get_experiment",
         "related_files",
-        0,
-        "empty on every input",
-    ),
-    (
-        "encode_tools",
-        "ENCODE_get_experiment",
-        "superseded_by",
-        0,
-        "empty on every input",
-    ),
-    (
-        "encode_tools",
-        "ENCODE_get_experiment",
-        "supersedes",
         1,
-        "only 1 observed, too few to claim the element type",
+        "the ENCODE index reports exactly 1 record in the archive carrying this field, and that record yields 1 item",
     ),
-    ("encode_tools", "ENCODE_get_experiment", "type_slims", 0, "empty on every input"),
-    (
-        "encode_tools",
-        "ENCODE_get_file",
-        "aliases",
-        2,
-        "only 2 observed, too few to claim the element type",
-    ),
-    (
-        "encode_tools",
-        "ENCODE_get_file",
-        "alternate_accessions",
-        2,
-        "only 2 observed, too few to claim the element type",
-    ),
-    (
-        "encode_tools",
-        "ENCODE_get_file",
-        "dbxrefs",
-        2,
-        "only 2 observed, too few to claim the element type",
-    ),
-    (
-        "encode_tools",
-        "ENCODE_get_file",
-        "flowcell_details",
-        1,
-        "only 1 observed, too few to type an object",
-    ),
-    ("encode_tools", "ENCODE_get_file", "quality_metrics", 0, "empty on every input"),
-    ("encode_tools", "ENCODE_get_file", "superseded_by", 0, "empty on every input"),
     (
         "openfoodfacts_tools",
         "OpenFoodFacts_get_product",
         "product->added_countries_tags",
         0,
-        "empty on every input",
+        "OpenFoodFacts reported 8,071 products carrying minerals_tags while its API was reachable, so this is about the inputs; the API returned 503 for the rest of the re-measurement and no product carrying these tags could be fetched through the tool",
     ),
     (
         "openfoodfacts_tools",
         "OpenFoodFacts_get_product",
         "product->amino_acids_prev_tags",
         0,
-        "empty on every input",
+        "OpenFoodFacts reported 8,071 products carrying minerals_tags while its API was reachable, so this is about the inputs; the API returned 503 for the rest of the re-measurement and no product carrying these tags could be fetched through the tool",
     ),
     (
         "openfoodfacts_tools",
         "OpenFoodFacts_get_product",
         "product->amino_acids_tags",
         0,
-        "empty on every input",
+        "OpenFoodFacts reported 8,071 products carrying minerals_tags while its API was reachable, so this is about the inputs; the API returned 503 for the rest of the re-measurement and no product carrying these tags could be fetched through the tool",
     ),
     (
         "openfoodfacts_tools",
         "OpenFoodFacts_get_product",
         "product->checkers",
         0,
-        "empty on every input",
+        "OpenFoodFacts reported 8,071 products carrying minerals_tags while its API was reachable, so this is about the inputs; the API returned 503 for the rest of the re-measurement and no product carrying these tags could be fetched through the tool",
     ),
     (
         "openfoodfacts_tools",
         "OpenFoodFacts_get_product",
         "product->data_quality_bugs_tags",
         0,
-        "empty on every input",
+        "OpenFoodFacts reported 8,071 products carrying minerals_tags while its API was reachable, so this is about the inputs; the API returned 503 for the rest of the re-measurement and no product carrying these tags could be fetched through the tool",
     ),
     (
         "openfoodfacts_tools",
         "OpenFoodFacts_get_product",
         "product->environment_impact_level_tags",
         0,
-        "empty on every input",
+        "OpenFoodFacts reported 8,071 products carrying minerals_tags while its API was reachable, so this is about the inputs; the API returned 503 for the rest of the re-measurement and no product carrying these tags could be fetched through the tool",
     ),
     (
         "openfoodfacts_tools",
         "OpenFoodFacts_get_product",
         "product->ingredients_that_may_be_from_palm_oil_tags",
         0,
-        "empty on every input",
+        "OpenFoodFacts reported 8,071 products carrying minerals_tags while its API was reachable, so this is about the inputs; the API returned 503 for the rest of the re-measurement and no product carrying these tags could be fetched through the tool",
     ),
     (
         "openfoodfacts_tools",
         "OpenFoodFacts_get_product",
         "product->main_countries_tags",
         0,
-        "empty on every input",
+        "OpenFoodFacts reported 8,071 products carrying minerals_tags while its API was reachable, so this is about the inputs; the API returned 503 for the rest of the re-measurement and no product carrying these tags could be fetched through the tool",
     ),
     (
         "openfoodfacts_tools",
         "OpenFoodFacts_get_product",
         "product->minerals_prev_tags",
         0,
-        "empty on every input",
+        "OpenFoodFacts reported 8,071 products carrying minerals_tags while its API was reachable, so this is about the inputs; the API returned 503 for the rest of the re-measurement and no product carrying these tags could be fetched through the tool",
     ),
     (
         "openfoodfacts_tools",
         "OpenFoodFacts_get_product",
         "product->minerals_tags",
         0,
-        "empty on every input",
+        "OpenFoodFacts reported 8,071 products carrying minerals_tags while its API was reachable, so this is about the inputs; the API returned 503 for the rest of the re-measurement and no product carrying these tags could be fetched through the tool",
     ),
     (
         "openfoodfacts_tools",
         "OpenFoodFacts_get_product",
         "product->nucleotides_prev_tags",
         0,
-        "empty on every input",
+        "OpenFoodFacts reported 8,071 products carrying minerals_tags while its API was reachable, so this is about the inputs; the API returned 503 for the rest of the re-measurement and no product carrying these tags could be fetched through the tool",
     ),
     (
         "openfoodfacts_tools",
         "OpenFoodFacts_get_product",
         "product->nucleotides_tags",
         0,
-        "empty on every input",
+        "OpenFoodFacts reported 8,071 products carrying minerals_tags while its API was reachable, so this is about the inputs; the API returned 503 for the rest of the re-measurement and no product carrying these tags could be fetched through the tool",
     ),
     (
         "openfoodfacts_tools",
         "OpenFoodFacts_get_product",
         "product->other_nutritional_substances_tags",
         0,
-        "empty on every input",
+        "OpenFoodFacts reported 8,071 products carrying minerals_tags while its API was reachable, so this is about the inputs; the API returned 503 for the rest of the re-measurement and no product carrying these tags could be fetched through the tool",
     ),
     (
         "openfoodfacts_tools",
         "OpenFoodFacts_get_product",
         "product->removed_countries_tags",
         0,
-        "empty on every input",
+        "OpenFoodFacts reported 8,071 products carrying minerals_tags while its API was reachable, so this is about the inputs; the API returned 503 for the rest of the re-measurement and no product carrying these tags could be fetched through the tool",
     ),
     (
         "openfoodfacts_tools",
         "OpenFoodFacts_get_product",
         "product->unknown_nutrients_tags",
         0,
-        "empty on every input",
+        "OpenFoodFacts reported 8,071 products carrying minerals_tags while its API was reachable, so this is about the inputs; the API returned 503 for the rest of the re-measurement and no product carrying these tags could be fetched through the tool",
     ),
     (
         "openfoodfacts_tools",
         "OpenFoodFacts_get_product",
         "product->vitamins_prev_tags",
         0,
-        "empty on every input",
+        "OpenFoodFacts reported 8,071 products carrying minerals_tags while its API was reachable, so this is about the inputs; the API returned 503 for the rest of the re-measurement and no product carrying these tags could be fetched through the tool",
     ),
     (
         "openfoodfacts_tools",
         "OpenFoodFacts_get_product",
         "product->vitamins_tags",
         0,
-        "empty on every input",
+        "OpenFoodFacts reported 8,071 products carrying minerals_tags while its API was reachable, so this is about the inputs; the API returned 503 for the rest of the re-measurement and no product carrying these tags could be fetched through the tool",
     ),
 ]
 

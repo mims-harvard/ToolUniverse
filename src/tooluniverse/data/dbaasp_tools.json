@@ -282,7 +282,43 @@
               "description": "Measured over 9 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "sourceGenes": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "dblink": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
+                  "gene": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "id": {
+                    "type": "integer"
+                  },
+                  "kingdom": {
+                    "type": "object"
+                  },
+                  "note": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "subkingdom": {
+                    "type": "string"
+                  }
+                }
+              },
+              "description": "Measured over 12 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "smiles": {
               "type": [
@@ -346,7 +382,23 @@
                     "type": "string"
                   },
                   "authors": {
-                    "type": "array"
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "description": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "description",
+                        "name"
+                      ]
+                    },
+                    "description": "Measured over 343 items; the declaration was an array with no items, so nothing about its contents could fail validation."
                   },
                   "id": {
                     "type": "integer"

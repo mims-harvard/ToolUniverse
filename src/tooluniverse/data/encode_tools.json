@@ -559,7 +559,11 @@
               "type": "string"
             },
             "documents": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 42 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "references": {
               "type": "array",
@@ -574,7 +578,11 @@
               "type": "string"
             },
             "alternate_accessions": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 7 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "analyses": {
               "type": "array",
@@ -637,7 +645,11 @@
               }
             },
             "supersedes": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 14 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "related_files": {
               "type": "array"
@@ -661,13 +673,25 @@
               "type": "string"
             },
             "objective_slims": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 19 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "type_slims": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 7 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "category_slims": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 21 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "assay_title": {
               "type": "string"
@@ -749,7 +773,11 @@
               }
             },
             "superseded_by": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 5 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "related_annotations": {
               "type": "array",
@@ -819,7 +847,11 @@
               "type": "string"
             },
             "aliases": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 19 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "schema_version": {
               "type": "string"
@@ -837,7 +869,11 @@
               "type": "string"
             },
             "alternate_accessions": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 9 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "file_format": {
               "type": "string"
@@ -877,7 +913,25 @@
               "type": "string"
             },
             "flowcell_details": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "barcode": {
+                    "type": "string"
+                  },
+                  "flowcell": {
+                    "type": "string"
+                  },
+                  "lane": {
+                    "type": "string"
+                  },
+                  "machine": {
+                    "type": "string"
+                  }
+                }
+              },
+              "description": "Measured over 9 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "output_type": {
               "type": "string"
@@ -898,7 +952,11 @@
               "type": "string"
             },
             "dbxrefs": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 18 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "@id": {
               "type": "string"
@@ -949,13 +1007,21 @@
               "type": "string"
             },
             "quality_metrics": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 10 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "file_type": {
               "type": "string"
             },
             "superseded_by": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 6 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "cloud_metadata": {
               "type": "object",
@@ -984,16 +1050,28 @@
               "type": "string"
             },
             "assay_term_name": {
-              "type": "string"
+              "type": [
+                "string",
+                "array"
+              ],
+              "description": "A string for one assay and a list when the file belongs to several -- 'PRO-cap' against ['ChIP-seq', 'RNA-seq', 'HiC']. 26 strings and 23 lists over 50 files measured."
             },
             "biosample_ontology": {
-              "type": "string"
+              "type": [
+                "string",
+                "array"
+              ],
+              "description": "A path string, or a list of them for a file spanning several biosample types. 46 strings and 1 list over 50 files measured."
             },
             "simple_biosample_summary": {
               "type": "string"
             },
             "target": {
-              "type": "string"
+              "type": [
+                "string",
+                "array"
+              ],
+              "description": "A target path, or a list -- empty on the one file measured carrying one. Absent on 47 of the 50 files measured."
             },
             "analyses": {
               "type": "array",
@@ -1322,7 +1400,11 @@
               }
             },
             "references": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 7 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "source": {
               "type": "string"
@@ -1334,16 +1416,28 @@
               "type": "string"
             },
             "genetic_modifications": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 10 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "alternate_accessions": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 7 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "description": {
               "type": "string"
             },
             "treatments": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 10 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "dbxrefs": {
               "type": "array",
@@ -1364,7 +1458,11 @@
               ]
             },
             "internal_tags": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 7 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "culture_harvest_date": {
               "type": "string"
@@ -1400,13 +1498,25 @@
               "type": "string"
             },
             "applied_modifications": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 22 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "characterizations": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 5 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "parent_of": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 11 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "age_display": {
               "type": "string"
@@ -1439,7 +1549,11 @@
               "type": "string"
             },
             "model_organism_donor_modifications": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 12 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             }
           },
           "required": [
