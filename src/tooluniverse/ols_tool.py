@@ -414,6 +414,7 @@ class OLSTool(BaseTool):
         )
 
         validated: List[Dict[str, Any]] = []
+        dropped = 0
         for item in ontologies:
             try:
                 validated.append(
@@ -422,16 +423,33 @@ class OLSTool(BaseTool):
                     )
                 )
             except ValidationError:
-                continue
+                # Skipping the row is the right call -- one unreadable ontology
+                # should not fail the whole listing -- but it has to be
+                # counted. This handler used to drop silently and still report
+                # upstream's total_items, so when `title` was a required field
+                # it returned 263 of the 287 ontologies OLS lists and the
+                # pagination still said 287.
+                dropped += 1
 
         total_pages = data.get("totalPages", 0)
         total_items = data.get("totalElements", len(ontologies))
         has_more = page + 1 < total_pages
         payload = {
-            "results": validated or ontologies,
+            # No fallback to the raw upstream objects here. `validated or
+            # ontologies` meant that a page on which every row failed
+            # validation came back as raw OLS v2 payloads -- different keys,
+            # different shapes, under a schema describing the projected ones.
+            # Returning no rows and saying how many were unreadable is the
+            # honest answer.
+            "results": validated,
             "pagination": {
                 "page": page,
                 "size": size,
+                # `showing` is what this page actually carries, the same word
+                # the term handlers in this tool use; total_items stays
+                # upstream's count. They differ when rows were dropped.
+                "showing": len(validated),
+                "dropped": dropped,
                 "total_pages": total_pages,
                 "total_items": total_items,
                 "has_more": has_more,

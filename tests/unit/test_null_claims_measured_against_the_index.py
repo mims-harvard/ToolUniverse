@@ -727,3 +727,101 @@ def test_the_title_aliases_do_not_override_a_title_ols_does_send():
 def test_the_ols_title_declaration_allows_the_null_it_can_now_return():
     schema = _tool("ols_tools", "ols_get_ontology_info")["return_schema"]
     assert _types(schema, "title") == {"string", "null"}
+
+
+def _search_schema():
+    return _tool("ols_tools", "ols_search_ontologies")["return_schema"]
+
+
+def test_the_ontology_listing_counts_the_rows_it_could_not_read():
+    """The handler skipped unreadable rows and still reported upstream's
+    total_items, so while `title` was required it answered 263 of the 287
+    ontologies OLS lists under a pagination block that said 287. Skipping one
+    bad row is right; not saying so is not.
+
+    `showing` is the word the term handlers in this tool already use for the
+    rows a page carries."""
+    from tooluniverse.ols_tool import OLSTool
+
+    tool = OLSTool({"name": "ols", "fields": {}})
+    tool._get_json = lambda *a, **k: {
+        "elements": [
+            {"ontologyId": "good", "title": "A", "numberOfClasses": "5"},
+            {"ontologyId": "titleless", "numberOfClasses": "7"},
+            {"title": "no ontologyId"},
+            {"ontologyId": "bad", "title": "B", "numberOfClasses": "not-a-number"},
+        ],
+        "totalPages": 1,
+        "totalElements": 4,
+    }
+    page = tool._handle_search_ontologies({"page": 0, "size": 20})["data"]
+    assert [row["ontologyId"] for row in page["results"]] == ["good", "titleless"]
+    assert page["pagination"]["showing"] == 2
+    assert page["pagination"]["dropped"] == 2
+    assert page["pagination"]["total_items"] == 4
+
+
+def test_a_page_whose_every_row_is_unreadable_returns_no_rows():
+    """`validated or ontologies` meant that a page on which everything failed
+    validation came back as raw OLS v2 payloads instead -- other keys, other
+    shapes, under a schema describing the projected ones. Returning nothing and
+    counting it is the honest answer."""
+    from tooluniverse.ols_tool import OLSTool
+
+    tool = OLSTool({"name": "ols", "fields": {}})
+    tool._get_json = lambda *a, **k: {
+        "elements": [{"title": "x"}, {"title": "y"}],
+        "totalPages": 1,
+        "totalElements": 2,
+    }
+    page = tool._handle_search_ontologies({"page": 0, "size": 20})["data"]
+    assert page["results"] == []
+    assert page["pagination"]["dropped"] == 2
+
+
+LISTING_ROW_TYPES = {
+    "ontologyId": {"string"},
+    "title": {"string", "null"},
+    "version": {"string", "null"},
+    "description": {"string", "null"},
+    "domain": {"string", "null"},
+    "homepage": {"string", "null"},
+    "preferredPrefix": {"string", "null"},
+    "number_of_terms": {"integer"},
+    "numberOfClasses": {"integer"},
+    "repository": {"string", "null"},
+}
+
+LISTING_PAGINATION_TYPES = {
+    "page": {"integer"},
+    "size": {"integer"},
+    "showing": {"integer"},
+    "dropped": {"integer"},
+    "total_pages": {"integer"},
+    "total_items": {"integer"},
+    "has_more": {"boolean"},
+    "next_page": {"integer", "null"},
+}
+
+
+@pytest.mark.parametrize("field,types", sorted(LISTING_ROW_TYPES.items()))
+def test_a_listing_row_field_is_declared(field, types):
+    """`results` declared items: {"type": "object"} and `pagination` just
+    "object", so neither the dropped rows nor a raw payload leaking into the
+    array could ever fail validation. Typed here from 323 rows over 6 calls,
+    which are the same types ols_get_ontology_info declares -- both come from
+    OntologyInfo."""
+    assert _types(_search_schema(), f"results->*->{field}") == types
+
+
+@pytest.mark.parametrize("field,types", sorted(LISTING_PAGINATION_TYPES.items()))
+def test_a_listing_pagination_field_is_declared(field, types):
+    assert _types(_search_schema(), f"pagination->{field}") == types
+
+
+def test_a_listing_row_must_carry_its_ontology_id():
+    """The one field that makes a row identifiable. Requiring it is what makes
+    a raw OLS payload appearing in `results` a validation failure rather than
+    just another object."""
+    rows = _decl(_search_schema(), "results->*")
+    assert rows.get("required") == ["ontologyId"]
