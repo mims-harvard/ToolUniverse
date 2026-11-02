@@ -433,6 +433,11 @@
             "exon_count": {
               "type": "integer"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

@@ -249,6 +249,11 @@
             "total_genes_in_set": {
               "type": "integer"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -331,6 +336,11 @@
             "collection": {
               "type": "string"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

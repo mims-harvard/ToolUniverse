@@ -139,6 +139,11 @@
             "ResultCode": {
               "type": "integer"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

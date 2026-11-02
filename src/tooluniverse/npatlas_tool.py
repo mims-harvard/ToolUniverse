@@ -11,7 +11,7 @@ API: https://www.npatlas.org/api/v1  (public, no authentication, JSON)
 """
 
 import re
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import requests
 
@@ -21,8 +21,47 @@ from .tool_registry import register_tool
 NPATLAS_BASE = "https://www.npatlas.org/api/v1"
 
 
-def _summarize(c: Dict[str, Any]) -> Dict[str, Any]:
+def _organism_name(c: Dict[str, Any]) -> Optional[str]:
+    """The producing organism as a name, from whichever shape the record uses.
+
+    Two shapes, and the code read neither correctly as of 2026-11-01:
+
+    * ``/compounds/basicSearch`` sends ``original_organism`` (a string) and no
+      ``origin_organism`` at all, so reading ``origin_organism`` returned None
+      for every search hit -- NPAtlas_search_compounds reported
+      ``origin_organism: null`` on all of them.
+    * ``/compound/{npaid}`` sends ``origin_organism`` with ``genus``,
+      ``species``, ``type`` and ``taxon``, and ``taxon`` is now an object
+      ({id, name, rank, taxon_db, external_id, ncbi_id, ancestors}) where it
+      used to be a string. ``org.get("taxon")`` therefore returned that whole
+      object instead of falling through to the binomial, which is what made
+      NPAtlas_get_compound fail its own "string or null" schema.
+
+    The binomial wins over the taxon's own ``name`` because the taxon is
+    resolved to the rank NPAtlas could match -- genus "Curvularia" for
+    "Curvularia geniculata". The full taxon object is not lost: ``source_record``
+    carries the upstream record verbatim.
+    """
+    direct = c.get("original_organism")
+    if isinstance(direct, str) and direct.strip():
+        return direct.strip()
     org = c.get("origin_organism") or {}
+    if not isinstance(org, dict):
+        return org.strip() if isinstance(org, str) and org.strip() else None
+    taxon = org.get("taxon")
+    if isinstance(taxon, str) and taxon.strip():
+        return taxon.strip()
+    binomial = f"{org.get('genus') or ''} {org.get('species') or ''}".strip()
+    if binomial:
+        return binomial
+    if isinstance(taxon, dict):
+        name = taxon.get("name")
+        if isinstance(name, str) and name.strip():
+            return name.strip()
+    return None
+
+
+def _summarize(c: Dict[str, Any]) -> Dict[str, Any]:
     return {
         "npaid": c.get("npaid"),
         "name": c.get("original_name"),
@@ -31,8 +70,7 @@ def _summarize(c: Dict[str, Any]) -> Dict[str, Any]:
         "exact_mass": c.get("exact_mass"),
         "inchikey": c.get("inchikey"),
         "smiles": c.get("smiles"),
-        "origin_organism": org.get("taxon")
-        or (f"{org.get('genus', '')} {org.get('species', '')}".strip() or None),
+        "origin_organism": _organism_name(c),
     }
 
 

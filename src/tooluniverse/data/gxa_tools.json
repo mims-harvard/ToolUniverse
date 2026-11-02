@@ -79,6 +79,11 @@
                 }
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -252,6 +257,11 @@
               ],
               "description": "Present (non-null) only when a gene_id filter was supplied and matched nothing in the upstream sample. Explains that the upstream API returns only a partial sample and ignores gene filters, so an empty match is not evidence the gene is unexpressed or absent from the experiment."
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -324,6 +334,11 @@
             "config": {
               "type": "object"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

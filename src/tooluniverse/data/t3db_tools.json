@@ -22,7 +22,12 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object"
+          "type": "object",
+          "not": {
+            "required": [
+              "error"
+            ]
+          }
         },
         {
           "type": "object",

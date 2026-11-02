@@ -72,32 +72,369 @@
               ]
             },
             "targetGroups": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              },
+              "description": "Measured over 46 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "targetActivities": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "activity": {
+                    "type": "number"
+                  },
+                  "activityMeasureGroup": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
+                  "activityMeasureValue": {
+                    "type": "string"
+                  },
+                  "cfu": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "cfuGroup": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
+                  "concentration": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "integer"
+                  },
+                  "ionicStrength": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "medium": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
+                  "note": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "peptideId": {
+                    "type": "integer"
+                  },
+                  "ph": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "reference": {
+                    "type": "string"
+                  },
+                  "saltType": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "targetSpecies": {
+                    "type": "object"
+                  },
+                  "unit": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "activity",
+                  "activityMeasureGroup",
+                  "activityMeasureValue",
+                  "cfu",
+                  "cfuGroup",
+                  "concentration",
+                  "id",
+                  "ionicStrength",
+                  "medium",
+                  "note",
+                  "peptideId",
+                  "ph",
+                  "reference",
+                  "saltType",
+                  "targetSpecies",
+                  "unit"
+                ]
+              },
+              "description": "Measured over 163 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "hemoliticCytotoxicActivities": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "activity": {
+                    "type": "number"
+                  },
+                  "activityMeasureForLysisGroup": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
+                  "activityMeasureForLysisValue": {
+                    "type": "string"
+                  },
+                  "concentration": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "integer"
+                  },
+                  "ionicStrength": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "note": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "peptideId": {
+                    "type": "integer"
+                  },
+                  "ph": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "reference": {
+                    "type": "string"
+                  },
+                  "saltType": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "targetCell": {
+                    "type": "object"
+                  },
+                  "unit": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  }
+                }
+              },
+              "description": "Measured over 11 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "antibiofilmActivities": {
               "type": "array"
             },
             "uniprots": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "integer"
+                  },
+                  "proPeptide": {
+                    "type": "object"
+                  },
+                  "uniprotId": {
+                    "type": "string"
+                  },
+                  "uniprotUrl": {
+                    "type": "string"
+                  }
+                }
+              },
+              "description": "Measured over 9 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "sourceGenes": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "dblink": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
+                  "gene": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "id": {
+                    "type": "integer"
+                  },
+                  "kingdom": {
+                    "type": "object"
+                  },
+                  "note": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "source": {
+                    "type": "string"
+                  },
+                  "subkingdom": {
+                    "type": "string"
+                  }
+                }
+              },
+              "description": "Measured over 12 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "smiles": {
               "type": [
-                "string",
-                "array",
-                "null"
-              ]
+  "string",
+  "array",
+  "null"
+],
+              "items": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "id": {
+                    "type": "integer"
+                  },
+                  "lastUpdatedAt": {
+                    "type": "string"
+                  },
+                  "manuallyEdited": {
+                    "type": "boolean"
+                  },
+                  "pubChemCid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "pubChemCidUrl": {
+                    "type": "string"
+                  },
+                  "smiles": {
+                    "type": "string"
+                  },
+                  "smilesImageUrl": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "description",
+                  "id",
+                  "lastUpdatedAt",
+                  "manuallyEdited",
+                  "pubChemCid",
+                  "pubChemCidUrl",
+                  "smiles",
+                  "smilesImageUrl"
+                ]
+              },
+              "description": "Measured over 27 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "articles": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "additional": {
+                    "type": "string"
+                  },
+                  "authors": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "description": {
+                          "type": "string"
+                        },
+                        "name": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "description",
+                        "name"
+                      ]
+                    },
+                    "description": "Measured over 343 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+                  },
+                  "id": {
+                    "type": "integer"
+                  },
+                  "journal": {
+                    "type": "object"
+                  },
+                  "pages": {
+                    "type": "string"
+                  },
+                  "pubmed": {
+                    "type": "object"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "volume": {
+                    "type": "string"
+                  },
+                  "year": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "additional",
+                  "authors",
+                  "id",
+                  "journal",
+                  "pages",
+                  "pubmed",
+                  "title",
+                  "volume",
+                  "year"
+                ]
+              },
+              "description": "Measured over 27 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             }
           },
           "required": [

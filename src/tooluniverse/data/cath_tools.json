@@ -101,6 +101,11 @@
               ],
               "description": "Total number of classified domains"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -212,6 +217,11 @@
               ],
               "description": "Number of residues in domain"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

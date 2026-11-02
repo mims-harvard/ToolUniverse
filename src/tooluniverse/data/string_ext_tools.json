@@ -75,6 +75,11 @@
               "type": "object",
               "description": "One resumable annotation page per category, each with term, description, number_of_genes, and input_genes"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -194,6 +199,11 @@
                 }
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

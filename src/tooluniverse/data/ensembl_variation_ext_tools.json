@@ -96,6 +96,11 @@
               },
               "description": "Allele frequency data across global populations"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -228,6 +233,11 @@
               },
               "description": "Clinical significance annotations"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

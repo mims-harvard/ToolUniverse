@@ -141,6 +141,11 @@
               "type": "integer",
               "description": "Offset for next page"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -290,6 +295,11 @@
             "success": {
               "type": "integer"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

@@ -83,57 +83,86 @@
                 "array",
                 "null"
               ],
-              "description": "UniProt accession(s)"
+              "description": "UniProt accession(s)",
+              "items": {
+                "type": "string"
+              }
             },
             "refseq_accession": {
               "type": [
                 "array",
                 "null"
               ],
-              "description": "RefSeq accession(s)"
+              "description": "RefSeq accession(s)",
+              "items": {
+                "type": "string"
+              }
             },
             "omim_id": {
               "type": [
                 "array",
                 "null"
               ],
-              "description": "OMIM ID(s)"
+              "description": "OMIM ID(s)",
+              "items": {
+                "type": "string"
+              }
             },
             "ccds_id": {
               "type": [
                 "array",
                 "null"
               ],
-              "description": "CCDS ID(s)"
+              "description": "CCDS ID(s)",
+              "items": {
+                "type": "string"
+              }
             },
             "prev_symbol": {
               "type": [
                 "array",
                 "null"
               ],
-              "description": "Previous gene symbols"
+              "description": "Previous gene symbols",
+              "items": {
+                "type": "string"
+              }
             },
             "prev_name": {
               "type": [
                 "array",
                 "null"
               ],
-              "description": "Previous gene names"
+              "description": "Previous gene names",
+              "items": {
+                "type": "string"
+              }
             },
             "alias_symbol": {
               "type": [
                 "array",
                 "null"
               ],
-              "description": "Alias symbols"
+              "description": "Alias symbols",
+              "items": {
+                "type": "string"
+              }
             },
             "gene_group": {
               "type": [
                 "array",
                 "null"
               ],
-              "description": "Gene group memberships"
+              "description": "Gene group memberships",
+              "items": {
+                "type": "string"
+              }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -230,6 +259,11 @@
                 "null"
               ]
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

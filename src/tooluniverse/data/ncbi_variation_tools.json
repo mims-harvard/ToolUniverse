@@ -166,14 +166,156 @@
         "last_update_date": {"type": "string"},
         "variant_type": {"type": ["string", "null"]},
         "organism": {"type": ["string", "null"]},
-        "citations": {"type": "array"},
-        "mane_select_ids": {"type": "array"},
-        "grch38_placements": {"type": "array"},
-        "genes": {"type": "array"},
+        "citations": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "description": "Measured over 3171 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+        },
+        "mane_select_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Measured over 8 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+        },
+        "grch38_placements": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "coordinate_system": {
+                "type": "string"
+              },
+              "deleted_sequence": {
+                "type": "string"
+              },
+              "inserted_sequence": {
+                "type": "string"
+              },
+              "position": {
+                "type": "integer"
+              },
+              "seq_id": {
+                "type": "string"
+              },
+              "spdi_position": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "coordinate_system",
+              "deleted_sequence",
+              "inserted_sequence",
+              "position",
+              "seq_id",
+              "spdi_position"
+            ]
+          },
+          "description": "Measured over 27 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+        },
+        "genes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "gene": {
+                "type": "string"
+              },
+              "gene_id": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          },
+          "description": "Measured over 8 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+        },
         "clinical_significance": {
           "type": "array",
           "items": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "accession": {
+                "type": "string"
+              },
+              "accession_version": {
+                "type": "string"
+              },
+              "allele_annotation_index": {
+                "type": "integer"
+              },
+              "allele_id": {
+                "type": "integer"
+              },
+              "citations": {
+                "type": "array"
+              },
+              "clinical_significances": {
+                "type": "array"
+              },
+              "collection_method": {
+                "type": "array"
+              },
+              "create_date": {
+                "type": "string"
+              },
+              "disease_ids": {
+                "type": "array"
+              },
+              "disease_names": {
+                "type": "array"
+              },
+              "gene_ids": {
+                "type": "array"
+              },
+              "last_evaluated_date": {
+                "type": "string"
+              },
+              "measure_set_id": {
+                "type": "integer"
+              },
+              "origins": {
+                "type": "array"
+              },
+              "refsnp_id": {
+                "type": "string"
+              },
+              "review_status": {
+                "type": "string"
+              },
+              "significance": {
+                "type": "array"
+              },
+              "update_date": {
+                "type": "string"
+              },
+              "variant_identifiers": {
+                "type": "array"
+              }
+            },
+            "required": [
+              "accession",
+              "accession_version",
+              "allele_annotation_index",
+              "allele_id",
+              "citations",
+              "clinical_significances",
+              "collection_method",
+              "create_date",
+              "disease_ids",
+              "disease_names",
+              "gene_ids",
+              "measure_set_id",
+              "origins",
+              "refsnp_id",
+              "review_status",
+              "significance",
+              "update_date",
+              "variant_identifiers"
+            ]
           },
           "description": "Complete clinical assertions across every allele annotation"
         },

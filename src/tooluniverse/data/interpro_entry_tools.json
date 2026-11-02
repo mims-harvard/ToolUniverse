@@ -206,13 +206,16 @@
                     "type": "string"
                   },
                   "protein_count": {
-                    "type": "null"
+                    "type": "integer",
+                    "description": "UniProt proteins matched by the entry. The listing fills this only when it asks the API for extra_fields=counts; measured as an integer for all 450 entries returned by 10 queries."
                   },
                   "structure_count": {
-                    "type": "null"
+                    "type": "integer",
+                    "description": "PDB structures containing the entry. Integer for all 450 entries measured."
                   },
                   "taxa_count": {
-                    "type": "null"
+                    "type": "integer",
+                    "description": "Distinct taxa the entry is seen in. Integer for all 450 entries measured."
                   }
                 }
               }

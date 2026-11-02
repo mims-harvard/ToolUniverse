@@ -55,6 +55,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "type": "object",
           "description": "Search results from Bioconductor R-universe",
           "properties": {
@@ -197,6 +202,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "type": "object",
           "description": "Bioconductor package metadata",
           "properties": {

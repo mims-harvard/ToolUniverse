@@ -754,7 +754,10 @@
               "type": "string"
             },
             "gene_synonym": {
-              "type": "string"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             },
             "ensembl_id": {
               "type": "string"
@@ -938,6 +941,9 @@
     "test_examples": [
       {
         "ensembl_id": "ENSG00000141510"
+      },
+      {
+        "ensembl_id": "ENSG00000146648"
       }
     ],
     "return_schema": {
@@ -968,7 +974,8 @@
           }
         },
         "RNA tissue specific nTPM": {
-          "type": "null"
+          "type": ["object", "null"],
+          "description": "Tissue-specific nTPM values keyed by tissue, e.g. {'placenta': '61.8'}. Measured on ENSG00000146648 (EGFR). Null for genes with no tissue-specific enrichment."
         }
       }
     }

@@ -99,6 +99,11 @@
               "type": "string",
               "description": "URL to neuron image"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -344,6 +349,11 @@
               "type": "number",
               "description": "Total length (um)"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -514,31 +524,51 @@
               "array",
               "string",
               "null"
-            ]
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Measured over 1572 items; the declaration was an array with no items, so nothing about its contents could fail validation."
           },
           "species": {
             "type": [
               "array",
               "null"
-            ]
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Measured over 212 items; the declaration was an array with no items, so nothing about its contents could fail validation."
           },
           "brainRegion": {
             "type": [
               "array",
               "null"
-            ]
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Measured over 212 items; the declaration was an array with no items, so nothing about its contents could fail validation."
           },
           "cellType": {
             "type": [
               "array",
               "null"
-            ]
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Measured over 212 items; the declaration was an array with no items, so nothing about its contents could fail validation."
           },
           "tracingSystem": {
             "type": [
               "array",
               "null"
-            ]
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Measured over 212 items; the declaration was an array with no items, so nothing about its contents could fail validation."
           },
           "evaluatedDate": {
             "type": [
@@ -558,13 +588,29 @@
             "type": [
               "array",
               "null"
-            ]
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Measured over 214 items; the declaration was an array with no items, so nothing about its contents could fail validation."
           },
           "sharedReconstructions": {
             "type": [
               "array",
               "null"
-            ]
+            ],
+            "items": {
+              "type": "object",
+              "properties": {
+                "nReconstructions": {
+                  "type": "integer"
+                },
+                "sharedArticleId": {
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Measured over 11 items; the declaration was an array with no items, so nothing about its contents could fail validation."
           },
           "status": {
             "type": [
@@ -669,31 +715,51 @@
             "array",
             "string",
             "null"
-          ]
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Measured over 246 items; the declaration was an array with no items, so nothing about its contents could fail validation."
         },
         "species": {
           "type": [
             "array",
             "null"
-          ]
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Measured over 36 items; the declaration was an array with no items, so nothing about its contents could fail validation."
         },
         "brainRegion": {
           "type": [
             "array",
             "null"
-          ]
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Measured over 36 items; the declaration was an array with no items, so nothing about its contents could fail validation."
         },
         "cellType": {
           "type": [
             "array",
             "null"
-          ]
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Measured over 36 items; the declaration was an array with no items, so nothing about its contents could fail validation."
         },
         "tracingSystem": {
           "type": [
             "array",
             "null"
-          ]
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Measured over 36 items; the declaration was an array with no items, so nothing about its contents could fail validation."
         },
         "evaluatedDate": {
           "type": [
@@ -711,7 +777,11 @@
           "type": [
             "array",
             "null"
-          ]
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Measured over 36 items; the declaration was an array with no items, so nothing about its contents could fail validation."
         },
         "sharedReconstructions": {
           "type": [

@@ -114,6 +114,11 @@
             "hourly_units": {
               "type": "object"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -253,6 +258,11 @@
             "hourly_units": {
               "type": "object"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -380,6 +390,11 @@
             "generationtime_ms": {
               "type": "number"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

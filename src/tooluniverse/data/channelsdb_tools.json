@@ -23,7 +23,7 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Channel data for the PDB structure",
+          "description": "Both keys are present in every one of the 10 successful payloads measured. They are required so this branch stops matching the error envelope: with neither branch requiring anything, a 404 result satisfied both, and oneOf needs exactly one, so a perfectly valid error envelope failed validation.",
           "properties": {
             "Annotations": {
               "type": "array",
@@ -60,23 +60,198 @@
               "properties": {
                 "CSATunnels_MOLE": {
                   "type": "array",
-                  "description": "Tunnels detected by MOLE via ChannelsDB 2.0 CSA"
+                  "description": "Tunnels detected by MOLE via ChannelsDB 2.0 CSA",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "Auto": {
+                        "type": "boolean"
+                      },
+                      "Cavity": {
+                        "type": "string"
+                      },
+                      "Id": {
+                        "type": "string"
+                      },
+                      "Layers": {
+                        "type": "object"
+                      },
+                      "Profile": {
+                        "type": "array"
+                      },
+                      "Properties": {
+                        "type": "object"
+                      },
+                      "Type": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "Auto",
+                      "Cavity",
+                      "Id",
+                      "Layers",
+                      "Profile",
+                      "Properties",
+                      "Type"
+                    ]
+                  }
                 },
                 "CSATunnels_Caver": {
                   "type": "array",
-                  "description": "Tunnels detected by CAVER via ChannelsDB 2.0 CSA"
+                  "description": "Tunnels detected by CAVER via ChannelsDB 2.0 CSA",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "Auto": {
+                        "type": "boolean"
+                      },
+                      "Cavity": {
+                        "type": "string"
+                      },
+                      "Id": {
+                        "type": "string"
+                      },
+                      "Layers": {
+                        "type": "object"
+                      },
+                      "Profile": {
+                        "type": "array"
+                      },
+                      "Properties": {
+                        "type": "object"
+                      },
+                      "Type": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "Auto",
+                      "Cavity",
+                      "Id",
+                      "Layers",
+                      "Profile",
+                      "Properties",
+                      "Type"
+                    ]
+                  }
                 },
                 "ReviewedChannels_MOLE": {
                   "type": "array",
-                  "description": "Expert-reviewed channels detected by MOLE"
+                  "description": "Expert-reviewed channels detected by MOLE",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "Auto": {
+                        "type": "boolean"
+                      },
+                      "Cavity": {
+                        "type": "string"
+                      },
+                      "Id": {
+                        "type": "string"
+                      },
+                      "Layers": {
+                        "type": "object"
+                      },
+                      "Profile": {
+                        "type": "array"
+                      },
+                      "Properties": {
+                        "type": "object"
+                      },
+                      "Type": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "Auto",
+                      "Cavity",
+                      "Id",
+                      "Layers",
+                      "Profile",
+                      "Properties",
+                      "Type"
+                    ]
+                  }
                 },
                 "ReviewedChannels_Caver": {
                   "type": "array",
-                  "description": "Expert-reviewed channels detected by CAVER"
+                  "description": "Expert-reviewed channels detected by CAVER",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "Auto": {
+                        "type": "boolean"
+                      },
+                      "Cavity": {
+                        "type": "string"
+                      },
+                      "Id": {
+                        "type": "string"
+                      },
+                      "Layers": {
+                        "type": "object"
+                      },
+                      "Profile": {
+                        "type": "array"
+                      },
+                      "Properties": {
+                        "type": "object"
+                      },
+                      "Type": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "Auto",
+                      "Cavity",
+                      "Id",
+                      "Layers",
+                      "Profile",
+                      "Properties",
+                      "Type"
+                    ]
+                  }
                 },
                 "CofactorTunnels_MOLE": {
                   "type": "array",
-                  "description": "Cofactor access tunnels detected by MOLE"
+                  "description": "Cofactor access tunnels detected by MOLE",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "Auto": {
+                        "type": "boolean"
+                      },
+                      "Cavity": {
+                        "type": "string"
+                      },
+                      "Id": {
+                        "type": "string"
+                      },
+                      "Layers": {
+                        "type": "object"
+                      },
+                      "Profile": {
+                        "type": "array"
+                      },
+                      "Properties": {
+                        "type": "object"
+                      },
+                      "Type": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "Auto",
+                      "Cavity",
+                      "Id",
+                      "Layers",
+                      "Profile",
+                      "Properties",
+                      "Type"
+                    ]
+                  }
                 },
                 "CofactorTunnels_Caver": {
                   "type": "array",
@@ -84,7 +259,42 @@
                 },
                 "TransmembranePores_MOLE": {
                   "type": "array",
-                  "description": "Transmembrane pores detected by MOLE"
+                  "description": "Transmembrane pores detected by MOLE",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "Auto": {
+                        "type": "boolean"
+                      },
+                      "Cavity": {
+                        "type": "string"
+                      },
+                      "Id": {
+                        "type": "string"
+                      },
+                      "Layers": {
+                        "type": "object"
+                      },
+                      "Profile": {
+                        "type": "array"
+                      },
+                      "Properties": {
+                        "type": "object"
+                      },
+                      "Type": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "Auto",
+                      "Cavity",
+                      "Id",
+                      "Layers",
+                      "Profile",
+                      "Properties",
+                      "Type"
+                    ]
+                  }
                 },
                 "TransmembranePores_Caver": {
                   "type": "array",
@@ -92,11 +302,81 @@
                 },
                 "ProcognateTunnels_MOLE": {
                   "type": "array",
-                  "description": "Cognate ligand tunnels detected by MOLE"
+                  "description": "Cognate ligand tunnels detected by MOLE",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "Auto": {
+                        "type": "boolean"
+                      },
+                      "Cavity": {
+                        "type": "string"
+                      },
+                      "Id": {
+                        "type": "string"
+                      },
+                      "Layers": {
+                        "type": "object"
+                      },
+                      "Profile": {
+                        "type": "array"
+                      },
+                      "Properties": {
+                        "type": "object"
+                      },
+                      "Type": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "Auto",
+                      "Cavity",
+                      "Id",
+                      "Layers",
+                      "Profile",
+                      "Properties",
+                      "Type"
+                    ]
+                  }
                 },
                 "ProcognateTunnels_Caver": {
                   "type": "array",
-                  "description": "Cognate ligand tunnels detected by CAVER"
+                  "description": "Cognate ligand tunnels detected by CAVER",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "Auto": {
+                        "type": "boolean"
+                      },
+                      "Cavity": {
+                        "type": "string"
+                      },
+                      "Id": {
+                        "type": "string"
+                      },
+                      "Layers": {
+                        "type": "object"
+                      },
+                      "Profile": {
+                        "type": "array"
+                      },
+                      "Properties": {
+                        "type": "object"
+                      },
+                      "Type": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "Auto",
+                      "Cavity",
+                      "Id",
+                      "Layers",
+                      "Profile",
+                      "Properties",
+                      "Type"
+                    ]
+                  }
                 },
                 "AlphaFillTunnels_MOLE": {
                   "type": "array",
@@ -108,7 +388,11 @@
                 }
               }
             }
-          }
+          },
+          "required": [
+            "Annotations",
+            "Channels"
+          ]
         },
         {
           "type": "object",
@@ -169,6 +453,11 @@
               "type": "object",
               "description": "Channel data organized by detection method. Each channel has: Type (Tunnel/Pore), Id, Cavity, Properties (Charge, Hydrophobicity, Polarity, Mutability, NumPositives, NumNegatives), Profile (array of radius/distance/coordinate points along path), and Layers (residues lining the channel)."
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

@@ -219,13 +219,16 @@
                   "type": "string"
                 },
                 "samplePreparation": {
-                  "type": "string"
+                  "type": ["string", "null"],
+                  "description": "Sample preparation description. Null for datasets without one; measured over 24."
                 },
                 "gridPreparation": {
-                  "type": "null"
+                  "type": ["string", "null"],
+                  "description": "Grid preparation description, e.g. 'model: Quantifoil R2/1, material: COPPER, mesh: 200, ...'. Measured on dataset 10000. Null for datasets that do not record it."
                 },
                 "otherSetup": {
-                  "type": "null"
+                  "type": ["string", "null"],
+                  "description": "Free-text setup notes. Set for some datasets, null for others; measured over 24."
                 },
                 "depositionDate": {
                   "type": "string"
@@ -237,10 +240,12 @@
                   "type": "string"
                 },
                 "datasetPublications": {
-                  "type": "string"
+                  "type": ["string", "null"],
+                  "description": "Publication references for the dataset. Null for datasets with none; measured over 24."
                 },
                 "relatedDatabaseEntries": {
-                  "type": "string"
+                  "type": ["string", "null"],
+                  "description": "Cross-references to other databases. Null for datasets with none; measured over 24."
                 },
                 "keyPhotoUrl": {
                   "type": "string"
@@ -278,6 +283,26 @@
       {
         "operation": "get_dataset",
         "dataset_id": 10053
+      },
+      {
+        "operation": "get_dataset",
+        "dataset_id": 10000
+      },
+      {
+        "operation": "get_dataset",
+        "dataset_id": 10437
+      },
+      {
+        "operation": "get_dataset",
+        "dataset_id": 10295
+      },
+      {
+        "operation": "get_dataset",
+        "dataset_id": 10463
+      },
+      {
+        "operation": "get_dataset",
+        "dataset_id": 10515
       }
     ],
     "fields": {
@@ -505,7 +530,8 @@
                     "type": "string"
                   },
                   "processingSoftware": {
-                    "type": "null"
+                    "type": ["string", "null"],
+                    "description": "Software used to process the tomogram, e.g. 'tomo3D'. Measured on run 5000. Null for tomograms that do not record it."
                   },
                   "reconstructionSoftware": {
                     "type": "string"
@@ -562,6 +588,10 @@
       {
         "operation": "list_tomograms",
         "run_id": 3430
+      },
+      {
+        "operation": "list_tomograms",
+        "run_id": 5000
       }
     ],
     "fields": {
@@ -655,7 +685,8 @@
                     ]
                   },
                   "objectState": {
-                    "type": "null"
+                    "type": ["string", "null"],
+                    "description": "State of the annotated object. Set for some annotations, null for others; measured over 24 runs."
                   },
                   "objectCount": {
                     "type": [
@@ -685,7 +716,8 @@
                     "type": "string"
                   },
                   "annotationPublication": {
-                    "type": "string"
+                    "type": ["string", "null"],
+                    "description": "Publication the annotation came from. Null for unpublished annotations; measured over 24 runs."
                   },
                   "s3MetadataPath": {
                     "type": "string"
@@ -718,6 +750,14 @@
       {
         "operation": "list_annotations",
         "run_id": 3430
+      },
+      {
+        "operation": "list_annotations",
+        "run_id": 36153
+      },
+      {
+        "operation": "list_annotations",
+        "run_id": 16126
       }
     ],
     "fields": {

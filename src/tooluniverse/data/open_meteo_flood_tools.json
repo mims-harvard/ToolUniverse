@@ -40,6 +40,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "type": "object",
           "description": "Flood/river discharge forecast data",
           "properties": {

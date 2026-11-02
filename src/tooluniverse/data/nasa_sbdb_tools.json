@@ -39,6 +39,18 @@
       },
       {
         "sstr": "433"
+      },
+      {
+        "sstr": "1P",
+        "phys-par": "true"
+      },
+      {
+        "sstr": "Bennu",
+        "phys-par": "true"
+      },
+      {
+        "sstr": "1939 RR",
+        "phys-par": "true"
       }
     ],
     "return_schema": {
@@ -53,13 +65,12 @@
                   "type": "string"
                 },
                 "not_valid_after": {
-                  "type": "null"
+                  "type": "null",
+                  "description": "Null for all 34 bodies measured, comets and interstellar objects among them. JPL does not expose this field to its query API, so no stronger statement than the sample is available."
                 },
                 "n_dop_obs_used": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
+                  "type": ["integer", "number", "null"],
+                  "description": "Number of Doppler (radar) observations used in the fit. Measured null for bodies with none."
                 },
                 "soln_date": {
                   "type": "string"
@@ -86,13 +97,15 @@
                   "type": "string"
                 },
                 "not_valid_before": {
-                  "type": "null"
+                  "type": "null",
+                  "description": "Null for all 34 bodies measured, comets and interstellar objects among them. JPL does not expose this field to its query API, so no stronger statement than the sample is available."
                 },
                 "orbit_id": {
                   "type": "string"
                 },
                 "two_body": {
-                  "type": "null"
+                  "type": ["string", "null"],
+                  "description": "JPL's flag for a two-body orbit solution, reported as the string 'T' or 'F'. 59,881 small bodies carry it -- '1939 RR' answers 'T' and '1994 VV7' answers 'F' -- while it is null for all 32 named bodies and comets measured."
                 },
                 "n_obs_used": {
                   "type": [
@@ -186,19 +199,19 @@
                   "type": "string"
                 },
                 "n_del_obs_used": {
-                  "type": [
-                    "integer",
-                    "number"
-                  ]
+                  "type": ["integer", "number", "null"],
+                  "description": "Number of delay (radar) observations used in the fit. Measured null for 1P/Halley, which has none."
                 },
                 "equinox": {
                   "type": "string"
                 },
                 "condition_code": {
-                  "type": "string"
+                  "type": ["string", "null"],
+                  "description": "Orbit condition code. Measured null for solutions that do not carry one."
                 },
                 "comment": {
-                  "type": "null"
+                  "type": ["string", "null"],
+                  "description": "Note on the orbit solution, e.g. 'See Farnocchia et al. 2021'. Measured for Bennu. Null for solutions without one."
                 }
               }
             },
@@ -240,7 +253,8 @@
                   "type": "string"
                 },
                 "prefix": {
-                  "type": "null"
+                  "type": ["string", "null"],
+                  "description": "Designation prefix, 'P' for a periodic comet or 'C' for a non-periodic one. Measured for 1P (Halley). Null for asteroids."
                 },
                 "pha": {
                   "type": "boolean"

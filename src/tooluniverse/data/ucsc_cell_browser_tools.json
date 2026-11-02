@@ -303,7 +303,12 @@
               "description": "Child datasets if a collection"
             }
           },
-          "description": "Dataset detail"
+          "description": "Dataset detail",
+          "not": {
+            "required": [
+              "error"
+            ]
+          }
         },
         {
           "type": "object",

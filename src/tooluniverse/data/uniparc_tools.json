@@ -150,6 +150,11 @@
                             },
                             "description": "InterPro domain annotations"
                         }
+                    },
+                    "not": {
+                        "required": [
+                            "error"
+                        ]
                     }
                 },
                 {

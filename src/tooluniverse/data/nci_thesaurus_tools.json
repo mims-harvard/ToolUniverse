@@ -190,6 +190,11 @@
               },
               "description": "Additional properties (semantic type, etc.)"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -428,6 +433,11 @@
                 }
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

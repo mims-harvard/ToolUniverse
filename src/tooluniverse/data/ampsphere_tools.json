@@ -68,6 +68,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "description": "List of AMP records (search), or the filter-options object (list_options)."
         },
         {

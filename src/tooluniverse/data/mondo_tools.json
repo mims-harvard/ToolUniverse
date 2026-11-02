@@ -288,6 +288,11 @@
               ],
               "description": "For an obsolete term, the current Mondo term that replaced it (present only when deprecated is true)."
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

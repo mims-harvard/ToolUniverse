@@ -56,19 +56,100 @@
           "study_accession": {"type": ["string", "null"]},
           "title": {"type": ["string", "null"]},
           "brief_description": {"type": ["string", "null"]},
-          "condition_or_disease": {"type": ["array", "null"]},
-          "research_focus": {"type": ["array", "null"]},
-          "species": {"type": ["array", "null"]},
-          "assay_methods": {"type": ["array", "null"]},
-          "assay_method_counts": {"type": ["array", "null"]},
-          "biosample_types": {"type": ["array", "null"]},
+          "condition_or_disease": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Measured over 84 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          },
+          "research_focus": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Measured over 74 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          },
+          "species": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Measured over 66 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          },
+          "assay_methods": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Measured over 121 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          },
+          "assay_method_counts": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Measured over 121 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          },
+          "biosample_types": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Measured over 127 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          },
           "actual_enrollment": {"type": ["integer", "null"]},
           "age_range": {"type": ["string", "null"]},
           "gender_included": {"type": ["string", "null"]},
-          "pubmed_ids": {"type": ["array", "null"]},
+          "pubmed_ids": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Measured over 87 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          },
           "doi": {"type": ["string", "null"]},
-          "program_name": {"type": ["array", "null"]},
-          "study_pi": {"type": ["array", "null"]},
+          "program_name": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Measured over 83 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          },
+          "study_pi": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Measured over 266 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          },
           "clinical_trial": {"type": ["string", "null"]},
           "latest_data_release_date": {"type": ["string", "null"]}
         }

@@ -109,6 +109,11 @@
               },
               "description": "Molecular targets of the assay"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -236,6 +241,11 @@
                 }
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -378,6 +388,11 @@
                 "type": "string"
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -488,6 +503,11 @@
               },
               "description": "Per-compound rows keyed by column header. Each row maps each column name to its cell value (SID, CID, Activity Outcome, Activity Value [uM], etc.)."
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

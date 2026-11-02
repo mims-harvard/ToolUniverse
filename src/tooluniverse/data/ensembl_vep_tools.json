@@ -200,6 +200,11 @@
                 }
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -355,6 +360,11 @@
             "colocated_variants": {
               "type": "array"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

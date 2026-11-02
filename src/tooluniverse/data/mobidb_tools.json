@@ -80,7 +80,11 @@
                 "regions": {
                   "type": "array",
                   "items": {
-                    "type": "array"
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "description": "Measured over 32 items; the declaration was an array with no items, so nothing about its contents could fail validation."
                   },
                   "description": "Predicted disordered regions as [start, end] pairs"
                 },
@@ -104,7 +108,11 @@
               "type": "object",
               "properties": {
                 "regions": {
-                  "type": "array"
+                  "type": "array",
+                  "items": {
+                    "type": "array"
+                  },
+                  "description": "Measured over 12 items; the declaration was an array with no items, so nothing about its contents could fail validation."
                 },
                 "content_count": {
                   "type": [
@@ -119,7 +127,11 @@
               "type": "object",
               "properties": {
                 "regions": {
-                  "type": "array"
+                  "type": "array",
+                  "items": {
+                    "type": "array"
+                  },
+                  "description": "Measured over 8 items; the declaration was an array with no items, so nothing about its contents could fail validation."
                 },
                 "content_count": {
                   "type": [
@@ -163,7 +175,11 @@
                     "type": [
                       "array",
                       "null"
-                    ]
+                    ],
+                    "items": {
+                      "type": "integer"
+                    },
+                    "description": "Measured over 140 items; the declaration was an array with no items, so nothing about its contents could fail validation."
                   }
                 },
                 "entries": {
@@ -181,7 +197,11 @@
                         "type": [
                           "array",
                           "null"
-                        ]
+                        ],
+                        "items": {
+                          "type": "integer"
+                        },
+                        "description": "Measured over 140 items; the declaration was an array with no items, so nothing about its contents could fail validation."
                       }
                     }
                   }
@@ -195,6 +215,11 @@
                 "type": "string"
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -303,6 +328,11 @@
               "type": "object",
               "description": "Disorder-to-order and disorder-to-disorder binding transitions"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

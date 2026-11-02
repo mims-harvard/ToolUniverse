@@ -12,7 +12,14 @@ import urllib.parse
 from typing import Any, Dict, List, Optional
 
 import requests
-from pydantic import BaseModel, Field, HttpUrl, ValidationError
+from pydantic import (
+    AliasChoices,
+    BaseModel,
+    Field,
+    HttpUrl,
+    ValidationError,
+    field_validator,
+)
 
 from .base_tool import BaseTool
 from .tool_registry import register_tool
@@ -102,16 +109,45 @@ class OntologyInfo(BaseModel):
     id: str = Field(
         ..., description="Unique identifier for the ontology", alias="ontologyId"
     )
-    title: str = Field(..., description="Name of the ontology")
-    version: Optional[str] = Field(None, description="Version of the ontology")
+    # 16 of the 287 ontologies OLS lists carry no plain `title`, and a required
+    # str made get_ontology_info answer a validation error for each of them --
+    # and made search_ontologies drop all 16 while still reporting
+    # total_items: 287. Twelve name the title under a Dublin Core or rdfs key,
+    # sometimes as a list. medgen, oio and the two schemaorg entries have no
+    # title under any key in either API version, and now come back as null.
+    title: Optional[str] = Field(
+        None,
+        description="Name of the ontology",
+        validation_alias=AliasChoices(
+            "title",
+            "http://purl.org/dc/terms/title",
+            "http://purl.org/dc/elements/1.1/title",
+            "label",
+            "http://www.w3.org/2000/01/rdf-schema#label",
+        ),
+    )
+
+    # OLS v2 publishes the release as the OWL annotation property rather than
+    # under a short key; v1's flat `version` carried the identical string.
+    version: Optional[str] = Field(
+        None,
+        description="Version of the ontology",
+        validation_alias=AliasChoices(
+            "version", "http://www.w3.org/2002/07/owl#versionInfo"
+        ),
+    )
     description: Optional[str] = Field(None, description="Description of the ontology")
     domain: Optional[str] = Field(None, description="Domain of the ontology")
     homepage: Optional[HttpUrl] = Field(None, description="URL for the ontology")
     preferred_prefix: Optional[str] = Field(
         None, description="Preferred prefix for the ontology", alias="preferredPrefix"
     )
+    # v2 dropped `numberOfTerms`; the count it reported is v2's
+    # `numberOfClasses` (identical on go, hp, efo, mondo, chebi and uberon).
     number_of_terms: Optional[int] = Field(
-        None, description="Number of terms in the ontology"
+        None,
+        description="Number of terms in the ontology",
+        validation_alias=AliasChoices("numberOfTerms", "numberOfClasses"),
     )
     number_of_classes: Optional[int] = Field(
         None, description="Number of classes in the ontology", alias="numberOfClasses"
@@ -119,6 +155,25 @@ class OntologyInfo(BaseModel):
     repository: Optional[HttpUrl] = Field(
         None, description="Repository URL for the ontology"
     )
+
+    @field_validator("title", "version", mode="before")
+    @classmethod
+    def _first_of_a_list(cls, value):
+        """Several of these keys hold a list. Measured across all 287
+        ontologies OLS lists: `label` is a list every one of the 199 times it
+        is present, rdfs#label 3 times out of 20, the two Dublin Core titles
+        once and twice, and owl#versionInfo for 8 ontologies -- foodon answers
+        ['2026-02-02', '2026-09-20'] and bmont ['2025-06-20', 'Version
+        Release: 0.5.8']. OLS gives no order for those, so the first is taken
+        and the rest dropped rather than joined into a version string that
+        upstream never published.
+
+        Without this, giving `version` the owl#versionInfo alias turned those 8
+        into validation errors, which is how the commit before this one broke
+        them."""
+        if isinstance(value, list):
+            return value[0] if value else None
+        return value
 
 
 class PagedResponse(BaseModel):
@@ -359,6 +414,7 @@ class OLSTool(BaseTool):
         )
 
         validated: List[Dict[str, Any]] = []
+        dropped = 0
         for item in ontologies:
             try:
                 validated.append(
@@ -367,16 +423,33 @@ class OLSTool(BaseTool):
                     )
                 )
             except ValidationError:
-                continue
+                # Skipping the row is the right call -- one unreadable ontology
+                # should not fail the whole listing -- but it has to be
+                # counted. This handler used to drop silently and still report
+                # upstream's total_items, so when `title` was a required field
+                # it returned 263 of the 287 ontologies OLS lists and the
+                # pagination still said 287.
+                dropped += 1
 
         total_pages = data.get("totalPages", 0)
         total_items = data.get("totalElements", len(ontologies))
         has_more = page + 1 < total_pages
         payload = {
-            "results": validated or ontologies,
+            # No fallback to the raw upstream objects here. `validated or
+            # ontologies` meant that a page on which every row failed
+            # validation came back as raw OLS v2 payloads -- different keys,
+            # different shapes, under a schema describing the projected ones.
+            # Returning no rows and saying how many were unreadable is the
+            # honest answer.
+            "results": validated,
             "pagination": {
                 "page": page,
                 "size": size,
+                # `showing` is what this page actually carries, the same word
+                # the term handlers in this tool use; total_items stays
+                # upstream's count. They differ when rows were dropped.
+                "showing": len(validated),
+                "dropped": dropped,
                 "total_pages": total_pages,
                 "total_items": total_items,
                 "has_more": has_more,

@@ -52,6 +52,10 @@
     "return_schema": {
       "type": "object",
       "properties": {
+        "status": {
+          "type": "string",
+          "description": "\"success\" or \"error\"."
+        },
         "data": {
           "type": "object",
           "properties": {
@@ -191,6 +195,10 @@
     "return_schema": {
       "type": "object",
       "properties": {
+        "status": {
+          "type": "string",
+          "description": "\"success\" or \"error\"."
+        },
         "data": {
           "type": "object",
           "properties": {
@@ -294,6 +302,10 @@
     "return_schema": {
       "type": "object",
       "properties": {
+        "status": {
+          "type": "string",
+          "description": "\"success\" or \"error\"."
+        },
         "data": {
           "type": "object",
           "properties": {

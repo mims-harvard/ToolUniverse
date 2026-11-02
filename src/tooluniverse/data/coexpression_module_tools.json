@@ -59,6 +59,11 @@
                 "type": "object"
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

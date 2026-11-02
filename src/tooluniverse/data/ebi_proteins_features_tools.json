@@ -114,6 +114,11 @@
               "type": "object",
               "description": "Count of each feature type (DNA_BIND, BINDING, REGION, MOTIF, SITE)"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -245,6 +250,11 @@
               "type": "object",
               "description": "Count of each processing type (SIGNAL, CHAIN, PEPTIDE, PROPEP, etc.)"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -369,6 +379,11 @@
               "type": "object",
               "description": "Count of each type (HELIX, STRAND, TURN)"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

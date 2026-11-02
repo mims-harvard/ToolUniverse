@@ -417,6 +417,11 @@
               "type": "integer",
               "description": "Number of child terms"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

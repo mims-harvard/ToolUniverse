@@ -209,7 +209,10 @@
                     "type": "string"
                   },
                   "md5": {
-                    "type": "string",
+                    "type": [
+                      "string",
+                      "null"
+                    ],
                     "description": "From the collection's md5sum.txt; absent when it does not list the file."
                   },
                   "role": {

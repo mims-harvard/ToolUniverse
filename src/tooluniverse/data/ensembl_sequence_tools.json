@@ -48,6 +48,11 @@
         "return_schema": {
             "oneOf": [
                 {
+                    "not": {
+                        "required": [
+                            "error"
+                        ]
+                    },
                     "type": "object",
                     "properties": {
                         "species": {
@@ -163,6 +168,11 @@
         "return_schema": {
             "oneOf": [
                 {
+                    "not": {
+                        "required": [
+                            "error"
+                        ]
+                    },
                     "type": "object",
                     "properties": {
                         "ensembl_id": {

@@ -50,6 +50,11 @@
                 ]
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -181,6 +186,11 @@
               "type": "object",
               "description": "Parameters used for the analysis"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -262,6 +272,11 @@
               "type": "string",
               "description": "URL or base64-encoded SVG interaction diagram"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -412,6 +427,11 @@
               "type": "object",
               "description": "Parameters used for the analysis"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -508,6 +528,11 @@
               "type": "string",
               "description": "URL to configuration and parameters used"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -614,6 +639,11 @@
               "type": "string",
               "description": "URL to the ProtoSS log file"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

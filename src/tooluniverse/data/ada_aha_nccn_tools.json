@@ -125,6 +125,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "type": "object",
           "description": "ADA Standards section with abstract and optional full text",
           "properties": {
@@ -425,6 +430,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "type": "object",
           "description": "NCCN patient guideline page with cancer type, version, and PDF links",
           "properties": {
@@ -479,6 +489,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "type": "object",
           "description": "AHA/ACC guideline with abstract and optional PMC full text",
           "properties": {

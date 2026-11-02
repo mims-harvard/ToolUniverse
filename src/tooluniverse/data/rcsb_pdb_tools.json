@@ -375,6 +375,9 @@
     "test_examples": [
       {
         "pdb_id": "1CRN"
+      },
+      {
+        "pdb_id": "6VXX"
       }
     ],
     "return_schema": {
@@ -416,7 +419,8 @@
                         "type": "string"
                       },
                       "rcsb_ORCID_identifiers": {
-                        "type": "null"
+                        "type": ["array", "null"],
+                        "description": "ORCID identifiers of the citation's authors, in author order. Measured on 6VXX. Null for entries whose depositors supplied none."
                       }
                     }
                   },
@@ -427,7 +431,8 @@
                         "type": "string"
                       },
                       "rcsb_pubmed_mesh_descriptors_lineage": {
-                        "type": "null"
+                        "type": ["array", "null"],
+                        "description": "MeSH descriptor lineage for the primary citation's PubMed record. Measured on 6VXX. Null when the citation is not MeSH-indexed."
                       }
                     }
                   }
@@ -748,6 +753,18 @@
     "test_examples": [
       {
         "pdb_id": "7BV2"
+      },
+      {
+        "pdb_id": "3J3Q"
+      },
+      {
+        "pdb_id": "10GD"
+      },
+      {
+        "pdb_id": "3J79"
+      },
+      {
+        "pdb_id": "1PDL"
       }
     ],
     "return_schema": {
@@ -765,7 +782,8 @@
                     "type": "string"
                   },
                   "em_3d_fitting_list": {
-                    "type": "null"
+                    "type": ["array", "null"],
+                    "description": "Model-fitting records for a cryo-EM entry. Measured on 3J3Q. Null for entries that report no fitting."
                   },
                   "em_3d_reconstruction": {
                     "type": "array",
@@ -776,43 +794,51 @@
                           "type": "string"
                         },
                         "algorithm": {
-                          "type": "null"
+                          "type": ["string", "null"],
+                          "description": "Reconstruction algorithm, e.g. 'FOURIER SPACE'. Measured on 7A4M. Null when the entry does not report one."
                         },
                         "method": {
-                          "type": "null"
+                          "type": ["string", "null"],
+                          "description": "Reconstruction method, e.g. 'SIRT'. Measured on 3J3Q. Null when the entry does not report one."
                         },
                         "details": {
-                          "type": "null"
+                          "type": ["string", "null"],
+                          "description": "Free-text reconstruction details. Measured on 5A1A. Null when the entry does not report any."
                         },
                         "nominal_pixel_size": {
-                          "type": "null"
+                          "type": ["number", "null"],
+                          "description": "Nominal pixel size in Angstroms, e.g. 0.637. Measured on 5A1A. Null when the entry does not report it."
                         },
                         "actual_pixel_size": {
-                          "type": "null"
+                          "type": ["number", "null"],
+                          "description": "Actual pixel size in Angstroms, e.g. 0.637. Measured on 5A1A. Null when the entry does not report it."
                         },
                         "resolution": {
-                          "type": "number"
+                          "type": ["number", "null"],
+                          "description": "Reported resolution in Angstroms. Measured null on 3J3Q, which reports a reconstruction without one."
                         },
                         "resolution_method": {
-                          "type": "string"
+                          "type": ["string", "null"],
+                          "description": "How the reported resolution was determined. Measured null on 3J3Q, where the entry gives a resolution without naming a method."
                         },
                         "symmetry_type": {
                           "type": "string"
                         },
                         "num_particles": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
+                          "type": ["integer", "number", "null"],
+                          "description": "Number of particles in the reconstruction. Measured null for entries that do not report it."
                         },
                         "num_class_averages": {
-                          "type": "null"
+                          "type": ["integer", "null"],
+                          "description": "Class averages used. Reported by 3,934 of the 37,607 electron-microscopy entries in the PDB, e.g. 10GD."
                         },
                         "refinement_type": {
-                          "type": "null"
+                          "type": ["string", "null"],
+                          "description": "Refinement type, e.g. 'HALF-MAPS REFINED INDEPENDENTLY'. Reported by 45 of the 37,607 electron-microscopy entries, e.g. 3J79."
                         },
                         "magnification_calibration": {
-                          "type": "null"
+                          "type": ["string", "null"],
+                          "description": "How the magnification was calibrated, e.g. 'TMV images'. Reported by 197 of the 37,607 electron-microscopy entries, e.g. 1PDL."
                         }
                       }
                     }
@@ -986,6 +1012,9 @@
     "test_examples": [
       {
         "pdb_id": "1CRN"
+      },
+      {
+        "pdb_id": "5A1A"
       }
     ],
     "return_schema": {
@@ -1019,7 +1048,8 @@
                           "type": "object",
                           "properties": {
                             "method_details": {
-                              "type": "null"
+                              "type": ["string", "null"],
+                              "description": "How the assembly was determined, e.g. 'PISA'. Measured on 5A1A. Null when the entry does not report it."
                             },
                             "details": {
                               "type": "string"
@@ -1254,6 +1284,9 @@
     "test_examples": [
       {
         "pdb_id": "1HSG"
+      },
+      {
+        "pdb_id": "6VXX"
       }
     ],
     "return_schema": {
@@ -1281,10 +1314,14 @@
                             "type": "object",
                             "properties": {
                               "host_org_common_name": {
-                                "type": "null"
+                                "type": ["string", "null"],
+                                "description": "Common name of the expression host, e.g. 'Human'. Measured on 6VXX. Null when only the scientific name was deposited."
                               },
                               "pdbx_host_org_scientific_name": {
-                                "type": "null"
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
                               }
                             }
                           }
@@ -1525,7 +1562,8 @@
                             "type": "object",
                             "properties": {
                               "rcsb_nonpolymer_instance_feature_summary": {
-                                "type": "null"
+                                "type": "null",
+                                "description": "Null for every one of the 20,134 non-polymer entity instances measured across 3,000 X-ray entries; RCSB does not serve this summary through the entry graph."
                               }
                             }
                           }
@@ -1636,7 +1674,10 @@
                     "type": "string"
                   },
                   "exptl_crystal_grow": {
-                    "type": "null"
+                    "type": [
+                      "array",
+                      "null"
+                    ]
                   }
                 }
               }
@@ -1686,6 +1727,9 @@
     "test_examples": [
       {
         "entity_id": "1IEP_1"
+      },
+      {
+        "entity_id": "11TS_1"
       }
     ],
     "return_schema": {
@@ -1728,7 +1772,8 @@
                           "type": "string"
                         },
                         "description": {
-                          "type": "null"
+                          "type": ["string", "null"],
+                          "description": "Annotation description. Present for 2,435 polymer entities and null for the rest, e.g. 11TS_1 has 7 annotations of which some are described and some are not."
                         }
                       }
                     }
@@ -2024,6 +2069,9 @@
     "test_examples": [
       {
         "pdb_id": "1CRN"
+      },
+      {
+        "pdb_id": "4HHB"
       }
     ],
     "return_schema": {
@@ -2046,10 +2094,16 @@
                       "type": "object",
                       "properties": {
                         "ls_R_factor_R_free": {
-                          "type": "null"
+                          "type": [
+                            "number",
+                            "null"
+                          ]
                         },
                         "ls_R_factor_R_work": {
-                          "type": "null"
+                          "type": [
+                            "number",
+                            "null"
+                          ]
                         }
                       }
                     }
@@ -2265,7 +2319,10 @@
                     "type": "object",
                     "properties": {
                       "emdb_ids": {
-                        "type": "null"
+                        "type": [
+                          "array",
+                          "null"
+                        ]
                       }
                     }
                   }
@@ -2380,7 +2437,10 @@
                     "type": "string"
                   },
                   "exptl_crystal_grow": {
-                    "type": "null"
+                    "type": [
+                      "array",
+                      "null"
+                    ]
                   }
                 }
               }
@@ -2561,6 +2621,9 @@
     "test_examples": [
       {
         "pdb_id": "1CRN"
+      },
+      {
+        "pdb_id": "2RH1"
       }
     ],
     "return_schema": {
@@ -2586,10 +2649,12 @@
                           "type": "string"
                         },
                         "version": {
-                          "type": "null"
+                          "type": ["string", "null"],
+                          "description": "Software version, e.g. '5.8.0352'. Measured on 8SPL. Null for entries that name software without a version."
                         },
                         "type": {
-                          "type": "null"
+                          "type": ["string", "null"],
+                          "description": "Software classification, e.g. 'package'. Measured on 2RH1. Null when the entry does not classify it."
                         }
                       }
                     }
@@ -2727,7 +2792,10 @@
                     "type": "string"
                   },
                   "rcsb_binding_affinity": {
-                    "type": "null"
+                    "type": [
+                      "array",
+                      "null"
+                    ]
                   }
                 }
               }
@@ -2848,6 +2916,12 @@
     "test_examples": [
       {
         "pdb_id": "6LU7"
+      },
+      {
+        "pdb_id": "3EML"
+      },
+      {
+        "pdb_id": "1DN8"
       }
     ],
     "return_schema": {
@@ -2870,25 +2944,38 @@
                       "type": "object",
                       "properties": {
                         "ls_R_factor_R_work": {
-                          "type": "null"
+                          "type": [
+                            "number",
+                            "null"
+                          ]
                         },
                         "ls_R_factor_R_free": {
-                          "type": "null"
+                          "type": [
+                            "number",
+                            "null"
+                          ]
                         },
                         "occupancy_max": {
-                          "type": "null"
+                          "type": ["number", "null"],
+                          "description": "Highest atom occupancy in the model. Rare: reported by 5 of 6,000 X-ray entries sampled, e.g. 1DN8 (1.0)."
                         },
                         "occupancy_min": {
-                          "type": "null"
+                          "type": ["number", "null"],
+                          "description": "Lowest atom occupancy in the model. Rare: reported by 5 of 6,000 X-ray entries sampled, e.g. 1DN8 (0.01)."
                         },
                         "pdbx_overall_phase_error": {
-                          "type": "null"
+                          "type": [
+                            "number",
+                            "null"
+                          ]
                         },
                         "solvent_model_param_bsol": {
-                          "type": "null"
+                          "type": ["number", "null"],
+                          "description": "Bulk-solvent B parameter, e.g. 78.49. Measured on 3EML. Null when refinement did not use a bulk-solvent model or did not report it."
                         },
                         "solvent_model_param_ksol": {
-                          "type": "null"
+                          "type": ["number", "null"],
+                          "description": "Bulk-solvent K parameter, e.g. 0.33. Measured on 3EML. Null when refinement did not use a bulk-solvent model or did not report it."
                         }
                       }
                     }
@@ -2967,7 +3054,10 @@
                       "type": "object",
                       "properties": {
                         "rcsb_target_cofactors": {
-                          "type": "null"
+                          "type": [
+                            "array",
+                            "null"
+                          ]
                         }
                       }
                     }
@@ -3039,7 +3129,10 @@
                     "type": "string"
                   },
                   "nonpolymer_entities": {
-                    "type": "null"
+                    "type": [
+                      "array",
+                      "null"
+                    ]
                   }
                 }
               }
@@ -3103,7 +3196,10 @@
                     "type": "string"
                   },
                   "nonpolymer_entities": {
-                    "type": "null"
+                    "type": [
+                      "array",
+                      "null"
+                    ]
                   }
                 }
               }

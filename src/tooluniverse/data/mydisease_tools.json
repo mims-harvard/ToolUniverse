@@ -88,6 +88,11 @@
               ],
               "description": "DisGeNET gene-disease associations"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -180,6 +185,11 @@
                 "type": "object"
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
