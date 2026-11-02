@@ -501,7 +501,7 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Detailed dataset metadata from DataCite",
+          "description": "Required so this branch stops matching the error envelope. oneOf needs exactly one branch to match, and with nothing required here a correct {status, error} result satisfied both branches and failed validation. Measured present in all 12 successful payloads.",
           "properties": {
             "id": {
               "type": "string",
@@ -551,10 +551,29 @@
                         ]
                       },
                       "affiliation": {
-                        "type": "array"
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "Measured over 21 items; the declaration was an array with no items, so nothing about its contents could fail validation."
                       },
                       "nameIdentifiers": {
-                        "type": "array"
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "nameIdentifier": {
+                              "type": "string"
+                            },
+                            "nameIdentifierScheme": {
+                              "type": "string"
+                            },
+                            "schemeUri": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "description": "Measured over 15 items; the declaration was an array with no items, so nothing about its contents could fail validation."
                       }
                     }
                   }
@@ -670,13 +689,37 @@
                   }
                 },
                 "dates": {
-                  "type": "array"
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "date": {
+                        "type": "string"
+                      },
+                      "dateType": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "date",
+                      "dateType"
+                    ]
+                  },
+                  "description": "Measured over 53 items; the declaration was an array with no items, so nothing about its contents could fail validation."
                 },
                 "sizes": {
-                  "type": "array"
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Measured over 17 items; the declaration was an array with no items, so nothing about its contents could fail validation."
                 },
                 "formats": {
-                  "type": "array"
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Measured over 6 items; the declaration was an array with no items, so nothing about its contents could fail validation."
                 },
                 "version": {
                   "type": [
@@ -692,7 +735,12 @@
                 }
               }
             }
-          }
+          },
+          "required": [
+            "attributes",
+            "id",
+            "type"
+          ]
         },
         {
           "type": "object",

@@ -1129,37 +1129,61 @@
               "type": [
                 "array",
                 "null"
-              ]
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 17 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "gene": {
               "type": [
                 "array",
                 "null"
-              ]
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 23 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "organism_name": {
               "type": [
                 "array",
                 "null"
-              ]
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 25 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "product": {
               "type": [
                 "array",
                 "null"
-              ]
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 23 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "uniprotkb_accession": {
               "type": [
                 "array",
                 "null"
-              ]
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 28 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "pmid": {
               "type": [
                 "array",
                 "null"
-              ]
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "Measured over 13 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             },
             "release_date": {
               "type": [
@@ -1171,9 +1195,18 @@
               "type": [
                 "array",
                 "null"
-              ]
+              ],
+              "items": {
+                "type": "integer"
+              },
+              "description": "Measured over 25 items; the declaration was an array with no items, so nothing about its contents could fail validation."
             }
-          }
+          },
+          "required": [
+            "feature_id",
+            "pdb_id"
+          ],
+          "description": "Required so this branch stops matching the error envelope. oneOf needs exactly one branch to match, and with nothing required here a correct {status, error} result satisfied both branches and failed validation. Measured present in all 13 successful payloads. Two identity fields rather than all 22 always-present keys, so one optional field going missing upstream does not start failing correct results."
         },
         {
           "type": "object",

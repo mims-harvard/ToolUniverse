@@ -87,8 +87,26 @@
         "motif_id": {"type": ["string", "null"]},
         "gene_name_human": {"type": ["string", "null"]},
         "gene_name_mouse": {"type": ["string", "null"]},
-        "gene_synonyms_human": {"type": ["array", "null"]},
-        "gene_synonyms_mouse": {"type": ["array", "null"]},
+        "gene_synonyms_human": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Measured over 44 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+        },
+        "gene_synonyms_mouse": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Measured over 58 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+        },
         "quality": {"type": ["string", "null"]},
         "consensus": {"type": ["string", "null"]},
         "model_length": {"type": ["integer", "null"]},
@@ -98,13 +116,49 @@
         "uniprot_id_mouse": {"type": ["string", "null"]},
         "uniprot_ac_human": {"type": ["string", "null"]},
         "uniprot_ac_mouse": {"type": ["string", "null"]},
-        "hgnc_ids": {"type": ["array", "null"]},
-        "entrezgene_ids_human": {"type": ["array", "null"]},
-        "entrezgene_ids_mouse": {"type": ["array", "null"]},
+        "hgnc_ids": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Measured over 28 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+        },
+        "entrezgene_ids_human": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Measured over 28 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+        },
+        "entrezgene_ids_mouse": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Measured over 26 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+        },
         "tfclass": {"type": ["object", "null"]},
         "motif_cluster": {"type": ["string", "null"]},
         "quality_metrics": {"type": ["object", "null"]},
-        "previous_names": {"type": ["array", "null"]},
+        "previous_names": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Measured over 28 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+        },
         "retracted": {"type": ["boolean", "null"]},
         "pwm_requested": {
           "type": "boolean"
@@ -116,7 +170,16 @@
             "not_requested"
           ]
         },
-        "pwm": {"type": ["array", "null"]}
+        "pwm": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "array"
+          },
+          "description": "Measured over 228 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+        }
       }
     }
   }
