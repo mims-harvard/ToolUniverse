@@ -12,7 +12,7 @@ import urllib.parse
 from typing import Any, Dict, List, Optional
 
 import requests
-from pydantic import BaseModel, Field, HttpUrl, ValidationError
+from pydantic import AliasChoices, BaseModel, Field, HttpUrl, ValidationError
 
 from .base_tool import BaseTool
 from .tool_registry import register_tool
@@ -103,15 +103,27 @@ class OntologyInfo(BaseModel):
         ..., description="Unique identifier for the ontology", alias="ontologyId"
     )
     title: str = Field(..., description="Name of the ontology")
-    version: Optional[str] = Field(None, description="Version of the ontology")
+    # OLS v2 publishes the release as the OWL annotation property rather than
+    # under a short key; v1's flat `version` carried the identical string.
+    version: Optional[str] = Field(
+        None,
+        description="Version of the ontology",
+        validation_alias=AliasChoices(
+            "version", "http://www.w3.org/2002/07/owl#versionInfo"
+        ),
+    )
     description: Optional[str] = Field(None, description="Description of the ontology")
     domain: Optional[str] = Field(None, description="Domain of the ontology")
     homepage: Optional[HttpUrl] = Field(None, description="URL for the ontology")
     preferred_prefix: Optional[str] = Field(
         None, description="Preferred prefix for the ontology", alias="preferredPrefix"
     )
+    # v2 dropped `numberOfTerms`; the count it reported is v2's
+    # `numberOfClasses` (identical on go, hp, efo, mondo, chebi and uberon).
     number_of_terms: Optional[int] = Field(
-        None, description="Number of terms in the ontology"
+        None,
+        description="Number of terms in the ontology",
+        validation_alias=AliasChoices("numberOfTerms", "numberOfClasses"),
     )
     number_of_classes: Optional[int] = Field(
         None, description="Number of classes in the ontology", alias="numberOfClasses"

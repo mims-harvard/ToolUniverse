@@ -47,6 +47,10 @@
       {
         "sstr": "Bennu",
         "phys-par": "true"
+      },
+      {
+        "sstr": "1939 RR",
+        "phys-par": "true"
       }
     ],
     "return_schema": {
@@ -61,7 +65,8 @@
                   "type": "string"
                 },
                 "not_valid_after": {
-                  "type": "null"
+                  "type": "null",
+                  "description": "Null for all 34 bodies measured, comets and interstellar objects among them. JPL does not expose this field to its query API, so no stronger statement than the sample is available."
                 },
                 "n_dop_obs_used": {
                   "type": ["integer", "number", "null"],
@@ -92,13 +97,15 @@
                   "type": "string"
                 },
                 "not_valid_before": {
-                  "type": "null"
+                  "type": "null",
+                  "description": "Null for all 34 bodies measured, comets and interstellar objects among them. JPL does not expose this field to its query API, so no stronger statement than the sample is available."
                 },
                 "orbit_id": {
                   "type": "string"
                 },
                 "two_body": {
-                  "type": "null"
+                  "type": ["string", "null"],
+                  "description": "JPL's flag for a two-body orbit solution, reported as the string 'T' or 'F'. 59,881 small bodies carry it -- '1939 RR' answers 'T' and '1994 VV7' answers 'F' -- while it is null for all 32 named bodies and comets measured."
                 },
                 "n_obs_used": {
                   "type": [

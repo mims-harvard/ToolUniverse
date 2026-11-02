@@ -139,6 +139,9 @@
       },
       {
         "pmids": "25416956"
+      },
+      {
+        "pmids": "32015507"
       }
     ],
     "return_schema": {
@@ -234,8 +237,10 @@
                                     "type": [
                                       "integer",
                                       "number",
-                                      "string"
-                                    ]
+                                      "string",
+                                      "null"
+                                    ],
+                                    "description": "Normalized concept identifier. Null for annotations PubTator3 could not normalise; measured over 8 PMIDs."
                                   },
                                   "biotype": {
                                     "type": "string"

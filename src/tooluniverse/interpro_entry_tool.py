@@ -231,6 +231,12 @@ class InterProEntryTool(BaseTool):
         params = {
             "search": query,
             "page_size": page_size,
+            # Without this the listing omits the counts entirely and
+            # protein_count / structure_count / taxa_count below are always
+            # null. The API spells the field "counts" (not "counters", which
+            # it rejects with a 404 listing the valid names) and delivers it
+            # per result under "extra_fields", not inside "metadata".
+            "extra_fields": "counts",
         }
         self._add_cursor(params, arguments)
         if entry_type:
@@ -259,7 +265,11 @@ class InterProEntryTool(BaseTool):
                 else (str(name_obj) if name_obj else "")
             )
 
-            counters = meta.get("counters", {})
+            counters = (
+                (r.get("extra_fields") or {}).get("counts")
+                or meta.get("counters")
+                or {}
+            )
             entries.append(
                 {
                     "accession": meta.get("accession"),

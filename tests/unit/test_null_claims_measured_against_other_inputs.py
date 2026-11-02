@@ -53,23 +53,38 @@ The 85 that remain measured null on every input tried, and are left alone,
 because nothing measured says what they hold. Three groups are worth naming,
 since they are not all the same problem:
 
-  - 9 are accurate and will stay so. em_3d_reconstruction's
-    magnification_calibration, num_class_averages and refinement_type, and
-    NASASBDB's orbit->two_body, not_valid_before and not_valid_after, were null
-    for every entry and body probed (11 and 9 respectively).
+  - a few looked accurate on the sample probed here and were left alone on
+    that basis. Four of them were not: see the correction below.
   - some are unreachable through the tool rather than absent upstream.
     InterPro_get_domain_details asks only /entry/interpro/, so `integrated`,
     `wikipedia` and `set_info` can never be filled, while the raw API answers
-    integrated='IPR000719', a wikipedia array and set_info={'accession':
-    'CL0016'} for pfam/PF00069. InterPro_search_entries declares
-    protein_count, structure_count and taxa_count and never requests
-    extra_fields=counters, which returns proteins=37487.
+    integrated='IPR000719' and set_info={'accession': 'CL0016'} for
+    pfam/PF00069. InterPro_search_entries declares protein_count,
+    structure_count and taxa_count and never asks the API for them.
   - two are the tool dropping what the API sent, which is a projection fault
     and not a schema one. ols_get_ontology_info reports version and
     number_of_terms as null while OLS answers numberOfClasses='85169' and
     owl#versionInfo='2026-07-26'; the model declares neither alias.
 
-Those three groups are each their own fix and are not made here.
+Those groups are each their own fix and are not made here.
+
+Correction, made in the commit after this one. Four of the six fields this file
+called null everywhere were only null in the sample this file probed, which was
+11 electron-microscopy entries and 9 small bodies:
+
+    em_3d_reconstruction.num_class_averages         3,934 of 37,607 EM entries
+    em_3d_reconstruction.refinement_type               45 of 37,607 EM entries
+    em_3d_reconstruction.magnification_calibration    197 of 37,607 EM entries
+    NASASBDB orbit->two_body                     59,881 small bodies carry it
+
+RCSB's own search API answers how many entries populate a field, and JPL's
+query API does the same for small bodies; asking them settles in one request
+what no sample of ten can. Both are now widened and carry a reaching
+test_example. Only not_valid_before and not_valid_after are still declared
+null, and their descriptions now say that is a 34-body sample rather than a
+property of the data. The sibling claim about InterPro's extra_fields was wrong
+too: the field is spelled `counts`, not `counters`, and the API returns it
+under `extra_fields` rather than inside `metadata`.
 """
 
 import json
@@ -430,23 +445,10 @@ def test_the_reaching_input_is_a_test_example(stem, tool, example):
     assert example in _tool(stem, tool).get("test_examples", [])
 
 
+# Four of the six this list started with turned out to be reachable; see the
+# correction in the module docstring. These two are all that is left, and they
+# are left alone on a 34-body sample, not on a claim about the data.
 ALWAYS_NULL_AND_LEFT_ALONE = [
-    (
-        "rcsb_pdb_tools",
-        "get_em_3d_fitting_and_reconstruction_details",
-        f"{EM}->magnification_calibration",
-    ),
-    (
-        "rcsb_pdb_tools",
-        "get_em_3d_fitting_and_reconstruction_details",
-        f"{EM}->num_class_averages",
-    ),
-    (
-        "rcsb_pdb_tools",
-        "get_em_3d_fitting_and_reconstruction_details",
-        f"{EM}->refinement_type",
-    ),
-    ("nasa_sbdb_tools", "NASASBDB_get_body", "orbit->two_body"),
     ("nasa_sbdb_tools", "NASASBDB_get_body", "orbit->not_valid_before"),
     ("nasa_sbdb_tools", "NASASBDB_get_body", "orbit->not_valid_after"),
 ]

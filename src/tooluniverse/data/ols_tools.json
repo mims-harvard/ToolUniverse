@@ -192,6 +192,12 @@
       },
       {
         "ontology_id": "go"
+      },
+      {
+        "ontology_id": "uberon"
+      },
+      {
+        "ontology_id": "ogg"
       }
     ],
     "return_schema": {
@@ -204,23 +210,28 @@
           "type": "string"
         },
         "version": {
-          "type": "null"
+          "type": ["string", "null"],
+          "description": "Ontology release, read from the OWL versionInfo annotation. Null for 116 of the 287 ontologies OLS lists."
         },
         "description": {
-          "type": "string"
+          "type": ["string", "null"],
+          "description": "Null for the ontologies OLS carries no description for, e.g. 'ogg'."
         },
         "domain": {
           "type": ["string", "null"],
           "description": "Subject domain, e.g. 'biological systems'. Measured for 'go'. Null for ontologies whose config does not set one."
         },
         "homepage": {
-          "type": "string"
+          "type": ["string", "null"],
+          "description": "Null for 25 of the 287 ontologies OLS lists."
         },
         "preferredPrefix": {
-          "type": "string"
+          "type": ["string", "null"],
+          "description": "Null for 30 of the 287 ontologies OLS lists."
         },
         "number_of_terms": {
-          "type": "null"
+          "type": "integer",
+          "description": "Class count. OLS v2 publishes it as numberOfClasses; v1 reported the identical number under this name. Present for all 287 ontologies measured."
         },
         "numberOfClasses": {
           "type": "integer"

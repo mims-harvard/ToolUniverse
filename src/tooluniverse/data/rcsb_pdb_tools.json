@@ -756,6 +756,15 @@
       },
       {
         "pdb_id": "3J3Q"
+      },
+      {
+        "pdb_id": "10GD"
+      },
+      {
+        "pdb_id": "3J79"
+      },
+      {
+        "pdb_id": "1PDL"
       }
     ],
     "return_schema": {
@@ -820,13 +829,16 @@
                           "description": "Number of particles in the reconstruction. Measured null for entries that do not report it."
                         },
                         "num_class_averages": {
-                          "type": "null"
+                          "type": ["integer", "null"],
+                          "description": "Class averages used. Reported by 3,934 of the 37,607 electron-microscopy entries in the PDB, e.g. 10GD."
                         },
                         "refinement_type": {
-                          "type": "null"
+                          "type": ["string", "null"],
+                          "description": "Refinement type, e.g. 'HALF-MAPS REFINED INDEPENDENTLY'. Reported by 45 of the 37,607 electron-microscopy entries, e.g. 3J79."
                         },
                         "magnification_calibration": {
-                          "type": "null"
+                          "type": ["string", "null"],
+                          "description": "How the magnification was calibrated, e.g. 'TMV images'. Reported by 197 of the 37,607 electron-microscopy entries, e.g. 1PDL."
                         }
                       }
                     }
@@ -1550,7 +1562,8 @@
                             "type": "object",
                             "properties": {
                               "rcsb_nonpolymer_instance_feature_summary": {
-                                "type": "null"
+                                "type": "null",
+                                "description": "Null for every one of the 20,134 non-polymer entity instances measured across 3,000 X-ray entries; RCSB does not serve this summary through the entry graph."
                               }
                             }
                           }
@@ -1714,6 +1727,9 @@
     "test_examples": [
       {
         "entity_id": "1IEP_1"
+      },
+      {
+        "entity_id": "11TS_1"
       }
     ],
     "return_schema": {
@@ -1756,7 +1772,8 @@
                           "type": "string"
                         },
                         "description": {
-                          "type": "null"
+                          "type": ["string", "null"],
+                          "description": "Annotation description. Present for 2,435 polymer entities and null for the rest, e.g. 11TS_1 has 7 annotations of which some are described and some are not."
                         }
                       }
                     }
@@ -2902,6 +2919,9 @@
       },
       {
         "pdb_id": "3EML"
+      },
+      {
+        "pdb_id": "1DN8"
       }
     ],
     "return_schema": {
@@ -2936,10 +2956,12 @@
                           ]
                         },
                         "occupancy_max": {
-                          "type": "null"
+                          "type": ["number", "null"],
+                          "description": "Highest atom occupancy in the model. Rare: reported by 5 of 6,000 X-ray entries sampled, e.g. 1DN8 (1.0)."
                         },
                         "occupancy_min": {
-                          "type": "null"
+                          "type": ["number", "null"],
+                          "description": "Lowest atom occupancy in the model. Rare: reported by 5 of 6,000 X-ray entries sampled, e.g. 1DN8 (0.01)."
                         },
                         "pdbx_overall_phase_error": {
                           "type": [

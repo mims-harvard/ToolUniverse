@@ -29,6 +29,10 @@
       {
         "query": "imatinib",
         "size": 5
+      },
+      {
+        "query": "insulin",
+        "size": 20
       }
     ],
     "return_schema": {
@@ -87,16 +91,16 @@
             ]
           },
           "drugbank_id": {
-            "type": ["string", "null"],
-            "description": "DrugBank identifier"
+            "type": ["string", "array", "null"],
+            "description": "DrugBank identifier, or a list of them when DrugCentral cross-references several -- 'insulin' answers ['DB09564', 'DB00030']."
           },
           "chembl_id": {
             "type": ["string", "array", "null"],
             "description": "ChEMBL identifier(s)"
           },
           "pubchem_cid": {
-            "type": ["string", "integer", "null"],
-            "description": "PubChem Compound ID"
+            "type": ["string", "integer", "array", "null"],
+            "description": "PubChem Compound ID, or a list when several are cross-referenced ('insulin' answers ['118984462', '118984375']); an empty list when the xref record carries none."
           }
         }
       }
