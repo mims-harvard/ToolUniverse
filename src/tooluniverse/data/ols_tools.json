@@ -197,7 +197,10 @@
         "ontology_id": "uberon"
       },
       {
-        "ontology_id": "ogg"
+        "ontology_id": "skos"
+      },
+      {
+        "ontology_id": "medgen"
       }
     ],
     "return_schema": {
@@ -207,7 +210,8 @@
           "type": "string"
         },
         "title": {
-          "type": "string"
+          "type": ["string", "null"],
+          "description": "Ontology name. Null for the four ontologies OLS gives no title under any key -- medgen, oio, schemaorg_http and schemaorg_https. Declaring it a required string made this tool answer a validation error for 16 of the 287 ontologies and made ols_search_ontologies drop all 16 while still reporting total_items: 287."
         },
         "version": {
           "type": ["string", "null"],
@@ -215,7 +219,7 @@
         },
         "description": {
           "type": ["string", "null"],
-          "description": "Null for the ontologies OLS carries no description for, e.g. 'ogg'."
+          "description": "Null for the ontologies OLS carries no description for, e.g. 'skos'."
         },
         "domain": {
           "type": ["string", "null"],

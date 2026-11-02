@@ -300,7 +300,7 @@ WIDENED_BY_CENSUS = [
         "ols_get_ontology_info",
         "description",
         {"string", "null"},
-        "null for 'ogg', of the 287 ontologies OLS lists",
+        "null for 'skos', of the 287 ontologies OLS lists",
     ),
     (
         "ols_tools",
@@ -652,3 +652,78 @@ def test_a_null_the_census_agreed_with_stays_null(stem, tool, path, sample):
     """Null over the sample named in the parameter. Widening one of these to a
     type nobody has observed would read as fixed and fail exactly as before."""
     assert _types(_tool(stem, tool)["return_schema"], path) == {"null"}, sample
+
+
+def test_the_ols_model_does_not_require_a_title_ols_v2_may_not_send():
+    """16 of the 287 ontologies OLS lists carry no plain `title`, and a required
+    str made ols_get_ontology_info answer a validation error for every one of
+    them -- biolink, coho, dcat, dc, dcterms, evorao, medgen, oio and the rest.
+    ols_search_ontologies was worse off: it catches ValidationError per item and
+    skips, so it returned 263 ontologies while its own pagination reported
+    total_items: 287, and the 16 silently did not exist in any search result.
+    It returns all 287 now.
+
+    Twelve of the sixteen name the title under a Dublin Core or rdfs key, and
+    for three of those it is a list ('dcat' lists two). medgen, oio and the two
+    schemaorg entries have no title under any key, in v1 or v2, and now come
+    back as title: null.
+
+    The same list shape broke `version`: giving it the owl#versionInfo alias in
+    the commit before this one turned 8 ontologies into validation errors,
+    because foodon answers ['2026-02-02', '2026-09-20'] and 7 others likewise.
+    One before-validator covers both fields. Measured over all 287: `label` is
+    a list every one of the 199 times it is present, rdfs#label 3 of 20 times,
+    the two Dublin Core titles once and twice, owl#versionInfo 8 times, and no
+    other field the model reads is ever list-shaped."""
+    from tooluniverse.ols_tool import OntologyInfo
+
+    field = OntologyInfo.model_fields["title"]
+    assert not field.is_required()
+    for key in (
+        "title",
+        "http://purl.org/dc/terms/title",
+        "http://purl.org/dc/elements/1.1/title",
+        "label",
+        "http://www.w3.org/2000/01/rdf-schema#label",
+    ):
+        assert key in field.validation_alias.choices, key
+    assert (
+        OntologyInfo.model_validate(
+            {"ontologyId": "dcat", "label": ["The data catalog vocabulary", "other"]}
+        ).title
+        == "The data catalog vocabulary"
+    )
+    assert OntologyInfo.model_validate({"ontologyId": "medgen"}).title is None
+
+
+def test_the_title_aliases_do_not_override_a_title_ols_does_send():
+    """The aliases are a fallback, not a replacement: `title` comes first in the
+    AliasChoices, so the 271 ontologies that do send one keep it even when they
+    also send a label. Checked against the live listing when this was written:
+    no drift on any of those 271 titles, none on the 163 plain versions, and
+    exactly four ontologies end up with a null title."""
+    from tooluniverse.ols_tool import OntologyInfo
+
+    both = OntologyInfo.model_validate(
+        {
+            "ontologyId": "go",
+            "title": "Gene Ontology",
+            "label": ["GO", "something else"],
+            "http://purl.org/dc/terms/title": "not this one",
+        }
+    )
+    assert both.title == "Gene Ontology"
+    plain = OntologyInfo.model_validate(
+        {
+            "ontologyId": "hp",
+            "title": "Human Phenotype Ontology",
+            "version": "2026-09-01",
+            "http://www.w3.org/2002/07/owl#versionInfo": ["ignored"],
+        }
+    )
+    assert plain.version == "2026-09-01"
+
+
+def test_the_ols_title_declaration_allows_the_null_it_can_now_return():
+    schema = _tool("ols_tools", "ols_get_ontology_info")["return_schema"]
+    assert _types(schema, "title") == {"string", "null"}
