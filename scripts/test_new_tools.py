@@ -58,6 +58,43 @@ def _missing_distributions(names):
     return missing
 
 
+def _missing_binaries(entries):
+    """The declared executables this host cannot run, as the caller would name them.
+
+    A tool that shells out to a system binary has no Python distribution to
+    declare: mmseqs and foldseek are not pip-installable, so
+    `required_packages` cannot describe them and `requires_local_input` is about
+    the caller's data, not the host's software. Without a third declaration the
+    sweep ran protein_similarity_local on a host with no mmseqs and counted two
+    failures no change to the tool could clear.
+
+    Resolution mirrors what the tools themselves do: an env var pointing at an
+    executable file wins, else the name on PATH. Each entry is either the
+    executable name or {"name": ..., "env_var": ...}.
+    """
+    import shutil
+
+    missing = []
+    for entry in entries:
+        if isinstance(entry, str):
+            name, variable = entry, None
+        elif isinstance(entry, dict):
+            name, variable = entry.get("name"), entry.get("env_var")
+        else:
+            continue
+        if not name:
+            continue
+        override = os.environ.get(variable) if variable else None
+        if override:
+            candidate = Path(override).expanduser()
+            if candidate.is_file() and os.access(candidate, os.X_OK):
+                continue
+        if shutil.which(name):
+            continue
+        missing.append(f"{name} (or ${variable})" if variable else name)
+    return missing
+
+
 def schema_describes_envelope(schema, _depth=0):
     """True when *schema* describes the {"status", "data"} envelope itself.
 
@@ -303,6 +340,22 @@ def run_tests(
                 )
                 continue
 
+            # Skip a tool whose declared system binary is not on this host.
+            # See _missing_binaries: pip cannot install mmseqs or foldseek, so
+            # neither required_packages nor requires_local_input describes them.
+            missing_binaries = _missing_binaries(tool.get("required_binaries") or [])
+            if missing_binaries:
+                if args.verbose:
+                    print(
+                        f"  ⏭️  {name}: Skipped (needs "
+                        f"{', '.join(missing_binaries)} on this host)"
+                    )
+                stats["skipped"] += 1
+                stats["skipped_missing_binary"] = (
+                    stats.get("skipped_missing_binary", 0) + 1
+                )
+                continue
+
             required_keys = tool.get("required_api_keys", [])
             if required_keys:
                 missing_keys = [key for key in required_keys if not os.getenv(key)]
@@ -349,12 +402,18 @@ def run_tests(
                             f"  ⏭️  {name}: Skipped (set LLM_PROVIDER_WORKING=1 to run AgenticTool tests)"
                         )
                     stats["skipped"] += 1
+                    stats["skipped_llm_provider"] = (
+                        stats.get("skipped_llm_provider", 0) + 1
+                    )
                     continue
 
             if not examples:
                 if args.verbose:
                     print(f"  ⏭️  {name}: No test examples")
                 stats["skipped"] += 1
+                stats["skipped_no_examples"] = (
+                    stats.get("skipped_no_examples", 0) + 1
+                )
                 continue
 
             if args.verbose:
@@ -551,14 +610,21 @@ def main():
     if stats["errors_other"] > 0:
         print(f"  └─ Other Errors: {stats['errors_other']}")
     print(f"Skipped:          {stats['skipped']}")
-    # Three different reasons share the skipped count, and the sweep used to
-    # label every one of them "need a credential".
+    # Six different reasons share the skipped count, and the sweep labelled
+    # every unnamed one of them "need a credential" -- including a tool that
+    # ships no examples at all.
     if stats.get("skipped_local_input"):
         print(f"Skipped local input: {stats['skipped_local_input']}")
     if stats.get("skipped_long_running"):
         print(f"Skipped long running: {stats['skipped_long_running']}")
     if stats.get("skipped_missing_package"):
         print(f"Skipped missing package: {stats['skipped_missing_package']}")
+    if stats.get("skipped_missing_binary"):
+        print(f"Skipped missing binary: {stats['skipped_missing_binary']}")
+    if stats.get("skipped_no_examples"):
+        print(f"Skipped no examples: {stats['skipped_no_examples']}")
+    if stats.get("skipped_llm_provider"):
+        print(f"Skipped llm provider: {stats['skipped_llm_provider']}")
     print("-" * 30)
     print(f"Schema Valid:     {stats['schema_valid']}")
     print(f"Schema Invalid:   {stats['schema_invalid']}")
