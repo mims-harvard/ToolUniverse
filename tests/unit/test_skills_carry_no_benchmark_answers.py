@@ -42,14 +42,14 @@ def test_the_checker_is_where_this_test_expects_it():
 @pytest.mark.parametrize("strict", [False, True], ids=["hard", "strict"])
 def test_no_skill_carries_dataset_specific_content(strict):
     cmd = [sys.executable, str(CHECKER), "--all"] + (["--strict"] if strict else [])
-    run = subprocess.run(cmd, capture_output=True, text=True, cwd=REPO)
+    run = subprocess.run(cmd, capture_output=True, text=True, cwd=REPO, check=False)
     assert run.returncode == 0, (
         "check_memorization.py reported benchmark-specific content in a skill:\n"
         + run.stdout
         + run.stderr
     )
     # Guard the guard: a checker that silently scanned nothing would pass.
-    scanned = [l for l in run.stdout.splitlines() if l.startswith("Scanned ")]
+    scanned = [line for line in run.stdout.splitlines() if line.startswith("Scanned ")]
     assert scanned, run.stdout
     assert int(scanned[0].split()[1]) > 900, scanned[0]
 
@@ -64,6 +64,7 @@ def test_the_checker_reaches_the_copies_that_ship():
         capture_output=True,
         text=True,
         cwd=REPO,
+        check=False,
     )
     assert run.returncode == 0, run.stdout
     # It prints nothing per-file when clean, so assert on reach instead: the
@@ -77,7 +78,9 @@ def test_the_checker_reaches_the_copies_that_ship():
         or p.suffix == ".py"
     )
     scanned = int(
-        [l for l in run.stdout.splitlines() if l.startswith("Scanned ")][0].split()[1]
+        next(
+            line for line in run.stdout.splitlines() if line.startswith("Scanned ")
+        ).split()[1]
     )
     assert scanned > only_source, (
         f"the checker scanned {scanned} files, no more than the {only_source} "
@@ -99,6 +102,7 @@ def test_a_planted_worked_solution_is_caught(tmp_path):
         capture_output=True,
         text=True,
         cwd=REPO,
+        check=False,
     )
     assert run.returncode != 0, (
         "a reference doc reading one dataset's export file was not flagged:\n"
