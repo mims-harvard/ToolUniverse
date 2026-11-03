@@ -855,8 +855,15 @@ class HookManager:
 
                     # Check if ToolUniverse is fully initialized
                     if hasattr(self.tooluniverse, "all_tools"):
-                        # Load the tools and verify they were loaded
-                        self.tooluniverse.load_tools(tools_to_load)
+                        # Load the tools and verify they were loaded.
+                        # `tools_to_load` is a list of CATEGORIES, so this used
+                        # to bind to `categories=` with no `include_tools`, and
+                        # load_tools() then clears the registry by default --
+                        # replacing every loaded tool with that one category for
+                        # the rest of the session.
+                        self.tooluniverse.load_tools(
+                            tools_to_load, clear_existing=False
+                        )
 
                         # Verify that the required tools are actually available
                         missing_tools = []
@@ -916,7 +923,11 @@ class HookManager:
                 or "output_summarization" not in self.tooluniverse.tool_category_dicts
             ):
                 _logger.info("Loading output_summarization tools for hooks")
-                self.tooluniverse.load_tools(["output_summarization"])
+                # additive: this runs while a universe full of tools is already
+                # loaded, and the default would replace all of them
+                self.tooluniverse.load_tools(
+                    ["output_summarization"], clear_existing=False
+                )
 
             # Required hook tools
             required_tools = ["ToolOutputSummarizer", "OutputSummarizationComposer"]
@@ -1038,7 +1049,10 @@ class HookManager:
         """
         if self._pending_tools_to_load and hasattr(self.tooluniverse, "all_tools"):
             try:
-                self.tooluniverse.load_tools(self._pending_tools_to_load)
+                # additive, for the same reason as the call above
+                self.tooluniverse.load_tools(
+                    self._pending_tools_to_load, clear_existing=False
+                )
                 _logger.info(
                     "Loaded pending hook tools: %s",
                     ", ".join(self._pending_tools_to_load),
