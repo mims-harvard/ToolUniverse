@@ -165,6 +165,7 @@
           }
         },
         {
+          "minItems": 1,
           "type": "array",
           "description": "Error response (single-element array with error details)",
           "items": {
@@ -191,6 +192,17 @@
               "error"
             ]
           }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },

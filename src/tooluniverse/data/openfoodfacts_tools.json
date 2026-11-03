@@ -1693,8 +1693,7 @@
                   "type": "array",
                   "items": {
                     "type": "string"
-                  },
-                  "description": "Measured over 3 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+                  }
                 },
                 "code": {
                   "type": "string"
@@ -4061,8 +4060,7 @@
                   "type": "array",
                   "items": {
                     "type": "string"
-                  },
-                  "description": "Measured over 6 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+                  }
                 },
                 "emb_codes_lc": {
                   "type": "string"
@@ -4074,8 +4072,7 @@
                   "type": "array",
                   "items": {
                     "type": "string"
-                  },
-                  "description": "Measured over 6 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+                  }
                 },
                 "entry_dates_tags": {
                   "type": "array",
@@ -7146,8 +7143,7 @@
                         "type": "array",
                         "items": {
                           "type": "string"
-                        },
-                        "description": "Measured over 17 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+                        }
                       },
                       "import_t": {
                         "type": [

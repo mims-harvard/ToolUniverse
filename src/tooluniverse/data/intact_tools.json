@@ -520,13 +520,156 @@
                 "type": "string"
               },
               "linkedFeatures": {
-                "type": "array"
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "crossReferences": {
+                      "type": "array"
+                    },
+                    "featureAc": {
+                      "type": "string"
+                    },
+                    "featureRole": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "featureRoleDefinition": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "featureRoleMI": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "featureRoleUrl": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "featureType": {
+                      "type": "string"
+                    },
+                    "featureTypeDefinition": {
+                      "type": "string"
+                    },
+                    "featureTypeMI": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "featureTypeUrl": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "linkedFeatures": {
+                      "type": "array"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "participantId": {
+                      "type": "string"
+                    },
+                    "ranges": {
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "crossReferences",
+                    "featureAc",
+                    "featureRole",
+                    "featureRoleDefinition",
+                    "featureRoleMI",
+                    "featureRoleUrl",
+                    "featureType",
+                    "featureTypeDefinition",
+                    "featureTypeMI",
+                    "featureTypeUrl",
+                    "linkedFeatures",
+                    "name",
+                    "participantId",
+                    "ranges"
+                  ]
+                }
               },
               "name": {
                 "type": "string"
               },
               "otherFeatures": {
-                "type": "array"
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "crossReferences": {
+                      "type": "array"
+                    },
+                    "featureAc": {
+                      "type": "string"
+                    },
+                    "featureRole": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "featureRoleDefinition": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "featureRoleMI": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "featureRoleUrl": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "featureType": {
+                      "type": "string"
+                    },
+                    "featureTypeDefinition": {
+                      "type": "string"
+                    },
+                    "featureTypeMI": {
+                      "type": "string"
+                    },
+                    "featureTypeUrl": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "linkedFeatures": {
+                      "type": "array"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "participantId": {
+                      "type": "string"
+                    },
+                    "ranges": {
+                      "type": "array"
+                    }
+                  }
+                }
               },
               "stochiometry": {
                 "type": [

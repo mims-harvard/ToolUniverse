@@ -133,8 +133,7 @@
           "type": "array",
           "items": {
             "type": "string"
-          },
-          "description": "Measured over 10 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          }
         },
         "abstract": {
           "type": "string"
@@ -148,7 +147,18 @@
                 "type": "string"
               },
               "affiliation": {
-                "type": "array"
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name"
+                  ]
+                }
               },
               "authenticated-orcid": {
                 "type": "boolean"
@@ -163,7 +173,22 @@
                 "type": "string"
               },
               "role": {
-                "type": "array"
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "role": {
+                      "type": "string"
+                    },
+                    "vocabulary": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "role",
+                    "vocabulary"
+                  ]
+                }
               },
               "sequence": {
                 "type": "string"
@@ -177,15 +202,13 @@
               "role",
               "sequence"
             ]
-          },
-          "description": "Measured over 351 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          }
         },
         "container-title": {
           "type": "array",
           "items": {
             "type": "string"
-          },
-          "description": "Measured over 10 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          }
         },
         "published": {
           "type": "object"
@@ -247,8 +270,7 @@
             "required": [
               "key"
             ]
-          },
-          "description": "Measured over 738 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          }
         },
         "license": {
           "type": "array",
@@ -274,8 +296,7 @@
               "delay-in-days",
               "start"
             ]
-          },
-          "description": "Measured over 20 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          }
         },
         "funder": {
           "type": "array",
@@ -286,23 +307,47 @@
                 "type": "string"
               },
               "award": {
-                "type": "array"
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
               },
               "award-info": {
-                "type": "array"
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "award-number": {
+                      "type": "array"
+                    }
+                  }
+                }
               },
               "doi-asserted-by": {
                 "type": "string"
               },
               "id": {
-                "type": "array"
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "asserted-by": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "id-type": {
+                      "type": "string"
+                    }
+                  }
+                }
               },
               "name": {
                 "type": "string"
               }
             }
-          },
-          "description": "Measured over 17 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          }
         }
       }
     },

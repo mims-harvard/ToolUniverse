@@ -109,11 +109,12 @@ def test_every_schema_this_fixed_still_validates_an_error_result():
 
     Restricted to the schemas carrying the marker this change added, because it
     is not a repo-wide invariant. 34 other schemas match none of these
-    envelopes, and 30 of those have no error branch at all -- their oneOf is
-    one success shape against another, so an error envelope was never described
-    and is not described now. Whether those tools can validate their own error
-    results is a real question and an unmeasured one; it is not this change's
-    doing and is not asserted here.
+    envelopes: their oneOf is one success shape against another, so an error
+    envelope was never described here. That question has since been measured --
+    each of the 34 was called until it failed and the payload it really sends
+    recorded -- and is asserted in
+    test_oneof_accepts_the_failure_the_tool_reports.py, where 30 needed an
+    error branch and 4 already accepted the shape they emit.
 
     Among the fixed ones an envelope matching no branch is still acceptable
     where that schema's error branch requires keys the envelope lacks: Crossref
