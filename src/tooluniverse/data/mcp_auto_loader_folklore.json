@@ -12,17 +12,17 @@
     "require_structured_content": true,
     "mcp_structured_error_field": "adapter_error",
     "selected_tools": [
-      "search_variant_evidence",
+      "classify_germline_variant",
       "search_variant_literature",
       "get_publication_details",
       "search_literature_corpus"
     ],
     "tool_contracts": [
       {
-        "name": "search_variant_evidence",
+        "name": "classify_germline_variant",
         "title": "Classify or interpret a germline variant under ACMG/AMP",
         "description": "Use when a user asks to classify or interpret pathogenicity, review a VUS, check available ClinVar assertions or population-frequency evidence, or resolve a variant notation. Resolve one public GRCh38 germline nuclear SNV or simple indel smaller than 50 bp. Returns normalized identity, automated ACMG/AMP decision support, evidence, provenance and explicit limitations. Do not send patient or case context. Results require qualified professional review and are not diagnoses or treatment recommendations. Never select a candidate when the result is ambiguous.",
-        "contract_sha256": "7a537fea79ae459ada1ef188e0b84147b35aead716295b423a0d8c7173e5d42f",
+        "contract_sha256": "800325ed81610b42dd876d0542d8169105b03acf3704f9c89ba2597272c983ad",
         "annotations": {
           "readOnlyHint": true,
           "destructiveHint": false,
@@ -34,7 +34,7 @@
         "name": "search_variant_literature",
         "title": "Find literature for a germline variant",
         "description": "Resolve one public GRCh38 germline variant and retrieve source-linked publications from Folklore's PubMed-derived genetics corpus. Exact variant mentions precede broader gene associations. Associations do not establish causality, pathogenicity, or a diagnosis and do not change the ACMG/AMP classification.",
-        "contract_sha256": "999ec1ddb4ea413fe8a22df866086e0fa94f5e5f8027e6fbb6a1faabb38174d8",
+        "contract_sha256": "820a415743aa7338dc2bf2d27d9d2e3d320c878852ace63a1d44c1f66e9e953d",
         "annotations": {
           "readOnlyHint": true,
           "destructiveHint": false,
@@ -46,7 +46,7 @@
         "name": "get_publication_details",
         "title": "Get details for a PubMed publication",
         "description": "Retrieve one complete public bibliographic record by PMID from Folklore's PubMed-derived genetics corpus, including abstract, authors, publication metadata, gene and variant mentions, retraction status, and source links. This read-only literature evidence contains no patient context.",
-        "contract_sha256": "7906416a2f1dc0ec5f1c210f87a216da190a5f6e842e5059db70e1a5f6e190dd",
+        "contract_sha256": "c221b7142324feadfab11242c05af17eb98b8fe4a5a7df3a666dec90ed50a7eb",
         "annotations": {
           "readOnlyHint": true,
           "destructiveHint": false,
@@ -58,7 +58,7 @@
         "name": "search_literature_corpus",
         "title": "Search the Folklore Literature Corpus",
         "description": "Search source-linked scientific literature by natural-language question or exact PMID, DOI, PMCID, gene, variant, phenotype, HPO, or OMIM query. Include every known publication identifier when comparing papers. Results are evidence candidates for professional review, not diagnoses, causality claims, or treatment recommendations.",
-        "contract_sha256": "6e09be489f4d1a5d25652df12ca0ec0924d8fc27f4c940e31528dd1ea22d776e",
+        "contract_sha256": "34b4eba562a9bb39b91792eac6a4e9da447b37696a3133bbe754ab46833f5035",
         "annotations": {
           "readOnlyHint": true,
           "destructiveHint": false,
