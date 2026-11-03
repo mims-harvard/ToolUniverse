@@ -7,7 +7,9 @@ gaps. Each tool is exercised with a mocked HTTP layer for both the success
 Tools under test:
   - MaveDB_get_mapped_variants (MaveDBTool, operation=get_mapped_variants):
     flattens the score set's GA4GH VRS / ClinGen Allele ID mapped variants,
-    surfacing genomic SequenceLocation (chromosome end) and the ClinGen allele id.
+    surfacing MaveDB's genomic projection and the ClinGen allele id. Reads the
+    newline-delimited ``/variant-details`` route that replaced the retired
+    ``/mapped-variants`` one.
   - MaveDB_get_clinical_controls (MaveDBTool, operation=get_clinical_controls):
     returns overlapping ClinVar pathogenic/benign/VUS controls plus a
     significance breakdown and the linked MaveDB variant URNs.
@@ -57,58 +59,94 @@ def _genome_nexus_tool(endpoint):
 # --------------------------------------------------------------------------- #
 # MaveDB_get_mapped_variants
 # --------------------------------------------------------------------------- #
-_MAPPED_BODY = [
+# The route is ``/score-sets/{urn}/variant-details`` and its body is
+# newline-delimited JSON -- one record per variant, not a JSON array. MaveDB
+# retired ``/mapped-variants`` (HTTP 410, "Use GET
+# /score-sets/<urn>/variant-details instead"), and the successor renames
+# ``variantUrn`` to ``urn`` and ``current`` to ``isCurrent``, drops
+# ``vrsVersion``/``errorMessage``/``alignmentLevel``, and adds ``mapped``:
+# MaveDB's own projection of the scored variant onto genomic/cdna/protein
+# coordinates. Shapes below are trimmed from live responses (2026-11-01).
+_VARIANT_DETAIL_RECORDS = [
     {
-        # intronic / unmappable: post_mapped is null, error_message set
+        # scored at cdna level but not projectable to the genome: the
+        # ``mapped`` dict carries no ``genomic`` entry.
+        "urn": "urn:mavedb:00001263-a-2#1",
+        "assayLevel": "cdna",
+        "mode": "projection",
+        "isCurrent": True,
+        "supersededByScoreSet": None,
+        "targetHgvs": "NM_000059.4:c.1-5A>C",
+        "referenceHgvs": "NM_000059.4:c.1-5A>C",
         "preMapped": None,
         "postMapped": None,
-        "vrsVersion": "2",
-        "errorMessage": "ValueError: Variant is intronic and cannot be processed",
-        "current": True,
-        "alignmentLevel": "genomic",
-        "variantUrn": "urn:mavedb:00001263-a-2#1",
         "clingenAlleleId": None,
-        "recordType": "MappedVariant",
+        "mapped": {"cdna": {"hgvs": "NM_000059.4:c.1-5A>C"}},
     },
     {
-        # fully mapped: genomic SequenceLocation + ClinGen allele id
+        # fully projected: genomic HGVS present, ClinGen allele id present.
+        # Note the postMapped sequenceReference carries a refgetAccession and
+        # NO label, which is why the genomic count cannot be read off it.
+        "urn": "urn:mavedb:00001263-a-2#40",
+        "assayLevel": "cdna",
+        "mode": "projection",
+        "isCurrent": True,
+        "supersededByScoreSet": None,
+        "targetHgvs": "NM_000059.4:c.68A>C",
+        "referenceHgvs": "NM_000059.4:c.68A>C",
         "preMapped": {
             "id": "ga4gh:VA.pre",
             "state": {"type": "LiteralSequenceExpression", "sequence": "C"},
             "location": {
                 "start": 266,
                 "end": 267,
-                "sequenceReference": {"label": "NM_000059.4", "refgetAccession": "SQ.x"},
+                "sequenceReference": {
+                    "label": "NM_000059.4",
+                    "refgetAccession": "SQ.-ujJUd6rxZtuUoJFk3a-fspt-G05G7wt",
+                },
             },
         },
         "postMapped": {
-            "id": "ga4gh:VA.hecrf0q5PEydes_VYydUCM-pEXIyS_wo",
+            "id": "ga4gh:VA.FLPevyuGi02vqUuJ_LQUeWwVLlH8Plbd",
             "state": {"type": "LiteralSequenceExpression", "sequence": "C"},
             "location": {
                 "start": 32319076,
                 "end": 32319077,
                 "sequenceReference": {
-                    "label": "NC_000013.11",
-                    "refgetAccession": "SQ._0wi-qoDrvram155UmcSC-zA5ZK4fpLT",
+                    "refgetAccession": "SQ.-ujJUd6rxZtuUoJFk3a-fspt-G05G7wt"
                 },
             },
-            "expressions": [{"value": "NC_000013.11:g.32319077A>C", "syntax": "hgvs.g"}],
+            "expressions": [
+                {"value": "NM_000059.4:c.68A>C", "syntax": "hgvs.c"}
+            ],
         },
-        "vrsVersion": "2",
-        "errorMessage": None,
-        "current": True,
-        "alignmentLevel": "genomic",
-        "variantUrn": "urn:mavedb:00001263-a-2#40",
         "clingenAlleleId": "CA387754009",
-        "recordType": "MappedVariant",
+        "mapped": {
+            "genomic": {
+                "hgvs": "NC_000013.11:g.32319077A>C",
+                "position": 32319077,
+                "ref": "A",
+                "alt": "C",
+            },
+            "cdna": {"hgvs": "NM_000059.4:c.68A>C"},
+            "protein": {"hgvs": "NP_000050.3:p.Asp23Ala"},
+        },
     },
 ]
+
+_VARIANT_DETAILS_NDJSON = "\n".join(
+    json.dumps(record) for record in _VARIANT_DETAIL_RECORDS
+)
+
+
+def _variant_details_response():
+    return _fake_response(text=_VARIANT_DETAILS_NDJSON)
 
 
 def test_mapped_variants_parse():
     """Parse mapped variants: genomic VRS location + ClinGen allele id, intronic null."""
     tool = _mavedb_tool("get_mapped_variants")
-    with patch.object(tool.session, "get", return_value=_fake_response(json_body=_MAPPED_BODY)):
+    with patch.object(tool.session, "get", return_value=_variant_details_response()):
         out = tool.run({"urn": "urn:mavedb:00001263-a-2"})
 
     assert out["status"] == "success"
@@ -118,22 +156,33 @@ def test_mapped_variants_parse():
     assert data["n_with_clingen_allele_id"] == 1
 
     mapped = {mv["variant_urn"]: mv for mv in data["mapped_variants"]}
-    intronic = mapped["urn:mavedb:00001263-a-2#1"]
-    assert intronic["post_mapped"] is None
-    assert intronic["clingen_allele_id"] is None
-    assert "intronic" in intronic["error_message"]
+    unprojected = mapped["urn:mavedb:00001263-a-2#1"]
+    assert unprojected["post_mapped"] is None
+    assert unprojected["clingen_allele_id"] is None
+    assert unprojected["genomic_hgvs"] is None
+    assert unprojected["cdna_hgvs"] == "NM_000059.4:c.1-5A>C"
 
     full = mapped["urn:mavedb:00001263-a-2#40"]
     assert full["clingen_allele_id"] == "CA387754009"
+    assert full["assay_level"] == "cdna"
+    assert full["mapping_mode"] == "projection"
+    assert full["current"] is True
+    assert full["genomic_hgvs"] == "NC_000013.11:g.32319077A>C"
+    assert full["protein_hgvs"] == "NP_000050.3:p.Asp23Ala"
     assert full["post_mapped"]["end"] == 32319077
-    assert full["post_mapped"]["sequence_reference_label"] == "NC_000013.11"
-    assert full["post_mapped"]["hgvs_expressions"] == ["NC_000013.11:g.32319077A>C"]
+    # The successor route stopped sending a sequenceReference label, so the
+    # genomic count above must come from ``mapped.genomic``, not from here.
+    assert full["post_mapped"]["sequence_reference_label"] is None
+    assert (
+        full["post_mapped"]["refget_accession"]
+        == "SQ.-ujJUd6rxZtuUoJFk3a-fspt-G05G7wt"
+    )
 
 
 def test_mapped_variants_limit_truncates():
     """limit truncates returned list while counts reflect the full set."""
     tool = _mavedb_tool("get_mapped_variants")
-    with patch.object(tool.session, "get", return_value=_fake_response(json_body=_MAPPED_BODY)):
+    with patch.object(tool.session, "get", return_value=_variant_details_response()):
         out = tool.run({"urn": "urn:mavedb:00001263-a-2", "limit": 1})
     assert out["status"] == "success"
     # counts reflect the full set; returned/truncated reflect the cap
@@ -144,7 +193,7 @@ def test_mapped_variants_limit_truncates():
 
 def test_mapped_variants_offset_recovers_tail():
     tool = _mavedb_tool("get_mapped_variants")
-    with patch.object(tool.session, "get", return_value=_fake_response(json_body=_MAPPED_BODY)):
+    with patch.object(tool.session, "get", return_value=_variant_details_response()):
         out = tool.run(
             {"urn": "urn:mavedb:00001263-a-2", "limit": 1, "offset": 1}
         )

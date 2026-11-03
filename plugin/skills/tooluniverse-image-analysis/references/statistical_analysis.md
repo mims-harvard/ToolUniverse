@@ -142,7 +142,7 @@ def mann_whitney_test(group1, group2):
 
 ### Dunnett's Test
 
-**CRITICAL**: Dunnett's test compares each treatment group to a single control group. R uses `multcomp::glht()` with `mcp(Strain_Ratio = "Dunnett")`. Python equivalent uses scipy.
+**CRITICAL**: Dunnett's test compares each treatment group to a single control group. R uses `multcomp::glht()` with `mcp(<group_col> = "Dunnett")`. Python equivalent uses scipy.
 
 ```python
 from scipy import stats
@@ -281,11 +281,11 @@ def extract_anova_interaction(anova_table, factor1, factor2):
     return f_stat, p_val
 
 # Example usage
-anova_result = two_way_anova(df, 'NeuN_count', 'Condition', 'Sex')
+anova_result = two_way_anova(df, 'cell_count', 'treatment', 'batch')
 print(anova_result)
 
 # Extract interaction
-f_stat, p_val = extract_anova_interaction(anova_result, 'Condition', 'Sex')
+f_stat, p_val = extract_anova_interaction(anova_result, 'treatment', 'batch')
 print(f"Interaction F={f_stat:.3f}, p={p_val:.4f}")
 ```
 
@@ -391,36 +391,38 @@ def calculate_achieved_power(n_per_group, effect_size, alpha=0.05, alternative='
 
 ## Regression Modeling
 
-### Data Preparation for Co-culture Ratios
+### Turning Mixture Ratios Into a Continuous Predictor
+
+A mixture experiment often records composition as a ratio string such as
+`"3:1"`. Regression needs a number, so convert the ratio to the fraction of one
+component. Pass the column names your own data uses; nothing here assumes a
+particular dataset.
 
 ```python
-def prepare_ratio_data(df, strain_col='StrainNumber', ratio_col='Ratio',
-                       area_col='Area', exclude_strains=None):
-    """Prepare co-culture ratio data for regression analysis.
-
-    Converts ratio strings (e.g., "3:1") to frequency fractions.
-    Filters out pure strains if requested.
+def ratio_to_frequency(df, ratio_col, group_col=None, exclude_groups=None):
+    """Convert "a:b" composition strings to the fraction of the first component.
 
     Args:
-        df: DataFrame with swarming data
-        strain_col: Column with strain identifiers
-        ratio_col: Column with ratio strings
-        area_col: Column with area measurements
-        exclude_strains: List of strain IDs to exclude (e.g., pure strains)
+        df: DataFrame with one row per sample
+        ratio_col: Column holding ratio strings like "3:1"
+        group_col: Optional column identifying the sample group
+        exclude_groups: Optional group values to drop before fitting -- for
+            example single-component controls, which have no meaningful
+            mixture fraction
 
-    Returns: DataFrame with Frequency_rhlI column added
+    Returns: DataFrame with `part_a`, `part_b` and `frequency_a` added
     """
     result = df.copy()
 
-    if exclude_strains:
-        result = result[~result[strain_col].isin(exclude_strains)]
+    if exclude_groups:
+        if group_col is None:
+            raise ValueError("exclude_groups needs group_col")
+        result = result[~result[group_col].isin(exclude_groups)]
 
-    # Parse ratio into frequency
-    # Ratio format: "rhlI_D:lasI_D" (e.g., "3:1" means 3 parts rhlI, 1 part lasI)
-    ratio_parts = result[ratio_col].str.split(':', expand=True).astype(int)
-    result['rhlI_D'] = ratio_parts[0]
-    result['lasI_D'] = ratio_parts[1]
-    result['Frequency_rhlI'] = result['rhlI_D'] / (result['rhlI_D'] + result['lasI_D'])
+    parts = result[ratio_col].str.split(':', expand=True).astype(int)
+    result['part_a'] = parts[0]
+    result['part_b'] = parts[1]
+    result['frequency_a'] = result['part_a'] / (result['part_a'] + result['part_b'])
 
     return result
 ```
@@ -512,7 +514,9 @@ def fit_polynomial_model(df, x_col, y_col, degree=2):
 
 ### Natural Spline Regression
 
-**CRITICAL**: This must match R's `lm(Area ~ ns(Frequency_rhlI, df=4))`.
+**CRITICAL**: `patsy`'s default spline basis does not reproduce R's
+`ns()`. To match `lm(y ~ ns(x, df=k))`, use explicit quantile knots as
+below; the fitted values differ otherwise.
 
 ```python
 from patsy import dmatrix
@@ -637,37 +641,41 @@ def compare_regression_models(models_dict):
 
 ---
 
-## Answer Extraction Patterns
+## Reporting Numeric Results
 
-### Answer formatting
+### Rounding conventions
+
+Round once, at the point of reporting, and say which convention you used. The
+helper below is a place to keep that decision rather than scattering `round()`
+calls through an analysis.
 
 ```python
-def format_answer(value, question_type):
-    """Format answer for reporting.
+def round_for_report(value, convention):
+    """Round a statistic for reporting under a named convention.
 
     Args:
         value: Numeric value to format
-        question_type: Type of answer expected
+        convention: Which rounding convention to apply
 
     Returns: Formatted value
     """
-    if question_type == "nearest_thousand":
+    if convention == "nearest_thousand":
         return int(round(value, -3))
-    elif question_type == "percentage_int":
+    elif convention == "percentage_int":
         return int(round(value))
-    elif question_type == "percentage_2dec":
+    elif convention == "percentage_2dec":
         return round(value, 2)
-    elif question_type == "cohen_d":
+    elif convention == "cohen_d":
         return round(value, 3)
-    elif question_type == "statistic_3dec":
+    elif convention == "statistic_3dec":
         return round(value, 3)
-    elif question_type == "sample_size":
+    elif convention == "sample_size":
         return int(np.ceil(value))
-    elif question_type == "count":
+    elif convention == "count":
         return int(value)
-    elif question_type == "r_squared":
+    elif convention == "r_squared":
         return round(value, 2)
-    elif question_type == "p_value":
+    elif convention == "p_value":
         if value < 0.0001:
             return f"{value:.2e}"
         else:
@@ -678,42 +686,50 @@ def format_answer(value, question_type):
 
 ---
 
-## Complete Example: Spline Regression Workflow
+## Worked Example: Choosing Between Curve Shapes
+
+A measurement that rises and then falls across a continuous predictor can be
+fitted several ways. Fit the candidates, compare them on the same data, and
+report the peak from whichever wins -- rather than assuming a shape.
+
+Substitute your own file and column names; the variables below are placeholders.
 
 ```python
 import pandas as pd
 import numpy as np
 
-# Load data
-df = pd.read_csv("Swarm_2.csv")
+df = pd.read_csv("measurements.csv")
 
-# Prepare ratio data
-df_coculture = prepare_ratio_data(
+# If composition is recorded as a ratio string, convert it to a fraction first.
+# Drop single-component controls, which have no mixture fraction to place them
+# on the x axis.
+single_component_controls = ['control-a', 'control-b']
+
+fitted = ratio_to_frequency(
     df,
-    strain_col='StrainNumber',
-    ratio_col='Ratio',
-    area_col='Area',
-    exclude_strains=['1', '98']  # Exclude pure strains
+    ratio_col='composition',
+    group_col='sample_group',
+    exclude_groups=single_component_controls,
 )
 
-# Fit models
-quadratic = fit_polynomial_model(df_coculture, 'Frequency_rhlI', 'Area', degree=2)
-cubic = fit_polynomial_model(df_coculture, 'Frequency_rhlI', 'Area', degree=3)
-spline = fit_natural_spline_model(df_coculture, 'Frequency_rhlI', 'Area', spline_df=4)
+x, y = 'frequency_a', 'response'
 
-# Compare models
-models = {'quadratic': quadratic, 'cubic': cubic, 'spline': spline}
+models = {
+    'quadratic': fit_polynomial_model(fitted, x, y, degree=2),
+    'cubic': fit_polynomial_model(fitted, x, y, degree=3),
+    'spline': fit_natural_spline_model(fitted, x, y, spline_df=4),
+}
+
 comparison = compare_regression_models(models)
 print(comparison)
 
-# Best model by R-squared
-best_model_name = comparison.iloc[0]['model']
-best_model = models[best_model_name]
+best_name = comparison.iloc[0]['model']
+best = models[best_name]
 
-# Extract answers
-print(f"Best model: {best_model_name}")
-print(f"R-squared: {best_model['r_squared']:.4f}")
-print(f"Peak frequency: {best_model['peak_x']:.4f}")
-print(f"Peak area: {best_model['peak_value']:.1f}")
-print(f"95% CI: [{best_model['peak_ci_lower']:.1f}, {best_model['peak_ci_upper']:.1f}]")
+print(f"Best model: {best_name}  (R-squared {best['r_squared']:.4f})")
+print(f"Peak at x={best['peak_x']:.4f}, y={best['peak_value']:.1f}")
+print(f"95% CI for the peak: [{best['peak_ci_lower']:.1f}, {best['peak_ci_upper']:.1f}]")
 ```
+
+Report which model you chose and why. A peak read off a shape the data did not
+support is a different number from a peak read off the best-fitting one.

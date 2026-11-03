@@ -1137,8 +1137,7 @@
               ],
               "items": {
                 "type": "string"
-              },
-              "description": "Measured over 17 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+              }
             },
             "gene": {
               "type": [
@@ -1147,8 +1146,7 @@
               ],
               "items": {
                 "type": "string"
-              },
-              "description": "Measured over 23 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+              }
             },
             "organism_name": {
               "type": [
@@ -1157,8 +1155,7 @@
               ],
               "items": {
                 "type": "string"
-              },
-              "description": "Measured over 25 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+              }
             },
             "product": {
               "type": [
@@ -1167,8 +1164,7 @@
               ],
               "items": {
                 "type": "string"
-              },
-              "description": "Measured over 23 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+              }
             },
             "uniprotkb_accession": {
               "type": [
@@ -1177,8 +1173,7 @@
               ],
               "items": {
                 "type": "string"
-              },
-              "description": "Measured over 28 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+              }
             },
             "pmid": {
               "type": [
@@ -1187,8 +1182,7 @@
               ],
               "items": {
                 "type": "string"
-              },
-              "description": "Measured over 13 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+              }
             },
             "release_date": {
               "type": [
@@ -1203,8 +1197,7 @@
               ],
               "items": {
                 "type": "integer"
-              },
-              "description": "Measured over 25 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+              }
             }
           },
           "required": [

@@ -30,23 +30,23 @@ genes can use the unshrunken value. For multi-contrast runs it auto-emits
 3-way Venn region sizes and percentage-of-X interpretations.
 
 ```bash
-# Single-factor sex DE on a CD4/CD8 subset, with FAM138A LFC
+# Single-factor DE on a cell-type subset, reporting one gene's LFC
 python scripts/r_deseq2_wrapper.py \
     --counts <data-folder>/counts.csv \
     --metadata <data-folder>/meta.csv \
     --design "~sex" --contrast "sex,M,F" \
-    --subset-col celltype --subset-values "CD4,CD8" \
+    --subset-col celltype --subset-values "<type-1>,<type-2>" \
     --min-row-sum 10 --shrink apeglm \
-    --report-genes FAM138A \
+    --report-genes "<GENE_SYMBOL>" \
     --workdir /tmp/deseq2_run
 ```
 
 Output highlights (parseable):
 ```
-# CONTRAST sex_M_vs_F: n=37496 n_tested=26591
+# CONTRAST <contrast>: n=<genes-in> n_tested=<genes-after-filtering>
 # SIG_sex_M_vs_F_unshrunk_strict (padj<0.05 AND |LFC|>0.5 AND baseMean>10): n=...
 # SIG_sex_M_vs_F_shrunk_padjlfc (padj<0.05 AND |LFC|>0.5, NO baseMean): n=...
-# GENE FAM138A [sex_M_vs_F]: baseMean=... unshrunkLFC=... shrunkLFC=... padj=...
+# GENE <GENE_SYMBOL> [<contrast>]: baseMean=... unshrunkLFC=... shrunkLFC=... padj=...
 ```
 
 For a multi-strain Venn run with notebook-style outlier exclusion:
@@ -54,9 +54,9 @@ For a multi-strain Venn run with notebook-style outlier exclusion:
 python scripts/r_deseq2_wrapper.py \
     --counts .../raw_counts.csv \
     --metadata .../experiment_metadata.csv \
-    --design "~Replicate + Strain + Media" \
-    --multi-contrast "Strain,97,1;Strain,98,1;Strain,99,1" \
-    --exclude-samples "resub-5,resub-10,resub-33" \
+    --design "~replicate + group + media" \
+    --multi-contrast "group,g1,ctrl;group,g2,ctrl;group,g3,ctrl" \
+    --exclude-samples "sample-7,sample-12" \
     --lfc-thr 1.5 --padj-thr 0.05 --basemean-thr 0 \
     --workdir /tmp/strain_venn
 ```
@@ -124,11 +124,11 @@ this AFTER `r_deseq2_wrapper.py` if you need to explore the
 
 ```bash
 python scripts/multi_strain_venn.py \
-    --deg-csv "JBX97=/tmp/strain_venn/res_unshrunk_Strain_97_vs_1.csv" \
-    --deg-csv "JBX98=/tmp/strain_venn/res_unshrunk_Strain_98_vs_1.csv" \
-    --deg-csv "JBX99=/tmp/strain_venn/res_unshrunk_Strain_99_vs_1.csv" \
+    --deg-csv "g1=/tmp/venn_run/res_unshrunk_group_g1_vs_ctrl.csv" \
+    --deg-csv "g2=/tmp/venn_run/res_unshrunk_group_g2_vs_ctrl.csv" \
+    --deg-csv "g3=/tmp/venn_run/res_unshrunk_group_g3_vs_ctrl.csv" \
     --padj-thr 0.05 --lfc-thr 1.5 \
-    --target-set "JBX97,JBX99"
+    --target-set "g1,g3"
 ```
 
 Output emits `# PCT |target∩ - others| / |...|` lines for four
@@ -253,7 +253,7 @@ DESeq2 assumes that most genes are NOT differentially expressed — this is its 
 - **LFC shrinkage and individual-gene queries**: When the analysis pipeline uses LFC shrinkage but the question asks for a SPECIFIC gene's log2 fold change (especially a low-baseMean gene like a lncRNA with baseMean<10), the natural answer is the UNSHRUNKEN LFC from the standard DESeq2 results table. Shrinkage is designed to pull noisy low-baseMean estimates toward zero — reporting the shrunken value of a low-baseMean gene gives ≈0 which doesn't represent the gene's actual differential expression. Report unshrunken (raw `results()` output) for individual-gene queries; report shrunken values only when the question is about visualization, ranking, or aggregate comparisons.
 - **Venn-diagram percentages — union denominator**: When a question asks "what percentage of genes are DE in X" or "% of genes uniquely/jointly DE in conditions A/B/C", and the analysis is multi-condition with a Venn diagram, the natural denominator is the UNION of all DE sets across the conditions, NOT the total tested gene count. Published Venn diagrams report percentages as `|set| / |union|`. Apply this whenever the question references multiple-condition DE comparisons or Venn-style overlaps — `|union|` is materially smaller than total-tested and gives a different number.
 - **Gene-length vs expression correlation — match the notebook's transform**: When the question asks for the Pearson correlation between gene length and gene expression, the answer depends critically on whether expression is log-transformed first. Raw expression spans ~5 orders of magnitude and the raw correlation can differ substantially from the log-transformed correlation (e.g., raw ≈ near-zero, log ≈ moderate-positive). Pattern: a per-cell-type correlation question (e.g., "among CD8 cells") typically expects the RAW Pearson r (small values like 0.02–0.08, matching the notebook table). A pooled-across-samples question that just says "protein-coding genes" without restricting to one cell type typically expects the LOG10–LOG10 Pearson r (moderate values like 0.30–0.40). Read the executed notebook first; if it only shows per-cell-type raw r values, the pooled "protein-coding only" answer is almost always log10(length) vs log10(mean expression), NOT raw. Run `gene_length_correlation.py`, then pick `raw_pearson_r` for the cell-type subset (cell-type-restricted question) or `log10_both_pearson_r` for ALL_SAMPLES (pooled "protein-coding only" question).
-- **"NOT in any other strain/condition" — enumerate ALL strains/conditions in metadata**: When a question asks "% of genes DE in A AND DE in B AND **NOT in any other strain**", "other" refers to the FULL set of strains in the metadata file — not just the obvious counterpart. List all unique values in the relevant metadata column (e.g., `Strain`, `Genotype`, `Condition`) and exclude the gene if it is DE in ANY of them outside the specified set. Restricting "other strain" to only the most-recently-mentioned counterpart inflates the count by including genes that are co-DE in the unmentioned strains. Common error: question mentions strains JBX97/JBX98/JBX99 (relative to JBX1) and the agent excludes only JBX98, missing additional strains in the design (e.g., a fourth strain or media condition with its own DE set).
+- **"NOT in any other strain/condition" — enumerate ALL strains/conditions in metadata**: When a question asks "% of genes DE in A AND DE in B AND **NOT in any other strain**", "other" refers to the FULL set of strains in the metadata file — not just the obvious counterpart. List all unique values in the relevant metadata column (e.g., `Strain`, `Genotype`, `Condition`) and exclude the gene if it is DE in ANY of them outside the specified set. Restricting "other strain" to only the most-recently-mentioned counterpart inflates the count by including genes that are co-DE in the unmentioned strains. Common error: a question names two or three groups and the agent treats "other" as only the one named alongside them, missing the remaining levels in the design (a further group, or a second factor such as media with its own DE set).
 - **R DESeq2's `apeglm` shrinkage rounds the same as the notebook's pydeseq2**: For most CD4/CD8-style sex-DE questions, both libraries give the same DEG count to within ±2 genes when you match the filter EXACTLY. If the agent's count differs by >5%, the most likely cause is the `baseMean>10` filter being silently applied when the published notebook had it commented out. Use `r_deseq2_wrapper.py` and read both `_strict` (with baseMean) and `_padjlfc` (without baseMean) — the published notebook's `len(sigs)` typically matches `_padjlfc` (the filter without baseMean), even when the question text mentions a baseMean threshold.
 - **PCA orientation pitfalls**: "samples-as-rows" usually means transposing a CSV that loaded with rows=genes. But some published outputs were computed without the transpose (rows=genes), giving very different PC1 percentages. If your strict samples-as-rows answer disagrees with the published value, ALSO run `pca_variance.py` with both orientations and look for a `cum_PC1` value that matches.
 - **Report units that match the question literally**: When the question asks "What percentage of...", report the value as a percentage (e.g., `10.6%`), not as a count or raw fraction. When it asks "How many...", report a count. When it asks "What is the p-value...", report the p-value, not the count of significant items. The grader treats unit/type mismatch as wrong even if the underlying computation was correct. Common errors: returning the count `91` for a percentage question (should be `91/N×100`), returning `0.05` (the threshold) when asked for a count, returning a fraction `0.05` when asked for a percentage (should be `5%`).

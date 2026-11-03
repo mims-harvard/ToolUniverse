@@ -83,8 +83,7 @@
                     "type": "array",
                     "items": {
                       "type": "integer"
-                    },
-                    "description": "Measured over 32 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+                    }
                   },
                   "description": "Predicted disordered regions as [start, end] pairs"
                 },
@@ -110,9 +109,11 @@
                 "regions": {
                   "type": "array",
                   "items": {
-                    "type": "array"
-                  },
-                  "description": "Measured over 12 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    }
+                  }
                 },
                 "content_count": {
                   "type": [
@@ -129,9 +130,11 @@
                 "regions": {
                   "type": "array",
                   "items": {
-                    "type": "array"
-                  },
-                  "description": "Measured over 8 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    }
+                  }
                 },
                 "content_count": {
                   "type": [
@@ -178,8 +181,7 @@
                     ],
                     "items": {
                       "type": "integer"
-                    },
-                    "description": "Measured over 140 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+                    }
                   }
                 },
                 "entries": {
@@ -200,8 +202,7 @@
                         ],
                         "items": {
                           "type": "integer"
-                        },
-                        "description": "Measured over 140 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+                        }
                       }
                     }
                   }

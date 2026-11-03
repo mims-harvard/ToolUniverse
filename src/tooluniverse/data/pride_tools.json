@@ -50,8 +50,7 @@
             "type": "array",
             "items": {
               "type": "string"
-            },
-            "description": "Measured over 386 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+            }
           },
           "organismParts": {
             "type": "array"
@@ -60,15 +59,13 @@
             "type": "array",
             "items": {
               "type": "string"
-            },
-            "description": "Measured over 2769 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+            }
           },
           "instruments": {
             "type": "array",
             "items": {
               "type": "string"
-            },
-            "description": "Measured over 452 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+            }
           },
           "submissionDate": {
             "type": "string"
@@ -80,22 +77,19 @@
             "type": "array",
             "items": {
               "type": "string"
-            },
-            "description": "Measured over 300 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+            }
           },
           "keywords": {
             "type": "array",
             "items": {
               "type": "string"
-            },
-            "description": "Measured over 1372 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+            }
           },
           "projectTags": {
             "type": "array",
             "items": {
               "type": "string"
-            },
-            "description": "Measured over 18 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+            }
           }
         }
       }
@@ -178,8 +172,7 @@
               "cvLabel",
               "name"
             ]
-          },
-          "description": "Measured over 34 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          }
         },
         "organismParts": {
           "type": "array",
@@ -208,8 +201,7 @@
               "cvLabel",
               "name"
             ]
-          },
-          "description": "Measured over 63 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          }
         },
         "instruments": {
           "type": "array",
@@ -238,8 +230,7 @@
               "cvLabel",
               "name"
             ]
-          },
-          "description": "Measured over 32 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          }
         },
         "submissionDate": {
           "type": "string"
@@ -295,8 +286,7 @@
               "orcid",
               "title"
             ]
-          },
-          "description": "Measured over 30 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          }
         },
         "labPIs": {
           "type": "array",
@@ -346,15 +336,13 @@
               "orcid",
               "title"
             ]
-          },
-          "description": "Measured over 30 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          }
         },
         "keywords": {
           "type": "array",
           "items": {
             "type": "string"
-          },
-          "description": "Measured over 110 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          }
         },
         "doi": {
           "type": "string"

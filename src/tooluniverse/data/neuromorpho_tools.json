@@ -527,8 +527,7 @@
             ],
             "items": {
               "type": "string"
-            },
-            "description": "Measured over 1572 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+            }
           },
           "species": {
             "type": [
@@ -537,8 +536,7 @@
             ],
             "items": {
               "type": "string"
-            },
-            "description": "Measured over 212 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+            }
           },
           "brainRegion": {
             "type": [
@@ -547,8 +545,7 @@
             ],
             "items": {
               "type": "string"
-            },
-            "description": "Measured over 212 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+            }
           },
           "cellType": {
             "type": [
@@ -557,8 +554,7 @@
             ],
             "items": {
               "type": "string"
-            },
-            "description": "Measured over 212 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+            }
           },
           "tracingSystem": {
             "type": [
@@ -567,8 +563,7 @@
             ],
             "items": {
               "type": "string"
-            },
-            "description": "Measured over 212 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+            }
           },
           "evaluatedDate": {
             "type": [
@@ -591,8 +586,7 @@
             ],
             "items": {
               "type": "string"
-            },
-            "description": "Measured over 214 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+            }
           },
           "sharedReconstructions": {
             "type": [
@@ -609,8 +603,7 @@
                   "type": "object"
                 }
               }
-            },
-            "description": "Measured over 11 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+            }
           },
           "status": {
             "type": [
@@ -718,8 +711,7 @@
           ],
           "items": {
             "type": "string"
-          },
-          "description": "Measured over 246 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          }
         },
         "species": {
           "type": [
@@ -728,8 +720,7 @@
           ],
           "items": {
             "type": "string"
-          },
-          "description": "Measured over 36 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          }
         },
         "brainRegion": {
           "type": [
@@ -738,8 +729,7 @@
           ],
           "items": {
             "type": "string"
-          },
-          "description": "Measured over 36 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          }
         },
         "cellType": {
           "type": [
@@ -748,8 +738,7 @@
           ],
           "items": {
             "type": "string"
-          },
-          "description": "Measured over 36 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          }
         },
         "tracingSystem": {
           "type": [
@@ -758,8 +747,7 @@
           ],
           "items": {
             "type": "string"
-          },
-          "description": "Measured over 36 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          }
         },
         "evaluatedDate": {
           "type": [
@@ -780,8 +768,7 @@
           ],
           "items": {
             "type": "string"
-          },
-          "description": "Measured over 36 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          }
         },
         "sharedReconstructions": {
           "type": [

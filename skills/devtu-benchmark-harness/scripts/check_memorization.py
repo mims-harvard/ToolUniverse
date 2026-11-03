@@ -6,6 +6,9 @@ encoding. This script scans skills for signs of overfitting:
   - Benchmark names (BixBench, bix-N question IDs)
   - Dataset-specific capsule IDs / file names that only exist in one dataset
   - Numeric values suspiciously specific to a single question's ground truth
+  - Filenames shaped like one dataset's export rather than a placeholder
+
+It scans `skills/` and both shipped copies under `plugin/` and `plugins/`.
 
 Run this before accepting a skill edit from devtu-optimize-skills.
 
@@ -30,6 +33,16 @@ HARD_PATTERNS = [
     (re.compile(r"CapsuleFolder-[a-f0-9-]+"), "capsule UUID path"),
     (re.compile(r"TASK\d{3}_[A-Z-]+"), "TASK-prefixed dataset filename"),
     (re.compile(r"lab-bench[_-]?task"), "lab-bench task name"),
+    # A documentation example reads a placeholder file. A capitalised word with
+    # a bare trailing number -- Swarm_2.csv, Plate_3.xlsx -- is the shape of a
+    # file exported from one specific dataset, which is how issue #844's worked
+    # solution identified its capsule without ever naming the benchmark. The
+    # patterns above only catch leaks someone already wrote down; this one
+    # catches the shape.
+    (
+        re.compile(r"\b[A-Z][A-Za-z]*_\d+\.(?:csv|tsv|txt|xlsx|parquet)\b"),
+        "dataset-specific export filename (use a placeholder name in examples)",
+    ),
 ]
 
 # Known benchmark-side GT issues (recorded here only to keep the harness honest
@@ -62,6 +75,19 @@ SOFT_PATTERNS = [
 ]
 
 
+def _label(path: Path) -> str:
+    """Path for the report, relative to the repo when it is inside it.
+
+    A path from outside the tree used to raise out of the middle of the scan,
+    so the script exited 1 with a traceback and no finding -- which reads as a
+    detection to anything checking the exit code.
+    """
+    try:
+        return str(path.relative_to(REPO_ROOT))
+    except ValueError:
+        return str(path)
+
+
 def scan_file(path: Path, strict: bool = False):
     """Scan a single file for memorization signals. Returns list of hits."""
     if not path.exists():
@@ -77,15 +103,33 @@ def scan_file(path: Path, strict: bool = False):
     for rx, label in HARD_PATTERNS:
         for m in rx.finditer(text):
             line_no = text[: m.start()].count("\n") + 1
-            ctx = text.splitlines()[line_no - 1][:120] if line_no <= len(text.splitlines()) else ""
-            hits.append(("hard", f"{path.relative_to(REPO_ROOT)}:{line_no}: {label}: {m.group()}  | {ctx}"))
+            ctx = (
+                text.splitlines()[line_no - 1][:120]
+                if line_no <= len(text.splitlines())
+                else ""
+            )
+            hits.append(
+                (
+                    "hard",
+                    f"{_label(path)}:{line_no}: {label}: {m.group()}  | {ctx}",
+                )
+            )
 
     if strict:
         for rx, label in SOFT_PATTERNS:
             for m in rx.finditer(text):
                 line_no = text[: m.start()].count("\n") + 1
-                ctx = text.splitlines()[line_no - 1][:120] if line_no <= len(text.splitlines()) else ""
-                hits.append(("soft", f"{path.relative_to(REPO_ROOT)}:{line_no}: {label}: {m.group()}  | {ctx}"))
+                ctx = (
+                    text.splitlines()[line_no - 1][:120]
+                    if line_no <= len(text.splitlines())
+                    else ""
+                )
+                hits.append(
+                    (
+                        "soft",
+                        f"{_label(path)}:{line_no}: {label}: {m.group()}  | {ctx}",
+                    )
+                )
 
     return hits
 
@@ -93,18 +137,39 @@ def scan_file(path: Path, strict: bool = False):
 def main():
     parser = argparse.ArgumentParser(description="Detect memorization in skill files")
     parser.add_argument("paths", nargs="*", help="Paths to SKILL.md or similar files")
-    parser.add_argument("--all", action="store_true", help="Scan all tooluniverse-*/ skill files")
-    parser.add_argument("--strict", action="store_true", help="Include soft patterns (specific gene names, numeric GTs)")
+    parser.add_argument(
+        "--all", action="store_true", help="Scan all tooluniverse-*/ skill files"
+    )
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="Include soft patterns (specific gene names, numeric GTs)",
+    )
     args = parser.parse_args()
 
     paths = []
     if args.all:
-        for skill_dir in (REPO_ROOT / "skills").glob("tooluniverse-*"):
-            for p in skill_dir.rglob("*.md"):
-                if "references/" in str(p) or p.name in ("SKILL.md", "QUICK_START.md"):
+        # All three roots. `skills/` is the source, but `plugin/skills/` and
+        # `plugins/tooluniverse/skills/` are the copies that ship and get
+        # redistributed, and scanning only the source lets a leak survive in
+        # exactly the copy other people download.
+        roots = [
+            REPO_ROOT / "skills",
+            REPO_ROOT / "plugin" / "skills",
+            REPO_ROOT / "plugins" / "tooluniverse" / "skills",
+        ]
+        for root in roots:
+            if not root.is_dir():
+                continue
+            for skill_dir in sorted(root.glob("tooluniverse-*")):
+                for p in sorted(skill_dir.rglob("*.md")):
+                    if "references/" in str(p) or p.name in (
+                        "SKILL.md",
+                        "QUICK_START.md",
+                    ):
+                        paths.append(p)
+                for p in sorted(skill_dir.glob("scripts/*.py")):
                     paths.append(p)
-            for p in skill_dir.glob("scripts/*.py"):
-                paths.append(p)
     else:
         paths = [Path(p) for p in args.paths]
 

@@ -1347,8 +1347,7 @@
               "type": "array",
               "items": {
                 "type": "string"
-              },
-              "description": "Measured over 10 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+              }
             },
             "enrollment": {
               "type": [
@@ -1366,8 +1365,7 @@
               "type": "array",
               "items": {
                 "type": "string"
-              },
-              "description": "Measured over 23 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+              }
             },
             "interventions": {
               "type": "array",
@@ -1387,8 +1385,7 @@
                     "type": "string"
                   }
                 }
-              },
-              "description": "Measured over 19 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+              }
             },
             "arms": {
               "type": "array",
@@ -1402,7 +1399,10 @@
                     ]
                   },
                   "intervention_names": {
-                    "type": "array"
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
                   },
                   "label": {
                     "type": "string"
@@ -1420,8 +1420,7 @@
                   "label",
                   "type"
                 ]
-              },
-              "description": "Measured over 38 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+              }
             },
             "arm_count": {
               "type": "integer"
@@ -1452,8 +1451,7 @@
                   "measure",
                   "time_frame"
                 ]
-              },
-              "description": "Measured over 85 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+              }
             },
             "primary_outcome_count": {
               "type": "integer"
@@ -1497,8 +1495,7 @@
                   "facility",
                   "status"
                 ]
-              },
-              "description": "Measured over 295 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+              }
             },
             "location_count": {
               "type": "integer"
@@ -1522,8 +1519,7 @@
                   "citation",
                   "type"
                 ]
-              },
-              "description": "Measured over 59 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+              }
             },
             "reference_count": {
               "type": "integer"

@@ -188,6 +188,12 @@
         }
       ]
     },
+    "required_binaries": [
+      {
+        "name": "mmseqs",
+        "env_var": "TOOLUNIVERSE_MMSEQS2_BINARY"
+      }
+    ],
     "test_examples": [
       {
         "query_path": "builtin:1UBQ",
@@ -374,6 +380,12 @@
         }
       ]
     },
+    "required_binaries": [
+      {
+        "name": "foldseek",
+        "env_var": "TOOLUNIVERSE_FOLDSEEK_BINARY"
+      }
+    ],
     "test_examples": [
       {
         "query_path": "builtin:1UBQ",

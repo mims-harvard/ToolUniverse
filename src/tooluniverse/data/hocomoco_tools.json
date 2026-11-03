@@ -94,8 +94,7 @@
           ],
           "items": {
             "type": "string"
-          },
-          "description": "Measured over 44 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          }
         },
         "gene_synonyms_mouse": {
           "type": [
@@ -104,8 +103,7 @@
           ],
           "items": {
             "type": "string"
-          },
-          "description": "Measured over 58 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          }
         },
         "quality": {"type": ["string", "null"]},
         "consensus": {"type": ["string", "null"]},
@@ -123,8 +121,7 @@
           ],
           "items": {
             "type": "string"
-          },
-          "description": "Measured over 28 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          }
         },
         "entrezgene_ids_human": {
           "type": [
@@ -133,8 +130,7 @@
           ],
           "items": {
             "type": "string"
-          },
-          "description": "Measured over 28 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          }
         },
         "entrezgene_ids_mouse": {
           "type": [
@@ -143,8 +139,7 @@
           ],
           "items": {
             "type": "string"
-          },
-          "description": "Measured over 26 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          }
         },
         "tfclass": {"type": ["object", "null"]},
         "motif_cluster": {"type": ["string", "null"]},
@@ -156,8 +151,7 @@
           ],
           "items": {
             "type": "string"
-          },
-          "description": "Measured over 28 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          }
         },
         "retracted": {"type": ["boolean", "null"]},
         "pwm_requested": {
@@ -176,9 +170,11 @@
             "null"
           ],
           "items": {
-            "type": "array"
-          },
-          "description": "Measured over 228 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
         }
       }
     }

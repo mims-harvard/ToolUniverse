@@ -1892,8 +1892,7 @@
                                 "referenceId",
                                 "uuid"
                               ]
-                            },
-                            "description": "Measured over 468 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+                            }
                           },
                           "abstractText": {
                             "type": "string"
@@ -1928,10 +1927,182 @@
                                   "type": "integer"
                                 },
                                 "referencePicoOutcomeContinuous": {
-                                  "type": "array"
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "absoluteDifference": {
+                                        "type": [
+                                          "number",
+                                          "null"
+                                        ]
+                                      },
+                                      "absoluteDifferenceDirection": {
+                                        "type": "string"
+                                      },
+                                      "absoluteDifferenceHigh": {
+                                        "type": [
+                                          "number",
+                                          "null"
+                                        ]
+                                      },
+                                      "absoluteDifferenceHighDirection": {
+                                        "type": "string"
+                                      },
+                                      "absoluteDifferenceLow": {
+                                        "type": [
+                                          "number",
+                                          "null"
+                                        ]
+                                      },
+                                      "absoluteDifferenceLowDirection": {
+                                        "type": "string"
+                                      },
+                                      "absoluteDifferenceType": {
+                                        "type": "string"
+                                      },
+                                      "outcome": {
+                                        "type": "string"
+                                      },
+                                      "outcomeId": {
+                                        "type": "integer"
+                                      },
+                                      "referencePicoId": {
+                                        "type": "integer"
+                                      },
+                                      "revManId": {
+                                        "type": "string"
+                                      },
+                                      "studyData": {
+                                        "type": "array"
+                                      }
+                                    },
+                                    "required": [
+                                      "absoluteDifference",
+                                      "absoluteDifferenceDirection",
+                                      "absoluteDifferenceHigh",
+                                      "absoluteDifferenceHighDirection",
+                                      "absoluteDifferenceLow",
+                                      "absoluteDifferenceLowDirection",
+                                      "absoluteDifferenceType",
+                                      "outcome",
+                                      "outcomeId",
+                                      "referencePicoId",
+                                      "revManId",
+                                      "studyData"
+                                    ]
+                                  }
                                 },
                                 "referencePicoOutcomeDichotomous": {
-                                  "type": "array"
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "absoluteDifference": {
+                                        "type": [
+                                          "number",
+                                          "null"
+                                        ]
+                                      },
+                                      "absoluteDifferenceDirection": {
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      },
+                                      "absoluteDifferenceHigh": {
+                                        "type": [
+                                          "number",
+                                          "null"
+                                        ]
+                                      },
+                                      "absoluteDifferenceHighDirection": {
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      },
+                                      "absoluteDifferenceLow": {
+                                        "type": [
+                                          "number",
+                                          "null"
+                                        ]
+                                      },
+                                      "absoluteDifferenceLowDirection": {
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      },
+                                      "comparatorEffect": {
+                                        "type": [
+                                          "number",
+                                          "null"
+                                        ]
+                                      },
+                                      "interventionEffect": {
+                                        "type": [
+                                          "number",
+                                          "null"
+                                        ]
+                                      },
+                                      "outcome": {
+                                        "type": "string"
+                                      },
+                                      "outcomeId": {
+                                        "type": "integer"
+                                      },
+                                      "referencePicoId": {
+                                        "type": "integer"
+                                      },
+                                      "relativeEffect": {
+                                        "type": [
+                                          "number",
+                                          "null"
+                                        ]
+                                      },
+                                      "relativeEffectConfidenceHigh": {
+                                        "type": [
+                                          "number",
+                                          "null"
+                                        ]
+                                      },
+                                      "relativeEffectConfidenceLow": {
+                                        "type": [
+                                          "number",
+                                          "null"
+                                        ]
+                                      },
+                                      "relativeEffectType": {
+                                        "type": "string"
+                                      },
+                                      "revManId": {
+                                        "type": "string"
+                                      },
+                                      "studyData": {
+                                        "type": "array"
+                                      }
+                                    },
+                                    "required": [
+                                      "absoluteDifference",
+                                      "absoluteDifferenceDirection",
+                                      "absoluteDifferenceHigh",
+                                      "absoluteDifferenceHighDirection",
+                                      "absoluteDifferenceLow",
+                                      "absoluteDifferenceLowDirection",
+                                      "comparatorEffect",
+                                      "interventionEffect",
+                                      "outcome",
+                                      "outcomeId",
+                                      "referencePicoId",
+                                      "relativeEffect",
+                                      "relativeEffectConfidenceHigh",
+                                      "relativeEffectConfidenceLow",
+                                      "relativeEffectType",
+                                      "revManId",
+                                      "studyData"
+                                    ]
+                                  }
                                 },
                                 "referencePicoOutcomeNarrative": {
                                   "type": "array"
@@ -1955,8 +2126,7 @@
                                 "revManId",
                                 "setting"
                               ]
-                            },
-                            "description": "Measured over 491 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+                            }
                           },
                           "files": {
                             "type": "array",
@@ -2006,8 +2176,7 @@
                                 "referenceId",
                                 "uuid"
                               ]
-                            },
-                            "description": "Measured over 468 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+                            }
                           },
                           "results": {
                             "type": "string"
@@ -2042,8 +2211,7 @@
                             "type": "string"
                           }
                         }
-                      },
-                      "description": "Measured over 12 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+                      }
                     }
                   }
                 }
@@ -2190,8 +2358,7 @@
                           "referenceId",
                           "uuid"
                         ]
-                      },
-                      "description": "Measured over 469 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+                      }
                     },
                     "abstractText": {
                       "type": "string"
@@ -2226,10 +2393,182 @@
                             "type": "integer"
                           },
                           "referencePicoOutcomeContinuous": {
-                            "type": "array"
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "absoluteDifference": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "absoluteDifferenceDirection": {
+                                  "type": "string"
+                                },
+                                "absoluteDifferenceHigh": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "absoluteDifferenceHighDirection": {
+                                  "type": "string"
+                                },
+                                "absoluteDifferenceLow": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "absoluteDifferenceLowDirection": {
+                                  "type": "string"
+                                },
+                                "absoluteDifferenceType": {
+                                  "type": "string"
+                                },
+                                "outcome": {
+                                  "type": "string"
+                                },
+                                "outcomeId": {
+                                  "type": "integer"
+                                },
+                                "referencePicoId": {
+                                  "type": "integer"
+                                },
+                                "revManId": {
+                                  "type": "string"
+                                },
+                                "studyData": {
+                                  "type": "array"
+                                }
+                              },
+                              "required": [
+                                "absoluteDifference",
+                                "absoluteDifferenceDirection",
+                                "absoluteDifferenceHigh",
+                                "absoluteDifferenceHighDirection",
+                                "absoluteDifferenceLow",
+                                "absoluteDifferenceLowDirection",
+                                "absoluteDifferenceType",
+                                "outcome",
+                                "outcomeId",
+                                "referencePicoId",
+                                "revManId",
+                                "studyData"
+                              ]
+                            }
                           },
                           "referencePicoOutcomeDichotomous": {
-                            "type": "array"
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "absoluteDifference": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "absoluteDifferenceDirection": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "absoluteDifferenceHigh": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "absoluteDifferenceHighDirection": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "absoluteDifferenceLow": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "absoluteDifferenceLowDirection": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "comparatorEffect": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "interventionEffect": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "outcome": {
+                                  "type": "string"
+                                },
+                                "outcomeId": {
+                                  "type": "integer"
+                                },
+                                "referencePicoId": {
+                                  "type": "integer"
+                                },
+                                "relativeEffect": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "relativeEffectConfidenceHigh": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "relativeEffectConfidenceLow": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "relativeEffectType": {
+                                  "type": "string"
+                                },
+                                "revManId": {
+                                  "type": "string"
+                                },
+                                "studyData": {
+                                  "type": "array"
+                                }
+                              },
+                              "required": [
+                                "absoluteDifference",
+                                "absoluteDifferenceDirection",
+                                "absoluteDifferenceHigh",
+                                "absoluteDifferenceHighDirection",
+                                "absoluteDifferenceLow",
+                                "absoluteDifferenceLowDirection",
+                                "comparatorEffect",
+                                "interventionEffect",
+                                "outcome",
+                                "outcomeId",
+                                "referencePicoId",
+                                "relativeEffect",
+                                "relativeEffectConfidenceHigh",
+                                "relativeEffectConfidenceLow",
+                                "relativeEffectType",
+                                "revManId",
+                                "studyData"
+                              ]
+                            }
                           },
                           "referencePicoOutcomeNarrative": {
                             "type": "array"
@@ -2253,8 +2592,7 @@
                           "revManId",
                           "setting"
                         ]
-                      },
-                      "description": "Measured over 441 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+                      }
                     },
                     "files": {
                       "type": "array",
@@ -2304,8 +2642,7 @@
                           "referenceId",
                           "uuid"
                         ]
-                      },
-                      "description": "Measured over 469 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+                      }
                     },
                     "results": {
                       "type": "string"
@@ -2362,8 +2699,7 @@
                     "fullPath",
                     "uuid"
                   ]
-                },
-                "description": "Measured over 526 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+                }
               },
               "images": {
                 "type": "array",
@@ -2401,8 +2737,7 @@
                     "srcSet",
                     "uuid"
                   ]
-                },
-                "description": "Measured over 21 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+                }
               },
               "referenceIds": {
                 "type": "array",

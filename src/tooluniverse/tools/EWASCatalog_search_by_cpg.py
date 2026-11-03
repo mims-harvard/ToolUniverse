@@ -1,7 +1,7 @@
 """
 EWASCatalog_search_by_cpg
 
-NOTE (checked 2026-10-09): ewascatalog.org has answered HTTP 503 site-wide since at least 2026-10...
+NOTE (re-checked 2026-11-01): the 503 reported on 2026-10-09 is gone, but the catalogue is now HT...
 """
 
 from typing import Any, Optional, Callable
@@ -17,7 +17,7 @@ def EWASCatalog_search_by_cpg(
     validate: bool = True,
 ) -> Any:
     """
-    NOTE (checked 2026-10-09): ewascatalog.org has answered HTTP 503 site-wide since at least 2026-10...
+    NOTE (re-checked 2026-11-01): the 503 reported on 2026-10-09 is gone, but the catalogue is now HT...
 
     Parameters
     ----------

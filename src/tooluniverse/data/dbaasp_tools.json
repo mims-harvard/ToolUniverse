@@ -83,8 +83,7 @@
                 "required": [
                   "name"
                 ]
-              },
-              "description": "Measured over 46 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+              }
             },
             "targetActivities": {
               "type": "array",
@@ -185,8 +184,7 @@
                   "targetSpecies",
                   "unit"
                 ]
-              },
-              "description": "Measured over 163 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+              }
             },
             "hemoliticCytotoxicActivities": {
               "type": "array",
@@ -251,8 +249,7 @@
                     ]
                   }
                 }
-              },
-              "description": "Measured over 11 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+              }
             },
             "antibiofilmActivities": {
               "type": "array"
@@ -278,8 +275,7 @@
                     "type": "string"
                   }
                 }
-              },
-              "description": "Measured over 9 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+              }
             },
             "sourceGenes": {
               "type": "array",
@@ -317,8 +313,7 @@
                     "type": "string"
                   }
                 }
-              },
-              "description": "Measured over 12 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+              }
             },
             "smiles": {
               "type": [
@@ -370,8 +365,7 @@
                   "smiles",
                   "smilesImageUrl"
                 ]
-              },
-              "description": "Measured over 27 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+              }
             },
             "articles": {
               "type": "array",
@@ -397,8 +391,7 @@
                         "description",
                         "name"
                       ]
-                    },
-                    "description": "Measured over 343 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+                    }
                   },
                   "id": {
                     "type": "integer"
@@ -433,8 +426,7 @@
                   "volume",
                   "year"
                 ]
-              },
-              "description": "Measured over 27 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+              }
             }
           },
           "required": [

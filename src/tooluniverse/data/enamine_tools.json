@@ -1,7 +1,7 @@
 [
   {
     "name": "Enamine_search_catalog",
-    "description": "Search Enamine compound catalog by keyword or name when the Enamine Store API is available. The tool returns an explicit error rather than a successful empty result when the upstream endpoint is unavailable. JSON payloads support local limit/offset pagination, with metadata warning that upstream global completeness is undocumented.",
+    "description": "DEPRECATED / non-functional (verified 2026-11-01): the Enamine Store API this tool calls has been withdrawn. https://new.enaminestore.com/api/... now 302-redirects to https://enaminestore.com/api/..., which answers 404 for every path (catalog/search, catalog/compound/{id}, catalog/structure-search, libraries); the store front-end is a Next.js app that exposes no documented public API, and https://enamine.net/api/ is an unrelated Joomla endpoint. Every call therefore returns an error. For Enamine's catalogue use PubChem, which holds 5,199,802 Enamine substances as a depositor source: PubChem_get_CID_by_compound_name with the catalog number as 'name' (EN300-00002 resolves to CID 220107) and PubChem_get_substances_by_source with source='Enamine'. Search Enamine compound catalog by keyword or name when the Enamine Store API is available. The tool returns an explicit error rather than a successful empty result when the upstream endpoint is unavailable. JSON payloads support local limit/offset pagination, with metadata warning that upstream global completeness is undocumented.",
     "type": "EnamineTool",
     "parameter": {
       "type": "object",
@@ -60,7 +60,7 @@
   },
   {
     "name": "Enamine_get_compound",
-    "description": "Get compound details by Enamine ID when the Enamine Store API is available. If upstream retrieval fails, returns an explicit error and never substitutes a guessed web URL for compound data.",
+    "description": "DEPRECATED / non-functional (verified 2026-11-01): the Enamine Store API this tool calls has been withdrawn. https://new.enaminestore.com/api/... now 302-redirects to https://enaminestore.com/api/..., which answers 404 for every path (catalog/search, catalog/compound/{id}, catalog/structure-search, libraries); the store front-end is a Next.js app that exposes no documented public API, and https://enamine.net/api/ is an unrelated Joomla endpoint. Every call therefore returns an error. For Enamine's catalogue use PubChem, which holds 5,199,802 Enamine substances as a depositor source: PubChem_get_CID_by_compound_name with the catalog number as 'name' (EN300-00002 resolves to CID 220107) and PubChem_get_substances_by_source with source='Enamine'. Get compound details by Enamine ID when the Enamine Store API is available. If upstream retrieval fails, returns an explicit error and never substitutes a guessed web URL for compound data.",
     "type": "EnamineTool",
     "parameter": {
       "type": "object",
@@ -101,7 +101,7 @@
   },
   {
     "name": "Enamine_search_smiles",
-    "description": "Search Enamine by chemical structure (SMILES) when the Enamine Store API is available. Returns an explicit error rather than a successful empty result when upstream is unavailable. JSON payloads support local limit/offset pagination with unknown upstream completeness.",
+    "description": "DEPRECATED / non-functional (verified 2026-11-01): the Enamine Store API this tool calls has been withdrawn. https://new.enaminestore.com/api/... now 302-redirects to https://enaminestore.com/api/..., which answers 404 for every path (catalog/search, catalog/compound/{id}, catalog/structure-search, libraries); the store front-end is a Next.js app that exposes no documented public API, and https://enamine.net/api/ is an unrelated Joomla endpoint. Every call therefore returns an error. For Enamine's catalogue use PubChem, which holds 5,199,802 Enamine substances as a depositor source: PubChem_get_CID_by_compound_name with the catalog number as 'name' (EN300-00002 resolves to CID 220107) and PubChem_get_substances_by_source with source='Enamine'. Search Enamine by chemical structure (SMILES) when the Enamine Store API is available. Returns an explicit error rather than a successful empty result when upstream is unavailable. JSON payloads support local limit/offset pagination with unknown upstream completeness.",
     "type": "EnamineTool",
     "parameter": {
       "type": "object",
@@ -165,7 +165,7 @@
   },
   {
     "name": "Enamine_get_libraries",
-    "description": "Retrieve the live Enamine library catalog when its Store API is available. If upstream is unavailable, returns an explicit error rather than presenting hard-coded marketing copy as retrieved data.",
+    "description": "DEPRECATED / non-functional (verified 2026-11-01): the Enamine Store API this tool calls has been withdrawn. https://new.enaminestore.com/api/... now 302-redirects to https://enaminestore.com/api/..., which answers 404 for every path (catalog/search, catalog/compound/{id}, catalog/structure-search, libraries); the store front-end is a Next.js app that exposes no documented public API, and https://enamine.net/api/ is an unrelated Joomla endpoint. Every call therefore returns an error. For Enamine's catalogue use PubChem, which holds 5,199,802 Enamine substances as a depositor source: PubChem_get_CID_by_compound_name with the catalog number as 'name' (EN300-00002 resolves to CID 220107) and PubChem_get_substances_by_source with source='Enamine'. Retrieve the live Enamine library catalog when its Store API is available. If upstream is unavailable, returns an explicit error rather than presenting hard-coded marketing copy as retrieved data.",
     "type": "EnamineTool",
     "parameter": {
       "type": "object",
