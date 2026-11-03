@@ -33,56 +33,72 @@
       }
     ],
     "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "chembl_id": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "ChEMBL molecule ID"
-          },
-          "pref_name": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Preferred name"
-          },
-          "smiles": {
-            "type": "string",
-            "description": "SMILES string"
-          },
-          "similar_molecules": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "chembl_id": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "pref_name": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "smiles": {
-                  "type": "string"
-                },
-                "similarity": {
-                  "type": "string"
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "chembl_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "ChEMBL molecule ID"
+              },
+              "pref_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Preferred name"
+              },
+              "smiles": {
+                "type": "string",
+                "description": "SMILES string"
+              },
+              "similar_molecules": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "chembl_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "pref_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "smiles": {
+                      "type": "string"
+                    },
+                    "similarity": {
+                      "type": "string"
+                    }
+                  }
                 }
               }
             }
           }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ],
+          "description": "The failure envelope the tool returns instead of a result, e.g. when the optional epam.indigo dependency for structure similarity is absent."
         }
-      }
+      ]
     },
     "required_packages": ["epam.indigo"]
   },
@@ -310,7 +326,26 @@
             "targets": {
               "type": "array",
               "items": {
-                "type": "object"
+                "type": "object",
+                "properties": {
+                  "organism": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "pref_name": {
+                    "type": "string"
+                  },
+                  "target_chembl_id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "organism",
+                  "pref_name",
+                  "target_chembl_id"
+                ]
               }
             }
           }
@@ -442,7 +477,42 @@
               "type": "array",
               "items": {
                 "type": "object",
-                "description": "Target objects returned by ChEMBL. When 'fields' is provided, each object will contain only the selected fields."
+                "properties": {
+                  "cross_references": {
+                    "type": "array"
+                  },
+                  "organism": {
+                    "type": "string"
+                  },
+                  "pref_name": {
+                    "type": "string"
+                  },
+                  "species_group_flag": {
+                    "type": "boolean"
+                  },
+                  "target_chembl_id": {
+                    "type": "string"
+                  },
+                  "target_components": {
+                    "type": "array"
+                  },
+                  "target_type": {
+                    "type": "string"
+                  },
+                  "tax_id": {
+                    "type": "integer"
+                  }
+                },
+                "required": [
+                  "cross_references",
+                  "organism",
+                  "pref_name",
+                  "species_group_flag",
+                  "target_chembl_id",
+                  "target_components",
+                  "target_type",
+                  "tax_id"
+                ]
               }
             }
           }
@@ -557,7 +627,117 @@
             "assays": {
               "type": "array",
               "items": {
-                "type": "object"
+                "type": "object",
+                "properties": {
+                  "aidx": {
+                    "type": "string"
+                  },
+                  "assay_cell_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "assay_chembl_id": {
+                    "type": "string"
+                  },
+                  "assay_classifications": {
+                    "type": "array"
+                  },
+                  "assay_organism": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "assay_parameters": {
+                    "type": "array"
+                  },
+                  "assay_tax_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "assay_test_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "assay_type": {
+                    "type": "string"
+                  },
+                  "assay_type_description": {
+                    "type": "string"
+                  },
+                  "bao_format": {
+                    "type": "string"
+                  },
+                  "bao_label": {
+                    "type": "string"
+                  },
+                  "cell_chembl_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "confidence_description": {
+                    "type": "string"
+                  },
+                  "confidence_score": {
+                    "type": "integer"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "document_chembl_id": {
+                    "type": "string"
+                  },
+                  "relationship_description": {
+                    "type": "string"
+                  },
+                  "relationship_type": {
+                    "type": "string"
+                  },
+                  "src_id": {
+                    "type": "integer"
+                  },
+                  "target_chembl_id": {
+                    "type": "string"
+                  },
+                  "variant_sequence": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "aidx",
+                  "assay_cell_type",
+                  "assay_chembl_id",
+                  "assay_classifications",
+                  "assay_organism",
+                  "assay_parameters",
+                  "assay_tax_id",
+                  "assay_test_type",
+                  "assay_type",
+                  "assay_type_description",
+                  "bao_format",
+                  "bao_label",
+                  "cell_chembl_id",
+                  "confidence_description",
+                  "confidence_score",
+                  "description",
+                  "document_chembl_id",
+                  "relationship_description",
+                  "relationship_type",
+                  "src_id",
+                  "target_chembl_id",
+                  "variant_sequence"
+                ]
               }
             }
           }
@@ -687,7 +867,212 @@
             "activities": {
               "type": "array",
               "items": {
-                "type": "object"
+                "type": "object",
+                "properties": {
+                  "action_type": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
+                  "activity_comment": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "activity_id": {
+                    "type": "integer"
+                  },
+                  "activity_properties": {
+                    "type": "array"
+                  },
+                  "assay_chembl_id": {
+                    "type": "string"
+                  },
+                  "assay_description": {
+                    "type": "string"
+                  },
+                  "assay_type": {
+                    "type": "string"
+                  },
+                  "bao_endpoint": {
+                    "type": "string"
+                  },
+                  "bao_format": {
+                    "type": "string"
+                  },
+                  "bao_label": {
+                    "type": "string"
+                  },
+                  "canonical_smiles": {
+                    "type": "string"
+                  },
+                  "data_validity_comment": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "data_validity_description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "document_chembl_id": {
+                    "type": "string"
+                  },
+                  "document_journal": {
+                    "type": "string"
+                  },
+                  "document_year": {
+                    "type": "integer"
+                  },
+                  "ligand_efficiency": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
+                  "molecule_chembl_id": {
+                    "type": "string"
+                  },
+                  "molecule_pref_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "parent_molecule_chembl_id": {
+                    "type": "string"
+                  },
+                  "pchembl_value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "potential_duplicate": {
+                    "type": "integer"
+                  },
+                  "qudt_units": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "record_id": {
+                    "type": "integer"
+                  },
+                  "relation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "src_id": {
+                    "type": "integer"
+                  },
+                  "standard_flag": {
+                    "type": "integer"
+                  },
+                  "standard_relation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "standard_type": {
+                    "type": "string"
+                  },
+                  "standard_units": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "standard_value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "target_chembl_id": {
+                    "type": "string"
+                  },
+                  "target_organism": {
+                    "type": "string"
+                  },
+                  "target_pref_name": {
+                    "type": "string"
+                  },
+                  "target_tax_id": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "units": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "uo_units": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "action_type",
+                  "activity_comment",
+                  "activity_id",
+                  "activity_properties",
+                  "assay_chembl_id",
+                  "assay_description",
+                  "assay_type",
+                  "bao_endpoint",
+                  "bao_format",
+                  "bao_label",
+                  "canonical_smiles",
+                  "data_validity_comment",
+                  "data_validity_description",
+                  "document_chembl_id",
+                  "document_journal",
+                  "document_year",
+                  "ligand_efficiency",
+                  "molecule_chembl_id",
+                  "molecule_pref_name",
+                  "parent_molecule_chembl_id",
+                  "pchembl_value",
+                  "potential_duplicate",
+                  "qudt_units",
+                  "record_id",
+                  "relation",
+                  "src_id",
+                  "standard_flag",
+                  "standard_relation",
+                  "standard_type",
+                  "standard_units",
+                  "standard_value",
+                  "target_chembl_id",
+                  "target_organism",
+                  "target_pref_name",
+                  "target_tax_id",
+                  "type",
+                  "units",
+                  "uo_units",
+                  "value"
+                ]
               }
             }
           }
@@ -817,7 +1202,116 @@
               "type": "array",
               "items": {
                 "type": "object",
-                "description": "Assay objects returned by ChEMBL. When 'fields' is provided, each object will contain only the selected fields."
+                "properties": {
+                  "aidx": {
+                    "type": "string"
+                  },
+                  "assay_cell_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "assay_chembl_id": {
+                    "type": "string"
+                  },
+                  "assay_classifications": {
+                    "type": "array"
+                  },
+                  "assay_organism": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "assay_parameters": {
+                    "type": "array"
+                  },
+                  "assay_tax_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "assay_test_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "assay_type": {
+                    "type": "string"
+                  },
+                  "assay_type_description": {
+                    "type": "string"
+                  },
+                  "bao_format": {
+                    "type": "string"
+                  },
+                  "bao_label": {
+                    "type": "string"
+                  },
+                  "cell_chembl_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "confidence_description": {
+                    "type": "string"
+                  },
+                  "confidence_score": {
+                    "type": "integer"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "document_chembl_id": {
+                    "type": "string"
+                  },
+                  "relationship_description": {
+                    "type": "string"
+                  },
+                  "relationship_type": {
+                    "type": "string"
+                  },
+                  "src_id": {
+                    "type": "integer"
+                  },
+                  "target_chembl_id": {
+                    "type": "string"
+                  },
+                  "variant_sequence": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "aidx",
+                  "assay_cell_type",
+                  "assay_chembl_id",
+                  "assay_classifications",
+                  "assay_organism",
+                  "assay_parameters",
+                  "assay_tax_id",
+                  "assay_test_type",
+                  "assay_type",
+                  "assay_type_description",
+                  "bao_format",
+                  "bao_label",
+                  "cell_chembl_id",
+                  "confidence_description",
+                  "confidence_score",
+                  "description",
+                  "document_chembl_id",
+                  "relationship_description",
+                  "relationship_type",
+                  "src_id",
+                  "target_chembl_id",
+                  "variant_sequence"
+                ]
               }
             }
           }
@@ -1044,7 +1538,8 @@
                     "type": "string"
                   },
                   "standard_units": {
-                    "type": "string"
+                    "type": ["string", "null"],
+                    "description": "Unit of standard_value, null where ChEMBL recorded the activity without one. Null in 5 of 216 rows across five targets -- and in 0 of 150 rows for three of those five, so a sample from one target shows none of them however many pages it covers."
                   }
                 }
               }
@@ -1274,7 +1769,169 @@
             "drugs": {
               "type": "array",
               "items": {
-                "type": "object"
+                "type": "object",
+                "properties": {
+                  "applicants": {
+                    "type": [
+                      "array",
+                      "null"
+                    ]
+                  },
+                  "atc_classification": {
+                    "type": [
+                      "array",
+                      "null"
+                    ]
+                  },
+                  "availability_type": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "biotherapeutic": {
+                    "type": [
+                      "object",
+                      "null"
+                    ]
+                  },
+                  "black_box_warning": {
+                    "type": "string"
+                  },
+                  "chirality": {
+                    "type": "integer"
+                  },
+                  "drug_type": {
+                    "type": "integer"
+                  },
+                  "first_approval": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "first_in_class": {
+                    "type": "integer"
+                  },
+                  "helm_notation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "max_phase": {
+                    "type": "string"
+                  },
+                  "molecule_chembl_id": {
+                    "type": "string"
+                  },
+                  "molecule_properties": {
+                    "type": "object"
+                  },
+                  "molecule_structures": {
+                    "type": "object"
+                  },
+                  "molecule_synonyms": {
+                    "type": "array"
+                  },
+                  "ob_patent": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "oral": {
+                    "type": "integer"
+                  },
+                  "parenteral": {
+                    "type": "integer"
+                  },
+                  "prodrug": {
+                    "type": "integer"
+                  },
+                  "research_codes": {
+                    "type": [
+                      "array",
+                      "null"
+                    ]
+                  },
+                  "rule_of_five": {
+                    "type": "integer"
+                  },
+                  "sc_patent": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "synonyms": {
+                    "type": [
+                      "array",
+                      "null"
+                    ]
+                  },
+                  "topical": {
+                    "type": "integer"
+                  },
+                  "usan_stem": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "usan_stem_definition": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "usan_stem_substem": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "usan_year": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "withdrawn_flag": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "applicants",
+                  "atc_classification",
+                  "availability_type",
+                  "biotherapeutic",
+                  "black_box_warning",
+                  "chirality",
+                  "drug_type",
+                  "first_approval",
+                  "first_in_class",
+                  "helm_notation",
+                  "max_phase",
+                  "molecule_chembl_id",
+                  "molecule_properties",
+                  "molecule_structures",
+                  "molecule_synonyms",
+                  "ob_patent",
+                  "oral",
+                  "parenteral",
+                  "prodrug",
+                  "research_codes",
+                  "rule_of_five",
+                  "sc_patent",
+                  "synonyms",
+                  "topical",
+                  "usan_stem",
+                  "usan_stem_definition",
+                  "usan_stem_substem",
+                  "usan_year",
+                  "withdrawn_flag"
+                ]
               }
             }
           }
@@ -1470,7 +2127,18 @@
             "binding_sites": {
               "type": "array",
               "items": {
-                "type": "object"
+                "type": "object",
+                "properties": {
+                  "site_components": {
+                    "type": "array"
+                  },
+                  "site_id": {
+                    "type": "integer"
+                  },
+                  "site_name": {
+                    "type": "string"
+                  }
+                }
               }
             }
           }
@@ -1568,7 +2236,84 @@
             "molecules": {
               "type": "array",
               "items": {
-                "type": "object"
+                "type": "object",
+                "properties": {
+                  "atc_classifications": {
+                    "type": "array"
+                  },
+                  "availability_type": {
+                    "type": "integer"
+                  },
+                  "black_box_warning": {
+                    "type": "integer"
+                  },
+                  "chemical_probe": {
+                    "type": "integer"
+                  },
+                  "chirality": {
+                    "type": "integer"
+                  },
+                  "cross_references": {
+                    "type": "array"
+                  },
+                  "dosed_ingredient": {
+                    "type": "boolean"
+                  },
+                  "first_in_class": {
+                    "type": "integer"
+                  },
+                  "inorganic_flag": {
+                    "type": "integer"
+                  },
+                  "molecule_chembl_id": {
+                    "type": "string"
+                  },
+                  "molecule_hierarchy": {
+                    "type": "object"
+                  },
+                  "molecule_properties": {
+                    "type": "object"
+                  },
+                  "molecule_structures": {
+                    "type": "object"
+                  },
+                  "molecule_type": {
+                    "type": "string"
+                  },
+                  "natural_product": {
+                    "type": "integer"
+                  },
+                  "oral": {
+                    "type": "boolean"
+                  },
+                  "orphan": {
+                    "type": "integer"
+                  },
+                  "parenteral": {
+                    "type": "boolean"
+                  },
+                  "polymer_flag": {
+                    "type": "integer"
+                  },
+                  "prodrug": {
+                    "type": "integer"
+                  },
+                  "structure_type": {
+                    "type": "string"
+                  },
+                  "therapeutic_flag": {
+                    "type": "boolean"
+                  },
+                  "topical": {
+                    "type": "boolean"
+                  },
+                  "veterinary": {
+                    "type": "integer"
+                  },
+                  "withdrawn_flag": {
+                    "type": "boolean"
+                  }
+                }
               }
             }
           }
@@ -1978,7 +2723,48 @@
             "cell_lines": {
               "type": "array",
               "items": {
-                "type": "object"
+                "type": "object",
+                "properties": {
+                  "cell_chembl_id": {
+                    "type": "string"
+                  },
+                  "cell_description": {
+                    "type": "string"
+                  },
+                  "cell_id": {
+                    "type": "integer"
+                  },
+                  "cell_name": {
+                    "type": "string"
+                  },
+                  "cell_source_organism": {
+                    "type": "string"
+                  },
+                  "cell_source_tax_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "cell_source_tissue": {
+                    "type": "string"
+                  },
+                  "cellosaurus_id": {
+                    "type": "string"
+                  },
+                  "clo_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "efo_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
               }
             }
           }
