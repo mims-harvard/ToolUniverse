@@ -68,6 +68,10 @@ MCP_ENDPOINTS = {
         "GENOMIC_INTELLIGENCE_MCP_URL",
         "https://mcp.genomicintelligence.ai/mcp",
     ),
+    "mcp_auto_loader_agingresearch": (
+        "AGINGRESEARCH_MCP_URL",
+        "https://agingresearch.news/api/mcp",
+    ),
 }
 
 
