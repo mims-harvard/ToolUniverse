@@ -348,7 +348,19 @@
           "items": {
             "type": "string"
           },
-          "description": "Legacy flat list returned when format='values'."
+          "description": "Legacy flat list returned when format='values'.",
+          "minItems": 1
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -543,7 +555,19 @@
           "items": {
             "type": "string"
           },
-          "description": "Legacy flat list returned when format='values'."
+          "description": "Legacy flat list returned when format='values'.",
+          "minItems": 1
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }
