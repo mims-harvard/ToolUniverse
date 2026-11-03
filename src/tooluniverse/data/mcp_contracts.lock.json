@@ -69,6 +69,120 @@
     "mcp_auto_loader_folklore": {
       "endpoint": "https://api.helena.bio/folklore/v1/mcp",
       "tools": {
+        "classify_germline_variant": {
+          "contract": {
+            "inputSchema": {
+              "additionalProperties": false,
+              "description": "The only public scientific input admitted by the MCP tool.",
+              "properties": {
+                "assembly": {
+                  "const": "GRCh38",
+                  "default": "GRCh38",
+                  "description": "Reference genome assembly. Folklore currently accepts GRCh38 only.",
+                  "title": "Assembly",
+                  "type": "string"
+                },
+                "query": {
+                  "description": "One germline nuclear SNV or simple indel to resolve and interpret; accepted forms include coordinates, genomic/coding/protein HGVS, SPDI, rsID, or a returned Folklore canonical_key in GRCh38:chrN:position:REF:ALT form.",
+                  "maxLength": 512,
+                  "minLength": 1,
+                  "title": "Query",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "title": "SearchVariantArguments",
+              "type": "object"
+            },
+            "name": "classify_germline_variant",
+            "outputSchema": {
+              "additionalProperties": false,
+              "properties": {
+                "adapter_error": {
+                  "anyOf": [
+                    {
+                      "additionalProperties": false,
+                      "properties": {
+                        "code": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "message": {
+                          "minLength": 1,
+                          "type": "string"
+                        },
+                        "retryable": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "code",
+                        "message",
+                        "retryable"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "contract_version": {
+                  "const": "2",
+                  "type": "string"
+                },
+                "record_url": {
+                  "format": "uri",
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "result": {
+                  "anyOf": [
+                    {
+                      "additionalProperties": true,
+                      "properties": {
+                        "search_contract_version": {
+                          "const": "1.0",
+                          "type": "string"
+                        },
+                        "status": {
+                          "enum": [
+                            "resolved",
+                            "ambiguous",
+                            "not_found",
+                            "invalid_request",
+                            "unsupported",
+                            "resolution_unavailable"
+                          ],
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "search_contract_version",
+                        "status"
+                      ],
+                      "type": "object"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              },
+              "required": [
+                "contract_version",
+                "record_url",
+                "result",
+                "adapter_error"
+              ],
+              "type": "object"
+            }
+          }
+        },
         "get_publication_details": {
           "contract": {
             "inputSchema": {
@@ -420,28 +534,111 @@
                   "type": "object"
                 }
               },
-              "additionalProperties": false,
-              "properties": {
-                "contract_version": {
-                  "const": "1.0",
-                  "title": "Contract Version",
-                  "type": "string"
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "contract_version": {
+                      "const": "2",
+                      "title": "Contract Version",
+                      "type": "string"
+                    },
+                    "publication": {
+                      "$ref": "#/$defs/PublicPublicationDetails"
+                    }
+                  },
+                  "required": [
+                    "contract_version",
+                    "publication"
+                  ],
+                  "title": "PublicationDetailsResponse",
+                  "type": "object"
                 },
-                "publication": {
-                  "$ref": "#/$defs/PublicPublicationDetails"
-                },
-                "usage_boundary": {
-                  "additionalProperties": true,
-                  "title": "Usage Boundary",
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "adapter_error": {
+                      "anyOf": [
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "code": {
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "message": {
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "retryable": {
+                              "type": "boolean"
+                            }
+                          },
+                          "required": [
+                            "code",
+                            "message",
+                            "retryable"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "contract_version": {
+                      "const": "2",
+                      "type": "string"
+                    },
+                    "record_url": {
+                      "format": "uri",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "result": {
+                      "anyOf": [
+                        {
+                          "additionalProperties": true,
+                          "properties": {
+                            "search_contract_version": {
+                              "const": "1.0",
+                              "type": "string"
+                            },
+                            "status": {
+                              "enum": [
+                                "resolved",
+                                "ambiguous",
+                                "not_found",
+                                "invalid_request",
+                                "unsupported",
+                                "resolution_unavailable"
+                              ],
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "search_contract_version",
+                            "status"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "contract_version",
+                    "record_url",
+                    "result",
+                    "adapter_error"
+                  ],
                   "type": "object"
                 }
-              },
-              "required": [
-                "contract_version",
-                "publication",
-                "usage_boundary"
               ],
-              "title": "PublicationDetailsResponse",
               "type": "object"
             }
           }
@@ -751,270 +948,195 @@
                   "type": "object"
                 }
               },
-              "additionalProperties": false,
-              "properties": {
-                "contract_version": {
-                  "const": "1.0",
-                  "title": "Contract Version",
-                  "type": "string"
-                },
-                "graph_degraded_reason": {
-                  "anyOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ],
-                  "default": null,
-                  "title": "Graph Degraded Reason"
-                },
-                "graph_used": {
-                  "default": false,
-                  "title": "Graph Used",
-                  "type": "boolean"
-                },
-                "graph_version": {
-                  "anyOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ],
-                  "default": null,
-                  "title": "Graph Version"
-                },
-                "has_more": {
-                  "default": false,
-                  "title": "Has More",
-                  "type": "boolean"
-                },
-                "next_cursor": {
-                  "anyOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ],
-                  "default": null,
-                  "title": "Next Cursor"
-                },
-                "query": {
-                  "title": "Query",
-                  "type": "string"
-                },
-                "results": {
-                  "items": {
-                    "$ref": "#/$defs/PublicCorpusSearchResult"
-                  },
-                  "title": "Results",
-                  "type": "array"
-                },
-                "returned_count": {
-                  "title": "Returned Count",
-                  "type": "integer"
-                },
-                "searchable_fields": {
-                  "items": {
-                    "type": "string"
-                  },
-                  "title": "Searchable Fields",
-                  "type": "array"
-                },
-                "semantic_degraded_reason": {
-                  "anyOf": [
-                    {
-                      "type": "string"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ],
-                  "default": null,
-                  "title": "Semantic Degraded Reason"
-                },
-                "semantic_index_used": {
-                  "default": false,
-                  "title": "Semantic Index Used",
-                  "type": "boolean"
-                },
-                "usage_boundary": {
-                  "additionalProperties": true,
-                  "title": "Usage Boundary",
-                  "type": "object"
-                }
-              },
-              "required": [
-                "contract_version",
-                "query",
-                "returned_count",
-                "results",
-                "searchable_fields",
-                "usage_boundary"
-              ],
-              "title": "PublicCorpusSearchResponse",
-              "type": "object"
-            }
-          }
-        },
-        "search_variant_evidence": {
-          "contract": {
-            "inputSchema": {
-              "additionalProperties": false,
-              "description": "The only public scientific input admitted by the MCP tool.",
-              "properties": {
-                "assembly": {
-                  "const": "GRCh38",
-                  "default": "GRCh38",
-                  "description": "Reference genome assembly. Folklore currently accepts GRCh38 only.",
-                  "title": "Assembly",
-                  "type": "string"
-                },
-                "query": {
-                  "description": "One germline nuclear SNV or simple indel to resolve and interpret; accepted forms include coordinates, genomic/coding/protein HGVS, SPDI, rsID, or a returned Folklore canonical_key in GRCh38:chrN:position:REF:ALT form.",
-                  "maxLength": 512,
-                  "minLength": 1,
-                  "title": "Query",
-                  "type": "string"
-                }
-              },
-              "required": [
-                "query"
-              ],
-              "title": "SearchVariantArguments",
-              "type": "object"
-            },
-            "name": "search_variant_evidence",
-            "outputSchema": {
-              "additionalProperties": false,
-              "properties": {
-                "adapter_error": {
-                  "anyOf": [
-                    {
-                      "additionalProperties": false,
-                      "properties": {
-                        "code": {
-                          "minLength": 1,
-                          "type": "string"
-                        },
-                        "message": {
-                          "minLength": 1,
-                          "type": "string"
-                        },
-                        "retryable": {
-                          "type": "boolean"
-                        }
-                      },
-                      "required": [
-                        "code",
-                        "message",
-                        "retryable"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ]
-                },
-                "contract_version": {
-                  "const": "1",
-                  "type": "string"
-                },
-                "record_url": {
-                  "format": "uri",
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "result": {
-                  "anyOf": [
-                    {
-                      "additionalProperties": true,
-                      "properties": {
-                        "search_contract_version": {
-                          "const": "1.0",
-                          "type": "string"
-                        },
-                        "status": {
-                          "enum": [
-                            "resolved",
-                            "ambiguous",
-                            "not_found",
-                            "invalid_request",
-                            "unsupported",
-                            "resolution_unavailable"
-                          ],
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "search_contract_version",
-                        "status"
-                      ],
-                      "type": "object"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ]
-                },
-                "usage_boundary": {
+              "anyOf": [
+                {
                   "additionalProperties": false,
                   "properties": {
-                    "intended_use": {
-                      "const": "professional_variant_review",
+                    "contract_version": {
+                      "const": "2",
+                      "title": "Contract Version",
                       "type": "string"
                     },
-                    "not_for": {
-                      "items": {
-                        "enum": [
-                          "patient_diagnosis",
-                          "treatment_decision",
-                          "standalone_clinical_reporting"
-                        ],
-                        "type": "string"
-                      },
-                      "maxItems": 3,
-                      "minItems": 3,
-                      "type": "array",
-                      "uniqueItems": true
+                    "graph_degraded_reason": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null,
+                      "title": "Graph Degraded Reason"
                     },
-                    "patient_context_evaluated": {
-                      "const": false,
+                    "graph_used": {
+                      "default": false,
+                      "title": "Graph Used",
                       "type": "boolean"
                     },
-                    "result_type": {
-                      "const": "automated_variant_level_classification",
+                    "graph_version": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null,
+                      "title": "Graph Version"
+                    },
+                    "has_more": {
+                      "default": false,
+                      "title": "Has More",
+                      "type": "boolean"
+                    },
+                    "next_cursor": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null,
+                      "title": "Next Cursor"
+                    },
+                    "query": {
+                      "title": "Query",
                       "type": "string"
                     },
-                    "review_required": {
-                      "const": true,
+                    "results": {
+                      "items": {
+                        "$ref": "#/$defs/PublicCorpusSearchResult"
+                      },
+                      "title": "Results",
+                      "type": "array"
+                    },
+                    "returned_count": {
+                      "title": "Returned Count",
+                      "type": "integer"
+                    },
+                    "searchable_fields": {
+                      "items": {
+                        "type": "string"
+                      },
+                      "title": "Searchable Fields",
+                      "type": "array"
+                    },
+                    "semantic_degraded_reason": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ],
+                      "default": null,
+                      "title": "Semantic Degraded Reason"
+                    },
+                    "semantic_index_used": {
+                      "default": false,
+                      "title": "Semantic Index Used",
                       "type": "boolean"
                     }
                   },
                   "required": [
-                    "result_type",
-                    "review_required",
-                    "patient_context_evaluated",
-                    "intended_use",
-                    "not_for"
+                    "contract_version",
+                    "query",
+                    "returned_count",
+                    "results",
+                    "searchable_fields"
+                  ],
+                  "title": "PublicCorpusSearchResponse",
+                  "type": "object"
+                },
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "adapter_error": {
+                      "anyOf": [
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "code": {
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "message": {
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "retryable": {
+                              "type": "boolean"
+                            }
+                          },
+                          "required": [
+                            "code",
+                            "message",
+                            "retryable"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "contract_version": {
+                      "const": "2",
+                      "type": "string"
+                    },
+                    "record_url": {
+                      "format": "uri",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "result": {
+                      "anyOf": [
+                        {
+                          "additionalProperties": true,
+                          "properties": {
+                            "search_contract_version": {
+                              "const": "1.0",
+                              "type": "string"
+                            },
+                            "status": {
+                              "enum": [
+                                "resolved",
+                                "ambiguous",
+                                "not_found",
+                                "invalid_request",
+                                "unsupported",
+                                "resolution_unavailable"
+                              ],
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "search_contract_version",
+                            "status"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "contract_version",
+                    "record_url",
+                    "result",
+                    "adapter_error"
                   ],
                   "type": "object"
                 }
-              },
-              "required": [
-                "contract_version",
-                "record_url",
-                "result",
-                "usage_boundary",
-                "adapter_error"
               ],
               "type": "object"
             }
@@ -1316,54 +1438,137 @@
                   "type": "object"
                 }
               },
-              "additionalProperties": false,
-              "properties": {
-                "contract_version": {
-                  "const": "1.0",
-                  "default": "1.0",
-                  "title": "Contract Version",
-                  "type": "string"
-                },
-                "literature": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/$defs/LiteratureAuthorityResponse"
+              "anyOf": [
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "contract_version": {
+                      "const": "2",
+                      "default": "2",
+                      "title": "Contract Version",
+                      "type": "string"
                     },
-                    {
-                      "type": "null"
+                    "literature": {
+                      "anyOf": [
+                        {
+                          "$ref": "#/$defs/LiteratureAuthorityResponse"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "status": {
+                      "enum": [
+                        "resolved",
+                        "ambiguous",
+                        "not_found",
+                        "invalid_request",
+                        "unsupported",
+                        "resolution_unavailable"
+                      ],
+                      "title": "Status",
+                      "type": "string"
+                    },
+                    "variant_result": {
+                      "additionalProperties": true,
+                      "title": "Variant Result",
+                      "type": "object"
                     }
-                  ]
-                },
-                "status": {
-                  "enum": [
-                    "resolved",
-                    "ambiguous",
-                    "not_found",
-                    "invalid_request",
-                    "unsupported",
-                    "resolution_unavailable"
+                  },
+                  "required": [
+                    "status",
+                    "variant_result",
+                    "literature"
                   ],
-                  "title": "Status",
-                  "type": "string"
-                },
-                "usage_boundary": {
-                  "additionalProperties": true,
-                  "title": "Usage Boundary",
+                  "title": "PublicVariantLiteratureResponse",
                   "type": "object"
                 },
-                "variant_result": {
-                  "additionalProperties": true,
-                  "title": "Variant Result",
+                {
+                  "additionalProperties": false,
+                  "properties": {
+                    "adapter_error": {
+                      "anyOf": [
+                        {
+                          "additionalProperties": false,
+                          "properties": {
+                            "code": {
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "message": {
+                              "minLength": 1,
+                              "type": "string"
+                            },
+                            "retryable": {
+                              "type": "boolean"
+                            }
+                          },
+                          "required": [
+                            "code",
+                            "message",
+                            "retryable"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "contract_version": {
+                      "const": "2",
+                      "type": "string"
+                    },
+                    "record_url": {
+                      "format": "uri",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "result": {
+                      "anyOf": [
+                        {
+                          "additionalProperties": true,
+                          "properties": {
+                            "search_contract_version": {
+                              "const": "1.0",
+                              "type": "string"
+                            },
+                            "status": {
+                              "enum": [
+                                "resolved",
+                                "ambiguous",
+                                "not_found",
+                                "invalid_request",
+                                "unsupported",
+                                "resolution_unavailable"
+                              ],
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "search_contract_version",
+                            "status"
+                          ],
+                          "type": "object"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "contract_version",
+                    "record_url",
+                    "result",
+                    "adapter_error"
+                  ],
                   "type": "object"
                 }
-              },
-              "required": [
-                "status",
-                "variant_result",
-                "literature",
-                "usage_boundary"
               ],
-              "title": "PublicVariantLiteratureResponse",
               "type": "object"
             }
           }
