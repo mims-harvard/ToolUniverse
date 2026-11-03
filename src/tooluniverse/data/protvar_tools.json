@@ -156,7 +156,15 @@
                 "type": "object"
               },
               "synonyms": {
-                "type": "array"
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "string"
+                    }
+                  }
+                }
               }
             },
             "required": [
@@ -212,7 +220,10 @@
                 "type": "number"
               },
               "resid": {
-                "type": "array"
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
               },
               "score": {
                 "type": "number"
@@ -243,13 +254,19 @@
                 "type": "string"
               },
               "aresidues": {
-                "type": "array"
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
               },
               "b": {
                 "type": "string"
               },
               "bresidues": {
-                "type": "array"
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
               },
               "pdbModel": {
                 "type": "string"

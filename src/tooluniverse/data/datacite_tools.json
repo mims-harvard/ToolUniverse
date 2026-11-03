@@ -559,8 +559,7 @@
                         "type": "array",
                         "items": {
                           "type": "string"
-                        },
-                        "description": "Measured over 21 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+                        }
                       },
                       "nameIdentifiers": {
                         "type": "array",
@@ -577,8 +576,7 @@
                               "type": "string"
                             }
                           }
-                        },
-                        "description": "Measured over 15 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+                        }
                       }
                     }
                   }
@@ -709,22 +707,19 @@
                       "date",
                       "dateType"
                     ]
-                  },
-                  "description": "Measured over 53 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+                  }
                 },
                 "sizes": {
                   "type": "array",
                   "items": {
                     "type": "string"
-                  },
-                  "description": "Measured over 17 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+                  }
                 },
                 "formats": {
                   "type": "array",
                   "items": {
                     "type": "string"
-                  },
-                  "description": "Measured over 6 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+                  }
                 },
                 "version": {
                   "type": [

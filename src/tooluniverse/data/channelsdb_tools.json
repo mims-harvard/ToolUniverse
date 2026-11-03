@@ -77,7 +77,46 @@
                         "type": "object"
                       },
                       "Profile": {
-                        "type": "array"
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "Charge": {
+                              "type": "number"
+                            },
+                            "Distance": {
+                              "type": "number"
+                            },
+                            "FreeRadius": {
+                              "type": "number"
+                            },
+                            "Radius": {
+                              "type": "number"
+                            },
+                            "T": {
+                              "type": "number"
+                            },
+                            "X": {
+                              "type": "number"
+                            },
+                            "Y": {
+                              "type": "number"
+                            },
+                            "Z": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "Charge",
+                            "Distance",
+                            "FreeRadius",
+                            "Radius",
+                            "T",
+                            "X",
+                            "Y",
+                            "Z"
+                          ]
+                        }
                       },
                       "Properties": {
                         "type": "object"
@@ -116,7 +155,46 @@
                         "type": "object"
                       },
                       "Profile": {
-                        "type": "array"
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "Charge": {
+                              "type": "integer"
+                            },
+                            "Distance": {
+                              "type": "number"
+                            },
+                            "FreeRadius": {
+                              "type": "number"
+                            },
+                            "Radius": {
+                              "type": "number"
+                            },
+                            "T": {
+                              "type": "number"
+                            },
+                            "X": {
+                              "type": "number"
+                            },
+                            "Y": {
+                              "type": "number"
+                            },
+                            "Z": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "Charge",
+                            "Distance",
+                            "FreeRadius",
+                            "Radius",
+                            "T",
+                            "X",
+                            "Y",
+                            "Z"
+                          ]
+                        }
                       },
                       "Properties": {
                         "type": "object"
@@ -155,7 +233,46 @@
                         "type": "object"
                       },
                       "Profile": {
-                        "type": "array"
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "Charge": {
+                              "type": "number"
+                            },
+                            "Distance": {
+                              "type": "number"
+                            },
+                            "FreeRadius": {
+                              "type": "number"
+                            },
+                            "Radius": {
+                              "type": "number"
+                            },
+                            "T": {
+                              "type": "number"
+                            },
+                            "X": {
+                              "type": "number"
+                            },
+                            "Y": {
+                              "type": "number"
+                            },
+                            "Z": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "Charge",
+                            "Distance",
+                            "FreeRadius",
+                            "Radius",
+                            "T",
+                            "X",
+                            "Y",
+                            "Z"
+                          ]
+                        }
                       },
                       "Properties": {
                         "type": "object"
@@ -194,7 +311,46 @@
                         "type": "object"
                       },
                       "Profile": {
-                        "type": "array"
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "Charge": {
+                              "type": "integer"
+                            },
+                            "Distance": {
+                              "type": "number"
+                            },
+                            "FreeRadius": {
+                              "type": "number"
+                            },
+                            "Radius": {
+                              "type": "number"
+                            },
+                            "T": {
+                              "type": "number"
+                            },
+                            "X": {
+                              "type": "number"
+                            },
+                            "Y": {
+                              "type": "number"
+                            },
+                            "Z": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "Charge",
+                            "Distance",
+                            "FreeRadius",
+                            "Radius",
+                            "T",
+                            "X",
+                            "Y",
+                            "Z"
+                          ]
+                        }
                       },
                       "Properties": {
                         "type": "object"
@@ -233,7 +389,46 @@
                         "type": "object"
                       },
                       "Profile": {
-                        "type": "array"
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "Charge": {
+                              "type": "number"
+                            },
+                            "Distance": {
+                              "type": "number"
+                            },
+                            "FreeRadius": {
+                              "type": "number"
+                            },
+                            "Radius": {
+                              "type": "number"
+                            },
+                            "T": {
+                              "type": "number"
+                            },
+                            "X": {
+                              "type": "number"
+                            },
+                            "Y": {
+                              "type": "number"
+                            },
+                            "Z": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "Charge",
+                            "Distance",
+                            "FreeRadius",
+                            "Radius",
+                            "T",
+                            "X",
+                            "Y",
+                            "Z"
+                          ]
+                        }
                       },
                       "Properties": {
                         "type": "object"
@@ -276,7 +471,46 @@
                         "type": "object"
                       },
                       "Profile": {
-                        "type": "array"
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "Charge": {
+                              "type": "number"
+                            },
+                            "Distance": {
+                              "type": "number"
+                            },
+                            "FreeRadius": {
+                              "type": "number"
+                            },
+                            "Radius": {
+                              "type": "number"
+                            },
+                            "T": {
+                              "type": "number"
+                            },
+                            "X": {
+                              "type": "number"
+                            },
+                            "Y": {
+                              "type": "number"
+                            },
+                            "Z": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "Charge",
+                            "Distance",
+                            "FreeRadius",
+                            "Radius",
+                            "T",
+                            "X",
+                            "Y",
+                            "Z"
+                          ]
+                        }
                       },
                       "Properties": {
                         "type": "object"
@@ -319,7 +553,46 @@
                         "type": "object"
                       },
                       "Profile": {
-                        "type": "array"
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "Charge": {
+                              "type": "number"
+                            },
+                            "Distance": {
+                              "type": "number"
+                            },
+                            "FreeRadius": {
+                              "type": "number"
+                            },
+                            "Radius": {
+                              "type": "number"
+                            },
+                            "T": {
+                              "type": "number"
+                            },
+                            "X": {
+                              "type": "number"
+                            },
+                            "Y": {
+                              "type": "number"
+                            },
+                            "Z": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "Charge",
+                            "Distance",
+                            "FreeRadius",
+                            "Radius",
+                            "T",
+                            "X",
+                            "Y",
+                            "Z"
+                          ]
+                        }
                       },
                       "Properties": {
                         "type": "object"
@@ -358,7 +631,46 @@
                         "type": "object"
                       },
                       "Profile": {
-                        "type": "array"
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "Charge": {
+                              "type": "integer"
+                            },
+                            "Distance": {
+                              "type": "number"
+                            },
+                            "FreeRadius": {
+                              "type": "number"
+                            },
+                            "Radius": {
+                              "type": "number"
+                            },
+                            "T": {
+                              "type": "number"
+                            },
+                            "X": {
+                              "type": "number"
+                            },
+                            "Y": {
+                              "type": "number"
+                            },
+                            "Z": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "Charge",
+                            "Distance",
+                            "FreeRadius",
+                            "Radius",
+                            "T",
+                            "X",
+                            "Y",
+                            "Z"
+                          ]
+                        }
                       },
                       "Properties": {
                         "type": "object"

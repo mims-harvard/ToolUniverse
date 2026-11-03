@@ -170,15 +170,13 @@
           "type": "array",
           "items": {
             "type": "integer"
-          },
-          "description": "Measured over 3171 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          }
         },
         "mane_select_ids": {
           "type": "array",
           "items": {
             "type": "string"
-          },
-          "description": "Measured over 8 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          }
         },
         "grch38_placements": {
           "type": "array",
@@ -212,8 +210,7 @@
               "seq_id",
               "spdi_position"
             ]
-          },
-          "description": "Measured over 27 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          }
         },
         "genes": {
           "type": "array",
@@ -230,8 +227,7 @@
                 "type": "string"
               }
             }
-          },
-          "description": "Measured over 8 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+          }
         },
         "clinical_significance": {
           "type": "array",
@@ -251,25 +247,55 @@
                 "type": "integer"
               },
               "citations": {
-                "type": "array"
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
               },
               "clinical_significances": {
-                "type": "array"
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
               },
               "collection_method": {
-                "type": "array"
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
               },
               "create_date": {
                 "type": "string"
               },
               "disease_ids": {
-                "type": "array"
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "accession": {
+                      "type": "string"
+                    },
+                    "organization": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "accession",
+                    "organization"
+                  ]
+                }
               },
               "disease_names": {
-                "type": "array"
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
               },
               "gene_ids": {
-                "type": "array"
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
               },
               "last_evaluated_date": {
                 "type": "string"
@@ -278,7 +304,10 @@
                 "type": "integer"
               },
               "origins": {
-                "type": "array"
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
               },
               "refsnp_id": {
                 "type": "string"
@@ -287,13 +316,31 @@
                 "type": "string"
               },
               "significance": {
-                "type": "array"
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
               },
               "update_date": {
                 "type": "string"
               },
               "variant_identifiers": {
-                "type": "array"
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "accession": {
+                      "type": "string"
+                    },
+                    "organization": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "accession",
+                    "organization"
+                  ]
+                }
               }
             },
             "required": [

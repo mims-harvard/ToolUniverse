@@ -214,8 +214,7 @@
               "type": ["array", "null"],
               "items": {
                 "type": "string"
-              },
-              "description": "Measured over 28 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+              }
             },
             "organisms": {
               "type": ["array", "null"],
@@ -229,29 +228,25 @@
                     "type": "string"
                   }
                 }
-              },
-              "description": "Measured over 5 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+              }
             },
             "tissues": {
               "type": ["array", "null"],
               "items": {
                 "type": "string"
-              },
-              "description": "Measured over 11 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+              }
             },
             "diseases": {
               "type": ["array", "null"],
               "items": {
                 "type": "string"
-              },
-              "description": "Measured over 9 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+              }
             },
             "omics_type": {
               "type": "array",
               "items": {
                 "type": "string"
-              },
-              "description": "Measured over 8 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+              }
             },
             "publicationDate": {
               "type": "string"
@@ -260,8 +255,7 @@
               "type": ["array", "null"],
               "items": {
                 "type": "string"
-              },
-              "description": "Measured over 5 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+              }
             },
             "protocols": {
               "type": ["array", "null"],
@@ -275,15 +269,13 @@
                     "type": "string"
                   }
                 }
-              },
-              "description": "Measured over 6 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+              }
             },
             "instruments": {
               "type": ["array", "null"],
               "items": {
                 "type": "string"
-              },
-              "description": "Measured over 3 items; the declaration was an array with no items, so nothing about its contents could fail validation."
+              }
             },
             "full_dataset_link": {
               "type": ["string", "null"]
