@@ -349,7 +349,7 @@
   },
   {
     "name": "MaveDB_get_mapped_variants",
-    "description": "Get genomically-mapped variant coordinates (GA4GH VRS Allele + ClinGen Allele ID) for a MaveDB score set. Each variant includes genomic SequenceLocation when mapped, ClinGen canonical Allele ID, alignment status, and mapping errors. The API returns the full list internally; limit/offset provide recoverable local pagination. Continue with next_offset while has_more is true. Obtain the URN from MaveDB_search_score_sets.",
+    "description": "Get genomically-mapped variant coordinates (GA4GH VRS Allele + ClinGen Allele ID) for a MaveDB score set. Each variant carries genomic_hgvs (MaveDB's own projection of the scored variant onto an NC_ genome accession, null when it could not be projected), cdna_hgvs, protein_hgvs, the ClinGen canonical Allele ID, the preMapped/postMapped VRS pair, and assay_level (the level the assay scored: protein, cdna or genomic). Reads the /variant-details route that replaced /mapped-variants, retired upstream and answering HTTP 410 as of 2026-11-01; it takes no page-size parameter and streams the whole score set as newline-delimited JSON (784 variants = 11.4 MB), so limit/offset provide recoverable local pagination over that download. Continue with next_offset while has_more is true. Obtain the URN from MaveDB_search_score_sets.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -442,13 +442,13 @@
                       "null"
                     ]
                   },
-                  "alignment_level": {
+                  "assay_level": {
                     "type": [
                       "string",
                       "null"
                     ]
                   },
-                  "vrs_version": {
+                  "mapping_mode": {
                     "type": [
                       "string",
                       "null"
@@ -460,7 +460,37 @@
                       "null"
                     ]
                   },
-                  "error_message": {
+                  "superseded_by_score_set": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "target_hgvs": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "reference_hgvs": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "genomic_hgvs": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "cdna_hgvs": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "protein_hgvs": {
                     "type": [
                       "string",
                       "null"

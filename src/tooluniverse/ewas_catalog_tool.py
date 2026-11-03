@@ -8,12 +8,20 @@ which trait, in which tissue, cohort, and effect size. ToolUniverse has no
 methylation-association layer at all today, only GWAS-style variant
 association (GWAS Catalog, PheWAS).
 
-The API's `trait` search has no result cap and returns its entire match set
-in one response; a broad query like trait='smoking' took ~80s and 22 MB in
-testing. This tool exposes only `cpg` and `gene` search, both single-digit-
-seconds even for heavily studied genes, and truncates client-side.
+The API has no result cap and returns its entire match set in one response;
+a broad query like trait='smoking' took ~80s and 22 MB in testing. This tool
+exposes only `cpg` and `gene` search and truncates client-side.
 
-API: http://ewascatalog.org/api/
+The server cannot deliver its largest gene payloads. Measured 2026-11-01 for
+gene=AHRR: it sends `Content-Length: 2751412` and then closes the connection
+after 1.57-1.85 MB, at a different offset on every attempt (5 attempts, 5
+different offsets, plain and gzip alike), so the JSON is always unterminated.
+Nothing on the client can recover that body, which is why a truncated read is
+reported as the upstream fault it is rather than as a parse error. Genes whose
+payload stays near or below ~1 MB (CPT1A, 1941 rows, 1.04 MB) come back whole.
+
+API: https://ewascatalog.org/api/ (the http:// form returned 404 from
+2026-11-01; the service is HTTPS-only)
 No authentication required.
 """
 
@@ -24,7 +32,7 @@ import requests
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
-EWAS_CATALOG_URL = "http://ewascatalog.org/api/"
+EWAS_CATALOG_URL = "https://ewascatalog.org/api/"
 
 _NUMERIC_FIELDS = {"p", "beta", "se"}
 _INT_FIELDS = {"n", "n_cohorts"}
@@ -81,6 +89,23 @@ class EWASCatalogTool(BaseTool):
                 "status": "error",
                 "error": f"EWAS Catalog request timed out after {self.timeout}s. "
                 "Heavily studied genes (e.g. AHRR, F2RL3) can be slow.",
+            }
+        except requests.exceptions.ChunkedEncodingError as e:
+            # The server promises a Content-Length it does not deliver on its
+            # largest gene payloads and drops the connection part-way, at a
+            # different offset each time. Retrying does not help, so say what
+            # happened and name the query shape that does work.
+            return {
+                "status": "error",
+                "error": (
+                    "The EWAS Catalog closed the connection before sending the "
+                    "response it announced, so the result set for this query "
+                    "cannot be retrieved whole. This affects its largest gene "
+                    "payloads (e.g. gene=AHRR, ~2.75 MB announced) and is an "
+                    "upstream fault that retrying does not clear. Query the "
+                    "specific CpG sites you need with search_by_cpg instead, "
+                    f"or pick a less heavily studied gene. ({e})"
+                ),
             }
         except requests.exceptions.ConnectionError:
             return {

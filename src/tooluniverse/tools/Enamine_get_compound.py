@@ -1,7 +1,7 @@
 """
 Enamine_get_compound
 
-Get compound details by Enamine ID when the Enamine Store API is available. If upstream retrieval...
+DEPRECATED / non-functional (verified 2026-11-01): the Enamine Store API this tool calls has been...
 """
 
 from typing import Any, Optional, Callable
@@ -17,7 +17,7 @@ def Enamine_get_compound(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get compound details by Enamine ID when the Enamine Store API is available. If upstream retrieval...
+    DEPRECATED / non-functional (verified 2026-11-01): the Enamine Store API this tool calls has been...
 
     Parameters
     ----------
