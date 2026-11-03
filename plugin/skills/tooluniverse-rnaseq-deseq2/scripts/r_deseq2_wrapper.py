@@ -24,22 +24,22 @@ Usage examples:
         --design "~sex" --contrast "sex,M,F"
 
     # Subset to CD4/CD8 cells, filter low-expression, with LFC shrinkage,
-    # report individual gene FAM138A LFC and DEG count at the question's filter:
+    # report one gene's LFC alongside the DEG count at a chosen filter:
     python r_deseq2_wrapper.py \\
         --counts /path/counts.csv --metadata /path/meta.csv \\
         --design "~sex" --contrast "sex,M,F" \\
         --subset-col celltype --subset-values CD4,CD8 \\
         --min-row-sum 10 --shrink apeglm \\
-        --report-genes FAM138A \\
+        --report-genes "<GENE_SYMBOL>" \\
         --workdir /tmp/bix31
 
     # Strain-specific Venn analysis: produce sig sets per contrast, count
     # overlaps. Use this to answer "% genes DE in A AND B NOT in others".
     python r_deseq2_wrapper.py \\
         --counts /path/counts.csv --metadata /path/meta.csv \\
-        --design "~Replicate + Strain + Media" \\
+        --design "~replicate + group + media" \\
         --multi-contrast "Strain,97,1;Strain,98,1;Strain,99,1" \\
-        --exclude-samples resub-5,resub-10,resub-33 \\
+        --exclude-samples sample-7,sample-12 \\
         --workdir /tmp/bix13
 
 Output blocks (parseable):
