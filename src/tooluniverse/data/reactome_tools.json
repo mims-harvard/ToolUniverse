@@ -87,9 +87,182 @@
         "compartment": {"type": "array", "items": {"type": "object"}, "description": "Cellular compartments"},
         "figure": {"type": "array", "items": {"type": "object"}, "description": "Pathway figures"},
         "goBiologicalProcess": {"type": "object", "description": "GO biological process annotation"},
-        "literatureReference": {"type": "array", "items": {"type": "object"}, "description": "Literature references"},
-        "orthologousEvent": {"type": "array", "items": {"type": "object"}, "description": "Orthologous events in other species"},
-        "hasEvent": {"type": "array", "items": {"type": "object"}, "description": "Events (reactions/subpathways) in this pathway"},
+        "literatureReference": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "className": {
+                "type": "string"
+              },
+              "dbId": {
+                "type": "integer"
+              },
+              "displayName": {
+                "type": "string"
+              },
+              "journal": {
+                "type": "string"
+              },
+              "pages": {
+                "type": "string"
+              },
+              "pubMedIdentifier": {
+                "type": "integer"
+              },
+              "schemaClass": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              },
+              "volume": {
+                "type": "integer"
+              },
+              "year": {
+                "type": "integer"
+              }
+            }
+          },
+          "description": "Literature references"
+        },
+        "orthologousEvent": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "className": {
+                "type": "string"
+              },
+              "dbId": {
+                "type": "integer"
+              },
+              "displayName": {
+                "type": "string"
+              },
+              "hasDiagram": {
+                "type": "boolean"
+              },
+              "hasEHLD": {
+                "type": "boolean"
+              },
+              "inferredFrom": {
+                "type": "array"
+              },
+              "isInDisease": {
+                "type": "boolean"
+              },
+              "isInferred": {
+                "type": "boolean"
+              },
+              "maxDepth": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "array"
+              },
+              "releaseDate": {
+                "type": "string"
+              },
+              "schemaClass": {
+                "type": "string"
+              },
+              "speciesName": {
+                "type": "string"
+              },
+              "stId": {
+                "type": "string"
+              },
+              "stIdVersion": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "className",
+              "dbId",
+              "displayName",
+              "hasDiagram",
+              "hasEHLD",
+              "inferredFrom",
+              "isInDisease",
+              "isInferred",
+              "maxDepth",
+              "name",
+              "releaseDate",
+              "schemaClass",
+              "speciesName",
+              "stId",
+              "stIdVersion"
+            ]
+          },
+          "description": "Orthologous events in other species"
+        },
+        "hasEvent": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "className": {
+                "type": "string"
+              },
+              "dbId": {
+                "type": "integer"
+              },
+              "definition": {
+                "type": "string"
+              },
+              "displayName": {
+                "type": "string"
+              },
+              "doi": {
+                "type": "string"
+              },
+              "eventOf": {
+                "type": "array"
+              },
+              "hasDiagram": {
+                "type": "boolean"
+              },
+              "hasEHLD": {
+                "type": "boolean"
+              },
+              "isInDisease": {
+                "type": "boolean"
+              },
+              "isInferred": {
+                "type": "boolean"
+              },
+              "lastUpdatedDate": {
+                "type": "string"
+              },
+              "maxDepth": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "array"
+              },
+              "releaseDate": {
+                "type": "string"
+              },
+              "schemaClass": {
+                "type": "string"
+              },
+              "speciesName": {
+                "type": "string"
+              },
+              "stId": {
+                "type": "string"
+              },
+              "stIdVersion": {
+                "type": "string"
+              }
+            }
+          },
+          "description": "Events (reactions/subpathways) in this pathway"
+        },
         "schemaClass": {"type": "string", "description": "Schema class (e.g., 'Pathway')"},
         "className": {"type": "string", "description": "Class name"}
       }
@@ -313,7 +486,16 @@
         "properties": {
           "dbId": {"type": "integer"},
           "displayName": {"type": "string"},
-          "name": {"type": ["string", "array"], "description": "Species name(s)"},
+          "name": {
+            "type": [
+              "string",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Species name(s)"
+          },
           "taxId": {"type": "string"}
         }
       }
@@ -369,9 +551,138 @@
           "name": {"type": "array", "items": {"type": "string"}, "description": "Entity names"},
           "releaseDate": {"type": "string", "description": "Release date"},
           "speciesName": {"type": "string", "description": "Species name"},
-          "compartment": {"type": "array", "items": {"type": "object"}, "description": "Cellular compartments"},
-          "literatureReference": {"type": "array", "items": {"type": "object"}, "description": "Literature references"},
-          "orthologousEvent": {"type": "array", "items": {"type": "object"}, "description": "Orthologous events"},
+          "compartment": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "accession": {
+                  "type": "string"
+                },
+                "className": {
+                  "type": "string"
+                },
+                "databaseName": {
+                  "type": "string"
+                },
+                "dbId": {
+                  "type": "integer"
+                },
+                "definition": {
+                  "type": "string"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "schemaClass": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Cellular compartments"
+          },
+          "literatureReference": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "className": {
+                  "type": "string"
+                },
+                "dbId": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "journal": {
+                  "type": "string"
+                },
+                "pages": {
+                  "type": "string"
+                },
+                "pubMedIdentifier": {
+                  "type": "integer"
+                },
+                "schemaClass": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                },
+                "volume": {
+                  "type": "integer"
+                },
+                "year": {
+                  "type": "integer"
+                }
+              }
+            },
+            "description": "Literature references"
+          },
+          "orthologousEvent": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "className": {
+                  "type": "string"
+                },
+                "dbId": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "hasDiagram": {
+                  "type": "boolean"
+                },
+                "hasEHLD": {
+                  "type": "boolean"
+                },
+                "inferredFrom": {
+                  "type": "array"
+                },
+                "isInDisease": {
+                  "type": "boolean"
+                },
+                "isInferred": {
+                  "type": "boolean"
+                },
+                "maxDepth": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "array"
+                },
+                "releaseDate": {
+                  "type": "string"
+                },
+                "schemaClass": {
+                  "type": "string"
+                },
+                "speciesName": {
+                  "type": "string"
+                },
+                "stId": {
+                  "type": "string"
+                },
+                "stIdVersion": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Orthologous events"
+          },
           "input": {"type": "array", "items": {"type": ["integer", "object"]}, "description": "Input entities (can be IDs or objects, for reactions)"},
           "output": {"type": "array", "items": {"type": ["integer", "object"]}, "description": "Output entities (can be IDs or objects, for reactions)"},
           "regulatedBy": {"type": "array", "items": {"type": "object"}, "description": "Regulation information"},
@@ -551,7 +862,45 @@
           "peDbId": {"type": "integer", "description": "Physical entity database ID"},
           "displayName": {"type": "string", "description": "Participant display name"},
           "schemaClass": {"type": "string", "description": "Schema class (e.g., 'Complex', 'SimpleEntity')"},
-          "refEntities": {"type": "array", "items": {"type": "object"}, "description": "Reference entities (UniProt, ChEBI, etc.) associated with this participant"}
+          "refEntities": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "dbId": {
+                  "type": "integer"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "icon": {
+                  "type": "string"
+                },
+                "identifier": {
+                  "type": "string"
+                },
+                "schemaClass": {
+                  "type": "string"
+                },
+                "stId": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "dbId",
+                "displayName",
+                "icon",
+                "identifier",
+                "schemaClass",
+                "stId",
+                "url"
+              ]
+            },
+            "description": "Reference entities (UniProt, ChEBI, etc.) associated with this participant"
+          }
         },
         "description": "Physical entity participating in the event"
       }
@@ -683,14 +1032,38 @@
       }
     ],
     "return_schema": {
-      "type": "object",
-      "properties": {
-        "id": {"type": "string", "description": "Compartment database ID"},
-        "name": {"type": "string", "description": "Compartment name (e.g., 'cytosol')"},
-        "type": {"type": "string", "description": "Compartment type (e.g., 'Compartment')"},
-        "raw": {"type": "string", "description": "Original TSV line"}
-      },
-      "description": "Compartment information parsed from TSV format"
+      "description": "Compartment information parsed from TSV format. An entity in one compartment comes back as a single object, an entity in several comes back as a list, and an entity in none comes back as an empty list -- measured across nine stable IDs: 3 single, 2 lists of 2-3, 4 empty.",
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {"type": "string", "description": "Compartment database ID"},
+            "name": {"type": "string", "description": "Compartment name (e.g., 'cytosol')"},
+            "type": {"type": "string", "description": "Compartment type (e.g., 'Compartment')"},
+            "raw": {"type": "string", "description": "Original TSV line"}
+          },
+          "not": {"required": ["error"]},
+          "description": "The entity is in exactly one compartment"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": "string", "description": "Compartment database ID"},
+              "name": {"type": "string", "description": "Compartment name (e.g., 'cytosol')"},
+              "type": {"type": "string", "description": "Compartment type (e.g., 'Compartment')"},
+              "raw": {"type": "string", "description": "Original TSV line"}
+            }
+          },
+          "description": "Zero or more compartments"
+        },
+        {
+          "type": "object",
+          "properties": {"error": {"type": "string"}},
+          "required": ["error"]
+        }
+      ]
     }
   },
   {
@@ -726,7 +1099,49 @@
           "diagram": {"type": "boolean", "description": "Whether pathway has diagram"},
           "totalEntity": {"type": "integer", "description": "Total number of entities"},
           "totalEntityAndInteractors": {"type": "integer", "description": "Total entities including interactors"},
-          "children": {"type": "array", "items": {"type": "object"}, "description": "Child events (subpathways and reactions), recursively nested"}
+          "children": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "children": {
+                  "type": "array"
+                },
+                "diagram": {
+                  "type": "boolean"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "species": {
+                  "type": "string"
+                },
+                "stId": {
+                  "type": "string"
+                },
+                "totalEntity": {
+                  "type": "integer"
+                },
+                "totalEntityAndInteractors": {
+                  "type": "integer"
+                },
+                "type": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "children",
+                "diagram",
+                "name",
+                "species",
+                "stId",
+                "totalEntity",
+                "totalEntityAndInteractors",
+                "type"
+              ]
+            },
+            "description": "Child events (subpathways and reactions), recursively nested"
+          }
         },
         "description": "Top-level pathway with nested hierarchy structure"
       }
