@@ -53,155 +53,170 @@
       ]
     },
     "return_schema": {
-      "type": "array",
-      "description": "List of full-text biomedical papers from PMC matching the search query",
-      "items": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string",
-            "description": "Title of the paper"
-          },
-          "abstract": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Abstract of the paper (null when not available via esummary)"
-          },
-          "authors": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "List of author names"
-          },
-          "year": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Publication year"
-          },
-          "pmc_id": {
-            "type": "string",
-            "description": "PMC identifier"
-          },
-          "pmid": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "PubMed identifier"
-          },
-          "doi": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Digital Object Identifier (DOI) of the paper"
-          },
-          "doi_url": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "DOI resolver URL"
-          },
-          "url": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "URL to access the paper on PMC"
-          },
-          "pdf_url": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "PDF URL on PMC (when available)"
-          },
-          "abstract_source": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Source of abstract text (when include_abstract=true)"
-          },
-          "venue": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Journal or venue name"
-          },
-          "open_access": {
-            "type": "boolean",
-            "description": "Open access status (always true for PMC)"
-          },
-          "source": {
-            "type": "string",
-            "description": "Source identifier (always 'PMC')"
-          },
-          "article_type": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Type of article (e.g., research-article, review)"
-          },
-          "citations": {
-            "type": "integer",
-            "description": "Number of citations"
-          },
-          "search_pagination": {
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of full-text biomedical papers from PMC matching the search query",
+          "items": {
             "type": "object",
-            "description": "Page metadata repeated on each paper to preserve the historical list response type.",
             "properties": {
-              "total_results": {
+              "title": {
+                "type": "string",
+                "description": "Title of the paper"
+              },
+              "abstract": {
                 "type": [
-                  "integer",
+                  "string",
                   "null"
-                ]
+                ],
+                "description": "Abstract of the paper (null when not available via esummary)"
               },
-              "retrievable_results": {
-                "type": "integer"
+              "authors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "List of author names"
               },
-              "returned": {
-                "type": "integer"
-              },
-              "offset": {
-                "type": "integer"
-              },
-              "limit": {
-                "type": "integer"
-              },
-              "has_more": {
-                "type": "boolean"
-              },
-              "next_offset": {
+              "year": {
                 "type": [
-                  "integer",
+                  "string",
                   "null"
-                ]
+                ],
+                "description": "Publication year"
               },
-              "result_set_complete": {
-                "type": "boolean"
+              "pmc_id": {
+                "type": "string",
+                "description": "PMC identifier"
               },
-              "database_result_complete": {
-                "type": "boolean"
+              "pmid": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "PubMed identifier"
               },
-              "retrieval_limit_reached": {
-                "type": "boolean"
+              "doi": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Digital Object Identifier (DOI) of the paper"
               },
-              "retrieval_limit_note": {
-                "type": "string"
+              "doi_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "DOI resolver URL"
+              },
+              "url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "URL to access the paper on PMC"
+              },
+              "pdf_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "PDF URL on PMC (when available)"
+              },
+              "abstract_source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Source of abstract text (when include_abstract=true)"
+              },
+              "venue": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Journal or venue name"
+              },
+              "open_access": {
+                "type": "boolean",
+                "description": "Open access status (always true for PMC)"
+              },
+              "source": {
+                "type": "string",
+                "description": "Source identifier (always 'PMC')"
+              },
+              "article_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Type of article (e.g., research-article, review)"
+              },
+              "citations": {
+                "type": "integer",
+                "description": "Number of citations"
+              },
+              "search_pagination": {
+                "type": "object",
+                "description": "Page metadata repeated on each paper to preserve the historical list response type.",
+                "properties": {
+                  "total_results": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "retrievable_results": {
+                    "type": "integer"
+                  },
+                  "returned": {
+                    "type": "integer"
+                  },
+                  "offset": {
+                    "type": "integer"
+                  },
+                  "limit": {
+                    "type": "integer"
+                  },
+                  "has_more": {
+                    "type": "boolean"
+                  },
+                  "next_offset": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "result_set_complete": {
+                    "type": "boolean"
+                  },
+                  "database_result_complete": {
+                    "type": "boolean"
+                  },
+                  "retrieval_limit_reached": {
+                    "type": "boolean"
+                  },
+                  "retrieval_limit_note": {
+                    "type": "string"
+                  }
+                }
               }
             }
           }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {

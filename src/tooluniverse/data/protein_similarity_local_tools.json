@@ -182,8 +182,7 @@
           },
           "required": [
             "status",
-            "error",
-            "stage"
+            "error"
           ]
         }
       ]
@@ -212,7 +211,7 @@
         "query_path": {
           "type": "string",
           "minLength": 1,
-          "description": "Local single-chain one-model .pdb file, or directory of 1\u201350 such files with standard CA records and no alternate locations; builtin:1UBQ is bundled public ubiquitin."
+          "description": "Local single-chain one-model .pdb file, or directory of 1–50 such files with standard CA records and no alternate locations; builtin:1UBQ is bundled public ubiquitin."
         },
         "reference_path": {
           "type": "string",
@@ -374,8 +373,7 @@
           },
           "required": [
             "status",
-            "error",
-            "stage"
+            "error"
           ]
         }
       ]
