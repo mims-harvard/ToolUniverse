@@ -1504,6 +1504,31 @@ def test_firecrawl_backend_live_keyless_call(monkeypatch):
     assert "api.firecrawl.dev" in data["provider_notice"]
 
 
+class _FakeOutcrawlResponse:
+    def __init__(self, payload, status_code=200, reason=""):
+        self._payload = payload
+        self.status_code = status_code
+        self.reason = reason
+
+    def json(self):
+        if isinstance(self._payload, Exception):
+            raise self._payload
+        return self._payload
+
+
+_OUTCRAWL_RESPONSE = {
+    "hits": [
+        {
+            "url": "https://docs.python.org/3/library/asyncio-eventloop.html",
+            "title": "Event Loop",
+            "snippet": "The event loop is the core of every asyncio application.",
+            "rank": 1,
+        }
+    ],
+    "usage": {"credits": "0.5"},
+}
+
+
 # --- Keenable -------------------------------------------------------------
 
 
@@ -1536,6 +1561,370 @@ _KEENABLE_RESPONSE = {
         },
     ]
 }
+
+
+@pytest.mark.unit
+def test_outcrawl_search_requires_api_key(monkeypatch):
+    monkeypatch.delenv("OUTCRAWL_API_KEY", raising=False)
+
+    def unexpected_post(*args, **kwargs):
+        raise AssertionError("no request without a key")
+
+    monkeypatch.setattr(web_search_tool.requests, "post", unexpected_post)
+
+    with pytest.raises(RuntimeError, match="OUTCRAWL_API_KEY"):
+        _new_tool()._search_with_outcrawl(query="x", max_results=1)
+
+
+@pytest.mark.unit
+def test_outcrawl_search_sends_documented_request_and_parses_hits(monkeypatch):
+    monkeypatch.setenv("OUTCRAWL_API_KEY", "  oc-test-key\n")
+    captured = {}
+
+    def fake_post(url, *, json=None, headers=None, timeout=None):
+        captured["url"] = url
+        captured["json"] = json
+        captured["headers"] = headers
+        captured["timeout"] = timeout
+        return _FakeOutcrawlResponse(_OUTCRAWL_RESPONSE)
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+
+    results = _new_tool()._search_with_outcrawl(
+        query="python asyncio event loop", max_results=5
+    )
+
+    assert captured["url"] == "https://api.outcrawl.ai/v1/search"
+    assert captured["json"] == {"query": "python asyncio event loop", "limit": 5}
+    assert captured["headers"]["Authorization"] == "Bearer oc-test-key"
+    assert captured["headers"]["User-Agent"] == "ToolUniverse/1.0"
+    assert captured["timeout"] == 30
+    assert results == [
+        {
+            "title": "Event Loop",
+            "url": "https://docs.python.org/3/library/asyncio-eventloop.html",
+            "snippet": "The event loop is the core of every asyncio application.",
+            "rank": 1,
+        }
+    ]
+
+
+@pytest.mark.unit
+def test_outcrawl_search_caps_limit_at_twenty(monkeypatch):
+    monkeypatch.setenv("OUTCRAWL_API_KEY", "oc-test-key")
+    captured = {}
+
+    def fake_post(url, *, json=None, headers=None, timeout=None):
+        captured["json"] = json
+        return _FakeOutcrawlResponse({"hits": []})
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+
+    _new_tool()._search_with_outcrawl(query="x", max_results=50)
+
+    assert captured["json"]["limit"] == 20
+
+
+@pytest.mark.unit
+def test_outcrawl_search_prefers_the_request_scoped_key(monkeypatch):
+    monkeypatch.setenv("OUTCRAWL_API_KEY", "oc-operator-key")
+    captured = {}
+
+    def fake_post(url, *, json=None, headers=None, timeout=None):
+        captured["headers"] = headers
+        return _FakeOutcrawlResponse(_OUTCRAWL_RESPONSE)
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+    tool = _new_tool()
+
+    with credential_context({"OUTCRAWL_API_KEY": "oc-request-key"}):
+        tool._search_with_outcrawl(query="x", max_results=1)
+
+    assert captured["headers"]["Authorization"] == "Bearer oc-request-key"
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    ("status_code", "payload", "pattern"),
+    [
+        (401, {"message": "invalid key"}, "HTTP 401"),
+        (
+            402,
+            {"message": "credits exhausted"},
+            "out of credits.*402.*credits exhausted",
+        ),
+        (429, {"error": {"message": "slow down"}}, "rate limit.*429.*slow down"),
+        (500, {"message": "upstream failed"}, "500.*upstream failed"),
+        (502, ValueError("not json"), "502.*Bad Gateway"),
+    ],
+)
+def test_outcrawl_search_surfaces_http_errors(
+    monkeypatch, status_code, payload, pattern
+):
+    monkeypatch.setenv("OUTCRAWL_API_KEY", "oc-test-key")
+    monkeypatch.setattr(
+        web_search_tool.requests,
+        "post",
+        lambda *a, **k: _FakeOutcrawlResponse(
+            payload, status_code=status_code, reason="Bad Gateway"
+        ),
+    )
+
+    with pytest.raises(RuntimeError, match=pattern):
+        _new_tool()._search_with_outcrawl(query="x", max_results=1)
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    "payload",
+    [{}, {"hits": {}}, {"hits": "nope"}, "not a dict", ValueError("not json")],
+)
+def test_outcrawl_search_rejects_malformed_bodies(monkeypatch, payload):
+    monkeypatch.setenv("OUTCRAWL_API_KEY", "oc-test-key")
+    monkeypatch.setattr(
+        web_search_tool.requests, "post", lambda *a, **k: _FakeOutcrawlResponse(payload)
+    )
+
+    with pytest.raises(RuntimeError):
+        _new_tool()._search_with_outcrawl(query="x", max_results=1)
+
+
+@pytest.mark.unit
+def test_outcrawl_search_skips_malformed_items_and_truncates(monkeypatch):
+    monkeypatch.setenv("OUTCRAWL_API_KEY", "oc-test-key")
+    hits = [
+        None,
+        {},
+        {"url": ""},
+        {"title": None, "url": "https://example.com/a", "rank": 7},
+        {"title": 12, "url": "https://example.com/b", "snippet": 3},
+        {"title": "C", "url": "https://example.com/c", "snippet": "c"},
+    ]
+    monkeypatch.setattr(
+        web_search_tool.requests,
+        "post",
+        lambda *a, **k: _FakeOutcrawlResponse({"hits": hits}),
+    )
+
+    results = _new_tool()._search_with_outcrawl(query="x", max_results=2)
+
+    assert results == [
+        {"title": "", "url": "https://example.com/a", "snippet": "", "rank": 1},
+        {"title": "", "url": "https://example.com/b", "snippet": "", "rank": 2},
+    ]
+
+
+@pytest.mark.unit
+def test_outcrawl_backend_reports_success(monkeypatch):
+    tool = _new_tool()
+    monkeypatch.setattr(
+        tool,
+        "_search_with_outcrawl",
+        lambda **kwargs: [
+            {"title": "R", "url": "https://example.com", "snippet": "s", "rank": 1}
+        ],
+    )
+    monkeypatch.setattr(web_search_tool.time, "sleep", lambda _: None)
+
+    result = tool.run({"query": "test query", "backend": "outcrawl"})
+
+    assert result["status"] == "success"
+    assert result["data"]["backend_used"] == "outcrawl"
+    assert result["data"]["attempted_backends"] == ["outcrawl"]
+    assert "api.outcrawl.ai" in result["data"]["provider_notice"]
+    assert "patient-identifying" in result["data"]["provider_notice"]
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    ("controls", "named"),
+    [
+        ({"region": "uk-en"}, "region"),
+        ({"safesearch": "off"}, "safesearch"),
+        ({"region": "de-de", "safesearch": "on"}, "region, safesearch"),
+    ],
+)
+def test_outcrawl_backend_rejects_unsupported_controls(monkeypatch, controls, named):
+    tool = _new_tool()
+
+    def unexpected_call(**kwargs):
+        raise AssertionError("Outcrawl must not be called with unsupported controls")
+
+    monkeypatch.setattr(tool, "_search_with_outcrawl", unexpected_call)
+
+    result = tool.run({"query": "test query", "backend": "outcrawl", **controls})
+
+    assert result["status"] == "error"
+    assert (
+        f"The Outcrawl backend does not support non-default ToolUniverse controls: {named}."
+        in result["error"]
+    )
+
+
+@pytest.mark.unit
+def test_outcrawl_run_sends_clamped_limit(monkeypatch):
+    monkeypatch.setenv("OUTCRAWL_API_KEY", "oc-test-key")
+    captured = {}
+
+    def fake_post(url, *, json=None, headers=None, timeout=None):
+        captured["json"] = json
+        return _FakeOutcrawlResponse(_OUTCRAWL_RESPONSE)
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+    monkeypatch.setattr(web_search_tool.time, "sleep", lambda _: None)
+
+    result = _new_tool().run({"query": "x", "backend": "outcrawl", "max_results": 80})
+
+    assert captured["json"] == {"query": "x", "limit": 20}
+    assert result["data"]["backend_used"] == "outcrawl"
+
+
+@pytest.mark.unit
+def test_outcrawl_backend_without_key_falls_back_to_auto(monkeypatch):
+    monkeypatch.delenv("OUTCRAWL_API_KEY", raising=False)
+    tool = _new_tool()
+    monkeypatch.setattr(
+        tool,
+        "_search_with_ddgs",
+        lambda **kwargs: [
+            {"title": "F", "url": "https://fallback.example", "snippet": "", "rank": 1}
+        ],
+    )
+    monkeypatch.setattr(web_search_tool.time, "sleep", lambda _: None)
+
+    result = tool.run({"query": "test query", "backend": "outcrawl"})
+
+    data = result["data"]
+    assert result["status"] == "success"
+    assert data["backend_used"] == "auto"
+    assert data["attempted_backends"] == ["outcrawl", "auto"]
+    assert "OUTCRAWL_API_KEY" in data["provider_errors"]["outcrawl"]
+    assert data["provider_notice"] == web_search_tool.OUTCRAWL_PROVIDER_NOTICE
+
+
+@pytest.mark.unit
+def test_outcrawl_empty_results_fall_back_without_provider_error(monkeypatch):
+    monkeypatch.setenv("OUTCRAWL_API_KEY", "oc-test-key")
+    tool = _new_tool()
+    monkeypatch.setattr(
+        web_search_tool.requests,
+        "post",
+        lambda *a, **k: _FakeOutcrawlResponse({"hits": []}),
+    )
+    monkeypatch.setattr(
+        tool,
+        "_search_with_ddgs",
+        lambda **kwargs: [
+            {"title": "F", "url": "https://fallback.example", "snippet": "", "rank": 1}
+        ],
+    )
+    monkeypatch.setattr(web_search_tool.time, "sleep", lambda _: None)
+
+    result = tool.run({"query": "x", "backend": "outcrawl"})
+
+    data = result["data"]
+    assert data["attempted_backends"][0] == "outcrawl"
+    assert data["backend_used"] != "outcrawl"
+    assert "outcrawl" not in data.get("provider_errors", {})
+
+
+@pytest.mark.unit
+def test_outcrawl_all_provider_failure_keeps_disclosure(monkeypatch):
+    tool = _new_tool()
+
+    def always_fail(**kwargs):
+        raise RuntimeError("simulated provider failure")
+
+    monkeypatch.setattr(tool, "_search_with_outcrawl", always_fail)
+    monkeypatch.setattr(tool, "_search_with_ddgs", always_fail)
+    monkeypatch.setattr(tool, "_search_with_duckduckgo_html", always_fail)
+    monkeypatch.setattr(tool, "_search_with_wikipedia_api", always_fail)
+
+    result = tool.run({"query": "test query", "backend": "outcrawl"})
+
+    assert result["data"]["backend_used"] == "none"
+    assert result["data"]["all_providers_failed"] is True
+    assert "api.outcrawl.ai" in result["data"]["provider_notice"]
+
+
+@pytest.mark.unit
+def test_auto_backend_does_not_call_outcrawl(monkeypatch):
+    tool = _new_tool()
+
+    def unexpected_call(**kwargs):
+        raise AssertionError("Outcrawl must remain opt-in")
+
+    monkeypatch.setattr(tool, "_search_with_outcrawl", unexpected_call)
+    monkeypatch.setattr(
+        tool,
+        "_search_with_ddgs",
+        lambda **kwargs: [
+            {"title": "D", "url": "https://default.example", "snippet": "", "rank": 1}
+        ],
+    )
+    monkeypatch.setattr(web_search_tool.time, "sleep", lambda _: None)
+
+    result = tool.run({"query": "test query", "backend": "auto"})
+
+    assert "outcrawl" not in result["data"]["attempted_backends"]
+    assert "provider_notice" not in result["data"]
+
+
+@pytest.mark.unit
+def test_api_documentation_search_forwards_outcrawl_backend(monkeypatch):
+    tool = _new_api_docs_tool()
+    captured = {}
+
+    def fake_search(**kwargs):
+        captured.update(kwargs)
+        return (
+            [{"title": "D", "url": "https://docs.example", "snippet": "", "rank": 1}],
+            "outcrawl",
+            ["outcrawl"],
+            None,
+            {},
+        )
+
+    monkeypatch.setattr(tool, "_search_with_fallback", fake_search)
+    monkeypatch.setattr(web_search_tool.time, "sleep", lambda _: None)
+
+    result = tool.run({"query": "FastMCP Client", "backend": "outcrawl"})
+
+    assert captured["backend"] == "outcrawl"
+    assert result["data"]["backend_used"] == "outcrawl"
+    assert "api.outcrawl.ai" in result["data"]["provider_notice"]
+
+
+@pytest.mark.integration
+@pytest.mark.network
+@pytest.mark.require_api_keys
+def test_outcrawl_backend_live_call():
+    """Opt-in live check against the real endpoint (excluded by default via the
+    `network` and `require_api_keys` markers). Skips without OUTCRAWL_API_KEY,
+    and whenever Outcrawl did not serve the search (the backend then falls back
+    to DDGS, which is correct behavior)."""
+    import os
+
+    if not os.environ.get("OUTCRAWL_API_KEY"):
+        pytest.skip("OUTCRAWL_API_KEY is not set")
+
+    result = _new_tool().run(
+        {"query": "python asyncio event loop", "backend": "outcrawl", "max_results": 3}
+    )
+
+    data = result["data"]
+    if data["backend_used"] != "outcrawl":
+        reason = data.get("provider_errors", {}).get(
+            "outcrawl", "no provider error reported"
+        )
+        pytest.skip(f"Outcrawl did not serve this search: {reason}")
+
+    assert result["status"] == "success"
+    assert 1 <= data["total_results"] <= 3
+    first = data["results"][0]
+    assert first["url"].startswith("http")
+    assert first["rank"] == 1
+    assert "api.outcrawl.ai" in data["provider_notice"]
 
 
 @pytest.mark.unit
@@ -1629,7 +2018,9 @@ def test_auto_backend_does_not_call_keenable(monkeypatch):
     monkeypatch.setattr(
         tool,
         "_search_with_ddgs",
-        lambda **kwargs: [{"title": "d", "url": "https://d.example", "snippet": "", "rank": 1}],
+        lambda **kwargs: [
+            {"title": "d", "url": "https://d.example", "snippet": "", "rank": 1}
+        ],
     )
 
     result = tool.run({"query": "q"})

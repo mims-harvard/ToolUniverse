@@ -598,6 +598,18 @@
     ]
   },
   {
+    "name": "OUTCRAWL_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Other",
+    "register_url": "https://outcrawl.ai/sign-in",
+    "purpose": "Authenticate the backend='outcrawl' option (Outcrawl Search, https://api.outcrawl.ai/v1/search). Searches are billed against the account's credits (the free tier includes 1,000 credits a month).",
+    "without": "web_search still works via DDGS/Parallel/DuckDuckGo-HTML/Wikipedia; backend='outcrawl' falls back to the normal DDGS chain without it.",
+    "used_by": [
+      "web_search_tools.json"
+    ]
+  },
+  {
     "name": "PHARMVAR_API_KEY",
     "requirement": "required",
     "type": "secret",
