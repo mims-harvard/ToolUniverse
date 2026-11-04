@@ -472,8 +472,8 @@ def colony_morphometry_analysis(df, genotype_col='Genotype',
 
 
 # Example usage (colony morphometry)
-df = pd.read_csv("Swarm_1.csv")
-result = colony_morphometry_analysis(df, 'Genotype', 'Area', 'Circularity')
+df = pd.read_csv("colony_measurements.csv")
+result = colony_morphometry_analysis(df, 'genotype', 'area', 'circularity')
 print(f"Genotype with largest area: {result['max_area_genotype']}")
 print(f"Mean circularity: {result['max_area_circularity']:.4f}")
 ```

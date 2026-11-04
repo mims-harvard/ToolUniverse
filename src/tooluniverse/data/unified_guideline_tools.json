@@ -755,6 +755,11 @@
               "type": "string",
               "description": "Type of content (full_guideline)"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -865,6 +870,11 @@
               "type": "string",
               "description": "Additional notes about content availability"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

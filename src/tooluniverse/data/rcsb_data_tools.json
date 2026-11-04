@@ -321,6 +321,11 @@
             "evidence_pagination": {
               "type": "object"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -432,6 +437,11 @@
               },
               "description": "Database annotations (DrugBank, etc.)"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

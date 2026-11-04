@@ -11,6 +11,7 @@ Reference: Esposito et al. (2019) Genome Research
 
 import csv
 import io
+import json
 import re
 from collections import Counter
 
@@ -305,21 +306,6 @@ class MaveDBTool(BaseTool):
         }
 
     @staticmethod
-    def _is_genomic_reference(summary: Optional[Dict[str, Any]]) -> bool:
-        """True when a summarized VRS allele is anchored on a genomic sequence.
-
-        MaveDB maps protein-level DMS constructs onto protein (NP_/XP_) or
-        transcript (NM_/XM_/NR_) RefSeqs, which carry no genomic coordinates;
-        only chromosome/gene-region RefSeqs (NC_/NT_/NW_/NG_) are genomic.
-        Counting any non-null postMapped as "genomic" over-reports variants that
-        cannot actually be cross-referenced to ClinVar/dbSNP by position.
-        """
-        if not summary:
-            return False
-        label = (summary.get("sequence_reference_label") or "").upper()
-        return label.startswith(("NC_", "NT_", "NW_", "NG_"))
-
-    @staticmethod
     def _parse_limit(raw_limit: Any) -> Optional[int]:
         """Coerce a user-supplied ``limit`` to a positive int, else None (no cap)."""
         if raw_limit is None:
@@ -365,10 +351,25 @@ class MaveDBTool(BaseTool):
     def _get_mapped_variants(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """Get genomically-mapped (GA4GH VRS / ClinGen Allele ID) coordinates.
 
-        Returns the list of mapped variants for a MaveDB score set. Each entry
-        carries a postMapped VRS Allele with genomic SequenceLocation (when the
-        variant maps to the genome) plus the ClinGen canonical allele ID, which
-        is what links a MAVE functional score to other variant databases.
+        Reads ``/score-sets/{urn}/variant-details``. The older
+        ``/mapped-variants`` route this operation used was retired upstream:
+        since 2026-11-01 it answers HTTP 410 with the body "GET
+        /score-sets/<urn>/mapped-variants has been removed. Use GET
+        /score-sets/<urn>/variant-details instead", and MaveDB's own OpenAPI
+        now documents it as "Removed; see GET /score-sets/{urn}/variant-details".
+
+        The successor carries strictly more: the preMapped/postMapped VRS pair
+        it always had, plus MaveDB's own cross-level projection (``mapped``),
+        which is what finally makes the genomic coordinate readable without
+        resolving a refget accession. Two fields the old route carried --
+        ``vrsVersion`` and ``errorMessage`` -- have no successor in the new
+        payload and are not emitted as perpetual nulls. ``alignmentLevel``
+        becomes ``assay_level``, which is the level the assay itself scored
+        (protein / cdna / genomic), not the level the mapping reached.
+
+        The response is newline-delimited JSON, one record per variant, and the
+        route takes no page-size parameter: a 784-variant score set is 11.4 MB.
+        limit/offset remain a recoverable local page over the full download.
         """
         urn = (params.get("urn") or "").strip()
         if not urn:
@@ -384,7 +385,7 @@ class MaveDBTool(BaseTool):
 
         try:
             resp = self.session.get(
-                f"{MAVEDB_API}/score-sets/{urn}/mapped-variants", timeout=30
+                f"{MAVEDB_API}/score-sets/{urn}/variant-details", timeout=120
             )
         except requests.exceptions.RequestException as e:
             return {"status": "error", "error": f"MaveDB API error: {e}"}
@@ -394,18 +395,34 @@ class MaveDBTool(BaseTool):
                 "status": "error",
                 "error": f"Score set '{urn}' not found in MaveDB",
             }
+        if resp.status_code == 410:
+            # The route we now call is itself the replacement for a retired
+            # one. If MaveDB retires it too, its 410 body names the successor,
+            # so pass that through instead of a bare status code.
+            detail = ""
+            try:
+                detail = (resp.json() or {}).get("detail") or ""
+            except ValueError:
+                detail = (resp.text or "")[:300]
+            return {
+                "status": "error",
+                "error": (
+                    "MaveDB has retired the variant-details route this tool "
+                    f"calls (HTTP 410). Upstream says: {detail}"
+                    if detail
+                    else "MaveDB has retired the variant-details route this "
+                    "tool calls (HTTP 410)."
+                ),
+            }
         if resp.status_code != 200:
             return {
                 "status": "error",
                 "error": f"MaveDB request failed: HTTP {resp.status_code}",
             }
 
-        try:
-            raw = resp.json()
-        except ValueError as e:
-            return {"status": "error", "error": f"Invalid JSON from MaveDB: {e}"}
-        if not isinstance(raw, list):
-            raw = [raw] if raw else []
+        raw, parse_error = self._parse_ndjson(resp.text)
+        if parse_error:
+            return {"status": "error", "error": parse_error}
 
         mapped = []
         n_with_genomic = 0
@@ -416,18 +433,35 @@ class MaveDBTool(BaseTool):
             post = self._summarize_vrs_allele(entry.get("postMapped"))
             pre = self._summarize_vrs_allele(entry.get("preMapped"))
             clingen = entry.get("clingenAlleleId")
-            if self._is_genomic_reference(post):
+            projections = entry.get("mapped")
+            if not isinstance(projections, dict):
+                projections = {}
+            genomic = projections.get("genomic")
+            if not isinstance(genomic, dict):
+                genomic = {}
+            cdna = projections.get("cdna")
+            if not isinstance(cdna, dict):
+                cdna = {}
+            protein = projections.get("protein")
+            if not isinstance(protein, dict):
+                protein = {}
+            if genomic.get("hgvs"):
                 n_with_genomic += 1
             if clingen:
                 n_with_clingen += 1
             mapped.append(
                 {
-                    "variant_urn": entry.get("variantUrn"),
+                    "variant_urn": entry.get("urn"),
                     "clingen_allele_id": clingen,
-                    "alignment_level": entry.get("alignmentLevel"),
-                    "vrs_version": entry.get("vrsVersion"),
-                    "current": entry.get("current"),
-                    "error_message": entry.get("errorMessage"),
+                    "assay_level": entry.get("assayLevel"),
+                    "mapping_mode": entry.get("mode"),
+                    "current": entry.get("isCurrent"),
+                    "superseded_by_score_set": entry.get("supersededByScoreSet"),
+                    "target_hgvs": entry.get("targetHgvs"),
+                    "reference_hgvs": entry.get("referenceHgvs"),
+                    "genomic_hgvs": genomic.get("hgvs"),
+                    "cdna_hgvs": cdna.get("hgvs"),
+                    "protein_hgvs": protein.get("hgvs"),
                     "post_mapped": post,
                     "pre_mapped": pre,
                 }
@@ -453,15 +487,58 @@ class MaveDBTool(BaseTool):
                 "mapped_variants": mapped,
             },
             "metadata": {
-                "source": "MaveDB mapped-variants (GA4GH VRS + ClinGen Allele Registry)",
+                "source": (
+                    "MaveDB variant-details (GA4GH VRS + Cat-VRS + ClinGen "
+                    "Allele Registry)"
+                ),
                 "note": (
-                    "post_mapped carries genomic SequenceLocation when the "
-                    "variant maps to the genome (alignment_level='genomic'); "
-                    "intronic / unmappable variants have post_mapped=None and an "
-                    "error_message. clingen_allele_id links scores to ClinVar/dbSNP."
+                    "genomic_hgvs is MaveDB's own projection of the scored "
+                    "variant onto the genome (NC_ accession) and is the field "
+                    "to join on; it is null for a score set MaveDB could not "
+                    "project. post_mapped/pre_mapped are the VRS Alleles at "
+                    "the level the assay scored, whose sequenceReference "
+                    "carries a refget accession and no label, so a genomic "
+                    "variant is counted from genomic_hgvs, not from the "
+                    "accession. clingen_allele_id links scores to "
+                    "ClinVar/dbSNP."
                 ),
             },
         }
+
+    @staticmethod
+    def _parse_ndjson(body: str) -> Tuple[List[Dict[str, Any]], Optional[str]]:
+        """Parse newline-delimited JSON, tolerating a single JSON array.
+
+        MaveDB's variant-details route streams one object per line. A plain
+        ``resp.json()`` on that body raises "Extra data: line 2 column 1", and
+        the old route this replaced did return a single array, so accept both
+        rather than make the format a hard dependency.
+        """
+        text = (body or "").strip()
+        if not text:
+            return [], None
+        if text[0] == "[":
+            try:
+                parsed = json.loads(text)
+            except ValueError as e:
+                return [], f"Invalid JSON from MaveDB: {e}"
+            if isinstance(parsed, list):
+                return parsed, None
+            return [parsed], None
+        records: List[Dict[str, Any]] = []
+        for lineno, line in enumerate(text.split("\n"), start=1):
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                records.append(json.loads(line))
+            except ValueError as e:
+                return (
+                    [],
+                    "MaveDB returned a line that is not JSON "
+                    f"(line {lineno} of its newline-delimited response): {e}",
+                )
+        return records, None
 
     def _get_clinical_controls(self, params: Dict[str, Any]) -> Dict[str, Any]:
         """Get ClinVar clinical-control variants overlapping a score set.

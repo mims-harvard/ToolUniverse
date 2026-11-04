@@ -65,6 +65,11 @@
                             ],
                             "description": "Replacement IDs if this ID was retired"
                         }
+                    },
+                    "not": {
+                        "required": [
+                            "error"
+                        ]
                     }
                 },
                 {
@@ -148,6 +153,11 @@
                                 }
                             }
                         }
+                    },
+                    "not": {
+                        "required": [
+                            "error"
+                        ]
                     }
                 },
                 {

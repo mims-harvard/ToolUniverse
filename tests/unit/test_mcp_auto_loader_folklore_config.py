@@ -4,24 +4,24 @@ from pathlib import Path
 from tooluniverse.default_config import default_tool_files
 
 EXPECTED_TOOLS = {
-    "search_variant_evidence",
+    "classify_germline_variant",
     "search_variant_literature",
     "get_publication_details",
     "search_literature_corpus",
 }
 
 EXPECTED_CONTRACT_HASHES = {
-    "search_variant_evidence": (
-        "7a537fea79ae459ada1ef188e0b84147b35aead716295b423a0d8c7173e5d42f"
+    "classify_germline_variant": (
+        "800325ed81610b42dd876d0542d8169105b03acf3704f9c89ba2597272c983ad"
     ),
     "search_variant_literature": (
-        "999ec1ddb4ea413fe8a22df866086e0fa94f5e5f8027e6fbb6a1faabb38174d8"
+        "820a415743aa7338dc2bf2d27d9d2e3d320c878852ace63a1d44c1f66e9e953d"
     ),
     "get_publication_details": (
-        "7906416a2f1dc0ec5f1c210f87a216da190a5f6e842e5059db70e1a5f6e190dd"
+        "c221b7142324feadfab11242c05af17eb98b8fe4a5a7df3a666dec90ed50a7eb"
     ),
     "search_literature_corpus": (
-        "6e09be489f4d1a5d25652df12ca0ec0924d8fc27f4c940e31528dd1ea22d776e"
+        "34b4eba562a9bb39b91792eac6a4e9da447b37696a3133bbe754ab46833f5035"
     ),
 }
 
@@ -54,8 +54,10 @@ def test_folklore_loader_is_opt_in_allowlisted_and_contract_pinned():
         not contract["annotations"]["destructiveHint"]
         for contract in contracts.values()
     )
-    assert "professional review" in contracts["search_variant_evidence"]["description"]
-    assert contracts["search_variant_evidence"]["title"] == (
+    assert (
+        "professional review" in contracts["classify_germline_variant"]["description"]
+    )
+    assert contracts["classify_germline_variant"]["title"] == (
         "Classify or interpret a germline variant under ACMG/AMP"
     )
     for trigger in (
@@ -65,7 +67,7 @@ def test_folklore_loader_is_opt_in_allowlisted_and_contract_pinned():
         "population-frequency evidence",
         "resolve a variant notation",
     ):
-        assert trigger in contracts["search_variant_evidence"]["description"]
+        assert trigger in contracts["classify_germline_variant"]["description"]
     assert "do not change" in contracts["search_variant_literature"]["description"]
     assert "no patient context" in contracts["get_publication_details"]["description"]
     assert "professional review" in contracts["search_literature_corpus"]["description"]

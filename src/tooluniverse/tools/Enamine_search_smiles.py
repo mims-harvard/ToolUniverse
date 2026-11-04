@@ -1,7 +1,7 @@
 """
 Enamine_search_smiles
 
-Search Enamine by chemical structure (SMILES) when the Enamine Store API is available. Returns an...
+DEPRECATED / non-functional (verified 2026-11-01): the Enamine Store API this tool calls has been...
 """
 
 from typing import Any, Optional, Callable
@@ -20,7 +20,7 @@ def Enamine_search_smiles(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search Enamine by chemical structure (SMILES) when the Enamine Store API is available. Returns an...
+    DEPRECATED / non-functional (verified 2026-11-01): the Enamine Store API this tool calls has been...
 
     Parameters
     ----------

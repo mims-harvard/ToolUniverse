@@ -204,7 +204,12 @@
               "description": "True if a CellTypist default model"
             }
           },
-          "description": "A single CellTypist model"
+          "description": "A single CellTypist model",
+          "not": {
+            "required": [
+              "error"
+            ]
+          }
         },
         {
           "type": "object",

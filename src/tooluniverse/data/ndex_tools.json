@@ -238,6 +238,11 @@
               "type": "object",
               "description": "Custom network properties (key-value pairs)"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -379,6 +384,11 @@
                 "null"
               ]
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

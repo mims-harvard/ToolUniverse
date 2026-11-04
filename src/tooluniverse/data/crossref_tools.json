@@ -130,16 +130,85 @@
           "type": "string"
         },
         "title": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "abstract": {
           "type": "string"
         },
         "author": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "ORCID": {
+                "type": "string"
+              },
+              "affiliation": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "name"
+                  ]
+                }
+              },
+              "authenticated-orcid": {
+                "type": "boolean"
+              },
+              "family": {
+                "type": "string"
+              },
+              "given": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "role": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "role": {
+                      "type": "string"
+                    },
+                    "vocabulary": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "role",
+                    "vocabulary"
+                  ]
+                }
+              },
+              "sequence": {
+                "type": "string"
+              },
+              "suffix": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "affiliation",
+              "role",
+              "sequence"
+            ]
+          }
         },
         "container-title": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "published": {
           "type": "object"
@@ -154,13 +223,131 @@
           "type": "integer"
         },
         "reference": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "DOI": {
+                "type": "string"
+              },
+              "article-title": {
+                "type": "string"
+              },
+              "author": {
+                "type": "string"
+              },
+              "doi-asserted-by": {
+                "type": "string"
+              },
+              "first-page": {
+                "type": "string"
+              },
+              "issue": {
+                "type": "string"
+              },
+              "journal-title": {
+                "type": "string"
+              },
+              "key": {
+                "type": "string"
+              },
+              "series-title": {
+                "type": "string"
+              },
+              "unstructured": {
+                "type": "string"
+              },
+              "volume": {
+                "type": "string"
+              },
+              "volume-title": {
+                "type": "string"
+              },
+              "year": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "key"
+            ]
+          }
         },
         "license": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "URL": {
+                "type": "string"
+              },
+              "content-version": {
+                "type": "string"
+              },
+              "delay-in-days": {
+                "type": "integer"
+              },
+              "start": {
+                "type": "object"
+              }
+            },
+            "required": [
+              "URL",
+              "content-version",
+              "delay-in-days",
+              "start"
+            ]
+          }
         },
         "funder": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "DOI": {
+                "type": "string"
+              },
+              "award": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "award-info": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "award-number": {
+                      "type": "array"
+                    }
+                  }
+                }
+              },
+              "doi-asserted-by": {
+                "type": "string"
+              },
+              "id": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "asserted-by": {
+                      "type": "string"
+                    },
+                    "id": {
+                      "type": "string"
+                    },
+                    "id-type": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          }
         }
       }
     },
@@ -528,6 +715,11 @@
             "coverage": {
               "type": "object"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

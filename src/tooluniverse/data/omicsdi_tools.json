@@ -81,6 +81,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "type": "object",
           "description": "OmicsDI search results",
           "properties": {
@@ -185,6 +190,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "type": "object",
           "description": "Detailed dataset information",
           "properties": {
@@ -201,31 +211,71 @@
               "type": "string"
             },
             "keywords": {
-              "type": ["array", "null"]
+              "type": ["array", "null"],
+              "items": {
+                "type": "string"
+              }
             },
             "organisms": {
-              "type": ["array", "null"]
+              "type": ["array", "null"],
+              "items": {
+                "type": "object",
+                "properties": {
+                  "acc": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
             },
             "tissues": {
-              "type": ["array", "null"]
+              "type": ["array", "null"],
+              "items": {
+                "type": "string"
+              }
             },
             "diseases": {
-              "type": ["array", "null"]
+              "type": ["array", "null"],
+              "items": {
+                "type": "string"
+              }
             },
             "omics_type": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             },
             "publicationDate": {
               "type": "string"
             },
             "publicationIds": {
-              "type": ["array", "null"]
+              "type": ["array", "null"],
+              "items": {
+                "type": "string"
+              }
             },
             "protocols": {
-              "type": ["array", "null"]
+              "type": ["array", "null"],
+              "items": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
             },
             "instruments": {
-              "type": "array"
+              "type": ["array", "null"],
+              "items": {
+                "type": "string"
+              }
             },
             "full_dataset_link": {
               "type": ["string", "null"]

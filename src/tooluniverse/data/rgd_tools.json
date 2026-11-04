@@ -29,7 +29,12 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object"
+          "type": "object",
+          "not": {
+            "required": [
+              "error"
+            ]
+          }
         },
         {
           "type": "object",
@@ -416,7 +421,12 @@
     "return_schema": {
       "oneOf": [
         {
-          "description": "Gene record (symbol mode) or list of genes in region (region mode)."
+          "description": "Gene record (symbol mode) or list of genes in region (region mode).",
+          "not": {
+            "required": [
+              "error"
+            ]
+          }
         },
         {
           "type": "object",

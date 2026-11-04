@@ -120,6 +120,11 @@
                 "type": "string"
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -246,6 +251,11 @@
               },
               "description": "Direct parent disease terms with their parents"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

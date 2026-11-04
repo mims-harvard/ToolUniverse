@@ -57,6 +57,11 @@
         "return_schema": {
             "oneOf": [
                 {
+                    "not": {
+                        "required": [
+                            "error"
+                        ]
+                    },
                     "type": "object",
                     "properties": {
                         "mappings": {
@@ -145,6 +150,11 @@
         "return_schema": {
             "oneOf": [
                 {
+                    "not": {
+                        "required": [
+                            "error"
+                        ]
+                    },
                     "type": "object",
                     "properties": {
                         "mappings": {

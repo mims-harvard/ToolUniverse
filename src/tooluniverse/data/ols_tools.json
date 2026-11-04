@@ -189,6 +189,18 @@
     "test_examples": [
       {
         "ontology_id": "efo"
+      },
+      {
+        "ontology_id": "go"
+      },
+      {
+        "ontology_id": "uberon"
+      },
+      {
+        "ontology_id": "skos"
+      },
+      {
+        "ontology_id": "medgen"
       }
     ],
     "return_schema": {
@@ -198,31 +210,39 @@
           "type": "string"
         },
         "title": {
-          "type": "string"
+          "type": ["string", "null"],
+          "description": "Ontology name. Null for the four ontologies OLS gives no title under any key -- medgen, oio, schemaorg_http and schemaorg_https. Declaring it a required string made this tool answer a validation error for 16 of the 287 ontologies and made ols_search_ontologies drop all 16 while still reporting total_items: 287."
         },
         "version": {
-          "type": "null"
+          "type": ["string", "null"],
+          "description": "Ontology release, read from the OWL versionInfo annotation. Null for 116 of the 287 ontologies OLS lists."
         },
         "description": {
-          "type": "string"
+          "type": ["string", "null"],
+          "description": "Null for the ontologies OLS carries no description for, e.g. 'skos'."
         },
         "domain": {
-          "type": "null"
+          "type": ["string", "null"],
+          "description": "Subject domain, e.g. 'biological systems'. Measured for 'go'. Null for ontologies whose config does not set one."
         },
         "homepage": {
-          "type": "string"
+          "type": ["string", "null"],
+          "description": "Null for 25 of the 287 ontologies OLS lists."
         },
         "preferredPrefix": {
-          "type": "string"
+          "type": ["string", "null"],
+          "description": "Null for 30 of the 287 ontologies OLS lists."
         },
         "number_of_terms": {
-          "type": "null"
+          "type": "integer",
+          "description": "Class count. OLS v2 publishes it as numberOfClasses; v1 reported the identical number under this name. Present for all 287 ontologies measured."
         },
         "numberOfClasses": {
           "type": "integer"
         },
         "repository": {
-          "type": "null"
+          "type": ["string", "null"],
+          "description": "Source repository URL. Measured for 'go'. Null for ontologies whose config does not set one."
         }
       }
     },
@@ -293,18 +313,86 @@
     ],
     "return_schema": {
       "type": "object",
+      "description": "The listing payload, or the error envelope when the call fails. Measured over 6 calls and 323 rows.",
       "properties": {
         "status": {
-          "type": "string"
+          "type": "string",
+          "description": "\"success\" or \"error\"."
         },
         "results": {
           "type": "array",
+          "description": "One entry per ontology this page could read. Rows upstream sent that could not be read are left out and counted in pagination.dropped; this array never carries a raw OLS payload in their place.",
           "items": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "ontologyId": {
+                "type": "string"
+              },
+              "title": {
+                "type": ["string", "null"],
+                "description": "Null for the four ontologies OLS gives no title under any key."
+              },
+              "version": {
+                "type": ["string", "null"],
+                "description": "Null for 116 of the 287 ontologies OLS lists."
+              },
+              "description": {
+                "type": ["string", "null"]
+              },
+              "domain": {
+                "type": ["string", "null"]
+              },
+              "homepage": {
+                "type": ["string", "null"]
+              },
+              "preferredPrefix": {
+                "type": ["string", "null"]
+              },
+              "number_of_terms": {
+                "type": "integer"
+              },
+              "numberOfClasses": {
+                "type": "integer"
+              },
+              "repository": {
+                "type": ["string", "null"]
+              }
+            },
+            "required": ["ontologyId"]
           }
         },
         "pagination": {
-          "type": "object"
+          "type": "object",
+          "properties": {
+            "page": {
+              "type": "integer"
+            },
+            "size": {
+              "type": "integer",
+              "description": "The page size asked for, not the number of rows returned."
+            },
+            "showing": {
+              "type": "integer",
+              "description": "Rows this page actually carries. Less than size at the end of the result set, and less than that again when rows were dropped."
+            },
+            "dropped": {
+              "type": "integer",
+              "description": "Ontologies OLS sent that could not be read. Non-zero means total_items counts rows this page does not contain."
+            },
+            "total_pages": {
+              "type": "integer"
+            },
+            "total_items": {
+              "type": "integer",
+              "description": "Upstream's count of matching ontologies, which is not reduced by dropped rows."
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_page": {
+              "type": ["integer", "null"]
+            }
+          }
         },
         "search": {
           "type": [

@@ -87,6 +87,11 @@
                 "description": "Enzyme name"
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

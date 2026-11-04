@@ -110,6 +110,11 @@
               "type": "integer",
               "description": "Total groups found"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -284,6 +289,11 @@
               },
               "description": "InterPro domain annotations"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -441,6 +451,11 @@
               "type": "object",
               "description": "Count of genes per organism"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

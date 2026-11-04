@@ -280,6 +280,11 @@
               ],
               "description": "Total evidence records available"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

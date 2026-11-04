@@ -27,6 +27,11 @@
         "return_schema": {
             "oneOf": [
                 {
+                    "not": {
+                        "required": [
+                            "error"
+                        ]
+                    },
                     "type": "object",
                     "properties": {
                         "variant": {"type": "string", "description": "HGVS genomic notation"},
@@ -137,6 +142,11 @@
         "return_schema": {
             "oneOf": [
                 {
+                    "not": {
+                        "required": [
+                            "error"
+                        ]
+                    },
                     "type": "object",
                     "properties": {
                         "variant": {"type": "string"},
@@ -194,6 +204,11 @@
         "return_schema": {
             "oneOf": [
                 {
+                    "not": {
+                        "required": [
+                            "error"
+                        ]
+                    },
                     "type": "object",
                     "properties": {
                         "transcriptId": {"type": "string", "description": "Ensembl transcript ID"},
@@ -279,6 +294,11 @@
         "return_schema": {
             "oneOf": [
                 {
+                    "not": {
+                        "required": [
+                            "error"
+                        ]
+                    },
                     "type": "object",
                     "properties": {
                         "variant": {"type": "string"},
@@ -335,6 +355,11 @@
         "return_schema": {
             "oneOf": [
                 {
+                    "not": {
+                        "required": [
+                            "error"
+                        ]
+                    },
                     "type": "object",
                     "properties": {
                         "variant": {"type": "string", "description": "dbSNP rsID that was queried"},

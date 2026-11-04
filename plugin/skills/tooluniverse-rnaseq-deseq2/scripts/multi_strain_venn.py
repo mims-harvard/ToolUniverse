@@ -11,19 +11,19 @@ Why this exists:
 Usage:
     # If you've already run DESeq2 and saved per-contrast results CSVs:
     python multi_strain_venn.py \\
-        --deg-csv "JBX97=res_unshrunk_Strain_97_vs_1.csv" \\
-        --deg-csv "JBX98=res_unshrunk_Strain_98_vs_1.csv" \\
-        --deg-csv "JBX99=res_unshrunk_Strain_99_vs_1.csv" \\
+        --deg-csv "g1=res_unshrunk_group_g1_vs_ctrl.csv" \\
+        --deg-csv "g2=res_unshrunk_group_g2_vs_ctrl.csv" \\
+        --deg-csv "g3=res_unshrunk_group_g3_vs_ctrl.csv" \\
         --padj-thr 0.05 --lfc-thr 1.5 --basemean-thr 0 \\
-        --target-set "JBX97,JBX99" \\
-        --denominators "JBX97,JBX99,intersect,union,target_intersect"
+        --target-set "g1,g3" \\
+        --denominators "g1,g3,intersect,union,target_intersect"
 
     # Or if you just have plain gene-list .txt files (one gene per line):
     python multi_strain_venn.py \\
-        --gene-list "JBX97=jbx97_sigs.txt" \\
-        --gene-list "JBX99=jbx99_sigs.txt" \\
-        --gene-list "JBX98=jbx98_sigs.txt" \\
-        --target-set "JBX97,JBX99"
+        --gene-list "g1=g1_sigs.txt" \\
+        --gene-list "g3=g3_sigs.txt" \\
+        --gene-list "g2=g2_sigs.txt" \\
+        --target-set "g1,g3"
 
 Output (parseable):
     # SET <name>: n=...
@@ -90,7 +90,7 @@ def main():
     ap.add_argument("--basemean-thr", type=float, default=0.0,
                     help="baseMean threshold for sig sets from --deg-csv (default 0).")
     ap.add_argument("--target-set", required=True,
-                    help="Comma-separated labels for the 'target' subset, e.g. 'JBX97,JBX99'. "
+                    help="Comma-separated labels for the 'target' subset, e.g. 'g1,g3'. "
                          "Numerator = (intersect of these) - (union of OTHER labels).")
     ap.add_argument("--gene-id-col", default=None,
                     help="If --deg-csv has gene IDs in a column (not the index), specify it.")

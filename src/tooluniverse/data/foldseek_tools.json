@@ -299,6 +299,11 @@
             "result_set_complete": {
               "type": "boolean"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

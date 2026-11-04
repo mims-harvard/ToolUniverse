@@ -179,8 +179,7 @@ class IMPCTool(BaseTool):
             "mgi_accession_id,marker_symbol,marker_name,marker_synonym,"
             "marker_type,human_gene_symbol,status,imits_phenotype_started,"
             "imits_phenotype_complete,imits_phenotype_status,"
-            "latest_phenotype_status,latest_production_status,"
-            "latest_phenotyping_centre,latest_production_centre,"
+            "mouse_production_status,assignment_status,"
             "allele_name,es_cell_status,mouse_status,phenotype_status,"
             "production_centre,phenotyping_centre,p_value,mp_id,mp_term,"
             "mp_term_synonym,top_level_mp_id,top_level_mp_term,"
@@ -235,10 +234,17 @@ class IMPCTool(BaseTool):
                 "synonyms": gene_data.get("marker_synonym", []),
                 "human_ortholog": gene_data.get("human_gene_symbol", []),
                 "marker_type": gene_data.get("marker_type"),
-                "phenotype_status": gene_data.get("latest_phenotype_status"),
-                "production_status": gene_data.get("latest_production_status"),
-                "phenotyping_centre": gene_data.get("latest_phenotyping_centre"),
-                "production_centre": gene_data.get("latest_production_centre"),
+                # The 'gene' core has no latest_* variants of these; the four
+                # keys below are the ones it actually carries. Measured over
+                # 300 genes: phenotype_status / phenotyping_centre /
+                # production_centre are set on 140, mouse_production_status on
+                # 151 and assignment_status on 208 -- including 57 genes that
+                # have an assignment but no mouse-production state yet.
+                "phenotype_status": gene_data.get("phenotype_status"),
+                "production_status": gene_data.get("mouse_production_status")
+                or gene_data.get("assignment_status"),
+                "phenotyping_centre": gene_data.get("phenotyping_centre"),
+                "production_centre": gene_data.get("production_centre"),
                 "has_phenotype_data": has_real_phenotype_calls
                 or gene_data.get("imits_phenotype_complete") == "1"
                 or bool(gene_data.get("mp_id")),
@@ -387,8 +393,8 @@ class IMPCTool(BaseTool):
 
         fields = (
             "mgi_accession_id,marker_symbol,marker_name,marker_synonym,"
-            "marker_type,human_gene_symbol,latest_phenotype_status,"
-            "latest_production_status"
+            "marker_type,human_gene_symbol,phenotype_status,"
+            "mouse_production_status,assignment_status"
         )
 
         result = self._solr_query(
@@ -410,8 +416,11 @@ class IMPCTool(BaseTool):
                     "name": doc.get("marker_name"),
                     "synonyms": doc.get("marker_synonym", []),
                     "human_ortholog": doc.get("human_gene_symbol", []),
-                    "phenotype_status": doc.get("latest_phenotype_status"),
-                    "production_status": doc.get("latest_production_status"),
+                    # Same two keys as the gene summary above; the 'gene'
+                    # core has no latest_* variants of either.
+                    "phenotype_status": doc.get("phenotype_status"),
+                    "production_status": doc.get("mouse_production_status")
+                    or doc.get("assignment_status"),
                 }
             )
 

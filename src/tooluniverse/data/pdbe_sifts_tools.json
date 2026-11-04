@@ -147,6 +147,11 @@
               "type": "string",
               "description": "Present when more entries remain; explains how to page to them"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -303,6 +308,11 @@
               "type": "integer",
               "description": "Number of distinct UniProt proteins"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -469,6 +479,11 @@
               "type": "string",
               "description": "Present when more entries remain; explains how to page to them"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -650,6 +665,11 @@
             "total_domains": {
               "type": "integer"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

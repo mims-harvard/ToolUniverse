@@ -69,6 +69,11 @@
             "total_population_counts": {
               "type": "object"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

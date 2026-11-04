@@ -291,6 +291,11 @@
               ],
               "description": "Original source URI (e.g., iGEM registry URL)"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

@@ -26,7 +26,7 @@ async def test_folklore_reviewed_tools_match_live_contract_and_return_boundaries
     assert all(tool["annotations"]["readOnlyHint"] for tool in tools.values())
 
     response = await loader.call_tool(
-        "search_variant_evidence",
+        "classify_germline_variant",
         {
             "assembly": "GRCh38",
             # BRCA1 is minus-strand; the reference genome's plus-strand base at

@@ -316,6 +316,11 @@
               },
               "description": "Known drug targets for this compound"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

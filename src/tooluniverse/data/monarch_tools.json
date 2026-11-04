@@ -88,6 +88,17 @@
             }
           },
           "required": ["diseases", "total_matched"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     }

@@ -580,7 +580,12 @@
                 "additionalProperties": true
               }
             }
-          ]
+          ],
+          "not": {
+            "required": [
+              "error"
+            ]
+          }
         },
         {
           "type": "object",

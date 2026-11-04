@@ -61,6 +61,11 @@
             "characteristics": {
               "type": "object"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -340,6 +345,11 @@
             "relationship_count": {
               "type": "integer"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -448,6 +458,11 @@
             "external_reference_data_facets": {
               "type": "array"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

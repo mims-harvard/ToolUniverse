@@ -29,6 +29,11 @@
         "return_schema": {
             "oneOf": [
                 {
+                    "not": {
+                        "required": [
+                            "error"
+                        ]
+                    },
                     "type": "object",
                     "properties": {
                         "accession": {
@@ -117,6 +122,11 @@
         "return_schema": {
             "oneOf": [
                 {
+                    "not": {
+                        "required": [
+                            "error"
+                        ]
+                    },
                     "type": "object",
                     "properties": {
                         "accession": {
@@ -249,6 +259,11 @@
         "return_schema": {
             "oneOf": [
                 {
+                    "not": {
+                        "required": [
+                            "error"
+                        ]
+                    },
                     "type": "object",
                     "properties": {
                         "accession": {

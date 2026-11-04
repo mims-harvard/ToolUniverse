@@ -468,7 +468,10 @@
         },
         "ligands": {
           "type": "array",
-          "description": "Associated ligands"
+          "description": "Associated ligands",
+          "items": {
+            "type": "string"
+          }
         },
         "complexAssemblies": {
           "type": "array",
@@ -479,7 +482,219 @@
         },
         "participants": {
           "type": "array",
-          "description": "Complex participants with interactor details, stoichiometry, and features"
+          "description": "Complex participants with interactor details, stoichiometry, and features",
+          "items": {
+            "type": "object",
+            "properties": {
+              "bioRole": {
+                "type": "string"
+              },
+              "bioRoleDefinition": {
+                "type": "string"
+              },
+              "bioRoleMI": {
+                "type": "string"
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "identifier": {
+                "type": "string"
+              },
+              "identifierLink": {
+                "type": "string"
+              },
+              "interactorAC": {
+                "type": "string"
+              },
+              "interactorType": {
+                "type": "string"
+              },
+              "interactorTypeDefinition": {
+                "type": "string"
+              },
+              "interactorTypeMI": {
+                "type": "string"
+              },
+              "linkedFeatures": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "crossReferences": {
+                      "type": "array"
+                    },
+                    "featureAc": {
+                      "type": "string"
+                    },
+                    "featureRole": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "featureRoleDefinition": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "featureRoleMI": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "featureRoleUrl": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "featureType": {
+                      "type": "string"
+                    },
+                    "featureTypeDefinition": {
+                      "type": "string"
+                    },
+                    "featureTypeMI": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "featureTypeUrl": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "linkedFeatures": {
+                      "type": "array"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "participantId": {
+                      "type": "string"
+                    },
+                    "ranges": {
+                      "type": "array"
+                    }
+                  },
+                  "required": [
+                    "crossReferences",
+                    "featureAc",
+                    "featureRole",
+                    "featureRoleDefinition",
+                    "featureRoleMI",
+                    "featureRoleUrl",
+                    "featureType",
+                    "featureTypeDefinition",
+                    "featureTypeMI",
+                    "featureTypeUrl",
+                    "linkedFeatures",
+                    "name",
+                    "participantId",
+                    "ranges"
+                  ]
+                }
+              },
+              "name": {
+                "type": "string"
+              },
+              "otherFeatures": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "crossReferences": {
+                      "type": "array"
+                    },
+                    "featureAc": {
+                      "type": "string"
+                    },
+                    "featureRole": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "featureRoleDefinition": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "featureRoleMI": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "featureRoleUrl": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "featureType": {
+                      "type": "string"
+                    },
+                    "featureTypeDefinition": {
+                      "type": "string"
+                    },
+                    "featureTypeMI": {
+                      "type": "string"
+                    },
+                    "featureTypeUrl": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "linkedFeatures": {
+                      "type": "array"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "participantId": {
+                      "type": "string"
+                    },
+                    "ranges": {
+                      "type": "array"
+                    }
+                  }
+                }
+              },
+              "stochiometry": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "bioRole",
+              "bioRoleDefinition",
+              "bioRoleMI",
+              "description",
+              "identifier",
+              "identifierLink",
+              "interactorAC",
+              "interactorType",
+              "interactorTypeDefinition",
+              "interactorTypeMI",
+              "linkedFeatures",
+              "name",
+              "otherFeatures",
+              "stochiometry"
+            ]
+          }
         },
         "diseases": {
           "type": "array",
@@ -490,15 +705,83 @@
         },
         "crossReferences": {
           "type": "array",
-          "description": "Cross-references to other databases (GO, PubMed, PDB, etc.)"
+          "description": "Cross-references to other databases (GO, PubMed, PDB, etc.)",
+          "items": {
+            "type": "object",
+            "properties": {
+              "database": {
+                "type": "string"
+              },
+              "dbMI": {
+                "type": "string"
+              },
+              "dbdefinition": {
+                "type": "string"
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "identifier": {
+                "type": "string"
+              },
+              "qualifier": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "qualifierDefinition": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "qualifierMI": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "qualifierUrl": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "searchURL": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "database",
+              "dbMI",
+              "dbdefinition",
+              "description",
+              "identifier",
+              "qualifier",
+              "qualifierDefinition",
+              "qualifierMI",
+              "qualifierUrl",
+              "searchURL"
+            ]
+          }
         },
         "institution": {
           "type": "string",
           "description": "Institution that curated the complex data"
         },
         "institutionURL": {
-          "type": "string",
-          "description": "URL of the institution"
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Null for CPX-200, the one complex of the 56 measured whose institution carries no URL."
         },
         "agonists": {
           "type": "array",

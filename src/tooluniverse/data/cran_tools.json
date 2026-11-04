@@ -129,6 +129,11 @@
               ],
               "description": "All released versions with dates"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -193,6 +198,11 @@
               "type": "object",
               "description": "Map of version string to release date (ISO 8601)"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

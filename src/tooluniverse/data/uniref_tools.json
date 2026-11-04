@@ -153,6 +153,11 @@
               ],
               "description": "Sequence length"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

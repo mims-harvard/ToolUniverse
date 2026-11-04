@@ -101,6 +101,11 @@
               "type": "string",
               "description": "Timezone identifier"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

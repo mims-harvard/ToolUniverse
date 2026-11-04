@@ -115,6 +115,11 @@
               ],
               "description": "Standard error"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -207,6 +212,11 @@
               "type": "integer",
               "description": "Confidentiality level"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

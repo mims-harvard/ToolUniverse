@@ -188,6 +188,11 @@
             "elemental_composition": {
               "type": "object"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

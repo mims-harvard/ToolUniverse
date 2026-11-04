@@ -47,16 +47,25 @@
             "type": "string"
           },
           "organisms": {
-            "type": "array"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "organismParts": {
             "type": "array"
           },
           "diseases": {
-            "type": "array"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "instruments": {
-            "type": "array"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "submissionDate": {
             "type": "string"
@@ -65,13 +74,22 @@
             "type": "string"
           },
           "submitters": {
-            "type": "array"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "keywords": {
-            "type": "array"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "projectTags": {
-            "type": "array"
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       }
@@ -128,13 +146,91 @@
           "type": "string"
         },
         "organisms": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "@type": {
+                "type": "string"
+              },
+              "accession": {
+                "type": "string"
+              },
+              "cvLabel": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "@type",
+              "accession",
+              "cvLabel",
+              "name"
+            ]
+          }
         },
         "organismParts": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "@type": {
+                "type": "string"
+              },
+              "accession": {
+                "type": "string"
+              },
+              "cvLabel": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "@type",
+              "accession",
+              "cvLabel",
+              "name"
+            ]
+          }
         },
         "instruments": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "@type": {
+                "type": "string"
+              },
+              "accession": {
+                "type": "string"
+              },
+              "cvLabel": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "value": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "@type",
+              "accession",
+              "cvLabel",
+              "name"
+            ]
+          }
         },
         "submissionDate": {
           "type": "string"
@@ -143,13 +239,110 @@
           "type": "string"
         },
         "submitters": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "affiliation": {
+                "type": "string"
+              },
+              "country": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "firstName": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "identifier": {
+                "type": "string"
+              },
+              "lastName": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "orcid": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "affiliation",
+              "country",
+              "email",
+              "firstName",
+              "id",
+              "identifier",
+              "lastName",
+              "name",
+              "orcid",
+              "title"
+            ]
+          }
         },
         "labPIs": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "affiliation": {
+                "type": "string"
+              },
+              "country": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              },
+              "firstName": {
+                "type": "string"
+              },
+              "id": {
+                "type": "string"
+              },
+              "identifier": {
+                "type": "string"
+              },
+              "lastName": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "orcid": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "affiliation",
+              "country",
+              "email",
+              "firstName",
+              "id",
+              "identifier",
+              "lastName",
+              "name",
+              "orcid",
+              "title"
+            ]
+          }
         },
         "keywords": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "doi": {
           "type": "string"

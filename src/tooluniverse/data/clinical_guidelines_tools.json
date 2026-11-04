@@ -1845,7 +1845,54 @@
                             "type": "string"
                           },
                           "attachedFiles": {
-                            "type": "array"
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "avStatus": {
+                                  "type": "string"
+                                },
+                                "displayName": {
+                                  "type": "string"
+                                },
+                                "fileExtension": {
+                                  "type": "string"
+                                },
+                                "fileId": {
+                                  "type": "integer"
+                                },
+                                "fileLocation": {
+                                  "type": "string"
+                                },
+                                "fileName": {
+                                  "type": "string"
+                                },
+                                "fullPath": {
+                                  "type": "string"
+                                },
+                                "referenceFileId": {
+                                  "type": "integer"
+                                },
+                                "referenceId": {
+                                  "type": "integer"
+                                },
+                                "uuid": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "avStatus",
+                                "displayName",
+                                "fileExtension",
+                                "fileId",
+                                "fileLocation",
+                                "fileName",
+                                "fullPath",
+                                "referenceFileId",
+                                "referenceId",
+                                "uuid"
+                              ]
+                            }
                           },
                           "abstractText": {
                             "type": "string"
@@ -1860,10 +1907,276 @@
                             "type": "null"
                           },
                           "referencePicos": {
-                            "type": "array"
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "comparator": {
+                                  "type": "string"
+                                },
+                                "intervention": {
+                                  "type": "string"
+                                },
+                                "picoId": {
+                                  "type": "integer"
+                                },
+                                "population": {
+                                  "type": "string"
+                                },
+                                "referenceId": {
+                                  "type": "integer"
+                                },
+                                "referencePicoOutcomeContinuous": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "absoluteDifference": {
+                                        "type": [
+                                          "number",
+                                          "null"
+                                        ]
+                                      },
+                                      "absoluteDifferenceDirection": {
+                                        "type": "string"
+                                      },
+                                      "absoluteDifferenceHigh": {
+                                        "type": [
+                                          "number",
+                                          "null"
+                                        ]
+                                      },
+                                      "absoluteDifferenceHighDirection": {
+                                        "type": "string"
+                                      },
+                                      "absoluteDifferenceLow": {
+                                        "type": [
+                                          "number",
+                                          "null"
+                                        ]
+                                      },
+                                      "absoluteDifferenceLowDirection": {
+                                        "type": "string"
+                                      },
+                                      "absoluteDifferenceType": {
+                                        "type": "string"
+                                      },
+                                      "outcome": {
+                                        "type": "string"
+                                      },
+                                      "outcomeId": {
+                                        "type": "integer"
+                                      },
+                                      "referencePicoId": {
+                                        "type": "integer"
+                                      },
+                                      "revManId": {
+                                        "type": "string"
+                                      },
+                                      "studyData": {
+                                        "type": "array"
+                                      }
+                                    },
+                                    "required": [
+                                      "absoluteDifference",
+                                      "absoluteDifferenceDirection",
+                                      "absoluteDifferenceHigh",
+                                      "absoluteDifferenceHighDirection",
+                                      "absoluteDifferenceLow",
+                                      "absoluteDifferenceLowDirection",
+                                      "absoluteDifferenceType",
+                                      "outcome",
+                                      "outcomeId",
+                                      "referencePicoId",
+                                      "revManId",
+                                      "studyData"
+                                    ]
+                                  }
+                                },
+                                "referencePicoOutcomeDichotomous": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "absoluteDifference": {
+                                        "type": [
+                                          "number",
+                                          "null"
+                                        ]
+                                      },
+                                      "absoluteDifferenceDirection": {
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      },
+                                      "absoluteDifferenceHigh": {
+                                        "type": [
+                                          "number",
+                                          "null"
+                                        ]
+                                      },
+                                      "absoluteDifferenceHighDirection": {
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      },
+                                      "absoluteDifferenceLow": {
+                                        "type": [
+                                          "number",
+                                          "null"
+                                        ]
+                                      },
+                                      "absoluteDifferenceLowDirection": {
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      },
+                                      "comparatorEffect": {
+                                        "type": [
+                                          "number",
+                                          "null"
+                                        ]
+                                      },
+                                      "interventionEffect": {
+                                        "type": [
+                                          "number",
+                                          "null"
+                                        ]
+                                      },
+                                      "outcome": {
+                                        "type": "string"
+                                      },
+                                      "outcomeId": {
+                                        "type": "integer"
+                                      },
+                                      "referencePicoId": {
+                                        "type": "integer"
+                                      },
+                                      "relativeEffect": {
+                                        "type": [
+                                          "number",
+                                          "null"
+                                        ]
+                                      },
+                                      "relativeEffectConfidenceHigh": {
+                                        "type": [
+                                          "number",
+                                          "null"
+                                        ]
+                                      },
+                                      "relativeEffectConfidenceLow": {
+                                        "type": [
+                                          "number",
+                                          "null"
+                                        ]
+                                      },
+                                      "relativeEffectType": {
+                                        "type": "string"
+                                      },
+                                      "revManId": {
+                                        "type": "string"
+                                      },
+                                      "studyData": {
+                                        "type": "array"
+                                      }
+                                    },
+                                    "required": [
+                                      "absoluteDifference",
+                                      "absoluteDifferenceDirection",
+                                      "absoluteDifferenceHigh",
+                                      "absoluteDifferenceHighDirection",
+                                      "absoluteDifferenceLow",
+                                      "absoluteDifferenceLowDirection",
+                                      "comparatorEffect",
+                                      "interventionEffect",
+                                      "outcome",
+                                      "outcomeId",
+                                      "referencePicoId",
+                                      "relativeEffect",
+                                      "relativeEffectConfidenceHigh",
+                                      "relativeEffectConfidenceLow",
+                                      "relativeEffectType",
+                                      "revManId",
+                                      "studyData"
+                                    ]
+                                  }
+                                },
+                                "referencePicoOutcomeNarrative": {
+                                  "type": "array"
+                                },
+                                "revManId": {
+                                  "type": "string"
+                                },
+                                "setting": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "comparator",
+                                "intervention",
+                                "picoId",
+                                "population",
+                                "referenceId",
+                                "referencePicoOutcomeContinuous",
+                                "referencePicoOutcomeDichotomous",
+                                "referencePicoOutcomeNarrative",
+                                "revManId",
+                                "setting"
+                              ]
+                            }
                           },
                           "files": {
-                            "type": "array"
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "avStatus": {
+                                  "type": "string"
+                                },
+                                "displayName": {
+                                  "type": "string"
+                                },
+                                "fileExtension": {
+                                  "type": "string"
+                                },
+                                "fileId": {
+                                  "type": "integer"
+                                },
+                                "fileLocation": {
+                                  "type": "string"
+                                },
+                                "fileName": {
+                                  "type": "string"
+                                },
+                                "fullPath": {
+                                  "type": "string"
+                                },
+                                "referenceFileId": {
+                                  "type": "integer"
+                                },
+                                "referenceId": {
+                                  "type": "integer"
+                                },
+                                "uuid": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "avStatus",
+                                "displayName",
+                                "fileExtension",
+                                "fileId",
+                                "fileLocation",
+                                "fileName",
+                                "fullPath",
+                                "referenceFileId",
+                                "referenceId",
+                                "uuid"
+                              ]
+                            }
                           },
                           "results": {
                             "type": "string"
@@ -1872,7 +2185,33 @@
                       }
                     },
                     "picoCodes": {
-                      "type": "array"
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "code": {
+                            "type": "string"
+                          },
+                          "codeId": {
+                            "type": "integer"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "ontology": {
+                            "type": "string"
+                          },
+                          "picoId": {
+                            "type": "integer"
+                          },
+                          "sectionId": {
+                            "type": "integer"
+                          },
+                          "type": {
+                            "type": "string"
+                          }
+                        }
+                      }
                     }
                   }
                 }
@@ -1972,7 +2311,54 @@
                       "type": "string"
                     },
                     "attachedFiles": {
-                      "type": "array"
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "avStatus": {
+                            "type": "string"
+                          },
+                          "displayName": {
+                            "type": "string"
+                          },
+                          "fileExtension": {
+                            "type": "string"
+                          },
+                          "fileId": {
+                            "type": "integer"
+                          },
+                          "fileLocation": {
+                            "type": "string"
+                          },
+                          "fileName": {
+                            "type": "string"
+                          },
+                          "fullPath": {
+                            "type": "string"
+                          },
+                          "referenceFileId": {
+                            "type": "integer"
+                          },
+                          "referenceId": {
+                            "type": "integer"
+                          },
+                          "uuid": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "avStatus",
+                          "displayName",
+                          "fileExtension",
+                          "fileId",
+                          "fileLocation",
+                          "fileName",
+                          "fullPath",
+                          "referenceFileId",
+                          "referenceId",
+                          "uuid"
+                        ]
+                      }
                     },
                     "abstractText": {
                       "type": "string"
@@ -1987,10 +2373,276 @@
                       "type": "null"
                     },
                     "referencePicos": {
-                      "type": "array"
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "comparator": {
+                            "type": "string"
+                          },
+                          "intervention": {
+                            "type": "string"
+                          },
+                          "picoId": {
+                            "type": "integer"
+                          },
+                          "population": {
+                            "type": "string"
+                          },
+                          "referenceId": {
+                            "type": "integer"
+                          },
+                          "referencePicoOutcomeContinuous": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "absoluteDifference": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "absoluteDifferenceDirection": {
+                                  "type": "string"
+                                },
+                                "absoluteDifferenceHigh": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "absoluteDifferenceHighDirection": {
+                                  "type": "string"
+                                },
+                                "absoluteDifferenceLow": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "absoluteDifferenceLowDirection": {
+                                  "type": "string"
+                                },
+                                "absoluteDifferenceType": {
+                                  "type": "string"
+                                },
+                                "outcome": {
+                                  "type": "string"
+                                },
+                                "outcomeId": {
+                                  "type": "integer"
+                                },
+                                "referencePicoId": {
+                                  "type": "integer"
+                                },
+                                "revManId": {
+                                  "type": "string"
+                                },
+                                "studyData": {
+                                  "type": "array"
+                                }
+                              },
+                              "required": [
+                                "absoluteDifference",
+                                "absoluteDifferenceDirection",
+                                "absoluteDifferenceHigh",
+                                "absoluteDifferenceHighDirection",
+                                "absoluteDifferenceLow",
+                                "absoluteDifferenceLowDirection",
+                                "absoluteDifferenceType",
+                                "outcome",
+                                "outcomeId",
+                                "referencePicoId",
+                                "revManId",
+                                "studyData"
+                              ]
+                            }
+                          },
+                          "referencePicoOutcomeDichotomous": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "absoluteDifference": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "absoluteDifferenceDirection": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "absoluteDifferenceHigh": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "absoluteDifferenceHighDirection": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "absoluteDifferenceLow": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "absoluteDifferenceLowDirection": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "comparatorEffect": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "interventionEffect": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "outcome": {
+                                  "type": "string"
+                                },
+                                "outcomeId": {
+                                  "type": "integer"
+                                },
+                                "referencePicoId": {
+                                  "type": "integer"
+                                },
+                                "relativeEffect": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "relativeEffectConfidenceHigh": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "relativeEffectConfidenceLow": {
+                                  "type": [
+                                    "number",
+                                    "null"
+                                  ]
+                                },
+                                "relativeEffectType": {
+                                  "type": "string"
+                                },
+                                "revManId": {
+                                  "type": "string"
+                                },
+                                "studyData": {
+                                  "type": "array"
+                                }
+                              },
+                              "required": [
+                                "absoluteDifference",
+                                "absoluteDifferenceDirection",
+                                "absoluteDifferenceHigh",
+                                "absoluteDifferenceHighDirection",
+                                "absoluteDifferenceLow",
+                                "absoluteDifferenceLowDirection",
+                                "comparatorEffect",
+                                "interventionEffect",
+                                "outcome",
+                                "outcomeId",
+                                "referencePicoId",
+                                "relativeEffect",
+                                "relativeEffectConfidenceHigh",
+                                "relativeEffectConfidenceLow",
+                                "relativeEffectType",
+                                "revManId",
+                                "studyData"
+                              ]
+                            }
+                          },
+                          "referencePicoOutcomeNarrative": {
+                            "type": "array"
+                          },
+                          "revManId": {
+                            "type": "string"
+                          },
+                          "setting": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "comparator",
+                          "intervention",
+                          "picoId",
+                          "population",
+                          "referenceId",
+                          "referencePicoOutcomeContinuous",
+                          "referencePicoOutcomeDichotomous",
+                          "referencePicoOutcomeNarrative",
+                          "revManId",
+                          "setting"
+                        ]
+                      }
                     },
                     "files": {
-                      "type": "array"
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "avStatus": {
+                            "type": "string"
+                          },
+                          "displayName": {
+                            "type": "string"
+                          },
+                          "fileExtension": {
+                            "type": "string"
+                          },
+                          "fileId": {
+                            "type": "integer"
+                          },
+                          "fileLocation": {
+                            "type": "string"
+                          },
+                          "fileName": {
+                            "type": "string"
+                          },
+                          "fullPath": {
+                            "type": "string"
+                          },
+                          "referenceFileId": {
+                            "type": "integer"
+                          },
+                          "referenceId": {
+                            "type": "integer"
+                          },
+                          "uuid": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "avStatus",
+                          "displayName",
+                          "fileExtension",
+                          "fileId",
+                          "fileLocation",
+                          "fileName",
+                          "fullPath",
+                          "referenceFileId",
+                          "referenceId",
+                          "uuid"
+                        ]
+                      }
                     },
                     "results": {
                       "type": "string"
@@ -1999,10 +2651,93 @@
                 }
               },
               "files": {
-                "type": "array"
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "avStatus": {
+                      "type": "string"
+                    },
+                    "displayName": {
+                      "type": "string"
+                    },
+                    "fileExtension": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "fileId": {
+                      "type": "integer"
+                    },
+                    "fileLocation": {
+                      "type": "string"
+                    },
+                    "fileName": {
+                      "type": "string"
+                    },
+                    "fullPath": {
+                      "type": "string"
+                    },
+                    "referenceFileId": {
+                      "type": "integer"
+                    },
+                    "referenceId": {
+                      "type": "integer"
+                    },
+                    "uuid": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "avStatus",
+                    "displayName",
+                    "fileExtension",
+                    "fileId",
+                    "fileLocation",
+                    "fileName",
+                    "fullPath",
+                    "uuid"
+                  ]
+                }
               },
               "images": {
-                "type": "array"
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "caption": {
+                      "type": "string"
+                    },
+                    "fileName": {
+                      "type": "string"
+                    },
+                    "imageId": {
+                      "type": "integer"
+                    },
+                    "location": {
+                      "type": "string"
+                    },
+                    "sortOrder": {
+                      "type": "integer"
+                    },
+                    "srcSet": {
+                      "type": "object"
+                    },
+                    "uuid": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "caption",
+                    "fileName",
+                    "imageId",
+                    "location",
+                    "sortOrder",
+                    "srcSet",
+                    "uuid"
+                  ]
+                }
               },
               "referenceIds": {
                 "type": "array",

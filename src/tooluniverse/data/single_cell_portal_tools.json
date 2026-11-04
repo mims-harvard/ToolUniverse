@@ -286,7 +286,12 @@
               "description": "Portal URL for the study"
             }
           },
-          "description": "A single study record"
+          "description": "A single study record",
+          "not": {
+            "required": [
+              "error"
+            ]
+          }
         },
         {
           "type": "object",

@@ -84,7 +84,8 @@
           }
         },
         "molecular_properties": {
-          "type": "null"
+          "type": ["object", "null"],
+          "description": "PubChem property table for the drug. Measured for 'Aspirin'. Null when PubChem has no record for the name supplied."
         },
         "safety_literature": {
           "type": "object",
@@ -101,7 +102,8 @@
                     "type": "string"
                   },
                   "abstract": {
-                    "type": "string"
+                    "type": ["string", "null"],
+                    "description": "Abstract text. Measured null for records PubMed returns without an abstract."
                   },
                   "authors": {
                     "type": "array",
@@ -113,10 +115,12 @@
                     "type": "string"
                   },
                   "year": {
-                    "type": "string"
+                    "type": ["string", "null"],
+                    "description": "Publication year of the safety literature record. Measured null for records PubMed returns without one; its own test example already contains such a record."
                   },
                   "doi": {
-                    "type": "string"
+                    "type": ["string", "null"],
+                    "description": "DOI of the record. Measured null for records without one."
                   },
                   "url": {
                     "type": "string"
@@ -128,7 +132,8 @@
                     "type": "string"
                   },
                   "pmid": {
-                    "type": "string"
+                    "type": ["string", "null"],
+                    "description": "PubMed id of the record. Measured null for records returned without one."
                   },
                   "pmcid": {
                     "type": [
@@ -137,7 +142,8 @@
                     ]
                   },
                   "doi_url": {
-                    "type": "string"
+                    "type": ["string", "null"],
+                    "description": "Resolvable DOI URL. Measured null for records without a DOI."
                   },
                   "fulltext_xml_url": {
                     "type": [

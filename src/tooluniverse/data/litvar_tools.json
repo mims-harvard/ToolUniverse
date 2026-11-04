@@ -192,6 +192,11 @@
               "type": "integer",
               "description": "Exact total number of PMC IDs in LitVar2, computed before local paging"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -313,6 +318,11 @@
               ],
               "description": "ALFA minor allele frequency data, when available."
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

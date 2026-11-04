@@ -319,6 +319,11 @@
               "type": "string",
               "description": "Model creation timestamp"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
