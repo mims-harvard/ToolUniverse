@@ -12,6 +12,30 @@
     ]
   },
   {
+    "name": "AGINGRESEARCH_API_KEY",
+    "requirement": "optional",
+    "type": "secret",
+    "domain": "Literature & Patents",
+    "register_url": "https://agingresearch.news/s/ktmbvv",
+    "purpose": "Raises the AgingResearch.News MCP lookup allowance from the signed-out daily limit to the account's plan; every free account has a key in Settings.",
+    "without": "Works at the signed-out allowance, about 30 lookups a day per address.",
+    "used_by": [
+      "mcp_auto_loader_agingresearch.json"
+    ]
+  },
+  {
+    "name": "AGINGRESEARCH_MCP_URL",
+    "requirement": "required",
+    "type": "endpoint",
+    "domain": "Literature & Patents",
+    "register_url": "https://agingresearch.news/s/3b354i",
+    "purpose": "Endpoint URL for the opt-in AgingResearch.News aging-research MCP connection.",
+    "without": "Leave blank to keep this third-party MCP connection disabled. To enable, set this to https://agingresearch.news/api/mcp \u2014 the public endpoint needs no account for lookups.",
+    "used_by": [
+      "mcp_auto_loader_agingresearch.json"
+    ]
+  },
+  {
     "name": "ALPHA_GENOME_API_KEY",
     "requirement": "required",
     "type": "api_key",
