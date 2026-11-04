@@ -30,13 +30,14 @@
         },
         "backend": {
           "type": "string",
-          "description": "Search engine backend to use. Selecting 'parallel' sends the query to https://search.parallel.ai/mcp; that backend does not apply ToolUniverse region or safesearch controls. Selecting 'serpbase' sends the query to https://api.serpbase.dev (requires SERPBASE_API_KEY) for real Google SERP results; that backend applies region but not safesearch. Selecting 'firecrawl' sends the query to https://api.firecrawl.dev/v2/search (FIRECRAWL_API_KEY optional); that backend applies region as a country code only and safesearch as a two-state filter ('on' and 'moderate' filter, 'off' does not). Selecting 'outcrawl' sends the query to https://api.outcrawl.ai/v1/search (requires OUTCRAWL_API_KEY); that backend does not apply ToolUniverse region or safesearch controls and returns at most 20 results.",
+          "description": "Search engine backend to use. Selecting 'parallel' sends the query to https://search.parallel.ai/mcp; that backend does not apply ToolUniverse region or safesearch controls. Selecting 'serpbase' sends the query to https://api.serpbase.dev (requires SERPBASE_API_KEY) for real Google SERP results; that backend applies region but not safesearch. Selecting 'firecrawl' sends the query to https://api.firecrawl.dev/v2/search (FIRECRAWL_API_KEY optional); that backend applies region as a country code only and safesearch as a two-state filter ('on' and 'moderate' filter, 'off' does not). Selecting 'outcrawl' sends the query to https://api.outcrawl.ai/v1/search (requires OUTCRAWL_API_KEY); that backend does not apply ToolUniverse region or safesearch controls and returns at most 20 results. Selecting 'keenable' sends the query to https://api.keenable.ai (KEENABLE_API_KEY optional); that backend does not apply ToolUniverse region or safesearch controls.",
           "enum": [
             "auto",
             "parallel",
             "serpbase",
             "firecrawl",
             "outcrawl",
+            "keenable",
             "google",
             "bing",
             "brave",
@@ -73,7 +74,7 @@
         "query"
       ]
     },
-    "optional_api_keys": ["SERPBASE_API_KEY", "FIRECRAWL_API_KEY", "OUTCRAWL_API_KEY"],
+    "optional_api_keys": ["SERPBASE_API_KEY", "FIRECRAWL_API_KEY", "OUTCRAWL_API_KEY", "KEENABLE_API_KEY"],
     "api_key_info": {
       "SERPBASE_API_KEY": {
         "domain": "Other",
@@ -95,6 +96,13 @@
         "register_url": "https://outcrawl.ai/sign-in",
         "purpose": "Authenticate the backend='outcrawl' option (Outcrawl Search, https://api.outcrawl.ai/v1/search). Searches are billed against the account's credits (the free tier includes 1,000 credits a month).",
         "without": "web_search still works via DDGS/Parallel/DuckDuckGo-HTML/Wikipedia; backend='outcrawl' falls back to the normal DDGS chain without it."
+      },
+      "KEENABLE_API_KEY": {
+        "domain": "Other",
+        "type": "secret",
+        "register_url": "https://keenable.ai/",
+        "purpose": "Authenticate the backend='keenable' option against Keenable's keyed Search API (https://api.keenable.ai/v1/search) for the account's rate limits.",
+        "without": "backend='keenable' still works keyless via Keenable's public endpoint (https://api.keenable.ai/v1/search/public), which is rate-limited. The default web_search chain is unaffected."
       }
     },
     "return_schema": {
@@ -240,13 +248,14 @@
         },
         "backend": {
           "type": "string",
-          "description": "Search engine backend to use. Selecting 'parallel' sends the query to https://search.parallel.ai/mcp. Selecting 'serpbase' sends the query to https://api.serpbase.dev (requires SERPBASE_API_KEY) for real Google SERP results. Selecting 'firecrawl' sends the query to https://api.firecrawl.dev/v2/search (FIRECRAWL_API_KEY optional). Selecting 'outcrawl' sends the query to https://api.outcrawl.ai/v1/search (requires OUTCRAWL_API_KEY) and returns at most 20 results.",
+          "description": "Search engine backend to use. Selecting 'parallel' sends the query to https://search.parallel.ai/mcp. Selecting 'serpbase' sends the query to https://api.serpbase.dev (requires SERPBASE_API_KEY) for real Google SERP results. Selecting 'firecrawl' sends the query to https://api.firecrawl.dev/v2/search (FIRECRAWL_API_KEY optional). Selecting 'outcrawl' sends the query to https://api.outcrawl.ai/v1/search (requires OUTCRAWL_API_KEY) and returns at most 20 results. Selecting 'keenable' sends the query to https://api.keenable.ai (KEENABLE_API_KEY optional).",
           "enum": [
             "auto",
             "parallel",
             "serpbase",
             "firecrawl",
             "outcrawl",
+            "keenable",
             "google",
             "bing",
             "brave",

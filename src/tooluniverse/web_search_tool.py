@@ -1,5 +1,5 @@
 """Web search tools for ToolUniverse using DDGS plus opt-in hosted backends
-(Parallel Search MCP, SerpBase, Firecrawl Search, Outcrawl Search)."""
+(Parallel Search MCP, SerpBase, Firecrawl Search, Outcrawl Search, Keenable Search)."""
 
 import importlib.util
 import json
@@ -41,6 +41,17 @@ FIRECRAWL_PROVIDER_NOTICE = (
     "code only and safesearch as a two-state filter by this backend; do not "
     "submit sensitive or patient-identifying information."
 )
+KEENABLE_PUBLIC_SEARCH_URL = "https://api.keenable.ai/v1/search/public"
+KEENABLE_SEARCH_URL = "https://api.keenable.ai/v1/search"
+KEENABLE_PROVIDER_NOTICE = (
+    "Query sent to Keenable's hosted third-party Search API at "
+    "https://api.keenable.ai. ToolUniverse region and safesearch controls are "
+    "not applied by this backend; do not submit sensitive or "
+    "patient-identifying information."
+)
+# Keenable's ``snippet`` can be a long page excerpt; its ``description`` is
+# the short summary. Fall back to a truncated snippet when there is none.
+_KEENABLE_SNIPPET_MAX_CHARS = 500
 # Region prefixes in the web_search enum that are not ISO 3166-1 alpha-2
 # country codes ("uk-en" is the United Kingdom; "ja-jp" is Japan).
 _FIRECRAWL_COUNTRY_OVERRIDES = {"uk": "GB", "ja": "JP"}
@@ -502,6 +513,70 @@ print(json.dumps(results))
 
         return results
 
+    def _search_with_keenable(
+        self, query: str, max_results: int
+    ) -> List[Dict[str, Any]]:
+        """Search with Keenable's Search API and normalize its results.
+
+        Works without a key via the public endpoint. When KEENABLE_API_KEY
+        resolves (request credential scope first, then the environment) the
+        keyed endpoint is used with the key in ``X-API-Key``.
+        """
+        headers: Dict[str, str] = {"X-Keenable-Title": "ToolUniverse"}
+        api_key = (self.credential("KEENABLE_API_KEY") or "").strip()
+        url = KEENABLE_PUBLIC_SEARCH_URL
+        if api_key:
+            headers["X-API-Key"] = api_key
+            url = KEENABLE_SEARCH_URL
+
+        response = requests.post(
+            url,
+            json={"query": query, "max_results": max_results},
+            headers=headers,
+            timeout=30,
+        )
+        if response.status_code == 429:
+            hint = (
+                ""
+                if api_key
+                else " Set KEENABLE_API_KEY to use the keyed endpoint's limits."
+            )
+            raise RuntimeError(f"Keenable Search rate limit reached (HTTP 429).{hint}")
+        response.raise_for_status()
+        data = response.json()
+        raw_results = data.get("results") if isinstance(data, dict) else None
+        if not isinstance(raw_results, list):
+            raise RuntimeError("Keenable Search response did not include results")
+
+        results = []
+        for item in raw_results:
+            if not isinstance(item, dict):
+                continue
+            link = item.get("url")
+            if not isinstance(link, str) or not link:
+                continue
+            title = item.get("title")
+            snippet = item.get("description")
+            if not isinstance(snippet, str) or not snippet:
+                snippet = item.get("snippet")
+                snippet = (
+                    snippet[:_KEENABLE_SNIPPET_MAX_CHARS]
+                    if isinstance(snippet, str)
+                    else ""
+                )
+            results.append(
+                {
+                    "title": title if isinstance(title, str) else "",
+                    "url": link,
+                    "snippet": snippet,
+                    "rank": len(results) + 1,
+                }
+            )
+            if len(results) >= max_results:
+                break
+
+        return results
+
     def _search_with_fallback(
         self,
         query: str,
@@ -619,6 +694,28 @@ print(json.dumps(results))
 
             # Explicit providers fall back to DDGS auto today. Preserve that
             # contract without adding Outcrawl to the default provider chain.
+            backends_to_try = ["auto"]
+        elif backend == "keenable":
+            attempted_backends.append("keenable")
+            try:
+                results = self._search_with_keenable(
+                    query=query, max_results=max_results
+                )
+                if results:
+                    return (
+                        results,
+                        "keenable",
+                        attempted_backends,
+                        None,
+                        provider_errors,
+                    )
+                had_empty_success = True
+            except Exception as error:
+                last_error = str(error)
+                provider_errors["keenable"] = str(error)
+
+            # Explicit providers fall back to DDGS auto today. Preserve that
+            # contract without adding Keenable to the default provider chain.
             backends_to_try = ["auto"]
         elif backend == "auto":
             # Try the explicit DuckDuckGo backend first. It tends to fail with
@@ -846,7 +943,7 @@ print(json.dumps(results))
                     },
                 }
 
-            if backend in ("parallel", "outcrawl"):
+            if backend in ("parallel", "outcrawl", "keenable"):
                 unsupported_controls = []
                 if region != "us-en":
                     unsupported_controls.append("region")
@@ -854,9 +951,8 @@ print(json.dumps(results))
                     unsupported_controls.append("safesearch")
                 if unsupported_controls:
                     controls = ", ".join(unsupported_controls)
-                    provider_name = "Parallel" if backend == "parallel" else "Outcrawl"
                     error_msg = (
-                        f"The {provider_name} backend does not support non-default "
+                        f"The {backend.capitalize()} backend does not support non-default "
                         f"ToolUniverse controls: {controls}. Omit these controls "
                         "or use a DDGS backend."
                     )
@@ -940,6 +1036,8 @@ print(json.dumps(results))
                     response["data"]["provider_notice"] = FIRECRAWL_PROVIDER_NOTICE
                 if "outcrawl" in attempted_backends:
                     response["data"]["provider_notice"] = OUTCRAWL_PROVIDER_NOTICE
+                if "keenable" in attempted_backends:
+                    response["data"]["provider_notice"] = KEENABLE_PROVIDER_NOTICE
                 return response
 
             # Add rate limiting to be respectful
@@ -964,6 +1062,8 @@ print(json.dumps(results))
                 result_data["provider_notice"] = FIRECRAWL_PROVIDER_NOTICE
             if "outcrawl" in attempted_backends:
                 result_data["provider_notice"] = OUTCRAWL_PROVIDER_NOTICE
+            if "keenable" in attempted_backends:
+                result_data["provider_notice"] = KEENABLE_PROVIDER_NOTICE
 
             return {"status": "success", "data": result_data}
 

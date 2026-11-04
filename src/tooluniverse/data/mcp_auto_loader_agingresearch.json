@@ -1,0 +1,192 @@
+[
+  {
+    "name": "mcp_auto_loader_agingresearch",
+    "description": "Opt-in connection to the AgingResearch.News MCP server (https://agingresearch.news/api/mcp). Discovers nine reviewed, read-only tools over new research on aging and age-related disease: papers from PubMed, bioRxiv, medRxiv, arXiv and Europe PMC with study type, species and preprint status; evidence on drugs, genes and processes (human versus animal work, replication across independent labs); extracted findings; clinical trials; research grants; and drug and therapy programs. The public server answers about 30 lookups a day per address without a key; an optional key raises that to the account's plan allowance.",
+    "type": "MCPAutoLoaderTool",
+    "tool_prefix": "agingresearch_",
+    "server_url": "${AGINGRESEARCH_MCP_URL}",
+    "transport": "http",
+    "timeout": 30,
+    "strict_tool_contracts": true,
+    "normalize_mcp_result": true,
+    "http_headers_from_env": {
+      "Authorization": {
+        "env": "AGINGRESEARCH_API_KEY",
+        "prefix": "Bearer "
+      }
+    },
+    "selected_tools": [
+      "search_papers",
+      "get_paper",
+      "list_stories",
+      "find_entities",
+      "get_entity",
+      "list_claims",
+      "list_trials",
+      "list_grants",
+      "list_assets"
+    ],
+    "tool_contracts": [
+      {
+        "name": "search_papers",
+        "title": "Search aging research papers",
+        "description": "Search the titles and abstracts of every aging and age-related disease paper AgingResearch.News has read (PubMed, bioRxiv, medRxiv, arXiv, Europe PMC), best match first. Pass 2 to 4 key terms, not a question ('rapamycin lifespan humans'). Supports quoted phrases, OR, -exclusions and filters for date, study type, category, preprint status and author. Each result gives study type, species and preprint status.",
+        "contract_sha256": "732f06115e7d0ab47875a73c396241a60cde0835c83b989888ca8240fe2c3a79",
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        }
+      },
+      {
+        "name": "get_paper",
+        "title": "Get one paper",
+        "description": "Read one paper in depth by AgingResearch.News id (MED-42823970), DOI, PMID, PMCID, arXiv id or link: what it did and found, species and sample size, caveats, authors with ORCID iDs and institutions, the drugs, genes and processes it studies, its extracted findings, its story when published, and a link to the source. It does not replace the paper.",
+        "contract_sha256": "ecc1046c974a86bc0bfaf65c74c1292e058a62d9685209b24461e124bdf5a9ca",
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        }
+      },
+      {
+        "name": "list_stories",
+        "title": "List recent stories",
+        "description": "Plain-language stories about notable new aging papers, newest first, each checked against and linked to its paper. For every paper on a question, use search_papers.",
+        "contract_sha256": "cff4c45648b6eebe2f8250e99ef19204a42d8f945b819035facbb5772306d471",
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        }
+      },
+      {
+        "name": "find_entities",
+        "title": "Find a drug, gene or topic",
+        "description": "Resolve a name or synonym (a drug, supplement, gene or protein, process, disease, biomarker, organism, method or hallmark of aging) to the type and key used by get_entity, list_claims and list_grants, with how many papers involve each.",
+        "contract_sha256": "a3364a8905c6c3f0ba0e0a6e3034ad679059cdc2f4ceac34dc956b0872bb1f27",
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        }
+      },
+      {
+        "name": "get_entity",
+        "title": "Get a drug, gene or topic and its papers",
+        "description": "One intervention, gene, process or disease by type and key from find_entities: its papers newest first with its role in each, and its evidence as structure (human versus animal or cell work, independent replication, trials and how many posted no results, funders, linked companies), never a grade. Counts cover the papers AgingResearch.News has read, not all literature. Not for personal medical advice or doses.",
+        "contract_sha256": "bc530f71bfdcef8fc0907129c266d8bead18b17bd98afa3b01c689bef3f467a9",
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        }
+      },
+      {
+        "name": "list_claims",
+        "title": "List extracted findings",
+        "description": "Findings extracted from papers as subject, relation and object (rapamycin extends_lifespan in Mus musculus), with organism, effect size and the source paper, newest first. Verify any that matter with get_paper. Not for personal medical advice.",
+        "contract_sha256": "13442c354494c6e6c43017a277ccf3c04d14e828ca23672c2c7c719e35d4ccd9",
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        }
+      },
+      {
+        "name": "list_trials",
+        "title": "List aging clinical trials",
+        "description": "Clinical trials that bear on human aging or age-related conditions, newest registry update first, with phase, status, sponsor, size, conditions, interventions and the latest change.",
+        "contract_sha256": "145be7b1695ebe65fc6c4ccf16ee555db00a0f09a673ff12b2c439a654f10817",
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        }
+      },
+      {
+        "name": "list_grants",
+        "title": "List aging research grants",
+        "description": "Aging research grants from NIH, the EU (CORDIS), UKRI and Wellcome, newest award first: title, funder, holder, investigators, amount, period and a link to the funder's record.",
+        "contract_sha256": "f508b96b6f90e053cb677cf5f1bbf0afdef4237cb1d523ac9ccf945bc47bb24e",
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        }
+      },
+      {
+        "name": "list_assets",
+        "title": "List drug and therapy programs",
+        "description": "Drug and therapy programs against a target, mechanism, hallmark of aging or age-related disease, furthest stage first, with developers, partners, code names, modality, targets, indications with stages and lifespan evidence. Signed-out and free callers read an outline of each record.",
+        "contract_sha256": "9d8307cfaf5f5ff3297e1db3212dce611173bc4910455676e89bb416b18a614f",
+        "annotations": {
+          "readOnlyHint": true,
+          "destructiveHint": false,
+          "idempotentHint": true,
+          "openWorldHint": false
+        }
+      }
+    ],
+    "required_api_keys": [
+      "AGINGRESEARCH_MCP_URL"
+    ],
+    "optional_api_keys": [
+      "AGINGRESEARCH_API_KEY"
+    ],
+    "api_key_info": {
+      "AGINGRESEARCH_MCP_URL": {
+        "domain": "Literature & Patents",
+        "type": "endpoint",
+        "register_url": "https://agingresearch.news/s/3b354i",
+        "purpose": "Endpoint URL for the opt-in AgingResearch.News aging-research MCP connection.",
+        "without": "Leave blank to keep this third-party MCP connection disabled. To enable, set this to https://agingresearch.news/api/mcp — the public endpoint needs no account for lookups."
+      },
+      "AGINGRESEARCH_API_KEY": {
+        "domain": "Literature & Patents",
+        "type": "secret",
+        "register_url": "https://agingresearch.news/s/ktmbvv",
+        "purpose": "Raises the AgingResearch.News MCP lookup allowance from the signed-out daily limit to the account's plan; every free account has a key in Settings.",
+        "without": "Works at the signed-out allowance, about 30 lookups a day per address."
+      }
+    },
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "discover",
+            "generate_configs",
+            "call_tool"
+          ],
+          "description": "Discover reviewed tools, generate proxy configurations, or call one reviewed tool."
+        },
+        "tool_name": {
+          "type": "string",
+          "description": "Reviewed MCP tool name, required when operation is call_tool."
+        },
+        "tool_arguments": {
+          "type": "object",
+          "description": "Search terms, identifiers or filters for the selected tool. Never include personal health information."
+        }
+      },
+      "required": [
+        "operation"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "Reviewed AgingResearch.News MCP discovery data or structured tool result.",
+      "additionalProperties": true
+    }
+  }
+]

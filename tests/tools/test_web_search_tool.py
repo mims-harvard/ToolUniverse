@@ -1529,6 +1529,40 @@ _OUTCRAWL_RESPONSE = {
 }
 
 
+# --- Keenable -------------------------------------------------------------
+
+
+class _FakeKeenableResponse:
+    def __init__(self, payload, status_code=200):
+        self._payload = payload
+        self.status_code = status_code
+
+    def json(self):
+        return self._payload
+
+    def raise_for_status(self):
+        if self.status_code >= 400:
+            raise web_search_tool.requests.HTTPError(f"HTTP {self.status_code}")
+
+
+_KEENABLE_RESPONSE = {
+    "results": [
+        {
+            "title": "asyncio — Python docs",
+            "url": "https://docs.python.org/3/library/asyncio.html",
+            "description": "Asynchronous I/O.",
+            "snippet": "long page excerpt",
+        },
+        {"title": "No URL", "description": "dropped"},
+        {
+            "title": "Snippet only",
+            "url": "https://example.com/a",
+            "snippet": "x" * 2000,
+        },
+    ]
+}
+
+
 @pytest.mark.unit
 def test_outcrawl_search_requires_api_key(monkeypatch):
     monkeypatch.delenv("OUTCRAWL_API_KEY", raising=False)
@@ -1891,3 +1925,104 @@ def test_outcrawl_backend_live_call():
     assert first["url"].startswith("http")
     assert first["rank"] == 1
     assert "api.outcrawl.ai" in data["provider_notice"]
+
+
+@pytest.mark.unit
+def test_keenable_search_uses_public_endpoint_without_key(monkeypatch):
+    monkeypatch.delenv("KEENABLE_API_KEY", raising=False)
+    captured = {}
+
+    def fake_post(url, *, json=None, headers=None, timeout=None):
+        captured.update(url=url, json=json, headers=headers, timeout=timeout)
+        return _FakeKeenableResponse(_KEENABLE_RESPONSE)
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+
+    results = _new_tool()._search_with_keenable(query="python asyncio", max_results=5)
+
+    assert captured["url"] == "https://api.keenable.ai/v1/search/public"
+    assert captured["json"] == {"query": "python asyncio", "max_results": 5}
+    assert captured["headers"] == {"X-Keenable-Title": "ToolUniverse"}
+    assert captured["timeout"] == 30
+    assert [r["url"] for r in results] == [
+        "https://docs.python.org/3/library/asyncio.html",
+        "https://example.com/a",
+    ]
+    assert results[0]["snippet"] == "Asynchronous I/O."
+    assert len(results[1]["snippet"]) == 500
+    assert [r["rank"] for r in results] == [1, 2]
+
+
+@pytest.mark.unit
+def test_keenable_search_uses_keyed_endpoint_when_key_is_set(monkeypatch):
+    monkeypatch.setenv("KEENABLE_API_KEY", "  kn-test-key\n")
+    captured = {}
+
+    def fake_post(url, *, json=None, headers=None, timeout=None):
+        captured.update(url=url, headers=headers)
+        return _FakeKeenableResponse(_KEENABLE_RESPONSE)
+
+    monkeypatch.setattr(web_search_tool.requests, "post", fake_post)
+
+    _new_tool()._search_with_keenable(query="x", max_results=1)
+
+    assert captured["url"] == "https://api.keenable.ai/v1/search"
+    assert captured["headers"] == {
+        "X-Keenable-Title": "ToolUniverse",
+        "X-API-Key": "kn-test-key",
+    }
+
+
+@pytest.mark.unit
+def test_keenable_backend_reports_success(monkeypatch):
+    tool = _new_tool()
+    monkeypatch.setattr(
+        tool,
+        "_search_with_keenable",
+        lambda **kwargs: [
+            {"title": "K", "url": "https://example.com", "snippet": "s", "rank": 1}
+        ],
+    )
+
+    result = tool.run({"query": "test query", "backend": "keenable"})
+
+    assert result["status"] == "success"
+    assert result["data"]["backend_used"] == "keenable"
+    assert result["data"]["attempted_backends"] == ["keenable"]
+    assert "api.keenable.ai" in result["data"]["provider_notice"]
+
+
+@pytest.mark.unit
+def test_keenable_backend_rejects_unsupported_controls(monkeypatch):
+    tool = _new_tool()
+
+    def unexpected_call(**kwargs):
+        raise AssertionError("Unsupported controls must fail before transmission")
+
+    monkeypatch.setattr(tool, "_search_with_keenable", unexpected_call)
+
+    result = tool.run({"query": "q", "backend": "keenable", "region": "cn-zh"})
+
+    assert result["status"] == "error"
+    assert "does not support" in result["error"]
+
+
+@pytest.mark.unit
+def test_auto_backend_does_not_call_keenable(monkeypatch):
+    tool = _new_tool()
+
+    def unexpected_call(**kwargs):
+        raise AssertionError("auto must not call Keenable")
+
+    monkeypatch.setattr(tool, "_search_with_keenable", unexpected_call)
+    monkeypatch.setattr(
+        tool,
+        "_search_with_ddgs",
+        lambda **kwargs: [
+            {"title": "d", "url": "https://d.example", "snippet": "", "rank": 1}
+        ],
+    )
+
+    result = tool.run({"query": "q"})
+
+    assert result["data"]["backend_used"] != "keenable"
