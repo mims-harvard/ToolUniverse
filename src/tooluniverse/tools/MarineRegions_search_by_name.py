@@ -17,7 +17,7 @@ def MarineRegions_search_by_name(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search the Marine Regions Gazetteer (VLIZ) for ocean/sea geographic features by name. Returns at ...
 
@@ -40,7 +40,7 @@ def MarineRegions_search_by_name(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

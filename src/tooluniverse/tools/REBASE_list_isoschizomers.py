@@ -14,7 +14,7 @@ def REBASE_list_isoschizomers(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List every restriction enzyme sharing a prototype with the named enzyme, i.e. all enzymes with th...
 
@@ -31,7 +31,7 @@ def REBASE_list_isoschizomers(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

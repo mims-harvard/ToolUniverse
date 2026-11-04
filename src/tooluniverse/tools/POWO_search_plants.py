@@ -17,7 +17,7 @@ def POWO_search_plants(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search the Plants of the World Online (POWO) database maintained by the Royal Botanic Gardens, Ke...
 
@@ -40,7 +40,7 @@ def POWO_search_plants(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

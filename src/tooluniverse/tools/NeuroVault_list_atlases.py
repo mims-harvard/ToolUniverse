@@ -16,7 +16,7 @@ def NeuroVault_list_atlases(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     List labeled anatomical brain atlas maps (parcellation/label images) hosted on NeuroVault. Each a...
 
@@ -37,7 +37,7 @@ def NeuroVault_list_atlases(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

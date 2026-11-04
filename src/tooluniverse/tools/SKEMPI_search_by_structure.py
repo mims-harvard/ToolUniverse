@@ -16,7 +16,7 @@ def SKEMPI_search_by_structure(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List every experimentally measured binding-affinity mutation for a protein-protein complex in SKE...
 
@@ -37,7 +37,7 @@ def SKEMPI_search_by_structure(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

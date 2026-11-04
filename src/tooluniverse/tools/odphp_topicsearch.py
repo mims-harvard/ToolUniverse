@@ -18,7 +18,7 @@ def odphp_topicsearch(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search ODPHP MyHealthfinder v4 topics by topic ID or keyword, or omit both to retrieve all topics...
 
@@ -43,7 +43,7 @@ def odphp_topicsearch(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

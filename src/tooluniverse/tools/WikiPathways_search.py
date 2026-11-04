@@ -17,7 +17,7 @@ def WikiPathways_search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search pathway titles in the current WikiPathways SPARQL dataset. Results are recoverably paginat...
 
@@ -40,7 +40,7 @@ def WikiPathways_search(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

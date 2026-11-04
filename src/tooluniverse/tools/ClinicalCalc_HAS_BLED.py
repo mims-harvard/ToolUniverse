@@ -22,7 +22,7 @@ def ClinicalCalc_HAS_BLED(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     HAS-BLED score: 1-year major bleeding risk in patients with atrial fibrillation on anticoagulatio...
 
@@ -55,7 +55,7 @@ def ClinicalCalc_HAS_BLED(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

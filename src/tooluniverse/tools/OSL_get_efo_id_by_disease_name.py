@@ -16,7 +16,7 @@ def OSL_get_efo_id_by_disease_name(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> Optional[dict[str, Any]]:
     """
         Legacy helper to find an EFO term ID from a disease name using EMBL-EBI OLS search.
 
@@ -35,7 +35,7 @@ def OSL_get_efo_id_by_disease_name(
 
         Returns
         -------
-        Any
+        Optional[dict[str, Any]]
     """
     # Handle mutable defaults to avoid B006 linting error
 

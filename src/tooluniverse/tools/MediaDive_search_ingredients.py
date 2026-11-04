@@ -15,7 +15,7 @@ def MediaDive_search_ingredients(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search MediaDive's catalogue of over 1,200 media ingredients by name substring. Returns each matc...
 
@@ -34,7 +34,7 @@ def MediaDive_search_ingredients(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

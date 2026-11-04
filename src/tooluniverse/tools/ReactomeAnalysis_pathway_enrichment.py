@@ -18,7 +18,7 @@ def ReactomeAnalysis_pathway_enrichment(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Perform pathway overrepresentation (enrichment) analysis using the Reactome Analysis Service. Sub...
 
@@ -43,7 +43,7 @@ def ReactomeAnalysis_pathway_enrichment(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

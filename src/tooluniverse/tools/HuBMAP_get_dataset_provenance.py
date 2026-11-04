@@ -14,7 +14,7 @@ def HuBMAP_get_dataset_provenance(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve a HuBMAP dataset's biological provenance lineage: the ordered chain of ancestor entities...
 
@@ -31,7 +31,7 @@ def HuBMAP_get_dataset_provenance(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

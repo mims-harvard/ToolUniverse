@@ -15,7 +15,7 @@ def Pharos_get_target_expression(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> Optional[dict[str, Any]]:
     """
     Get GTEx baseline tissue RNA expression (per-tissue TPM) for a drug target from Pharos/TCRD (by g...
 
@@ -34,7 +34,7 @@ def Pharos_get_target_expression(
 
     Returns
     -------
-    Any
+    Optional[dict[str, Any]]
     """
     # Handle mutable defaults to avoid B006 linting error
 

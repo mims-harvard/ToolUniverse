@@ -22,7 +22,7 @@ def ConoServer_search_conopeptides(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search ConoServer conopeptides (cone-snail venom peptides) by one or more case-insensitive substr...
 
@@ -55,7 +55,7 @@ def ConoServer_search_conopeptides(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

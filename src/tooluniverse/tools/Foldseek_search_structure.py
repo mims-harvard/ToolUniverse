@@ -20,7 +20,7 @@ def Foldseek_search_structure(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Submit a Foldseek structural similarity search for a PDB structure and wait for completion. Retur...
 
@@ -49,7 +49,7 @@ def Foldseek_search_structure(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

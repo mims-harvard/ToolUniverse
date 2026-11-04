@@ -18,7 +18,7 @@ def Dfam_search_families(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search Dfam repeat families with explicit offset pagination and pages up to 1000 records. Returns...
 
@@ -43,7 +43,7 @@ def Dfam_search_families(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

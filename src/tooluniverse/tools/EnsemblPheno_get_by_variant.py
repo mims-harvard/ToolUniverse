@@ -17,7 +17,7 @@ def EnsemblPheno_get_by_variant(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get phenotype associations for a specific variant (by rsID) from the Ensembl REST API. Returns tr...
 
@@ -40,7 +40,7 @@ def EnsemblPheno_get_by_variant(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

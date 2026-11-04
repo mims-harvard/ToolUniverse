@@ -18,7 +18,7 @@ def LNCipedia_search_ncrna_by_type(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search any RNAcentral non-coding RNA type with exact offset pagination. Supports miRNA, lncRNA, r...
 
@@ -43,7 +43,7 @@ def LNCipedia_search_ncrna_by_type(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

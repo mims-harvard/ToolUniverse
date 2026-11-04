@@ -18,7 +18,7 @@ def TCIA_get_series(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get imaging series from The Cancer Imaging Archive (TCIA). A series is a set of related images fr...
 
@@ -43,7 +43,7 @@ def TCIA_get_series(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

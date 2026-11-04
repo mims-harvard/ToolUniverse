@@ -23,7 +23,7 @@ def ProteinsPlus_analyze_binding_site_similarity(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Analyze binding site similarity and generate structural ensembles using SIENA (Structural Interac...
 
@@ -58,7 +58,7 @@ def ProteinsPlus_analyze_binding_site_similarity(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -17,7 +17,7 @@ def EpiGraphDB_get_literature_evidence(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get SemMedDB literature triple evidence supporting a GWAS trait via EpiGraphDB, with recoverable ...
 
@@ -40,7 +40,7 @@ def EpiGraphDB_get_literature_evidence(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

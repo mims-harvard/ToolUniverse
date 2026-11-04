@@ -14,7 +14,7 @@ def ChannelsDB_get_channels_pdb(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get protein channel, tunnel, and pore data for a PDB structure from ChannelsDB. ChannelsDB is a c...
 
@@ -31,7 +31,7 @@ def ChannelsDB_get_channels_pdb(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

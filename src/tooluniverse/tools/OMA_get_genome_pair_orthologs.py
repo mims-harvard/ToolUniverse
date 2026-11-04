@@ -17,7 +17,7 @@ def OMA_get_genome_pair_orthologs(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Retrieve pairwise orthologs between two whole genomes in OMA. Unlike OMA_get_orthologs, this endp...
 
@@ -40,7 +40,7 @@ def OMA_get_genome_pair_orthologs(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

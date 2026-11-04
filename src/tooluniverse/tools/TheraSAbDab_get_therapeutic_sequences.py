@@ -16,7 +16,7 @@ def TheraSAbDab_get_therapeutic_sequences(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the full curated record for a clinical/approved therapeutic antibody from Thera-SAbDab by WHO...
 
@@ -37,7 +37,7 @@ def TheraSAbDab_get_therapeutic_sequences(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

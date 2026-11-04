@@ -16,7 +16,7 @@ def BioImageArchive_search_bioimages(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search the BioImages collection with explicit page pagination. Metadata reports next_page and pre...
 
@@ -37,7 +37,7 @@ def BioImageArchive_search_bioimages(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

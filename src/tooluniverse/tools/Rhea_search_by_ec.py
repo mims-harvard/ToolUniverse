@@ -16,7 +16,7 @@ def Rhea_search_by_ec(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search for biochemical reactions in Rhea by EC (Enzyme Commission) number. Returns all reactions ...
 
@@ -37,7 +37,7 @@ def Rhea_search_by_ec(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -16,7 +16,7 @@ def HPA_generic_search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Generic search tool for Human Protein Atlas. Allows custom search queries and retrieval of specif...
 
@@ -37,7 +37,7 @@ def HPA_generic_search(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

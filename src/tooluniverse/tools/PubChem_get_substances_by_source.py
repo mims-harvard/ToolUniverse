@@ -15,7 +15,7 @@ def PubChem_get_substances_by_source(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Reverse sourcing: list ALL PubChem substance SIDs deposited/offered by a specific chemical vendor...
 
@@ -34,7 +34,7 @@ def PubChem_get_substances_by_source(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

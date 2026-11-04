@@ -15,7 +15,7 @@ def HMDB_search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Alias for Metabolite_search. Search for metabolites by compound name or molecular formula via Pub...
 
@@ -34,7 +34,7 @@ def HMDB_search(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

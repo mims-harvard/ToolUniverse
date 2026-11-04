@@ -26,7 +26,7 @@ def predict_protein_structure(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Fold a protein sequence, with one model or every available one at once. Accepts a raw 1-letter se...
 
@@ -67,7 +67,7 @@ def predict_protein_structure(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

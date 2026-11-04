@@ -16,7 +16,7 @@ def Alliance_get_molecular_interactions(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get molecular (physical) interactions for a gene via the Alliance of Genome Resources, including ...
 
@@ -37,7 +37,7 @@ def Alliance_get_molecular_interactions(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

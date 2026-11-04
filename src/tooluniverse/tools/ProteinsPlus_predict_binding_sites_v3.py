@@ -19,7 +19,7 @@ def ProteinsPlus_predict_binding_sites_v3(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Predict druggable binding sites using DoGSite3 algorithm with ligand-biased grid option. Enhanced...
 
@@ -46,7 +46,7 @@ def ProteinsPlus_predict_binding_sites_v3(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

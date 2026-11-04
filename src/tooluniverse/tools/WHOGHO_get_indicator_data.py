@@ -18,7 +18,7 @@ def WHOGHO_get_indicator_data(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get actual health data values for a specific WHO Global Health Observatory indicator by its code....
 
@@ -43,7 +43,7 @@ def WHOGHO_get_indicator_data(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

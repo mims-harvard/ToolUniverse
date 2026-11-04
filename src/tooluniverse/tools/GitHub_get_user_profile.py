@@ -14,7 +14,7 @@ def GitHub_get_user_profile(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get a public GitHub user profile by username. Returns user metadata including name, bio, company,...
 
@@ -31,7 +31,7 @@ def GitHub_get_user_profile(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -19,7 +19,7 @@ def VCF_summary_stats(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Canonical variant statistics for a local VCF/BCF file via bcftools stats. Returns records, SNPs, ...
 
@@ -46,7 +46,7 @@ def VCF_summary_stats(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

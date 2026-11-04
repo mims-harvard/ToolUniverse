@@ -15,7 +15,7 @@ def NeuroMorpho_get_neuron(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed neuron reconstruction data from NeuroMorpho.Org by neuron ID or name. Returns specie...
 
@@ -34,7 +34,7 @@ def NeuroMorpho_get_neuron(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

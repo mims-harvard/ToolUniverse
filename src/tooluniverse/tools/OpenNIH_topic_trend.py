@@ -16,7 +16,7 @@ def OpenNIH_topic_trend(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Trace annual NIH project-row counts and recorded award totals for a research topic using title-ke...
 
@@ -37,7 +37,7 @@ def OpenNIH_topic_trend(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

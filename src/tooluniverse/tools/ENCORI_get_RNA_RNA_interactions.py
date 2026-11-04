@@ -21,7 +21,7 @@ def ENCORI_get_RNA_RNA_interactions(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Retrieve ncRNA-RNA (RNA-RNA duplex) interaction networks from high-throughput crosslinking (PARIS...
 
@@ -52,7 +52,7 @@ def ENCORI_get_RNA_RNA_interactions(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

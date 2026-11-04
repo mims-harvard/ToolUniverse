@@ -19,7 +19,7 @@ def CMSOpenPayments_search_payments(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search CMS Open Payments (the 'Sunshine Act' database) for payments and transfers of value from d...
 
@@ -46,7 +46,7 @@ def CMSOpenPayments_search_payments(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

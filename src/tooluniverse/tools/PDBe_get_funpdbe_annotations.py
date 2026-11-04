@@ -14,7 +14,7 @@ def PDBe_get_funpdbe_annotations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get functional annotations from the FunPDBe consortium for a PDB structure. FunPDBe aggregates re...
 
@@ -31,7 +31,7 @@ def PDBe_get_funpdbe_annotations(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

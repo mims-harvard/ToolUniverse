@@ -18,7 +18,7 @@ def ClinicalCalc_CURB_65(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     CURB-65 score: community-acquired pneumonia severity and disposition (outpatient vs inpatient vs ...
 
@@ -43,7 +43,7 @@ def ClinicalCalc_CURB_65(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

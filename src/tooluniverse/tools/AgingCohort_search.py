@@ -18,7 +18,7 @@ def AgingCohort_search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search a curated registry of ~30 major longitudinal cohort studies relevant to aging research wor...
 
@@ -43,7 +43,7 @@ def AgingCohort_search(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

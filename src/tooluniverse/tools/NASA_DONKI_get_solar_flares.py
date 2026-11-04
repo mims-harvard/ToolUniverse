@@ -15,7 +15,7 @@ def NASA_DONKI_get_solar_flares(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search NASA DONKI for Solar Flare (FLR) events. Returns flare observations including class (C/M/X...
 
@@ -34,7 +34,7 @@ def NASA_DONKI_get_solar_flares(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

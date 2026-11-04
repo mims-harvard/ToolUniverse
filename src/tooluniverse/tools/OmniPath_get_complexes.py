@@ -15,7 +15,7 @@ def OmniPath_get_complexes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get protein complex compositions from OmniPath's comprehensive complex database. Integrates 22,00...
 
@@ -34,7 +34,7 @@ def OmniPath_get_complexes(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

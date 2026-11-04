@@ -14,7 +14,7 @@ def BMRB_get_entry(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get NMR data entry from the Biological Magnetic Resonance Data Bank (BMRB). Returns the full NMR-...
 
@@ -31,7 +31,7 @@ def BMRB_get_entry(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

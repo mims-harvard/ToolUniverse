@@ -16,7 +16,7 @@ def UniProtRef_search_keywords(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search the UniProt keyword controlled vocabulary with official cursor pagination. Returns keyword...
 
@@ -37,7 +37,7 @@ def UniProtRef_search_keywords(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

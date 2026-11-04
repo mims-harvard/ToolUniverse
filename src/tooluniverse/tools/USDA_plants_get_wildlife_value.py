@@ -15,7 +15,7 @@ def USDA_plants_get_wildlife_value(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get wildlife food and cover value ratings for a plant from the USDA PLANTS Database. Returns fora...
 
@@ -34,7 +34,7 @@ def USDA_plants_get_wildlife_value(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -20,7 +20,7 @@ def DNA_primer_design(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Design forward and reverse PCR primers for a target DNA region using the SantaLucia 1998 nearest-...
 
@@ -49,7 +49,7 @@ def DNA_primer_design(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

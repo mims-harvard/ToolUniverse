@@ -18,7 +18,7 @@ def Activity_infer_ulm(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Infer transcription-factor / pathway activities from a per-gene statistic (e.g. a DESeq2/edgeR t-...
 
@@ -43,7 +43,7 @@ def Activity_infer_ulm(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

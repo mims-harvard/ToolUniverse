@@ -18,7 +18,7 @@ def SMILES_verify(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Parse a SMILES string without RDKit and compute molecular properties: molecular weight, molecular...
 
@@ -43,7 +43,7 @@ def SMILES_verify(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

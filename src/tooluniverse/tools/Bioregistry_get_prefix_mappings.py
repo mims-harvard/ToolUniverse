@@ -15,7 +15,7 @@ def Bioregistry_get_prefix_mappings(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get cross-registry prefix mappings for a Bioregistry prefix. Maps a prefix (e.g. 'chebi', 'go', '...
 
@@ -34,7 +34,7 @@ def Bioregistry_get_prefix_mappings(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

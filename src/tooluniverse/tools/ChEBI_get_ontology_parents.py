@@ -14,7 +14,7 @@ def ChEBI_get_ontology_parents(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the ontology parents (is-a / has-role ancestors) of a ChEBI compound, navigating UPWARD in th...
 
@@ -31,7 +31,7 @@ def ChEBI_get_ontology_parents(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

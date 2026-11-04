@@ -22,7 +22,7 @@ def GTEx_get_single_tissue_sqtls(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get GTEx single-tissue splicing QTLs (sQTLs) and sGenes - a molecular layer distinct from eQTLs t...
 
@@ -55,7 +55,7 @@ def GTEx_get_single_tissue_sqtls(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

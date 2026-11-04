@@ -15,7 +15,7 @@ def ROR_search_organizations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search Research Organization Registry (ROR) v2 with explicit page pagination and exact total meta...
 
@@ -34,7 +34,7 @@ def ROR_search_organizations(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

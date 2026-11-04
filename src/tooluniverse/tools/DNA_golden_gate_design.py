@@ -16,7 +16,7 @@ def DNA_golden_gate_design(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Design Golden Gate Assembly parts with Type IIS restriction enzyme sites (BsaI or BbsI). Assigns ...
 
@@ -37,7 +37,7 @@ def DNA_golden_gate_design(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -16,7 +16,7 @@ def EpiGraphDB_get_gene_drug_associations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get pharmacogenomics drug-gene associations from CPIC and PharmGKB databases via EpiGraphDB. Retu...
 
@@ -37,7 +37,7 @@ def EpiGraphDB_get_gene_drug_associations(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

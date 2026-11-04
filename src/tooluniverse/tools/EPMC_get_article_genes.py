@@ -15,7 +15,7 @@ def EPMC_get_article_genes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the complete deduplicated set of genes and proteins mentioned in a biomedical article, identi...
 
@@ -34,7 +34,7 @@ def EPMC_get_article_genes(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

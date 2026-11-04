@@ -16,7 +16,7 @@ def gProfiler_convert_ids(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Convert gene identifiers between different namespaces using g:Profiler (g:Convert) from the Unive...
 
@@ -37,7 +37,7 @@ def gProfiler_convert_ids(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

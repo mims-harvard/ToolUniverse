@@ -17,7 +17,7 @@ def GO_get_genes_for_term(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Finds genes/proteins annotated to a Gene Ontology term, including annotations to its descendant t...
 
@@ -40,7 +40,7 @@ def GO_get_genes_for_term(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

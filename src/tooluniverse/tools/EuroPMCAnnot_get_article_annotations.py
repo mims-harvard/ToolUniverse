@@ -17,7 +17,7 @@ def EuroPMCAnnot_get_article_annotations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get text-mined annotations from a scientific article using the Europe PMC Annotations API. Return...
 
@@ -40,7 +40,7 @@ def EuroPMCAnnot_get_article_annotations(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

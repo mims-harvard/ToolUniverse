@@ -14,7 +14,7 @@ def PDBeSearch_get_compound(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get PDB ligand/compound information by compound ID from PDBe. Returns chemical name, formula, mol...
 
@@ -31,7 +31,7 @@ def PDBeSearch_get_compound(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

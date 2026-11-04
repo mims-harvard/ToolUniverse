@@ -23,7 +23,7 @@ def MassBank_search_records_advanced(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Filtered search of the MassBank Europe spectral library using one or more criteria combined as AN...
 
@@ -58,7 +58,7 @@ def MassBank_search_records_advanced(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

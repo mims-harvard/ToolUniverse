@@ -17,7 +17,7 @@ def ArtIC_search_artworks(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search the Art Institute of Chicago collection with explicit page pagination. Continue with metad...
 
@@ -40,7 +40,7 @@ def ArtIC_search_artworks(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

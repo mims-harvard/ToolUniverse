@@ -13,7 +13,7 @@ def NASAEONET_get_categories(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the list of natural event categories tracked by NASA EONET (Earth Observatory Natural Event T...
 
@@ -29,7 +29,7 @@ def NASAEONET_get_categories(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -17,7 +17,7 @@ def OrthoDB_get_group_fasta(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve a resumable structured page of member protein sequences for an OrthoDB orthologous group...
 
@@ -40,7 +40,7 @@ def OrthoDB_get_group_fasta(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

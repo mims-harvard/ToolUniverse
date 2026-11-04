@@ -15,7 +15,7 @@ def NASA_DONKI_get_solar_energetic_particles(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search NASA DONKI for Solar Energetic Particle (SEP) events. SEPs are high-energy particles (prot...
 
@@ -34,7 +34,7 @@ def NASA_DONKI_get_solar_energetic_particles(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

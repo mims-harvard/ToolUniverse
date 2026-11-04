@@ -16,7 +16,7 @@ def SIGN_list_guidelines(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List the current official SIGN guidelines, optionally filtered by topic. Each array item includes...
 
@@ -37,7 +37,7 @@ def SIGN_list_guidelines(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

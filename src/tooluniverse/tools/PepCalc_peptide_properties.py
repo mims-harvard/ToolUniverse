@@ -16,7 +16,7 @@ def PepCalc_peptide_properties(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Calculate physicochemical properties for a peptide with optional N-terminal and C-terminal chemic...
 
@@ -37,7 +37,7 @@ def PepCalc_peptide_properties(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

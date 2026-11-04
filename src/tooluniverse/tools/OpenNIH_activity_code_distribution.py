@@ -16,7 +16,7 @@ def OpenNIH_activity_code_distribution(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Break NIH or one Institute/Center portfolio into research, career, training, center, contract, in...
 
@@ -37,7 +37,7 @@ def OpenNIH_activity_code_distribution(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

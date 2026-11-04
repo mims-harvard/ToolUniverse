@@ -18,7 +18,7 @@ def IMPC_get_gene_phenotype_hits(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed IMPC statistical phenotype results for a gene with exact Solr offset pagination. Fil...
 
@@ -43,7 +43,7 @@ def IMPC_get_gene_phenotype_hits(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

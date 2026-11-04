@@ -14,7 +14,7 @@ def PubChemBioAssay_get_assay(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the complete detailed description of a PubChem BioAssay by its AID (Assay ID), including ever...
 
@@ -31,7 +31,7 @@ def PubChemBioAssay_get_assay(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

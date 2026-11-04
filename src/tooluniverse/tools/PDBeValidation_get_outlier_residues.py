@@ -14,7 +14,7 @@ def PDBeValidation_get_outlier_residues(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get residue-level validation outliers for a PDB structure from PDBe. Identifies specific residues...
 
@@ -31,7 +31,7 @@ def PDBeValidation_get_outlier_residues(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -14,7 +14,7 @@ def BMRB_get_entries_by_pdb_id(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Find BMRB NMR entries associated with a PDB structure. Returns BMRB entry IDs linked to a given P...
 
@@ -31,7 +31,7 @@ def BMRB_get_entries_by_pdb_id(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

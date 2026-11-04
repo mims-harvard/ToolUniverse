@@ -16,7 +16,7 @@ def OBIS_search_taxa(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Resolve an exact scientific name through OBIS /taxon/{scientificname}. Returns same-name accepted...
 
@@ -37,7 +37,7 @@ def OBIS_search_taxa(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

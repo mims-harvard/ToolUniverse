@@ -14,7 +14,7 @@ def WormBase_get_expression(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get expression data for a C. elegans gene from WormBase. Returns tissues where the gene is expres...
 
@@ -31,7 +31,7 @@ def WormBase_get_expression(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

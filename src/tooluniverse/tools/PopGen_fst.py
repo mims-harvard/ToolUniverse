@@ -18,7 +18,7 @@ def PopGen_fst(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Calculate the Weir-Cockerham (1984) theta Fst estimator between two populations given allele freq...
 
@@ -43,7 +43,7 @@ def PopGen_fst(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

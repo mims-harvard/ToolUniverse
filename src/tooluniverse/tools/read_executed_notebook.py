@@ -19,7 +19,7 @@ def read_executed_notebook(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Read a pre-executed Jupyter notebook (.ipynb, often named '*_executed.ipynb') and return its cell...
 
@@ -46,7 +46,7 @@ def read_executed_notebook(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

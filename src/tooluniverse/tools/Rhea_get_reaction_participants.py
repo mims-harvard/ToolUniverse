@@ -14,7 +14,7 @@ def Rhea_get_reaction_participants(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Return the structured reactants and products of one Rhea biochemical reaction, including each par...
 
@@ -31,7 +31,7 @@ def Rhea_get_reaction_participants(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

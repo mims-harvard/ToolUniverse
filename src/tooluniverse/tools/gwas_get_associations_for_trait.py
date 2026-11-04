@@ -19,7 +19,7 @@ def gwas_get_associations_for_trait(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get all associations for a specific trait, sorted by p-value (most significant first). A free-tex...
 
@@ -46,7 +46,7 @@ def gwas_get_associations_for_trait(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

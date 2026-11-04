@@ -16,7 +16,7 @@ def SunriseSunset_get_times(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get sunrise, sunset, solar noon, and twilight times for any location on Earth using the Sunrise-S...
 
@@ -37,7 +37,7 @@ def SunriseSunset_get_times(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

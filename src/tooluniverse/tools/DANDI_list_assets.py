@@ -15,7 +15,7 @@ def DANDI_list_assets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List the data files (assets) in one DANDI dandiset: file path, size, and asset id. Example: dandi...
 
@@ -34,7 +34,7 @@ def DANDI_list_assets(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -14,7 +14,7 @@ def NCBIDatasets_get_genome_assembly(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get genome assembly metadata for an assembly accession (RefSeq GCF_ or GenBank GCA_) from the NCB...
 
@@ -31,7 +31,7 @@ def NCBIDatasets_get_genome_assembly(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

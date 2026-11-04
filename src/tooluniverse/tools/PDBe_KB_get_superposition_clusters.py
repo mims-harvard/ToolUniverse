@@ -20,7 +20,7 @@ def PDBe_KB_get_superposition_clusters(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get structural superposition clusters for a UniProt protein from PDBe-KB. Segments, clusters with...
 
@@ -49,7 +49,7 @@ def PDBe_KB_get_superposition_clusters(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

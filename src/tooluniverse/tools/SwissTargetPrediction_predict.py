@@ -17,7 +17,7 @@ def SwissTargetPrediction_predict(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Predict the most probable protein targets of a small molecule using SwissTargetPrediction. Given ...
 
@@ -40,7 +40,7 @@ def SwissTargetPrediction_predict(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

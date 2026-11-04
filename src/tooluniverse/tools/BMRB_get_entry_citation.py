@@ -14,7 +14,7 @@ def BMRB_get_entry_citation(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> str | dict[str, Any]:
     """
     Get the citation/publication information for a BMRB NMR entry in BibTeX format. Returns author li...
 
@@ -31,7 +31,7 @@ def BMRB_get_entry_citation(
 
     Returns
     -------
-    Any
+    str | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

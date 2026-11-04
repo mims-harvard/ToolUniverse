@@ -16,7 +16,7 @@ def EBIProteins_get_interaction_details(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get protein metadata, disease associations, subcellular locations, and a paginated experiment-cou...
 
@@ -37,7 +37,7 @@ def EBIProteins_get_interaction_details(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

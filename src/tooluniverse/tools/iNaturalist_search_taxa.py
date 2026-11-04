@@ -16,7 +16,7 @@ def iNaturalist_search_taxa(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search iNaturalist taxa with exact total and page continuation. Page-based access is limited to 1...
 
@@ -37,7 +37,7 @@ def iNaturalist_search_taxa(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

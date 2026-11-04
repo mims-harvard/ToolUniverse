@@ -14,7 +14,7 @@ def OncoKB_get_levels(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get OncoKB evidence level definitions. Returns descriptions of all therapeutic actionability leve...
 
@@ -31,7 +31,7 @@ def OncoKB_get_levels(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

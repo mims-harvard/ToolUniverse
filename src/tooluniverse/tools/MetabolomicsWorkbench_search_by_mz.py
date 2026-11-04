@@ -17,7 +17,7 @@ def MetabolomicsWorkbench_search_by_mz(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search metabolites by m/z (mass-to-charge ratio) value from mass spectrometry data. Essential for...
 
@@ -40,7 +40,7 @@ def MetabolomicsWorkbench_search_by_mz(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

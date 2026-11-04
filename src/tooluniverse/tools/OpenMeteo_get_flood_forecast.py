@@ -18,7 +18,7 @@ def OpenMeteo_get_flood_forecast(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get river discharge and flood forecast data for any location using Open-Meteo's free GloFAS (Glob...
 
@@ -43,7 +43,7 @@ def OpenMeteo_get_flood_forecast(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

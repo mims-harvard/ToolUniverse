@@ -14,7 +14,7 @@ def GSA_get_accession(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Look up a GSA (Genome Sequence Archive) accession by its CRA-format ID. GSA, run by China's Natio...
 
@@ -31,7 +31,7 @@ def GSA_get_accession(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -17,7 +17,7 @@ def GDC_get_mutation_frequency_by_project(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get per-project (per-cancer-type) somatic mutation frequency for a gene from NCI GDC. For each TC...
 
@@ -40,7 +40,7 @@ def GDC_get_mutation_frequency_by_project(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

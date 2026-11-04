@@ -17,7 +17,7 @@ def NWS_get_active_alerts(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get active National Weather Service alerts with exact local offset pagination. NWS does not recog...
 
@@ -40,7 +40,7 @@ def NWS_get_active_alerts(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

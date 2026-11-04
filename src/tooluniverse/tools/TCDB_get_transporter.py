@@ -14,7 +14,7 @@ def TCDB_get_transporter(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Look up a membrane transporter protein in TCDB (Transporter Classification Database) by UniProt a...
 
@@ -31,7 +31,7 @@ def TCDB_get_transporter(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

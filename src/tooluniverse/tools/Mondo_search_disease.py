@@ -16,7 +16,7 @@ def Mondo_search_disease(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search Mondo diseases by name or keyword with exact offset pagination. Metadata reports total_res...
 
@@ -37,7 +37,7 @@ def Mondo_search_disease(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

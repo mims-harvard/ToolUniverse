@@ -18,7 +18,7 @@ def MHCMotifAtlas_get_allele_ligands(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve the complete exact match set of naturally presented ligands for an MHC Motif Atlas allel...
 
@@ -43,7 +43,7 @@ def MHCMotifAtlas_get_allele_ligands(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

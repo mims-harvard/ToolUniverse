@@ -19,7 +19,7 @@ def UCSC_get_track(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get annotation track data for a genomic region. If UCSC reports maxItemsLimit=true, the response ...
 
@@ -46,7 +46,7 @@ def UCSC_get_track(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

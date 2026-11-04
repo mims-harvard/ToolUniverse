@@ -15,7 +15,7 @@ def KLIFS_list_kinases(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List kinases in the Kinase-Ligand Interaction Fingerprints and Structures (KLIFS) database. KLIFS...
 
@@ -34,7 +34,7 @@ def KLIFS_list_kinases(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

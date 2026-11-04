@@ -16,7 +16,7 @@ def MetabolomicsWorkbench_get_gene_protein(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Look up a Metabolomics Workbench gene or protein (MGP) annotation record linking gene/protein ide...
 
@@ -37,7 +37,7 @@ def MetabolomicsWorkbench_get_gene_protein(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

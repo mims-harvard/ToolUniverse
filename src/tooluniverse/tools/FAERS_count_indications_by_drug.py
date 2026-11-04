@@ -16,7 +16,7 @@ def FAERS_count_indications_by_drug(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any] | list[Any]:
     """
     Aggregate FDA adverse event (FAERS) reports for a drug by the INDICATION (the medical condition t...
 
@@ -37,7 +37,7 @@ def FAERS_count_indications_by_drug(
 
     Returns
     -------
-    Any
+    dict[str, Any] | list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

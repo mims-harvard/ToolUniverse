@@ -22,7 +22,7 @@ def predict_molecular_property(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Predict one ADMET property for one molecule, with one model or every model that covers it. REQUIR...
 
@@ -55,7 +55,7 @@ def predict_molecular_property(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

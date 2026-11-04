@@ -16,7 +16,7 @@ def OpenTopoData_get_elevation(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get terrain elevation data for any location on Earth using the OpenTopoData API. Returns elevatio...
 
@@ -37,7 +37,7 @@ def OpenTopoData_get_elevation(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

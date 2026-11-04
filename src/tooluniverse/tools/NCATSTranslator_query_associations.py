@@ -18,7 +18,7 @@ def NCATSTranslator_query_associations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     One-hop biolink association query across ~15 NCATS Translator knowledge providers via the Aragorn...
 
@@ -43,7 +43,7 @@ def NCATSTranslator_query_associations(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

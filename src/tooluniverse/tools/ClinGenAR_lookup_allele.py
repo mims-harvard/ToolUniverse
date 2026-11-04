@@ -14,7 +14,7 @@ def ClinGenAR_lookup_allele(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Look up a genetic variant in the ClinGen Allele Registry by HGVS notation. Returns the canonical ...
 
@@ -31,7 +31,7 @@ def ClinGenAR_lookup_allele(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

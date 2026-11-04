@@ -15,7 +15,7 @@ def OpenML_search_datasets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     List/discover OpenML benchmark datasets in catalog order. This endpoint does not perform keyword ...
 
@@ -34,7 +34,7 @@ def OpenML_search_datasets(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

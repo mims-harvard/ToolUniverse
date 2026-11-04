@@ -15,7 +15,7 @@ def DiseaseSH_get_vaccine_coverage(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get COVID-19 vaccine coverage data for a specific country using the Disease.sh API. Returns timel...
 
@@ -34,7 +34,7 @@ def DiseaseSH_get_vaccine_coverage(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

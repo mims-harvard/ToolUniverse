@@ -16,7 +16,7 @@ def MedGen_get_clinical_features(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get HPO clinical features (phenotypes) associated with a genetic condition from NCBI MedGen. Retu...
 
@@ -37,7 +37,7 @@ def MedGen_get_clinical_features(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

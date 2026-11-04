@@ -30,7 +30,7 @@ def OpenNeuro_advanced_search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Faceted search across all OpenNeuro datasets plus the archive-wide total participant count. Retur...
 
@@ -79,7 +79,7 @@ def OpenNeuro_advanced_search(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

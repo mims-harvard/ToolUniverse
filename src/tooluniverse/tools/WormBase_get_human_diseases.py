@@ -14,7 +14,7 @@ def WormBase_get_human_diseases(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get human disease models (Disease Ontology / DOID) for a C. elegans gene from WormBase, inferred ...
 
@@ -31,7 +31,7 @@ def WormBase_get_human_diseases(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

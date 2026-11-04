@@ -18,7 +18,7 @@ def Enrichr_gene_to_genesets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Reverse gene-to-geneset membership lookup. Given ONE gene symbol, return every Enrichr term/gene-...
 
@@ -43,7 +43,7 @@ def Enrichr_gene_to_genesets(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -16,7 +16,7 @@ def FAERS_count_reporter_qualification(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any] | list[Any]:
     """
     Aggregate FDA adverse event (FAERS) reports for a drug by the primary-source reporter qualificati...
 
@@ -37,7 +37,7 @@ def FAERS_count_reporter_qualification(
 
     Returns
     -------
-    Any
+    dict[str, Any] | list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

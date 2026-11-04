@@ -19,7 +19,7 @@ def OpenMeteo_get_historical_climate(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get historical daily climate data for any location on Earth using the Open-Meteo Climate Change A...
 
@@ -46,7 +46,7 @@ def OpenMeteo_get_historical_climate(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -15,7 +15,7 @@ def PubChemTox_get_toxicity_summary(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get a comprehensive toxicity data summary for a chemical compound from PubChem. Returns an overvi...
 
@@ -34,7 +34,7 @@ def PubChemTox_get_toxicity_summary(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -16,7 +16,7 @@ def MassBank_search_by_compound(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search MassBank Europe spectra by compound name. MassBank returns the full matching array and ign...
 
@@ -37,7 +37,7 @@ def MassBank_search_by_compound(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

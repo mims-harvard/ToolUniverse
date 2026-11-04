@@ -14,7 +14,7 @@ def GenomeNexus_get_canonical_transcript(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the canonical transcript for a gene from Genome Nexus (MSK). Returns the Ensembl transcript I...
 
@@ -31,7 +31,7 @@ def GenomeNexus_get_canonical_transcript(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

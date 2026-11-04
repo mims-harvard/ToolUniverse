@@ -14,7 +14,7 @@ def OpenCitations_get_references(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get the list of papers cited by a given scientific article (its reference list) using OpenCitatio...
 
@@ -31,7 +31,7 @@ def OpenCitations_get_references(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

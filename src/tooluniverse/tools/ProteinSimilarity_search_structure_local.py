@@ -20,7 +20,7 @@ def ProteinSimilarity_search_structure_local(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Compare single-chain PDB queries locally with Foldseek/TM-align and caller-managed references. Re...
 
@@ -49,7 +49,7 @@ def ProteinSimilarity_search_structure_local(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

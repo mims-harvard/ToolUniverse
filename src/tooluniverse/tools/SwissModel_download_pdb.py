@@ -18,7 +18,7 @@ def SwissModel_download_pdb(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Download the actual 3D atomic coordinates (PDB format) of SWISS-MODEL Repository structures for a...
 
@@ -43,7 +43,7 @@ def SwissModel_download_pdb(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

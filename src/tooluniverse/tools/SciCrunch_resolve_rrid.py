@@ -14,7 +14,7 @@ def SciCrunch_resolve_rrid(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Resolve any Research Resource Identifier (RRID) via SciCrunch's registry: software/tools (SCR_ pr...
 
@@ -31,7 +31,7 @@ def SciCrunch_resolve_rrid(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

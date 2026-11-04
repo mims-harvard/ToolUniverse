@@ -21,7 +21,7 @@ def phykit_batch_analysis(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Run PhyKIT phylogenetics functions (treeness, saturation, dvmc, long_branch_score, total_tree_len...
 
@@ -52,7 +52,7 @@ def phykit_batch_analysis(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

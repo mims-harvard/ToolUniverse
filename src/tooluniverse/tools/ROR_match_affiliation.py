@@ -14,7 +14,7 @@ def ROR_match_affiliation(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Resolve a free-text author affiliation string (as printed in a paper, e.g. 'Department of Chemist...
 
@@ -31,7 +31,7 @@ def ROR_match_affiliation(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

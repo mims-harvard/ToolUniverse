@@ -16,7 +16,7 @@ def EPMC_get_references(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get one page of the reference list (bibliography) of a specific paper from Europe PMC. Given a Pu...
 
@@ -37,7 +37,7 @@ def EPMC_get_references(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

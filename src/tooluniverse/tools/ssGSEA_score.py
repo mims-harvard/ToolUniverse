@@ -18,7 +18,7 @@ def ssGSEA_score(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Single-sample GSEA (Barbie 2009): score each sample for each gene set from an expression matrix (...
 
@@ -43,7 +43,7 @@ def ssGSEA_score(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

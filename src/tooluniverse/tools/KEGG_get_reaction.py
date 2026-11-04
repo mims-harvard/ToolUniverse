@@ -15,7 +15,7 @@ def KEGG_get_reaction(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve a KEGG REACTION entry by R-number. Returns the reaction NAME, the human-readable DEFINIT...
 
@@ -34,7 +34,7 @@ def KEGG_get_reaction(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

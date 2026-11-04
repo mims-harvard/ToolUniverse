@@ -14,7 +14,7 @@ def PROSITE_get_entry(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve a PROSITE protein motif/domain entry by its accession number. Returns the entry name, de...
 
@@ -31,7 +31,7 @@ def PROSITE_get_entry(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

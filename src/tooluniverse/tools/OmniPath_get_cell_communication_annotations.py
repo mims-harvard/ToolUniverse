@@ -16,7 +16,7 @@ def OmniPath_get_cell_communication_annotations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get cell-cell communication annotations for proteins from databases like CellPhoneDB, CellChatDB,...
 
@@ -37,7 +37,7 @@ def OmniPath_get_cell_communication_annotations(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

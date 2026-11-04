@@ -16,7 +16,7 @@ def FlyBase_get_gene_disease_models(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get disease models involving a Drosophila gene from the Alliance of Genome Resources. Drosophila ...
 
@@ -37,7 +37,7 @@ def FlyBase_get_gene_disease_models(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

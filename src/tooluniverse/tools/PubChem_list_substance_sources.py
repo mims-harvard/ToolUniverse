@@ -13,7 +13,7 @@ def PubChem_list_substance_sources(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Vendor/source directory: enumerate the full master roster of chemical vendors and data sources re...
 
@@ -29,7 +29,7 @@ def PubChem_list_substance_sources(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

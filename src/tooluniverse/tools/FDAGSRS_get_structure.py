@@ -14,7 +14,7 @@ def FDAGSRS_get_structure(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get chemical structure data for an FDA-regulated substance by UNII code. Returns SMILES, molecula...
 
@@ -31,7 +31,7 @@ def FDAGSRS_get_structure(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

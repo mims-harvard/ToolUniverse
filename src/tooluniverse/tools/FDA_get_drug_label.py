@@ -16,7 +16,7 @@ def FDA_get_drug_label(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the complete FDA-approved prescribing information for a specific drug by name. Pass 'route' w...
 
@@ -37,7 +37,7 @@ def FDA_get_drug_label(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

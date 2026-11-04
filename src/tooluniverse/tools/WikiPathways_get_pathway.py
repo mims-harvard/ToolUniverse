@@ -17,7 +17,7 @@ def WikiPathways_get_pathway(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Fetch pathway content by WPID. format='json' (default) returns structured metadata (uri, title, o...
 
@@ -40,7 +40,7 @@ def WikiPathways_get_pathway(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

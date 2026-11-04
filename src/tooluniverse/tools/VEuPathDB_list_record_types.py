@@ -13,7 +13,7 @@ def VEuPathDB_list_record_types(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List all available record types in VEuPathDB (Eukaryotic Pathogen, Vector and Host Informatics Re...
 
@@ -29,7 +29,7 @@ def VEuPathDB_list_record_types(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

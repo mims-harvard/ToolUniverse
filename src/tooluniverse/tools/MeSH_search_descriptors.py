@@ -16,7 +16,7 @@ def MeSH_search_descriptors(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search MeSH (Medical Subject Headings) descriptors by label. MeSH is NLM's controlled vocabulary ...
 
@@ -37,7 +37,7 @@ def MeSH_search_descriptors(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

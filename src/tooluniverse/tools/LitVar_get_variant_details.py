@@ -14,7 +14,7 @@ def LitVar_get_variant_details(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the full structured variant record from NCBI LitVar2 by rsID (the 'variant/get' endpoint, WIT...
 
@@ -31,7 +31,7 @@ def LitVar_get_variant_details(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

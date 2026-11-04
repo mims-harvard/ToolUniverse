@@ -15,7 +15,7 @@ def IdentifiersOrg_resolve(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Resolve a biological identifier to its resource URLs using Identifiers.org. Given a namespace (e....
 
@@ -34,7 +34,7 @@ def IdentifiersOrg_resolve(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

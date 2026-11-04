@@ -17,7 +17,7 @@ def DataCite_search_dois(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search DataCite DOI records by keyword and resource type. Returns exact total matches plus page c...
 
@@ -40,7 +40,7 @@ def DataCite_search_dois(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

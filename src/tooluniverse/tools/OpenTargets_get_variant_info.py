@@ -14,7 +14,7 @@ def OpenTargets_get_variant_info(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed information about a genetic variant from Open Targets Platform, including genomic co...
 
@@ -31,7 +31,7 @@ def OpenTargets_get_variant_info(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

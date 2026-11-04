@@ -16,7 +16,7 @@ def Alliance_get_gene_phenotypes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get phenotype annotations for a gene from the Alliance of Genome Resources. Results are recoverab...
 
@@ -37,7 +37,7 @@ def Alliance_get_gene_phenotypes(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

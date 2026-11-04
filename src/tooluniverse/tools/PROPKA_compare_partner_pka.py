@@ -20,7 +20,7 @@ def PROPKA_compare_partner_pka(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Compare protein pKa in a complex with the same-coordinate free partner using local PROPKA. Explic...
 
@@ -49,7 +49,7 @@ def PROPKA_compare_partner_pka(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

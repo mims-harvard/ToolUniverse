@@ -15,7 +15,7 @@ def CodonUsage_get_table(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Retrieve the codon usage table for an organism from the Codon Usage Database, indexed by NCBI tax...
 
@@ -34,7 +34,7 @@ def CodonUsage_get_table(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -22,7 +22,7 @@ def PDB_check_alpha_stereochemistry(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Check C-alpha orientation in local legacy PDB or public 1UBQ. Reports L/D mirrors, degenerate cen...
 
@@ -55,7 +55,7 @@ def PDB_check_alpha_stereochemistry(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

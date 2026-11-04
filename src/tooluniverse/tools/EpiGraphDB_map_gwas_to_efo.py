@@ -14,7 +14,7 @@ def EpiGraphDB_map_gwas_to_efo(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Map GWAS trait names to EFO (Experimental Factor Ontology) terms for standardization. Returns EFO...
 
@@ -31,7 +31,7 @@ def EpiGraphDB_map_gwas_to_efo(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

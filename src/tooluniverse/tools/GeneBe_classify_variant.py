@@ -18,7 +18,7 @@ def GeneBe_classify_variant(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Classify a germline variant under the ACMG/AMP guidelines using GeneBe (genebe.net). Given chromo...
 
@@ -43,7 +43,7 @@ def GeneBe_classify_variant(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

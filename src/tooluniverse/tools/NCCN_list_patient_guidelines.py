@@ -13,7 +13,7 @@ def NCCN_list_patient_guidelines(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List all NCCN (National Comprehensive Cancer Network) Guidelines for Patients available on nccn.o...
 
@@ -29,7 +29,7 @@ def NCCN_list_patient_guidelines(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

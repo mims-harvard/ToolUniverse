@@ -14,7 +14,7 @@ def DrugProps_pains_filter(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Screen a compound for PAINS (Pan-Assay Interference Compounds), Brenk undesirable substructures, ...
 
@@ -31,7 +31,7 @@ def DrugProps_pains_filter(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

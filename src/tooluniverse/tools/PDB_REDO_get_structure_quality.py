@@ -14,7 +14,7 @@ def PDB_REDO_get_structure_quality(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get re-refined structure quality metrics from PDB-REDO for a given PDB entry. PDB-REDO is a datab...
 
@@ -31,7 +31,7 @@ def PDB_REDO_get_structure_quality(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

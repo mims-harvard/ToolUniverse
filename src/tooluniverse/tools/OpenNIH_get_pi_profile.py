@@ -18,7 +18,7 @@ def OpenNIH_get_pi_profile(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Publications are not returned by the deployed endpoint. Return PI grant rows and shared-award con...
 
@@ -43,7 +43,7 @@ def OpenNIH_get_pi_profile(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

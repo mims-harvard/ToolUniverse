@@ -15,7 +15,7 @@ def ENAPortal_count_records(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Count the number of records matching a query in the European Nucleotide Archive (ENA). Supports c...
 
@@ -34,7 +34,7 @@ def ENAPortal_count_records(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

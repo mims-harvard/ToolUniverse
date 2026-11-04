@@ -13,7 +13,7 @@ def CPIC_list_pgx_genes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List all pharmacogenomics genes curated by the Clinical Pharmacogenomics Implementation Consortiu...
 
@@ -29,7 +29,7 @@ def CPIC_list_pgx_genes(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

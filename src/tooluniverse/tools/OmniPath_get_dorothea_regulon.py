@@ -15,7 +15,7 @@ def OmniPath_get_dorothea_regulon(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get the complete DoRothEA regulon for a transcription factor from OmniPath. Returns all target ge...
 
@@ -34,7 +34,7 @@ def OmniPath_get_dorothea_regulon(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

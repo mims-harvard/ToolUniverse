@@ -16,7 +16,7 @@ def EPMC_get_text_mined_annotations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get all unique text-mined annotations from a biomedical article via Europe PMC. Returns the compl...
 
@@ -37,7 +37,7 @@ def EPMC_get_text_mined_annotations(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -14,7 +14,7 @@ def TCIA_get_series_size(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get the total file size and image count for a specific imaging series in The Cancer Imaging Archi...
 
@@ -31,7 +31,7 @@ def TCIA_get_series_size(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

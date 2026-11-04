@@ -19,7 +19,7 @@ def CancerPrognosis_get_survival_data(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve patient-level OS and DFS data from a TCGA or cBioPortal study. The tool fetches every ra...
 
@@ -46,7 +46,7 @@ def CancerPrognosis_get_survival_data(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

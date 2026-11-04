@@ -20,7 +20,7 @@ def GTEx_get_median_gene_expression(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get median gene expression levels across GTEx tissues. Returns median expression in TPM (Transcri...
 
@@ -49,7 +49,7 @@ def GTEx_get_median_gene_expression(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

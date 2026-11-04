@@ -20,7 +20,7 @@ def GTEx_get_single_tissue_eqtls(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get significant single-tissue eQTL associations. Returns precomputed gene-variant associations wi...
 
@@ -49,7 +49,7 @@ def GTEx_get_single_tissue_eqtls(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

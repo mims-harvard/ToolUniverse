@@ -20,7 +20,7 @@ def euhealthinfo_search_obesity(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     This tool facilitates the discovery of datasets related to health topics, specializing in areas s...
 
@@ -49,7 +49,7 @@ def euhealthinfo_search_obesity(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

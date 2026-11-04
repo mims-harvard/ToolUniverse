@@ -14,7 +14,7 @@ def MobiDB_get_consensus(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get consensus disorder analysis for a protein from MobiDB, focusing on merged/consensus predictio...
 
@@ -31,7 +31,7 @@ def MobiDB_get_consensus(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

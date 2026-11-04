@@ -17,7 +17,7 @@ def DDBJ_get_cross_references(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List the DDBJ records linked to an accession, so you can walk a study to its experiments, runs, a...
 
@@ -40,7 +40,7 @@ def DDBJ_get_cross_references(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

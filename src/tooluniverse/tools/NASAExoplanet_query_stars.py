@@ -14,7 +14,7 @@ def NASAExoplanet_query_stars(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Query the NASA Exoplanet Archive for stellar host properties using ADQL SQL. Use table 'stellarho...
 
@@ -31,7 +31,7 @@ def NASAExoplanet_query_stars(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -15,7 +15,7 @@ def GTEx_get_expression_summary(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Summarize tissue-specific expression (e.g., median TPM) for a gene across GTEx tissues. Accepts g...
 
@@ -34,7 +34,7 @@ def GTEx_get_expression_summary(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

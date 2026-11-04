@@ -16,7 +16,7 @@ def FAERS_count_additive_administration_routes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any] | list[Any]:
     """
     Enumerate and count administration routes for adverse events across specified medicinal products....
 
@@ -37,7 +37,7 @@ def FAERS_count_additive_administration_routes(
 
     Returns
     -------
-    Any
+    dict[str, Any] | list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

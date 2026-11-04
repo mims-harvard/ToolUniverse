@@ -17,7 +17,7 @@ def OrthoDB_get_orthologs(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get orthologous genes from an OrthoDB group, optionally filtered by species, with local offset pa...
 
@@ -40,7 +40,7 @@ def OrthoDB_get_orthologs(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

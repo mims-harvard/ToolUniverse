@@ -19,7 +19,7 @@ def CancerPrognosis_search_studies(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search cBioPortal for cancer genomics studies by keyword. Find studies by cancer type, institutio...
 
@@ -46,7 +46,7 @@ def CancerPrognosis_search_studies(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

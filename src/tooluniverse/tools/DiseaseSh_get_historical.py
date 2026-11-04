@@ -15,7 +15,7 @@ def DiseaseSh_get_historical(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get historical COVID-19 time series data for a country or globally from Disease.sh. Returns daily...
 
@@ -34,7 +34,7 @@ def DiseaseSh_get_historical(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

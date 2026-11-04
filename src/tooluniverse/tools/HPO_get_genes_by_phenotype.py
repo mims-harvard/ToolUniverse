@@ -16,7 +16,7 @@ def HPO_get_genes_by_phenotype(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the genes associated with an HPO phenotype term (genes in which variants cause this phenotype...
 
@@ -37,7 +37,7 @@ def HPO_get_genes_by_phenotype(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

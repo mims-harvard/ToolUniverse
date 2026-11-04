@@ -14,7 +14,7 @@ def OpenNeuro_get_dataset_snapshots(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get all version snapshots of a specific dataset on OpenNeuro. Returns the snapshot id, tag, and c...
 
@@ -31,7 +31,7 @@ def OpenNeuro_get_dataset_snapshots(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

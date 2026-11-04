@@ -19,7 +19,7 @@ def SemanticScholar_get_paper_references(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     List one page of papers that a given paper CITES, including citation intents, influence flag, con...
 
@@ -42,7 +42,7 @@ def SemanticScholar_get_paper_references(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

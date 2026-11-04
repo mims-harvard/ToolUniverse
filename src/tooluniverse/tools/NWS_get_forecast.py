@@ -16,7 +16,7 @@ def NWS_get_forecast(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the 7-day weather forecast for a National Weather Service grid point. You need the gridId, gr...
 
@@ -37,7 +37,7 @@ def NWS_get_forecast(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

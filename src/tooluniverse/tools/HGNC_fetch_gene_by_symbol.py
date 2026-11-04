@@ -14,7 +14,7 @@ def HGNC_fetch_gene_by_symbol(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Fetch detailed gene information from HGNC (HUGO Gene Nomenclature Committee) by official gene sym...
 
@@ -31,7 +31,7 @@ def HGNC_fetch_gene_by_symbol(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

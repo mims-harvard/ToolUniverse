@@ -14,7 +14,7 @@ def AMPSphere_get_family(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve full detail for an AMPSphere protein family (SPHERE cluster) by accession (e.g. 'SPHERE-...
 
@@ -31,7 +31,7 @@ def AMPSphere_get_family(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

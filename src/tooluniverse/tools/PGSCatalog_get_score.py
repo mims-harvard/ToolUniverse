@@ -14,7 +14,7 @@ def PGSCatalog_get_score(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve the full metadata for a specific polygenic score from the PGS Catalog by its PGS id (e.g...
 
@@ -31,7 +31,7 @@ def PGSCatalog_get_score(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

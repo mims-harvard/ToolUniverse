@@ -15,7 +15,7 @@ def CodonUsage_get_optimal_codons(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Return the most-used codon for each amino acid in an organism, which is the reference table neede...
 
@@ -34,7 +34,7 @@ def CodonUsage_get_optimal_codons(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

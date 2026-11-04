@@ -18,7 +18,7 @@ def OpenMeteo_get_air_quality(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get current and forecast air quality data for any location using the Open-Meteo Air Quality API. ...
 
@@ -43,7 +43,7 @@ def OpenMeteo_get_air_quality(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

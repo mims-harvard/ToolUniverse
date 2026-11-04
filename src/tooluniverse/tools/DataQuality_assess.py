@@ -15,7 +15,7 @@ def DataQuality_assess(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Assess the quality of a tabular dataset (CSV file or JSON array of records). Returns per-column s...
 
@@ -34,7 +34,7 @@ def DataQuality_assess(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

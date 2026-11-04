@@ -16,7 +16,7 @@ def EVA_list_studies(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     List EVA variant studies with deterministic local limit/offset pagination. The upstream endpoint ...
 
@@ -37,7 +37,7 @@ def EVA_list_studies(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

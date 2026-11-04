@@ -15,7 +15,7 @@ def NICE_Clinical_Guidelines_Search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search NICE (National Institute for Health and Care Excellence) clinical guidelines and evidence-...
 
@@ -34,7 +34,7 @@ def NICE_Clinical_Guidelines_Search(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

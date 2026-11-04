@@ -17,7 +17,7 @@ def ClinicalCalc_eGFR_CKD_EPI(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Estimated glomerular filtration rate (eGFR) by the CKD-EPI 2021 creatinine equation (race-free, I...
 
@@ -40,7 +40,7 @@ def ClinicalCalc_eGFR_CKD_EPI(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

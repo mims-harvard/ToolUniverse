@@ -14,7 +14,7 @@ def EGA_get_study_datasets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List the dataset accessions belonging to one EGA study. Example: accession='EGAS00000000001' retu...
 
@@ -31,7 +31,7 @@ def EGA_get_study_datasets(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

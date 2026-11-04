@@ -16,7 +16,7 @@ def BVBRC_search_taxonomy(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search for pathogen taxonomy entries in BV-BRC by keyword, with explicit pagination and true Cont...
 
@@ -37,7 +37,7 @@ def BVBRC_search_taxonomy(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

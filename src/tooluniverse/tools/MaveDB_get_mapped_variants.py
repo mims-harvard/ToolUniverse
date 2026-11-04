@@ -16,7 +16,7 @@ def MaveDB_get_mapped_variants(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get genomically-mapped variant coordinates (GA4GH VRS Allele + ClinGen Allele ID) for a MaveDB sc...
 
@@ -37,7 +37,7 @@ def MaveDB_get_mapped_variants(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

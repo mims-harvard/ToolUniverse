@@ -14,7 +14,7 @@ def Pfam_get_protein_annotations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get all Pfam domain annotations for a specific protein by its UniProt accession. Returns every Pf...
 
@@ -31,7 +31,7 @@ def Pfam_get_protein_annotations(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

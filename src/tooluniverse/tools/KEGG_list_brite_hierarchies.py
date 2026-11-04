@@ -13,7 +13,7 @@ def KEGG_list_brite_hierarchies(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     List all available KEGG BRITE hierarchy classification files. KEGG BRITE is a collection of hiera...
 
@@ -29,7 +29,7 @@ def KEGG_list_brite_hierarchies(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

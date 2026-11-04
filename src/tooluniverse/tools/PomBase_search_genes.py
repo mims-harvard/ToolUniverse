@@ -16,7 +16,7 @@ def PomBase_search_genes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search all PomBase fission-yeast genes by name, systematic ID, or product keyword with complete l...
 
@@ -37,7 +37,7 @@ def PomBase_search_genes(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

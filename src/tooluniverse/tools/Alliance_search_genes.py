@@ -16,7 +16,7 @@ def Alliance_search_genes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search genes across all Alliance of Genome Resources species by symbol, synonym, name, or keyword...
 
@@ -37,7 +37,7 @@ def Alliance_search_genes(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

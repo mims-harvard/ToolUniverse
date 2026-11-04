@@ -17,7 +17,7 @@ def KEGG_get_gene_pathways(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get all KEGG pathways that a gene participates in. Returns pathway IDs and names for a given KEGG...
 
@@ -40,7 +40,7 @@ def KEGG_get_gene_pathways(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

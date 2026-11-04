@@ -16,7 +16,7 @@ def ReactomeAnalysis_token_result(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve previously computed Reactome pathway analysis results using an analysis token. Tokens ar...
 
@@ -37,7 +37,7 @@ def ReactomeAnalysis_token_result(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

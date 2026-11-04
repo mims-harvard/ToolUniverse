@@ -20,7 +20,7 @@ def euhealthinfo_search_healthcare_expenditure(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     This tool enables the discovery of healthcare-related datasets focusing on expenditure and spendi...
 
@@ -49,7 +49,7 @@ def euhealthinfo_search_healthcare_expenditure(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

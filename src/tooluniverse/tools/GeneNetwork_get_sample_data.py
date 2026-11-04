@@ -15,7 +15,7 @@ def GeneNetwork_get_sample_data(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get expression or phenotype values for a specific gene/trait across all samples in a GeneNetwork ...
 
@@ -34,7 +34,7 @@ def GeneNetwork_get_sample_data(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

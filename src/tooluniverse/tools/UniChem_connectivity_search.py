@@ -16,7 +16,7 @@ def UniChem_connectivity_search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Connectivity (cross-source) search in UniChem: find all compounds across the 40+ source databases...
 
@@ -37,7 +37,7 @@ def UniChem_connectivity_search(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

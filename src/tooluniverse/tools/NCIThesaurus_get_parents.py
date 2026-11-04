@@ -14,7 +14,7 @@ def NCIThesaurus_get_parents(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get the direct parent concepts (upward hierarchy / broader categories) of an NCI Thesaurus concep...
 
@@ -31,7 +31,7 @@ def NCIThesaurus_get_parents(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

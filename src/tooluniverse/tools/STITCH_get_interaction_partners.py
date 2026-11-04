@@ -16,7 +16,7 @@ def STITCH_get_interaction_partners(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get all interaction partners (chemicals and proteins) for a given identifier. Returns network of ...
 
@@ -37,7 +37,7 @@ def STITCH_get_interaction_partners(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

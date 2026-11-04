@@ -82,6 +82,62 @@ def json_type_to_python(json_type: str | list) -> str:
     }.get(json_type, "Any")
 
 
+def _return_type_for(return_schema: Dict[str, Any]) -> str:
+    """Python type for a return_schema, including the `oneOf` form.
+
+    A schema that lists alternatives has no top-level ``type``, so asking for
+    one yields ``""`` and every such tool was annotated ``Any`` -- 1,594 of
+    them, over half the generated wrappers. The branches do carry types, and a
+    union of them says more than ``Any``: a result that is an object on
+    success and an object on failure is ``dict[str, Any]`` either way, and one
+    that is a list or an error envelope is ``list[Any] | dict[str, Any]``.
+
+    Nullability is collected across the branches and applied once, so a
+    nullable branch beside a non-nullable one of the same type gives
+    ``Optional[dict[str, Any]]`` rather than
+    ``Optional[dict[str, Any]] | dict[str, Any]``.
+
+    Falls back to ``Any`` when any branch declares no type, which is the
+    honest answer rather than a guess.
+    """
+    declared = return_schema.get("type")
+    if declared:
+        return json_type_to_python(declared)
+
+    branches = return_schema.get("oneOf") or return_schema.get("anyOf")
+    if not isinstance(branches, list) or not branches:
+        return "Any"
+
+    bases: list = []
+    has_null = False
+    for branch in branches:
+        if not isinstance(branch, dict):
+            return "Any"
+        branch_type = branch.get("type")
+        if not branch_type:
+            # a branch constraining only `properties`/`required` is an object
+            if branch.get("properties") or branch.get("required"):
+                branch_type = "object"
+            else:
+                return "Any"
+        types = [branch_type] if isinstance(branch_type, str) else list(branch_type)
+        if "null" in types:
+            has_null = True
+            types = [t for t in types if t != "null"]
+        if not types:
+            continue
+        rendered = json_type_to_python(types if len(types) > 1 else types[0])
+        if rendered == "Any":
+            return "Any"
+        if rendered not in bases:
+            bases.append(rendered)
+
+    if not bases:
+        return "Any"
+    joined = _deduplicate_types(bases)
+    return f"Optional[{joined}]" if has_null else joined
+
+
 def _deduplicate_types(types: list) -> str:
     """Join a list of Python type strings with '|', removing duplicates while preserving order."""
     if not types:
@@ -276,7 +332,7 @@ def generate_tool_file(
     # Infer return type
     return_schema = tool_config.get("return_schema", {})
     if return_schema:
-        return_type = json_type_to_python(return_schema.get("type", ""))
+        return_type = _return_type_for(return_schema)
     else:
         return_type = "Any"
 
@@ -777,9 +833,7 @@ def main(
         # diff. Restricted to names that have a file, because an import line
         # for a missing module would break the package at import time.
         exportable = sorted(
-            name
-            for name in all_config_tool_names
-            if (output / f"{name}.py").exists()
+            name for name in all_config_tool_names if (output / f"{name}.py").exists()
         )
         init_path = generate_init(exportable, output)
         generated_paths.append(str(init_path))

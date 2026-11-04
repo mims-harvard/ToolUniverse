@@ -15,7 +15,7 @@ def Planteome_search_terms(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search Planteome (a Global Core Biodata Resource) for plant ontology terms by keyword, across the...
 
@@ -34,7 +34,7 @@ def Planteome_search_terms(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

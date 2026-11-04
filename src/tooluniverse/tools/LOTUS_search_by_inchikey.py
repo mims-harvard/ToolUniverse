@@ -14,7 +14,7 @@ def LOTUS_search_by_inchikey(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search the LOTUS natural products database specifically by InChIKey, which provides exact structu...
 
@@ -31,7 +31,7 @@ def LOTUS_search_by_inchikey(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

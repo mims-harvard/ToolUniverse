@@ -22,7 +22,7 @@ def PDB_check_beta_stereochemistry(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Check natural Ile/Thr C-beta orientation in local legacy PDB or public1UBQ. Reports inverted/plan...
 
@@ -55,7 +55,7 @@ def PDB_check_beta_stereochemistry(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

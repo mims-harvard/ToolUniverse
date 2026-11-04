@@ -14,7 +14,7 @@ def WHOGHO_list_dimension_values(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Decode WHO GHO dimension codes into human-readable labels and the country->region hierarchy. WHOG...
 
@@ -31,7 +31,7 @@ def WHOGHO_list_dimension_values(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

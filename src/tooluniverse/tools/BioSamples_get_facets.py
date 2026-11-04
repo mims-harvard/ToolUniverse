@@ -15,7 +15,7 @@ def BioSamples_get_facets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Faceted aggregation discovery over EBI BioSamples: given a free-text query, return the available ...
 
@@ -34,7 +34,7 @@ def BioSamples_get_facets(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

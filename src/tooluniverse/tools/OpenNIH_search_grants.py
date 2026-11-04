@@ -24,7 +24,7 @@ def OpenNIH_search_grants(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search NIH project-year rows. WARNING: total_funding is a row sum, and repeated full project numb...
 
@@ -61,7 +61,7 @@ def OpenNIH_search_grants(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

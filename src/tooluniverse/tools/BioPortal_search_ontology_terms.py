@@ -18,7 +18,7 @@ def BioPortal_search_ontology_terms(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search across 900+ biomedical ontologies in BioPortal (NCBO) for concepts matching a query. Retur...
 
@@ -43,7 +43,7 @@ def BioPortal_search_ontology_terms(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

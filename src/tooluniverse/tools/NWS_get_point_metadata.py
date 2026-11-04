@@ -15,7 +15,7 @@ def NWS_get_point_metadata(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get weather metadata for a geographic point (latitude/longitude) from the US National Weather Ser...
 
@@ -34,7 +34,7 @@ def NWS_get_point_metadata(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

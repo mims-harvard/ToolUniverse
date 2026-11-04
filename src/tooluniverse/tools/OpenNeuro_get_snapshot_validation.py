@@ -15,7 +15,7 @@ def OpenNeuro_get_snapshot_validation(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get BIDS validation results for a specific version (snapshot) of an OpenNeuro dataset. Returns wh...
 
@@ -34,7 +34,7 @@ def OpenNeuro_get_snapshot_validation(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

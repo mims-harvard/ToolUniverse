@@ -14,7 +14,7 @@ def T3DB_search_toxins(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search for toxins by name or keyword in the T3DB (Toxin and Toxin-Target Database). Returns match...
 
@@ -31,7 +31,7 @@ def T3DB_search_toxins(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

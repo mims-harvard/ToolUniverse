@@ -14,7 +14,7 @@ def OpenTargets_get_gwas_study(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed metadata for a GWAS study from Open Targets Platform, including trait information, s...
 
@@ -31,7 +31,7 @@ def OpenTargets_get_gwas_study(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

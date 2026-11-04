@@ -18,7 +18,7 @@ def GOAPI_get_genes_by_function(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get unique genes annotated with a GO term. The upstream /genes route actually returns repeated as...
 
@@ -43,7 +43,7 @@ def GOAPI_get_genes_by_function(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

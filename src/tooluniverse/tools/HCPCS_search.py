@@ -15,7 +15,7 @@ def HCPCS_search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     US procedure and durable-medical-equipment billing code autocomplete via the NLM Clinical Table S...
 
@@ -34,7 +34,7 @@ def HCPCS_search(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

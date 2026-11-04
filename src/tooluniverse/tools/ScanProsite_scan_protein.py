@@ -14,7 +14,7 @@ def ScanProsite_scan_protein(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Scan a protein against the PROSITE database of protein motifs, domains, and families. Given a Uni...
 
@@ -31,7 +31,7 @@ def ScanProsite_scan_protein(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

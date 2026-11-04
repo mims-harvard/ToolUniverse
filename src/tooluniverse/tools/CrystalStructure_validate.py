@@ -23,7 +23,7 @@ def CrystalStructure_validate(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Validate crystal structure by computing theoretical density from unit cell parameters (a, b, c in...
 
@@ -58,7 +58,7 @@ def CrystalStructure_validate(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

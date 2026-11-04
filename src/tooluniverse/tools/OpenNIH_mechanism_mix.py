@@ -16,7 +16,7 @@ def OpenNIH_mechanism_mix(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Analyze the mix of NIH award mechanisms for one resolved institution, or the system-wide RPG rese...
 
@@ -37,7 +37,7 @@ def OpenNIH_mechanism_mix(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

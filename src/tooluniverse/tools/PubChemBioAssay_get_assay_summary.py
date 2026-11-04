@@ -14,7 +14,7 @@ def PubChemBioAssay_get_assay_summary(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get summary and molecular target information for a PubChem BioAssay. Returns the assay name, sour...
 
@@ -31,7 +31,7 @@ def PubChemBioAssay_get_assay_summary(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

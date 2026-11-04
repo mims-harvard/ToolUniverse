@@ -16,7 +16,7 @@ def SemanticScholar_get_recommendations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get paper recommendations from Semantic Scholar for a given paper. Returns papers similar to or r...
 
@@ -37,7 +37,7 @@ def SemanticScholar_get_recommendations(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -18,7 +18,7 @@ def iNaturalist_get_species_counts(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get species observation counts from iNaturalist for a given taxon group or location. Returns a ra...
 
@@ -43,7 +43,7 @@ def iNaturalist_get_species_counts(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

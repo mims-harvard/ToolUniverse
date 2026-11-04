@@ -14,7 +14,7 @@ def Planteome_get_term(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get a single Planteome ontology term by its accession ID (from Planteome_search_terms or Planteom...
 
@@ -31,7 +31,7 @@ def Planteome_get_term(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

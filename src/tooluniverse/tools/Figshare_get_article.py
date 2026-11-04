@@ -14,7 +14,7 @@ def Figshare_get_article(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed metadata for a specific Figshare research output by its article ID. Returns complete...
 
@@ -31,7 +31,7 @@ def Figshare_get_article(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

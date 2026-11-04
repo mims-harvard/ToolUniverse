@@ -18,7 +18,7 @@ def BVBRC_search_protein_structures(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search for pathogen protein structures in BV-BRC by organism, gene, or method, with explicit pagi...
 
@@ -43,7 +43,7 @@ def BVBRC_search_protein_structures(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

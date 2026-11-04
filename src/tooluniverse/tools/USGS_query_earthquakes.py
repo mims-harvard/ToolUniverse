@@ -24,7 +24,7 @@ def USGS_query_earthquakes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Query the USGS FDSN earthquake database with explicit one-based offset pagination and an exact to...
 
@@ -61,7 +61,7 @@ def USGS_query_earthquakes(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

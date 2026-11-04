@@ -17,7 +17,7 @@ def DNA_translate_reading_frames(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Translate a DNA sequence to protein in all 3 forward reading frames and identify the longest ORF....
 
@@ -40,7 +40,7 @@ def DNA_translate_reading_frames(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

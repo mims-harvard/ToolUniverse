@@ -18,7 +18,7 @@ def OmniPath_get_enzyme_substrate(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get enzyme-substrate (post-translational modification) interactions from OmniPath. Integrates dat...
 
@@ -43,7 +43,7 @@ def OmniPath_get_enzyme_substrate(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

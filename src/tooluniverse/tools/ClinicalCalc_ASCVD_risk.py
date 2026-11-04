@@ -23,7 +23,7 @@ def ClinicalCalc_ASCVD_risk(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     10-year atherosclerotic cardiovascular disease (ASCVD) risk by the 2013 ACC/AHA Pooled Cohort Equ...
 
@@ -58,7 +58,7 @@ def ClinicalCalc_ASCVD_risk(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

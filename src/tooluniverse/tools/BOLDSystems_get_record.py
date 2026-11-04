@@ -14,7 +14,7 @@ def BOLDSystems_get_record(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve a single BOLD (Barcode of Life Data System) DNA barcode record by its BOLD process ID. R...
 
@@ -31,7 +31,7 @@ def BOLDSystems_get_record(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

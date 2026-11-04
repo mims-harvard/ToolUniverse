@@ -17,7 +17,7 @@ def EVA_get_variants_by_gene(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get genetic variants from the European Variation Archive (EVA) for a specific gene. Results use e...
 
@@ -40,7 +40,7 @@ def EVA_get_variants_by_gene(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

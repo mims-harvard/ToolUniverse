@@ -21,7 +21,7 @@ def humanbase_ppi_analysis(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> str | dict[str, Any]:
     """
     Retrieve a tissue-specific HumanBase gene interaction network and associated Gene Ontology biolog...
 
@@ -52,7 +52,7 @@ def humanbase_ppi_analysis(
 
     Returns
     -------
-    Any
+    str | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

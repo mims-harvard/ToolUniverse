@@ -17,7 +17,7 @@ def VCF_normalize(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Normalize a local VCF/BCF with bcftools norm (split or join multiallelics; left-align indels agai...
 
@@ -40,7 +40,7 @@ def VCF_normalize(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

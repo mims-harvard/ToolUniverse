@@ -16,7 +16,7 @@ def PDBeSIFTS_get_pdb_to_uniprot(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Map PDB entry chains to UniProt accessions using PDBe SIFTS. Chain mappings within every returned...
 
@@ -37,7 +37,7 @@ def PDBeSIFTS_get_pdb_to_uniprot(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

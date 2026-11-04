@@ -16,7 +16,7 @@ def OpenFDA_search_animalvet_adverse_events(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search the FDA animal & veterinary adverse-event database via openFDA. Contains reports of advers...
 
@@ -37,7 +37,7 @@ def OpenFDA_search_animalvet_adverse_events(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

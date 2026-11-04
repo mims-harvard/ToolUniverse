@@ -14,7 +14,7 @@ def QuickGO_get_term_detail(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed information about a specific Gene Ontology (GO) term from the EBI QuickGO browser. R...
 
@@ -31,7 +31,7 @@ def QuickGO_get_term_detail(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

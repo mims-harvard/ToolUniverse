@@ -14,7 +14,7 @@ def IDR_get_study(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed information about a specific imaging study (project) in the Image Data Resource (IDR...
 
@@ -31,7 +31,7 @@ def IDR_get_study(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

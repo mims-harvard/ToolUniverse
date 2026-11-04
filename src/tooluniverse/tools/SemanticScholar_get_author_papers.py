@@ -19,7 +19,7 @@ def SemanticScholar_get_author_papers(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     List an author's publication bibliography from Semantic Scholar. Results use offset pagination: b...
 
@@ -42,7 +42,7 @@ def SemanticScholar_get_author_papers(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

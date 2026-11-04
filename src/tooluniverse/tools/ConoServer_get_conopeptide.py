@@ -14,7 +14,7 @@ def ConoServer_get_conopeptide(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get a full ConoServer conopeptide (cone-snail venom peptide) record by its ConoServer protein ID ...
 
@@ -31,7 +31,7 @@ def ConoServer_get_conopeptide(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

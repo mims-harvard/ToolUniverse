@@ -14,7 +14,7 @@ def SwissDock_check_job_status(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Check the status of a SwissDock docking job using its session ID. Returns current job status: RUN...
 
@@ -31,7 +31,7 @@ def SwissDock_check_job_status(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

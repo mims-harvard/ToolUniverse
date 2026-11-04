@@ -29,7 +29,7 @@ def run_deseq2_analysis(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Run R DESeq2 differential expression analysis on a count matrix + metadata. Returns gene counts, ...
 
@@ -76,7 +76,7 @@ def run_deseq2_analysis(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

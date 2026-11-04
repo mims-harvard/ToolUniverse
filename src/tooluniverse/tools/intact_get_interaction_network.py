@@ -24,7 +24,7 @@ def intact_get_interaction_network(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get interaction network centered on a specific interactor. Uses EBI Search API (IntAct domain) fo...
 
@@ -61,7 +61,7 @@ def intact_get_interaction_network(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

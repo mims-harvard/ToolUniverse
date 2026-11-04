@@ -17,7 +17,7 @@ def AllenCellTypes_search_specimens(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search Allen Cell Types neuron specimens with exact RMA row pagination. Filter by donor species a...
 
@@ -40,7 +40,7 @@ def AllenCellTypes_search_specimens(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

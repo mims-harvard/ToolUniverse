@@ -14,7 +14,7 @@ def Crossref_check_retraction(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Check whether a published paper (by DOI) has been retracted, withdrawn, corrected, or flagged wit...
 
@@ -31,7 +31,7 @@ def Crossref_check_retraction(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

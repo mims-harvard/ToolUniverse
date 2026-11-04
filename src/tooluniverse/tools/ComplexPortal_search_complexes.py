@@ -17,7 +17,7 @@ def ComplexPortal_search_complexes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search for curated protein complexes by gene/protein name from the EBI Complex Portal (includes C...
 
@@ -40,7 +40,7 @@ def ComplexPortal_search_complexes(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

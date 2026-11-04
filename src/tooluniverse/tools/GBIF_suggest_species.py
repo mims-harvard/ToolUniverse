@@ -15,7 +15,7 @@ def GBIF_suggest_species(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Autocomplete species names using the GBIF species suggestion endpoint. Returns quick matches as y...
 
@@ -34,7 +34,7 @@ def GBIF_suggest_species(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

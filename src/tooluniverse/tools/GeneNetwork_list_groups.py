@@ -14,7 +14,7 @@ def GeneNetwork_list_groups(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List genetic cross populations (groups) available in GeneNetwork for a given species. These group...
 
@@ -31,7 +31,7 @@ def GeneNetwork_list_groups(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

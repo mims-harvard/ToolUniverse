@@ -20,7 +20,7 @@ def GSEA_prerank(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Pre-ranked Gene Set Enrichment Analysis (Subramanian 2005) on a ranked gene list (e.g. genes rank...
 
@@ -49,7 +49,7 @@ def GSEA_prerank(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

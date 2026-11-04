@@ -16,7 +16,7 @@ def EBIProteins_get_proteomics_peptides(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get mass-spectrometry peptide evidence from the EBI Proteins API with limit/offset pagination and...
 
@@ -37,7 +37,7 @@ def EBIProteins_get_proteomics_peptides(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

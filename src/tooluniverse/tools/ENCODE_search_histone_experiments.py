@@ -22,7 +22,7 @@ def ENCODE_search_histone_experiments(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search ENCODE histone ChIP-seq experiments by histone modification mark, biosample, or organism. ...
 
@@ -55,7 +55,7 @@ def ENCODE_search_histone_experiments(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

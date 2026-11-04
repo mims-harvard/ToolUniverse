@@ -13,7 +13,7 @@ def OpenNIH_source_status(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Inspect OpenNIH corpus coverage, snapshot freshness, official sidecar availability, and known lag...
 
@@ -29,7 +29,7 @@ def OpenNIH_source_status(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

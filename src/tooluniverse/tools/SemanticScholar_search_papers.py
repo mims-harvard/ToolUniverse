@@ -20,7 +20,7 @@ def SemanticScholar_search_papers(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search for papers on Semantic Scholar including abstracts and AI-generated TLDR summaries. This t...
 
@@ -49,7 +49,7 @@ def SemanticScholar_search_papers(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

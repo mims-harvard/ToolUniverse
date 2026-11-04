@@ -14,7 +14,7 @@ def DailyMed_get_spl_history(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the full version history of a DailyMed SPL Set ID: every published SPL version with its versi...
 
@@ -31,7 +31,7 @@ def DailyMed_get_spl_history(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

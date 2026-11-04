@@ -15,7 +15,7 @@ def gnomad_search_genes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search for genes in gnomAD by free-text query (typically a gene symbol). Returns matching `ensemb...
 
@@ -34,7 +34,7 @@ def gnomad_search_genes(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

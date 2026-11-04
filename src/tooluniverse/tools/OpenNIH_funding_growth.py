@@ -16,7 +16,7 @@ def OpenNIH_funding_growth(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Calculate annual competitive Research Project Grant (RPG) funding growth and window CAGR for all ...
 
@@ -37,7 +37,7 @@ def OpenNIH_funding_growth(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -16,7 +16,7 @@ def Orphadata_get_phenotypes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Retrieve HPO phenotype annotations for a rare disease by ORPHAcode, with each phenotype's frequen...
 
@@ -37,7 +37,7 @@ def Orphadata_get_phenotypes(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -16,7 +16,7 @@ def NCBIDatasets_get_orthologs(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get orthologous genes across species for a given NCBI Gene ID. NCBI's ortholog endpoint returns a...
 
@@ -37,7 +37,7 @@ def NCBIDatasets_get_orthologs(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

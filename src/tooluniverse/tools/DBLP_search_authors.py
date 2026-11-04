@@ -16,7 +16,7 @@ def DBLP_search_authors(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search and disambiguate DBLP authors by name with offset pagination. Each response includes metad...
 
@@ -37,7 +37,7 @@ def DBLP_search_authors(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

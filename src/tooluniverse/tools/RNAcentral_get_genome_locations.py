@@ -16,7 +16,7 @@ def RNAcentral_get_genome_locations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the genomic coordinates of a non-coding RNA in a specific organism from RNAcentral. Provide a...
 
@@ -37,7 +37,7 @@ def RNAcentral_get_genome_locations(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

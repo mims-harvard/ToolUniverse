@@ -18,7 +18,7 @@ def MyVariant_get_pathogenicity_scores(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get comprehensive pathogenicity prediction scores for a variant from dbNSFP. Returns REVEL, CADD,...
 
@@ -39,7 +39,7 @@ def MyVariant_get_pathogenicity_scores(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

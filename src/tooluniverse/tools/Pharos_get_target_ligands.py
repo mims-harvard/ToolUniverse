@@ -17,7 +17,7 @@ def Pharos_get_target_ligands(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> Optional[dict[str, Any]]:
     """
     Get per-target ligand and drug bioactivities from Pharos/TCRD by gene symbol or UniProt ID. Retur...
 
@@ -40,7 +40,7 @@ def Pharos_get_target_ligands(
 
     Returns
     -------
-    Any
+    Optional[dict[str, Any]]
     """
     # Handle mutable defaults to avoid B006 linting error
 

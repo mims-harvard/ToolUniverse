@@ -16,7 +16,7 @@ def OpenMeteo_geocode_location(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search for city/location coordinates using Open-Meteo's free geocoding API. Returns latitude, lon...
 
@@ -37,7 +37,7 @@ def OpenMeteo_geocode_location(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

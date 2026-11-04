@@ -17,7 +17,7 @@ def PubChemTox_get_toxicity_values(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get non-human toxicity values (LD50, LC50, etc.) for a chemical compound from PubChem. Returns le...
 
@@ -40,7 +40,7 @@ def PubChemTox_get_toxicity_values(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

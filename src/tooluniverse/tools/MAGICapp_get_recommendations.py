@@ -14,7 +14,7 @@ def MAGICapp_get_recommendations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get all clinical recommendations from a specific MAGICapp guideline. Returns GRADE-rated recommen...
 
@@ -31,7 +31,7 @@ def MAGICapp_get_recommendations(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

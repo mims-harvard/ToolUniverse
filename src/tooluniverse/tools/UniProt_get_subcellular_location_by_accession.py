@@ -15,7 +15,7 @@ def UniProt_get_subcellular_location_by_accession(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Extract structured subcellular localization annotations from a UniProtKB entry, preserving eviden...
 
@@ -34,7 +34,7 @@ def UniProt_get_subcellular_location_by_accession(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -17,7 +17,7 @@ def RNAcentral_get_xrefs_and_pubs(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get paginated cross-references and literature for an RNAcentral entry in one call. xrefs_page and...
 
@@ -40,7 +40,7 @@ def RNAcentral_get_xrefs_and_pubs(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

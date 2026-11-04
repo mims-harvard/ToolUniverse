@@ -14,7 +14,7 @@ def IPD_get_hla_allele(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Fetch the full IPD-IMGT/HLA record for a single HLA allele by its IPD accession (e.g. 'HLA00001')...
 
@@ -31,7 +31,7 @@ def IPD_get_hla_allele(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

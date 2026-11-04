@@ -17,7 +17,7 @@ def EnsemblLD_get_ld_region(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get region-wide pairwise linkage disequilibrium (LD) from the Ensembl REST API: every r-squared a...
 
@@ -40,7 +40,7 @@ def EnsemblLD_get_ld_region(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

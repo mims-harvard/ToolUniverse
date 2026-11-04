@@ -15,7 +15,7 @@ def Anaconda_get_package(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed information about a specific conda package from a specific channel on Anaconda.org. ...
 
@@ -34,7 +34,7 @@ def Anaconda_get_package(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -14,7 +14,7 @@ def PDBeSIFTS_get_scop_mapping(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the SCOP (Structural Classification of Proteins) structural classification for a PDB entry fr...
 
@@ -31,7 +31,7 @@ def PDBeSIFTS_get_scop_mapping(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

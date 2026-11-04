@@ -26,7 +26,7 @@ def iDigBio_search_media(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search the iDigBio specimen MEDIA index (photographs and scans) with exact offset pagination. Met...
 
@@ -67,7 +67,7 @@ def iDigBio_search_media(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

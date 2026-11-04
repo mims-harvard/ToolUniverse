@@ -13,7 +13,7 @@ def HuBMAP_list_organs(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     List all organs available in the HuBMAP (Human BioMolecular Atlas Program) atlas. Returns organ n...
 
@@ -29,7 +29,7 @@ def HuBMAP_list_organs(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

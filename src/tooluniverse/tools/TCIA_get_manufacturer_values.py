@@ -16,7 +16,7 @@ def TCIA_get_manufacturer_values(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get the distinct scanner Manufacturer values present in a TCIA collection (optionally filtered by...
 
@@ -37,7 +37,7 @@ def TCIA_get_manufacturer_values(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

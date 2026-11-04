@@ -15,7 +15,7 @@ def GBIF_parse_name(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Parse one or more scientific name strings into structured components using the GBIF name parser. ...
 
@@ -34,7 +34,7 @@ def GBIF_parse_name(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

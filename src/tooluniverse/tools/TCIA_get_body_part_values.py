@@ -15,7 +15,7 @@ def TCIA_get_body_part_values(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get the body parts examined in TCIA imaging collections. Returns body part names for filtering se...
 
@@ -34,7 +34,7 @@ def TCIA_get_body_part_values(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

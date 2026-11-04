@@ -16,7 +16,7 @@ def Dryad_search_datasets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search the Dryad open research data repository for published datasets using its real `/api/v2/sea...
 
@@ -37,7 +37,7 @@ def Dryad_search_datasets(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

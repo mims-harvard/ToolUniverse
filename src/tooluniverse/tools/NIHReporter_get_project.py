@@ -15,7 +15,7 @@ def NIHReporter_get_project(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve one NIH-funded project by its project number or application id from NIH RePORTER: title,...
 
@@ -34,7 +34,7 @@ def NIHReporter_get_project(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

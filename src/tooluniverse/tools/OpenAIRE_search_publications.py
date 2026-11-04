@@ -17,7 +17,7 @@ def OpenAIRE_search_publications(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search OpenAIRE publications, datasets, or software with recoverable one-based pagination. Page s...
 
@@ -40,7 +40,7 @@ def OpenAIRE_search_publications(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

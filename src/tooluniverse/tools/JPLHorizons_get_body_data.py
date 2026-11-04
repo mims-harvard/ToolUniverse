@@ -14,7 +14,7 @@ def JPLHorizons_get_body_data(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get physical and orbital data for a solar system body from the JPL Horizons system. Returns mass,...
 
@@ -31,7 +31,7 @@ def JPLHorizons_get_body_data(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

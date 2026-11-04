@@ -14,7 +14,7 @@ def G2P_get_record(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed Gene2Phenotype (G2P) record for a specific gene-disease association by its stable ID...
 
@@ -31,7 +31,7 @@ def G2P_get_record(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

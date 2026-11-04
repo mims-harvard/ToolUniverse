@@ -17,7 +17,7 @@ def NIHReporter_search_projects(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Full-text search NIH RePORTER, NIH's public database of ~3 million funded research projects since...
 
@@ -40,7 +40,7 @@ def NIHReporter_search_projects(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

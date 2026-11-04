@@ -17,7 +17,7 @@ def EBI_build_phylogenetic_tree(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Build a phylogenetic tree from a multiple sequence alignment via EMBL-EBI simple_phylogeny. Takes...
 
@@ -40,7 +40,7 @@ def EBI_build_phylogenetic_tree(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

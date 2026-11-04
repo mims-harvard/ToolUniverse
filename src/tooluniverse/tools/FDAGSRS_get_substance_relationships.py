@@ -17,7 +17,7 @@ def FDAGSRS_get_substance_relationships(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the FDA GSRS substance relationship graph plus regulatory references for a substance by UNII....
 
@@ -40,7 +40,7 @@ def FDAGSRS_get_substance_relationships(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

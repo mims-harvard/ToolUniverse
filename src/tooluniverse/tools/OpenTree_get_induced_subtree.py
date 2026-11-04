@@ -14,7 +14,7 @@ def OpenTree_get_induced_subtree(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get a phylogenetic subtree (in Newick format) from the Open Tree of Life synthetic tree for a spe...
 
@@ -31,7 +31,7 @@ def OpenTree_get_induced_subtree(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

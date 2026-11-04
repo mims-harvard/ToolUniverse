@@ -18,7 +18,7 @@ def Finemap_credible_set(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Single-causal-variant fine-mapping from GWAS/QTL summary statistics (per-SNP effect size + SE ove...
 
@@ -43,7 +43,7 @@ def Finemap_credible_set(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

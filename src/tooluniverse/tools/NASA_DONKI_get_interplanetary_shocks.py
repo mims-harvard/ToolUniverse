@@ -16,7 +16,7 @@ def NASA_DONKI_get_interplanetary_shocks(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search NASA DONKI for Interplanetary Shock (IPS) events detected at Earth or in the solar wind. I...
 
@@ -37,7 +37,7 @@ def NASA_DONKI_get_interplanetary_shocks(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

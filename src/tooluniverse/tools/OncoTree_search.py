@@ -17,7 +17,7 @@ def OncoTree_search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search the OncoTree cancer type ontology by name, code, main type, or tissue. Returns every upstr...
 
@@ -40,7 +40,7 @@ def OncoTree_search(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

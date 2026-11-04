@@ -23,7 +23,7 @@ def gwas_get_variants_for_trait(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search the GWAS Catalog for all genetic variants (SNPs) linked to a specific disease or trait. Ac...
 
@@ -58,7 +58,7 @@ def gwas_get_variants_for_trait(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

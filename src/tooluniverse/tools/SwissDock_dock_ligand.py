@@ -19,7 +19,7 @@ def SwissDock_dock_ligand(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Perform protein-ligand molecular docking using SwissDock service with AutoDock Vina or Attracting...
 
@@ -46,7 +46,7 @@ def SwissDock_dock_ligand(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -17,7 +17,7 @@ def RxClass_find_classes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search NLM RxClass class names by keyword across ATC, EPC, MoA, VA and other class types. Metadat...
 
@@ -40,7 +40,7 @@ def RxClass_find_classes(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

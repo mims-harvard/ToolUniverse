@@ -20,7 +20,7 @@ def GlyGen_search_glycoproteins(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search GlyGen for glycoproteins by organism, glycosylation evidence/type, protein name, or gene n...
 
@@ -49,7 +49,7 @@ def GlyGen_search_glycoproteins(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

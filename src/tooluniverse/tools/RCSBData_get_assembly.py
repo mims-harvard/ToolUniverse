@@ -19,7 +19,7 @@ def RCSBData_get_assembly(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get biological assembly details for a PDB structure from the RCSB Data API. Returns oligomeric st...
 
@@ -46,7 +46,7 @@ def RCSBData_get_assembly(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

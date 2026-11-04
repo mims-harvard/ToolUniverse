@@ -13,7 +13,7 @@ def ZOOMA_list_datasources(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List the curated annotation datasources that EBI ZOOMA draws on when mapping free text to ontolog...
 
@@ -29,7 +29,7 @@ def ZOOMA_list_datasources(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -23,7 +23,7 @@ def ClinicalCalc_Wells_DVT(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Wells score for deep vein thrombosis (DVT) pretest probability. Sum of clinical features (minus 2...
 
@@ -58,7 +58,7 @@ def ClinicalCalc_Wells_DVT(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

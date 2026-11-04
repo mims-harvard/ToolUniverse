@@ -19,7 +19,7 @@ def ZINC_search_by_smiles(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Structure-search the ZINC22 (and legacy ZINC20) database by SMILES via the CartBlanche22 async st...
 
@@ -46,7 +46,7 @@ def ZINC_search_by_smiles(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

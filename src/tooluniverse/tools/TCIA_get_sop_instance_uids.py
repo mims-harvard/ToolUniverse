@@ -14,7 +14,7 @@ def TCIA_get_sop_instance_uids(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List the SOP Instance UIDs of every individual DICOM image (slice) within a TCIA imaging series. ...
 
@@ -31,7 +31,7 @@ def TCIA_get_sop_instance_uids(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

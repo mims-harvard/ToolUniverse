@@ -19,7 +19,7 @@ def ebi_search_domain(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search across a specific EBI domain (e.g., ensembl, uniprot, interpro) using the unified EBI Sear...
 
@@ -46,7 +46,7 @@ def ebi_search_domain(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

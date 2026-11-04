@@ -15,7 +15,7 @@ def CPIC_list_drugs(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List every drug in the CPIC database that has pharmacogenomic annotations (324 as of the last cen...
 
@@ -34,7 +34,7 @@ def CPIC_list_drugs(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -14,7 +14,7 @@ def GeneNetwork_get_dataset_info(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get metadata about a specific GeneNetwork dataset including its full name, data type, data scale,...
 
@@ -31,7 +31,7 @@ def GeneNetwork_get_dataset_info(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

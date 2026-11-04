@@ -14,7 +14,7 @@ def ROR_get_organization(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed metadata for a specific research organization by its ROR ID. Returns comprehensive i...
 
@@ -31,7 +31,7 @@ def ROR_get_organization(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
