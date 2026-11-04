@@ -20,7 +20,7 @@ def euhealthinfo_search_primary_care_workforce(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     This tool is designed to conduct metadata searches for datasets related to the primary-care workf...
 
@@ -49,7 +49,7 @@ def euhealthinfo_search_primary_care_workforce(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

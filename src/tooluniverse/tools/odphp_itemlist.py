@@ -15,7 +15,7 @@ def odphp_itemlist(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     List ODPHP MyHealthfinder v4 topics or categories. The response exposes the upstream total, retur...
 
@@ -34,7 +34,7 @@ def odphp_itemlist(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

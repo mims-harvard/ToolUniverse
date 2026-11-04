@@ -18,7 +18,7 @@ def CPIC_search_gene_drug_pairs(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search CPIC gene-drug pairs by gene symbol and/or CPIC evidence level. Gene symbol should be the ...
 
@@ -43,7 +43,7 @@ def CPIC_search_gene_drug_pairs(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

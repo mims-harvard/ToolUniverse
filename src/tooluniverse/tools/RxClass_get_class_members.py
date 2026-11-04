@@ -18,7 +18,7 @@ def RxClass_get_class_members(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List drugs belonging to a specific NLM RxClass class ID. Metadata reports the exact total_count a...
 
@@ -43,7 +43,7 @@ def RxClass_get_class_members(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

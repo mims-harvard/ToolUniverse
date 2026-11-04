@@ -16,7 +16,7 @@ def SASBDB_search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search SASBDB small-angle scattering database by query term or UniProt accession. UniProt IDs ret...
 
@@ -37,7 +37,7 @@ def SASBDB_search(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

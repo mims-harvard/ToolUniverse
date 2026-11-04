@@ -15,7 +15,7 @@ def OpenFDADevice_search_adverse_events(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search openFDA's MAUDE database of medical device adverse event reports by device generic name. R...
 
@@ -34,7 +34,7 @@ def OpenFDADevice_search_adverse_events(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

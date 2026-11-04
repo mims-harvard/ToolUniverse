@@ -19,7 +19,7 @@ def HuBMAP_search_datasets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search HuBMAP published datasets by organ, assay type, or free text. Supports Elasticsearch-style...
 
@@ -46,7 +46,7 @@ def HuBMAP_search_datasets(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

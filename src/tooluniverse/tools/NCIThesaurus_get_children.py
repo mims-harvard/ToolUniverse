@@ -14,7 +14,7 @@ def NCIThesaurus_get_children(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get the direct child concepts of an NCI Thesaurus concept code. Returns the immediate subcategori...
 
@@ -31,7 +31,7 @@ def NCIThesaurus_get_children(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

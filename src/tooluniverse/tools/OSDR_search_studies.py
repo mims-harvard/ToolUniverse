@@ -16,7 +16,7 @@ def OSDR_search_studies(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Full-text search NASA's Open Science Data Repository (OSDR, formerly GeneLab): ~1,000 space biolo...
 
@@ -37,7 +37,7 @@ def OSDR_search_studies(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

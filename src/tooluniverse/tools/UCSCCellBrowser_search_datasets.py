@@ -18,7 +18,7 @@ def UCSCCellBrowser_search_datasets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search the UCSC Cell Browser catalog of 300+ curated single-cell datasets, filtering by organism,...
 
@@ -43,7 +43,7 @@ def UCSCCellBrowser_search_datasets(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

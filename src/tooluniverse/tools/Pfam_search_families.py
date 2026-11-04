@@ -16,7 +16,7 @@ def Pfam_search_families(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search for Pfam protein family entries by keyword using the InterPro API. Pfam is the authoritati...
 
@@ -37,7 +37,7 @@ def Pfam_search_families(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

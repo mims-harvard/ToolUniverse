@@ -15,7 +15,7 @@ def ISRCTN_search_trials(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search the ISRCTN clinical trial registry by free text. The official XML API has no pagination an...
 
@@ -34,7 +34,7 @@ def ISRCTN_search_trials(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

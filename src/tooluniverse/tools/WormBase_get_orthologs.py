@@ -14,7 +14,7 @@ def WormBase_get_orthologs(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get orthologs and homologs of a C. elegans gene across species from WormBase (Inparanoid/EnsEMBL-...
 
@@ -31,7 +31,7 @@ def WormBase_get_orthologs(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

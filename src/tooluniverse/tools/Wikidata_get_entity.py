@@ -16,7 +16,7 @@ def Wikidata_get_entity(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed structured data for one or more specific Wikidata entities by their Q-numbers. Retur...
 
@@ -37,7 +37,7 @@ def Wikidata_get_entity(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

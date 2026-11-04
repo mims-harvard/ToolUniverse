@@ -21,7 +21,7 @@ def CancerPrognosis_get_gene_expression(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Fetch gene expression values (RNA-seq) for a specific gene across cancer samples in a TCGA or cBi...
 
@@ -52,7 +52,7 @@ def CancerPrognosis_get_gene_expression(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

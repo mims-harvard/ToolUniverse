@@ -16,7 +16,7 @@ def CellTypist_search_models(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search the CellTypist catalog of pre-trained models for automated single-cell type annotation, co...
 
@@ -37,7 +37,7 @@ def CellTypist_search_models(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

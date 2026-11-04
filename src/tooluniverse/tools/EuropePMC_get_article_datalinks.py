@@ -17,7 +17,7 @@ def EuropePMC_get_article_datalinks(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve the Europe PMC 'datalinks' for an article: the text-mined and curated cross-references f...
 
@@ -40,7 +40,7 @@ def EuropePMC_get_article_datalinks(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

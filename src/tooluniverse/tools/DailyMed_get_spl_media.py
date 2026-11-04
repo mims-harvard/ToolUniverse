@@ -14,7 +14,7 @@ def DailyMed_get_spl_media(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the structured list of drug-label images (pill photos, packaging/carton images, figures) for ...
 
@@ -31,7 +31,7 @@ def DailyMed_get_spl_media(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

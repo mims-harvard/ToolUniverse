@@ -14,7 +14,7 @@ def GNPS_npclassifier_from_smiles(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     NP Classifier: de novo natural-product biosynthetic classification of an arbitrary chemical struc...
 
@@ -31,7 +31,7 @@ def GNPS_npclassifier_from_smiles(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

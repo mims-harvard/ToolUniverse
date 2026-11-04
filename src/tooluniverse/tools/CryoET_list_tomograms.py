@@ -17,7 +17,7 @@ def CryoET_list_tomograms(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     List tomographic reconstructions for a specific experimental run from the CryoET Data Portal. Ret...
 
@@ -40,7 +40,7 @@ def CryoET_list_tomograms(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

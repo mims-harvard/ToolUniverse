@@ -20,7 +20,7 @@ def ClinicalCalc_Wells_PE(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Wells score for pulmonary embolism (PE) pretest probability. Weighted score giving three-tier (lo...
 
@@ -49,7 +49,7 @@ def ClinicalCalc_Wells_PE(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

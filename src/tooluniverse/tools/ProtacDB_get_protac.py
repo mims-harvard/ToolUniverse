@@ -15,7 +15,7 @@ def ProtacDB_get_protac(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get detailed information about a specific PROTAC compound by its PROTAC-DB ID. Returns full recor...
 
@@ -34,7 +34,7 @@ def ProtacDB_get_protac(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

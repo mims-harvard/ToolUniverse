@@ -16,7 +16,7 @@ def EBIProteins_get_variation_by_hgvs(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Reverse variation lookup by HGVS genomic expression from the EBI Proteins API. Returns every proj...
 
@@ -37,7 +37,7 @@ def EBIProteins_get_variation_by_hgvs(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

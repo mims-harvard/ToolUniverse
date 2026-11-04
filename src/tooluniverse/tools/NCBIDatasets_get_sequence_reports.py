@@ -16,7 +16,7 @@ def NCBIDatasets_get_sequence_reports(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get a page of per-sequence (chromosome/plasmid/scaffold) reports for a genome assembly via the NC...
 
@@ -37,7 +37,7 @@ def NCBIDatasets_get_sequence_reports(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

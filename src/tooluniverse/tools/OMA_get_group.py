@@ -16,7 +16,7 @@ def OMA_get_group(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get OMA Group details and page through all member proteins. OMA Groups contain sets of strict 1:1...
 
@@ -37,7 +37,7 @@ def OMA_get_group(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

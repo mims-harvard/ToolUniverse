@@ -18,7 +18,7 @@ def NASACMR_search_collections(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search NASA CMR for Earth-observation collections. Results use exact one-based CMR pagination: st...
 
@@ -43,7 +43,7 @@ def NASACMR_search_collections(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

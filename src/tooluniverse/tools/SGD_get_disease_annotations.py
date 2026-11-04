@@ -16,7 +16,7 @@ def SGD_get_disease_annotations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get and page through curated gene-disease (Disease Ontology / DOID) associations for a yeast gene...
 
@@ -37,7 +37,7 @@ def SGD_get_disease_annotations(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

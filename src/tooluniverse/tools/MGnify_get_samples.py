@@ -18,7 +18,7 @@ def MGnify_get_samples(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List MGnify biological samples with geographic, host, and environment provenance. Pass sample_acc...
 
@@ -43,7 +43,7 @@ def MGnify_get_samples(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

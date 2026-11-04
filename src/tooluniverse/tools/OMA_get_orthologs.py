@@ -17,7 +17,7 @@ def OMA_get_orthologs(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get pairwise orthologs for a protein from the OMA (Orthologous MAtrix) Browser. Returns orthologo...
 
@@ -40,7 +40,7 @@ def OMA_get_orthologs(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -14,7 +14,7 @@ def SCP_get_study(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve one Single Cell Portal study by accession, with its full untruncated description. Access...
 
@@ -31,7 +31,7 @@ def SCP_get_study(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

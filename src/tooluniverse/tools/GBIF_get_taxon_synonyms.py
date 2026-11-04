@@ -16,7 +16,7 @@ def GBIF_get_taxon_synonyms(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List taxonomic synonyms of a GBIF Backbone taxon. Results use GBIF offset pagination; when metada...
 
@@ -37,7 +37,7 @@ def GBIF_get_taxon_synonyms(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

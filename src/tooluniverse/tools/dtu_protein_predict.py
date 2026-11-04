@@ -18,7 +18,7 @@ def dtu_protein_predict(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Run DTU Health Tech machine-learning protein predictors on a protein sequence via the BioLib clou...
 
@@ -43,7 +43,7 @@ def dtu_protein_predict(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

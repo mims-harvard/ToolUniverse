@@ -22,7 +22,7 @@ def Coloc_abf_test(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Bayesian colocalization (coloc.abf, Giambartolomei 2014) of two GWAS/QTL signals over the same SN...
 
@@ -55,7 +55,7 @@ def Coloc_abf_test(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

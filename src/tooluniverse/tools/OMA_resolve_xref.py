@@ -16,7 +16,7 @@ def OMA_resolve_xref(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Resolve and page through OMA cross-reference matches for a gene symbol, UniProt entry name, or ot...
 
@@ -37,7 +37,7 @@ def OMA_resolve_xref(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

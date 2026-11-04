@@ -18,7 +18,7 @@ def PROPKA_predict_pka(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Predict protein pKa locally from one PDB model using optional PROPKA. Returns numbered groups, wa...
 
@@ -43,7 +43,7 @@ def PROPKA_predict_pka(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -24,7 +24,7 @@ def ISRCTN_search_trials_fielded(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Field-scoped ISRCTN search using its boolean query DSL. The official XML API has no pagination an...
 
@@ -61,7 +61,7 @@ def ISRCTN_search_trials_fielded(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

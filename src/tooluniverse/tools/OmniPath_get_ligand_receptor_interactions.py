@@ -19,7 +19,7 @@ def OmniPath_get_ligand_receptor_interactions(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get ligand-receptor interaction pairs from OmniPath, the largest integrated intercellular communi...
 
@@ -46,7 +46,7 @@ def OmniPath_get_ligand_receptor_interactions(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

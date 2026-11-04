@@ -15,7 +15,7 @@ def IDR_list_studies(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     List imaging studies (projects) from the Image Data Resource (IDR), the public repository for ref...
 
@@ -34,7 +34,7 @@ def IDR_list_studies(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

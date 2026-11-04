@@ -16,7 +16,7 @@ def BAR_get_rnaseq_expression(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get RNA-seq gene expression data from the BAR (Bio-Analytic Resource for Plant Biology). database...
 
@@ -37,7 +37,7 @@ def BAR_get_rnaseq_expression(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

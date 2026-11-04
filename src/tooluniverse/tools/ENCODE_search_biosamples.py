@@ -17,7 +17,7 @@ def ENCODE_search_biosamples(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search ENCODE biosamples (cell lines, tissues, primary cells) by organism, biosample type, or tre...
 
@@ -40,7 +40,7 @@ def ENCODE_search_biosamples(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

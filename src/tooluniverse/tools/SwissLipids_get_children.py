@@ -14,7 +14,7 @@ def SwissLipids_get_children(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List the direct children of a SwissLipids hierarchy node, i.e. descend the lipid structural class...
 
@@ -31,7 +31,7 @@ def SwissLipids_get_children(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

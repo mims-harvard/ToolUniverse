@@ -19,7 +19,7 @@ def cBioPortal_get_copy_number_alterations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get discrete copy-number alteration (CNA) calls per sample from GISTIC profiles for a gene in a c...
 
@@ -46,7 +46,7 @@ def cBioPortal_get_copy_number_alterations(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

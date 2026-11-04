@@ -15,7 +15,7 @@ def proteins_api_get_protein(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any] | list[Any]:
     """
     Get comprehensive protein information from Proteins API by UniProt accession. Returns protein ann...
 
@@ -34,7 +34,7 @@ def proteins_api_get_protein(
 
     Returns
     -------
-    Any
+    dict[str, Any] | list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

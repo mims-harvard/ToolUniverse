@@ -14,7 +14,7 @@ def Dataverse_get_dataset(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed metadata for a specific Harvard Dataverse dataset by its persistent DOI identifier. ...
 
@@ -31,7 +31,7 @@ def Dataverse_get_dataset(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

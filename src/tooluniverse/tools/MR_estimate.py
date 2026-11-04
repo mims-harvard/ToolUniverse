@@ -17,7 +17,7 @@ def MR_estimate(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Two-sample Mendelian randomization causal estimate from harmonized instrument summary statistics ...
 
@@ -40,7 +40,7 @@ def MR_estimate(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

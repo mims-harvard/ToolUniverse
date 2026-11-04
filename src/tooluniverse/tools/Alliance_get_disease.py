@@ -14,7 +14,7 @@ def Alliance_get_disease(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get disease summary information from the Alliance of Genome Resources by Disease Ontology (DO) ID...
 
@@ -31,7 +31,7 @@ def Alliance_get_disease(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

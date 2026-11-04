@@ -16,7 +16,7 @@ def MaveDB_get_gnomad_variants(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get gnomAD population-frequency variants observed within a MaveDB score set. Returns identifier, ...
 
@@ -37,7 +37,7 @@ def MaveDB_get_gnomad_variants(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

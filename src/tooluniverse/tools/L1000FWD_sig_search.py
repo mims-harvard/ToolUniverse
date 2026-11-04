@@ -18,7 +18,7 @@ def L1000FWD_sig_search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Transcriptomic signature query against the LINCS L1000 Connectivity Map via the L1000FWD Firework...
 
@@ -43,7 +43,7 @@ def L1000FWD_sig_search(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

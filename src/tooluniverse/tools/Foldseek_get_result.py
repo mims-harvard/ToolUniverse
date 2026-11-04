@@ -16,7 +16,7 @@ def Foldseek_get_result(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get a recoverable offset page from a previously submitted Foldseek ticket. Completed jobs return ...
 
@@ -37,7 +37,7 @@ def Foldseek_get_result(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

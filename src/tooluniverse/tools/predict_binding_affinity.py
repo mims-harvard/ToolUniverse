@@ -25,7 +25,7 @@ def predict_binding_affinity(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Dock or score one protein-ligand pair, with one model or all of them. Give 'ligand_smiles' (or a ...
 
@@ -64,7 +64,7 @@ def predict_binding_affinity(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

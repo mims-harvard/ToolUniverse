@@ -17,7 +17,7 @@ def SCP_search_studies(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Keyword search across the Broad Institute Single Cell Portal, which hosts 1000+ single-cell studi...
 
@@ -40,7 +40,7 @@ def SCP_search_studies(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -14,7 +14,7 @@ def OpenNIH_fetch(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Fetch one canonical project record; when metadata.matching_rows is greater than one, its amount i...
 
@@ -31,7 +31,7 @@ def OpenNIH_fetch(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

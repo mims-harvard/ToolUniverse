@@ -18,7 +18,7 @@ def OrthoDB_search_groups(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search for orthologous groups by gene/protein name in OrthoDB v12 with server-backed offset pagin...
 
@@ -43,7 +43,7 @@ def OrthoDB_search_groups(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -18,7 +18,7 @@ def RxClass_get_drug_classes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get NLM RxClass classifications for a drug name or RXCUI across ATC, EPC, MoA, VA and other sourc...
 
@@ -43,7 +43,7 @@ def RxClass_get_drug_classes(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

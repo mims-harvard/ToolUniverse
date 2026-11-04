@@ -16,7 +16,7 @@ def Alliance_get_disease_genes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get genes associated with a Disease Ontology term across model organisms. Results are recoverably...
 
@@ -37,7 +37,7 @@ def Alliance_get_disease_genes(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

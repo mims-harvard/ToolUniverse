@@ -16,7 +16,7 @@ def LNCipedia_get_lncrna_publications(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve publications associated with a long non-coding RNA from RNAcentral with explicit page pa...
 
@@ -37,7 +37,7 @@ def LNCipedia_get_lncrna_publications(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

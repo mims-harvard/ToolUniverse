@@ -14,7 +14,7 @@ def OpenTargets_get_credible_set_detail(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed information about a specific GWAS credible set (fine-mapped locus) from Open Targets...
 
@@ -31,7 +31,7 @@ def OpenTargets_get_credible_set_detail(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

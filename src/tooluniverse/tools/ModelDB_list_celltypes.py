@@ -13,7 +13,7 @@ def ModelDB_list_celltypes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List all neuron/cell type IDs available in ModelDB. Returns an array of cell type IDs that can be...
 
@@ -29,7 +29,7 @@ def ModelDB_list_celltypes(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

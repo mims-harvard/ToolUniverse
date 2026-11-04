@@ -20,7 +20,7 @@ def ENCORI_scan_RBP_motifs(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Scan RBP binding-motif enrichment via ENCORI (starBase) RBPMotifScan module. Provide 'motif' (e.g...
 
@@ -49,7 +49,7 @@ def ENCORI_scan_RBP_motifs(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

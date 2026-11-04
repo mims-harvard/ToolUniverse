@@ -16,7 +16,7 @@ def OpenFoodFacts_search_products(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search Open Food Facts products by name or brand. Returns one page of product and nutrition data ...
 
@@ -37,7 +37,7 @@ def OpenFoodFacts_search_products(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

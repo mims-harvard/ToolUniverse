@@ -16,7 +16,7 @@ def NCICACTUS_resolve(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Convert chemical identifiers using the NCI CACTUS Chemical Identifier Resolver. Accepts chemical ...
 
@@ -37,7 +37,7 @@ def NCICACTUS_resolve(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

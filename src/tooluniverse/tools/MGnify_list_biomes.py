@@ -17,7 +17,7 @@ def MGnify_list_biomes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Browse the MGnify biome hierarchy with explicit page pagination. Returns biome identifiers, names...
 
@@ -40,7 +40,7 @@ def MGnify_list_biomes(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

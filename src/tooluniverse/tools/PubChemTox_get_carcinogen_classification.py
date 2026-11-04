@@ -15,7 +15,7 @@ def PubChemTox_get_carcinogen_classification(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get carcinogen classification data for a chemical compound from PubChem. Returns classifications ...
 
@@ -34,7 +34,7 @@ def PubChemTox_get_carcinogen_classification(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -17,7 +17,7 @@ def LNCipedia_search_lncrna(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search long non-coding RNAs by name, accession, or keyword using EBI Search over RNAcentral. Resu...
 
@@ -40,7 +40,7 @@ def LNCipedia_search_lncrna(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

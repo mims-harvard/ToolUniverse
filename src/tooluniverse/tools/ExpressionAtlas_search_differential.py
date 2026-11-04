@@ -18,7 +18,7 @@ def ExpressionAtlas_search_differential(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search differential-expression EXPERIMENTS from EBI Expression Atlas with recoverable offset pagi...
 
@@ -43,7 +43,7 @@ def ExpressionAtlas_search_differential(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

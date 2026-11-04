@@ -15,7 +15,7 @@ def EPMC_get_article_organisms(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get organisms mentioned in a biomedical article, identified by text mining from Europe PMC. Retur...
 
@@ -34,7 +34,7 @@ def EPMC_get_article_organisms(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

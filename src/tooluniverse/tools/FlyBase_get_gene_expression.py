@@ -16,7 +16,7 @@ def FlyBase_get_gene_expression(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get expression annotations for a Drosophila gene from the Alliance of Genome Resources. Returns p...
 
@@ -37,7 +37,7 @@ def FlyBase_get_gene_expression(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

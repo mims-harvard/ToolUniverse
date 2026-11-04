@@ -18,7 +18,7 @@ def ReactomeInteractors_search_entity(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search and page through Reactome biological entities by name or identifier. Reactome groups resul...
 
@@ -43,7 +43,7 @@ def ReactomeInteractors_search_entity(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

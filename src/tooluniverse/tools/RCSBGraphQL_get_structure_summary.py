@@ -15,7 +15,7 @@ def RCSBGraphQL_get_structure_summary(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get comprehensive structure summary for one or more PDB entries using the RCSB PDB Data API (Grap...
 
@@ -34,7 +34,7 @@ def RCSBGraphQL_get_structure_summary(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

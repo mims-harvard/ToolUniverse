@@ -17,7 +17,7 @@ def StatPearls_get_management(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     How a disease, injury, condition or surgical problem is treated and managed, in one call: finds t...
 
@@ -40,7 +40,7 @@ def StatPearls_get_management(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

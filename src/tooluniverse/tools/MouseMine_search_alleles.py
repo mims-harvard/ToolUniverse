@@ -16,7 +16,7 @@ def MouseMine_search_alleles(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search MouseMine specifically for mouse alleles and mutants. Returns allele symbols, names, MGI i...
 
@@ -37,7 +37,7 @@ def MouseMine_search_alleles(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

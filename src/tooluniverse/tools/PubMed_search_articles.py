@@ -21,7 +21,7 @@ def PubMed_search_articles(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search PubMed (MEDLINE), the main index of published biomedical and clinical literature, using NC...
 
@@ -52,7 +52,7 @@ def PubMed_search_articles(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

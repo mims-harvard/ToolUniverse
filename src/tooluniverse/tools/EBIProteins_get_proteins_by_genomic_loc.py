@@ -17,7 +17,7 @@ def EBIProteins_get_proteins_by_genomic_loc(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Reverse genome-to-protein coordinate lookup from the EBI Proteins API: given a genomic position (...
 
@@ -40,7 +40,7 @@ def EBIProteins_get_proteins_by_genomic_loc(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

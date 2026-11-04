@@ -17,7 +17,7 @@ def DNA_virtual_digest(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Perform a virtual restriction enzyme digest on a DNA sequence using the NEB enzyme library (25 cu...
 
@@ -40,7 +40,7 @@ def DNA_virtual_digest(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

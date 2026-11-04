@@ -14,7 +14,7 @@ def PubChem_get_substance_by_SID(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve a PubChem SUBSTANCE (SID, depositor-level) record by its Substance ID. Unlike the CID/co...
 
@@ -31,7 +31,7 @@ def PubChem_get_substance_by_SID(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

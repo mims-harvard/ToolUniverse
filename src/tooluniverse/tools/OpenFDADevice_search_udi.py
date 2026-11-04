@@ -15,7 +15,7 @@ def OpenFDADevice_search_udi(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search openFDA's Unique Device Identifier (UDI) database by brand name, company, or free text. Re...
 
@@ -34,7 +34,7 @@ def OpenFDADevice_search_udi(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

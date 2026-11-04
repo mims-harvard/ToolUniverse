@@ -17,7 +17,7 @@ def IEDB_predict_mhci_binding(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Predict MHC class I peptide binding using NetMHCpan via the IEDB next-generation tools API (https...
 
@@ -40,7 +40,7 @@ def IEDB_predict_mhci_binding(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -19,7 +19,7 @@ def ChIPAtlas_get_colocalization(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     ChIP-Atlas colocalization partners ranked by genome-wide overlap score. Results are recoverably p...
 
@@ -46,7 +46,7 @@ def ChIPAtlas_get_colocalization(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -16,7 +16,7 @@ def RxTerms_search_drugs(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search NLM RxTerms drug names with official count+offset pagination. Returns prescribable display...
 
@@ -37,7 +37,7 @@ def RxTerms_search_drugs(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

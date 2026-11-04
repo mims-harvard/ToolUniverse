@@ -16,7 +16,7 @@ def MARRVEL_get_omim_phenotypes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get the complete OMIM phenotype association list for a human gene via MARRVEL, including phenotyp...
 
@@ -37,7 +37,7 @@ def MARRVEL_get_omim_phenotypes(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

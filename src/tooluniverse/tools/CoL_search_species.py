@@ -17,7 +17,7 @@ def CoL_search_species(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search the Catalogue of Life (CoL) for species and other taxa by scientific name. CoL is the glob...
 
@@ -40,7 +40,7 @@ def CoL_search_species(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

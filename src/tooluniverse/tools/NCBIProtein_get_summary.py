@@ -14,7 +14,7 @@ def NCBIProtein_get_summary(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get protein record summary from the NCBI Protein database by GI number or accession using the E-u...
 
@@ -31,7 +31,7 @@ def NCBIProtein_get_summary(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

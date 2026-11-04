@@ -16,7 +16,7 @@ def ReactomeContent_get_contained_events(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get events contained within a Reactome pathway. Returns every resolved sub-pathway plus an explic...
 
@@ -37,7 +37,7 @@ def ReactomeContent_get_contained_events(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

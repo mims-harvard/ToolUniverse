@@ -14,7 +14,7 @@ def HGNC_fetch_gene_family_members(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Enumerate ALL member genes of an HGNC gene family/group by its numeric gene_group_id, returning t...
 
@@ -31,7 +31,7 @@ def HGNC_fetch_gene_family_members(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

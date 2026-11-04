@@ -17,7 +17,7 @@ def GEO_search_rnaseq_datasets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search NCBI GEO GSE series for RNA-seq datasets with exact offset pagination. Returns GSE accessi...
 
@@ -40,7 +40,7 @@ def GEO_search_rnaseq_datasets(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

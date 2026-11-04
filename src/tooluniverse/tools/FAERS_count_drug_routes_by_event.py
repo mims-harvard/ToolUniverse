@@ -16,7 +16,7 @@ def FAERS_count_drug_routes_by_event(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any] | list[Any]:
     """
     Count the most common routes of administration for drugs involved in adverse event reports. Only ...
 
@@ -37,7 +37,7 @@ def FAERS_count_drug_routes_by_event(
 
     Returns
     -------
-    Any
+    dict[str, Any] | list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

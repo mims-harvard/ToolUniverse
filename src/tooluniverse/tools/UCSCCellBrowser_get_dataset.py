@@ -14,7 +14,7 @@ def UCSCCellBrowser_get_dataset(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detail for one UCSC Cell Browser dataset by name, including its abstract, organisms, body par...
 
@@ -31,7 +31,7 @@ def UCSCCellBrowser_get_dataset(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

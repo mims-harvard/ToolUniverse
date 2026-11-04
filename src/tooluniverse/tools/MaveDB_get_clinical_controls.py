@@ -17,7 +17,7 @@ def MaveDB_get_clinical_controls(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get ClinVar clinical-control variants overlapping a MaveDB score set for functional-score calibra...
 
@@ -40,7 +40,7 @@ def MaveDB_get_clinical_controls(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

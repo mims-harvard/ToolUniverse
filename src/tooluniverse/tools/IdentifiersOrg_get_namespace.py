@@ -14,7 +14,7 @@ def IdentifiersOrg_get_namespace(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed information about a specific Identifiers.org namespace (database prefix). Returns th...
 
@@ -31,7 +31,7 @@ def IdentifiersOrg_get_namespace(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

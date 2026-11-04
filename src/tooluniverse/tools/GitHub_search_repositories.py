@@ -18,7 +18,7 @@ def GitHub_search_repositories(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search GitHub public repositories with explicit page pagination and completeness metadata. Contin...
 
@@ -43,7 +43,7 @@ def GitHub_search_repositories(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

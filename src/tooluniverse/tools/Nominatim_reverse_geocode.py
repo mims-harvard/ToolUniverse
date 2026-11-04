@@ -15,7 +15,7 @@ def Nominatim_reverse_geocode(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Reverse geocode latitude/longitude coordinates to a human-readable address using OpenStreetMap No...
 
@@ -34,7 +34,7 @@ def Nominatim_reverse_geocode(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

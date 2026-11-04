@@ -14,7 +14,7 @@ def BMRB_get_validation(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the BMRB-computed NMR assignment validation report for an entry (AVS and PANAV analyses). Unl...
 
@@ -31,7 +31,7 @@ def BMRB_get_validation(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

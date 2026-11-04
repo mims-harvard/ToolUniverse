@@ -15,7 +15,7 @@ def PanelApp_search_genes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search a gene across Genomics England PanelApp panels with case-normalized symbols and page metad...
 
@@ -34,7 +34,7 @@ def PanelApp_search_genes(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

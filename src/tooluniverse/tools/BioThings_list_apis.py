@@ -15,7 +15,7 @@ def BioThings_list_apis(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List the ~50 biomedical APIs reachable through the BioThings gateway, with a one-line description...
 
@@ -34,7 +34,7 @@ def BioThings_list_apis(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

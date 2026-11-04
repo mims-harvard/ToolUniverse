@@ -17,7 +17,7 @@ def ReactomeAnalysis_species_comparison(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Perform Reactome pathway analysis with cross-species projection. Submit protein/gene identifiers ...
 
@@ -40,7 +40,7 @@ def ReactomeAnalysis_species_comparison(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

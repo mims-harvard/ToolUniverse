@@ -16,7 +16,7 @@ def MGnify_search_genomes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search the MGnify genome catalog by GTDB taxonomy lineage with explicit page pagination. Returns ...
 
@@ -37,7 +37,7 @@ def MGnify_search_genomes(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

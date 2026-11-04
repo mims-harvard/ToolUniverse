@@ -14,7 +14,7 @@ def OpenTargets_get_variant_effect_predictions(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve in-silico functional effect predictions for a variant (chrom_pos_ref_alt) from OpenTarge...
 
@@ -31,7 +31,7 @@ def OpenTargets_get_variant_effect_predictions(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

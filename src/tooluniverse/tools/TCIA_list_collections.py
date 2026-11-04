@@ -13,7 +13,7 @@ def TCIA_list_collections(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List all publicly available imaging collections in The Cancer Imaging Archive (TCIA). TCIA is a l...
 
@@ -29,7 +29,7 @@ def TCIA_list_collections(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -16,7 +16,7 @@ def ReactomeAnalysis_pathway_found_entities(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Per-pathway found-entities drill-down: for an analysis token and a specific HIT pathway, list exa...
 
@@ -37,7 +37,7 @@ def ReactomeAnalysis_pathway_found_entities(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

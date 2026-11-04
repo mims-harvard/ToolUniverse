@@ -20,7 +20,7 @@ def FAERS_count_seriousness_by_drug_event(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any] | list[Any]:
     """
     Count the number of adverse event reports classified as serious or non-serious. Only medicinalpro...
 
@@ -49,7 +49,7 @@ def FAERS_count_seriousness_by_drug_event(
 
     Returns
     -------
-    Any
+    dict[str, Any] | list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

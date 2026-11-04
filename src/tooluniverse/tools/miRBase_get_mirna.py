@@ -15,7 +15,7 @@ def miRBase_get_mirna(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed miRNA information from RNAcentral including full RNA sequence, species, RNA type, ge...
 
@@ -34,7 +34,7 @@ def miRBase_get_mirna(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

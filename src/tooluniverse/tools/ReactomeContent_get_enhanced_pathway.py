@@ -14,7 +14,7 @@ def ReactomeContent_get_enhanced_pathway(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get enhanced pathway details from Reactome including the complete curated description and complet...
 
@@ -31,7 +31,7 @@ def ReactomeContent_get_enhanced_pathway(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

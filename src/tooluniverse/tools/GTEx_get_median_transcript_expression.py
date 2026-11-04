@@ -20,7 +20,7 @@ def GTEx_get_median_transcript_expression(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get GTEx transcript/isoform-level median expression: per-transcript (ENST) median TPM across tiss...
 
@@ -49,7 +49,7 @@ def GTEx_get_median_transcript_expression(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

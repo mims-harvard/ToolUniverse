@@ -16,7 +16,7 @@ def KEGG_get_enzyme(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve a KEGG ENZYME entry by EC number. Returns all NAMEs (accepted name plus synonyms), the C...
 
@@ -37,7 +37,7 @@ def KEGG_get_enzyme(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

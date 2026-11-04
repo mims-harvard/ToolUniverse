@@ -19,7 +19,7 @@ def GSVA_score(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Gene Set Variation Analysis (Hänzelmann 2013): turn an expression matrix (genes x samples) into a...
 
@@ -46,7 +46,7 @@ def GSVA_score(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

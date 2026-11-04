@@ -16,7 +16,7 @@ def ZFIN_get_gene_alleles(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get alleles and variants for a zebrafish gene from ZFIN via the Alliance of Genome Resources. Ret...
 
@@ -37,7 +37,7 @@ def ZFIN_get_gene_alleles(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -16,7 +16,7 @@ def OmniPath_get_tf_target_interactions(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get transcription factor (TF) to target gene interactions from OmniPath DoRothEA and CollecTRI re...
 
@@ -37,7 +37,7 @@ def OmniPath_get_tf_target_interactions(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

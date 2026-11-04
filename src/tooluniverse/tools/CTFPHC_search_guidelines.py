@@ -16,7 +16,7 @@ def CTFPHC_search_guidelines(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search the current Canadian Task Force on Preventive Health Care guideline index by title. Each a...
 
@@ -37,7 +37,7 @@ def CTFPHC_search_guidelines(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

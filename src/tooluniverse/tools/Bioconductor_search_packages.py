@@ -16,7 +16,7 @@ def Bioconductor_search_packages(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search Bioconductor bioinformatics R packages by keyword or analysis type. Results use exact r-un...
 
@@ -37,7 +37,7 @@ def Bioconductor_search_packages(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

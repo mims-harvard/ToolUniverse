@@ -14,7 +14,7 @@ def GenomeNexus_get_cancer_hotspots(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get cancer mutation hotspot annotations from Genome Nexus (MSK) for a specific genomic variant. C...
 
@@ -31,7 +31,7 @@ def GenomeNexus_get_cancer_hotspots(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

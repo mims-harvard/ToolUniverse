@@ -14,7 +14,7 @@ def ReactomeAnalysis_not_found_identifiers(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     List of submitted identifiers that did NOT map to any Reactome entity for an analysis token (mapp...
 
@@ -31,7 +31,7 @@ def ReactomeAnalysis_not_found_identifiers(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

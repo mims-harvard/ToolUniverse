@@ -17,7 +17,7 @@ def HuBMAP_search_donors(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search HuBMAP human Donors with normalized demographics, exact totals, and Elasticsearch offset p...
 
@@ -40,7 +40,7 @@ def HuBMAP_search_donors(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

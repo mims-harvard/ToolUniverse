@@ -18,7 +18,7 @@ def NDEx_get_network(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get a recoverable page of biological network content from NDEx, including nodes (proteins/genes) ...
 
@@ -43,7 +43,7 @@ def NDEx_get_network(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

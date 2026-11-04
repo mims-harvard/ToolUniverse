@@ -15,7 +15,7 @@ def WikiPathways_get_pathway_metabolites(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the metabolite/compound participants (wp:Metabolite nodes) of a WikiPathways pathway. Unlike ...
 
@@ -34,7 +34,7 @@ def WikiPathways_get_pathway_metabolites(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

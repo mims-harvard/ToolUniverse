@@ -14,7 +14,7 @@ def scite_get_tallies(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get smart citation tallies for a scientific paper using scite.ai. scite analyzes citation context...
 
@@ -31,7 +31,7 @@ def scite_get_tallies(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

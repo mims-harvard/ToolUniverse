@@ -15,7 +15,7 @@ def EnsemblVEP_annotate_hgvs(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Predict functional consequences of a genetic variant using HGVS notation via the Ensembl Variant ...
 
@@ -34,7 +34,7 @@ def EnsemblVEP_annotate_hgvs(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

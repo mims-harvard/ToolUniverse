@@ -15,7 +15,7 @@ def ZINC_get_compound(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the structure and computed properties for a ZINC22 compound by its ZINC ID, via the CartBlanc...
 
@@ -34,7 +34,7 @@ def ZINC_get_compound(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

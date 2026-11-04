@@ -14,7 +14,7 @@ def SwissDock_retrieve_results(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve results for a completed SwissDock docking job. Returns download URL and metadata for doc...
 
@@ -31,7 +31,7 @@ def SwissDock_retrieve_results(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

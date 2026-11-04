@@ -16,7 +16,7 @@ def CPIC_get_gene_info(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get pharmacogenomics information for a gene from the Clinical Pharmacogenomics Implementation Con...
 
@@ -37,7 +37,7 @@ def CPIC_get_gene_info(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

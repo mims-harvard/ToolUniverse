@@ -14,7 +14,7 @@ def NDEx_get_network_summary(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed summary information for a specific biological network in NDEx by its UUID. Returns t...
 
@@ -31,7 +31,7 @@ def NDEx_get_network_summary(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -15,7 +15,7 @@ def PubChemTox_get_ghs_classification(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get GHS (Globally Harmonized System) hazard classification for a chemical compound from PubChem. ...
 
@@ -34,7 +34,7 @@ def PubChemTox_get_ghs_classification(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

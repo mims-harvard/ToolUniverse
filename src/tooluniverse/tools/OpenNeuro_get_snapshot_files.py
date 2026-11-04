@@ -15,7 +15,7 @@ def OpenNeuro_get_snapshot_files(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     List the files in a specific version (snapshot) of an OpenNeuro dataset, with direct keyless down...
 
@@ -34,7 +34,7 @@ def OpenNeuro_get_snapshot_files(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

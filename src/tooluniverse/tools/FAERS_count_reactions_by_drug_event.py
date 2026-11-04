@@ -23,7 +23,7 @@ def FAERS_count_reactions_by_drug_event(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any] | list[Any]:
     """
     Count the number of adverse reactions reported for a given drug. Only medicinalproduct is require...
 
@@ -58,7 +58,7 @@ def FAERS_count_reactions_by_drug_event(
 
     Returns
     -------
-    Any
+    dict[str, Any] | list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

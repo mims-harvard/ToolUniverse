@@ -15,7 +15,7 @@ def IEDB_predict_bcell_epitopes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Predict linear B-cell (antibody) epitopes along a protein sequence using the IEDB B-cell tool (de...
 
@@ -34,7 +34,7 @@ def IEDB_predict_bcell_epitopes(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

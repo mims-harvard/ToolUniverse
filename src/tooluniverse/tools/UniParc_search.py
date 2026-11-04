@@ -20,7 +20,7 @@ def UniParc_search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search UniParc with official result cursor pagination plus independently reachable organism and g...
 
@@ -49,7 +49,7 @@ def UniParc_search(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

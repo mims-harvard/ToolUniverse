@@ -26,7 +26,7 @@ def gwas_search_associations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search the GWAS Catalog for genome-wide association study results by keyword. Accepts free-text d...
 
@@ -67,7 +67,7 @@ def gwas_search_associations(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

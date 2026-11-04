@@ -17,7 +17,7 @@ def CryoET_list_runs(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     List the experimental tilt-series acquisition runs within a specific CryoET Data Portal dataset. ...
 
@@ -40,7 +40,7 @@ def CryoET_list_runs(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

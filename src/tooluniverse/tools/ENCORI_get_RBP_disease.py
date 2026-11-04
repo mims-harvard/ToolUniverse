@@ -20,7 +20,7 @@ def ENCORI_get_RBP_disease(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Retrieve RBP-disease associations via ENCORI (starBase) RBPDisease module: RBP binding sites that...
 
@@ -49,7 +49,7 @@ def ENCORI_get_RBP_disease(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -18,7 +18,7 @@ def Epidemiology_bayesian(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Compute post-test probability via Bayes' theorem given pre-test prevalence, test sensitivity, and...
 
@@ -43,7 +43,7 @@ def Epidemiology_bayesian(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

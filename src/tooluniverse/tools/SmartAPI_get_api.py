@@ -14,7 +14,7 @@ def SmartAPI_get_api(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve one SmartAPI registry entry's full metadata: base URL(s), tags, contact, terms of servic...
 
@@ -31,7 +31,7 @@ def SmartAPI_get_api(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

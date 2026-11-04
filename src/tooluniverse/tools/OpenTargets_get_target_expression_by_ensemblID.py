@@ -16,7 +16,7 @@ def OpenTargets_get_target_expression_by_ensemblID(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve baseline expression summary statistics for a target across tissues and cell types (GTEx,...
 
@@ -37,7 +37,7 @@ def OpenTargets_get_target_expression_by_ensemblID(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

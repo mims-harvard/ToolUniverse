@@ -15,7 +15,7 @@ def VariantValidator_format_genomic_to_transcripts(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Project a genomic variant onto EVERY overlapping RefSeq transcript in one call using the VariantV...
 
@@ -34,7 +34,7 @@ def VariantValidator_format_genomic_to_transcripts(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

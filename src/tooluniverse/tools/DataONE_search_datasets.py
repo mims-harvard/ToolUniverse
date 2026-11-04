@@ -18,7 +18,7 @@ def DataONE_search_datasets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search DataONE (Data Observation Network for Earth) for open scientific datasets. DataONE indexes...
 
@@ -43,7 +43,7 @@ def DataONE_search_datasets(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

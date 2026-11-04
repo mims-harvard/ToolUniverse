@@ -16,7 +16,7 @@ def TogoID_convert(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Convert up to 50 biological identifiers between directly related TogoID datasets. Unlike TogoID's...
 
@@ -37,7 +37,7 @@ def TogoID_convert(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

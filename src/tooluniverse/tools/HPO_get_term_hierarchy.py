@@ -15,7 +15,7 @@ def HPO_get_term_hierarchy(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get the parent or child terms of an HPO phenotype term in the ontology hierarchy. HPO is organize...
 
@@ -34,7 +34,7 @@ def HPO_get_term_hierarchy(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

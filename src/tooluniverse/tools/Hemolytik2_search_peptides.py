@@ -15,7 +15,7 @@ def Hemolytik2_search_peptides(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search Hemolytik 2.0 (Raghava lab, IIITD) for experimentally validated HEMOLYTIC / TOXIC peptide ...
 
@@ -34,7 +34,7 @@ def Hemolytik2_search_peptides(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

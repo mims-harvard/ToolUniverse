@@ -19,7 +19,7 @@ def SCXA_get_cluster_marker_genes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get EBI Single Cell Expression Atlas computed marker genes per cell cluster or inferred cell type...
 
@@ -46,7 +46,7 @@ def SCXA_get_cluster_marker_genes(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

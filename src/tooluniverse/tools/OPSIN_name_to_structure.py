@@ -14,7 +14,7 @@ def OPSIN_name_to_structure(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Convert a systematic (IUPAC) chemical name into a chemical structure using OPSIN, a deterministic...
 
@@ -31,7 +31,7 @@ def OPSIN_name_to_structure(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

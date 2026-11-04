@@ -16,7 +16,7 @@ def DNA_codon_optimize(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Codon-optimize an amino acid sequence for expression in a target species (human, ecoli, mouse, or...
 
@@ -37,7 +37,7 @@ def DNA_codon_optimize(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

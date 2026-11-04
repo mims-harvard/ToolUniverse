@@ -15,7 +15,7 @@ def Norine_get_peptide(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Programmatic keyless lookup of non-ribosomal peptide (NRP) records from Norine (Nonribosomal Pept...
 
@@ -34,7 +34,7 @@ def Norine_get_peptide(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

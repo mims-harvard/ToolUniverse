@@ -19,7 +19,7 @@ def ols_get_term_xrefs(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the cross-references (obo_xref) of an ontology term in OLS — the canonical OxO-replacement ID...
 
@@ -46,7 +46,7 @@ def ols_get_term_xrefs(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -16,7 +16,7 @@ def BioPortal_annotate_text(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Annotate biomedical text with ontology terms using BioPortal's Annotator (named entity recognitio...
 
@@ -37,7 +37,7 @@ def BioPortal_annotate_text(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

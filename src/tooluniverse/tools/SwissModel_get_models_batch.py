@@ -16,7 +16,7 @@ def SwissModel_get_models_batch(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Batch SWISS-MODEL Repository lookup for up to 250 UniProt accessions in a single call. Each resul...
 
@@ -37,7 +37,7 @@ def SwissModel_get_models_batch(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

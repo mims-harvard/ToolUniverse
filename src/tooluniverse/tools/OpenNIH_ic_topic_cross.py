@@ -18,7 +18,7 @@ def OpenNIH_ic_topic_cross(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Measure one research topic within one NIH Institute/Center (IC), or within one combined all-IC sc...
 
@@ -43,7 +43,7 @@ def OpenNIH_ic_topic_cross(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

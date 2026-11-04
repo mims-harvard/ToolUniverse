@@ -20,7 +20,7 @@ def euhealthinfo_search_disability(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     This tool performs searches across multiple dataset repositories to identify datasets related to ...
 
@@ -49,7 +49,7 @@ def euhealthinfo_search_disability(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

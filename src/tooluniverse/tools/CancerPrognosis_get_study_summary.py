@@ -17,7 +17,7 @@ def CancerPrognosis_get_study_summary(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get summary information for a cancer study including available molecular profiles (mutations, exp...
 
@@ -40,7 +40,7 @@ def CancerPrognosis_get_study_summary(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

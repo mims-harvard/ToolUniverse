@@ -20,7 +20,7 @@ def ZOOMA_annotate_text(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Map free text to ontology terms with EBI ZOOMA and exact local pagination over the complete upstr...
 
@@ -49,7 +49,7 @@ def ZOOMA_annotate_text(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

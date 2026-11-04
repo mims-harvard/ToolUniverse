@@ -17,7 +17,7 @@ def ebi_cross_reference_search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search for cross-references between EBI domains. Find entries in one domain that reference entrie...
 
@@ -40,7 +40,7 @@ def ebi_cross_reference_search(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

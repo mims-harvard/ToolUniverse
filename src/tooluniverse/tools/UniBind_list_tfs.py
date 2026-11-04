@@ -17,7 +17,7 @@ def UniBind_list_tfs(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List the complete catalog of transcription factors profiled in UniBind direct TF-DNA binding data...
 
@@ -40,7 +40,7 @@ def UniBind_list_tfs(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

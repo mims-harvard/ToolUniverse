@@ -14,7 +14,7 @@ def NASANED_lookup_object(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Look up an extragalactic astronomical object by name in the NASA/IPAC Extragalactic Database (NED...
 
@@ -31,7 +31,7 @@ def NASANED_lookup_object(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

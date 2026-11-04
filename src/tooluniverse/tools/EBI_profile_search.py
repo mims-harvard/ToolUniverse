@@ -17,7 +17,7 @@ def EBI_profile_search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search a protein sequence against a sequence database using a profile method via EMBL-EBI: method...
 
@@ -40,7 +40,7 @@ def EBI_profile_search(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

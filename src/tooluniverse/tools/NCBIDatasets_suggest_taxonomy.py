@@ -14,7 +14,7 @@ def NCBIDatasets_suggest_taxonomy(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Suggest taxonomic names matching a query string. Searches NCBI Taxonomy for organisms by partial ...
 
@@ -31,7 +31,7 @@ def NCBIDatasets_suggest_taxonomy(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

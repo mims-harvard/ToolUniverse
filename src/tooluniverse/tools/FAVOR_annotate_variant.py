@@ -14,7 +14,7 @@ def FAVOR_annotate_variant(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Comprehensive functional annotation of a single GRCh38 variant via FAVOR (Functional Annotation o...
 
@@ -31,7 +31,7 @@ def FAVOR_annotate_variant(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

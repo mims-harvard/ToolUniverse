@@ -20,7 +20,7 @@ def PKAI_predict_sidechain_pka(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Predict six protein side-chain pKa types from one PDB with local CPU pKAI/pKAI+ weights. Returns ...
 
@@ -49,7 +49,7 @@ def PKAI_predict_sidechain_pka(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

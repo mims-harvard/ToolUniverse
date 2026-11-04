@@ -14,7 +14,7 @@ def UniProt_get_proteome(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get proteome information by proteome ID. Returns comprehensive proteome data including taxonomy, ...
 
@@ -31,7 +31,7 @@ def UniProt_get_proteome(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

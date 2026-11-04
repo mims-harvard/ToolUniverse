@@ -16,7 +16,7 @@ def TIMER2_immune_estimation(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Estimate immune cell abundance in TCGA cancer samples using TIMER-equivalent marker gene expressi...
 
@@ -37,7 +37,7 @@ def TIMER2_immune_estimation(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

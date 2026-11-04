@@ -16,7 +16,7 @@ def CTD_get_gene_diseases(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     PERMANENTLY UNAVAILABLE: this tool always returns an error. No live, free source of CTD's curated...
 
@@ -37,7 +37,7 @@ def CTD_get_gene_diseases(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

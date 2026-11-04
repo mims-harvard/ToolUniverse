@@ -15,7 +15,7 @@ def BMRB_search_by_keyword(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search BMRB (Biological Magnetic Resonance Data Bank) entries by keyword or molecule name. Return...
 
@@ -34,7 +34,7 @@ def BMRB_search_by_keyword(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

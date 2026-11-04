@@ -18,7 +18,7 @@ def Epidemiology_diagnostic(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Compute diagnostic test performance metrics from a 2x2 contingency table (TP, FP, TN, FN). Return...
 
@@ -43,7 +43,7 @@ def Epidemiology_diagnostic(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

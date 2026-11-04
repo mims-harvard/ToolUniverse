@@ -19,7 +19,7 @@ def EnsemblMap_convert_coordinates(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Convert genomic coordinates between human genome assemblies (e.g., GRCh37/hg19 to GRCh38/hg38 or ...
 
@@ -46,7 +46,7 @@ def EnsemblMap_convert_coordinates(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

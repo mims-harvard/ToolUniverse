@@ -14,7 +14,7 @@ def RGD_get_strain(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the full Rat Genome Database (RGD) record for a single rat strain by its exact strain symbol ...
 
@@ -31,7 +31,7 @@ def RGD_get_strain(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

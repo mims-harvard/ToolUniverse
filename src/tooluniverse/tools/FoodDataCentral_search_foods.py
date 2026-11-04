@@ -17,7 +17,7 @@ def FoodDataCentral_search_foods(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search USDA FoodData Central for foods by keyword. Each food includes the complete nutrient array...
 
@@ -40,7 +40,7 @@ def FoodDataCentral_search_foods(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

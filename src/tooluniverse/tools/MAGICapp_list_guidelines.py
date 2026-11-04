@@ -17,7 +17,7 @@ def MAGICapp_list_guidelines(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Find clinical practice guidelines on MAGICapp (Making GRADE the Irresistible Choice), the platfor...
 
@@ -40,7 +40,7 @@ def MAGICapp_list_guidelines(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -16,7 +16,7 @@ def CTD_get_disease_chemicals(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get curated disease-chemical associations from CTD. Given a disease name, MONDO CURIE, or MeSH di...
 
@@ -37,7 +37,7 @@ def CTD_get_disease_chemicals(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

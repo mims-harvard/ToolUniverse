@@ -20,7 +20,7 @@ def OpenMeteo_get_weather_forecast(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get current weather and forecasts for any location using Open-Meteo (free, no API key needed). Re...
 
@@ -49,7 +49,7 @@ def OpenMeteo_get_weather_forecast(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

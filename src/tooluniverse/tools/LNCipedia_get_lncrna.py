@@ -15,7 +15,7 @@ def LNCipedia_get_lncrna(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed lncRNA information from RNAcentral including full RNA sequence, species, gene associ...
 
@@ -34,7 +34,7 @@ def LNCipedia_get_lncrna(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

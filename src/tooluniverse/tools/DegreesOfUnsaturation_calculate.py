@@ -24,7 +24,7 @@ def DegreesOfUnsaturation_calculate(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Calculate degrees of unsaturation (DoU, also called index of hydrogen deficiency or degree of uns...
 
@@ -61,7 +61,7 @@ def DegreesOfUnsaturation_calculate(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

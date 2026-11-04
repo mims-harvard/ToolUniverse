@@ -16,7 +16,7 @@ def TIMER2_survival_association(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Analyze overall survival association of gene expression in TCGA cancer patients using cBioPortal ...
 
@@ -37,7 +37,7 @@ def TIMER2_survival_association(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -15,7 +15,7 @@ def CxGDisc_list_collections(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     List curated single-cell RNA-seq collections from CZI CellxGene Discovery. Each collection is a p...
 
@@ -34,7 +34,7 @@ def CxGDisc_list_collections(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

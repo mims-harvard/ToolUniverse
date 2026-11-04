@@ -15,7 +15,7 @@ def LipidMaps_search_by_name(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any] | list[Any]:
     """
     Search exact lipidomics abbreviations in LIPID MAPS. Sum compositions use abbrev (e.g. PC 34:1); ...
 
@@ -34,7 +34,7 @@ def LipidMaps_search_by_name(
 
     Returns
     -------
-    Any
+    dict[str, Any] | list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

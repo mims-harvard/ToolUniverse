@@ -16,7 +16,7 @@ def HPO_get_diseases_by_phenotype(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the diseases that present with an HPO phenotype term, from the JAX HPO network annotations. R...
 
@@ -37,7 +37,7 @@ def HPO_get_diseases_by_phenotype(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

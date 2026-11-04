@@ -15,7 +15,7 @@ def BindingDB_get_ligands_by_uniprot(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get binding affinity data (Ki, IC50, Kd) for a single protein by UniProt ID. Returns SMILES struc...
 
@@ -34,7 +34,7 @@ def BindingDB_get_ligands_by_uniprot(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

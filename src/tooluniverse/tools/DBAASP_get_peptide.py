@@ -14,7 +14,7 @@ def DBAASP_get_peptide(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get a full DBAASP antimicrobial peptide record by numeric peptide ID. Returns the sequence, N/C-t...
 
@@ -31,7 +31,7 @@ def DBAASP_get_peptide(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

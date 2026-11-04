@@ -14,7 +14,7 @@ def LOTUS_get_compound(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed information about a specific natural product from LOTUS by its internal compound ID....
 
@@ -31,7 +31,7 @@ def LOTUS_get_compound(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

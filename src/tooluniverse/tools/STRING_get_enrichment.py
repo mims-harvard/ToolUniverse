@@ -16,7 +16,7 @@ def STRING_get_enrichment(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Perform functional enrichment analysis on a set of proteins using the STRING database. Tests whet...
 
@@ -37,7 +37,7 @@ def STRING_get_enrichment(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

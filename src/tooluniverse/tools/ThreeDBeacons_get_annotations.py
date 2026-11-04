@@ -16,7 +16,7 @@ def ThreeDBeacons_get_annotations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get residue-level structural and functional annotations mapped onto a protein's 3D models from th...
 
@@ -37,7 +37,7 @@ def ThreeDBeacons_get_annotations(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

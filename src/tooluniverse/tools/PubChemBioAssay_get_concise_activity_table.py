@@ -16,7 +16,7 @@ def PubChemBioAssay_get_concise_activity_table(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the assay-wide concise bioactivity table for a PubChem BioAssay, one row per tested compound ...
 
@@ -37,7 +37,7 @@ def PubChemBioAssay_get_concise_activity_table(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

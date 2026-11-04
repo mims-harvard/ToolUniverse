@@ -19,7 +19,7 @@ def VCF_count_variants(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Count variants in a local VCF/BCF after applying filters, via bcftools. Returns total records plu...
 
@@ -46,7 +46,7 @@ def VCF_count_variants(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

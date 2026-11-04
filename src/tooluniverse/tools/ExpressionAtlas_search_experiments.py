@@ -18,7 +18,7 @@ def ExpressionAtlas_search_experiments(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search all EBI Expression Atlas experiments (baseline + differential) with recoverable offset pag...
 
@@ -43,7 +43,7 @@ def ExpressionAtlas_search_experiments(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

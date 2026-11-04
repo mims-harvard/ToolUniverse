@@ -19,7 +19,7 @@ def BVBRC_search_pathways(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search for metabolic pathways in BV-BRC with explicit pagination. Metadata reports the true row t...
 
@@ -46,7 +46,7 @@ def BVBRC_search_pathways(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

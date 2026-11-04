@@ -18,7 +18,7 @@ def PubTator3_GetEntityRelations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Query the NCBI PubTator3 relation graph for a normalized biomedical entity. PubTator returns the ...
 
@@ -43,7 +43,7 @@ def PubTator3_GetEntityRelations(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

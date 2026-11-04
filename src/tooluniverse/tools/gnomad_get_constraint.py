@@ -16,7 +16,7 @@ def gnomad_get_constraint(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get gene-level constraint metrics from gnomAD (Genome Aggregation Database) for a single gene, gi...
 
@@ -37,7 +37,7 @@ def gnomad_get_constraint(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

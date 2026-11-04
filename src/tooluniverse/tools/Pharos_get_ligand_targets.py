@@ -14,7 +14,7 @@ def Pharos_get_ligand_targets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> Optional[dict[str, Any]]:
     """
     Get all protein targets for a drug or ligand from Pharos/TCRD (reverse polypharmacology). Given o...
 
@@ -31,7 +31,7 @@ def Pharos_get_ligand_targets(
 
     Returns
     -------
-    Any
+    Optional[dict[str, Any]]
     """
     # Handle mutable defaults to avoid B006 linting error
 

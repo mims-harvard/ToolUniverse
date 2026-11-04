@@ -15,7 +15,7 @@ def IMPC_get_gene_summary(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get mouse gene summary from IMPC including phenotyping status, viability, ortholog info, and MP/H...
 
@@ -34,7 +34,7 @@ def IMPC_get_gene_summary(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

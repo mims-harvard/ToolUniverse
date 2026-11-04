@@ -17,7 +17,7 @@ def PanglaoDB_cell_types_for_gene(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Reverse cell-type lookup for a gene using PanglaoDB (panglaodb.se). Given an official human gene ...
 
@@ -40,7 +40,7 @@ def PanglaoDB_cell_types_for_gene(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

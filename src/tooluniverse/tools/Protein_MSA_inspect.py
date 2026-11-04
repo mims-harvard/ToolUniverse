@@ -18,7 +18,7 @@ def Protein_MSA_inspect(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Inspect local single-component protein A3M or aligned FASTA. Reports raw/unique depth, query-only...
 
@@ -43,7 +43,7 @@ def Protein_MSA_inspect(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

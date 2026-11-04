@@ -19,7 +19,7 @@ def BVBRC_search_surveillance(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search influenza and pathogen surveillance data in BV-BRC with explicit pagination and true Conte...
 
@@ -46,7 +46,7 @@ def BVBRC_search_surveillance(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

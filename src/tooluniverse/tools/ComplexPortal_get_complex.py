@@ -14,7 +14,7 @@ def ComplexPortal_get_complex(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed information for a specific protein complex by Complex Portal ID (e.g., CPX-1234). Re...
 
@@ -31,7 +31,7 @@ def ComplexPortal_get_complex(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

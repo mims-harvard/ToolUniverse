@@ -19,7 +19,7 @@ def HLALigandAtlas_get_benign_peptides(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve benign-tissue HLA-presented peptides from the complete HLA Ligand Atlas 2020.12 aggregat...
 
@@ -46,7 +46,7 @@ def HLALigandAtlas_get_benign_peptides(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

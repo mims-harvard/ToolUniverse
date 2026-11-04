@@ -20,7 +20,7 @@ def ReactomeContent_search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search Reactome for pathways, reactions, and biological entities by keyword. Performs free-text s...
 
@@ -49,7 +49,7 @@ def ReactomeContent_search(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

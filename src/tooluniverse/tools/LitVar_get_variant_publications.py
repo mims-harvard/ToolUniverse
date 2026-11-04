@@ -17,7 +17,7 @@ def LitVar_get_variant_publications(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get PubMed and PubMed Central publication IDs that mention a variant in NCBI LitVar2. LitVar2 ign...
 
@@ -40,7 +40,7 @@ def LitVar_get_variant_publications(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

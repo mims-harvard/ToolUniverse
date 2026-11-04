@@ -17,7 +17,7 @@ def CryoET_list_tiltseries(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     List tilt-series RAW ACQUISITION metadata from the CZ BioHub CryoET Data Portal. A tilt-series is...
 
@@ -40,7 +40,7 @@ def CryoET_list_tiltseries(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

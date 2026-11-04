@@ -14,7 +14,7 @@ def ZFIN_get_gene(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed Danio rerio (zebrafish) gene information from ZFIN via the Alliance of Genome Resour...
 
@@ -31,7 +31,7 @@ def ZFIN_get_gene(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

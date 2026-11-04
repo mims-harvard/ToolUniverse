@@ -16,7 +16,7 @@ def BioImageArchive_list_study_files(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List the file/image manifest of a BioImage Archive study, giving per-file download paths and per-...
 
@@ -37,7 +37,7 @@ def BioImageArchive_list_study_files(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

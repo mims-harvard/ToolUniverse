@@ -18,7 +18,7 @@ def alphafold_get_prediction(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Retrieve full AlphaFold 3D structure predictions for a given protein. IMPORTANT: The qualifier mu...
 
@@ -43,7 +43,7 @@ def alphafold_get_prediction(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

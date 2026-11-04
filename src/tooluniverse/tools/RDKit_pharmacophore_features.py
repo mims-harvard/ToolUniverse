@@ -15,7 +15,7 @@ def RDKit_pharmacophore_features(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Extract pharmacophore feature centers from a SMILES string using RDKit SMARTS matching. Identifie...
 
@@ -34,7 +34,7 @@ def RDKit_pharmacophore_features(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

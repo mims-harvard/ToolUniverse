@@ -17,7 +17,7 @@ def ZFIN_get_gene_orthologs(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get orthologs of a zebrafish gene across other species from the Alliance of Genome Resources. Ret...
 
@@ -40,7 +40,7 @@ def ZFIN_get_gene_orthologs(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

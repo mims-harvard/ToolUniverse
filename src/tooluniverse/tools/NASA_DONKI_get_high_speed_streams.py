@@ -15,7 +15,7 @@ def NASA_DONKI_get_high_speed_streams(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search NASA DONKI for High Speed Stream (HSS) events in the solar wind. HSSs originate from coron...
 
@@ -34,7 +34,7 @@ def NASA_DONKI_get_high_speed_streams(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

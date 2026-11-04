@@ -19,7 +19,7 @@ def Pathoplexus_get_sequence_details(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List the individual sequence records (not aggregated counts) behind a Pathoplexus organism, from ...
 
@@ -46,7 +46,7 @@ def Pathoplexus_get_sequence_details(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

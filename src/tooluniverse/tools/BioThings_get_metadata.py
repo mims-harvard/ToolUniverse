@@ -15,7 +15,7 @@ def BioThings_get_metadata(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Describe a BioThings API: record counts, build date and version, upstream sources, and optionally...
 
@@ -34,7 +34,7 @@ def BioThings_get_metadata(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

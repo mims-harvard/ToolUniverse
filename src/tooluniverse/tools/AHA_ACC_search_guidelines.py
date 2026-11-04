@@ -16,7 +16,7 @@ def AHA_ACC_search_guidelines(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search AHA (American Heart Association) and ACC (American College of Cardiology) clinical practic...
 
@@ -37,7 +37,7 @@ def AHA_ACC_search_guidelines(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

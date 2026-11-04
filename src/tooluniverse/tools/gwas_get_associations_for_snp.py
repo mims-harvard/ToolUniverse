@@ -18,7 +18,7 @@ def gwas_get_associations_for_snp(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get all associations for a specific SNP with optional sorting.
 
@@ -43,7 +43,7 @@ def gwas_get_associations_for_snp(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

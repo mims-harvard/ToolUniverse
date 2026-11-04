@@ -13,7 +13,7 @@ def UniChem_list_sources(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     List the complete current UniChem source catalog and verify returned length against totalSources....
 
@@ -29,7 +29,7 @@ def UniChem_list_sources(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

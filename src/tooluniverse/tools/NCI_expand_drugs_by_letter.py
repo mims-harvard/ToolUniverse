@@ -16,7 +16,7 @@ def NCI_expand_drugs_by_letter(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Browse one page of the NCI Drug Dictionary by first letter. The response includes an exact total ...
 
@@ -37,7 +37,7 @@ def NCI_expand_drugs_by_letter(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

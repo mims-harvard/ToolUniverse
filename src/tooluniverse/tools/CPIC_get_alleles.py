@@ -16,7 +16,7 @@ def CPIC_get_alleles(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get pharmacogenomics alleles and their functional status for a gene from CPIC. Returns allele nam...
 
@@ -37,7 +37,7 @@ def CPIC_get_alleles(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

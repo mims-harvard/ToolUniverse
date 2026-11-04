@@ -17,7 +17,7 @@ def Anaconda_search_packages(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search Anaconda.org packages with explicit limit/offset pagination. The upstream default silently...
 
@@ -40,7 +40,7 @@ def Anaconda_search_packages(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

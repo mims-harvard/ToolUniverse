@@ -15,7 +15,7 @@ def extract_clinical_trial_outcomes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Extracts detailed trial outcome results (e.g., overall survival months, p-values, etc.) from clin...
 
@@ -34,7 +34,7 @@ def extract_clinical_trial_outcomes(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

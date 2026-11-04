@@ -20,7 +20,7 @@ def euhealthinfo_search_covid_19(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     This tool facilitates the discovery of datasets and resources relevant to COVID-19 or SARS-CoV-2....
 
@@ -49,7 +49,7 @@ def euhealthinfo_search_covid_19(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -14,7 +14,7 @@ def AOPWiki_get_key_event(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get one AOP-Wiki Key Event (KE) by its numeric event id, including the machine-readable ontology ...
 
@@ -31,7 +31,7 @@ def AOPWiki_get_key_event(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

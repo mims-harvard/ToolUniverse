@@ -15,7 +15,7 @@ def SynBioHub_get_part(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed SBOL (Synthetic Biology Open Language) information for a specific genetic part from ...
 
@@ -34,7 +34,7 @@ def SynBioHub_get_part(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

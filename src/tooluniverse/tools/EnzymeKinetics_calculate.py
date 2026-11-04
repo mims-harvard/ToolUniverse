@@ -20,7 +20,7 @@ def EnzymeKinetics_calculate(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Calculate enzyme kinetic parameters from experimental data. Supports: (1) Michaelis-Menten Km/Vma...
 
@@ -49,7 +49,7 @@ def EnzymeKinetics_calculate(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

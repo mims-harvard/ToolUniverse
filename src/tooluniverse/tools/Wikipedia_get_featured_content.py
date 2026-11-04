@@ -16,7 +16,7 @@ def Wikipedia_get_featured_content(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get Wikipedia's featured content for a specific date including the featured article of the day, m...
 
@@ -37,7 +37,7 @@ def Wikipedia_get_featured_content(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -23,7 +23,7 @@ def Statistics_test(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Perform basic statistical tests using pure Python (no scipy/numpy required). Supports: (1) Chi-sq...
 
@@ -58,7 +58,7 @@ def Statistics_test(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

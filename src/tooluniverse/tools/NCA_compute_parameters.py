@@ -20,7 +20,7 @@ def NCA_compute_parameters(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Perform Non-Compartmental Analysis (NCA) on time-concentration pharmacokinetic data. Computes key...
 
@@ -49,7 +49,7 @@ def NCA_compute_parameters(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

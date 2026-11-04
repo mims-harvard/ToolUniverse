@@ -14,7 +14,7 @@ def EnsemblArchive_batch_lookup(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Batch lookup version histories for multiple Ensembl stable IDs. Returns current status, release, ...
 
@@ -31,7 +31,7 @@ def EnsemblArchive_batch_lookup(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

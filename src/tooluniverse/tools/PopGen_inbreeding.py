@@ -16,7 +16,7 @@ def PopGen_inbreeding(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Compute inbreeding coefficient F for a known pedigree type over one or more generations. Supports...
 
@@ -37,7 +37,7 @@ def PopGen_inbreeding(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

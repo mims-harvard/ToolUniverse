@@ -14,7 +14,7 @@ def AHA_ACC_get_guideline(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Fetch the full text (or a detailed snippet) of a specific AHA (American Heart Association) or ACC...
 
@@ -31,7 +31,7 @@ def AHA_ACC_get_guideline(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

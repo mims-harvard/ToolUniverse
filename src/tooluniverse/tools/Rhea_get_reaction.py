@@ -14,7 +14,7 @@ def Rhea_get_reaction(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Fetch the full structured detail of a single Rhea biochemical reaction by its Rhea identifier. Rh...
 
@@ -31,7 +31,7 @@ def Rhea_get_reaction(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

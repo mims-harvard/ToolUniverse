@@ -17,7 +17,7 @@ def SemanticScholar_get_paper(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed metadata for a specific paper from Semantic Scholar by paper ID, DOI, PubMed ID, or ...
 
@@ -36,7 +36,7 @@ def SemanticScholar_get_paper(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

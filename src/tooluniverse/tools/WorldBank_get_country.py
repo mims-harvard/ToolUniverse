@@ -14,7 +14,7 @@ def WorldBank_get_country(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get metadata about a country from the World Bank database. Returns country name, ISO codes, world...
 
@@ -31,7 +31,7 @@ def WorldBank_get_country(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

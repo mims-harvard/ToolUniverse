@@ -15,7 +15,7 @@ def PANTHER_gene_info(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get gene classification and functional annotation from PANTHER (Protein ANalysis THrough Evolutio...
 
@@ -34,7 +34,7 @@ def PANTHER_gene_info(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

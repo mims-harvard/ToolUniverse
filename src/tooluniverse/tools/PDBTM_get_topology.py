@@ -14,7 +14,7 @@ def PDBTM_get_topology(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve structure-derived transmembrane classification for one PDB entry from PDBTM: per-chain t...
 
@@ -31,7 +31,7 @@ def PDBTM_get_topology(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

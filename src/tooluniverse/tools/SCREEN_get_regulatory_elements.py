@@ -20,7 +20,7 @@ def SCREEN_get_regulatory_elements(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Resolve an official human gene symbol to its GRCh38 coordinates with Ensembl, then return genuine...
 
@@ -49,7 +49,7 @@ def SCREEN_get_regulatory_elements(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

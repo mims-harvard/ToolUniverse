@@ -19,7 +19,7 @@ def UniProt_id_mapping(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Map IDs between databases using UniProt's asynchronous service. Fetches every upstream result pag...
 
@@ -46,7 +46,7 @@ def UniProt_id_mapping(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

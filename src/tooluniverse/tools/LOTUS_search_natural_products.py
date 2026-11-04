@@ -14,7 +14,7 @@ def LOTUS_search_natural_products(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search the LOTUS (naturaL prOducTs occUrrenceS) database for natural products by name, SMILES, or...
 
@@ -31,7 +31,7 @@ def LOTUS_search_natural_products(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

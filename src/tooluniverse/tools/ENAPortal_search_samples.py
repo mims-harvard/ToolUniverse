@@ -16,7 +16,7 @@ def ENAPortal_search_samples(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search the European Nucleotide Archive (ENA) for biological samples by taxonomy or text query. Re...
 
@@ -37,7 +37,7 @@ def ENAPortal_search_samples(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

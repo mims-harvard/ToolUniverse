@@ -16,7 +16,7 @@ def MassBank_search_by_formula(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search MassBank Europe spectra by molecular formula. MassBank returns the full matching array and...
 
@@ -37,7 +37,7 @@ def MassBank_search_by_formula(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

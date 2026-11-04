@@ -18,7 +18,7 @@ def IEDB_predict_antigen_processing(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Predict MHC class I antigen processing using the IEDB next-generation tools API (https://api-next...
 
@@ -43,7 +43,7 @@ def IEDB_predict_antigen_processing(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -16,7 +16,7 @@ def NeuroMorpho_get_field_values(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get available values for a NeuroMorpho neuron metadata field with explicit zero-based page pagina...
 
@@ -37,7 +37,7 @@ def NeuroMorpho_get_field_values(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

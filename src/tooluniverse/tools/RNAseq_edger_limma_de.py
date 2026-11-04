@@ -23,7 +23,7 @@ def RNAseq_edger_limma_de(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Bulk RNA-seq differential expression via edgeR (QL-F) or limma-voom on a count matrix + sample me...
 
@@ -58,7 +58,7 @@ def RNAseq_edger_limma_de(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

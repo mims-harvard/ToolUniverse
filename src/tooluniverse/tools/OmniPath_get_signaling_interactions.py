@@ -21,7 +21,7 @@ def OmniPath_get_signaling_interactions(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get intracellular signaling pathway interactions from OmniPath's curated datasets. Supports query...
 
@@ -52,7 +52,7 @@ def OmniPath_get_signaling_interactions(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

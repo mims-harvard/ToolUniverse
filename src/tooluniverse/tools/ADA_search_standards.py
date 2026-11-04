@@ -15,7 +15,7 @@ def ADA_search_standards(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search ADA (American Diabetes Association) guidelines and publications by topic using PubMed. Sea...
 
@@ -34,7 +34,7 @@ def ADA_search_standards(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

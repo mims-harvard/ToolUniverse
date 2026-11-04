@@ -18,7 +18,7 @@ def Eurostat_get_dataset(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve statistical data from Eurostat (EU statistical office) for a specific dataset and filter...
 
@@ -43,7 +43,7 @@ def Eurostat_get_dataset(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

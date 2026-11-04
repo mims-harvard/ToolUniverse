@@ -17,7 +17,7 @@ def EnsemblSeq_get_region_sequence(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the DNA nucleotide sequence for a genomic region from Ensembl with recoverable sequence pagin...
 
@@ -40,7 +40,7 @@ def EnsemblSeq_get_region_sequence(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

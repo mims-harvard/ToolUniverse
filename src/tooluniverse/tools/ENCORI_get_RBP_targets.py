@@ -22,7 +22,7 @@ def ENCORI_get_RBP_targets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Look up RBP-RNA binding sites from CLIP-seq via ENCORI (starBase) RBPTarget module. Provide 'rbp'...
 
@@ -55,7 +55,7 @@ def ENCORI_get_RBP_targets(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

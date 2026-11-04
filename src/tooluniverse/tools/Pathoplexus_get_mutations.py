@@ -20,7 +20,7 @@ def Pathoplexus_get_mutations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get characteristic amino-acid (default) or nucleotide mutations for a Pathoplexus organism above ...
 
@@ -49,7 +49,7 @@ def Pathoplexus_get_mutations(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

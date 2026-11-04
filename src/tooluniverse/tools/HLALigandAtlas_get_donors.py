@@ -15,7 +15,7 @@ def HLALigandAtlas_get_donors(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve the donor-to-HLA-allele mapping table from the HLA Ligand Atlas (hla-ligand-atlas.org, r...
 
@@ -34,7 +34,7 @@ def HLALigandAtlas_get_donors(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -16,7 +16,7 @@ def IDR_list_dataset_images(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     List the individual images contained in a specific IDR (Image Data Resource) dataset, drilling do...
 
@@ -37,7 +37,7 @@ def IDR_list_dataset_images(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

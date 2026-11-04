@@ -18,7 +18,7 @@ def DHSProgram_get_data(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Retrieve DHS Program survey results for one indicator, optionally filtered by country (ISO2-like ...
 
@@ -43,7 +43,7 @@ def DHSProgram_get_data(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

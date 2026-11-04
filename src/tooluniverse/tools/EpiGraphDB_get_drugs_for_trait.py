@@ -17,7 +17,7 @@ def EpiGraphDB_get_drugs_for_trait(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Find drugs that target genes associated with a GWAS risk factor trait, ranked by supporting evide...
 
@@ -40,7 +40,7 @@ def EpiGraphDB_get_drugs_for_trait(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

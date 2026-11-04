@@ -18,7 +18,7 @@ def UniParc_get_entry(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get a UniProt UniParc entry by its stable UPI identifier. Returns the full sequence plus explicit...
 
@@ -43,7 +43,7 @@ def UniParc_get_entry(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

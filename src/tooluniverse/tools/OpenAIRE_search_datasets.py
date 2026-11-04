@@ -18,7 +18,7 @@ def OpenAIRE_search_datasets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search OpenAIRE research datasets with exact totals and explicit page navigation. Continue with m...
 
@@ -43,7 +43,7 @@ def OpenAIRE_search_datasets(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

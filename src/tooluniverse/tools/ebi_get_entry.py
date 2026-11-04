@@ -17,7 +17,7 @@ def ebi_get_entry(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed information about a specific entry from an EBI domain by its ID. IMPORTANT: EBI Sear...
 
@@ -40,7 +40,7 @@ def ebi_get_entry(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

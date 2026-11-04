@@ -18,7 +18,7 @@ def DNA_golden_gate_assemble(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Work out the product of a Golden Gate reaction that has already been performed: given the plasmid...
 
@@ -43,7 +43,7 @@ def DNA_golden_gate_assemble(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

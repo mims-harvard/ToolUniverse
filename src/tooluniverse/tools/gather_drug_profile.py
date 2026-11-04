@@ -15,7 +15,7 @@ def gather_drug_profile(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Gather a drug's identity, structure, mechanism of action, approved indications and safety from Ch...
 
@@ -34,7 +34,7 @@ def gather_drug_profile(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

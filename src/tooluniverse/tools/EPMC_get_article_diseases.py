@@ -15,7 +15,7 @@ def EPMC_get_article_diseases(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the complete deduplicated set of diseases mentioned in a biomedical article, identified by Eu...
 
@@ -34,7 +34,7 @@ def EPMC_get_article_diseases(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

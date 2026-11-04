@@ -15,7 +15,7 @@ def PlantReactome_search_pathways(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search Plant Reactome pathways by keyword and optional species. The official endpoint can report ...
 
@@ -34,7 +34,7 @@ def PlantReactome_search_pathways(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

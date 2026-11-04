@@ -14,7 +14,7 @@ def ThreeDBeacons_get_structure_summary(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get a summary of all available 3D structure models for a protein from the 3D Beacons Hub. Aggrega...
 
@@ -31,7 +31,7 @@ def ThreeDBeacons_get_structure_summary(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

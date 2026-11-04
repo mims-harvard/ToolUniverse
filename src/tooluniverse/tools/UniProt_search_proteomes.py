@@ -16,7 +16,7 @@ def UniProt_search_proteomes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search the UniProt Proteome database with official cursor pagination. Supports organism, taxonomy...
 
@@ -37,7 +37,7 @@ def UniProt_search_proteomes(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

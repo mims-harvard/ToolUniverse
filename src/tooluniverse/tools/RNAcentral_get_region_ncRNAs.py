@@ -18,7 +18,7 @@ def RNAcentral_get_region_ncRNAs(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     List all RNAcentral non-coding RNAs overlapping a genome locus, aggregated from 50+ member databa...
 
@@ -43,7 +43,7 @@ def RNAcentral_get_region_ncRNAs(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

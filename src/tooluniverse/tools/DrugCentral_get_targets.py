@@ -14,7 +14,7 @@ def DrugCentral_get_targets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get drug target information from DrugCentral for a specific drug by its InChIKey or ChEMBL ID. Re...
 
@@ -31,7 +31,7 @@ def DrugCentral_get_targets(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

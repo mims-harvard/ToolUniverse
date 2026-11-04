@@ -21,7 +21,7 @@ def IDR_search_images(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search the Image Data Resource (IDR) for individual images across ALL published studies at once b...
 
@@ -52,7 +52,7 @@ def IDR_search_images(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

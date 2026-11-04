@@ -19,7 +19,7 @@ def HMDB_get_diseases(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Alias for Metabolite_get_diseases. Get CTD disease associations for a metabolite with recoverable...
 
@@ -46,7 +46,7 @@ def HMDB_get_diseases(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

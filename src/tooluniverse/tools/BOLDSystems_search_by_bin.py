@@ -15,7 +15,7 @@ def BOLDSystems_search_by_bin(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search BOLD (Barcode of Life Data System) for all DNA barcode records sharing a BIN (Barcode Inde...
 
@@ -34,7 +34,7 @@ def BOLDSystems_search_by_bin(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -16,7 +16,7 @@ def Rhea_search_reactions(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search for biochemical reactions in the Rhea database by compound name, reaction description, or ...
 
@@ -37,7 +37,7 @@ def Rhea_search_reactions(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

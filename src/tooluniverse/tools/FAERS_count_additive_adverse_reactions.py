@@ -22,7 +22,7 @@ def FAERS_count_additive_adverse_reactions(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any] | list[Any]:
     """
     Aggregate adverse reaction counts across specified medicinal products. Note: 'medicinalproducts' ...
 
@@ -55,7 +55,7 @@ def FAERS_count_additive_adverse_reactions(
 
     Returns
     -------
-    Any
+    dict[str, Any] | list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

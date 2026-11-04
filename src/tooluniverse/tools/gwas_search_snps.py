@@ -17,7 +17,7 @@ def gwas_search_snps(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search the GWAS Catalog for single nucleotide polymorphisms (SNPs) by rs ID (e.g., 'rs7903146') o...
 
@@ -40,7 +40,7 @@ def gwas_search_snps(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

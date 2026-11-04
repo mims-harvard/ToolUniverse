@@ -17,7 +17,7 @@ def FDAGSRS_search_substances(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search FDA GSRS for substances by name, UNII, InChIKey, or formula. Results are recoverably pagin...
 
@@ -40,7 +40,7 @@ def FDAGSRS_search_substances(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

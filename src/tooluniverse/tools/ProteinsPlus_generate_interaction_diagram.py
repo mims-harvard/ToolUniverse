@@ -15,7 +15,7 @@ def ProteinsPlus_generate_interaction_diagram(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Generate 2D protein-ligand interaction diagrams using PoseView. Creates publication-quality visua...
 
@@ -34,7 +34,7 @@ def ProteinsPlus_generate_interaction_diagram(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

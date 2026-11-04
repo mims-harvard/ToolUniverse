@@ -15,7 +15,7 @@ def FHIRTerminology_expand_valueset(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Expand a FHIR value set to its member codes via HL7's public FHIR Terminology Service. Its stando...
 
@@ -34,7 +34,7 @@ def FHIRTerminology_expand_valueset(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

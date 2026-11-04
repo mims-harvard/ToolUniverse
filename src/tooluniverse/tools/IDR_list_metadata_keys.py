@@ -14,7 +14,7 @@ def IDR_list_metadata_keys(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     List the curated metadata attribute keys available for searching the Image Data Resource (IDR), f...
 
@@ -31,7 +31,7 @@ def IDR_list_metadata_keys(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

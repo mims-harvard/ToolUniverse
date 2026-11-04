@@ -17,7 +17,7 @@ def UCSC_get_cpg_islands(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get CpG island annotations for a genomic region from UCSC Genome Browser. CpG islands are genomic...
 
@@ -40,7 +40,7 @@ def UCSC_get_cpg_islands(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

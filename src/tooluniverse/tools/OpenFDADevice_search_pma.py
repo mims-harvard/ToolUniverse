@@ -15,7 +15,7 @@ def OpenFDADevice_search_pma(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search openFDA's Premarket Approval (PMA) database by trade name -- the pathway required for high...
 
@@ -34,7 +34,7 @@ def OpenFDADevice_search_pma(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

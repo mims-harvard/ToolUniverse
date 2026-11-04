@@ -15,7 +15,7 @@ def PharmGKB_get_pathway(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get a curated pharmacogenomic pathway from PharmGKB/ClinPGx by pathway ID (e.g., 'PA145011113' = ...
 
@@ -34,7 +34,7 @@ def PharmGKB_get_pathway(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

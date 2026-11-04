@@ -14,7 +14,7 @@ def EBITaxonomy_get_by_scientific_name(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Look up taxonomy by scientific (Latin) name using the EBI Taxonomy service. Returns taxonomy ID, ...
 
@@ -31,7 +31,7 @@ def EBITaxonomy_get_by_scientific_name(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

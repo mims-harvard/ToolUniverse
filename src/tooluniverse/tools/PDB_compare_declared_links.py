@@ -22,7 +22,7 @@ def PDB_compare_declared_links(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Compare explicit reference PDB LINK distances against a local PDB model. Resolves exact atoms wit...
 
@@ -55,7 +55,7 @@ def PDB_compare_declared_links(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -15,7 +15,7 @@ def GeneBe_classify_variants_batch(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Batch-classify up to 1000 germline variants under the ACMG/AMP guidelines in a single GeneBe (gen...
 
@@ -34,7 +34,7 @@ def GeneBe_classify_variants_batch(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

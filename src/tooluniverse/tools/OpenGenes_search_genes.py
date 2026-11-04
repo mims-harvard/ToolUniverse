@@ -15,7 +15,7 @@ def OpenGenes_search_genes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Browse the complete Open Genes catalog of human aging/longevity genes with one-based page paginat...
 
@@ -34,7 +34,7 @@ def OpenGenes_search_genes(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

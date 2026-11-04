@@ -17,7 +17,7 @@ def PopGen_hwe_test(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Test Hardy-Weinberg equilibrium for a biallelic locus given observed genotype counts (AA, Aa, aa)...
 
@@ -40,7 +40,7 @@ def PopGen_hwe_test(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

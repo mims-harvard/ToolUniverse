@@ -20,7 +20,7 @@ def FAERS_count_additive_seriousness_classification(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any] | list[Any]:
     """
     Quantify serious vs non-serious classifications across medicinal products. Only medicinalproducts...
 
@@ -49,7 +49,7 @@ def FAERS_count_additive_seriousness_classification(
 
     Returns
     -------
-    Any
+    dict[str, Any] | list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

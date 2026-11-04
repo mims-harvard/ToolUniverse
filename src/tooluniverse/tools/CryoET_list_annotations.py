@@ -18,7 +18,7 @@ def CryoET_list_annotations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     List biological annotations (segmentations, point annotations, surface meshes) for a specific cry...
 
@@ -43,7 +43,7 @@ def CryoET_list_annotations(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

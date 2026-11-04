@@ -15,7 +15,7 @@ def MassBank_spectral_similarity_search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Identify an unknown metabolite by spectral library similarity search against MassBank Europe. Sub...
 
@@ -34,7 +34,7 @@ def MassBank_spectral_similarity_search(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

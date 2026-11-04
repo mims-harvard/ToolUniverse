@@ -19,7 +19,7 @@ def FDA_search_drug_labels(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search FDA-approved drug labels (prescribing information) by drug name or medical indication. Pas...
 
@@ -46,7 +46,7 @@ def FDA_search_drug_labels(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

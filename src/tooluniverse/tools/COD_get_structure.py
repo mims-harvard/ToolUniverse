@@ -15,7 +15,7 @@ def COD_get_structure(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get the complete source record for one seven-digit Crystallography Open Database entry ID. Valida...
 
@@ -34,7 +34,7 @@ def COD_get_structure(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

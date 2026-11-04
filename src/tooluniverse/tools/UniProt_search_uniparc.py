@@ -16,7 +16,7 @@ def UniProt_search_uniparc(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search UniParc entries with explicit cursor pagination. data.next_cursor comes from the official ...
 
@@ -37,7 +37,7 @@ def UniProt_search_uniparc(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

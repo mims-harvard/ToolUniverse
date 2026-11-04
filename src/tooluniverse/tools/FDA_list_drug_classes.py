@@ -15,7 +15,7 @@ def FDA_list_drug_classes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List FDA Established Pharmacologic Classes and label counts. The ranked class catalog is recovera...
 
@@ -34,7 +34,7 @@ def FDA_list_drug_classes(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

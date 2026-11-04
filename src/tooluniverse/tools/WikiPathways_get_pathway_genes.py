@@ -16,7 +16,7 @@ def WikiPathways_get_pathway_genes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the genes involved in a WikiPathways pathway. `gene_count` counts distinct gene products; `ge...
 
@@ -37,7 +37,7 @@ def WikiPathways_get_pathway_genes(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

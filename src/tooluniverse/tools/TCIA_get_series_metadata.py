@@ -14,7 +14,7 @@ def TCIA_get_series_metadata(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get detailed DICOM metadata for a specific imaging series in TCIA by its Series Instance UID. Ret...
 
@@ -31,7 +31,7 @@ def TCIA_get_series_metadata(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

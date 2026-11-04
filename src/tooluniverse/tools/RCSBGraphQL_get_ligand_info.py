@@ -14,7 +14,7 @@ def RCSBGraphQL_get_ligand_info(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed chemical component (ligand) information from the PDB using the RCSB Data API. Return...
 
@@ -31,7 +31,7 @@ def RCSBGraphQL_get_ligand_info(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

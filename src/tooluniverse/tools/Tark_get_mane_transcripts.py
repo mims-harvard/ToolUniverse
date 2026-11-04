@@ -16,7 +16,7 @@ def Tark_get_mane_transcripts(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Look up the MANE (Matched Annotation from NCBI and EMBL-EBI) transcript(s) for a gene, mapping th...
 
@@ -37,7 +37,7 @@ def Tark_get_mane_transcripts(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

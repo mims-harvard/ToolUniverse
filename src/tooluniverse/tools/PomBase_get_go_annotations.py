@@ -14,7 +14,7 @@ def PomBase_get_go_annotations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the complete Gene Ontology annotation set (biological_process / molecular_function / cellular...
 
@@ -31,7 +31,7 @@ def PomBase_get_go_annotations(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

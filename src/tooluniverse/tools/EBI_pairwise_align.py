@@ -20,7 +20,7 @@ def EBI_pairwise_align(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Align exactly two sequences via EMBL-EBI EMBOSS and return the alignment with percent identity, s...
 
@@ -49,7 +49,7 @@ def EBI_pairwise_align(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

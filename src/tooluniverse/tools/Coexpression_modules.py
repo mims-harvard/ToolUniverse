@@ -17,7 +17,7 @@ def Coexpression_modules(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Detect co-expression modules from a genes x samples expression matrix (WGCNA-style): builds a sof...
 
@@ -40,7 +40,7 @@ def Coexpression_modules(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

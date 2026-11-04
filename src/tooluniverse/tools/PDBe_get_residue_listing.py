@@ -21,7 +21,7 @@ def PDBe_get_residue_listing(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get per-residue information for a PDB structure, optionally filtered by chain. Molecules, chains ...
 
@@ -52,7 +52,7 @@ def PDBe_get_residue_listing(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

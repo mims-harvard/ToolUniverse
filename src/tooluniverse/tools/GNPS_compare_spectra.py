@@ -15,7 +15,7 @@ def GNPS_compare_spectra(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Compare two MS/MS spectra from the GNPS spectral library using Universal Spectrum Identifiers (US...
 
@@ -34,7 +34,7 @@ def GNPS_compare_spectra(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

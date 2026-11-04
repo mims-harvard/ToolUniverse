@@ -17,7 +17,7 @@ def UniRef_search_clusters(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search UniProt UniRef protein sequence clusters with official cursor pagination. Metadata reports...
 
@@ -40,7 +40,7 @@ def UniRef_search_clusters(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

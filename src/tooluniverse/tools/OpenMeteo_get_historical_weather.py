@@ -20,7 +20,7 @@ def OpenMeteo_get_historical_weather(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get historical weather data for any location from Open-Meteo ERA5 reanalysis archive (1940-presen...
 
@@ -49,7 +49,7 @@ def OpenMeteo_get_historical_weather(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

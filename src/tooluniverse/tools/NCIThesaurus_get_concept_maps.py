@@ -14,7 +14,7 @@ def NCIThesaurus_get_concept_maps(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get cross-vocabulary maps for an NCI Thesaurus concept: code mappings to MedDRA, SNOMED-CT, GDC, ...
 
@@ -31,7 +31,7 @@ def NCIThesaurus_get_concept_maps(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

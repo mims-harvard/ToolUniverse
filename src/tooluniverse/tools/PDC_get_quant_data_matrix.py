@@ -18,7 +18,7 @@ def PDC_get_quant_data_matrix(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get a recoverable gene-row page from a PDC quantitative protein abundance matrix. The full aliquo...
 
@@ -43,7 +43,7 @@ def PDC_get_quant_data_matrix(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

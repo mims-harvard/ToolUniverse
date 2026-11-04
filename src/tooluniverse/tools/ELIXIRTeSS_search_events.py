@@ -19,7 +19,7 @@ def ELIXIRTeSS_search_events(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search ELIXIR TeSS for bioinformatics training events. Results use one-based page pagination: sta...
 
@@ -46,7 +46,7 @@ def ELIXIRTeSS_search_events(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

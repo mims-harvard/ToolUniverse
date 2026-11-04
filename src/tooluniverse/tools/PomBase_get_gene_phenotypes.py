@@ -14,7 +14,7 @@ def PomBase_get_gene_phenotypes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get all phenotype annotations for a fission yeast (S. pombe) gene from PomBase. Returns deletion ...
 
@@ -31,7 +31,7 @@ def PomBase_get_gene_phenotypes(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

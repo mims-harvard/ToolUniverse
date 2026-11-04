@@ -14,7 +14,7 @@ def DrugProps_calculate_qed(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Calculate Quantitative Estimate of Drug-likeness (QED) score for a compound using the Bickerton e...
 
@@ -31,7 +31,7 @@ def DrugProps_calculate_qed(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

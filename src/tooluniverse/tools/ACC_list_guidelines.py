@@ -15,7 +15,7 @@ def ACC_list_guidelines(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List recent American College of Cardiology (ACC) clinical practice guidelines. Returns ACC-author...
 
@@ -34,7 +34,7 @@ def ACC_list_guidelines(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

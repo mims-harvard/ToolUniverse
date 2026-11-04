@@ -15,7 +15,7 @@ def MonarchV3_phenotype_profile_compare(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Compare two explicit phenotype profiles (HPO term sets) pairwise using Monarch Initiative semanti...
 
@@ -34,7 +34,7 @@ def MonarchV3_phenotype_profile_compare(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

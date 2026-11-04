@@ -14,7 +14,7 @@ def POWO_get_taxon(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed taxonomic information for a specific plant species from Plants of the World Online (...
 
@@ -31,7 +31,7 @@ def POWO_get_taxon(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

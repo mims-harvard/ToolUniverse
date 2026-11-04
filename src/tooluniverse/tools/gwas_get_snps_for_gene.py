@@ -18,7 +18,7 @@ def gwas_get_snps_for_gene(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get all GWAS Catalog SNPs mapped to a specific gene by gene name (e.g., 'BRCA1', 'TP53'). Returns...
 
@@ -43,7 +43,7 @@ def gwas_get_snps_for_gene(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

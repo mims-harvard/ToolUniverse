@@ -22,7 +22,7 @@ def BVBRC_search_genomes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search for pathogen genomes in BV-BRC by organism name or keyword, with explicit pagination and o...
 
@@ -55,7 +55,7 @@ def BVBRC_search_genomes(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

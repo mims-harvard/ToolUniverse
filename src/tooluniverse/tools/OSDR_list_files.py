@@ -15,7 +15,7 @@ def OSDR_list_files(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List the downloadable data files for one NASA OSDR study: raw and processed files across assay ty...
 
@@ -34,7 +34,7 @@ def OSDR_list_files(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

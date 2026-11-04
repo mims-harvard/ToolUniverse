@@ -16,7 +16,7 @@ def HMDB_get_metabolite(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Alias for Metabolite_get_info. Get compound information by HMDB ID, compound name, or PubChem CID.
 
@@ -37,7 +37,7 @@ def HMDB_get_metabolite(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

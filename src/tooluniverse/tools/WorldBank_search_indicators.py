@@ -16,7 +16,7 @@ def WorldBank_search_indicators(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search the World Development Indicators (WDI, ~1,500 indicators covering health, education, econo...
 
@@ -37,7 +37,7 @@ def WorldBank_search_indicators(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

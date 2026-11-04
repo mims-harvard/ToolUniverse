@@ -17,7 +17,7 @@ def SCP_list_studies(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List the public Single Cell Portal study catalog (1000+ studies), sorted by cell count descending...
 
@@ -40,7 +40,7 @@ def SCP_list_studies(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
