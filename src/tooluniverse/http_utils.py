@@ -99,9 +99,7 @@ def _jittered_sleep(backoff_seconds: float, attempt: int) -> None:
 # and only 99 of the 551 tool modules mention a User-Agent at all, so the rest
 # were sending the blocked string. Naming ourselves is also the polite thing to
 # do: an upstream that wants to rate-limit or contact a heavy client can.
-DEFAULT_USER_AGENT = (
-    "ToolUniverse/1.0 (+https://github.com/mims-harvard/ToolUniverse)"
-)
+DEFAULT_USER_AGENT = "ToolUniverse/1.0 (+https://github.com/mims-harvard/ToolUniverse)"
 
 
 def with_user_agent(
@@ -152,6 +150,76 @@ def cloudflare_challenge(resp: Any) -> Optional[str]:
         "(HTTP 403, cf-mitigated: challenge). Passing it requires a browser "
         "engine, so no User-Agent, header or retry will get through -- this is "
         "a setting on their side, not a problem with your credentials or setup"
+    )
+
+
+# Markers of an interstitial served in place of the data. Matched against the
+# head of the body, case-folded. Kept in several languages on purpose: GSA's
+# page was Chinese when it first appeared and is English now, and a marker
+# list in one language silently stops matching when a site translates its own
+# wall.
+_CHALLENGE_MARKERS = (
+    # Anubis proof-of-work, which dblp.org serves
+    "making sure you're not a bot",
+    "making sure you are not a bot",
+    ".within.website",
+    # Self-written "verifying your browser" interstitials, e.g. GSA's
+    "verifying your browser",
+    "securitycheck",
+    "\u6b63\u5728\u8fdb\u884c\u5b89\u5168\u68c0\u67e5",
+    "\u6b63\u5728\u9a8c\u8bc1\u60a8\u7684\u6d4f\u89c8\u5668",
+    # Cloudflare's, when the header is absent but the page is not
+    "just a moment",
+    "enable javascript and cookies to continue",
+)
+
+
+def bot_challenge(resp: Any) -> Optional[str]:
+    """Describe an anti-bot interstitial, or None when the response is data.
+
+    Three shapes, each measured 2026-11-05 against the live service, each
+    served *in place of* the answer and each needing a browser to clear:
+
+    - Cloudflare's managed challenge: 403 with ``cf-mitigated: challenge``.
+      Delegated to :func:`cloudflare_challenge`, which already names it.
+    - Anubis proof-of-work, which dblp.org now runs: **HTTP 202** and 7.4 KB
+      of HTML reading "Making sure you're not a bot!", carrying
+      ``{"rules":{"algorithm":"fast","difficulty":16}}``. The status is the
+      trap -- a caller that branches on ``!= 200`` reports a bare
+      "API error 202" and never reaches the message written for this case.
+    - A site's own interstitial, which ngdc.cncb.ac.cn/gsa runs: **HTTP 200**
+      and ~1 KB titled "SecurityCheck" ("Verifying your browser, please
+      wait..."), whose script sets a cookie and reloads. 200 is the trap here:
+      the page parses fine and simply has none of the fields the tool wants,
+      so the tool concludes the record is missing.
+
+    Worth naming rather than passing the status or the parse failure through.
+    "HTTP 202", or "an HTML page -- the resource may not exist", sends the
+    caller to hunt for a wrong identifier or a bad parameter, when the record
+    is there and a wall this client does not climb is in front of it.
+
+    Returns a sentence for the tool's ``error`` field, or None.
+    """
+    if resp is None:
+        return None
+    cf = cloudflare_challenge(resp)
+    if cf:
+        return cf
+    try:
+        text = getattr(resp, "text", "") or ""
+        head = text[:4000].lower()
+    except Exception:  # noqa: BLE001 - never raise from an error path
+        return None
+    if not any(marker in head for marker in _CHALLENGE_MARKERS):
+        return None
+    status = getattr(resp, "status_code", None)
+    where = f"HTTP {status}" if status is not None else "its response"
+    return (
+        f"the site answered with a browser/bot check instead of the data "
+        f"({where}). Clearing it requires running the page's JavaScript, so "
+        "no User-Agent, header or retry gets through, and this tool does not "
+        "work around it. It does not mean the record is missing or the query "
+        "is wrong"
     )
 
 

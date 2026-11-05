@@ -85,7 +85,7 @@ The base install covers the API and database tools. Local ML, cheminformatics, a
 
 ## What is ToolUniverse?
 
-ToolUniverse is an ecosystem for creating AI scientist systems from any large language model. Powered by the AI-Tool Interaction Protocol, it standardizes how LLMs identify and call tools, integrating more than **1000 machine learning models, datasets, APIs, and scientific packages** for data analysis, knowledge retrieval, and experimental design.
+ToolUniverse is an ecosystem for creating AI scientist systems from any large language model. Powered by the AI-Tool Interaction Protocol, it standardizes how LLMs identify and call tools, integrating more than **2,700 machine learning models, datasets, APIs, and scientific packages** for data analysis, knowledge retrieval, and experimental design.
 
 **Key features:**
 
@@ -94,8 +94,8 @@ ToolUniverse is an ecosystem for creating AI scientist systems from any large la
 - [**MCP Integration**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/building_ai_scientists/mcp_support.html): Native Model Context Protocol server with configurable transport and tool selection
 - [**Async Operations**](https://zitniklab.hms.harvard.edu/ToolUniverse/expand_tooluniverse/async_tools_guide.html): Long-running tasks (protein docking, molecular simulations) with progress tracking and parallel execution
 - [**Tool Composition**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/tool_composition.html): Chain tools for sequential or parallel execution in self-directed workflows
-- [**Compact Mode**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/building_ai_scientists/compact_mode.html): Reduces 1000+ tools to 4-5 core discovery tools, saving ~99% context window
-- [**CLI (`tu`)**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/tu_cli.html): Discover, inspect, run, and test tools directly from the terminal — 9 subcommands for interactive and scripted workflows
+- [**Compact Mode**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/building_ai_scientists/compact_mode.html): Reduces 2,700+ tools to 4-5 core discovery tools, saving ~99% context window
+- [**CLI (`tu`)**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/tu_cli.html): Discover, inspect, run, and test tools directly from the terminal — 14 subcommands for interactive and scripted workflows
 - [**Agent Skills**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/skills_showcase.html): 68 pre-built research workflows for drug discovery, precision oncology, rare disease diagnosis, pharmacovigilance, and more
 - [**Literature Search**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/literature_search_tools_tutorial.html): Unified search across PubMed, Semantic Scholar, ArXiv, BioRxiv, Europe PMC, and more
 - [**Two-Tier Result Caching**](https://zitniklab.hms.harvard.edu/ToolUniverse/guide/cache_system.html): In-memory LRU + SQLite persistence with per-tool fingerprinting for 10x speedup, offline support, and reproducibility
