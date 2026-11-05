@@ -145,6 +145,15 @@ def _advertised_floors(text):
         # the three JSON listings were corrected to 2,700 while README still
         # said "1000+ tools" -- under half the catalogue.
         ("README.md", (REPO / "README.md").read_text()),
+        # The Codex plugin manifest was the last one still on "1000+ tools".
+        (
+            "plugins/tooluniverse/.codex-plugin/plugin.json",
+            (REPO / "plugins/tooluniverse/.codex-plugin/plugin.json").read_text(),
+        ),
+        (
+            "plugin/.claude-plugin/plugin.json",
+            (REPO / "plugin/.claude-plugin/plugin.json").read_text(),
+        ),
     ],
 )
 def test_a_listing_never_advertises_more_tools_than_exist_nor_far_fewer(label, text):
@@ -174,4 +183,88 @@ def test_the_registry_listing_states_the_number_of_tools_it_exposes():
     assert stated, "server.json no longer states how many tools it exposes"
     assert int(stated.group(1)) == exposed, (
         f"server.json says {stated.group(1)} core tools, the server exposes {exposed}"
+    )
+
+
+# ── The same drift, in the skill counts and the plugin version ───────────────
+
+
+def _skill_count():
+    """Skills the Claude Code plugin actually ships."""
+    return len(list((REPO / "plugin" / "skills").glob("*/SKILL.md")))
+
+
+def _advertised_skill_floors(text):
+    """Every "N+ skills" style claim in a listing string."""
+    return [
+        int(match.replace(",", ""))
+        for match in re.findall(r"([\d,]{2,})\+?\s+(?:research\s+)?skills", text)
+    ]
+
+
+@pytest.mark.parametrize(
+    "label, text",
+    [
+        (".claude-plugin/marketplace.json", json.dumps(MARKETPLACE)),
+        (
+            "skills/tooluniverse-claude-code-plugin/SKILL.md",
+            (REPO / "skills/tooluniverse-claude-code-plugin/SKILL.md").read_text(),
+        ),
+    ],
+)
+def test_a_listing_never_advertises_more_skills_than_exist_nor_far_fewer(label, text):
+    """The tool counts had a guard and the skill counts did not.
+
+    marketplace.json said "140+ research skills" and the plugin skill said
+    "120+", against 163 shipped -- the same undersell the tool-count guard was
+    written for, one field over.
+    """
+    actual = _skill_count()
+    floors = _advertised_skill_floors(text)
+    assert floors, f"{label} advertises no skill count; it used to"
+    for floor in floors:
+        assert floor <= actual, (
+            f"{label} advertises {floor} skills but the plugin ships {actual}"
+        )
+        assert floor >= actual * 0.8, (
+            f"{label} advertises {floor} skills against {actual} shipped -- "
+            "stale enough to undersell; round down to the nearest ten"
+        )
+
+
+def _pyproject_version():
+    m = re.search(r'^version = "([^"]+)"', (REPO / "pyproject.toml").read_text(), re.M)
+    assert m, "pyproject.toml has no version"
+    return m.group(1)
+
+
+@pytest.mark.parametrize(
+    "path",
+    [
+        "plugin/.claude-plugin/plugin.json",
+        "plugins/tooluniverse/.codex-plugin/plugin.json",
+        ".claude-plugin/marketplace.json",
+    ],
+)
+def test_the_plugin_version_is_the_version_that_was_released(path):
+    """A plugin manifest must not name a version the package never shipped.
+
+    These are hand-bumped and have never agreed with the package at a release
+    tag -- measured across four:
+
+        v1.5.5   pyproject 1.5.5   plugin 1.5.1   five releases stale
+        v1.5.6   pyproject 1.5.6   plugin 1.5.1   six
+        v1.5.7   pyproject 1.5.7   plugin 1.5.8   a version not yet released
+        v1.5.8   pyproject 1.5.8   plugin 1.5.9   likewise
+
+    They agree today only because 1.5.9 shipped and the hand-bump happened to
+    be one ahead. Equality is the rule that catches both directions, and the
+    bumps toward 1.5.8 and 1.5.9 say matching the package was the intent.
+    """
+    data = json.loads((REPO / path).read_text())
+    # plugin.json carries it at the top level; marketplace.json under metadata.
+    version = data.get("version") or (data.get("metadata") or {}).get("version")
+    assert version, f"{path} has no version field"
+    assert version == _pyproject_version(), (
+        f"{path} says {version}, pyproject.toml says {_pyproject_version()}"
     )
