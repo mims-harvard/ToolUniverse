@@ -2,6 +2,7 @@ import html
 import requests
 from .base_tool import BaseTool
 from .provider_rate_limit import enforce_provider_rate_limit
+from .http_utils import bot_challenge
 from .tool_registry import register_tool
 
 
@@ -74,6 +75,22 @@ class DBLPTool(BaseTool):
                 "status": "error",
                 "error": "Network error calling DBLP API",
                 "reason": str(e),
+            }
+
+        # Before the status check, not after it. DBLP runs an Anubis
+        # proof-of-work wall that answers 202, so "status != 200" caught it
+        # first and reported "DBLP API error 202" -- while the message written
+        # for exactly this case sat in the JSON-parse branch below, reachable
+        # only on a 200, i.e. never.
+        challenge = bot_challenge(response)
+        if challenge:
+            return {
+                "status": "error",
+                "error": f"DBLP is not reachable programmatically: {challenge}.",
+                "reason": (
+                    "Use Crossref_search_works, SemanticScholar_search_papers "
+                    "or openalex_search_works instead."
+                ),
             }
 
         if response.status_code != 200:
