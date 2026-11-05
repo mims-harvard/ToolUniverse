@@ -21,18 +21,33 @@
       ]
     },
     "return_schema": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "item": {
-            "type": "string"
-          },
-          "itemLabel": {
-            "type": "string"
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "item": {
+                "type": "string"
+              },
+              "itemLabel": {
+                "type": "string"
+              }
+            }
           }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {

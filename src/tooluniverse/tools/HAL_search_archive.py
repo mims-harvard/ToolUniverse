@@ -15,7 +15,7 @@ def HAL_search_archive(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search the French HAL open archive via its public API. Returns documents with title, authors, yea...
 
@@ -34,7 +34,7 @@ def HAL_search_archive(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

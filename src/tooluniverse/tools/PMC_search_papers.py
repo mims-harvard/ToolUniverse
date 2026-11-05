@@ -21,7 +21,7 @@ def PMC_search_papers(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search full-text biomedical literature in PMC by relevance. Uses limit (default 10; retmax is an ...
 
@@ -52,7 +52,7 @@ def PMC_search_papers(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

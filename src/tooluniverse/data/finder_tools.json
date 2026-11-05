@@ -267,11 +267,26 @@
       }
     ],
     "return_schema": {
-      "type": "array",
-      "description": "List of matching tools (name, description, parameter schema), ranked by keyword relevance.",
-      "items": {
-        "type": "object"
-      }
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of matching tools (name, description, parameter schema), ranked by keyword relevance.",
+          "items": {
+            "type": "object"
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
     }
   },
   {
