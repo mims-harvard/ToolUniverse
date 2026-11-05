@@ -5,7 +5,7 @@ description: Install or update ToolUniverse in Claude Science — create the con
 
 # Set up ToolUniverse for Claude Science
 
-The upstream ToolUniverse ships a Claude **Code** plugin (MCP server + `uvx` + slash commands). Claude **Science** loads capabilities differently, so this skill installs the equivalent natively: the `tooluniverse` **pip package** supplies the 2500+ tools, and the workflow library is packaged into a single dynamically-loaded skill, `tooluniverse-research`. No `uv`, no MCP server, no plugin marketplace.
+The upstream ToolUniverse ships a Claude **Code** plugin (MCP server + `uvx` + slash commands). Claude **Science** loads capabilities differently, so this skill installs the equivalent natively: the `tooluniverse` **pip package** supplies the 2,700+ tools, and the workflow library is packaged into a single dynamically-loaded skill, `tooluniverse-research`. No `uv`, no MCP server, no plugin marketplace.
 
 Loading this skill defines `tu_build_research_bundle()` in the kernel (run cells in the **`tooluniverse`** conda env).
 
