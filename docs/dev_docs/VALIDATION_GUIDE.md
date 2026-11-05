@@ -166,7 +166,7 @@ sphinx-apidoc -f -o api ../src/tooluniverse
 **What it checks:**
 - Inconsistent tool counts across documentation (e.g., "600 tools" vs "750 tools")
 
-**Standard:** Use `1000+ tools` consistently
+**Standard:** Use `2,700+ tools` consistently
 
 **How to fix:**
 ```bash
@@ -174,7 +174,7 @@ sphinx-apidoc -f -o api ../src/tooluniverse
 grep -r "tools" docs/ --include="*.rst" | grep -E "[0-9]+"
 
 # Update to standard format (replace any stale counts with 1000+)
-sed -i 's/[0-9]*+ tools/1000+ tools/g' docs/quickstart.rst
+sed -i 's/[0-9]*+ tools/2,700+ tools/g' docs/quickstart.rst
 ```
 
 ## Manual Validation Scripts
@@ -371,7 +371,7 @@ cd docs && sphinx-apidoc -f -o api ../src/tooluniverse
 # Use standard format everywhere
 grep -r "[0-9]\+ tools" docs/ --include="*.rst"
 
-# Replace with "1000+ tools"
+# Replace with "2,700+ tools"
 # See DOCUMENTATION_STANDARDS.md for details
 ```
 

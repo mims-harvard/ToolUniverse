@@ -1,6 +1,6 @@
 # ToolUniverse Plugin for Codex
 
-1000+ scientific research tools for biology, chemistry, medicine, and data science.
+2,700+ scientific research tools for biology, chemistry, medicine, and data science.
 
 ## What is included
 

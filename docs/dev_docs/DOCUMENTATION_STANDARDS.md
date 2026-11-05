@@ -68,11 +68,11 @@ All other `.rst` and `.md` files are manually maintained:
 
 ### Tool Counts
 
-**Standard**: Use `1000+ tools` consistently across documentation.
+**Standard**: Use `2,700+ tools` consistently across documentation.
 
 - Actual count: run `tu status`; hard-coding it here is how it went stale
 - Use rounded public-facing number for simplicity
-- Update only when crossing major milestones (e.g., 1500+ tools)
+- Update only when crossing major milestones (e.g., 3000+ tools)
 
 **Where to update**:
 - `docs/index.rst` - Main landing page
