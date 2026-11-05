@@ -532,9 +532,26 @@ def _render_info(d: dict) -> str:
                 )
 
     # Full-detail sections: shown when get_tool_info returns the complete tool config
-    pkgs = d.get("required_packages") or d.get("required_api_keys")
-    if pkgs and isinstance(pkgs, list):
-        lines.append(f"\n  Required: {', '.join(str(p) for p in pkgs)}")
+    # `or` between these showed only the first: a tool needing both a package
+    # and a credential reported only the package. And required_binaries -- the
+    # system programs mmseqs/foldseek that pip cannot install -- was not shown
+    # at all, so `tu info` could not tell a caller what to install.
+    requirements = []
+    for key in ("required_packages", "required_api_keys", "required_binaries"):
+        value = d.get(key)
+        if not isinstance(value, list):
+            continue
+        for item in value:
+            if isinstance(item, dict):
+                name = item.get("name")
+                variable = item.get("env_var")
+                if not name:
+                    continue
+                requirements.append(f"{name} (or ${variable})" if variable else name)
+            elif item:
+                requirements.append(str(item))
+    if requirements:
+        lines.append(f"\n  Required: {', '.join(requirements)}")
 
     examples = d.get("test_examples")
     if examples and isinstance(examples, list):

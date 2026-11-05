@@ -17,7 +17,7 @@ def NCBIDatasets_list_genomes_by_taxon(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List genome assemblies available for a taxon (NCBI tax id or scientific name) via the NCBI Datase...
 
@@ -40,7 +40,7 @@ def NCBIDatasets_list_genomes_by_taxon(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

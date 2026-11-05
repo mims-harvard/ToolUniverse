@@ -16,7 +16,7 @@ def WoRMS_get_synonyms(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get taxonomic synonyms for a WoRMS AphiaID with complete access to the official 50-record pages. ...
 
@@ -37,7 +37,7 @@ def WoRMS_get_synonyms(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

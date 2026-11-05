@@ -16,7 +16,7 @@ def TCIA_get_patient_studies(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get study information for patients in The Cancer Imaging Archive (TCIA). Returns study metadata i...
 
@@ -37,7 +37,7 @@ def TCIA_get_patient_studies(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

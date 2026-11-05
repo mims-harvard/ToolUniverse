@@ -15,7 +15,7 @@ def HGNC_search_genes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search HGNC by symbol, name, alias, previous symbol, external ID, or location. Wildcards are supp...
 
@@ -34,7 +34,7 @@ def HGNC_search_genes(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

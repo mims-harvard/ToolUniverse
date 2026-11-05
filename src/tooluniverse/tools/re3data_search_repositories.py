@@ -16,7 +16,7 @@ def re3data_search_repositories(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search re3data.org for research data repositories worldwide. re3data is a global registry of 3,00...
 
@@ -37,7 +37,7 @@ def re3data_search_repositories(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

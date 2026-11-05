@@ -21,7 +21,7 @@ def FDAPurpleBook_search_products(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search FDA's Purple Book of licensed biological products: reference biologics, their licensed bio...
 
@@ -52,7 +52,7 @@ def FDAPurpleBook_search_products(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

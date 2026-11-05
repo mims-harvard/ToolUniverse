@@ -15,7 +15,7 @@ def OpenTargets_get_credible_set_colocalisation(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve GWAS/QTL colocalisation evidence for a credible set (by studyLocusId) from OpenTargets. ...
 
@@ -34,7 +34,7 @@ def OpenTargets_get_credible_set_colocalisation(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

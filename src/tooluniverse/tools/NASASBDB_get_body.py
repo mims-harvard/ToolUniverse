@@ -15,7 +15,7 @@ def NASASBDB_get_body(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get physical and orbital data for an asteroid, comet, or small solar system body from NASA's Smal...
 
@@ -34,7 +34,7 @@ def NASASBDB_get_body(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

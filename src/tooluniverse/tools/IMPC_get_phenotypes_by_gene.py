@@ -17,7 +17,7 @@ def IMPC_get_phenotypes_by_gene(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get IMPC phenotype calls for a mouse gene with exact Solr offset pagination. total_phenotype_call...
 
@@ -40,7 +40,7 @@ def IMPC_get_phenotypes_by_gene(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

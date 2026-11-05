@@ -18,7 +18,7 @@ def STITCH_get_chemical_protein_interactions(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get chemical-protein interactions from STITCH. Returns known and predicted interactions between c...
 
@@ -43,7 +43,7 @@ def STITCH_get_chemical_protein_interactions(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

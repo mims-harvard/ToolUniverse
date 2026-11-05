@@ -16,7 +16,7 @@ def EuropePMC_get_full_text(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve and parse full-text XML from Europe PMC into structured sections. Returns title, abstrac...
 
@@ -37,7 +37,7 @@ def EuropePMC_get_full_text(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

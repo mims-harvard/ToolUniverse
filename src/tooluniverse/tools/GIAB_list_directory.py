@@ -14,7 +14,7 @@ def GIAB_list_directory(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Browse NIST Genome in a Bottle's (GIAB) benchmark file release tree -- the reference-standard hig...
 
@@ -31,7 +31,7 @@ def GIAB_list_directory(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

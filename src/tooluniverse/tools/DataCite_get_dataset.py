@@ -14,7 +14,7 @@ def DataCite_get_dataset(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed metadata for a specific research dataset by its DOI from DataCite. Returns comprehen...
 
@@ -31,7 +31,7 @@ def DataCite_get_dataset(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

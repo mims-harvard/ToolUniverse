@@ -16,7 +16,7 @@ def OpenFDA_search_drug_ndc(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search the FDA National Drug Code Directory via openFDA with exact totals and skip pagination. Co...
 
@@ -37,7 +37,7 @@ def OpenFDA_search_drug_ndc(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

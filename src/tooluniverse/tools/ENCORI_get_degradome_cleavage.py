@@ -22,7 +22,7 @@ def ENCORI_get_degradome_cleavage(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Retrieve miRNA cleavage sites validated by degradome-seq (PARE / Degradome) via ENCORI (starBase)...
 
@@ -55,7 +55,7 @@ def ENCORI_get_degradome_cleavage(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -17,7 +17,7 @@ def ENCODE_search_hic_experiments(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search ENCODE Hi-C and intact Hi-C experiments for 3D genome organization data. Hi-C captures chr...
 
@@ -40,7 +40,7 @@ def ENCODE_search_hic_experiments(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

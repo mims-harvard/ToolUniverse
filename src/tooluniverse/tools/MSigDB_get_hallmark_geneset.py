@@ -15,7 +15,7 @@ def MSigDB_get_hallmark_geneset(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve a Hallmark gene set from MSigDB. The Hallmark collection (H) contains 50 gene sets repre...
 
@@ -34,7 +34,7 @@ def MSigDB_get_hallmark_geneset(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

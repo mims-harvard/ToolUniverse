@@ -17,7 +17,7 @@ def GDC_get_survival(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get Kaplan-Meier survival data for a GDC/TCGA cancer cohort. Returns time-to-event data with cens...
 
@@ -40,7 +40,7 @@ def GDC_get_survival(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -1,7 +1,7 @@
 """
 EWASCatalog_search_by_gene
 
-NOTE (checked 2026-10-09): ewascatalog.org has answered HTTP 503 site-wide since at least 2026-10...
+NOTE (re-checked 2026-11-01): the 503 reported on 2026-10-09 is gone, but the catalogue is now HT...
 """
 
 from typing import Any, Optional, Callable
@@ -15,9 +15,9 @@ def EWASCatalog_search_by_gene(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
-    NOTE (checked 2026-10-09): ewascatalog.org has answered HTTP 503 site-wide since at least 2026-10...
+    NOTE (re-checked 2026-11-01): the 503 reported on 2026-10-09 is gone, but the catalogue is now HT...
 
     Parameters
     ----------
@@ -34,7 +34,7 @@ def EWASCatalog_search_by_gene(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

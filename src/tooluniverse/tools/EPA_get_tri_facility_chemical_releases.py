@@ -16,7 +16,7 @@ def EPA_get_tri_facility_chemical_releases(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get per-chemical, per-year EPA TRI reporting forms for one facility. Results use native Envirofac...
 
@@ -37,7 +37,7 @@ def EPA_get_tri_facility_chemical_releases(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

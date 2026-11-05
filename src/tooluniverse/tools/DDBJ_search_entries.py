@@ -17,7 +17,7 @@ def DDBJ_search_entries(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Keyword search one DDBJ entry type (bioproject, biosample, sra-study, sra-experiment, sra-run, sr...
 
@@ -40,7 +40,7 @@ def DDBJ_search_entries(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

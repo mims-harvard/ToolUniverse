@@ -14,7 +14,7 @@ def MassBank_get_record_by_accession(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve a complete MassBank Europe spectrum record by its accession identifier. Returns the full...
 
@@ -31,7 +31,7 @@ def MassBank_get_record_by_accession(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -15,7 +15,7 @@ def NIHDSLD_search_products(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search the NIH Dietary Supplement Label Database (DSLD), covering over 200,000 US supplement prod...
 
@@ -34,7 +34,7 @@ def NIHDSLD_search_products(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

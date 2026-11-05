@@ -14,7 +14,7 @@ def OpenML_get_dataset(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed metadata for a specific OpenML dataset by its numeric ID. Returns comprehensive info...
 
@@ -31,7 +31,7 @@ def OpenML_get_dataset(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

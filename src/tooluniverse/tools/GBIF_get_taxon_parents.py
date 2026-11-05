@@ -14,7 +14,7 @@ def GBIF_get_taxon_parents(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get the full ranked ancestor lineage of a GBIF Backbone taxon. Given a taxonKey, returns the orde...
 
@@ -31,7 +31,7 @@ def GBIF_get_taxon_parents(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

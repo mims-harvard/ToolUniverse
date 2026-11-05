@@ -19,7 +19,7 @@ def BVBRC_search_epitopes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search for pathogen epitopes (B-cell and T-cell) in BV-BRC with explicit pagination. Metadata rep...
 
@@ -46,7 +46,7 @@ def BVBRC_search_epitopes(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

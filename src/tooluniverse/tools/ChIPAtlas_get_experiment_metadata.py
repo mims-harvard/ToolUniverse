@@ -16,7 +16,7 @@ def ChIPAtlas_get_experiment_metadata(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     ChIP-Atlas single-experiment structured metadata: given one experiment accession (SRX/DRX/ERX), r...
 
@@ -37,7 +37,7 @@ def ChIPAtlas_get_experiment_metadata(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

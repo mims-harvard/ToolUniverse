@@ -14,7 +14,7 @@ def ModelDB_list_models(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List all computational neuroscience model IDs from ModelDB, optionally filtered by simulation env...
 
@@ -31,7 +31,7 @@ def ModelDB_list_models(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

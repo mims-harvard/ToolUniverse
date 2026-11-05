@@ -17,7 +17,7 @@ def EPA_search_frs_facilities(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search EPA Facility Registry Service sites by US state and optional city. Results use native Envi...
 
@@ -40,7 +40,7 @@ def EPA_search_frs_facilities(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

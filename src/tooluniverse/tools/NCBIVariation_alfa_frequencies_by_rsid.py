@@ -14,7 +14,7 @@ def NCBIVariation_alfa_frequencies_by_rsid(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get ALFA (Allele Frequency Aggregator) per-ancestry allele frequencies for a dbSNP rsID from NCBI...
 
@@ -31,7 +31,7 @@ def NCBIVariation_alfa_frequencies_by_rsid(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

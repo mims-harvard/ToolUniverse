@@ -17,7 +17,7 @@ def EpiGraphDB_get_genetic_correlations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get strong genetic correlations (|rg| > 0.8) between a GWAS trait and other traits with recoverab...
 
@@ -40,7 +40,7 @@ def EpiGraphDB_get_genetic_correlations(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

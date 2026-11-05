@@ -14,7 +14,7 @@ def PGSCatalog_search_traits(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search the PGS Catalog (pgscatalog.org, EMBL-EBI — the open database of published polygenic score...
 
@@ -31,7 +31,7 @@ def PGSCatalog_search_traits(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

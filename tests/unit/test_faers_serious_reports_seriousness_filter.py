@@ -102,7 +102,22 @@ def test_the_generated_python_wrapper_exposes_the_parameter_too():
 
 
 def test_the_return_schema_no_longer_promises_a_serious_only_list():
-    description = _config(TOOL)["return_schema"]["description"]
+    """The description travelled with the success schema into a `oneOf` branch.
+
+    The schema is the contract on the whole return here, not on a `data`
+    payload, so it also has to describe the {status, error, error_details}
+    payload run_one_function returns on a credential, argument or transport
+    failure -- which made it a oneOf. The page-of-reports branch is the one
+    carrying this description.
+    """
+    schema = _config(TOOL)["return_schema"]
+    branches = [
+        b
+        for b in schema.get("oneOf", [schema])
+        if "reports" in (b.get("properties") or {})
+    ]
+    assert len(branches) == 1
+    description = branches[0]["description"]
 
     assert "serious" in description
     assert "non-serious" in description

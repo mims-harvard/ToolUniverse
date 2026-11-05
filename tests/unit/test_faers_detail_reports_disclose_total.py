@@ -77,14 +77,52 @@ def test_a_missing_upstream_total_stays_none_rather_than_becoming_zero():
     assert "truncation_note" not in envelope
 
 
+def _success_branch(return_schema):
+    """The branch describing a successful return.
+
+    These schemas are the contract on the whole return, not on a `data` payload
+    (`cli.py`'s `_schema_describes_envelope` / issue #246), so they also have to
+    describe the `{status, error, error_details}` payload `run_one_function`
+    returns on a credential, argument or transport failure. That made them a
+    `oneOf`, and this test is about the success half of it.
+    """
+    if "oneOf" not in return_schema:
+        return return_schema
+    branches = [
+        b for b in return_schema["oneOf"] if "reports" in (b.get("properties") or {})
+    ]
+    assert len(branches) == 1, (
+        f"expected exactly one branch describing a page of reports, "
+        f"found {len(branches)}"
+    )
+    return branches[0]
+
+
 @pytest.mark.parametrize("tool_name", DETAIL_TOOLS)
 def test_the_return_schema_describes_the_envelope_not_a_list(tool_name):
-    return_schema = _config(tool_name)["return_schema"]
+    success = _success_branch(_config(tool_name)["return_schema"])
 
-    assert return_schema["type"] == "object"
-    assert return_schema["properties"]["reports"]["type"] == "array"
-    assert return_schema["properties"]["total_available"]["type"] == ["integer", "null"]
-    assert "total_available" in return_schema["required"]
+    assert success["type"] == "object"
+    assert success["properties"]["reports"]["type"] == "array"
+    assert success["properties"]["total_available"]["type"] == ["integer", "null"]
+    assert "total_available" in success["required"]
+
+
+@pytest.mark.parametrize("tool_name", DETAIL_TOOLS)
+def test_the_return_schema_also_describes_a_framework_error(tool_name):
+    """The reason the schema above is now a branch rather than the whole thing.
+
+    Without this, the next person reading `_success_branch` has no way to tell
+    whether the other branch is load-bearing or left over.
+    """
+    return_schema = _config(tool_name)["return_schema"]
+    envelope = {"status": "error", "error": "boom", "error_details": {"code": 500}}
+
+    jsonschema = pytest.importorskip("jsonschema")
+    jsonschema.validate(envelope, return_schema)
+
+    with pytest.raises(jsonschema.ValidationError):
+        jsonschema.validate(envelope, _success_branch(return_schema))
 
 
 @pytest.mark.parametrize("tool_name", DETAIL_TOOLS)
@@ -109,10 +147,14 @@ def test_the_generated_wrapper_annotates_the_new_return_type(tool_name):
 
 
 def test_the_seriousness_return_schema_still_documents_the_serious_mix():
-    """Pinned by test_faers_serious_reports_seriousness_filter; keep it true."""
-    description = _config("FAERS_search_serious_reports_by_drug")["return_schema"][
-        "description"
-    ]
+    """Pinned by test_faers_serious_reports_seriousness_filter; keep it true.
+
+    The description travelled with the success schema when it became a `oneOf`
+    branch, so it is read from the branch rather than the top level.
+    """
+    description = _success_branch(
+        _config("FAERS_search_serious_reports_by_drug")["return_schema"]
+    )["description"]
 
     assert "serious" in description
     assert "non-serious" in description

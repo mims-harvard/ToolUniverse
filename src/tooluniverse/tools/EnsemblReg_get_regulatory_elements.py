@@ -17,7 +17,7 @@ def EnsemblReg_get_regulatory_elements(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get Ensembl regulatory features (enhancers, promoters, CTCF binding sites, open chromatin, TF bin...
 
@@ -40,7 +40,7 @@ def EnsemblReg_get_regulatory_elements(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

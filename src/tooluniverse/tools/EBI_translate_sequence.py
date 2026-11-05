@@ -18,7 +18,7 @@ def EBI_translate_sequence(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Translate nucleotide to protein, back-translate protein to nucleotide, or produce a six-frame tra...
 
@@ -43,7 +43,7 @@ def EBI_translate_sequence(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

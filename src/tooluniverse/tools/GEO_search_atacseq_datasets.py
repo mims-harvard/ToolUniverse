@@ -17,7 +17,7 @@ def GEO_search_atacseq_datasets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search NCBI GEO GSE series for ATAC-seq datasets with exact offset pagination. Returns GSE access...
 
@@ -40,7 +40,7 @@ def GEO_search_atacseq_datasets(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -17,7 +17,7 @@ def CPIC_list_guidelines(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List all CPIC pharmacogenomic guidelines. Returns ~29 evidence-based guidelines (count may vary a...
 
@@ -40,7 +40,7 @@ def CPIC_list_guidelines(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -17,7 +17,7 @@ def SemanticScholar_search_authors(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search for researchers/authors on Semantic Scholar by name. Results use exact offset pagination: ...
 
@@ -40,7 +40,7 @@ def SemanticScholar_search_authors(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

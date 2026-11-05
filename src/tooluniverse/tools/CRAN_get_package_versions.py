@@ -14,7 +14,7 @@ def CRAN_get_package_versions(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get all historical versions of an R package from CRAN with release dates and dependencies for eac...
 
@@ -31,7 +31,7 @@ def CRAN_get_package_versions(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

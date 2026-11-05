@@ -15,7 +15,7 @@ def NASA_DONKI_get_coronal_mass_ejections(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search NASA DONKI (Database Of Notifications, Knowledge, Information) for Coronal Mass Ejection (...
 
@@ -34,7 +34,7 @@ def NASA_DONKI_get_coronal_mass_ejections(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

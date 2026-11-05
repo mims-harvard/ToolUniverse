@@ -20,7 +20,7 @@ def PDBe_KB_get_interface_residues(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get protein-protein interaction interface residues for a UniProt protein from PDBe-KB. Results ar...
 
@@ -49,7 +49,7 @@ def PDBe_KB_get_interface_residues(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

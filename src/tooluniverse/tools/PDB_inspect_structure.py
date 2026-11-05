@@ -21,7 +21,7 @@ def PDB_inspect_structure(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Inspect local legacy PDB or public ID (1UBQ). Reports selected-model coordinates, chains, SEQRES ...
 
@@ -52,7 +52,7 @@ def PDB_inspect_structure(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

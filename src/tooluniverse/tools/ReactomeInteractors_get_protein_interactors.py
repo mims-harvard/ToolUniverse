@@ -16,7 +16,7 @@ def ReactomeInteractors_get_protein_interactors(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get protein-protein interaction partners from Reactome's IntAct-derived data. Returns the authori...
 
@@ -37,7 +37,7 @@ def ReactomeInteractors_get_protein_interactors(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

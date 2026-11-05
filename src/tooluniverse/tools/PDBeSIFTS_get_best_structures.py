@@ -16,7 +16,7 @@ def PDBeSIFTS_get_best_structures(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the best available PDB structures for a UniProt protein, ranked by coverage and resolution fr...
 
@@ -37,7 +37,7 @@ def PDBeSIFTS_get_best_structures(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

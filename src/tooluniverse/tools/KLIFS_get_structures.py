@@ -14,7 +14,7 @@ def KLIFS_get_structures(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get crystal structures for a specific kinase from KLIFS. Returns all annotated crystal structures...
 
@@ -31,7 +31,7 @@ def KLIFS_get_structures(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -17,7 +17,7 @@ def GxA_get_experiment_expression(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get gene expression data from a specific Expression Atlas experiment. Returns expression levels a...
 
@@ -40,7 +40,7 @@ def GxA_get_experiment_expression(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

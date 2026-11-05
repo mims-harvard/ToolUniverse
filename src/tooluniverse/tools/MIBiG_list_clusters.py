@@ -14,7 +14,7 @@ def MIBiG_list_clusters(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List biosynthetic gene clusters (BGCs) from the MIBiG repository. MIBiG (Minimum Information abou...
 
@@ -31,7 +31,7 @@ def MIBiG_list_clusters(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

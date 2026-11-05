@@ -16,7 +16,7 @@ def CoL_get_children(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get immediate child taxa of a Catalogue of Life taxon through the official tree/{id}/children end...
 
@@ -37,7 +37,7 @@ def CoL_get_children(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

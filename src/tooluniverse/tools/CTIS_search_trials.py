@@ -16,7 +16,7 @@ def CTIS_search_trials(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search EU CTIS with strict, recoverable one-based pagination. Returns exact total_records plus ha...
 
@@ -37,7 +37,7 @@ def CTIS_search_trials(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

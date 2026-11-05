@@ -15,7 +15,7 @@ def gnomad_get_sv_detail(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed information for a specific gnomAD structural variant by its ID. Resolves IDs from bo...
 
@@ -34,7 +34,7 @@ def gnomad_get_sv_detail(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -16,7 +16,7 @@ def MGnify_list_analyses(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List analyses for a study with explicit page pagination. Preserves upstream JSON:API links, total...
 
@@ -37,7 +37,7 @@ def MGnify_list_analyses(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -17,7 +17,7 @@ def ProtacDB_search_protacs(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search PROTAC-DB 3.0 for PROTAC (Proteolysis Targeting Chimera) compounds. Filter by target prote...
 
@@ -40,7 +40,7 @@ def ProtacDB_search_protacs(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

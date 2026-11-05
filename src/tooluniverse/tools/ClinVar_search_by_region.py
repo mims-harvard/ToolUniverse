@@ -24,7 +24,7 @@ def ClinVar_search_by_region(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Find ClinVar variants that OVERLAP a genomic region, including large copy-number variants that be...
 
@@ -61,7 +61,7 @@ def ClinVar_search_by_region(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

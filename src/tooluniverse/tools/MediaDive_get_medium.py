@@ -14,7 +14,7 @@ def MediaDive_get_medium(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve the full recipe for one MediaDive medium: every solution's ingredient list with exact am...
 
@@ -31,7 +31,7 @@ def MediaDive_get_medium(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

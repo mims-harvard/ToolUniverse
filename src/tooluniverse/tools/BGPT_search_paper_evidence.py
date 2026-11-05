@@ -17,7 +17,7 @@ def BGPT_search_paper_evidence(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search scientific papers with BGPT and return structured, full-text-derived study evidence for cr...
 
@@ -40,7 +40,7 @@ def BGPT_search_paper_evidence(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

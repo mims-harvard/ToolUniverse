@@ -21,7 +21,7 @@ def PathwayCommons_paths_between(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Find mechanistic paths connecting genes in Pathway Commons. Edge results are recoverably paginate...
 
@@ -52,7 +52,7 @@ def PathwayCommons_paths_between(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

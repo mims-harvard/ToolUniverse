@@ -13,7 +13,7 @@ def DiseaseSh_get_global_stats(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get global COVID-19 statistics from the Disease.sh API. Returns worldwide totals for confirmed ca...
 
@@ -29,7 +29,7 @@ def DiseaseSh_get_global_stats(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

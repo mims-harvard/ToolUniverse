@@ -14,7 +14,7 @@ def Reactome_get_entity_compartment(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> dict[str, Any] | list[Any]:
     """
     Get compartment information for an entity. Returns TSV-formatted compartment data parsed into str...
 
@@ -31,7 +31,7 @@ def Reactome_get_entity_compartment(
 
     Returns
     -------
-    dict[str, Any]
+    dict[str, Any] | list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

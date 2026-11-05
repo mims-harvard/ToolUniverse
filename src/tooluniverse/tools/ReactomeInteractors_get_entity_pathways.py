@@ -15,7 +15,7 @@ def ReactomeInteractors_get_entity_pathways(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Find Reactome biological pathways that contain a specific molecular entity. Returns pathway stabl...
 
@@ -34,7 +34,7 @@ def ReactomeInteractors_get_entity_pathways(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

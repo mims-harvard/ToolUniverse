@@ -15,7 +15,7 @@ def SmartAPI_search_apis(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search the SmartAPI registry of ~270 biomedical web APIs (OpenAPI-described, many NCATS Translato...
 
@@ -34,7 +34,7 @@ def SmartAPI_search_apis(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

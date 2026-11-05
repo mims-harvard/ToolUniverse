@@ -16,7 +16,7 @@ def ProtacDB_search_targets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search PROTAC target proteins in PROTAC-DB 3.0. Returns target protein names (short and long). Ov...
 
@@ -37,7 +37,7 @@ def ProtacDB_search_targets(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -15,7 +15,7 @@ def DbGaP_search_studies(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search dbGaP (NCBI's controlled-access US genotype-phenotype archive, the American counterpart to...
 
@@ -34,7 +34,7 @@ def DbGaP_search_studies(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

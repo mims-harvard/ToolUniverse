@@ -14,7 +14,7 @@ def GNPS_get_library_record(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve a full GNPS library reference spectrum record by its SpectrumID / CCMSLIB accession. GNP...
 
@@ -31,7 +31,7 @@ def GNPS_get_library_record(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

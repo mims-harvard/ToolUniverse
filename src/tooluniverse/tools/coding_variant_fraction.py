@@ -19,7 +19,7 @@ def coding_variant_fraction(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Compute the fraction of CODING variants in an Excel/CSV variant table that match a given Sequence...
 
@@ -46,7 +46,7 @@ def coding_variant_fraction(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

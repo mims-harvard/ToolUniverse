@@ -15,7 +15,7 @@ def IdentifiersOrg_list_namespaces(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     List all registered namespaces in the Identifiers.org registry with pagination. Returns database ...
 
@@ -34,7 +34,7 @@ def IdentifiersOrg_list_namespaces(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

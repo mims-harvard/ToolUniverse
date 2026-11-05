@@ -21,7 +21,7 @@ def GTEx_get_single_nucleus_expression(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get GTEx single-nucleus (snRNA-seq) gene expression resolved by cell type from the snRNA-seq pilo...
 
@@ -52,7 +52,7 @@ def GTEx_get_single_nucleus_expression(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

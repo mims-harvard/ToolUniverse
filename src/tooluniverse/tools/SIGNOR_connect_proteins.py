@@ -17,7 +17,7 @@ def SIGNOR_connect_proteins(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Find the curated causal signaling sub-network connecting a set of proteins. Results are recoverab...
 
@@ -40,7 +40,7 @@ def SIGNOR_connect_proteins(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

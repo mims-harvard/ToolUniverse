@@ -18,7 +18,7 @@ def HuggingFace_search_models(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search the HuggingFace Hub for machine learning models. Results use the Hub's opaque cursor pagin...
 
@@ -43,7 +43,7 @@ def HuggingFace_search_models(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

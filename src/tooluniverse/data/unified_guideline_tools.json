@@ -755,6 +755,11 @@
               "type": "string",
               "description": "Type of content (full_guideline)"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -865,6 +870,11 @@
               "type": "string",
               "description": "Additional notes about content availability"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -908,53 +918,68 @@
       ]
     },
     "return_schema": {
-      "type": "array",
-      "description": "List of CMA Infobase clinical practice guidelines",
-      "items": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string",
-            "description": "Title of the guideline"
-          },
-          "url": {
-            "type": "string",
-            "description": "URL to access the guideline"
-          },
-          "description": {
-            "type": "string",
-            "description": "Description or summary of the guideline"
-          },
-          "date": {
-            "type": "string",
-            "description": "Publication or update date"
-          },
-          "source": {
-            "type": "string",
-            "description": "Source organization (CMA)"
-          },
-          "organization": {
-            "type": "string",
-            "description": "Canadian healthcare organization that developed the guideline"
-          },
-          "is_guideline": {
-            "type": "boolean",
-            "description": "Indicates this is a clinical guideline"
-          },
-          "official": {
-            "type": "boolean",
-            "description": "Indicates this is an official publication"
-          },
-          "content": {
-            "type": "string",
-            "description": "Full content of the guideline"
-          },
-          "note": {
-            "type": "string",
-            "description": "Additional notes about content availability"
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of CMA Infobase clinical practice guidelines",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Title of the guideline"
+              },
+              "url": {
+                "type": "string",
+                "description": "URL to access the guideline"
+              },
+              "description": {
+                "type": "string",
+                "description": "Description or summary of the guideline"
+              },
+              "date": {
+                "type": "string",
+                "description": "Publication or update date"
+              },
+              "source": {
+                "type": "string",
+                "description": "Source organization (CMA)"
+              },
+              "organization": {
+                "type": "string",
+                "description": "Canadian healthcare organization that developed the guideline"
+              },
+              "is_guideline": {
+                "type": "boolean",
+                "description": "Indicates this is a clinical guideline"
+              },
+              "official": {
+                "type": "boolean",
+                "description": "Indicates this is an official publication"
+              },
+              "content": {
+                "type": "string",
+                "description": "Full content of the guideline"
+              },
+              "note": {
+                "type": "string",
+                "description": "Additional notes about content availability"
+              }
+            }
           }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {

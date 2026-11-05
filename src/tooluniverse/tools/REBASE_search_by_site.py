@@ -17,7 +17,7 @@ def REBASE_search_by_site(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Find restriction enzymes by what they recognize. Give site to find every enzyme reading an exact ...
 
@@ -40,7 +40,7 @@ def REBASE_search_by_site(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

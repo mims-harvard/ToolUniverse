@@ -17,7 +17,7 @@ def Pathoplexus_count_sequences(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Count and aggregate open pathogen genome sequences in Pathoplexus (LAPIS) for genomic-epidemiolog...
 
@@ -40,7 +40,7 @@ def Pathoplexus_count_sequences(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

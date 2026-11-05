@@ -18,7 +18,7 @@ def OncoKB_annotate_mutations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Annotate a cancer mutation using OncoKB. Accepts query string like 'BRAF V600E' or separate gene/...
 
@@ -43,7 +43,7 @@ def OncoKB_annotate_mutations(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

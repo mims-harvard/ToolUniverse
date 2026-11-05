@@ -14,7 +14,7 @@ def BioSamples_get_sample(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed metadata for a specific biological sample from the EBI BioSamples database by access...
 
@@ -31,7 +31,7 @@ def BioSamples_get_sample(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -16,7 +16,7 @@ def NeuroVault_list_collection_images(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     List all statistical map images in a specific NeuroVault collection. Returns image metadata inclu...
 
@@ -37,7 +37,7 @@ def NeuroVault_list_collection_images(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -21,19 +21,30 @@ import requests
 from bs4 import BeautifulSoup
 
 from .base_tool import BaseTool
+from .http_utils import bot_challenge
 from .tool_registry import register_tool
 
 GSA_BASE_URL = "https://ngdc.cncb.ac.cn/gsa"
 _HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; ToolUniverse/1.0)"}
 
 
-# Markers of GSA's JavaScript browser check: its title and its heading.
-_BROWSER_CHECK_MARKERS = ("正在进行安全检查", "正在验证您的浏览器")
-
-
 def _is_browser_check(html: str) -> bool:
-    head = (html or "")[:4000]
-    return any(marker in head for marker in _BROWSER_CHECK_MARKERS)
+    """True when GSA served its browser check instead of the record.
+
+    This used to match two Chinese markers. GSA has since translated the page
+    -- it is now titled "SecurityCheck" and reads "Verifying your browser,
+    please wait..." -- so those markers stopped matching, the check page fell
+    through to the parser, and a caller asking for CRA002926 was told no such
+    accession exists. It does exist. The shared marker list in http_utils
+    carries both languages for that reason.
+    """
+
+    class _Body:
+        status_code = 200
+        headers: dict = {}
+        text = html or ""
+
+    return bot_challenge(_Body()) is not None
 
 
 def _panel_by_heading(soup: BeautifulSoup, heading_text: str):
@@ -52,7 +63,13 @@ def _label_value(soup: BeautifulSoup, label: str) -> Optional[str]:
 
 def _publication_info(soup: BeautifulSoup) -> Dict[str, Optional[str]]:
     panel = _panel_by_heading(soup, "出版信息")
-    fields = {"title": None, "journal": None, "year": None, "doi": None, "pubmed_id": None}
+    fields = {
+        "title": None,
+        "journal": None,
+        "year": None,
+        "doi": None,
+        "pubmed_id": None,
+    }
     if panel is None:
         return fields
     label_map = {
@@ -80,7 +97,9 @@ def _download_urls(soup: BeautifulSoup) -> Dict[str, Optional[str]]:
     urls = {"https": None, "ftp": None}
     if panel is None:
         return urls
-    https_a = panel.find("a", href=lambda h: h and h.startswith("https://download.cncb.ac.cn"))
+    https_a = panel.find(
+        "a", href=lambda h: h and h.startswith("https://download.cncb.ac.cn")
+    )
     ftp_a = panel.find("a", href=lambda h: h and h.startswith("ftp://"))
     urls["https"] = https_a.get("href") if https_a else None
     urls["ftp"] = ftp_a.get("href") if ftp_a else None

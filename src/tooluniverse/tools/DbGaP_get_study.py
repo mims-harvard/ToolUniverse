@@ -14,7 +14,7 @@ def DbGaP_get_study(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve one dbGaP study's full public metadata by its phs accession: description, medical condit...
 
@@ -31,7 +31,7 @@ def DbGaP_get_study(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

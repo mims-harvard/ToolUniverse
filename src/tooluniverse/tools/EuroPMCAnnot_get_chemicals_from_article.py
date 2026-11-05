@@ -16,7 +16,7 @@ def EuroPMCAnnot_get_chemicals_from_article(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Extract chemical/compound mentions from a scientific article using Europe PMC text mining. Return...
 
@@ -37,7 +37,7 @@ def EuroPMCAnnot_get_chemicals_from_article(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

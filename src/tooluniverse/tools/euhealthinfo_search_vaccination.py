@@ -20,7 +20,7 @@ def euhealthinfo_search_vaccination(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     This tool enables users to discover and access datasets related to vaccination and immunization s...
 
@@ -49,7 +49,7 @@ def euhealthinfo_search_vaccination(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

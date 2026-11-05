@@ -17,7 +17,7 @@ def EPA_search_tri_facilities(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search EPA TRI facilities by US state and optional city. Results use native Envirofacts paginatio...
 
@@ -40,7 +40,7 @@ def EPA_search_tri_facilities(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

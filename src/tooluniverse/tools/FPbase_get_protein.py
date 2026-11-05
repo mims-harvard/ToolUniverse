@@ -14,7 +14,7 @@ def FPbase_get_protein(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get detailed data for a fluorescent protein from FPbase by its slug/short name. Returns the prote...
 
@@ -31,7 +31,7 @@ def FPbase_get_protein(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

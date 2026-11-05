@@ -33,6 +33,11 @@
         "return_schema": {
             "oneOf": [
                 {
+                    "not": {
+                        "required": [
+                            "error"
+                        ]
+                    },
                     "type": "object",
                     "properties": {
                                 "gene_id": {
@@ -472,6 +477,11 @@
         "return_schema": {
             "oneOf": [
                 {
+                    "not": {
+                        "required": [
+                            "error"
+                        ]
+                    },
                     "type": "object",
                     "properties": {
                                 "tax_id": {
@@ -699,6 +709,11 @@
         "return_schema": {
           "oneOf": [
             {
+              "not": {
+                "required": [
+                  "error"
+                ]
+              },
               "type": "object",
               "description": "Curated assembly fields (accession, organism, level, stats)",
               "properties": {

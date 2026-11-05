@@ -14,7 +14,7 @@ def OpenTree_get_mrca(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Find the Most Recent Common Ancestor (MRCA) of a set of taxa in the Open Tree of Life synthetic p...
 
@@ -31,7 +31,7 @@ def OpenTree_get_mrca(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -16,7 +16,7 @@ def ProteomicsDB_get_protein_meltome(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get a protein's thermal proteome profiling (meltome / TPP) melting curves from ProteomicsDB by ge...
 
@@ -37,7 +37,7 @@ def ProteomicsDB_get_protein_meltome(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -18,7 +18,7 @@ def HuBMAP_search_samples(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search HuBMAP biospecimen Samples with exact totals and Elasticsearch offset pagination. Continue...
 
@@ -43,7 +43,7 @@ def HuBMAP_search_samples(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

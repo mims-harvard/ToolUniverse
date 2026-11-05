@@ -16,7 +16,7 @@ def OpenNIH_get_institution_profile(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve one resolved institution's funding history, mechanism mix, and top PIs for an optional f...
 
@@ -37,7 +37,7 @@ def OpenNIH_get_institution_profile(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

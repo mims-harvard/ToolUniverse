@@ -19,7 +19,7 @@ def WorldBank_get_indicator(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get World Bank development indicator data for one or more countries over time. Returns economic, ...
 
@@ -46,7 +46,7 @@ def WorldBank_get_indicator(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -14,7 +14,7 @@ def RGD_get_orthologs(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get orthologs of a rat gene across species (human, mouse, chinchilla, dog, pig, etc.) from RGD. R...
 
@@ -31,7 +31,7 @@ def RGD_get_orthologs(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -14,7 +14,7 @@ def EVA_get_clustered_variant_by_rs(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Resolve an EVA clustered-variant RS accession to its canonical assembly/contig/position record us...
 
@@ -31,7 +31,7 @@ def EVA_get_clustered_variant_by_rs(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

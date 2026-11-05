@@ -17,7 +17,7 @@ def ExpressionAtlas_get_baseline(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     List baseline gene expression experiments in EBI Expression Atlas for a given species. The `gene`...
 
@@ -40,7 +40,7 @@ def ExpressionAtlas_get_baseline(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

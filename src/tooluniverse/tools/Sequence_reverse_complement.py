@@ -15,7 +15,7 @@ def Sequence_reverse_complement(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Return the reverse complement of a DNA sequence. Supports A, T, C, G, and N bases. Useful for pri...
 
@@ -34,7 +34,7 @@ def Sequence_reverse_complement(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

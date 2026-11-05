@@ -48,7 +48,7 @@
             "description": "Abstract of the article (HTML tags removed)"
           },
           "authors": {
-            "type": "array",
+            "type": ["array", "string"],
             "items": {
               "type": "string"
             },
@@ -79,7 +79,7 @@
             "description": "Open access status (always true for DOAJ)"
           },
           "keywords": {
-            "type": "array",
+            "type": ["array", "string"],
             "items": {
               "type": "string"
             },

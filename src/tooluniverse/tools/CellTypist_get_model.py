@@ -14,7 +14,7 @@ def CellTypist_get_model(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve metadata for one CellTypist model by filename, including its training description, numbe...
 
@@ -31,7 +31,7 @@ def CellTypist_get_model(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

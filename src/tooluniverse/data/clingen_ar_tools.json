@@ -71,6 +71,11 @@
               },
               "description": "Genomic coordinates in different assemblies"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -135,6 +140,11 @@
               "type": "integer",
               "description": "Number of external databases with records"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -254,6 +264,11 @@
                 }
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

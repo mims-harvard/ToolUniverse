@@ -17,7 +17,7 @@ def CryoET_list_depositions(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Browse depositions from the CZ BioHub CryoET Data Portal. A deposition is the top-level submissio...
 
@@ -40,7 +40,7 @@ def CryoET_list_depositions(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

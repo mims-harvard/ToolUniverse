@@ -15,7 +15,7 @@ def STITCH_resolve_identifier(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Resolve a chemical or protein name to STITCH database identifiers. Useful for mapping common name...
 
@@ -34,7 +34,7 @@ def STITCH_resolve_identifier(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -87,8 +87,24 @@
         "motif_id": {"type": ["string", "null"]},
         "gene_name_human": {"type": ["string", "null"]},
         "gene_name_mouse": {"type": ["string", "null"]},
-        "gene_synonyms_human": {"type": ["array", "null"]},
-        "gene_synonyms_mouse": {"type": ["array", "null"]},
+        "gene_synonyms_human": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "gene_synonyms_mouse": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
         "quality": {"type": ["string", "null"]},
         "consensus": {"type": ["string", "null"]},
         "model_length": {"type": ["integer", "null"]},
@@ -98,13 +114,45 @@
         "uniprot_id_mouse": {"type": ["string", "null"]},
         "uniprot_ac_human": {"type": ["string", "null"]},
         "uniprot_ac_mouse": {"type": ["string", "null"]},
-        "hgnc_ids": {"type": ["array", "null"]},
-        "entrezgene_ids_human": {"type": ["array", "null"]},
-        "entrezgene_ids_mouse": {"type": ["array", "null"]},
+        "hgnc_ids": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "entrezgene_ids_human": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
+        "entrezgene_ids_mouse": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
         "tfclass": {"type": ["object", "null"]},
         "motif_cluster": {"type": ["string", "null"]},
         "quality_metrics": {"type": ["object", "null"]},
-        "previous_names": {"type": ["array", "null"]},
+        "previous_names": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          }
+        },
         "retracted": {"type": ["boolean", "null"]},
         "pwm_requested": {
           "type": "boolean"
@@ -116,7 +164,18 @@
             "not_requested"
           ]
         },
-        "pwm": {"type": ["array", "null"]}
+        "pwm": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        }
       }
     }
   }

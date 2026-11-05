@@ -18,7 +18,7 @@ def EuroPMCAnnot_get_annotations_by_type(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get all annotations of a specific type from multiple articles using the Europe PMC Annotations AP...
 
@@ -43,7 +43,7 @@ def EuroPMCAnnot_get_annotations_by_type(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

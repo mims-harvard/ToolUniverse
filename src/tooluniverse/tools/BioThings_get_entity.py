@@ -15,7 +15,7 @@ def BioThings_get_entity(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve one record from a BioThings API by its _id, as returned in BioThings_query results. Exam...
 
@@ -34,7 +34,7 @@ def BioThings_get_entity(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

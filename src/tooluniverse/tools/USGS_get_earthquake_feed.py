@@ -15,7 +15,7 @@ def USGS_get_earthquake_feed(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get recent USGS earthquake data feeds in GeoJSON format. Returns earthquakes based on magnitude t...
 
@@ -34,7 +34,7 @@ def USGS_get_earthquake_feed(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

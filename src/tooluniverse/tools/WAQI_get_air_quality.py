@@ -14,7 +14,7 @@ def WAQI_get_air_quality(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get real-time Air Quality Index (AQI) data for a city or monitoring station using the World Air Q...
 
@@ -31,7 +31,7 @@ def WAQI_get_air_quality(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

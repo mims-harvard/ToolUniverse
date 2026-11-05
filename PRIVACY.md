@@ -50,7 +50,7 @@ data anywhere:
 ## Opt-in hosted backends
 
 Some tools are opt-in hosted services that are only reached when you select
-them explicitly — for example the `parallel`, `serpbase` and `firecrawl`
+them explicitly — for example the `parallel`, `serpbase`, `firecrawl` and `keenable`
 backends of `web_search`. Those tools state in their description that the
 query is sent to a hosted third party, and the response carries a notice
 saying so.

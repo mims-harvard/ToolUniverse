@@ -14,7 +14,7 @@ def TDC_list_datasets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     List the available dataset names for a Therapeutics Data Commons (TDC) problem, via the PyTDC pac...
 
@@ -31,7 +31,7 @@ def TDC_list_datasets(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

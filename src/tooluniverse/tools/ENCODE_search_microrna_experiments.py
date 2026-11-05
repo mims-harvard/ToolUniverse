@@ -16,7 +16,7 @@ def ENCODE_search_microrna_experiments(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search ENCODE microRNA-seq experiments. MicroRNA-seq profiles small regulatory RNAs (miRNAs, ~22n...
 
@@ -37,7 +37,7 @@ def ENCODE_search_microrna_experiments(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

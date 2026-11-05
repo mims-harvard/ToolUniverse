@@ -15,7 +15,7 @@ def OPM_search_structures(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search the Orientations of Proteins in Membranes database for solved structures positioned in a l...
 
@@ -34,7 +34,7 @@ def OPM_search_structures(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

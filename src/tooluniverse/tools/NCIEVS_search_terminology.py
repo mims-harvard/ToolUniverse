@@ -16,7 +16,7 @@ def NCIEVS_search_terminology(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Keyword-search an NCI EVS clinical/biomedical terminology other than NCIt (use NCIThesaurus_searc...
 
@@ -37,7 +37,7 @@ def NCIEVS_search_terminology(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

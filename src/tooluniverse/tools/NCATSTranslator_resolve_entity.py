@@ -16,7 +16,7 @@ def NCATSTranslator_resolve_entity(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Resolve a free-text biomedical name to Translator-normalized identifiers (CURIEs) via SRI Name Re...
 
@@ -37,7 +37,7 @@ def NCATSTranslator_resolve_entity(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -19,7 +19,7 @@ def SwissModel_get_models(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get a paginated list of protein structures from SWISS-MODEL Repository for a UniProt accession. R...
 
@@ -46,7 +46,7 @@ def SwissModel_get_models(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

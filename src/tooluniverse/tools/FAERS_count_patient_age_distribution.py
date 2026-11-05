@@ -15,7 +15,7 @@ def FAERS_count_patient_age_distribution(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any] | list[Any]:
     """
     Analyze the age distribution of patients experiencing adverse events for a specific drug. Only me...
 
@@ -34,7 +34,7 @@ def FAERS_count_patient_age_distribution(
 
     Returns
     -------
-    Any
+    dict[str, Any] | list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

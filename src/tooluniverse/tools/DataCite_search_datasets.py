@@ -19,7 +19,7 @@ def DataCite_search_datasets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search DataCite for datasets across repositories. Defaults to resource type Dataset and returns e...
 
@@ -46,7 +46,7 @@ def DataCite_search_datasets(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

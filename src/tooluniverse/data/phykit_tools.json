@@ -92,6 +92,11 @@
             "max": {
               "type": "number"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

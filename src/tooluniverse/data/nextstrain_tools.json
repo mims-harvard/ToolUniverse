@@ -196,6 +196,11 @@
             "available_colorings_complete": {
               "type": "boolean"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

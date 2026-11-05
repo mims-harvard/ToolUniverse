@@ -15,7 +15,7 @@ def OpenFDADevice_search_510k(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search openFDA's 510(k) premarket notification database by device name -- the pathway most medica...
 
@@ -34,7 +34,7 @@ def OpenFDADevice_search_510k(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

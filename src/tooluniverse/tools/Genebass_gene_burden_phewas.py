@@ -18,7 +18,7 @@ def Genebass_gene_burden_phewas(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Page through all Genebass gene-burden PheWAS associations after stable ascending p-value sorting....
 
@@ -43,7 +43,7 @@ def Genebass_gene_burden_phewas(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

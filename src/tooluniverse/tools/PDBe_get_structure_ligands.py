@@ -18,7 +18,7 @@ def PDBe_get_structure_ligands(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get ligands (drug-like molecules, cofactors, ions) bound in a PDB structure. Ligands and annotati...
 
@@ -43,7 +43,7 @@ def PDBe_get_structure_ligands(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

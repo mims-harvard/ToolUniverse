@@ -17,7 +17,7 @@ def IPD_search_hla_alleles(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search the IPD-IMGT/HLA database for human HLA alleles by allele name prefix or substring with co...
 
@@ -40,7 +40,7 @@ def IPD_search_hla_alleles(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

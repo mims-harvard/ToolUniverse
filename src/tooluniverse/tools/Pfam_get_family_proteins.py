@@ -18,7 +18,7 @@ def Pfam_get_family_proteins(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get proteins containing a specific Pfam domain, optionally filtered by species. Returns protein a...
 
@@ -43,7 +43,7 @@ def Pfam_get_family_proteins(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -15,7 +15,7 @@ def ZINC_get_purchasable(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the vendor/catalog purchasability and price list for a ZINC22 compound by its ZINC ID, via th...
 
@@ -34,7 +34,7 @@ def ZINC_get_purchasable(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

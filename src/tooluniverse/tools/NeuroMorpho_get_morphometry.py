@@ -15,7 +15,7 @@ def NeuroMorpho_get_morphometry(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get morphometric measurements for a neuron from NeuroMorpho.Org. Returns quantitative properties ...
 
@@ -34,7 +34,7 @@ def NeuroMorpho_get_morphometry(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

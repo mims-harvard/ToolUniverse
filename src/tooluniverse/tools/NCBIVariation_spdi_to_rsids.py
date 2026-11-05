@@ -14,7 +14,7 @@ def NCBIVariation_spdi_to_rsids(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Reverse lookup from a normalized SPDI variant to the co-located dbSNP rsID(s), using NCBI Variati...
 
@@ -31,7 +31,7 @@ def NCBIVariation_spdi_to_rsids(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

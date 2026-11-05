@@ -161,6 +161,7 @@
           }
         },
         {
+          "minItems": 1,
           "type": "array",
           "description": "Stub response when summaries fail (contains PMIDs and URLs only)",
           "items": {
@@ -180,6 +181,17 @@
               "partial"
             ]
           }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ]
     },

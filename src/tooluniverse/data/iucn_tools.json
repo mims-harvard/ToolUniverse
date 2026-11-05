@@ -26,7 +26,7 @@
     },
     "return_schema": {
       "oneOf": [
-        {"type": ["object", "null"], "properties": {"scientific_name": {"type": "string"}, "red_list_category_code": {"type": ["string", "null"]}, "red_list_category": {"type": ["string", "null"]}, "year_published": {"type": ["string", "integer", "null"]}}},
+        {"type": ["object", "null"], "not": {"required": ["error"]}, "properties": {"scientific_name": {"type": "string"}, "red_list_category_code": {"type": ["string", "null"]}, "red_list_category": {"type": ["string", "null"]}, "year_published": {"type": ["string", "integer", "null"]}}},
         {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
       ]
     }

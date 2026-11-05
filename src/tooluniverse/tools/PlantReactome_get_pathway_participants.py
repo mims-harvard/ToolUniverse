@@ -14,7 +14,7 @@ def PlantReactome_get_pathway_participants(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List the gene/protein/molecule participants of a Plant Reactome pathway or reaction (the macromol...
 
@@ -31,7 +31,7 @@ def PlantReactome_get_pathway_participants(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

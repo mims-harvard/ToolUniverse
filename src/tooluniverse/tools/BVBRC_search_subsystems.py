@@ -20,7 +20,7 @@ def BVBRC_search_subsystems(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search for functional subsystems in BV-BRC with explicit pagination and true Content-Range totals.
 
@@ -49,7 +49,7 @@ def BVBRC_search_subsystems(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

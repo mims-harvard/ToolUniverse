@@ -17,7 +17,7 @@ def OpenAlex_Guidelines_Search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search for clinical practice guidelines using OpenAlex scholarly database. Provides access to a c...
 
@@ -40,7 +40,7 @@ def OpenAlex_Guidelines_Search(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

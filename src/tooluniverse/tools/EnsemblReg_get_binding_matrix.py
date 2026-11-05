@@ -15,7 +15,7 @@ def EnsemblReg_get_binding_matrix(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get a transcription factor binding matrix (position weight matrix/PWM) by stable ID from the Ense...
 
@@ -34,7 +34,7 @@ def EnsemblReg_get_binding_matrix(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

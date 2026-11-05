@@ -15,7 +15,7 @@ def nhanes_get_dataset_info(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get information about NHANES (National Health and Nutrition Examination Survey) datasets. NHANES ...
 
@@ -34,7 +34,7 @@ def nhanes_get_dataset_info(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

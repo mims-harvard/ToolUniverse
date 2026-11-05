@@ -18,7 +18,7 @@ def BioPortal_get_hierarchy(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get children, parents, or ancestors of a specific concept in a BioPortal ontology, including ever...
 
@@ -43,7 +43,7 @@ def BioPortal_get_hierarchy(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

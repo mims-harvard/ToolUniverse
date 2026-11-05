@@ -154,6 +154,11 @@
                 }
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -298,6 +303,11 @@
             "fork": {
               "type": "boolean"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -446,6 +456,11 @@
               "type": "string",
               "description": "Last profile update date (ISO 8601)"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

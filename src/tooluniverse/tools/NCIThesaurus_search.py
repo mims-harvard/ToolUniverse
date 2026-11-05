@@ -17,7 +17,7 @@ def NCIThesaurus_search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search the NCI Thesaurus (NCIt) for biomedical concepts with explicit match semantics and offset ...
 
@@ -40,7 +40,7 @@ def NCIThesaurus_search(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

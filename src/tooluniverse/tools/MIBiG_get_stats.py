@@ -13,7 +13,7 @@ def MIBiG_get_stats(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get summary statistics from the MIBiG biosynthetic gene cluster repository. Returns total BGC cou...
 
@@ -29,7 +29,7 @@ def MIBiG_get_stats(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

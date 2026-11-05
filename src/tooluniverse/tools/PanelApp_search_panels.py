@@ -14,7 +14,7 @@ def PanelApp_search_panels(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search Genomics England PanelApp for gene panels used in clinical genetic testing. PanelApp is th...
 
@@ -31,7 +31,7 @@ def PanelApp_search_panels(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

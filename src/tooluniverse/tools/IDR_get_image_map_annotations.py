@@ -14,7 +14,7 @@ def IDR_get_image_map_annotations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Fetch the map (key-value) annotations attached to a specific IDR image. Map annotations carry the...
 
@@ -31,7 +31,7 @@ def IDR_get_image_map_annotations(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

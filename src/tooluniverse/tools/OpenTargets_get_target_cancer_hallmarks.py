@@ -14,7 +14,7 @@ def OpenTargets_get_target_cancer_hallmarks(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve cancer hallmarks annotation for a target by Ensembl gene ID (from the COSMIC Cancer Gene...
 
@@ -31,7 +31,7 @@ def OpenTargets_get_target_cancer_hallmarks(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

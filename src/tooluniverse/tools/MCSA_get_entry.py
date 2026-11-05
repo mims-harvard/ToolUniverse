@@ -14,7 +14,7 @@ def MCSA_get_entry(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve an enzyme's catalytic machinery from M-CSA, the curated Mechanism and Catalytic Site Atl...
 
@@ -31,7 +31,7 @@ def MCSA_get_entry(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

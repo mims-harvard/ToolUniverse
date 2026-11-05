@@ -14,7 +14,7 @@ def BioSamples_get_relationships(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve the relationship/provenance graph of a BioSample: the sample-to-sample lineage edges (e....
 
@@ -31,7 +31,7 @@ def BioSamples_get_relationships(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

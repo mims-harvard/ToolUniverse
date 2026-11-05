@@ -18,7 +18,7 @@ def BioThings_query(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search any BioThings-hosted API with an Elasticsearch-style query. Use '*' to match everything, a...
 
@@ -43,7 +43,7 @@ def BioThings_query(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

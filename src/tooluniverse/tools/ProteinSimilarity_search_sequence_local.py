@@ -21,7 +21,7 @@ def ProteinSimilarity_search_sequence_local(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search proteins locally with MMseqs2 against caller-managed FASTA/database files. Returns identit...
 
@@ -52,7 +52,7 @@ def ProteinSimilarity_search_sequence_local(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

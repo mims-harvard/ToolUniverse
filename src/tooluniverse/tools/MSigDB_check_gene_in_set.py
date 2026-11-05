@@ -17,7 +17,7 @@ def MSigDB_check_gene_in_set(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Check if a specific gene is a member of an MSigDB gene set. Covers GTRD transcription factor targ...
 
@@ -40,7 +40,7 @@ def MSigDB_check_gene_in_set(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

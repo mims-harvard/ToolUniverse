@@ -14,7 +14,7 @@ def CTIS_get_trial(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve complete top-level public CTIS trial metadata by CT number, including human-readable and...
 
@@ -31,7 +31,7 @@ def CTIS_get_trial(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

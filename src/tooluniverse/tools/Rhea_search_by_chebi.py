@@ -16,7 +16,7 @@ def Rhea_search_by_chebi(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search for biochemical reactions involving a specific ChEBI compound in Rhea. Returns reactions w...
 
@@ -37,7 +37,7 @@ def Rhea_search_by_chebi(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

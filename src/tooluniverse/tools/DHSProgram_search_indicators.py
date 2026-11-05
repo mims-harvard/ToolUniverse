@@ -15,7 +15,7 @@ def DHSProgram_search_indicators(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search the DHS Program's indicator catalog by keyword: fertility, maternal and child mortality, n...
 
@@ -34,7 +34,7 @@ def DHSProgram_search_indicators(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

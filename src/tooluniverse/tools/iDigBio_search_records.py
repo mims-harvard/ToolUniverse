@@ -26,7 +26,7 @@ def iDigBio_search_records(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search iDigBio digitized biodiversity specimen records by taxon and/or locality with exact offset...
 
@@ -67,7 +67,7 @@ def iDigBio_search_records(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

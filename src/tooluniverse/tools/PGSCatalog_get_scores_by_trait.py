@@ -14,7 +14,7 @@ def PGSCatalog_get_scores_by_trait(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List the published polygenic scores (PGS) for a trait in the PGS Catalog, given its EFO/MONDO tra...
 
@@ -31,7 +31,7 @@ def PGSCatalog_get_scores_by_trait(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

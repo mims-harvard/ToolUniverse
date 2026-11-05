@@ -94,7 +94,12 @@
           },
           "required": [
             "status"
-          ]
+          ],
+          "not": {
+            "required": [
+              "error"
+            ]
+          }
         },
         {
           "type": "object",
@@ -222,7 +227,12 @@
           },
           "required": [
             "status"
-          ]
+          ],
+          "not": {
+            "required": [
+              "error"
+            ]
+          }
         },
         {
           "type": "object",

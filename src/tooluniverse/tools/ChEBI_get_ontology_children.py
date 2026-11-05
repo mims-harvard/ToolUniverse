@@ -14,7 +14,7 @@ def ChEBI_get_ontology_children(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the ontology children (is-a, has-part, has-functional-parent, etc.) of a ChEBI compound. ChEB...
 
@@ -31,7 +31,7 @@ def ChEBI_get_ontology_children(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

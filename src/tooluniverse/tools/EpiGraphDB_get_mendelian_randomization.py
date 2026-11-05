@@ -18,7 +18,7 @@ def EpiGraphDB_get_mendelian_randomization(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get Mendelian Randomization (MR) evidence using IEU OpenGWAS data with recoverable offset paginat...
 
@@ -43,7 +43,7 @@ def EpiGraphDB_get_mendelian_randomization(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

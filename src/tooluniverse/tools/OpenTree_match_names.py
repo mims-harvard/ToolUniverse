@@ -14,7 +14,7 @@ def OpenTree_match_names(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Resolve species names to standardized Open Tree of Life taxonomy IDs (OTT IDs) using the TNRS (Ta...
 
@@ -31,7 +31,7 @@ def OpenTree_match_names(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

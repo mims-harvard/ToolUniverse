@@ -14,7 +14,7 @@ def OSDR_get_study(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve full metadata for one NASA OSDR space biology study: title, description, organism, space...
 
@@ -31,7 +31,7 @@ def OSDR_get_study(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

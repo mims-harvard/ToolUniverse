@@ -18,7 +18,7 @@ def STRING_get_functional_annotations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get comprehensive functional annotations for a protein from STRING, grouped by category. limit an...
 
@@ -43,7 +43,7 @@ def STRING_get_functional_annotations(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

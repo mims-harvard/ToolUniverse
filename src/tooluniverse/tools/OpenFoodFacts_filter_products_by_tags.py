@@ -23,7 +23,7 @@ def OpenFoodFacts_filter_products_by_tags(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Structured Open Food Facts v2 tag search. Multiple controlled-vocabulary filters combine with AND...
 
@@ -58,7 +58,7 @@ def OpenFoodFacts_filter_products_by_tags(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

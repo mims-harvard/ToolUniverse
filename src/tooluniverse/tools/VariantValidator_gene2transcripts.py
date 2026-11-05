@@ -18,7 +18,7 @@ def VariantValidator_gene2transcripts(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get all transcripts for a gene using VariantValidator. Returns MANE Select and MANE Plus Clinical...
 
@@ -43,7 +43,7 @@ def VariantValidator_gene2transcripts(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

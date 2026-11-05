@@ -15,7 +15,7 @@ def BindingDB_search_by_target(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search BindingDB for binding affinity data by target. Requires a UniProt accession (e.g. 'P00533'...
 
@@ -34,7 +34,7 @@ def BindingDB_search_by_target(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

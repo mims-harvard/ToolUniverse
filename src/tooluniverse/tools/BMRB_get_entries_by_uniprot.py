@@ -14,7 +14,7 @@ def BMRB_get_entries_by_uniprot(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Find BMRB NMR entries for a protein using its UniProt accession. Returns NMR data entries associa...
 
@@ -31,7 +31,7 @@ def BMRB_get_entries_by_uniprot(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

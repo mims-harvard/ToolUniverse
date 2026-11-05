@@ -14,7 +14,7 @@ def PDBe_get_uniprot_structure_coverage(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get all PDB structures mapped to a UniProt protein, ranked by quality and coverage, from the PDBe...
 
@@ -31,7 +31,7 @@ def PDBe_get_uniprot_structure_coverage(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

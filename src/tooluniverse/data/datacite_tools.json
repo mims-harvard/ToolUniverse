@@ -195,6 +195,11 @@
                 }
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -501,7 +506,7 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "Detailed dataset metadata from DataCite",
+          "description": "Required so this branch stops matching the error envelope. oneOf needs exactly one branch to match, and with nothing required here a correct {status, error} result satisfied both branches and failed validation. Measured present in all 12 successful payloads.",
           "properties": {
             "id": {
               "type": "string",
@@ -551,10 +556,27 @@
                         ]
                       },
                       "affiliation": {
-                        "type": "array"
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
                       },
                       "nameIdentifiers": {
-                        "type": "array"
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "nameIdentifier": {
+                              "type": "string"
+                            },
+                            "nameIdentifierScheme": {
+                              "type": "string"
+                            },
+                            "schemeUri": {
+                              "type": "string"
+                            }
+                          }
+                        }
                       }
                     }
                   }
@@ -670,13 +692,34 @@
                   }
                 },
                 "dates": {
-                  "type": "array"
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "date": {
+                        "type": "string"
+                      },
+                      "dateType": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "date",
+                      "dateType"
+                    ]
+                  }
                 },
                 "sizes": {
-                  "type": "array"
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 },
                 "formats": {
-                  "type": "array"
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 },
                 "version": {
                   "type": [
@@ -692,7 +735,12 @@
                 }
               }
             }
-          }
+          },
+          "required": [
+            "attributes",
+            "id",
+            "type"
+          ]
         },
         {
           "type": "object",

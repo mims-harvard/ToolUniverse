@@ -16,7 +16,7 @@ def AlphaFill_get_transplants(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get ligands, cofactors, and ions transplanted into an AlphaFold model by AlphaFill. Source PDB ID...
 
@@ -37,7 +37,7 @@ def AlphaFill_get_transplants(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

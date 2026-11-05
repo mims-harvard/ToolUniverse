@@ -18,7 +18,7 @@ def CryoET_list_datasets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search and list cryo-electron tomography (cryo-ET) datasets from the CZ BioHub CryoET Data Portal...
 
@@ -43,7 +43,7 @@ def CryoET_list_datasets(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

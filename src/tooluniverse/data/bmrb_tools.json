@@ -40,6 +40,11 @@
               "type": "object",
               "description": "NMR-STAR saveframes containing experimental data by category"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

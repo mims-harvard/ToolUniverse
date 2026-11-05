@@ -19,7 +19,7 @@ def CxGDisc_search_datasets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search CellxGene Discovery single-cell RNA-seq datasets by tissue, disease, organism, or cell typ...
 
@@ -46,7 +46,7 @@ def CxGDisc_search_datasets(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

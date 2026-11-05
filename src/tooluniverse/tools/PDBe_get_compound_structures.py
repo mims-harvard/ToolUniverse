@@ -16,7 +16,7 @@ def PDBe_get_compound_structures(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get every PDB structure containing a chemical compound through explicit limit/offset pages from P...
 
@@ -37,7 +37,7 @@ def PDBe_get_compound_structures(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

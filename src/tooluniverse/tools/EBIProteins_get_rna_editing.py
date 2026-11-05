@@ -14,7 +14,7 @@ def EBIProteins_get_rna_editing(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get RNA editing annotations (A-to-I / Q->R recoding sites) for a UniProt protein from the EBI Pro...
 
@@ -31,7 +31,7 @@ def EBIProteins_get_rna_editing(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

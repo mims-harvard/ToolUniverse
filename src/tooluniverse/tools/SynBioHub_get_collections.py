@@ -13,7 +13,7 @@ def SynBioHub_get_collections(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List all public collections available on SynBioHub. Collections are curated sets of genetic parts...
 
@@ -29,7 +29,7 @@ def SynBioHub_get_collections(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

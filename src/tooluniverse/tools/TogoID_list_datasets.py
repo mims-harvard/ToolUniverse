@@ -14,7 +14,7 @@ def TogoID_list_datasets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List the current TogoID identifier datasets and preserve each complete upstream configuration rec...
 
@@ -31,7 +31,7 @@ def TogoID_list_datasets(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

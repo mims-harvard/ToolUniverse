@@ -18,7 +18,7 @@ def SPrediXcan_associate(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Summary-based transcriptome-wide association (S-PrediXcan, Barbeira 2018): test a gene for trait ...
 
@@ -43,7 +43,7 @@ def SPrediXcan_associate(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -16,7 +16,7 @@ def TCDB_search_by_substrate(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search TCDB for transporters that transport a given substrate. Returns TC numbers, family descrip...
 
@@ -37,7 +37,7 @@ def TCDB_search_by_substrate(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

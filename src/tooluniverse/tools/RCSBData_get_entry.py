@@ -15,7 +15,7 @@ def RCSBData_get_entry(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get comprehensive structure metadata for a PDB entry from the RCSB Data API. Returns experimental...
 
@@ -34,7 +34,7 @@ def RCSBData_get_entry(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

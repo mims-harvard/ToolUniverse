@@ -15,7 +15,7 @@ def Orphadata_get_epidemiology(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Retrieve Orphanet prevalence and epidemiology estimates for a rare disease by ORPHAcode, includin...
 
@@ -34,7 +34,7 @@ def Orphadata_get_epidemiology(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

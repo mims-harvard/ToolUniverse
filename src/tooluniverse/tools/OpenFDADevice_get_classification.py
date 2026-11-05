@@ -15,7 +15,7 @@ def OpenFDADevice_get_classification(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Look up a medical device's US regulatory classification by device name. Returns device class (1 =...
 
@@ -34,7 +34,7 @@ def OpenFDADevice_get_classification(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

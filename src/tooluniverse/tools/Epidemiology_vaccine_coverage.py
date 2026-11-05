@@ -17,7 +17,7 @@ def Epidemiology_vaccine_coverage(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Derive vaccine effectiveness from field surveillance data using the screening method (Farrington ...
 
@@ -40,7 +40,7 @@ def Epidemiology_vaccine_coverage(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

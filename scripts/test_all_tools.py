@@ -397,19 +397,30 @@ def _format_result_status(result: Dict[str, Any]) -> str:
     if state == "skipped":
         skipped = result.get("skipped", 0)
         reasons = []
-        local_input = result.get("skipped_local_input", 0)
-        long_running = result.get("skipped_long_running", 0)
-        missing_package = result.get("skipped_missing_package", 0)
-        if missing_package:
-            reasons.append(
-                f"{missing_package} need a package that is not installed"
-            )
-        if local_input:
-            reasons.append(f"{local_input} need an input file the caller supplies")
-        if long_running:
-            reasons.append(f"{long_running} poll an upstream job for longer than "
-                           "this budget")
-        credential = skipped - local_input - long_running - missing_package
+        # Only a skip with no name of its own is a missing credential. While
+        # three of the six reasons were unnamed, a category skipped because it
+        # ships no examples at all was reported as needing a credential.
+        named = (
+            ("skipped_missing_package", "need a package that is not installed"),
+            ("skipped_missing_binary", "need a program this host does not have"),
+            ("skipped_local_input", "need an input file the caller supplies"),
+            (
+                "skipped_long_running",
+                "poll an upstream job for longer than this budget",
+            ),
+            ("skipped_no_examples", "ship no test examples to run"),
+            (
+                "skipped_llm_provider",
+                "need a working LLM provider (set LLM_PROVIDER_WORKING=1)",
+            ),
+        )
+        accounted = 0
+        for key, phrase in named:
+            count = result.get(key, 0)
+            accounted += count
+            if count:
+                reasons.append(f"{count} {phrase}")
+        credential = skipped - accounted
         if credential > 0:
             reasons.append(
                 f"{credential} need a credential this run does not have"
@@ -644,6 +655,9 @@ _OUTPUT_LABELS: List[Tuple[str, str]] = [
     ("Skipped local input:", "skipped_local_input"),
     ("Skipped long running:", "skipped_long_running"),
     ("Skipped missing package:", "skipped_missing_package"),
+    ("Skipped missing binary:", "skipped_missing_binary"),
+    ("Skipped no examples:", "skipped_no_examples"),
+    ("Skipped llm provider:", "skipped_llm_provider"),
 ]
 
 

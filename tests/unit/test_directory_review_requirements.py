@@ -129,7 +129,9 @@ def _advertised_floors(text):
     """Every "N+ tools" style claim in a listing string."""
     return [
         int(match.replace(",", ""))
-        for match in re.findall(r"([\d,]{3,})\+?\s+(?:scientific\s+)?(?:research\s+)?tools", text)
+        for match in re.findall(
+            r"([\d,]{3,})\+?\s+(?:scientific\s+)?(?:research\s+)?tools", text
+        )
     ]
 
 
@@ -139,6 +141,10 @@ def _advertised_floors(text):
         ("mcpb/manifest.json", MANIFEST["description"]),
         ("server.json", json.dumps(SERVER_JSON)),
         (".claude-plugin/marketplace.json", json.dumps(MARKETPLACE)),
+        # README is the listing most people read, and it was the one left out:
+        # the three JSON listings were corrected to 2,700 while README still
+        # said "1000+ tools" -- under half the catalogue.
+        ("README.md", (REPO / "README.md").read_text()),
     ],
 )
 def test_a_listing_never_advertises_more_tools_than_exist_nor_far_fewer(label, text):

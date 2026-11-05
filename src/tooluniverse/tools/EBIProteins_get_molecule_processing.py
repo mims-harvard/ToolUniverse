@@ -16,7 +16,7 @@ def EBIProteins_get_molecule_processing(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get and page through molecule-processing features for a protein from the EBI Proteins API. Return...
 
@@ -37,7 +37,7 @@ def EBIProteins_get_molecule_processing(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

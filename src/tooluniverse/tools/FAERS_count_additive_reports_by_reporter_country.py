@@ -20,7 +20,7 @@ def FAERS_count_additive_reports_by_reporter_country(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any] | list[Any]:
     """
     Aggregate adverse event reports by primary reporter country across medicinal products. Only medic...
 
@@ -49,7 +49,7 @@ def FAERS_count_additive_reports_by_reporter_country(
 
     Returns
     -------
-    Any
+    dict[str, Any] | list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

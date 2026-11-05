@@ -16,7 +16,7 @@ def MSigDB_get_gene_set_members(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get all gene members of an MSigDB gene set by exact name. Returns parsed gene list (unlike MSigDB...
 
@@ -37,7 +37,7 @@ def MSigDB_get_gene_set_members(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

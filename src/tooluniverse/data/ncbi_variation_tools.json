@@ -166,14 +166,203 @@
         "last_update_date": {"type": "string"},
         "variant_type": {"type": ["string", "null"]},
         "organism": {"type": ["string", "null"]},
-        "citations": {"type": "array"},
-        "mane_select_ids": {"type": "array"},
-        "grch38_placements": {"type": "array"},
-        "genes": {"type": "array"},
+        "citations": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          }
+        },
+        "mane_select_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "grch38_placements": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "coordinate_system": {
+                "type": "string"
+              },
+              "deleted_sequence": {
+                "type": "string"
+              },
+              "inserted_sequence": {
+                "type": "string"
+              },
+              "position": {
+                "type": "integer"
+              },
+              "seq_id": {
+                "type": "string"
+              },
+              "spdi_position": {
+                "type": "integer"
+              }
+            },
+            "required": [
+              "coordinate_system",
+              "deleted_sequence",
+              "inserted_sequence",
+              "position",
+              "seq_id",
+              "spdi_position"
+            ]
+          }
+        },
+        "genes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "gene": {
+                "type": "string"
+              },
+              "gene_id": {
+                "type": "integer"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          }
+        },
         "clinical_significance": {
           "type": "array",
           "items": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "accession": {
+                "type": "string"
+              },
+              "accession_version": {
+                "type": "string"
+              },
+              "allele_annotation_index": {
+                "type": "integer"
+              },
+              "allele_id": {
+                "type": "integer"
+              },
+              "citations": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "clinical_significances": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "collection_method": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "create_date": {
+                "type": "string"
+              },
+              "disease_ids": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "accession": {
+                      "type": "string"
+                    },
+                    "organization": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "accession",
+                    "organization"
+                  ]
+                }
+              },
+              "disease_names": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "gene_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "last_evaluated_date": {
+                "type": "string"
+              },
+              "measure_set_id": {
+                "type": "integer"
+              },
+              "origins": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "refsnp_id": {
+                "type": "string"
+              },
+              "review_status": {
+                "type": "string"
+              },
+              "significance": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "update_date": {
+                "type": "string"
+              },
+              "variant_identifiers": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "accession": {
+                      "type": "string"
+                    },
+                    "organization": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "accession",
+                    "organization"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "accession",
+              "accession_version",
+              "allele_annotation_index",
+              "allele_id",
+              "citations",
+              "clinical_significances",
+              "collection_method",
+              "create_date",
+              "disease_ids",
+              "disease_names",
+              "gene_ids",
+              "measure_set_id",
+              "origins",
+              "refsnp_id",
+              "review_status",
+              "significance",
+              "update_date",
+              "variant_identifiers"
+            ]
           },
           "description": "Complete clinical assertions across every allele annotation"
         },

@@ -14,7 +14,7 @@ def SGD_get_sequence(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get genomic, coding, and protein sequences plus genomic coordinates for a yeast gene from SGD (re...
 
@@ -31,7 +31,7 @@ def SGD_get_sequence(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -17,7 +17,7 @@ def GOAPI_get_gene_functions(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get Gene Ontology annotations for a specific gene with explicit start/rows pagination. The GO API...
 
@@ -40,7 +40,7 @@ def GOAPI_get_gene_functions(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

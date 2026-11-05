@@ -19,7 +19,7 @@ def FPbase_search_by_spectrum(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search FPbase for fluorescent proteins with specific spectral properties. Filter by excitation wa...
 
@@ -46,7 +46,7 @@ def FPbase_search_by_spectrum(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

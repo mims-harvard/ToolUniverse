@@ -14,7 +14,7 @@ def ClassyFire_classify_by_inchikey(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Classify a chemical structure into the ClassyFire ChemOnt chemical taxonomy by its InChIKey. Retu...
 
@@ -31,7 +31,7 @@ def ClassyFire_classify_by_inchikey(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

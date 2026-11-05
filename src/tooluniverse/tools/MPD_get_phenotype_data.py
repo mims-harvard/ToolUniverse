@@ -16,7 +16,7 @@ def MPD_get_phenotype_data(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search ENCODE experiment records mentioning a given mouse strain (used as a Mouse Phenome Databas...
 
@@ -37,7 +37,7 @@ def MPD_get_phenotype_data(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

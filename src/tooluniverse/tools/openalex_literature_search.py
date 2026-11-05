@@ -25,7 +25,7 @@ def openalex_literature_search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search for academic literature using OpenAlex. Supports optional full-text-index filtering (has_f...
 
@@ -64,7 +64,7 @@ def openalex_literature_search(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

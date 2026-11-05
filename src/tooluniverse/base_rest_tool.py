@@ -16,6 +16,7 @@ from datetime import date
 from typing import Any, Dict, Optional, Callable
 from .base_tool import BaseTool
 from .http_utils import (
+    bot_challenge,
     cloudflare_challenge,
     redact_url_secrets,
     request_with_retry,
@@ -253,6 +254,16 @@ class BaseRESTTool(BaseTool):
             if "text/html" in content_type or (
                 text.strip().startswith(("<html", "<!DOCTYPE", "<HTML"))
             ):
+                challenge = bot_challenge(response)
+                if challenge:
+                    # An HTML body is how a bot wall looks from here too, and
+                    # "the resource may not exist" is the wrong thing to tell
+                    # a caller whose record is fine and simply behind a check.
+                    return {
+                        "status": "error",
+                        "error": f"{self.api_name}: {challenge}.",
+                        "url": url,
+                    }
                 return {
                     "status": "error",
                     "error": f"{self.api_name}: server returned an HTML page instead of data. The requested resource may not exist.",

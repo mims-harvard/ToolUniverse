@@ -14,7 +14,7 @@ def PlantReactome_get_pathway(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed information about a specific Plant Reactome pathway by stable ID. Returns pathway na...
 
@@ -31,7 +31,7 @@ def PlantReactome_get_pathway(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

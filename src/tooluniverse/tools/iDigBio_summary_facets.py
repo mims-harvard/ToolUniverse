@@ -24,7 +24,7 @@ def iDigBio_summary_facets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get aggregate specimen statistics from iDigBio for a Darwin Core query: the exact total record co...
 
@@ -61,7 +61,7 @@ def iDigBio_summary_facets(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -14,7 +14,7 @@ def PDBe_KB_get_summary_stats(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get aggregated structural summary statistics for a UniProt protein from PDBe-KB. Returns the numb...
 
@@ -31,7 +31,7 @@ def PDBe_KB_get_summary_stats(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

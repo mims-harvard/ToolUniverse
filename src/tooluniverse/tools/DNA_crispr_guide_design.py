@@ -18,7 +18,7 @@ def DNA_crispr_guide_design(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Find candidate SpCas9 (NGG PAM) guide RNAs in a target DNA sequence, on both strands. Ranks 20 bp...
 
@@ -43,7 +43,7 @@ def DNA_crispr_guide_design(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

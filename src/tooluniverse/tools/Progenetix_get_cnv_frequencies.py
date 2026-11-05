@@ -16,7 +16,7 @@ def Progenetix_get_cnv_frequencies(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the genome-wide aggregate CNV frequency profile for a cancer type from Progenetix — the signa...
 
@@ -37,7 +37,7 @@ def Progenetix_get_cnv_frequencies(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

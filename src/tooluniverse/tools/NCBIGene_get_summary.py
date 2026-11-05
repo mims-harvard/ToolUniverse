@@ -14,7 +14,7 @@ def NCBIGene_get_summary(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get a detailed gene summary from NCBI Gene by Entrez Gene ID using the E-utilities ESummary API. ...
 
@@ -31,7 +31,7 @@ def NCBIGene_get_summary(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

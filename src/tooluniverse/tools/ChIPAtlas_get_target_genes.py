@@ -19,7 +19,7 @@ def ChIPAtlas_get_target_genes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     ChIP-Atlas transcription-factor target genes ranked by average TSS-proximal binding score. Result...
 
@@ -46,7 +46,7 @@ def ChIPAtlas_get_target_genes(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

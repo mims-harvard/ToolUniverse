@@ -1344,7 +1344,10 @@
               ]
             },
             "phases": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             },
             "enrollment": {
               "type": [
@@ -1359,13 +1362,65 @@
               ]
             },
             "conditions": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
             },
             "interventions": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  }
+                }
+              }
             },
             "arms": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "intervention_names": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "description",
+                  "intervention_names",
+                  "label",
+                  "type"
+                ]
+              }
             },
             "arm_count": {
               "type": "integer"
@@ -1374,7 +1429,29 @@
               "type": "integer"
             },
             "primary_outcomes": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "measure": {
+                    "type": "string"
+                  },
+                  "time_frame": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "description",
+                  "measure",
+                  "time_frame"
+                ]
+              }
             },
             "primary_outcome_count": {
               "type": "integer"
@@ -1392,17 +1469,66 @@
               ]
             },
             "locations": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "city": {
+                    "type": "string"
+                  },
+                  "country": {
+                    "type": "string"
+                  },
+                  "facility": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "required": [
+                  "city",
+                  "country",
+                  "facility",
+                  "status"
+                ]
+              }
             },
             "location_count": {
               "type": "integer"
             },
             "references": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "citation": {
+                    "type": "string"
+                  },
+                  "pmid": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "citation",
+                  "type"
+                ]
+              }
             },
             "reference_count": {
               "type": "integer"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -1575,6 +1701,11 @@
                 }
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -1741,6 +1872,11 @@
                 }
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -2038,6 +2174,11 @@
               ],
               "description": "Prose stating how many studies are excluded from the facet, whether rows double-count studies, and which figure may be used as a denominator. Read before quoting any percentage."
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

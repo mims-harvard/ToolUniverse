@@ -20,7 +20,7 @@ def PharmacoDB_get_drug_targets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Query PharmacoDB drug-target relationships in three directions. (1) Gene -> targets: pass gene_na...
 
@@ -49,7 +49,7 @@ def PharmacoDB_get_drug_targets(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

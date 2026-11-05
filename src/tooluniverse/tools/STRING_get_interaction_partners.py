@@ -18,7 +18,7 @@ def STRING_get_interaction_partners(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get ranked interaction partners for one protein from STRING. STRING's limit=0 returns the complet...
 
@@ -43,7 +43,7 @@ def STRING_get_interaction_partners(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

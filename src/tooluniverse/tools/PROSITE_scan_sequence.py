@@ -15,7 +15,7 @@ def PROSITE_scan_sequence(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Scan a raw protein amino acid sequence against all PROSITE patterns and profiles to find matching...
 
@@ -34,7 +34,7 @@ def PROSITE_scan_sequence(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

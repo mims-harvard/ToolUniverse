@@ -15,7 +15,7 @@ def ORCID_get_fundings(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get every public funding-summary assertion in every ORCID funding group, including group/summary ...
 
@@ -34,7 +34,7 @@ def ORCID_get_fundings(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

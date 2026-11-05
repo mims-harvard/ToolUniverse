@@ -1123,7 +1123,10 @@
                 "type": "string"
               },
               "subsetGroup": {
-                "type": "null"
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
           }
@@ -1276,7 +1279,8 @@
                 "type": "string"
               },
               "pathologyNotes": {
-                "type": "null"
+                "type": ["string", "null"],
+                "description": "Pathologist's note for the sample, e.g. '2 pieces diffuse established cirrhosis, ...'. Non-null for all 20 Liver samples measured. Null for tissues that carry no note."
               },
               "sampleId": {
                 "type": "string"
@@ -1309,7 +1313,8 @@
                 "type": "string"
               },
               "autolysisScore": {
-                "type": "null"
+                "type": ["string", "null"],
+                "description": "Autolysis score, e.g. 'Mild'. Non-null for all 20 Liver samples measured. Null where it was not scored."
               },
               "datasetId": {
                 "type": "string"
@@ -1338,6 +1343,13 @@
         ],
         "sex": "female",
         "items_per_page": 10
+      },
+      {
+        "operation": "get_sample_info",
+        "tissue_site_detail_id": [
+          "Liver"
+        ],
+        "items_per_page": 20
       }
     ],
     "fields": {

@@ -14,7 +14,7 @@ def DrugCentral_get_drug(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed DrugCentral information for a specific drug by its InChIKey or ChEMBL ID. Returns co...
 
@@ -31,7 +31,7 @@ def DrugCentral_get_drug(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

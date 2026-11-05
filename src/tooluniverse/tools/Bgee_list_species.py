@@ -13,7 +13,7 @@ def Bgee_list_species(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List all species available in the Bgee gene expression database. Returns species with taxonomy ID...
 
@@ -29,7 +29,7 @@ def Bgee_list_species(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

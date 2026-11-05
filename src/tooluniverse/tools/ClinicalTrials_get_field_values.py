@@ -17,7 +17,7 @@ def ClinicalTrials_get_field_values(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the registry-wide value distribution for one ClinicalTrials.gov field: each distinct value wi...
 
@@ -40,7 +40,7 @@ def ClinicalTrials_get_field_values(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -17,7 +17,7 @@ def Epidemiology_r0_herd(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Compute herd immunity threshold and effective reproduction number from R0 and vaccine efficacy. R...
 
@@ -40,7 +40,7 @@ def Epidemiology_r0_herd(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -14,7 +14,7 @@ def TCIA_get_patients(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     List the patients (subjects) in a TCIA imaging collection. Returns patient-level fields not avail...
 
@@ -31,7 +31,7 @@ def TCIA_get_patients(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

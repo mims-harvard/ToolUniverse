@@ -15,7 +15,7 @@ def USDA_plants_get_wetland_status(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get USACE wetland indicator status by geographic region for a plant from the USDA PLANTS Database...
 
@@ -34,7 +34,7 @@ def USDA_plants_get_wetland_status(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

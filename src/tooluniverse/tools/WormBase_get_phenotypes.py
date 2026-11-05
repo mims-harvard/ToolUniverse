@@ -14,7 +14,7 @@ def WormBase_get_phenotypes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get phenotype annotations for a C. elegans gene from WormBase. Returns observed phenotypes (from ...
 
@@ -31,7 +31,7 @@ def WormBase_get_phenotypes(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -16,7 +16,7 @@ def TargetMine_search_genes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search TargetMine specifically for genes relevant to drug target discovery. This convenience wrap...
 
@@ -37,7 +37,7 @@ def TargetMine_search_genes(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

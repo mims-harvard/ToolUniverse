@@ -17,7 +17,7 @@ def PubChemTox_get_ecotoxicity_values(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get aquatic/environmental ecotoxicity values for a chemical compound from PubChem (PUG View 'Ecot...
 
@@ -40,7 +40,7 @@ def PubChemTox_get_ecotoxicity_values(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -17,7 +17,7 @@ def TIMER2_gene_correlation(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Analyze Spearman correlation between two genes across TCGA cancer samples using cBioPortal data. ...
 
@@ -40,7 +40,7 @@ def TIMER2_gene_correlation(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -16,7 +16,7 @@ def StatPearls_get_chapter_section(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Read a StatPearls clinical review chapter (NCBI Bookshelf NBK430685). Give the chapter as the cha...
 
@@ -37,7 +37,7 @@ def StatPearls_get_chapter_section(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

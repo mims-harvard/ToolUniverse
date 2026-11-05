@@ -14,7 +14,7 @@ def ENCODE_get_experiment(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get comprehensive metadata for a specific ENCODE experiment by its accession ID. Returns detailed...
 
@@ -31,7 +31,7 @@ def ENCODE_get_experiment(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

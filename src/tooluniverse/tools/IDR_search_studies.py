@@ -21,7 +21,7 @@ def IDR_search_studies(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Find which IDR studies (screens and projects) contain images matching a metadata key/value, searc...
 
@@ -52,7 +52,7 @@ def IDR_search_studies(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

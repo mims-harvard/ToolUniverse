@@ -18,7 +18,7 @@ def GTEx_get_eqtl_genes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get eQTL genes (eGenes) with significant cis-eQTLs. Returns genes with at least one significant e...
 
@@ -43,7 +43,7 @@ def GTEx_get_eqtl_genes(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

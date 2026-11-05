@@ -17,7 +17,7 @@ def WikiPathways_find_pathways_by_gene(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Find WikiPathways pathways containing an exact gene label. Results use stable limit/offset pagina...
 
@@ -40,7 +40,7 @@ def WikiPathways_find_pathways_by_gene(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

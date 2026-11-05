@@ -16,7 +16,7 @@ def NPIProvider_search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     US healthcare provider/organization directory search via the NLM Clinical Table Search Service (N...
 
@@ -37,7 +37,7 @@ def NPIProvider_search(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -18,7 +18,7 @@ def ELM_get_interaction_domains(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get ELM motif-to-interaction-domain mappings with exact total and recoverable offset pagination. ...
 
@@ -43,7 +43,7 @@ def ELM_get_interaction_domains(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

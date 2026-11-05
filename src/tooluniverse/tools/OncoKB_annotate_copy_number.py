@@ -18,7 +18,7 @@ def OncoKB_annotate_copy_number(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Annotate copy number alterations (amplification/deletion) for oncogenic potential. Returns eviden...
 
@@ -43,7 +43,7 @@ def OncoKB_annotate_copy_number(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

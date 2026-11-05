@@ -15,7 +15,7 @@ def MediaDive_search_media(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search MediaDive's catalogue of over 3,300 standardized microbial cultivation media by name subst...
 
@@ -34,7 +34,7 @@ def MediaDive_search_media(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

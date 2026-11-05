@@ -99,6 +99,11 @@
               "type": "string",
               "description": "URL to neuron image"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -344,6 +349,11 @@
               "type": "number",
               "description": "Total length (um)"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -514,31 +524,46 @@
               "array",
               "string",
               "null"
-            ]
+            ],
+            "items": {
+              "type": "string"
+            }
           },
           "species": {
             "type": [
               "array",
               "null"
-            ]
+            ],
+            "items": {
+              "type": "string"
+            }
           },
           "brainRegion": {
             "type": [
               "array",
               "null"
-            ]
+            ],
+            "items": {
+              "type": "string"
+            }
           },
           "cellType": {
             "type": [
               "array",
               "null"
-            ]
+            ],
+            "items": {
+              "type": "string"
+            }
           },
           "tracingSystem": {
             "type": [
               "array",
               "null"
-            ]
+            ],
+            "items": {
+              "type": "string"
+            }
           },
           "evaluatedDate": {
             "type": [
@@ -558,13 +583,27 @@
             "type": [
               "array",
               "null"
-            ]
+            ],
+            "items": {
+              "type": "string"
+            }
           },
           "sharedReconstructions": {
             "type": [
               "array",
               "null"
-            ]
+            ],
+            "items": {
+              "type": "object",
+              "properties": {
+                "nReconstructions": {
+                  "type": "integer"
+                },
+                "sharedArticleId": {
+                  "type": "object"
+                }
+              }
+            }
           },
           "status": {
             "type": [
@@ -669,31 +708,46 @@
             "array",
             "string",
             "null"
-          ]
+          ],
+          "items": {
+            "type": "string"
+          }
         },
         "species": {
           "type": [
             "array",
             "null"
-          ]
+          ],
+          "items": {
+            "type": "string"
+          }
         },
         "brainRegion": {
           "type": [
             "array",
             "null"
-          ]
+          ],
+          "items": {
+            "type": "string"
+          }
         },
         "cellType": {
           "type": [
             "array",
             "null"
-          ]
+          ],
+          "items": {
+            "type": "string"
+          }
         },
         "tracingSystem": {
           "type": [
             "array",
             "null"
-          ]
+          ],
+          "items": {
+            "type": "string"
+          }
         },
         "evaluatedDate": {
           "type": [
@@ -711,7 +765,10 @@
           "type": [
             "array",
             "null"
-          ]
+          ],
+          "items": {
+            "type": "string"
+          }
         },
         "sharedReconstructions": {
           "type": [

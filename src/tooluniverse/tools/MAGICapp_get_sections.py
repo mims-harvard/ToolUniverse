@@ -14,7 +14,7 @@ def MAGICapp_get_sections(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get all sections (chapters) of a specific MAGICapp clinical guideline. Returns the structural org...
 
@@ -31,7 +31,7 @@ def MAGICapp_get_sections(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

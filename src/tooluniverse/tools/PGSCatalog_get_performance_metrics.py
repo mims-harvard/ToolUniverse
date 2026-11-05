@@ -14,7 +14,7 @@ def PGSCatalog_get_performance_metrics(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Retrieve the published validation/evaluation performance metrics for a polygenic score from the P...
 
@@ -31,7 +31,7 @@ def PGSCatalog_get_performance_metrics(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

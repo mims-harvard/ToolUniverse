@@ -17,7 +17,7 @@ def GTDB_get_species(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get a recoverable page of genomes in a GTDB species cluster. total_genomes is exact because GTDB ...
 
@@ -40,7 +40,7 @@ def GTDB_get_species(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

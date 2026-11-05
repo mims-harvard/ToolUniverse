@@ -16,7 +16,7 @@ def eBird_get_taxonomy(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get bird taxonomy data from eBird (Cornell Lab of Ornithology). Returns taxonomic information inc...
 
@@ -37,7 +37,7 @@ def eBird_get_taxonomy(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

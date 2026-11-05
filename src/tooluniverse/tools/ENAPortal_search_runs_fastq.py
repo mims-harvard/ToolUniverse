@@ -16,7 +16,7 @@ def ENAPortal_search_runs_fastq(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search the European Nucleotide Archive (ENA) for sequencing RUNS (read_run) by taxonomy and libra...
 
@@ -37,7 +37,7 @@ def ENAPortal_search_runs_fastq(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

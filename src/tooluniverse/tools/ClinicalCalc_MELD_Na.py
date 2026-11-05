@@ -18,7 +18,7 @@ def ClinicalCalc_MELD_Na(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     MELD-Na score (UNOS/OPTN 2016): 90-day mortality risk in chronic liver disease and liver transpla...
 
@@ -43,7 +43,7 @@ def ClinicalCalc_MELD_Na(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

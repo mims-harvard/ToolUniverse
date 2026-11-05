@@ -15,7 +15,7 @@ def EnsemblVEP_variant_recoder(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Convert genetic variant identifiers between different nomenclature formats using the Ensembl Vari...
 
@@ -34,7 +34,7 @@ def EnsemblVEP_variant_recoder(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

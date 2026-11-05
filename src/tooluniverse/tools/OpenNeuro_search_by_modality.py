@@ -16,7 +16,7 @@ def OpenNeuro_search_by_modality(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search OpenNeuro neuroimaging datasets filtered by imaging modality. Returns the exact matching c...
 
@@ -37,7 +37,7 @@ def OpenNeuro_search_by_modality(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

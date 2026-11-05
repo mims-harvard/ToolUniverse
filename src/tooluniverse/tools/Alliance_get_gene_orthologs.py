@@ -17,7 +17,7 @@ def Alliance_get_gene_orthologs(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get orthologs and paralogs of a gene across model organisms via the Alliance of Genome Resources ...
 
@@ -40,7 +40,7 @@ def Alliance_get_gene_orthologs(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

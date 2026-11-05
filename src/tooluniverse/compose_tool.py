@@ -88,6 +88,31 @@ class ComposeTool(BaseTool):
 
         return dependencies
 
+    def _is_available(self, tool_name):
+        """
+        Whether ``tool_name`` is registered, under its own name or the name it is
+        registered under.
+
+        With name shortening on (the MCP server enables it), a tool whose name is
+        longer than MAX_TOOL_NAME_LENGTH is registered under its shortened form, so
+        a composition that names the original would never find it in
+        ``all_tool_dict`` -- and every miss triggers an auto-load.
+        """
+        universe = self.tooluniverse
+        if (
+            tool_name in universe.callable_functions
+            or tool_name in universe.all_tool_dict
+        ):
+            return True
+        resolve = getattr(universe, "_resolve_tool_name", None)
+        if resolve is None:
+            return False
+        resolved = resolve(tool_name)
+        return (
+            resolved in universe.callable_functions
+            or resolved in universe.all_tool_dict
+        )
+
     def _get_tool_category_mapping(self):
         """
         Create a mapping from tool names to their categories.
@@ -147,15 +172,15 @@ class ComposeTool(BaseTool):
                 print(
                     f"🔄 Auto-loading category '{category}' for ComposeTool '{self.name}'"
                 )
-                self.tooluniverse.load_tools(tool_type=[category])
+                # load_tools() clears the registry by default when given no
+                # include_tools, which would drop every tool already loaded --
+                # including the MCP server's own execute_tool -- for the rest of
+                # the session.
+                self.tooluniverse.load_tools(tool_type=[category], clear_existing=False)
 
                 # Check which tools from this category are now available
                 for tool_name in missing_tools:
-                    # Check both callable_functions and all_tool_dict
-                    if (
-                        tool_name in self.tooluniverse.callable_functions
-                        or tool_name in self.tooluniverse.all_tool_dict
-                    ):
+                    if self._is_available(tool_name):
                         successfully_loaded.add(tool_name)
 
             except Exception as e:
@@ -240,11 +265,7 @@ class ComposeTool(BaseTool):
         missing_tools = set()
 
         for tool_name in all_dependencies:
-            # Check both callable_functions and all_tool_dict
-            if (
-                tool_name not in self.tooluniverse.callable_functions
-                and tool_name not in self.tooluniverse.all_tool_dict
-            ):
+            if not self._is_available(tool_name):
                 missing_tools.add(tool_name)
 
         # Handle missing dependencies
@@ -461,11 +482,7 @@ class ComposeTool(BaseTool):
         Returns
             Any: Result from the tool execution
         """
-        # Check if tool is available (check both callable_functions and all_tool_dict)
-        if (
-            tool_name not in self.tooluniverse.callable_functions
-            and tool_name not in self.tooluniverse.all_tool_dict
-        ):
+        if not self._is_available(tool_name):
             if self.auto_load_dependencies:
                 # Try to load the tool
                 missing_tools = {tool_name}

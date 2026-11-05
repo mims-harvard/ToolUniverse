@@ -16,7 +16,7 @@ def GoaT_get_species(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Look up genome sequencing status via GoaT (Genomes on a Tree), which indexes the Earth BioGenome ...
 
@@ -37,7 +37,7 @@ def GoaT_get_species(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

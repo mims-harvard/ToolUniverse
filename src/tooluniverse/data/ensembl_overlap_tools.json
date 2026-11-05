@@ -133,6 +133,11 @@
               "type": "object",
               "description": "Count of features by type"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -247,6 +252,11 @@
             "type_summary": {
               "type": "object"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

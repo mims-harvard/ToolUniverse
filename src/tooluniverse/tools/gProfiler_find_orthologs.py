@@ -16,7 +16,7 @@ def gProfiler_find_orthologs(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Find orthologous genes across species using g:Profiler (g:Orth) from the University of Tartu. Map...
 
@@ -37,7 +37,7 @@ def gProfiler_find_orthologs(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

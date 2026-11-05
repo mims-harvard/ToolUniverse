@@ -21,7 +21,7 @@ def NASASBDB_close_approaches(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Query NASA/JPL Close Approach Data with explicit zero-based offset pagination and exact total met...
 
@@ -52,7 +52,7 @@ def NASASBDB_close_approaches(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

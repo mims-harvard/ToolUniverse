@@ -1,5 +1,5 @@
 """Web search tools for ToolUniverse using DDGS plus opt-in hosted backends
-(Parallel Search MCP, SerpBase, Firecrawl Search)."""
+(Parallel Search MCP, SerpBase, Firecrawl Search, Outcrawl Search, Keenable Search)."""
 
 import importlib.util
 import json
@@ -41,9 +41,30 @@ FIRECRAWL_PROVIDER_NOTICE = (
     "code only and safesearch as a two-state filter by this backend; do not "
     "submit sensitive or patient-identifying information."
 )
+KEENABLE_PUBLIC_SEARCH_URL = "https://api.keenable.ai/v1/search/public"
+KEENABLE_SEARCH_URL = "https://api.keenable.ai/v1/search"
+KEENABLE_PROVIDER_NOTICE = (
+    "Query sent to Keenable's hosted third-party Search API at "
+    "https://api.keenable.ai. ToolUniverse region and safesearch controls are "
+    "not applied by this backend; do not submit sensitive or "
+    "patient-identifying information."
+)
+# Keenable's ``snippet`` can be a long page excerpt; its ``description`` is
+# the short summary. Fall back to a truncated snippet when there is none.
+_KEENABLE_SNIPPET_MAX_CHARS = 500
 # Region prefixes in the web_search enum that are not ISO 3166-1 alpha-2
 # country codes ("uk-en" is the United Kingdom; "ja-jp" is Japan).
 _FIRECRAWL_COUNTRY_OVERRIDES = {"uk": "GB", "ja": "JP"}
+
+OUTCRAWL_SEARCH_URL = "https://api.outcrawl.ai/v1/search"
+OUTCRAWL_PROVIDER_NOTICE = (
+    "Query sent to Outcrawl's hosted third-party Search API at "
+    f"{OUTCRAWL_SEARCH_URL} (billed in credits against the account). "
+    "ToolUniverse region and safesearch controls are not applied by this "
+    "backend; do not submit sensitive or patient-identifying information."
+)
+# Outcrawl returns at most 20 hits per request.
+_OUTCRAWL_MAX_LIMIT = 20
 
 
 def _firecrawl_country_from_region(region: str) -> str:
@@ -406,6 +427,156 @@ print(json.dumps(results))
 
         return results
 
+    def _search_with_outcrawl(
+        self, query: str, max_results: int
+    ) -> List[Dict[str, Any]]:
+        """Search with Outcrawl's Search API and normalize its hits.
+
+        Requires OUTCRAWL_API_KEY, resolved per call from the request's
+        credential scope when one is active, otherwise from the environment.
+        Outcrawl returns at most 20 hits per request, so ``limit`` is capped
+        there. Failures come back as a non-2xx status with a JSON body; the
+        body is read first to keep its message, then the status is enforced.
+        """
+        api_key = (self.credential("OUTCRAWL_API_KEY") or "").strip()
+        if not api_key:
+            raise RuntimeError(
+                "OUTCRAWL_API_KEY environment variable is not set. "
+                "Request a key at https://outcrawl.ai."
+            )
+
+        response = requests.post(
+            OUTCRAWL_SEARCH_URL,
+            json={"query": query, "limit": min(max_results, _OUTCRAWL_MAX_LIMIT)},
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "User-Agent": "ToolUniverse/1.0",
+            },
+            timeout=30,
+        )
+
+        try:
+            data = response.json()
+        except ValueError:
+            data = None
+        body_error = None
+        if isinstance(data, dict):
+            body_error = data.get("message") or data.get("error")
+            if isinstance(body_error, dict):
+                body_error = body_error.get("message")
+            if not isinstance(body_error, str):
+                body_error = None
+
+        if response.status_code == 401:
+            raise RuntimeError("Outcrawl Search rejected OUTCRAWL_API_KEY (HTTP 401).")
+        if response.status_code == 402:
+            detail = f" {body_error}" if body_error else ""
+            raise RuntimeError(
+                f"Outcrawl Search account is out of credits (HTTP 402).{detail}"
+            )
+        if response.status_code == 429:
+            detail = f" {body_error}" if body_error else ""
+            raise RuntimeError(
+                f"Outcrawl Search rate limit reached (HTTP 429).{detail}"
+            )
+        if response.status_code >= 400:
+            message = body_error or response.reason or "request failed"
+            raise RuntimeError(
+                f"Outcrawl Search API error (HTTP {response.status_code}): {message}"
+            )
+
+        if not isinstance(data, dict):
+            raise RuntimeError("Outcrawl Search response was not a JSON object")
+        hits = data.get("hits")
+        if not isinstance(hits, list):
+            raise RuntimeError("Outcrawl Search response did not include hits")
+
+        results = []
+        for item in hits:
+            if not isinstance(item, dict):
+                continue
+            url = item.get("url")
+            if not isinstance(url, str) or not url:
+                continue
+            title = item.get("title")
+            snippet = item.get("snippet")
+            results.append(
+                {
+                    "title": title if isinstance(title, str) else "",
+                    "url": url,
+                    "snippet": snippet if isinstance(snippet, str) else "",
+                    "rank": len(results) + 1,
+                }
+            )
+            if len(results) >= max_results:
+                break
+
+        return results
+
+    def _search_with_keenable(
+        self, query: str, max_results: int
+    ) -> List[Dict[str, Any]]:
+        """Search with Keenable's Search API and normalize its results.
+
+        Works without a key via the public endpoint. When KEENABLE_API_KEY
+        resolves (request credential scope first, then the environment) the
+        keyed endpoint is used with the key in ``X-API-Key``.
+        """
+        headers: Dict[str, str] = {"X-Keenable-Title": "ToolUniverse"}
+        api_key = (self.credential("KEENABLE_API_KEY") or "").strip()
+        url = KEENABLE_PUBLIC_SEARCH_URL
+        if api_key:
+            headers["X-API-Key"] = api_key
+            url = KEENABLE_SEARCH_URL
+
+        response = requests.post(
+            url,
+            json={"query": query, "max_results": max_results},
+            headers=headers,
+            timeout=30,
+        )
+        if response.status_code == 429:
+            hint = (
+                ""
+                if api_key
+                else " Set KEENABLE_API_KEY to use the keyed endpoint's limits."
+            )
+            raise RuntimeError(f"Keenable Search rate limit reached (HTTP 429).{hint}")
+        response.raise_for_status()
+        data = response.json()
+        raw_results = data.get("results") if isinstance(data, dict) else None
+        if not isinstance(raw_results, list):
+            raise RuntimeError("Keenable Search response did not include results")
+
+        results = []
+        for item in raw_results:
+            if not isinstance(item, dict):
+                continue
+            link = item.get("url")
+            if not isinstance(link, str) or not link:
+                continue
+            title = item.get("title")
+            snippet = item.get("description")
+            if not isinstance(snippet, str) or not snippet:
+                snippet = item.get("snippet")
+                snippet = (
+                    snippet[:_KEENABLE_SNIPPET_MAX_CHARS]
+                    if isinstance(snippet, str)
+                    else ""
+                )
+            results.append(
+                {
+                    "title": title if isinstance(title, str) else "",
+                    "url": link,
+                    "snippet": snippet,
+                    "rank": len(results) + 1,
+                }
+            )
+            if len(results) >= max_results:
+                break
+
+        return results
+
     def _search_with_fallback(
         self,
         query: str,
@@ -501,6 +672,50 @@ print(json.dumps(results))
 
             # Explicit providers fall back to DDGS auto today. Preserve that
             # contract without adding Firecrawl to the default provider chain.
+            backends_to_try = ["auto"]
+        elif backend == "outcrawl":
+            attempted_backends.append("outcrawl")
+            try:
+                results = self._search_with_outcrawl(
+                    query=query, max_results=max_results
+                )
+                if results:
+                    return (
+                        results,
+                        "outcrawl",
+                        attempted_backends,
+                        None,
+                        provider_errors,
+                    )
+                had_empty_success = True
+            except Exception as error:
+                last_error = str(error)
+                provider_errors["outcrawl"] = str(error)
+
+            # Explicit providers fall back to DDGS auto today. Preserve that
+            # contract without adding Outcrawl to the default provider chain.
+            backends_to_try = ["auto"]
+        elif backend == "keenable":
+            attempted_backends.append("keenable")
+            try:
+                results = self._search_with_keenable(
+                    query=query, max_results=max_results
+                )
+                if results:
+                    return (
+                        results,
+                        "keenable",
+                        attempted_backends,
+                        None,
+                        provider_errors,
+                    )
+                had_empty_success = True
+            except Exception as error:
+                last_error = str(error)
+                provider_errors["keenable"] = str(error)
+
+            # Explicit providers fall back to DDGS auto today. Preserve that
+            # contract without adding Keenable to the default provider chain.
             backends_to_try = ["auto"]
         elif backend == "auto":
             # Try the explicit DuckDuckGo backend first. It tends to fail with
@@ -728,7 +943,7 @@ print(json.dumps(results))
                     },
                 }
 
-            if backend == "parallel":
+            if backend in ("parallel", "outcrawl", "keenable"):
                 unsupported_controls = []
                 if region != "us-en":
                     unsupported_controls.append("region")
@@ -737,7 +952,7 @@ print(json.dumps(results))
                 if unsupported_controls:
                     controls = ", ".join(unsupported_controls)
                     error_msg = (
-                        "The Parallel backend does not support non-default "
+                        f"The {backend.capitalize()} backend does not support non-default "
                         f"ToolUniverse controls: {controls}. Omit these controls "
                         "or use a DDGS backend."
                     )
@@ -819,6 +1034,10 @@ print(json.dumps(results))
                     response["data"]["provider_notice"] = SERPBASE_PROVIDER_NOTICE
                 if "firecrawl" in attempted_backends:
                     response["data"]["provider_notice"] = FIRECRAWL_PROVIDER_NOTICE
+                if "outcrawl" in attempted_backends:
+                    response["data"]["provider_notice"] = OUTCRAWL_PROVIDER_NOTICE
+                if "keenable" in attempted_backends:
+                    response["data"]["provider_notice"] = KEENABLE_PROVIDER_NOTICE
                 return response
 
             # Add rate limiting to be respectful
@@ -841,6 +1060,10 @@ print(json.dumps(results))
                 result_data["provider_notice"] = SERPBASE_PROVIDER_NOTICE
             if "firecrawl" in attempted_backends:
                 result_data["provider_notice"] = FIRECRAWL_PROVIDER_NOTICE
+            if "outcrawl" in attempted_backends:
+                result_data["provider_notice"] = OUTCRAWL_PROVIDER_NOTICE
+            if "keenable" in attempted_backends:
+                result_data["provider_notice"] = KEENABLE_PROVIDER_NOTICE
 
             return {"status": "success", "data": result_data}
 

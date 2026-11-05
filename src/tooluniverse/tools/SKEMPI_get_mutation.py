@@ -15,7 +15,7 @@ def SKEMPI_get_mutation(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Retrieve the measured binding effect of one specific substitution in a protein-protein complex. M...
 
@@ -34,7 +34,7 @@ def SKEMPI_get_mutation(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

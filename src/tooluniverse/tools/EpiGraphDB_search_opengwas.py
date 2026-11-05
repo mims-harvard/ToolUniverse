@@ -14,7 +14,7 @@ def EpiGraphDB_search_opengwas(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search the IEU OpenGWAS database for GWAS studies by trait name. Returns matching GWAS study IDs ...
 
@@ -31,7 +31,7 @@ def EpiGraphDB_search_opengwas(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

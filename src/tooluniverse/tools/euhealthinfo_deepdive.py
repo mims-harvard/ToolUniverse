@@ -23,7 +23,7 @@ def euhealthinfo_deepdive(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     This tool identifies and retrieves relevant links related to publicly accessible datasets and inf...
 
@@ -58,7 +58,7 @@ def euhealthinfo_deepdive(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

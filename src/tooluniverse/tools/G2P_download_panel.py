@@ -14,7 +14,7 @@ def G2P_download_panel(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Download the FULL content of a Gene2Phenotype (G2P) clinical panel as structured gene-disease rec...
 
@@ -31,7 +31,7 @@ def G2P_download_panel(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

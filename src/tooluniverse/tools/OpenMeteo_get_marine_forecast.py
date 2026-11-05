@@ -19,7 +19,7 @@ def OpenMeteo_get_marine_forecast(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get marine/ocean weather forecast for any coastal or offshore location using Open-Meteo (free, no...
 
@@ -46,7 +46,7 @@ def OpenMeteo_get_marine_forecast(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

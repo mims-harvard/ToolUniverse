@@ -17,7 +17,7 @@ def RegulomeDB_query_variant(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Query RegulomeDB for regulatory variant annotations using rsID. Nearby SNPs are independently pag...
 
@@ -40,7 +40,7 @@ def RegulomeDB_query_variant(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

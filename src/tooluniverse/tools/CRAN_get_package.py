@@ -14,7 +14,7 @@ def CRAN_get_package(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get metadata for a CRAN R package from the CRAN database (crandb). Returns package title, version...
 
@@ -31,7 +31,7 @@ def CRAN_get_package(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

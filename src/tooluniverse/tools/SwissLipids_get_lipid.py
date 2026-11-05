@@ -14,7 +14,7 @@ def SwissLipids_get_lipid(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve a full SwissLipids entry by its id (e.g. 'SLM:000000510'). Returns the lipid's name, mol...
 
@@ -31,7 +31,7 @@ def SwissLipids_get_lipid(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

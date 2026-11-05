@@ -20,7 +20,7 @@ def euhealthinfo_search_surveillance(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     The tool facilitates the identification and exploration of health-related datasets across diverse...
 
@@ -49,7 +49,7 @@ def euhealthinfo_search_surveillance(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

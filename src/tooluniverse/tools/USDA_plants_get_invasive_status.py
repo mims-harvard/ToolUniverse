@@ -15,7 +15,7 @@ def USDA_plants_get_invasive_status(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get state-by-state invasive and noxious-weed legal status for a plant from the USDA PLANTS Databa...
 
@@ -34,7 +34,7 @@ def USDA_plants_get_invasive_status(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

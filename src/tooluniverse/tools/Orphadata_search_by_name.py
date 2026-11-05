@@ -15,7 +15,7 @@ def Orphadata_search_by_name(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Find rare diseases in Orphanet by name or synonym, returning ORPHAcodes for use with the other Or...
 
@@ -34,7 +34,7 @@ def Orphadata_search_by_name(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

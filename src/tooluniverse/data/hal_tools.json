@@ -21,44 +21,65 @@
       ]
     },
     "return_schema": {
-      "type": "array",
-      "description": "List of HAL documents matching the search query",
-      "items": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string",
-            "description": "Title of the document"
-          },
-          "authors": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "List of author names"
-          },
-          "year": {
-            "type": "integer",
-            "description": "Publication year"
-          },
-          "doi": {
-            "type": ["string", "null"],
-            "description": "Digital Object Identifier (if available)"
-          },
-          "url": {
-            "type": "string",
-            "description": "URL to the document on HAL"
-          },
-          "abstract": {
-            "type": "string",
-            "description": "Abstract of the document"
-          },
-          "source": {
-            "type": ["string", "null"],
-            "description": "Source identifier (always 'HAL' when present)"
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "List of HAL documents matching the search query",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Title of the document"
+              },
+              "authors": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "List of author names"
+              },
+              "year": {
+                "type": "integer",
+                "description": "Publication year"
+              },
+              "doi": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Digital Object Identifier (if available)"
+              },
+              "url": {
+                "type": "string",
+                "description": "URL to the document on HAL"
+              },
+              "abstract": {
+                "type": "string",
+                "description": "Abstract of the document"
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Source identifier (always 'HAL' when present)"
+              }
+            }
           }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
-      }
+      ]
     },
     "test_examples": [
       {

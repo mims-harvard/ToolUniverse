@@ -20,7 +20,7 @@ def euhealthinfo_search_key_indicators_registries_surveys(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     This tool identifies and retrieves aggregated datasets that include high-level health indicators ...
 
@@ -49,7 +49,7 @@ def euhealthinfo_search_key_indicators_registries_surveys(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

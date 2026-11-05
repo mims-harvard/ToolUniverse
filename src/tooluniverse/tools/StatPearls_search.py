@@ -16,7 +16,7 @@ def StatPearls_search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Full-text search of StatPearls, the peer-reviewed point-of-care clinical review library on NCBI B...
 
@@ -37,7 +37,7 @@ def StatPearls_search(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

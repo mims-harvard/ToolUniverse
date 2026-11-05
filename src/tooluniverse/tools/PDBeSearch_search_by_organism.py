@@ -17,7 +17,7 @@ def PDBeSearch_search_by_organism(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search PDBe Solr records filtered by organism, optionally combined with a keyword. Results are of...
 
@@ -40,7 +40,7 @@ def PDBeSearch_search_by_organism(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

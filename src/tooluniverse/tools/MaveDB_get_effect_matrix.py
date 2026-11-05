@@ -16,7 +16,7 @@ def MaveDB_get_effect_matrix(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     One-shot DMS data loader: fetch a MaveDB score set, parse HGVS to (ref_aa, position, alt_aa), fil...
 
@@ -37,7 +37,7 @@ def MaveDB_get_effect_matrix(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

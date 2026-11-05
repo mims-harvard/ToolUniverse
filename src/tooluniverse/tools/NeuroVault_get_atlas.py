@@ -14,7 +14,7 @@ def NeuroVault_get_atlas(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed metadata for a single labeled anatomical brain atlas map in NeuroVault by its atlas ...
 
@@ -31,7 +31,7 @@ def NeuroVault_get_atlas(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

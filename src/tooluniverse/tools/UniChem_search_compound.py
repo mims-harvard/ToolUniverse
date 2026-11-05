@@ -16,7 +16,7 @@ def UniChem_search_compound(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search UniChem by InChI, InChIKey, source compound ID, or UCI. Every returned compound is preserv...
 
@@ -37,7 +37,7 @@ def UniChem_search_compound(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

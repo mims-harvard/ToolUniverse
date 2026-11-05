@@ -19,6 +19,30 @@ from tooluniverse.exceptions import (
 )
 
 
+def _encode_error_message(payload: Dict[str, Any]) -> str:
+    """ENCODE's error document, as one line."""
+    code = payload.get("code")
+    title = payload.get("title") or "Error"
+    detail = payload.get("description") or payload.get("detail") or ""
+    return f"{code} {title}: {detail}".strip()
+
+
+def _is_encode_error_document(parsed: Any) -> bool:
+    """True for ENCODE's error documents.
+
+    ENCODE names the classes of whatever it serves in `@type`: a file is
+    ["File", "Item"], an experiment ["Experiment", "Dataset", "Item"], and an
+    error ["HTTPNotFound", "Error"]. A real object never lists "Error" there,
+    which is why this keys off @type rather than off the body's own `status`
+    -- that field carries the object's lifecycle state for real resources
+    ("released", "archived"), not a call outcome.
+    """
+    if not isinstance(parsed, dict):
+        return False
+    types = parsed.get("@type")
+    return isinstance(types, list) and "Error" in types
+
+
 def _http_get(
     url: str,
     headers: Dict[str, str] | None = None,
@@ -29,20 +53,28 @@ def _http_get(
         with urlopen(req, timeout=timeout) as resp:
             data = resp.read()
             try:
-                return json.loads(data.decode("utf-8", errors="ignore"))
+                parsed = json.loads(data.decode("utf-8", errors="ignore"))
             except Exception:
                 return {"raw": data.decode("utf-8", errors="ignore")}
     except HTTPError as e:
-        # ENCODE API may return 404 even with valid JSON data
-        # Read the response body from the error
+        # ENCODE serves some real payloads with a non-200 status, so the body
+        # is read rather than re-raised.
         try:
             data = e.read()
             parsed = json.loads(data.decode("utf-8", errors="ignore"))
-            # If we got valid JSON, return it even though status was 404
-            return parsed
         except Exception:
             # If we can't parse, re-raise the original error
             raise
+    # ...but it also answers a missing accession with an error document, and
+    # returning that as the resource told the caller status: "success" and
+    # handed it {"@type": ["HTTPNotFound", "Error"], "status": "error",
+    # "code": 404, "title": "Not Found", ...} to read as a file or experiment.
+    if _is_encode_error_document(parsed):
+        # ToolUnavailableError rather than a new exception class: it is what
+        # _handle_encode_error already maps "404" and "not found" to, and the
+        # callers' existing `except Exception` turns it into an error envelope.
+        raise ToolUnavailableError(_encode_error_message(parsed))
+    return parsed
 
 
 # Top-level keys in an ENCODE `/search/` response that describe the search

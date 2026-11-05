@@ -139,6 +139,11 @@
               "type": "object",
               "description": "Associated publication(s)"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -214,6 +219,11 @@
               "type": "object",
               "description": "References cited by this paper"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -323,6 +333,11 @@
               "type": "integer",
               "description": "Classification ID"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

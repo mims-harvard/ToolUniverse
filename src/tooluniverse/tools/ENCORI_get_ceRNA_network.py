@@ -21,7 +21,7 @@ def ENCORI_get_ceRNA_network(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Build competing-endogenous-RNA (ceRNA / miRNA-sponge) networks via ENCORI (starBase) ceRNA module...
 
@@ -52,7 +52,7 @@ def ENCORI_get_ceRNA_network(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

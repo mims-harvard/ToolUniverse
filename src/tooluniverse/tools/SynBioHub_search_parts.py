@@ -16,7 +16,7 @@ def SynBioHub_search_parts(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search the SynBioHub synthetic biology parts repository for genetic parts and designs by keyword....
 
@@ -37,7 +37,7 @@ def SynBioHub_search_parts(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

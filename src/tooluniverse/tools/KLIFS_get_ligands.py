@@ -14,7 +14,7 @@ def KLIFS_get_ligands(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get all ligands (co-crystallized inhibitors) bound to a specific kinase across all its crystal st...
 
@@ -31,7 +31,7 @@ def KLIFS_get_ligands(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

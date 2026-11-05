@@ -14,7 +14,7 @@ def REBASE_get_enzyme(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Look up a restriction enzyme in REBASE, the reference catalogue of ~6,000 enzymes from New Englan...
 
@@ -31,7 +31,7 @@ def REBASE_get_enzyme(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

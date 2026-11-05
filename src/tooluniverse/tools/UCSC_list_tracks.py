@@ -18,7 +18,7 @@ def UCSC_list_tracks(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Discover UCSC Genome Browser tracks with exact track_count and recoverable local offset paginatio...
 
@@ -43,7 +43,7 @@ def UCSC_list_tracks(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

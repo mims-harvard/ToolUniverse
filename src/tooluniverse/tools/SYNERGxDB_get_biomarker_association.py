@@ -16,7 +16,7 @@ def SYNERGxDB_get_biomarker_association(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Pharmacogenomic biomarker discovery for drug combinations in SYNERGxDB: correlates per-cell-line ...
 
@@ -37,7 +37,7 @@ def SYNERGxDB_get_biomarker_association(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

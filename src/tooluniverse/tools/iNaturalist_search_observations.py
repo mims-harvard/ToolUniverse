@@ -20,7 +20,7 @@ def iNaturalist_search_observations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search iNaturalist observations by taxon/name, place, and quality, ordered by observation ID desc...
 
@@ -49,7 +49,7 @@ def iNaturalist_search_observations(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

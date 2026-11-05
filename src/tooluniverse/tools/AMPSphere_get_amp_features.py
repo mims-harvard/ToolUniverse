@@ -14,7 +14,7 @@ def AMPSphere_get_amp_features(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve the full physicochemical feature profile of a single AMPSphere AMP by accession (e.g. 'A...
 
@@ -31,7 +31,7 @@ def AMPSphere_get_amp_features(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

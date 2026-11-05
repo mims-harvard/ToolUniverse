@@ -21,7 +21,7 @@ def MetabolomicsWorkbench_find_studies_by_phenotype(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Discover Metabolomics Workbench studies matching a phenotype/experimental profile via the METSTAT...
 
@@ -52,7 +52,7 @@ def MetabolomicsWorkbench_find_studies_by_phenotype(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

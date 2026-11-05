@@ -16,7 +16,7 @@ def HPO_search_terms(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search HPO terms by keyword with complete synonym arrays and explicit synonym_count for every ret...
 
@@ -37,7 +37,7 @@ def HPO_search_terms(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

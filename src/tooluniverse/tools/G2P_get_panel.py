@@ -14,7 +14,7 @@ def G2P_get_panel(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get summary statistics for a Gene2Phenotype clinical panel. G2P organizes gene-disease associatio...
 
@@ -31,7 +31,7 @@ def G2P_get_panel(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

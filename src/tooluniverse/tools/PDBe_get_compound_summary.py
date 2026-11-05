@@ -14,7 +14,7 @@ def PDBe_get_compound_summary(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed chemical compound information from PDBe by PDB chemical component ID. Returns comple...
 
@@ -31,7 +31,7 @@ def PDBe_get_compound_summary(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

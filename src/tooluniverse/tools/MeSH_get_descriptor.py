@@ -14,7 +14,7 @@ def MeSH_get_descriptor(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the complete source record for a MeSH descriptor by its ID. Returns convenient parsed fields ...
 
@@ -31,7 +31,7 @@ def MeSH_get_descriptor(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

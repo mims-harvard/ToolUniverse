@@ -15,7 +15,7 @@ def OMA_get_protein_go(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get Gene Ontology (GO) functional annotations for a specific OMA protein. OMA attaches per-entry ...
 
@@ -34,7 +34,7 @@ def OMA_get_protein_go(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

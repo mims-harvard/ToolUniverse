@@ -14,7 +14,7 @@ def Tark_get_transcript(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get the archived transcript record for an Ensembl transcript id (ENST) from the Ensembl Tark tran...
 
@@ -31,7 +31,7 @@ def Tark_get_transcript(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

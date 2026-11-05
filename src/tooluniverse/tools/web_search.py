@@ -19,7 +19,7 @@ def web_search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     General web search using DDGS (Dux Distributed Global Search) supporting multiple search engines ...
 
@@ -36,7 +36,7 @@ def web_search(
     region : str
         Search region/locale for DDGS backends, and country/language for the SerpBase...
     safesearch : str
-        Safe search level for DDGS backends. Parallel and SerpBase do not support thi...
+        Safe search level for DDGS backends. Parallel, SerpBase, and Outcrawl do not ...
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -46,7 +46,7 @@ def web_search(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

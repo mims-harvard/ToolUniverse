@@ -18,7 +18,7 @@ def ZINC_search_by_properties(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     NOT SUPPORTED by ZINC22 (CartBlanche22): molecular-property-range search (filtering by MW / LogP ...
 
@@ -43,7 +43,7 @@ def ZINC_search_by_properties(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

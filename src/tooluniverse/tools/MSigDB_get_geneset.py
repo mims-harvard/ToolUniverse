@@ -15,7 +15,7 @@ def MSigDB_get_geneset(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve a specific gene set from MSigDB (Molecular Signatures Database) by its exact name. MSigD...
 
@@ -34,7 +34,7 @@ def MSigDB_get_geneset(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

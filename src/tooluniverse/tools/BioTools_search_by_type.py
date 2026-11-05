@@ -18,7 +18,7 @@ def BioTools_search_by_type(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search the ELIXIR Bio.tools registry for bioinformatics resources by tool type. Returns resources...
 
@@ -43,7 +43,7 @@ def BioTools_search_by_type(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -14,7 +14,7 @@ def OncoKB_get_cancer_genes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get list of all cancer genes curated in OncoKB. Returns genes classified as oncogenes and/or tumo...
 
@@ -31,7 +31,7 @@ def OncoKB_get_cancer_genes(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

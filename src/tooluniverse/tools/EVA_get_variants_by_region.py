@@ -17,7 +17,7 @@ def EVA_get_variants_by_region(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get genetic variants from EVA within a genomic region. Start with offset=0 and continue with meta...
 
@@ -40,7 +40,7 @@ def EVA_get_variants_by_region(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

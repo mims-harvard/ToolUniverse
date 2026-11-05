@@ -18,7 +18,7 @@ def BioSamples_search_by_filter(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search the EBI BioSamples database with a structured attribute filter. For small result sets, use...
 
@@ -43,7 +43,7 @@ def BioSamples_search_by_filter(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

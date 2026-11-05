@@ -17,7 +17,7 @@ def SGD_search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search SGD across genes, GO terms, phenotypes, references, alleles, diseases, complexes, pathways...
 
@@ -40,7 +40,7 @@ def SGD_search(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

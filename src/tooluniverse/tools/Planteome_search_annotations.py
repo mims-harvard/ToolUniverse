@@ -15,7 +15,7 @@ def Planteome_search_annotations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search Planteome's gene-to-ontology-term annotation index by gene id or accession. Resolves a pla...
 
@@ -34,7 +34,7 @@ def Planteome_search_annotations(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -14,7 +14,7 @@ def PlantReactome_get_species_pathway_tree(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Retrieve the full hierarchical pathway/event tree for a plant species (top-level pathways down to...
 
@@ -31,7 +31,7 @@ def PlantReactome_get_species_pathway_tree(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

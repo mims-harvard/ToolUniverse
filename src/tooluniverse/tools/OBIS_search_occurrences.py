@@ -17,7 +17,7 @@ def OBIS_search_occurrences(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Retrieve one cursor page of marine occurrence records from OBIS. The API ignores offset/from/page...
 
@@ -40,7 +40,7 @@ def OBIS_search_occurrences(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

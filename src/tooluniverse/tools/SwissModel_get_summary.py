@@ -14,7 +14,7 @@ def SwissModel_get_summary(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get a summary of the best available homology model from SWISS-MODEL Repository for a UniProt acce...
 
@@ -31,7 +31,7 @@ def SwissModel_get_summary(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -14,7 +14,7 @@ def PDB_REDO_get_version_info(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get PDB-REDO re-refinement version and provenance metadata for a PDB entry. This is the versions....
 
@@ -31,7 +31,7 @@ def PDB_REDO_get_version_info(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

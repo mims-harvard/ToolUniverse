@@ -18,7 +18,7 @@ def EnsemblPheno_get_by_term(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Reverse phenotype lookup from the Ensembl REST API: given a trait/disease name or ontology access...
 
@@ -43,7 +43,7 @@ def EnsemblPheno_get_by_term(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

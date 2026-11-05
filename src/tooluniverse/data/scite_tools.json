@@ -63,6 +63,11 @@
               "type": "integer",
               "description": "Total unique publications that cite this paper"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

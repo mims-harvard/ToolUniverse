@@ -18,7 +18,7 @@ def gnomad_get_region(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get basic regional information from gnomAD by genomic interval. Returns genes overlapping the reg...
 
@@ -43,7 +43,7 @@ def gnomad_get_region(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

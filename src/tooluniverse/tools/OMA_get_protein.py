@@ -14,7 +14,7 @@ def OMA_get_protein(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get protein information from the OMA (Orthologous MAtrix) Browser by UniProt accession or OMA ID....
 
@@ -31,7 +31,7 @@ def OMA_get_protein(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -15,7 +15,7 @@ def GTDB_get_genome(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get comprehensive metadata for a specific genome by NCBI accession from GTDB. Returns nucleotide ...
 
@@ -34,7 +34,7 @@ def GTDB_get_genome(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -16,7 +16,7 @@ def UniProtIDMap_to_pdb(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Convert UniProt accessions to PDB IDs. All upstream pages are fetched and exposed through local l...
 
@@ -37,7 +37,7 @@ def UniProtIDMap_to_pdb(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

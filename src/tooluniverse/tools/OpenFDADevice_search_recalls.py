@@ -15,7 +15,7 @@ def OpenFDADevice_search_recalls(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search openFDA's medical device recall database by device name, recalling firm, or free text. Ret...
 
@@ -34,7 +34,7 @@ def OpenFDADevice_search_recalls(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -103,6 +103,11 @@
               "type": "integer",
               "description": "Number of cross-references found"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -204,6 +209,11 @@
               "type": "integer",
               "description": "Number of matches found"
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -340,6 +350,11 @@
                 }
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

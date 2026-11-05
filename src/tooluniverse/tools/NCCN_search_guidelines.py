@@ -15,7 +15,7 @@ def NCCN_search_guidelines(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search NCCN (National Comprehensive Cancer Network) guidelines and publications via PubMed. Searc...
 
@@ -34,7 +34,7 @@ def NCCN_search_guidelines(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

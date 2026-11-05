@@ -14,7 +14,7 @@ def ModelDB_get_celltype(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get details about a specific neuron/cell type from ModelDB by its cell type ID. Returns the cell ...
 
@@ -31,7 +31,7 @@ def ModelDB_get_celltype(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

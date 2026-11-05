@@ -16,7 +16,7 @@ def FAERS_count_drug_characterization(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any] | list[Any]:
     """
     Aggregate FDA adverse event (FAERS) reports for a drug by drugcharacterization, i.e. the role the...
 
@@ -37,7 +37,7 @@ def FAERS_count_drug_characterization(
 
     Returns
     -------
-    Any
+    dict[str, Any] | list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

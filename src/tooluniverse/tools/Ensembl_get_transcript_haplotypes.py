@@ -15,7 +15,7 @@ def Ensembl_get_transcript_haplotypes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get population protein and CDS haplotypes for a transcript from the Ensembl REST API (transcript_...
 
@@ -34,7 +34,7 @@ def Ensembl_get_transcript_haplotypes(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -15,7 +15,7 @@ def BioTools_get_tool(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed information about a specific bioinformatics tool from the ELIXIR Bio.tools registry ...
 
@@ -34,7 +34,7 @@ def BioTools_get_tool(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

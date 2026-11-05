@@ -15,7 +15,7 @@ def gnomad_get_transcript(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get basic transcript metadata from gnomAD by Ensembl transcript ID (e.g., ENST...). The response ...
 
@@ -34,7 +34,7 @@ def gnomad_get_transcript(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

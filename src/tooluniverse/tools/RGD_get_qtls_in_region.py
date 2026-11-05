@@ -19,7 +19,7 @@ def RGD_get_qtls_in_region(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get QTLs (Quantitative Trait Loci) overlapping a genomic region from RGD with limit/offset pagina...
 
@@ -46,7 +46,7 @@ def RGD_get_qtls_in_region(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

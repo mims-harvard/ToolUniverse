@@ -16,7 +16,7 @@ def EBIProteins_get_domains_sites(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get and page through domain/site features for a protein from the EBI Proteins API. Returns true c...
 
@@ -37,7 +37,7 @@ def EBIProteins_get_domains_sites(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

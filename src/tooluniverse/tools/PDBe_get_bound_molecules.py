@@ -14,7 +14,7 @@ def PDBe_get_bound_molecules(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get all bound molecules (ligands, cofactors, drugs) in a PDB structure from the PDBe Graph API. R...
 
@@ -31,7 +31,7 @@ def PDBe_get_bound_molecules(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

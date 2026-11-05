@@ -14,7 +14,7 @@ def WormBase_get_interactions(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get physical and genetic interactions for a C. elegans gene from WormBase, split into physical an...
 
@@ -31,7 +31,7 @@ def WormBase_get_interactions(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

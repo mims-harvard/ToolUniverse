@@ -43,7 +43,12 @@
           },
           "required": [
             "status"
-          ]
+          ],
+          "not": {
+            "required": [
+              "error"
+            ]
+          }
         },
         {
           "type": "object",

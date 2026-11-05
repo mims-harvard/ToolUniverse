@@ -129,6 +129,11 @@
               "type": "array",
               "description": "With list_models=true: the catalogue instead of a prediction."
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -257,6 +262,11 @@
               "type": "array",
               "description": "With list_models=true: the catalogue instead of a prediction."
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -368,6 +378,11 @@
               "type": "array",
               "description": "With list_models=true: the catalogue instead of a prediction."
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {
@@ -489,6 +504,11 @@
               "type": "array",
               "description": "With list_models=true: the catalogue instead of a prediction."
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

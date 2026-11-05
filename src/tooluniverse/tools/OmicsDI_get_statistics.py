@@ -14,7 +14,7 @@ def OmicsDI_get_statistics(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get statistics about the OmicsDI omics data repositories. Returns counts of datasets across diffe...
 
@@ -31,7 +31,7 @@ def OmicsDI_get_statistics(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

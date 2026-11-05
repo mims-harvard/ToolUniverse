@@ -712,7 +712,8 @@
                   "type": "string"
                 },
                 "go_terms": {
-                  "type": "array",
+                  "type": ["array", "null"],
+                  "description": "GO terms assigned to the entry, or null when the entry has none. Measured over 64 entries.",
                   "items": {
                     "type": "object",
                     "properties": {
@@ -871,12 +872,14 @@
                   }
                 },
                 "wikipedia": {
-                  "type": "null"
+                  "type": "null",
+                  "description": "Null for every integrated InterPro entry (measured on 258); /entry/interpro/ does not serve the article list."
                 },
                 "literature": {
                   "type": "object",
-                  "properties": {
-                    "PUB00001530": {
+                  "description": "Publication records keyed by InterPro citation id. Measured over 250 InterPro entries (1,423 publication records, 1,143 distinct ids): the key set is data, not a fixed list, and an entry carries between 0 and 46 of them.",
+                  "patternProperties": {
+                    "^PUB[0-9]+$": {
                       "type": "object",
                       "properties": {
                         "PMID": {
@@ -886,13 +889,20 @@
                           ]
                         },
                         "ISBN": {
-                          "type": "null"
+                          "type": "null",
+                          "description": "Measured over 250 InterPro entries (1,423 publication records, 1,143 distinct ids): null in every record. InterPro carries book citations under a different entry type."
                         },
                         "volume": {
-                          "type": "string"
+                          "type": [
+                            "string",
+                            "null"
+                          ]
                         },
                         "issue": {
-                          "type": "string"
+                          "type": [
+                            "string",
+                            "null"
+                          ]
                         },
                         "year": {
                           "type": [
@@ -904,16 +914,23 @@
                           "type": "string"
                         },
                         "URL": {
-                          "type": "null"
+                          "type": "null",
+                          "description": "Measured over 250 InterPro entries (1,423 publication records, 1,143 distinct ids): null in every record. The resolvable link is DOI_URL."
                         },
                         "raw_pages": {
-                          "type": "string"
+                          "type": [
+                            "string",
+                            "null"
+                          ]
                         },
                         "medline_journal": {
                           "type": "string"
                         },
                         "ISO_journal": {
-                          "type": "string"
+                          "type": [
+                            "string",
+                            "null"
+                          ]
                         },
                         "authors": {
                           "type": "array",
@@ -922,467 +939,22 @@
                           }
                         },
                         "DOI_URL": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "PUB00003568": {
-                      "type": "object",
-                      "properties": {
-                        "PMID": {
                           "type": [
-                            "integer",
-                            "number"
+                            "string",
+                            "null"
                           ]
-                        },
-                        "ISBN": {
-                          "type": "null"
-                        },
-                        "volume": {
-                          "type": "string"
-                        },
-                        "issue": {
-                          "type": "null"
-                        },
-                        "year": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
-                        },
-                        "title": {
-                          "type": "string"
-                        },
-                        "URL": {
-                          "type": "null"
-                        },
-                        "raw_pages": {
-                          "type": "string"
-                        },
-                        "medline_journal": {
-                          "type": "string"
-                        },
-                        "ISO_journal": {
-                          "type": "string"
-                        },
-                        "authors": {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          }
-                        },
-                        "DOI_URL": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "PUB00003569": {
-                      "type": "object",
-                      "properties": {
-                        "PMID": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
-                        },
-                        "ISBN": {
-                          "type": "null"
-                        },
-                        "volume": {
-                          "type": "string"
-                        },
-                        "issue": {
-                          "type": "null"
-                        },
-                        "year": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
-                        },
-                        "title": {
-                          "type": "string"
-                        },
-                        "URL": {
-                          "type": "null"
-                        },
-                        "raw_pages": {
-                          "type": "string"
-                        },
-                        "medline_journal": {
-                          "type": "string"
-                        },
-                        "ISO_journal": {
-                          "type": "string"
-                        },
-                        "authors": {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          }
-                        },
-                        "DOI_URL": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "PUB00005115": {
-                      "type": "object",
-                      "properties": {
-                        "PMID": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
-                        },
-                        "ISBN": {
-                          "type": "null"
-                        },
-                        "volume": {
-                          "type": "string"
-                        },
-                        "issue": {
-                          "type": "string"
-                        },
-                        "year": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
-                        },
-                        "title": {
-                          "type": "string"
-                        },
-                        "URL": {
-                          "type": "null"
-                        },
-                        "raw_pages": {
-                          "type": "string"
-                        },
-                        "medline_journal": {
-                          "type": "string"
-                        },
-                        "ISO_journal": {
-                          "type": "string"
-                        },
-                        "authors": {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          }
-                        },
-                        "DOI_URL": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "PUB00005145": {
-                      "type": "object",
-                      "properties": {
-                        "PMID": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
-                        },
-                        "ISBN": {
-                          "type": "null"
-                        },
-                        "volume": {
-                          "type": "string"
-                        },
-                        "issue": {
-                          "type": "string"
-                        },
-                        "year": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
-                        },
-                        "title": {
-                          "type": "string"
-                        },
-                        "URL": {
-                          "type": "null"
-                        },
-                        "raw_pages": {
-                          "type": "string"
-                        },
-                        "medline_journal": {
-                          "type": "string"
-                        },
-                        "ISO_journal": {
-                          "type": "string"
-                        },
-                        "authors": {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          }
-                        },
-                        "DOI_URL": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "PUB00015293": {
-                      "type": "object",
-                      "properties": {
-                        "PMID": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
-                        },
-                        "ISBN": {
-                          "type": "null"
-                        },
-                        "volume": {
-                          "type": "string"
-                        },
-                        "issue": {
-                          "type": "string"
-                        },
-                        "year": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
-                        },
-                        "title": {
-                          "type": "string"
-                        },
-                        "URL": {
-                          "type": "null"
-                        },
-                        "raw_pages": {
-                          "type": "string"
-                        },
-                        "medline_journal": {
-                          "type": "string"
-                        },
-                        "ISO_journal": {
-                          "type": "string"
-                        },
-                        "authors": {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          }
-                        },
-                        "DOI_URL": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "PUB00020114": {
-                      "type": "object",
-                      "properties": {
-                        "PMID": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
-                        },
-                        "ISBN": {
-                          "type": "null"
-                        },
-                        "volume": {
-                          "type": "string"
-                        },
-                        "issue": {
-                          "type": "string"
-                        },
-                        "year": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
-                        },
-                        "title": {
-                          "type": "string"
-                        },
-                        "URL": {
-                          "type": "null"
-                        },
-                        "raw_pages": {
-                          "type": "string"
-                        },
-                        "medline_journal": {
-                          "type": "string"
-                        },
-                        "ISO_journal": {
-                          "type": "string"
-                        },
-                        "authors": {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          }
-                        },
-                        "DOI_URL": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "PUB00015362": {
-                      "type": "object",
-                      "properties": {
-                        "PMID": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
-                        },
-                        "ISBN": {
-                          "type": "null"
-                        },
-                        "volume": {
-                          "type": "string"
-                        },
-                        "issue": {
-                          "type": "string"
-                        },
-                        "year": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
-                        },
-                        "title": {
-                          "type": "string"
-                        },
-                        "URL": {
-                          "type": "null"
-                        },
-                        "raw_pages": {
-                          "type": "string"
-                        },
-                        "medline_journal": {
-                          "type": "string"
-                        },
-                        "ISO_journal": {
-                          "type": "string"
-                        },
-                        "authors": {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          }
-                        },
-                        "DOI_URL": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "PUB00034898": {
-                      "type": "object",
-                      "properties": {
-                        "PMID": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
-                        },
-                        "ISBN": {
-                          "type": "null"
-                        },
-                        "volume": {
-                          "type": "string"
-                        },
-                        "issue": {
-                          "type": "string"
-                        },
-                        "year": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
-                        },
-                        "title": {
-                          "type": "string"
-                        },
-                        "URL": {
-                          "type": "null"
-                        },
-                        "raw_pages": {
-                          "type": "string"
-                        },
-                        "medline_journal": {
-                          "type": "string"
-                        },
-                        "ISO_journal": {
-                          "type": "string"
-                        },
-                        "authors": {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          }
-                        },
-                        "DOI_URL": {
-                          "type": "string"
-                        }
-                      }
-                    },
-                    "PUB00034899": {
-                      "type": "object",
-                      "properties": {
-                        "PMID": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
-                        },
-                        "ISBN": {
-                          "type": "null"
-                        },
-                        "volume": {
-                          "type": "string"
-                        },
-                        "issue": {
-                          "type": "string"
-                        },
-                        "year": {
-                          "type": [
-                            "integer",
-                            "number"
-                          ]
-                        },
-                        "title": {
-                          "type": "string"
-                        },
-                        "URL": {
-                          "type": "null"
-                        },
-                        "raw_pages": {
-                          "type": "string"
-                        },
-                        "medline_journal": {
-                          "type": "string"
-                        },
-                        "ISO_journal": {
-                          "type": "string"
-                        },
-                        "authors": {
-                          "type": "array",
-                          "items": {
-                            "type": "string"
-                          }
-                        },
-                        "DOI_URL": {
-                          "type": "string"
                         }
                       }
                     }
                   }
                 },
                 "set_info": {
-                  "type": "null"
+                  "type": "null",
+                  "description": "Null for every integrated InterPro entry (measured on 258). Clan/set membership is a member-database property; see InterPro_get_member_signature."
                 },
                 "overlaps_with": {
-                  "type": "array",
+                  "type": ["array", "null"],
+                  "description": "Entries whose matches overlap this one, or null when there are none. Measured over 64 entries.",
                   "items": {
                     "type": "object",
                     "properties": {
@@ -1605,7 +1177,8 @@
                   "type": "boolean"
                 },
                 "representative_structure": {
-                  "type": "object",
+                  "type": ["object", "null"],
+                  "description": "A representative PDB structure, or null when InterPro has not picked one. Measured over 64 entries.",
                   "properties": {
                     "accession": {
                       "type": "string"
@@ -1638,6 +1211,12 @@
     "test_examples": [
       {
         "accession": "IPR000719"
+      },
+      {
+        "accession": "IPR001841"
+      },
+      {
+        "accession": "IPR013783"
       }
     ]
   }

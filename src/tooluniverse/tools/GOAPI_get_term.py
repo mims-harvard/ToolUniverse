@@ -14,7 +14,7 @@ def GOAPI_get_term(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed information about a Gene Ontology (GO) term by its GO ID. Returns the term label, fu...
 
@@ -31,7 +31,7 @@ def GOAPI_get_term(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

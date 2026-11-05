@@ -14,7 +14,7 @@ def ITIS_search_by_common_name(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search the ITIS (Integrated Taxonomic Information System) database by common/vernacular name. Ret...
 
@@ -31,7 +31,7 @@ def ITIS_search_by_common_name(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

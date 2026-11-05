@@ -14,7 +14,7 @@ def KLIFS_get_kinase(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get detailed information about a specific kinase from KLIFS by its kinase ID. Returns kinase name...
 
@@ -31,7 +31,7 @@ def KLIFS_get_kinase(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

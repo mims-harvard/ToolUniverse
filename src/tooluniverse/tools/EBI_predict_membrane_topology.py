@@ -14,7 +14,7 @@ def EBI_predict_membrane_topology(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Predict transmembrane helices and signal peptides from a protein sequence using Phobius via EMBL-...
 
@@ -31,7 +31,7 @@ def EBI_predict_membrane_topology(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

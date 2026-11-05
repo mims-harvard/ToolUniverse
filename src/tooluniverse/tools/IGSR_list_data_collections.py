@@ -16,7 +16,7 @@ def IGSR_list_data_collections(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     List available data collections from IGSR. Results are recoverably paginated: start with offset=0...
 
@@ -37,7 +37,7 @@ def IGSR_list_data_collections(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

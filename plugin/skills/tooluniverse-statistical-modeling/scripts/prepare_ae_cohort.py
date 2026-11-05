@@ -18,6 +18,42 @@ import sys
 import pandas as pd
 
 
+def _filter_subgroup(df: pd.DataFrame, subgroup: str) -> pd.DataFrame:
+    """Keep rows matching ``col=value``.
+
+    The value is always text. ``read_csv`` stores columns such as AGE as
+    int or float, and those dtypes never equal the string ``"65"``, so the
+    filter used to drop the whole cohort. Compare numbers numerically and
+    everything else as stripped text.
+    """
+    col, val = subgroup.split("=", 1)
+    target_col, target_val = col.strip(), val.strip()
+    series = df[target_col]
+    before = len(df)
+    if pd.api.types.is_integer_dtype(series) or pd.api.types.is_float_dtype(series):
+        try:
+            if pd.api.types.is_integer_dtype(series):
+                try:
+                    number = int(target_val)
+                except ValueError:
+                    parsed = float(target_val)
+                    if not parsed.is_integer():
+                        raise ValueError
+                    number = int(parsed)
+            else:
+                number = float(target_val)
+        except ValueError as exc:
+            raise ValueError(
+                f"Subgroup value {target_val!r} is not numeric "
+                f"for column {target_col!r}"
+            ) from exc
+        df = df[series == number]
+    else:
+        df = df[series.astype("string").str.strip() == target_val]
+    print(f"After subgroup {subgroup}: {len(df)} subjects (from {before})")
+    return df
+
+
 def prepare_cohort(dm_path: str, ae_path: str, subgroup: str = "") -> pd.DataFrame:
     """Prepare AE severity cohort with correct convention."""
     # Try latin1 encoding (common for clinical trial exports)
@@ -44,12 +80,8 @@ def prepare_cohort(dm_path: str, ae_path: str, subgroup: str = "") -> pd.DataFra
     print(f"AE: {len(ae)} records, {ae['USUBJID'].nunique()} subjects")
     print(f"After merge (inner join, max AESEV): {len(df)} subjects")
 
-    # Apply subgroup filter if specified
     if subgroup:
-        col, val = subgroup.split("=")
-        before = len(df)
-        df = df[df[col.strip()] == val.strip()]
-        print(f"After subgroup {subgroup}: {len(df)} subjects (from {before})")
+        df = _filter_subgroup(df, subgroup)
 
     print(f"AESEV distribution: {df['AESEV'].value_counts().sort_index().to_dict()}")
     return df

@@ -19,7 +19,7 @@ def OncoKB_annotate_variant(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Annotate a cancer variant for oncogenic potential and treatment implications using OncoKB. Return...
 
@@ -46,7 +46,7 @@ def OncoKB_annotate_variant(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

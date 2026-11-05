@@ -17,7 +17,7 @@ def TumorHope2_search_peptides(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Search TumorHoPe 2 (Raghava lab, IIITD) for TUMOR-HOMING peptide records used in drug delivery. F...
 
@@ -40,7 +40,7 @@ def TumorHope2_search_peptides(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

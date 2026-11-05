@@ -119,6 +119,17 @@
             "graph",
             "biological_processes"
           ]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
       ],
       "description": "When string_mode is true, a formatted network summary including evidence dataset counts and visible retrieval warnings. When false, an object containing a NetworkX graph with full returned evidence-dataset records and a biological-process list. The tool response also includes top-level retrieval-completeness metadata."

@@ -56,19 +56,91 @@
           "study_accession": {"type": ["string", "null"]},
           "title": {"type": ["string", "null"]},
           "brief_description": {"type": ["string", "null"]},
-          "condition_or_disease": {"type": ["array", "null"]},
-          "research_focus": {"type": ["array", "null"]},
-          "species": {"type": ["array", "null"]},
-          "assay_methods": {"type": ["array", "null"]},
-          "assay_method_counts": {"type": ["array", "null"]},
-          "biosample_types": {"type": ["array", "null"]},
+          "condition_or_disease": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "research_focus": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "species": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "assay_methods": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "assay_method_counts": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "biosample_types": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
           "actual_enrollment": {"type": ["integer", "null"]},
           "age_range": {"type": ["string", "null"]},
           "gender_included": {"type": ["string", "null"]},
-          "pubmed_ids": {"type": ["array", "null"]},
+          "pubmed_ids": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
           "doi": {"type": ["string", "null"]},
-          "program_name": {"type": ["array", "null"]},
-          "study_pi": {"type": ["array", "null"]},
+          "program_name": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "study_pi": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
           "clinical_trial": {"type": ["string", "null"]},
           "latest_data_release_date": {"type": ["string", "null"]}
         }

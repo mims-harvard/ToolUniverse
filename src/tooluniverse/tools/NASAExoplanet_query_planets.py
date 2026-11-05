@@ -15,7 +15,7 @@ def NASAExoplanet_query_planets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Query the NASA Exoplanet Archive for confirmed exoplanets using SQL-like ADQL queries. Returns or...
 
@@ -34,7 +34,7 @@ def NASAExoplanet_query_planets(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

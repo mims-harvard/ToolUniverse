@@ -149,7 +149,28 @@
         "protein_name": {"type": ["string", "null"]},
         "gene_names": {
           "type": "array",
-          "items": {"type": "object"}
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "object"
+              },
+              "synonyms": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "value": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "required": [
+              "name"
+            ]
+          }
         },
         "protein_existence": {"type": ["string", "null"]},
         "alternative_names": {
@@ -159,20 +180,109 @@
         "database_references": {
           "type": "array",
           "items": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "properties": {
+                "type": "object"
+              },
+              "type": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "properties",
+              "type"
+            ]
           }
         },
         "pockets": {
           "type": "array",
           "items": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "buriedness": {
+                "type": "number"
+              },
+              "energyPerVol": {
+                "type": "number"
+              },
+              "meanPlddt": {
+                "type": "number"
+              },
+              "pocketId": {
+                "type": "integer"
+              },
+              "radGyration": {
+                "type": "number"
+              },
+              "resid": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "score": {
+                "type": "number"
+              },
+              "structId": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "buriedness",
+              "energyPerVol",
+              "meanPlddt",
+              "pocketId",
+              "radGyration",
+              "resid",
+              "score",
+              "structId"
+            ]
           },
           "description": "Predicted structural pockets involving the queried position."
         },
         "interactions": {
           "type": "array",
           "items": {
-            "type": "object"
+            "type": "object",
+            "properties": {
+              "a": {
+                "type": "string"
+              },
+              "aresidues": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "b": {
+                "type": "string"
+              },
+              "bresidues": {
+                "type": "array",
+                "items": {
+                  "type": "integer"
+                }
+              },
+              "pdbModel": {
+                "type": "string"
+              },
+              "pdockq": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "a",
+              "aresidues",
+              "b",
+              "bresidues",
+              "pdbModel",
+              "pdockq"
+            ]
           },
           "description": "Predicted protein-protein interaction models involving the queried position."
         },

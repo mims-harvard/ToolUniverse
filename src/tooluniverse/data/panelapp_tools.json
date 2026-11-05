@@ -35,6 +35,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "type": "object",
           "description": "PanelApp panel search results",
           "properties": {
@@ -167,6 +172,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "type": "object",
           "description": "Full gene panel details from PanelApp",
           "properties": {
@@ -358,6 +368,11 @@
     "return_schema": {
       "oneOf": [
         {
+          "not": {
+            "required": [
+              "error"
+            ]
+          },
           "type": "object",
           "description": "Gene panel membership results from PanelApp",
           "properties": {

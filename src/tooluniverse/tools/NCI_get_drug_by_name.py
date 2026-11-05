@@ -14,7 +14,7 @@ def NCI_get_drug_by_name(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed information about a cancer drug from the NCI Drug Dictionary by its pretty-url-name ...
 
@@ -31,7 +31,7 @@ def NCI_get_drug_by_name(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

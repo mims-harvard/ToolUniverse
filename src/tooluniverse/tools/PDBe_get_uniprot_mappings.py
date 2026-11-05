@@ -14,7 +14,7 @@ def PDBe_get_uniprot_mappings(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get UniProt-to-PDB chain mappings for a PDB structure from the PDBe Graph API. For each UniProt a...
 
@@ -31,7 +31,7 @@ def PDBe_get_uniprot_mappings(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

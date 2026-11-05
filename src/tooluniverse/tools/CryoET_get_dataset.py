@@ -15,7 +15,7 @@ def CryoET_get_dataset(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get full metadata for a specific CryoET Data Portal dataset by its numeric ID. Returns complete d...
 
@@ -34,7 +34,7 @@ def CryoET_get_dataset(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -94,187 +94,202 @@
       "extract_essential": true
     },
     "return_schema": {
-      "type": "object",
-      "description": "Paged envelope, not a bare list. 'reports' holds this page; 'total_available' holds the size of the whole matching set. The reports are detailed adverse event reports",
-      "properties": {
-        "status": {
-          "type": "string",
-          "description": "'success', or 'error' with an 'error' message instead of 'reports'"
-        },
-        "reports": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "safetyreportid": {
-                "type": "string",
-                "description": "Unique identifier for the safety report"
-              },
-              "safetyreportversion": {
-                "type": "string",
-                "description": "Version of the safety report"
-              },
-              "serious": {
-                "type": "string",
-                "description": "Whether the event was serious (1=Yes, 2=No)"
-              },
-              "seriousnessdeath": {
-                "type": "string",
-                "description": "Whether death was reported (1=Yes)"
-              },
-              "seriousnesslifethreatening": {
-                "type": "string",
-                "description": "Whether the event was life-threatening (1=Yes)"
-              },
-              "seriousnesshospitalization": {
-                "type": "string",
-                "description": "Whether hospitalization was required (1=Yes)"
-              },
-              "seriousnessdisabling": {
-                "type": "string",
-                "description": "Whether the event was disabling (1=Yes)"
-              },
-              "occurcountry": {
-                "type": "string",
-                "description": "Country where the event occurred (ISO2 code)"
-              },
-              "primarysourcecountry": {
-                "type": "string",
-                "description": "Country of the primary reporter (ISO2 code)"
-              },
-              "transmissiondate": {
-                "type": "string",
-                "description": "Date the report was transmitted to FDA"
-              },
-              "reporttype": {
-                "type": "string",
-                "description": "Type of report"
-              },
-              "patient": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Paged envelope, not a bare list. 'reports' holds this page; 'total_available' holds the size of the whole matching set. The reports are detailed adverse event reports",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "'success', or 'error' with an 'error' message instead of 'reports'"
+            },
+            "reports": {
+              "type": "array",
+              "items": {
                 "type": "object",
-                "description": "Patient information",
                 "properties": {
-                  "patientonsetage": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Patient age at onset of event"
+                  "safetyreportid": {
+                    "type": "string",
+                    "description": "Unique identifier for the safety report"
                   },
-                  "patientonsetageunit": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Unit for patient age"
+                  "safetyreportversion": {
+                    "type": "string",
+                    "description": "Version of the safety report"
                   },
-                  "patientagegroup": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Patient age group"
+                  "serious": {
+                    "type": "string",
+                    "description": "Whether the event was serious (1=Yes, 2=No)"
                   },
-                  "patientsex": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Patient sex (1=Male, 2=Female, 0=Unknown)"
+                  "seriousnessdeath": {
+                    "type": "string",
+                    "description": "Whether death was reported (1=Yes)"
                   },
-                  "patientweight": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "description": "Patient weight"
+                  "seriousnesslifethreatening": {
+                    "type": "string",
+                    "description": "Whether the event was life-threatening (1=Yes)"
                   },
-                  "drug": {
-                    "type": "array",
-                    "description": "List of drugs involved in the event",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "medicinalproduct": {
-                          "type": "string",
-                          "description": "Name of the medicinal product"
-                        },
-                        "drugadministrationroute": {
-                          "type": "string",
-                          "description": "Route of drug administration"
-                        },
-                        "drugindication": {
-                          "type": "string",
-                          "description": "Indication for drug use"
-                        },
-                        "drugdosagetext": {
-                          "type": "string",
-                          "description": "Drug dosage information"
+                  "seriousnesshospitalization": {
+                    "type": "string",
+                    "description": "Whether hospitalization was required (1=Yes)"
+                  },
+                  "seriousnessdisabling": {
+                    "type": "string",
+                    "description": "Whether the event was disabling (1=Yes)"
+                  },
+                  "occurcountry": {
+                    "type": "string",
+                    "description": "Country where the event occurred (ISO2 code)"
+                  },
+                  "primarysourcecountry": {
+                    "type": "string",
+                    "description": "Country of the primary reporter (ISO2 code)"
+                  },
+                  "transmissiondate": {
+                    "type": "string",
+                    "description": "Date the report was transmitted to FDA"
+                  },
+                  "reporttype": {
+                    "type": "string",
+                    "description": "Type of report"
+                  },
+                  "patient": {
+                    "type": "object",
+                    "description": "Patient information",
+                    "properties": {
+                      "patientonsetage": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Patient age at onset of event"
+                      },
+                      "patientonsetageunit": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Unit for patient age"
+                      },
+                      "patientagegroup": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Patient age group"
+                      },
+                      "patientsex": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Patient sex (1=Male, 2=Female, 0=Unknown)"
+                      },
+                      "patientweight": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Patient weight"
+                      },
+                      "drug": {
+                        "type": "array",
+                        "description": "List of drugs involved in the event",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "medicinalproduct": {
+                              "type": "string",
+                              "description": "Name of the medicinal product"
+                            },
+                            "drugadministrationroute": {
+                              "type": "string",
+                              "description": "Route of drug administration"
+                            },
+                            "drugindication": {
+                              "type": "string",
+                              "description": "Indication for drug use"
+                            },
+                            "drugdosagetext": {
+                              "type": "string",
+                              "description": "Drug dosage information"
+                            }
+                          }
                         }
-                      }
-                    }
-                  },
-                  "reaction": {
-                    "type": "array",
-                    "description": "List of adverse reactions reported",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "reactionmeddrapt": {
-                          "type": "string",
-                          "description": "MedDRA preferred term for the reaction"
-                        },
-                        "reactionmeddraversionpt": {
-                          "type": "string",
-                          "description": "MedDRA version for the preferred term"
-                        },
-                        "reactionoutcome": {
-                          "type": "string",
-                          "description": "Outcome of the reaction"
+                      },
+                      "reaction": {
+                        "type": "array",
+                        "description": "List of adverse reactions reported",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "reactionmeddrapt": {
+                              "type": "string",
+                              "description": "MedDRA preferred term for the reaction"
+                            },
+                            "reactionmeddraversionpt": {
+                              "type": "string",
+                              "description": "MedDRA version for the preferred term"
+                            },
+                            "reactionoutcome": {
+                              "type": "string",
+                              "description": "Outcome of the reaction"
+                            }
+                          }
                         }
                       }
                     }
                   }
                 }
-              }
+              },
+              "description": "List of detailed adverse event reports"
+            },
+            "count": {
+              "type": "integer",
+              "description": "Number of reports in this page -- NOT the number matching the search"
+            },
+            "total_available": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Every report matching this search, from openFDA meta.results.total; null means openFDA did not report a total, never zero"
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Page size actually applied (openFDA caps this at 100)"
+            },
+            "skip": {
+              "type": "integer",
+              "description": "Offset actually applied"
+            },
+            "truncated": {
+              "type": "boolean",
+              "description": "True when skip + returned < total_matching, i.e. reports were left behind"
+            },
+            "truncation_note": {
+              "type": "string",
+              "description": "Present only when truncated: names the true total and how to page through it"
             }
           },
-          "description": "List of detailed adverse event reports"
+          "required": [
+            "status",
+            "reports",
+            "count",
+            "total_available",
+            "truncated"
+          ]
         },
-        "count": {
-          "type": "integer",
-          "description": "Number of reports in this page -- NOT the number matching the search"
-        },
-        "total_available": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "description": "Every report matching this search, from openFDA meta.results.total; null means openFDA did not report a total, never zero"
-        },
-        "limit": {
-          "type": "integer",
-          "description": "Page size actually applied (openFDA caps this at 100)"
-        },
-        "skip": {
-          "type": "integer",
-          "description": "Offset actually applied"
-        },
-        "truncated": {
-          "type": "boolean",
-          "description": "True when skip + returned < total_matching, i.e. reports were left behind"
-        },
-        "truncation_note": {
-          "type": "string",
-          "description": "Present only when truncated: names the true total and how to page through it"
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
-      },
-      "required": [
-        "status",
-        "reports",
-        "count",
-        "total_available",
-        "truncated"
       ]
     },
     "test_examples": [
@@ -380,68 +395,83 @@
       "extract_essential": true
     },
     "return_schema": {
-      "type": "object",
-      "description": "Paged envelope, not a bare list. 'reports' holds this page; 'total_available' holds the size of the whole matching set. The reports are detailed adverse event reports for the specified drug and reaction",
-      "properties": {
-        "status": {
-          "type": "string",
-          "description": "'success', or 'error' with an 'error' message instead of 'reports'"
-        },
-        "reports": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "safetyreportid": {
-                "type": "string",
-                "description": "Unique identifier for the safety report"
-              },
-              "serious": {
-                "type": "string",
-                "description": "Whether the event was serious (1=Yes, 2=No)"
-              },
-              "patient": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Paged envelope, not a bare list. 'reports' holds this page; 'total_available' holds the size of the whole matching set. The reports are detailed adverse event reports for the specified drug and reaction",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "'success', or 'error' with an 'error' message instead of 'reports'"
+            },
+            "reports": {
+              "type": "array",
+              "items": {
                 "type": "object",
-                "description": "Patient information including reactions and drugs"
-              }
+                "properties": {
+                  "safetyreportid": {
+                    "type": "string",
+                    "description": "Unique identifier for the safety report"
+                  },
+                  "serious": {
+                    "type": "string",
+                    "description": "Whether the event was serious (1=Yes, 2=No)"
+                  },
+                  "patient": {
+                    "type": "object",
+                    "description": "Patient information including reactions and drugs"
+                  }
+                }
+              },
+              "description": "List of detailed adverse event reports for the specified drug and reaction"
+            },
+            "count": {
+              "type": "integer",
+              "description": "Number of reports in this page -- NOT the number matching the search"
+            },
+            "total_available": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Every report matching this search, from openFDA meta.results.total; null means openFDA did not report a total, never zero"
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Page size actually applied (openFDA caps this at 100)"
+            },
+            "skip": {
+              "type": "integer",
+              "description": "Offset actually applied"
+            },
+            "truncated": {
+              "type": "boolean",
+              "description": "True when skip + returned < total_matching, i.e. reports were left behind"
+            },
+            "truncation_note": {
+              "type": "string",
+              "description": "Present only when truncated: names the true total and how to page through it"
             }
           },
-          "description": "List of detailed adverse event reports for the specified drug and reaction"
+          "required": [
+            "status",
+            "reports",
+            "count",
+            "total_available",
+            "truncated"
+          ]
         },
-        "count": {
-          "type": "integer",
-          "description": "Number of reports in this page -- NOT the number matching the search"
-        },
-        "total_available": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "description": "Every report matching this search, from openFDA meta.results.total; null means openFDA did not report a total, never zero"
-        },
-        "limit": {
-          "type": "integer",
-          "description": "Page size actually applied (openFDA caps this at 100)"
-        },
-        "skip": {
-          "type": "integer",
-          "description": "Offset actually applied"
-        },
-        "truncated": {
-          "type": "boolean",
-          "description": "True when skip + returned < total_matching, i.e. reports were left behind"
-        },
-        "truncation_note": {
-          "type": "string",
-          "description": "Present only when truncated: names the true total and how to page through it"
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
-      },
-      "required": [
-        "status",
-        "reports",
-        "count",
-        "total_available",
-        "truncated"
       ]
     },
     "test_examples": [
@@ -574,80 +604,95 @@
       "extract_essential": true
     },
     "return_schema": {
-      "type": "object",
-      "description": "Paged envelope, not a bare list. 'reports' holds this page; 'total_available' holds the size of the whole matching set. The reports are detailed FAERS case reports. Serious and non-serious reports alike unless serious='Yes' or a seriousness* criterion was passed.",
-      "properties": {
-        "status": {
-          "type": "string",
-          "description": "'success', or 'error' with an 'error' message instead of 'reports'"
-        },
-        "reports": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "safetyreportid": {
-                "type": "string",
-                "description": "Unique identifier for the safety report"
-              },
-              "seriousnessdeath": {
-                "type": "string",
-                "description": "Whether death was reported (1=Yes)"
-              },
-              "seriousnesshospitalization": {
-                "type": "string",
-                "description": "Whether hospitalization was required (1=Yes)"
-              },
-              "seriousnesslifethreatening": {
-                "type": "string",
-                "description": "Whether the event was life-threatening (1=Yes)"
-              },
-              "seriousnessdisabling": {
-                "type": "string",
-                "description": "Whether the event was disabling (1=Yes)"
-              },
-              "patient": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Paged envelope, not a bare list. 'reports' holds this page; 'total_available' holds the size of the whole matching set. The reports are detailed FAERS case reports. Serious and non-serious reports alike unless serious='Yes' or a seriousness* criterion was passed.",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "'success', or 'error' with an 'error' message instead of 'reports'"
+            },
+            "reports": {
+              "type": "array",
+              "items": {
                 "type": "object",
-                "description": "Patient information including reactions and drugs"
-              }
+                "properties": {
+                  "safetyreportid": {
+                    "type": "string",
+                    "description": "Unique identifier for the safety report"
+                  },
+                  "seriousnessdeath": {
+                    "type": "string",
+                    "description": "Whether death was reported (1=Yes)"
+                  },
+                  "seriousnesshospitalization": {
+                    "type": "string",
+                    "description": "Whether hospitalization was required (1=Yes)"
+                  },
+                  "seriousnesslifethreatening": {
+                    "type": "string",
+                    "description": "Whether the event was life-threatening (1=Yes)"
+                  },
+                  "seriousnessdisabling": {
+                    "type": "string",
+                    "description": "Whether the event was disabling (1=Yes)"
+                  },
+                  "patient": {
+                    "type": "object",
+                    "description": "Patient information including reactions and drugs"
+                  }
+                }
+              },
+              "description": "List of detailed FAERS case reports. Serious and non-serious reports alike unless serious='Yes' or a seriousness* criterion was passed."
+            },
+            "count": {
+              "type": "integer",
+              "description": "Number of reports in this page -- NOT the number matching the search"
+            },
+            "total_available": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Every report matching this search, from openFDA meta.results.total; null means openFDA did not report a total, never zero"
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Page size actually applied (openFDA caps this at 100)"
+            },
+            "skip": {
+              "type": "integer",
+              "description": "Offset actually applied"
+            },
+            "truncated": {
+              "type": "boolean",
+              "description": "True when skip + returned < total_matching, i.e. reports were left behind"
+            },
+            "truncation_note": {
+              "type": "string",
+              "description": "Present only when truncated: names the true total and how to page through it"
             }
           },
-          "description": "List of detailed FAERS case reports. Serious and non-serious reports alike unless serious='Yes' or a seriousness* criterion was passed."
+          "required": [
+            "status",
+            "reports",
+            "count",
+            "total_available",
+            "truncated"
+          ]
         },
-        "count": {
-          "type": "integer",
-          "description": "Number of reports in this page -- NOT the number matching the search"
-        },
-        "total_available": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "description": "Every report matching this search, from openFDA meta.results.total; null means openFDA did not report a total, never zero"
-        },
-        "limit": {
-          "type": "integer",
-          "description": "Page size actually applied (openFDA caps this at 100)"
-        },
-        "skip": {
-          "type": "integer",
-          "description": "Offset actually applied"
-        },
-        "truncated": {
-          "type": "boolean",
-          "description": "True when skip + returned < total_matching, i.e. reports were left behind"
-        },
-        "truncation_note": {
-          "type": "string",
-          "description": "Present only when truncated: names the true total and how to page through it"
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
-      },
-      "required": [
-        "status",
-        "reports",
-        "count",
-        "total_available",
-        "truncated"
       ]
     },
     "test_examples": [
@@ -752,64 +797,79 @@
       "extract_essential": true
     },
     "return_schema": {
-      "type": "object",
-      "description": "Paged envelope, not a bare list. 'reports' holds this page; 'total_available' holds the size of the whole matching set. The reports are detailed adverse event reports for the specified drug and indication",
-      "properties": {
-        "status": {
-          "type": "string",
-          "description": "'success', or 'error' with an 'error' message instead of 'reports'"
-        },
-        "reports": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "safetyreportid": {
-                "type": "string",
-                "description": "Unique identifier for the safety report"
-              },
-              "patient": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Paged envelope, not a bare list. 'reports' holds this page; 'total_available' holds the size of the whole matching set. The reports are detailed adverse event reports for the specified drug and indication",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "'success', or 'error' with an 'error' message instead of 'reports'"
+            },
+            "reports": {
+              "type": "array",
+              "items": {
                 "type": "object",
-                "description": "Patient information including drugs with indications and reactions"
-              }
+                "properties": {
+                  "safetyreportid": {
+                    "type": "string",
+                    "description": "Unique identifier for the safety report"
+                  },
+                  "patient": {
+                    "type": "object",
+                    "description": "Patient information including drugs with indications and reactions"
+                  }
+                }
+              },
+              "description": "List of detailed adverse event reports for the specified drug and indication"
+            },
+            "count": {
+              "type": "integer",
+              "description": "Number of reports in this page -- NOT the number matching the search"
+            },
+            "total_available": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Every report matching this search, from openFDA meta.results.total; null means openFDA did not report a total, never zero"
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Page size actually applied (openFDA caps this at 100)"
+            },
+            "skip": {
+              "type": "integer",
+              "description": "Offset actually applied"
+            },
+            "truncated": {
+              "type": "boolean",
+              "description": "True when skip + returned < total_matching, i.e. reports were left behind"
+            },
+            "truncation_note": {
+              "type": "string",
+              "description": "Present only when truncated: names the true total and how to page through it"
             }
           },
-          "description": "List of detailed adverse event reports for the specified drug and indication"
+          "required": [
+            "status",
+            "reports",
+            "count",
+            "total_available",
+            "truncated"
+          ]
         },
-        "count": {
-          "type": "integer",
-          "description": "Number of reports in this page -- NOT the number matching the search"
-        },
-        "total_available": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "description": "Every report matching this search, from openFDA meta.results.total; null means openFDA did not report a total, never zero"
-        },
-        "limit": {
-          "type": "integer",
-          "description": "Page size actually applied (openFDA caps this at 100)"
-        },
-        "skip": {
-          "type": "integer",
-          "description": "Offset actually applied"
-        },
-        "truncated": {
-          "type": "boolean",
-          "description": "True when skip + returned < total_matching, i.e. reports were left behind"
-        },
-        "truncation_note": {
-          "type": "string",
-          "description": "Present only when truncated: names the true total and how to page through it"
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
-      },
-      "required": [
-        "status",
-        "reports",
-        "count",
-        "total_available",
-        "truncated"
       ]
     },
     "test_examples": [
@@ -926,64 +986,79 @@
       }
     },
     "return_schema": {
-      "type": "object",
-      "description": "Paged envelope, not a bare list. 'reports' holds this page; 'total_available' holds the size of the whole matching set. The reports are detailed adverse event reports for the specified drug and outcome",
-      "properties": {
-        "status": {
-          "type": "string",
-          "description": "'success', or 'error' with an 'error' message instead of 'reports'"
-        },
-        "reports": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "safetyreportid": {
-                "type": "string",
-                "description": "Unique identifier for the safety report"
-              },
-              "patient": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Paged envelope, not a bare list. 'reports' holds this page; 'total_available' holds the size of the whole matching set. The reports are detailed adverse event reports for the specified drug and outcome",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "'success', or 'error' with an 'error' message instead of 'reports'"
+            },
+            "reports": {
+              "type": "array",
+              "items": {
                 "type": "object",
-                "description": "Patient information including reactions with outcomes"
-              }
+                "properties": {
+                  "safetyreportid": {
+                    "type": "string",
+                    "description": "Unique identifier for the safety report"
+                  },
+                  "patient": {
+                    "type": "object",
+                    "description": "Patient information including reactions with outcomes"
+                  }
+                }
+              },
+              "description": "List of detailed adverse event reports for the specified drug and outcome"
+            },
+            "count": {
+              "type": "integer",
+              "description": "Number of reports in this page -- NOT the number matching the search"
+            },
+            "total_available": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Every report matching this search, from openFDA meta.results.total; null means openFDA did not report a total, never zero"
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Page size actually applied (openFDA caps this at 100)"
+            },
+            "skip": {
+              "type": "integer",
+              "description": "Offset actually applied"
+            },
+            "truncated": {
+              "type": "boolean",
+              "description": "True when skip + returned < total_matching, i.e. reports were left behind"
+            },
+            "truncation_note": {
+              "type": "string",
+              "description": "Present only when truncated: names the true total and how to page through it"
             }
           },
-          "description": "List of detailed adverse event reports for the specified drug and outcome"
+          "required": [
+            "status",
+            "reports",
+            "count",
+            "total_available",
+            "truncated"
+          ]
         },
-        "count": {
-          "type": "integer",
-          "description": "Number of reports in this page -- NOT the number matching the search"
-        },
-        "total_available": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "description": "Every report matching this search, from openFDA meta.results.total; null means openFDA did not report a total, never zero"
-        },
-        "limit": {
-          "type": "integer",
-          "description": "Page size actually applied (openFDA caps this at 100)"
-        },
-        "skip": {
-          "type": "integer",
-          "description": "Offset actually applied"
-        },
-        "truncated": {
-          "type": "boolean",
-          "description": "True when skip + returned < total_matching, i.e. reports were left behind"
-        },
-        "truncation_note": {
-          "type": "string",
-          "description": "Present only when truncated: names the true total and how to page through it"
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
-      },
-      "required": [
-        "status",
-        "reports",
-        "count",
-        "total_available",
-        "truncated"
       ]
     },
     "test_examples": [
@@ -1080,68 +1155,83 @@
       "extract_essential": true
     },
     "return_schema": {
-      "type": "object",
-      "description": "Paged envelope, not a bare list. 'reports' holds this page; 'total_available' holds the size of the whole matching set. The reports are detailed adverse event reports involving the specified drug combination",
-      "properties": {
-        "status": {
-          "type": "string",
-          "description": "'success', or 'error' with an 'error' message instead of 'reports'"
-        },
-        "reports": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "safetyreportid": {
-                "type": "string",
-                "description": "Unique identifier for the safety report"
-              },
-              "serious": {
-                "type": "string",
-                "description": "Whether the event was serious (1=Yes, 2=No)"
-              },
-              "patient": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Paged envelope, not a bare list. 'reports' holds this page; 'total_available' holds the size of the whole matching set. The reports are detailed adverse event reports involving the specified drug combination",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "'success', or 'error' with an 'error' message instead of 'reports'"
+            },
+            "reports": {
+              "type": "array",
+              "items": {
                 "type": "object",
-                "description": "Patient information including all drugs and reactions"
-              }
+                "properties": {
+                  "safetyreportid": {
+                    "type": "string",
+                    "description": "Unique identifier for the safety report"
+                  },
+                  "serious": {
+                    "type": "string",
+                    "description": "Whether the event was serious (1=Yes, 2=No)"
+                  },
+                  "patient": {
+                    "type": "object",
+                    "description": "Patient information including all drugs and reactions"
+                  }
+                }
+              },
+              "description": "List of detailed adverse event reports involving the specified drug combination"
+            },
+            "count": {
+              "type": "integer",
+              "description": "Number of reports in this page -- NOT the number matching the search"
+            },
+            "total_available": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Every report matching this search, from openFDA meta.results.total; null means openFDA did not report a total, never zero"
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Page size actually applied (openFDA caps this at 100)"
+            },
+            "skip": {
+              "type": "integer",
+              "description": "Offset actually applied"
+            },
+            "truncated": {
+              "type": "boolean",
+              "description": "True when skip + returned < total_matching, i.e. reports were left behind"
+            },
+            "truncation_note": {
+              "type": "string",
+              "description": "Present only when truncated: names the true total and how to page through it"
             }
           },
-          "description": "List of detailed adverse event reports involving the specified drug combination"
+          "required": [
+            "status",
+            "reports",
+            "count",
+            "total_available",
+            "truncated"
+          ]
         },
-        "count": {
-          "type": "integer",
-          "description": "Number of reports in this page -- NOT the number matching the search"
-        },
-        "total_available": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "description": "Every report matching this search, from openFDA meta.results.total; null means openFDA did not report a total, never zero"
-        },
-        "limit": {
-          "type": "integer",
-          "description": "Page size actually applied (openFDA caps this at 100)"
-        },
-        "skip": {
-          "type": "integer",
-          "description": "Offset actually applied"
-        },
-        "truncated": {
-          "type": "boolean",
-          "description": "True when skip + returned < total_matching, i.e. reports were left behind"
-        },
-        "truncation_note": {
-          "type": "string",
-          "description": "Present only when truncated: names the true total and how to page through it"
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
         }
-      },
-      "required": [
-        "status",
-        "reports",
-        "count",
-        "total_available",
-        "truncated"
       ]
     },
     "test_examples": [

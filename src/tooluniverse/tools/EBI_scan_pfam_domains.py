@@ -16,7 +16,7 @@ def EBI_scan_pfam_domains(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Scan a protein sequence against Pfam HMMs via EMBL-EBI PfamScan and return each matched domain wi...
 
@@ -37,7 +37,7 @@ def EBI_scan_pfam_domains(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

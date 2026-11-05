@@ -15,7 +15,7 @@ def ProteinsPlus_protonate_structure(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Add hydrogens and optimize protonation with ProtoSS. Accept exactly one PDB ID or raw PDB text. C...
 
@@ -34,7 +34,7 @@ def ProteinsPlus_protonate_structure(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -14,7 +14,7 @@ def iCite_get_publications(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get citation metrics and research context for PubMed publications using NIH's iCite API. iCite pr...
 
@@ -31,7 +31,7 @@ def iCite_get_publications(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

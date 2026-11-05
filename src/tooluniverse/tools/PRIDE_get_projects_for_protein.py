@@ -14,7 +14,7 @@ def PRIDE_get_projects_for_protein(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Reverse lookup: list every PRIDE Archive project (PXD accession) that identified a given protein,...
 
@@ -31,7 +31,7 @@ def PRIDE_get_projects_for_protein(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -14,7 +14,7 @@ def OpenGenes_get_gene(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get the aging/longevity profile of a human gene by symbol from Open Genes, a manually-curated agi...
 
@@ -31,7 +31,7 @@ def OpenGenes_get_gene(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

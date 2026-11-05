@@ -17,7 +17,7 @@ def STRING_get_network(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get the protein-protein interaction network for one or more proteins from STRING database. Return...
 
@@ -40,7 +40,7 @@ def STRING_get_network(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

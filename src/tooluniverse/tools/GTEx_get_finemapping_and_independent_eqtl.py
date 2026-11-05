@@ -21,7 +21,7 @@ def GTEx_get_finemapping_and_independent_eqtl(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get GTEx statistical fine-mapping credible sets and conditionally-independent eQTLs - identifying...
 
@@ -52,7 +52,7 @@ def GTEx_get_finemapping_and_independent_eqtl(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

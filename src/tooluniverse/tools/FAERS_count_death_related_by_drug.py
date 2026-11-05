@@ -15,7 +15,7 @@ def FAERS_count_death_related_by_drug(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any] | list[Any]:
     """
     Count reports for a given drug by the FAERS 'seriousnessdeath' seriousness criterion. Only medici...
 
@@ -34,7 +34,7 @@ def FAERS_count_death_related_by_drug(
 
     Returns
     -------
-    Any
+    dict[str, Any] | list[Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

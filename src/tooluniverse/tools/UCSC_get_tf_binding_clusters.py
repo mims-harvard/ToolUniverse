@@ -17,7 +17,7 @@ def UCSC_get_tf_binding_clusters(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get Transcription Factor ChIP-seq Clusters from ENCODE3 for a genomic region via UCSC Genome Brow...
 
@@ -40,7 +40,7 @@ def UCSC_get_tf_binding_clusters(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -17,7 +17,7 @@ def EuropePMC_search_case_reports(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Find published clinical case reports about a disease, rare presentation, complication, injury or ...
 
@@ -40,7 +40,7 @@ def EuropePMC_search_case_reports(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

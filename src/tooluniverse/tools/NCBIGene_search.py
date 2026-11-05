@@ -16,7 +16,7 @@ def NCBIGene_search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search NCBI Gene using ESearch with explicit offset pagination and normalized exact metadata. Con...
 
@@ -37,7 +37,7 @@ def NCBIGene_search(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

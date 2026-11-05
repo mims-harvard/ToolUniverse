@@ -16,7 +16,7 @@ def Pfam_search_clans(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search and list Pfam clans (superfamilies) by keyword. Pfam clans group related families with a c...
 
@@ -37,7 +37,7 @@ def Pfam_search_clans(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

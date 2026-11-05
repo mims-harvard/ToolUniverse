@@ -24,6 +24,9 @@
       },
       {
         "location_id": "SL-0173"
+      },
+      {
+        "location_id": "SL-0147"
       }
     ],
     "return_schema": {
@@ -47,7 +50,8 @@
               "type": "string"
             },
             "note": {
-              "type": "null"
+              "type": ["string", "null"],
+              "description": "Curator note on the location. Present for some locations and absent for others; measured over 12 SL- identifiers."
             },
             "synonyms": {
               "type": "array"

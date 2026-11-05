@@ -17,7 +17,7 @@ def OpenAIRE_search_projects(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Search OpenAIRE funded projects/grants with recoverable one-based pagination. Page size is 1-1000...
 
@@ -40,7 +40,7 @@ def OpenAIRE_search_projects(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

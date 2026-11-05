@@ -14,7 +14,7 @@ def NCCN_get_patient_guideline(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Fetch content from a specific NCCN Guidelines for Patients page. Takes a URL obtained from NCCN_l...
 
@@ -31,7 +31,7 @@ def NCCN_get_patient_guideline(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

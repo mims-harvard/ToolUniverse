@@ -14,7 +14,7 @@ def re3data_get_repository(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get detailed metadata for a specific research data repository from re3data.org by its re3data ID....
 
@@ -31,7 +31,7 @@ def re3data_get_repository(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

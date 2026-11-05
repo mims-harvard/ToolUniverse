@@ -16,7 +16,7 @@ def EBIProteins_get_hpp_peptides(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Get Human Proteome Project (HPP) peptide-level mass-spectrometry evidence mapped to a protein fro...
 
@@ -37,7 +37,7 @@ def EBIProteins_get_hpp_peptides(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

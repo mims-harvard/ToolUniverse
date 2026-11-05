@@ -14,7 +14,7 @@ def QuickGO_get_term_children(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> list[Any] | dict[str, Any]:
     """
     Get child terms (direct descendants) of a Gene Ontology (GO) term from the EBI QuickGO browser. R...
 
@@ -31,7 +31,7 @@ def QuickGO_get_term_children(
 
     Returns
     -------
-    Any
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

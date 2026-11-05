@@ -20,7 +20,7 @@ def BridgeDb_xrefs(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Any:
+) -> dict[str, Any]:
     """
     Map a biological identifier across databases using BridgeDb. Given an identifier from one databas...
 
@@ -49,7 +49,7 @@ def BridgeDb_xrefs(
 
     Returns
     -------
-    Any
+    dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
