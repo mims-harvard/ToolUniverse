@@ -90,13 +90,34 @@ models than fit together never needs them resident together. Sharing implies war
 any provider that has no snapshot, because a manifest missing those tools would publish
 an online server that does not list what it can actually run.
 
+### One interpreter per provider
+
+A provider's environment is its own: `tu remote run` resolves
+`TOOLUNIVERSE_REMOTE_<SLUG>_PYTHON`, then `TOOLUNIVERSE_REMOTE_PYTHON`, then
+`.venvs/<slug>/bin/python` — per provider, and so does `check_environment`, which is what
+`tu serve` prints "environment ok" from. The pool resolves it the same way, for each
+provider it starts.
+
+It used to resolve one interpreter, from the first name in `--allow`, and start every
+provider with that. Measured on this project's GB10 with
+`TOOLUNIVERSE_REMOTE_ENFORMER_DEEPMIND_PYTHON` pointing at a second environment: the
+check read it, the start ignored it, and `enformer_deepmind`'s server ran in the
+interpreter resolved for `borzoi_calico`. So sharing two providers whose pinned stacks do
+not coexist — which is why a resident provider splits its server from its model at all —
+was the one thing a pool could not do, and it surfaced as a missing import inside the
+second provider rather than as anything about the pool.
+
+`--python` is still one interpreter for all of them, resolved before anything starts,
+because naming one is what asks for that.
+
 ### Admission and eviction
 
 `--max-active` bounds how many providers are resident; the default is 1, because one
 large model usually fills a GPU. Admitting a new provider evicts the
-least-recently-used **idle** one. A provider with a call in flight is never evicted —
-the caller is told to retry instead, since the alternative is killing a running GPU job
-to admit a new one.
+least-recently-used **idle** one, and `--max-active 0` drops the count and lets the
+memory ceiling decide alone (see "Letting memory decide alone"). A provider with a call
+in flight is never evicted — the caller is told to retry instead, since the alternative
+is killing a running GPU job to admit a new one.
 
 `--idle-ttl` (default 900s) stops providers that stop being called, returning their
 memory without operator involvement.
@@ -212,8 +233,107 @@ either being low overcommits the machine:
   sooner.
 
 A provider that declares nothing and has never been loaded here is still admitted on count
-alone: 28 of the 60 reviewed slugs declare no budget, and `[gpu] policy = "none"` declares
-0, so count-only admission stays a normal mode of operation rather than a fallback.
+alone: 28 of the 60 reviewed slugs declare no budget, so count-only admission stays a
+normal mode of operation rather than a fallback.
+
+#### What a declared zero is worth, and on which machine
+
+`[gpu] policy = "none"` is a measurement: three of these providers' kits publish no
+GPU-capable wheel for this architecture, so they hold no device memory at all, and
+`borzoi_calico`'s manifest draws the conclusion — ~10 GiB of host RSS and no VRAM, so it
+"is admitted while the card is full, which is what a variant-scoring job wants to be when
+a folding model owns the GPU". On a discrete-GPU host that is exactly right.
+
+On unified memory it is not. `pool_free_gib` answers there with `MemAvailable`, because
+the weights, the host RSS and the page cache all come out of one 121 GiB pool — so the
+10 GiB that provider holds is spent from the pool admission is reading, and calling it
+free admits a 10 GiB resident as though it were nothing. The old answer skipped the
+*measurement* for the same providers, so the figure stayed unlearnable as well as
+unknown.
+
+So `admission.pool_is_shared_with_the_host()` decides what the declaration is worth, off
+which machine `capacity_gib` answered from rather than a second detection that could
+drift from it: on unified memory a declared 0 becomes **unknown** — measured after the
+first call the provider answers, bounded one at a time until then — and on a discrete
+device it stays 0, read for nothing and recorded for nothing. A machine that cannot say
+which kind it is keeps the manifest's answer, since it has no free reading to protect
+either. The answer is read once per pool; a failed reading is not kept.
+
+#### What one residency actually holds
+
+A declared `vram_budget_gb` is **one process's peak device allocation**, measured on the
+machine that verified the provider. Where the pool is the host's own memory, what
+admission spends is **the resident set of the whole process tree** — and on this project's
+GB10 those two numbers differ by a factor of two. Measured live on 2026-10-26, `boltz`
+answering one call, every figure read from `/proc/<pid>/status`:
+
+| process | VmRSS | VmHWM |
+|---|---|---|
+| `boltz_mcp_server` | 0.07 GiB | 0.08 GiB |
+| `worker_launch` — the worker | 5.73 GiB | 6.33 GiB |
+| `worker_launch` — the half it forked | 1.00 GiB | 1.06 GiB |
+| `boltz2_opt.affinity_leg --serve` | 4.94 GiB | 5.32 GiB |
+| **the worker's tree** | **11.67 GiB** | |
+
+against a declared 5.54. The affinity leg is a **second model server**, started by the
+first call 65 s after the worker and still up 400 s later, and the second call reused it
+rather than starting another — so it is residency, and the `*_resident_worker.py
+--socket` pattern that finds holders cannot see it. Twelve of this catalog's resident
+workers spawn children.
+
+So on a shared pool a holder costs the **larger** of its declared budget and its tree's
+RSS, summed from the same `ps` snapshot that found it. Both figures are needed and in
+that order:
+
+* the **declared** budget is a peak, so a worker whose model has not loaded yet — every
+  provider here loads on the first request — is costed at what it will need rather than
+  at the few hundred MiB of interpreter it holds meanwhile;
+* the **reading** is this moment's truth, and it is the only figure that sees a child
+  process, a second model server, or a provider whose checkout is gone and whose manifest
+  can no longer declare anything.
+
+On a discrete device the reading is not a candidate at all: host RSS is not device memory
+there, and the declared budget is the only figure that is.
+
+A fork is dropped as a holder and kept as memory. Those are not in tension —
+`{'boltz': 5.54, 'boltz#2': 5.54}` was one residency reported as two, and the fix for it
+must not also lose the 1.00 GiB that half is holding inside its parent's tree. Counting
+the row once and its pages once is the same rule stated about two different things.
+
+One `ps` snapshot and not a `/proc` walk per holder: a walk reads a different moment for
+each process, and a worker that exits between two of them makes the sum describe no
+instant that ever existed. The gate decides in one moment, so it reads one.
+
+#### Letting memory decide alone
+
+`--max-active 0` means "no count ceiling, memory decides". It exists because the default
+of 1 is the one setting an operator cannot tune honestly: on a 121 GiB machine sharing
+five 6 GiB models, a count of 1 leaves four of them being loaded and unloaded against a
+pool that could have held all five, and a count of 5 is a promise about sizes the
+operator would have to keep re-checking as manifests change. Memory already knows both
+halves of that — what the machine has and what each model costs — so 0 hands it the
+decision rather than asking for a number that stands in for one.
+
+Two things keep that from meaning "unbounded":
+
+- **It is refused where memory cannot be read.** If `capacity_gib` cannot answer — no
+  NVIDIA driver, no unified memory to fall back on — then dropping the count would leave
+  nothing deciding at all, so the pool refuses to start and says to pass a count.
+  Capacity rather than the free reading, because both come from the same detection of
+  which kind of machine this is and capacity is the one that does not move: a pool is
+  not refused over a driver that was busy for a second.
+- **A provider nobody has costed is still admitted one at a time.** Memory can only
+  judge a provider with a figure, and for the 28 that declare nothing and have never
+  been loaded here there is none, so with the count gone their loads would be admitted
+  on no evidence at all. Those keep the ceiling every provider used to have until a call
+  one of them answered has been measured here, and then memory speaks for them like
+  anything else. The bound is on ignorance and not on size: a 6 GiB model and a 38 GiB
+  model both have a figure, and memory is allowed to decide about both. A `[gpu] policy =
+  "none"` provider has a figure on a discrete-GPU host and has none on unified memory, for
+  the reason "What a declared zero is worth" gives above.
+
+The default stays 1. 0 is a statement about the machine, and the person running the
+command is the one who knows whether this machine has room for several models.
 
 Decisions worth keeping:
 
@@ -262,7 +382,18 @@ A call can be answered without a model ever loading — a rejected argument, a c
 answer. For the 32 providers that keep a worker, the process table says which happened
 (`admission.machine_holdings`, keyed by the bare slug for this checkout's own workers;
 `admission.declares_resident_worker` is what asks whether to look), and a call that left
-no worker running measures nothing. For a provider holding its model in its own server
+no worker running measures nothing. That scan reads `ps -eo pid,ppid,rss,args` and drops a
+match whose parent is also a match, because a launcher that forks leaves two rows for one
+residency: boltz's did, so one worker read as `{'boltz': 5.54, 'boltz#2': 5.54}`. Two
+workers neither of which is the other's child are still two holders — that is the case
+that wedged this host.
+
+Worth recording about that double count, because the correction is not the whole story:
+11.08 GiB was **nearly right by accident**. One boltz residency really holds 11.67 GiB
+(above), so the buggy figure was 0.59 GiB from the truth and the corrected declared one,
+5.54, is 6.13 GiB below it. Reporting a holder's tree is what makes the fix an improvement
+rather than a more principled way to be wrong; a fork counted twice is still a bug,
+because what the code claims to count is holders. For a provider holding its model in its own server
 process there is no such evidence to be had, so a call that loaded nothing records
 something small, and `FootprintStore.record` keeping the largest figure it has ever seen
 is what corrects that on the first call that does load.
@@ -271,14 +402,24 @@ A measurement is taken once per residency — every later call would be measured
 baseline from before the load — and it is a residency cost plus whatever that one call
 still holds, which is not the request peak the manifests carry.
 
-On a unified-memory host the local reading is frequently worthless, and that is a reason
-the declared budget exists rather than a reason to distrust the design: measured live on
-this project's GB10 with `boltz` prewarmed, `MemAvailable` *rose* by 1.3 GiB across the
-load — something else on the machine released more than the model was taking, and with
-one pool for host and device there is nothing in the reading to tell them apart. A
-difference of zero or less is recorded as nothing, so admission went on using the
-manifest's 5673 MiB. The measurement is worth taking where it is reliable, and worth
-nothing where it is not — which is why it is never the only figure.
+**On a unified-memory host a difference in free memory is not the provider's cost**, and
+it has been wrong in both directions here. With `boltz` prewarmed, `MemAvailable` *rose*
+by 1.3 GiB across the load — something else released more than the model was taking. On
+2026-10-26, across one boltz residency, it fell 14.9 GiB where the provider's tree held
+11.67: 3.2 GiB of other tenants and kernel accounting, charged to boltz and then kept,
+because `FootprintStore.record` keeps the largest figure it has ever seen. An
+over-attributed difference is not one bad measurement; it is a ceiling for the life of
+the store.
+
+So where the pool is the host's own memory the measurement is **the resident set of the
+provider's process tree**, rooted at the process this pool started — attributable by
+construction, and the only reading that sees a forked worker or a second model server.
+The difference is still what answers where a tree is not available: on a discrete device,
+because host RSS is not device memory there; for an **adopted** endpoint, because the pool
+did not start it and has no pid for it; and when the process table cannot be read. It
+needs no baseline, which is the case the old measurement could not take at all — a
+machine whose free memory did not answer at start-up left the cost unknown however many
+calls the provider went on to serve.
 
 Reading the machine still degrades to "do not reason about memory" rather than to "no
 memory": no `nvidia-smi`, a non-zero exit, a reading that is neither a number nor `[N/A]`,
@@ -332,6 +473,30 @@ provider: a prewarm bound the port in 12.5 s with `model_loaded` false, and the 
 were in memory at 31.3 s with `machine_holdings` naming the worker; `memory_plan` sized it
 at the manifest's 5673 MiB; `MemAvailable` moved the wrong way across the load, so the
 local measurement was discarded rather than recorded as a ceiling.
+
+`--max-active 0` is verified live against two real provider subprocesses on this
+project's GB10, driving the real `ProviderPool`: with the count gone both stayed resident
+(`borzoi_calico` then `enformer_deepmind`, up in 4.2 s and 4.9 s), and the same pair at
+`--max-active 1` evicted the first to admit the second. A pool built with a capacity
+reading of None refused to start and said to pass a count.
+
+The same two providers are what "What a declared zero is worth" is about, and the change
+is visible in the same live run: `memory_plan` reported `expected_mib` of 0 for both
+before it and `null` after, this machine answering `pool_is_shared_with_the_host()` with
+True, and `--max-active 0` then held one of them resident at a time instead of both. Their
+servers cost 135 MiB of the pool to bind a port — the ~10 GiB their manifests measure is
+what an answered call holds, which is why the figure is learned from one.
+
+The fork rule is verified against real `ps -eo pid,ppid,args` output with a real
+parent/child pair present (a launcher that forks and holds for six seconds, loading
+nothing): four rows mention the worker path, two of them carry `--socket`, and
+`machine_holdings` returns one holder at the manifest's 5.54 GiB.
+
+Per-provider interpreters are verified in the same place, by reading
+`/proc/<pid>/cmdline` of the processes the pool actually started: with
+`TOOLUNIVERSE_REMOTE_ENFORMER_DEEPMIND_PYTHON` set to a second environment, both
+providers ran under the first one's interpreter before the change and each under its own
+after it.
 
 End-to-end against two real provider subprocesses over real HTTP, counting actual
 process launches: nothing starts at boot; `tools/list` stays empty and starts nothing;

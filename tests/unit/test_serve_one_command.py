@@ -166,6 +166,20 @@ def test_serve_exposes_every_input_in_one_help(capsys):
     assert {name for name, _ in SERVE_INPUTS} == {"files", "forward", "allow"}
 
 
+def test_zero_is_a_value_of_max_active_and_not_a_rejected_count():
+    """`--max-active 0` asks for no count ceiling, so the parser must not floor it at 1.
+
+    The bound used to start at 1, which made the one value that means "let memory
+    decide" an argparse error -- and an operator reading the help has no other way to
+    reach that behaviour.
+    """
+    parser = build_parser()
+
+    for spelling in (["serve"], ["remote", "pool"]):
+        args = parser.parse_args([*spelling, "--allow", "boltz", "--max-active", "0"])
+        assert args.max_active == 0, spelling
+
+
 # ── a flag that parses but does nothing is worse than no flag ────────────────────
 
 
@@ -212,6 +226,51 @@ def test_pass_env_is_wired_through_both_entry_points(monkeypatch):
         assert seen.get("extra_env") == ("SITE_LICENCE",), (
             f"{argv} -> {seen.get('extra_env')}"
         )
+
+
+def test_the_pool_is_left_to_resolve_each_providers_interpreter(monkeypatch):
+    """`--allow boltz,esm` used to start esm under the interpreter resolved for boltz.
+
+    The command resolved ONE interpreter, from the first allowed provider, and handed it
+    to the pool for all of them -- while the environment check it prints "environment ok"
+    from resolves each provider's own. So it is handed None unless the operator named one,
+    and an interpreter they did name is resolved here, before anything starts.
+    """
+    seen: dict = {}
+
+    class StopAfterConstruction(Exception):
+        """Raised to end the command once the pool has been built with its kwargs."""
+
+    class Recorder:
+        def __init__(self, **kwargs):
+            seen.update(kwargs)
+
+        def __getattr__(self, name):
+            raise StopAfterConstruction(name)
+
+    parser = build_parser()
+    monkeypatch.setattr("tooluniverse.remote_pool.ProviderPool", Recorder)
+    monkeypatch.setattr(
+        "tooluniverse.remote_runtime.check_environment",
+        lambda *a, **k: {"ok": True, "checks": []},
+    )
+    monkeypatch.setattr(
+        "tooluniverse.remote_runtime.resolve_python",
+        lambda *a, **k: "/resolved/by/the/command",
+    )
+
+    for argv, expected in (
+        (["serve", "--allow", "boltz,esm"], None),
+        (
+            ["serve", "--allow", "boltz,esm", "--python", "/named"],
+            "/resolved/by/the/command",
+        ),
+    ):
+        seen.clear()
+        args = parser.parse_args(argv)
+        with pytest.raises((StopAfterConstruction, SystemExit)):
+            args.func(args)
+        assert seen.get("python", "absent") == expected, argv
 
 
 def test_a_bare_namespace_still_reaches_the_stdio_server(monkeypatch):

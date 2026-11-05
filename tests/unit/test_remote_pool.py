@@ -43,13 +43,34 @@ class FakeClock:
         self.now += seconds
 
 
+class FakeProcess:
+    """Just the pid, which is what the pool reads a managed process for.
+
+    `ManagedRemoteProcess` wraps a `subprocess.Popen`, and the pool asks it for
+    one thing: the root of the process tree to cost. A started provider here
+    therefore has a distinct pid, so a test can give each tree its own reading.
+    """
+
+    def __init__(self, pid: int) -> None:
+        self.pid = pid
+
+
+class FakeManaged:
+    def __init__(self, pid: int) -> None:
+        self.process = FakeProcess(pid)
+
+
 class Lifecycle:
     """Records provider start/stop instead of launching anything."""
+
+    FIRST_PID = 4000
 
     def __init__(self) -> None:
         self.started: list[str] = []
         self.stopped: list[str] = []
         self.warmed: list[str] = []
+        self.interpreters: dict[str, str] = {}
+        self.pids: dict[str, int] = {}
         self.fail: set[str] = set()
 
     def ensure(
@@ -65,9 +86,11 @@ class Lifecycle:
         if deployment.slug in self.fail:
             raise RuntimeError(f"boom: {deployment.slug}")
         self.started.append(deployment.slug)
+        self.interpreters[deployment.slug] = python
         if warm_model:
             self.warmed.append(deployment.slug)
-        return object(), {"endpoint": deployment.endpoint, "ok": True}
+        pid = self.pids.setdefault(deployment.slug, self.FIRST_PID + len(self.pids))
+        return FakeManaged(pid), {"endpoint": deployment.endpoint, "ok": True}
 
     def stop(self, managed) -> None:
         self.stopped.append("stopped")
@@ -82,9 +105,21 @@ def make_pool(tmp_path: Path, slugs, lifecycle=None, **kwargs) -> ProviderPool:
     # pools with `vram_pool`, which injects a machine they control.
     kwargs.setdefault("read_holdings", lambda: {})
     kwargs.setdefault("read_free_vram", lambda: None)
+    # Capacity is a reading of this machine as much as the two above, and `--max-active
+    # 0` is refused when it cannot be read, so a test that says nothing about memory
+    # gets a machine large enough to hold anything in the catalog rather than this host.
+    kwargs.setdefault("read_capacity", lambda: 1 << 20)
+    # And so is which kind of machine this is: on unified memory a declared 0 stops
+    # meaning "free", so a test that says nothing about that gets a discrete device,
+    # where a manifest's 0 is the whole answer.
+    kwargs.setdefault("pool_shares_host_memory", lambda: False)
+    # A provider's process tree is a reading of this machine too, and the tests that
+    # predate it were written against the difference in free memory, so the default
+    # says "no tree reading here" and they keep measuring the way they describe.
+    kwargs.setdefault("read_tree_rss", lambda pid: None)
+    kwargs.setdefault("python", "/nonexistent/python")
     pool = ProviderPool(
         allow=tuple(slugs),
-        python="/nonexistent/python",
         log_dir=tmp_path / "logs",
         schemas=SchemaStore(tmp_path / "schemas"),
         ensure=lifecycle.ensure,
@@ -487,7 +522,7 @@ def test_a_provider_with_no_snapshot_still_routes_its_calls(tmp_path):
 @pytest.mark.parametrize(
     "kwargs, message",
     [
-        ({"max_active": 0}, "--max-active"),
+        ({"max_active": -1}, "--max-active"),
         ({"idle_ttl": 0}, "--idle-ttl"),
         ({"startup_timeout": 1}, "--startup-timeout"),
         ({"startup_timeout": 10_000}, "--startup-timeout"),
@@ -1073,6 +1108,515 @@ def test_two_small_models_coexist_where_a_count_of_one_would_not(tmp_path):
     pool.acquire(pool.provider_for_tool(esm_tool))
 
     assert sorted(row["provider"] for row in pool.status()) == ["boltz", "esm"]
+
+
+# ── one interpreter per provider, not one per pool ──────────────────────────────
+
+
+def per_provider(_explicit, deployment):
+    """What `resolve_python` does with no override, with the filesystem left out."""
+    return f"/envs/{deployment.slug}/bin/python"
+
+
+def test_each_provider_is_started_under_its_own_interpreter(tmp_path):
+    """A provider's environment is its own, and this pool used to pick the first one's.
+
+    `tu remote run` resolves `TOOLUNIVERSE_REMOTE_<SLUG>_PYTHON` per provider, and so
+    does the environment check that `tu serve` prints "environment ok" from -- and then
+    every provider was started with the interpreter resolved for the FIRST name in
+    `--allow`. Sharing boltz and esm from one host ran esm's server inside boltz's
+    environment, which is the one place their manifests say the two cannot coexist.
+    """
+    pool = make_pool(
+        tmp_path,
+        ["boltz", "esm"],
+        max_active=2,
+        python=None,
+        resolve_interpreter=per_provider,
+    )
+
+    pool.acquire(pool.provider_for_tool("boltz2_docking"))
+    pool.acquire(pool.provider_for_tool(REMOTE_BY_SLUG["esm"].operations[0]))
+
+    assert pool.lifecycle.interpreters == {
+        "boltz": "/envs/boltz/bin/python",
+        "esm": "/envs/esm/bin/python",
+    }
+
+
+def test_warming_uses_each_providers_own_interpreter_too(tmp_path):
+    """`--warm` starts every provider in turn, and takes the same route to each one."""
+    pool = make_pool(
+        tmp_path,
+        ["boltz", "esm"],
+        python=None,
+        resolve_interpreter=per_provider,
+        discover=lambda deployment: [{"name": deployment.operations[0]}],
+    )
+
+    pool.warm()
+
+    assert pool.lifecycle.interpreters == {
+        "boltz": "/envs/boltz/bin/python",
+        "esm": "/envs/esm/bin/python",
+    }
+
+
+def test_an_interpreter_the_operator_named_is_used_for_all_of_them(tmp_path):
+    """Naming one with `--python` is asking for one, so it is not resolved away."""
+
+    def never(*_args):
+        raise AssertionError("an explicit --python must not be re-resolved")
+
+    pool = make_pool(
+        tmp_path,
+        ["boltz", "esm"],
+        max_active=2,
+        python="/named/by/the/operator",
+        resolve_interpreter=never,
+    )
+
+    pool.acquire(pool.provider_for_tool("boltz2_docking"))
+    pool.acquire(pool.provider_for_tool(REMOTE_BY_SLUG["esm"].operations[0]))
+
+    assert set(pool.lifecycle.interpreters.values()) == {"/named/by/the/operator"}
+
+
+# ── what a declared zero is worth on unified memory ─────────────────────────────
+
+
+def unified_pool(tmp_path, slugs, gpu, **kwargs):
+    """A pool of CPU-only providers on a machine with one pool for host and device."""
+    kwargs.setdefault("read_capacity", lambda: 1 << 20)
+    kwargs.setdefault("pool_shares_host_memory", lambda: True)
+    kwargs.setdefault("declared_footprint", lambda slug: 0)
+    return vram_pool(tmp_path, slugs, gpu, **kwargs)
+
+
+def esm_of(pool):
+    return pool.provider_for_tool(REMOTE_BY_SLUG["esm"].operations[0])
+
+
+def test_a_cpu_only_provider_on_unified_memory_is_measured_and_not_assumed_free(
+    tmp_path,
+):
+    """`policy = "none"` says "no device memory", which here is not "no memory".
+
+    Three manifests declare it, each off a measurement -- their kit has no GPU-capable
+    wheel for this architecture -- and one of them draws the conclusion that it can
+    therefore be "admitted while the card is full". On a discrete-GPU host that is right
+    and worth having. On unified memory its ~10 GiB of host RSS comes out of the pool
+    admission reads, and the old answer skipped the measurement as well as the ceiling,
+    so the figure stayed unlearnable rather than merely unknown.
+    """
+    pool = unified_pool(tmp_path, ["esm"], falling_gpu(40_000, 30_000))
+    deployment = esm_of(pool)
+
+    pool.acquire(deployment)
+    pool.learn_footprint(deployment)
+
+    assert pool.footprints.get("esm") == 10_000
+
+
+def test_on_a_discrete_device_a_declared_zero_costs_nothing_and_is_read_for_nothing(
+    tmp_path,
+):
+    """The same manifest on the machine its claim is about: no ceiling, no reading."""
+    gpu = FakeGPU(free=40_000)
+    pool = unified_pool(tmp_path, ["esm"], gpu, pool_shares_host_memory=lambda: False)
+    deployment = esm_of(pool)
+
+    pool.acquire(deployment)
+    pool.learn_footprint(deployment)
+
+    assert pool.footprints.get("esm") is None
+    assert gpu.reads == 0, "a provider known to hold nothing is measured for nothing"
+
+
+# ---------------------------------------------------------------------------
+# What a residency costs: the tree, not a difference in free memory
+#
+# Measured on this project's GB10 on 2026-10-26, boltz answering one call. Its
+# worker forks, and the call started a second model server
+# (`boltz2_opt.affinity_leg --serve`, 4.94 GiB) that the next call reused:
+#
+#     worker 5.73 + fork 1.00 + affinity leg 4.94  =  11.67 GiB  held
+#     MemAvailable 110.1 -> 95.2                   =  14.90 GiB  "measured"
+#
+# The difference is 3.23 GiB of other tenants and kernel accounting, charged to
+# boltz and then kept forever, because `FootprintStore.record` keeps the largest
+# figure it has ever seen. The same reading has gone the other way too: the
+# design doc records a boltz load across which `MemAvailable` ROSE by 1.3 GiB.
+# ---------------------------------------------------------------------------
+
+TREE_GIB = 11.67
+TREE_MIB = int(TREE_GIB * 1024)
+
+
+def test_on_a_shared_pool_a_cost_is_measured_from_the_tree_and_not_the_difference(
+    tmp_path,
+):
+    """Both readings are available and the tree is the one recorded.
+
+    The machine here would answer 10,000 MiB by difference. That figure is not
+    this provider's, and on this hardware it has been wrong in both directions.
+    """
+    pool = unified_pool(
+        tmp_path,
+        ["esm"],
+        falling_gpu(40_000, 30_000),
+        read_tree_rss=lambda pid: TREE_GIB,
+    )
+    deployment = esm_of(pool)
+
+    pool.acquire(deployment)
+    pool.learn_footprint(deployment)
+
+    assert pool.footprints.get("esm") == TREE_MIB
+
+
+def test_the_tree_is_rooted_at_the_process_this_pool_started(tmp_path):
+    """Not at a pid found by pattern: this pool knows which process it launched."""
+    lifecycle = Lifecycle()
+    asked: list[int] = []
+    pool = unified_pool(
+        tmp_path,
+        ["esm"],
+        falling_gpu(40_000, 30_000),
+        lifecycle=lifecycle,
+        read_tree_rss=lambda pid: asked.append(pid) or TREE_GIB,
+    )
+    deployment = esm_of(pool)
+
+    pool.acquire(deployment)
+    pool.learn_footprint(deployment)
+
+    assert asked == [lifecycle.pids["esm"]]
+
+
+def test_a_tree_reading_needs_no_baseline(tmp_path):
+    """A difference needs two readings; a tree needs none of them.
+
+    This is the case the old measurement could not take at all: a machine whose
+    free memory did not answer when the provider started has no baseline, so the
+    cost stayed unknown however many calls it served.
+    """
+    pool = unified_pool(
+        tmp_path,
+        ["esm"],
+        lambda: None,
+        read_tree_rss=lambda pid: TREE_GIB,
+    )
+    deployment = esm_of(pool)
+
+    pool.acquire(deployment)
+    pool.learn_footprint(deployment)
+
+    assert pool.footprints.get("esm") == TREE_MIB
+
+
+def test_a_tree_is_not_read_on_a_discrete_device(tmp_path):
+    """Host RSS is not device memory there, so it is not a candidate at all."""
+    asked: list[int] = []
+    pool = vram_pool(
+        tmp_path,
+        ["esm"],
+        falling_gpu(40_000, 30_000),
+        pool_shares_host_memory=lambda: False,
+        read_tree_rss=lambda pid: asked.append(pid) or TREE_GIB,
+    )
+    deployment = esm_of(pool)
+
+    pool.acquire(deployment)
+    pool.learn_footprint(deployment)
+
+    assert asked == []
+    assert pool.footprints.get("esm") == 10_000
+
+
+def test_an_adopted_endpoint_is_measured_by_the_difference(tmp_path):
+    """There is no pid to root a tree at, and a pattern would find the wrong one.
+
+    `ensure` adopts an endpoint already serving the reviewed tool set rather than
+    restarting it, and such a provider is `managed=None`: started by another
+    session, in another checkout, possibly under another interpreter. The
+    difference is a worse figure and it is the only one available.
+    """
+    lifecycle = Lifecycle()
+    lifecycle.ensure = lambda deployment, **kw: (
+        None,
+        {"endpoint": deployment.endpoint, "ok": True},
+    )
+    asked: list[int] = []
+    pool = unified_pool(
+        tmp_path,
+        ["esm"],
+        falling_gpu(40_000, 30_000),
+        lifecycle=lifecycle,
+        read_tree_rss=lambda pid: asked.append(pid) or TREE_GIB,
+    )
+    deployment = esm_of(pool)
+
+    pool.acquire(deployment)
+    pool.learn_footprint(deployment)
+
+    assert asked == []
+    assert pool.footprints.get("esm") == 10_000
+
+
+def test_a_tree_that_cannot_be_read_falls_back_to_the_difference(tmp_path):
+    """`ps` failing is a reason to use the worse figure, not to learn nothing."""
+    pool = unified_pool(
+        tmp_path,
+        ["esm"],
+        falling_gpu(40_000, 30_000),
+        read_tree_rss=lambda pid: None,
+    )
+    deployment = esm_of(pool)
+
+    pool.acquire(deployment)
+    pool.learn_footprint(deployment)
+
+    assert pool.footprints.get("esm") == 10_000
+
+
+def test_a_machine_that_cannot_say_which_kind_it_is_keeps_the_manifests_answer(
+    tmp_path,
+):
+    """None is "cannot tell", and such a machine cannot read its free memory either.
+
+    There is no memory ceiling to protect on a host that answers nothing, so the
+    manifest's 0 is left as the answer rather than turned into a provider this pool
+    would then bound one at a time for no gain.
+    """
+    gpu = FakeGPU(free=40_000)
+    pool = unified_pool(tmp_path, ["esm"], gpu, pool_shares_host_memory=lambda: None)
+    deployment = esm_of(pool)
+
+    pool.acquire(deployment)
+    pool.learn_footprint(deployment)
+
+    assert pool.footprints.get("esm") is None
+    assert gpu.reads == 0
+
+
+def test_which_kind_of_machine_this_is_is_read_once_and_not_once_per_decision(tmp_path):
+    """It cannot change while a pool runs, and asking costs an `nvidia-smi`."""
+    asked = []
+    pool = unified_pool(
+        tmp_path,
+        ["boltz", "esm"],
+        FakeGPU(free=40_000),
+        pool_shares_host_memory=lambda: asked.append(1) or True,
+    )
+
+    pool.acquire(esm_of(pool))
+    pool.release(esm_of(pool))
+    pool.acquire(pool.provider_for_tool("boltz2_docking"))
+
+    assert len(asked) == 1
+
+
+def test_the_machine_kind_is_never_read_while_the_lock_is_held(tmp_path):
+    """A subprocess under the lock puts every caller behind a driver that can hang.
+
+    This module keeps its free and capacity readings outside the lock for exactly that
+    reason, and the memory ceiling reaches this third one from INSIDE it, through
+    `footprint_mib` in `_evict_for_locked`. That is safe only because `acquire` asks
+    before it takes the lock, which makes it an ordering property worth asserting rather
+    than commenting: `Condition._is_owned()` says whether this thread holds it.
+    """
+    owned = []
+    pool = None
+
+    def read_kind():
+        owned.append(pool._lock._is_owned())
+        return True
+
+    pool = unified_pool(
+        tmp_path, ["esm"], FakeGPU(free=40_000), pool_shares_host_memory=read_kind
+    )
+
+    pool.acquire(esm_of(pool))
+
+    assert owned == [False], "the machine was read once, and not under the lock"
+
+
+def test_a_machine_kind_that_could_not_be_read_is_asked_again(tmp_path):
+    """A driver busy for a second must not decide this for the rest of a pool's life."""
+    machine = {"shared": None}
+    gpu = FakeGPU(free=40_000)
+    pool = unified_pool(
+        tmp_path, ["esm"], gpu, pool_shares_host_memory=lambda: machine["shared"]
+    )
+    deployment = esm_of(pool)
+
+    pool.acquire(deployment)
+    assert gpu.reads == 0, "unreadable: the manifest's 0 stands"
+
+    machine["shared"] = True
+    pool.release(deployment)
+    pool.control("stop", {"provider": "esm"})
+    pool.acquire(deployment)
+
+    assert gpu.reads == 1, "asked again, and this time the cost is unknown here"
+
+
+# ── no count ceiling: --max-active 0 ────────────────────────────────────────────
+
+
+def countless_pool(tmp_path, slugs, gpu, **kwargs):
+    """A pool with no count ceiling, on a machine whose memory it can read."""
+    kwargs.setdefault("read_capacity", lambda: 1 << 20)
+    return vram_pool(tmp_path, slugs, gpu, max_active=0, **kwargs)
+
+
+def test_no_count_ceiling_is_refused_where_memory_cannot_be_read(tmp_path):
+    """Dropping the count where there is no second ceiling leaves no ceiling at all.
+
+    A capacity reading of None is `pool_capacity_mib`'s "do not reason about memory" --
+    a host with no NVIDIA driver and no unified memory to fall back on. Admitting on
+    nothing is worse than admitting on a count, so the operator is told at startup,
+    while they can still pass one, rather than by an out-of-memory later.
+    """
+    with pytest.raises(PoolError, match="--max-active 0"):
+        vram_pool(tmp_path, ["boltz"], FakeGPU(free=40_000), max_active=0)
+
+
+def test_without_a_count_ceiling_memory_still_evicts(tmp_path):
+    """0 does not mean "admit everything": the ceiling it drops is the count."""
+    pool = countless_pool(tmp_path, ["boltz", "esm"], FakeGPU(free=10_000))
+    esm = pool.provider_for_tool(REMOTE_BY_SLUG["esm"].operations[0])
+    boltz = pool.provider_for_tool("boltz2_docking")
+    pool.footprints.record("esm", 6_000)
+    pool.footprints.record("boltz", 14_000)
+
+    pool.acquire(esm)
+    pool.release(esm)
+    pool.acquire(boltz)  # 10000 free + 6000 reclaimed = 16000 >= 14000 + 1024
+
+    assert [row["provider"] for row in pool.status()] == ["boltz"]
+
+
+def test_a_provider_nobody_has_costed_is_still_admitted_one_at_a_time(tmp_path):
+    """The 28 undeclared slugs are what the count ceiling was really covering.
+
+    Memory cannot judge a provider whose cost nobody has said -- `footprint_mib` is
+    None and the memory ceiling returns early on it -- so with the count gone its load
+    would be admitted on no evidence, and so would the next one, and the machine would
+    find out how many fit by running out.
+    """
+    pool = countless_pool(tmp_path, ["boltz", "esm"], FakeGPU(free=40_000))
+    esm = pool.provider_for_tool(REMOTE_BY_SLUG["esm"].operations[0])
+
+    pool.acquire(esm)
+    pool.release(esm)
+    pool.acquire(pool.provider_for_tool("boltz2_docking"))
+
+    assert [row["provider"] for row in pool.status()] == ["boltz"], (
+        "two providers of unknown cost must not be resident together"
+    )
+
+
+def test_an_uncosted_provider_mid_call_is_a_retry_and_not_an_eviction(tmp_path):
+    """Same rule as every other ceiling: a running GPU job is not collateral."""
+    pool = countless_pool(tmp_path, ["boltz", "esm"], FakeGPU(free=40_000))
+    pool.acquire(pool.provider_for_tool(REMOTE_BY_SLUG["esm"].operations[0]))  # held
+
+    with pytest.raises(PoolError, match="busy"):
+        pool.acquire(pool.provider_for_tool("boltz2_docking"))
+
+    assert [row["provider"] for row in pool.status()] == ["esm"]
+
+
+def test_a_second_uncosted_provider_is_refused_while_the_first_is_starting(tmp_path):
+    """Nothing is resident to evict, because the other one is still coming up.
+
+    Killing a start in progress is not eviction -- the call that asked for it is still
+    waiting on it -- so the answer is the same retry a busy provider gets.
+    """
+    lifecycle, entered, release = blocking_lifecycle()
+    pool = countless_pool(
+        tmp_path, ["boltz", "esm"], FakeGPU(free=40_000), lifecycle=lifecycle
+    )
+    esm = pool.provider_for_tool(REMOTE_BY_SLUG["esm"].operations[0])
+
+    thread = threading.Thread(target=lambda: pool.acquire(esm))
+    thread.start()
+    assert entered.wait(5)
+    try:
+        with pytest.raises(PoolError, match="busy"):
+            pool.acquire(pool.provider_for_tool("boltz2_docking"))
+    finally:
+        release.set()
+        thread.join(10)
+
+
+def test_a_measured_provider_stops_being_bounded_one_at_a_time(tmp_path):
+    """The bound is on ignorance, and one answered call is what ends it.
+
+    The same two providers as the test above, with the one difference that this host
+    has measured what they cost -- which is what `learn_footprint` records after a call
+    each of them answered. Memory can speak for them now, and it says both fit.
+    """
+    pool = countless_pool(tmp_path, ["boltz", "esm"], FakeGPU(free=40_000))
+    pool.footprints.record("esm", 4_000)
+    pool.footprints.record("boltz", 4_000)
+    esm = pool.provider_for_tool(REMOTE_BY_SLUG["esm"].operations[0])
+
+    pool.acquire(esm)
+    pool.release(esm)
+    pool.acquire(pool.provider_for_tool("boltz2_docking"))
+
+    assert sorted(row["provider"] for row in pool.status()) == ["boltz", "esm"]
+    assert pool.lifecycle.stopped == [], "both fit, so nothing had to be stopped"
+
+
+def test_cpu_only_providers_on_unified_memory_are_not_all_admitted_unmeasured(tmp_path):
+    """Both new rules at once, which is the case this fleet's GB10 actually is.
+
+    Nothing has costed these providers HERE -- their manifests speak about a card they
+    do not touch -- so with the count ceiling gone they are admitted one at a time
+    until a call each of them answered has been measured.
+    """
+    pool = unified_pool(tmp_path, ["boltz", "esm"], FakeGPU(free=40_000), max_active=0)
+    esm = esm_of(pool)
+
+    pool.acquire(esm)
+    pool.release(esm)
+    pool.acquire(pool.provider_for_tool("boltz2_docking"))
+
+    assert [row["provider"] for row in pool.status()] == ["boltz"]
+
+
+def test_a_provider_declaring_it_holds_no_device_memory_is_costed_and_not_unknown(
+    tmp_path,
+):
+    """`[gpu] policy = "none"` is knowledge, not a gap, and 0 is not None.
+
+    A provider that holds no device memory can share the machine with anything, and it
+    would be the one hurt most by a bound meant for providers nobody has costed.
+    """
+    pool = countless_pool(
+        tmp_path,
+        ["boltz", "esm"],
+        FakeGPU(free=40_000),
+        declared_footprint=lambda slug: 0,
+    )
+    esm = pool.provider_for_tool(REMOTE_BY_SLUG["esm"].operations[0])
+
+    pool.acquire(esm)
+    pool.release(esm)
+    pool.acquire(pool.provider_for_tool("boltz2_docking"))
+
+    assert sorted(row["provider"] for row in pool.status()) == ["boltz", "esm"]
+
+
+def test_the_count_ceiling_a_pool_was_given_is_what_status_reports(tmp_path):
+    """An operator reading `status` needs to see which ceiling is in force."""
+    pool = countless_pool(tmp_path, ["boltz"], FakeGPU(free=40_000))
+
+    assert pool.control("status", {})["max_active"] == 0
 
 
 def test_a_large_model_evicts_an_idle_one_to_make_memory_room(tmp_path):
