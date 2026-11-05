@@ -14,7 +14,7 @@ def cBioPortal_get_sample_lists(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get all sample lists (cohort definitions) in a cancer study. Sample lists define groups like 'sam...
 
@@ -31,7 +31,7 @@ def cBioPortal_get_sample_lists(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -17,7 +17,7 @@ def ELM_get_instances(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get experimentally validated short linear motif (SLiM) instances for a protein from the ELM datab...
 
@@ -40,7 +40,7 @@ def ELM_get_instances(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -14,7 +14,7 @@ def UniProt_get_sequence_by_accession(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> str:
+) -> str | dict[str, Any]:
     """
     Extract the canonical sequence from UniProtKB entry.
 
@@ -31,7 +31,7 @@ def UniProt_get_sequence_by_accession(
 
     Returns
     -------
-    str
+    str | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

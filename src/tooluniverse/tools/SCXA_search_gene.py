@@ -15,7 +15,7 @@ def SCXA_search_gene(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search the EBI Single Cell Expression Atlas for single-cell experiments where a specific gene is ...
 
@@ -34,7 +34,7 @@ def SCXA_search_gene(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

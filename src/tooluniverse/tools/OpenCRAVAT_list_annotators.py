@@ -14,7 +14,7 @@ def OpenCRAVAT_list_annotators(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     List all available annotation modules on the OpenCRAVAT server. Returns 182+ annotators including...
 
@@ -31,7 +31,7 @@ def OpenCRAVAT_list_annotators(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -15,7 +15,7 @@ def ensembl_get_ontology_descendants(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     WARNING (checked 2026-09-21): Ensembl's REST server currently answers this endpoint with the term...
 
@@ -34,7 +34,7 @@ def ensembl_get_ontology_descendants(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

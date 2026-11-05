@@ -17,7 +17,7 @@ def Synapse_search_entities(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search public Synapse.org (Sage Bionetworks) content by keyword: projects, folders, files, tables...
 
@@ -40,7 +40,7 @@ def Synapse_search_entities(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

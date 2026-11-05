@@ -17,7 +17,7 @@ def intact_get_interactions_by_complex(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search for protein complexes in IntAct database using Complex Web Service. Accepts complex names ...
 
@@ -40,7 +40,7 @@ def intact_get_interactions_by_complex(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

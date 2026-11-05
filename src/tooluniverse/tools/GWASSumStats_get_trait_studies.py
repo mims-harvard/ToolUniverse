@@ -17,7 +17,7 @@ def GWASSumStats_get_trait_studies(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Find GWAS Catalog studies for a trait, matched on the EFO trait LABEL rather than an ontology id....
 
@@ -40,7 +40,7 @@ def GWASSumStats_get_trait_studies(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -18,7 +18,7 @@ def SCREEN_search_cCREs_by_region(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Query the ENCODE SCREEN Registry of candidate cis-Regulatory Elements (cCREs) overlapping a genom...
 
@@ -43,7 +43,7 @@ def SCREEN_search_cCREs_by_region(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

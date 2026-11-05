@@ -19,7 +19,7 @@ def PubMed_lookup_article_by_citation(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Find the PMID of an article from its citation details with NCBI ECitMatch: journal, year, volume,...
 
@@ -46,7 +46,7 @@ def PubMed_lookup_article_by_citation(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

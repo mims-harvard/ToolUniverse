@@ -18,7 +18,7 @@ def CELLxGENE_get_cell_metadata(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Optional[list[Any]]:
+) -> Optional[list[Any] | dict[str, Any]]:
     """
     Query cell metadata from CELLxGENE Census (50M+ human/mouse single cells). CRITICAL: obs_value_fi...
 
@@ -43,7 +43,7 @@ def CELLxGENE_get_cell_metadata(
 
     Returns
     -------
-    Optional[list[Any]]
+    Optional[list[Any] | dict[str, Any]]
     """
     # Handle mutable defaults to avoid B006 linting error
 

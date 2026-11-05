@@ -15,7 +15,7 @@ def KEGG_search_network(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search the KEGG NETWORK database for signaling pathway networks by gene or keyword. KEGG NETWORK ...
 
@@ -34,7 +34,7 @@ def KEGG_search_network(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

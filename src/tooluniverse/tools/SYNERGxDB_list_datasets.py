@@ -14,7 +14,7 @@ def SYNERGxDB_list_datasets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     List all drug combination screening datasets integrated in SYNERGxDB. Returns dataset names, numb...
 
@@ -31,7 +31,7 @@ def SYNERGxDB_list_datasets(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

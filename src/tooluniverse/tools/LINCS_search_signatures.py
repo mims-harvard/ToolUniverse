@@ -17,7 +17,7 @@ def LINCS_search_signatures(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search LINCS SigCom drug perturbation signatures with offset pagination and pages up to 1000 reco...
 
@@ -40,7 +40,7 @@ def LINCS_search_signatures(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

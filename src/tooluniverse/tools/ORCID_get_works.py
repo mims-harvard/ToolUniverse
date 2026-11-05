@@ -15,7 +15,7 @@ def ORCID_get_works(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get every public work-summary assertion for an ORCID researcher. ORCID groups equivalent works fr...
 
@@ -34,7 +34,7 @@ def ORCID_get_works(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

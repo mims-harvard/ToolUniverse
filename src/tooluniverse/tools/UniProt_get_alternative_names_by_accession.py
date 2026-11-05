@@ -14,7 +14,7 @@ def UniProt_get_alternative_names_by_accession(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Extract all alternative names (alternativeNames) from UniProtKB entry.
 
@@ -31,7 +31,7 @@ def UniProt_get_alternative_names_by_accession(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

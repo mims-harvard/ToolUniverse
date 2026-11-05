@@ -15,7 +15,7 @@ def get_clinical_trial_eligibility_criteria(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Retrieves the eligibility criteria for the clinical trials, using their NCT IDs.
 
@@ -34,7 +34,7 @@ def get_clinical_trial_eligibility_criteria(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

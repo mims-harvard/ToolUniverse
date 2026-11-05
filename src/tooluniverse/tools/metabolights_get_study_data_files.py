@@ -17,7 +17,7 @@ def metabolights_get_study_data_files(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search for data files in a MetaboLights study. Returns a list of files matching the search criter...
 
@@ -40,7 +40,7 @@ def metabolights_get_study_data_files(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

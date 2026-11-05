@@ -22,7 +22,7 @@ def NvidiaNIM_maisi(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> str:
+) -> str | dict[str, Any]:
     """
     Generate synthetic CT images with segmentation masks using MAISI via NVIDIA NIM. 3D Latent Diffus...
 
@@ -55,7 +55,7 @@ def NvidiaNIM_maisi(
 
     Returns
     -------
-    str
+    str | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
     if output_size is None:

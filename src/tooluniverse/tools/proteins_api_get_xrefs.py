@@ -15,7 +15,7 @@ def proteins_api_get_xrefs(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get cross-references for a protein from the Proteins API, including links to other databases (Ens...
 
@@ -34,7 +34,7 @@ def proteins_api_get_xrefs(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

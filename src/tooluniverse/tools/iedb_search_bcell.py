@@ -18,7 +18,7 @@ def iedb_search_bcell(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search B-cell assay rows (IEDB Query API). Use this to discover `bcell_id` values and related epi...
 
@@ -43,7 +43,7 @@ def iedb_search_bcell(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

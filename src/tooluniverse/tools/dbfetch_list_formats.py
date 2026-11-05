@@ -14,7 +14,7 @@ def dbfetch_list_formats(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> str:
+) -> str | dict[str, Any]:
     """
     List available output formats for a specific database. Note: This returns common format names as ...
 
@@ -31,7 +31,7 @@ def dbfetch_list_formats(
 
     Returns
     -------
-    str
+    str | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

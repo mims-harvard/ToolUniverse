@@ -16,7 +16,7 @@ def Synapse_list_children(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     List what a public Synapse project or folder contains: the child folders, files, tables and datas...
 
@@ -37,7 +37,7 @@ def Synapse_list_children(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

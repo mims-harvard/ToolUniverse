@@ -16,7 +16,7 @@ def ensembl_get_xrefs(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get cross-references (external database IDs) for an Ensembl gene, transcript, or protein. Returns...
 
@@ -37,7 +37,7 @@ def ensembl_get_xrefs(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

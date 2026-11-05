@@ -18,7 +18,7 @@ def EWASAtlas_search_by_region(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     List the CpG probes with curated epigenome-wide association study (EWAS) results inside a genomic...
 
@@ -43,7 +43,7 @@ def EWASAtlas_search_by_region(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

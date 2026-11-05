@@ -16,7 +16,7 @@ def Enrichr_list_libraries(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     List all available Enrichr gene set libraries with statistics. Enrichr has 225+ libraries coverin...
 
@@ -37,7 +37,7 @@ def Enrichr_list_libraries(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

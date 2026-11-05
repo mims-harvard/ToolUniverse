@@ -14,7 +14,7 @@ def ClinGen_dosage_by_gene(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get ClinGen dosage sensitivity curation for a specific gene using the JSON API. Returns haploinsu...
 
@@ -31,7 +31,7 @@ def ClinGen_dosage_by_gene(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

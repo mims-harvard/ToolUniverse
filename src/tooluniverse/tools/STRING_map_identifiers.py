@@ -17,7 +17,7 @@ def STRING_map_identifiers(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Map protein identifiers to STRING (Search Tool for Retrieval of Interacting Genes/Proteins) datab...
 
@@ -40,7 +40,7 @@ def STRING_map_identifiers(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

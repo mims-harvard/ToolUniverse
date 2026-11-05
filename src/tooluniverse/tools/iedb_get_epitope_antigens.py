@@ -19,7 +19,7 @@ def iedb_get_epitope_antigens(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Given an epitope `structure_id`, get linked antigens (IEDB Query API). Returned rows contain `par...
 
@@ -46,7 +46,7 @@ def iedb_get_epitope_antigens(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

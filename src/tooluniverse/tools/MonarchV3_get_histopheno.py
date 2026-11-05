@@ -14,7 +14,7 @@ def MonarchV3_get_histopheno(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get the phenotype profile of a disease grouped by body system from the Monarch Initiative. Return...
 
@@ -31,7 +31,7 @@ def MonarchV3_get_histopheno(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

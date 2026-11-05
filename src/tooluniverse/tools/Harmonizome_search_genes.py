@@ -16,7 +16,7 @@ def Harmonizome_search_genes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Resolve Harmonizome genes by exact symbol and symbol-like suggestions. The upstream /gene collect...
 
@@ -37,7 +37,7 @@ def Harmonizome_search_genes(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -14,7 +14,7 @@ def Reactome_get_event_ancestors(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get ancestor events (parent pathways) for a reaction or pathway.
 
@@ -31,7 +31,7 @@ def Reactome_get_event_ancestors(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -14,7 +14,7 @@ def FinnGen_get_variant_finemapping(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get fine-mapping regions associated with a genomic variant in FinnGen. Returns phenotypes where t...
 
@@ -31,7 +31,7 @@ def FinnGen_get_variant_finemapping(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -15,7 +15,7 @@ def KEGG_link_entries(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Find cross-references between KEGG databases using the KEGG /link API. Given a KEGG entry (gene, ...
 
@@ -34,7 +34,7 @@ def KEGG_link_entries(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

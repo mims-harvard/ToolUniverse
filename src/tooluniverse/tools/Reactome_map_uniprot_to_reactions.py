@@ -14,7 +14,7 @@ def Reactome_map_uniprot_to_reactions(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Map a UniProt protein identifier to Reactome reactions. Returns all reactions that involve this p...
 
@@ -31,7 +31,7 @@ def Reactome_map_uniprot_to_reactions(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

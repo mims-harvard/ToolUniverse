@@ -15,7 +15,7 @@ def IntentAnalyzerAgent(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Optional[str]:
+) -> Optional[str | dict[str, Any]]:
     """
     AI agent that analyzes user research intent and creates comprehensive search plans
 
@@ -34,7 +34,7 @@ def IntentAnalyzerAgent(
 
     Returns
     -------
-    Optional[str]
+    Optional[str | dict[str, Any]]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -14,7 +14,7 @@ def Reactome_get_entity_events(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get events (reactions/subpathways) associated with an entity. Returns TSV-formatted event data pa...
 
@@ -31,7 +31,7 @@ def Reactome_get_entity_events(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

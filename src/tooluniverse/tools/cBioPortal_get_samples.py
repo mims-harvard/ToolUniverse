@@ -16,7 +16,7 @@ def cBioPortal_get_samples(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get all samples in a cancer study. Returns the full cohort by default; the response is a bare arr...
 
@@ -37,7 +37,7 @@ def cBioPortal_get_samples(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

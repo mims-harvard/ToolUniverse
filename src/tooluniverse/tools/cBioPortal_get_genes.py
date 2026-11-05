@@ -15,7 +15,7 @@ def cBioPortal_get_genes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search for genes by keyword or query (gene symbol or alias). Alias: cBioPortal_search.
 
@@ -34,7 +34,7 @@ def cBioPortal_get_genes(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

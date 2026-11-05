@@ -14,7 +14,7 @@ def arrayexpress_get_experiment_samples(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get sample information for an ArrayExpress experiment. Returns sample metadata including sample n...
 
@@ -31,7 +31,7 @@ def arrayexpress_get_experiment_samples(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

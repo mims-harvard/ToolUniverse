@@ -15,7 +15,7 @@ def NvidiaNIM_esm2_650m(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> str:
+) -> str | dict[str, Any]:
     """
     Generate protein sequence embeddings using ESM2-650M via NVIDIA NIM. 650 million parameter langua...
 
@@ -34,7 +34,7 @@ def NvidiaNIM_esm2_650m(
 
     Returns
     -------
-    str
+    str | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

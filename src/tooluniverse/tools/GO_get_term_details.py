@@ -14,7 +14,7 @@ def GO_get_term_details(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Retrieves detailed information for a specific GO ID using the Biolink API, including definition, ...
 
@@ -31,7 +31,7 @@ def GO_get_term_details(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

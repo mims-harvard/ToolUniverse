@@ -14,7 +14,7 @@ def NvidiaNIM_esmfold(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Optional[str]:
+) -> Optional[str | dict[str, Any]]:
     """
     Fast alignment-free protein structure prediction using ESMFold via NVIDIA NIM. No MSA required - ...
 
@@ -31,7 +31,7 @@ def NvidiaNIM_esmfold(
 
     Returns
     -------
-    Optional[str]
+    Optional[str | dict[str, Any]]
     """
     # Handle mutable defaults to avoid B006 linting error
 

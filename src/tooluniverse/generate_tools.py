@@ -138,6 +138,41 @@ def _return_type_for(return_schema: Dict[str, Any]) -> str:
     return f"Optional[{joined}]" if has_null else joined
 
 
+def _wrapper_return_type(return_schema: Dict[str, Any]) -> str:
+    """Python type for what a generated wrapper can actually hand back.
+
+    `_return_type_for` answers what the *schema* says. A wrapper returns
+    `run_one_function(...)` unchanged, and that call has a failure exit of its
+    own: `_create_dual_format_error` answers ``{"status", "error",
+    "error_details"}`` -- a dict -- for an unknown tool, a parameter that fails
+    validation, a tool that raises, and a timeout. Every wrapper can therefore
+    return a dict whatever its schema describes, and an annotation that cannot
+    be one is false.
+
+    235 of them could not. 208 said `list[Any]`, 17 `str`, 6 `Optional[str]`
+    and 4 `Optional[list[Any]]`, while the tools answer the ``{status, data}``
+    envelope of issue #246: a caller writing `for row in Tool(...)` iterates
+    the envelope's keys instead, which raises nothing and is simply the wrong
+    answer. Checking all 235 live against their own `test_examples` confirmed
+    179 wrong, 9 right, and 47 unmeasurable because the tool errored or
+    carried no usable example.
+
+    Widening rather than unwrapping is deliberate. Making the wrapper return
+    `result["data"]` would make the narrow annotation true, and would break
+    every caller that reads `status` or `data` today -- silently, because the
+    key would simply be absent rather than raise. Adding a member to the union
+    breaks nobody; it is what #856 did for six tools whose schemas already
+    declared both shapes.
+    """
+    rendered = _return_type_for(return_schema)
+    if rendered == "Any" or "dict[str, Any]" in rendered:
+        return rendered
+    optional = re.fullmatch(r"Optional\[(.+)\]", rendered)
+    inner = optional.group(1) if optional else rendered
+    joined = _deduplicate_types(inner.split(" | ") + ["dict[str, Any]"])
+    return f"Optional[{joined}]" if optional else joined
+
+
 def _deduplicate_types(types: list) -> str:
     """Join a list of Python type strings with '|', removing duplicates while preserving order."""
     if not types:
@@ -332,7 +367,7 @@ def generate_tool_file(
     # Infer return type
     return_schema = tool_config.get("return_schema", {})
     if return_schema:
-        return_type = _return_type_for(return_schema)
+        return_type = _wrapper_return_type(return_schema)
     else:
         return_type = "Any"
 

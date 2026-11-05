@@ -15,7 +15,7 @@ def proteins_api_get_features(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get detailed sequence features for a protein, including domains, regions, motifs, modified residu...
 
@@ -34,7 +34,7 @@ def proteins_api_get_features(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

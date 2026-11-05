@@ -14,7 +14,7 @@ def SIGNOR_list_pathways(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     List curated signaling pathways in the SIGNOR database. Optionally filter by keyword to find path...
 
@@ -31,7 +31,7 @@ def SIGNOR_list_pathways(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

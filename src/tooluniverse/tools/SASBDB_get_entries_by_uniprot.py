@@ -14,7 +14,7 @@ def SASBDB_get_entries_by_uniprot(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Find SASBDB small-angle scattering entries associated with a UniProt protein accession. Returns l...
 
@@ -31,7 +31,7 @@ def SASBDB_get_entries_by_uniprot(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

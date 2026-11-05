@@ -15,7 +15,7 @@ def MetaboAnalyst_pathway_enrichment(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Perform metabolite pathway enrichment analysis (over-representation analysis) using hypergeometri...
 
@@ -34,7 +34,7 @@ def MetaboAnalyst_pathway_enrichment(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

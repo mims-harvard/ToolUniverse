@@ -14,7 +14,7 @@ def biostudies_get_study_files(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get list of files associated with a BioStudies study. Returns file metadata including paths, size...
 
@@ -31,7 +31,7 @@ def biostudies_get_study_files(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

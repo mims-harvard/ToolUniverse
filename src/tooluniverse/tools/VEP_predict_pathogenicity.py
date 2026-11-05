@@ -19,7 +19,7 @@ def VEP_predict_pathogenicity(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Predict missense variant pathogenicity via the Ensembl VEP REST API with AlphaMissense (DeepMind ...
 
@@ -46,7 +46,7 @@ def VEP_predict_pathogenicity(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -16,7 +16,7 @@ def GMrepo_get_phenotypes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     List phenotypes and health conditions with gut microbiome data in the GMrepo database. Returns Me...
 
@@ -37,7 +37,7 @@ def GMrepo_get_phenotypes(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

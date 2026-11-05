@@ -16,7 +16,7 @@ def Fatcat_search_scholar(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search Internet Archive Scholar's Fatcat release index and retrieve detailed metadata. Results ar...
 
@@ -37,7 +37,7 @@ def Fatcat_search_scholar(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

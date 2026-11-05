@@ -16,7 +16,7 @@ def MonarchV3_get_mappings(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get cross-ontology mappings for a biomedical entity with exact offset pagination. Metadata report...
 
@@ -37,7 +37,7 @@ def MonarchV3_get_mappings(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

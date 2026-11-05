@@ -15,7 +15,7 @@ def KEGG_search_variant(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search the KEGG VARIANT database for human gene variants associated with disease. KEGG VARIANT ca...
 
@@ -34,7 +34,7 @@ def KEGG_search_variant(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

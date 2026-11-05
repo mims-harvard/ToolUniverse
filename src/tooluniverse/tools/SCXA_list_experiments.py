@@ -17,7 +17,7 @@ def SCXA_list_experiments(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     List a resumable page of single-cell RNA-seq experiments from EBI Single Cell Expression Atlas, w...
 
@@ -40,7 +40,7 @@ def SCXA_list_experiments(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -14,7 +14,7 @@ def LOVD_get_variants(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get the full unpaginated LOVD variant response for a gene. Every record's gene symbol and Variant...
 
@@ -31,7 +31,7 @@ def LOVD_get_variants(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

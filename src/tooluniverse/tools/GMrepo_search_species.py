@@ -16,7 +16,7 @@ def GMrepo_search_species(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search the GMrepo database for gut microbiome species by name. Returns species with NCBI taxon ID...
 
@@ -37,7 +37,7 @@ def GMrepo_search_species(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

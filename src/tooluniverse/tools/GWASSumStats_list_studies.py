@@ -15,7 +15,7 @@ def GWASSumStats_list_studies(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     List studies in the EBI GWAS Catalog, newest API (v2). Returns the study accession with its repor...
 
@@ -34,7 +34,7 @@ def GWASSumStats_list_studies(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

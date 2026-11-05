@@ -16,7 +16,7 @@ def dbfetch_fetch_entry(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> str:
+) -> str | dict[str, Any]:
     """
     Fetch a single database entry by ID from various databases (UniProt, PDB, etc.) in specified form...
 
@@ -37,7 +37,7 @@ def dbfetch_fetch_entry(
 
     Returns
     -------
-    str
+    str | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

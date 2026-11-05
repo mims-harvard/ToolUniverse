@@ -15,7 +15,7 @@ def ARCHS4_get_gene_correlations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get genes most co-expressed with a query gene from ARCHS4, based on Pearson correlation computed ...
 
@@ -34,7 +34,7 @@ def ARCHS4_get_gene_correlations(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

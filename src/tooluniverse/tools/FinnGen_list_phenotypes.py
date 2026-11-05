@@ -18,7 +18,7 @@ def FinnGen_list_phenotypes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search and list FinnGen disease endpoints (phenotypes). FinnGen is a Finnish population genomics ...
 
@@ -43,7 +43,7 @@ def FinnGen_list_phenotypes(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

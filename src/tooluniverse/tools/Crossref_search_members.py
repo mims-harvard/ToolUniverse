@@ -17,7 +17,7 @@ def Crossref_search_members(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search Crossref members (publishers / depositing organizations) by name. Returns each member's nu...
 
@@ -40,7 +40,7 @@ def Crossref_search_members(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

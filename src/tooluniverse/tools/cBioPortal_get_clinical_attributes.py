@@ -14,7 +14,7 @@ def cBioPortal_get_clinical_attributes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get available clinical attributes for a cancer study. Returns attribute IDs, names, and data type...
 
@@ -31,7 +31,7 @@ def cBioPortal_get_clinical_attributes(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

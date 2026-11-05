@@ -13,7 +13,7 @@ def dbfetch_list_databases(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> str:
+) -> str | dict[str, Any]:
     """
     List all available databases in Dbfetch service. Note: This returns a static list of common datab...
 
@@ -29,7 +29,7 @@ def dbfetch_list_databases(
 
     Returns
     -------
-    str
+    str | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

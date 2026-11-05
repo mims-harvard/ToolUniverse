@@ -18,7 +18,7 @@ def CELLxGENE_get_gene_metadata(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Optional[list[Any]]:
+) -> Optional[list[Any] | dict[str, Any]]:
     """
     Query gene (variable) metadata from CELLxGENE Census. Returns gene symbols, Ensembl IDs, feature ...
 
@@ -43,7 +43,7 @@ def CELLxGENE_get_gene_metadata(
 
     Returns
     -------
-    Optional[list[Any]]
+    Optional[list[Any] | dict[str, Any]]
     """
     # Handle mutable defaults to avoid B006 linting error
 

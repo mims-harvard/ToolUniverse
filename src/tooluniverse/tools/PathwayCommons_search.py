@@ -18,7 +18,7 @@ def PathwayCommons_search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search Pathway Commons for pathways, interactions, and molecular entities across 22 integrated da...
 
@@ -43,7 +43,7 @@ def PathwayCommons_search(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

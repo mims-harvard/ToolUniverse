@@ -14,7 +14,7 @@ def MetaboAnalyst_name_to_id(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Map metabolite common names to database identifiers (KEGG, PubChem, ChEBI). Resolves metabolite n...
 
@@ -31,7 +31,7 @@ def MetaboAnalyst_name_to_id(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

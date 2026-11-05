@@ -19,7 +19,7 @@ def ensembl_get_alignment(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get genomic alignments between species for a genomic region. Returns multiple alignments showing ...
 
@@ -46,7 +46,7 @@ def ensembl_get_alignment(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -16,7 +16,7 @@ def cBioPortal_get_patients(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get all patients in a cancer study. Returns the full cohort by default; the response is a bare ar...
 
@@ -37,7 +37,7 @@ def cBioPortal_get_patients(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
