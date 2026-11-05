@@ -14,7 +14,7 @@ def SYNERGxDB_list_cell_lines(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     List all cancer cell lines in the SYNERGxDB database. Returns cell line names, tissue types, dise...
 
@@ -31,7 +31,7 @@ def SYNERGxDB_list_cell_lines(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

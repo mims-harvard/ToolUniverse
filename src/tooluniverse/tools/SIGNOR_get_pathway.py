@@ -16,7 +16,7 @@ def SIGNOR_get_pathway(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get signaling interactions in a SIGNOR curated pathway. Results are recoverably paginated: start ...
 
@@ -37,7 +37,7 @@ def SIGNOR_get_pathway(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

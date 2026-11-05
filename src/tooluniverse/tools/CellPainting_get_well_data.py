@@ -17,7 +17,7 @@ def CellPainting_get_well_data(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get a paginated slice of well-level metadata and image links for a specific Cell Painting plate f...
 
@@ -40,7 +40,7 @@ def CellPainting_get_well_data(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

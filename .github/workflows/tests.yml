@@ -225,11 +225,19 @@ jobs:
           fi
           echo "committed generated files match their generators"
 
+      # The key has to name everything the wrappers are generated FROM, or a
+      # restore serves yesterday's wrappers over the ones the commit carries
+      # and the suite tests the cache instead of the branch. It named
+      # scripts/build_tools.py, which is a 51-line shim that calls
+      # tooluniverse.generate_tools.main -- so a change to the generator that
+      # rewrote every annotation left the key untouched, the stale tree came
+      # back over 235 committed files, and "Generate SDK" below (no --force)
+      # found every config hash unchanged and rewrote nothing.
       - name: Cache SDK generation
         uses: actions/cache@v3
         with:
           path: src/tooluniverse/tools
-          key: ${{ runner.os }}-sdk-${{ hashFiles('scripts/build_tools.py', 'src/tooluniverse/data/*.json') }}
+          key: ${{ runner.os }}-sdk-${{ hashFiles('scripts/build_tools.py', 'src/tooluniverse/generate_tools.py', 'src/tooluniverse/build_optimizer.py', 'src/tooluniverse/data/*.json') }}
 
       - name: Generate SDK
         run: python scripts/build_tools.py

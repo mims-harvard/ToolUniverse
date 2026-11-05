@@ -18,7 +18,7 @@ def Crossref_search_works(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search Crossref Works API for scholarly articles, publications, and research outputs by keyword. ...
 
@@ -43,7 +43,7 @@ def Crossref_search_works(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

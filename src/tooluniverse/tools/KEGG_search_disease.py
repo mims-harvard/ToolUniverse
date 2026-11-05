@@ -17,7 +17,7 @@ def KEGG_search_disease(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search the KEGG DISEASE database by keyword. Returns disease IDs and names plus the exact total a...
 
@@ -40,7 +40,7 @@ def KEGG_search_disease(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

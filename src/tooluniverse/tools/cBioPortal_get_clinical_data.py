@@ -16,7 +16,7 @@ def cBioPortal_get_clinical_data(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get clinical data for samples in a study. Returns patient-level data like tumor stage, histology,...
 
@@ -37,7 +37,7 @@ def cBioPortal_get_clinical_data(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

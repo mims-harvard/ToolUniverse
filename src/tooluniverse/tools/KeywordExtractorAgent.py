@@ -17,7 +17,7 @@ def KeywordExtractorAgent(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Optional[str]:
+) -> Optional[str | dict[str, Any]]:
     """
     AI agent that extracts and refines search keywords for research plans
 
@@ -40,7 +40,7 @@ def KeywordExtractorAgent(
 
     Returns
     -------
-    Optional[str]
+    Optional[str | dict[str, Any]]
     """
     # Handle mutable defaults to avoid B006 linting error
 

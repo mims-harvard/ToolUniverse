@@ -17,7 +17,7 @@ def NeuroMorpho_search_literature(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search source publications linked to NeuroMorpho reconstructions with explicit zero-based page pa...
 
@@ -40,7 +40,7 @@ def NeuroMorpho_search_literature(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -23,7 +23,7 @@ def CORE_search_papers(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search open-access papers in CORE with recoverable offset pagination. Start with offset=0 and con...
 
@@ -58,7 +58,7 @@ def CORE_search_papers(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -14,7 +14,7 @@ def Reactome_map_uniprot_to_pathways(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Map a UniProt protein identifier to Reactome pathways. Returns all pathways that contain this pro...
 
@@ -31,7 +31,7 @@ def Reactome_map_uniprot_to_pathways(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

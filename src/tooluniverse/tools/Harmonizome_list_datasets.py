@@ -13,7 +13,7 @@ def Harmonizome_list_datasets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     List all 100+ integrated genomics datasets available in Harmonizome (Ma'ayan Lab). Returns datase...
 
@@ -29,7 +29,7 @@ def Harmonizome_list_datasets(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

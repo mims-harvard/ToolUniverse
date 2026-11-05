@@ -14,7 +14,7 @@ def PRIDE_get_project_files(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get the complete list of data files for a PRIDE Archive project including raw mass spectrometry f...
 
@@ -31,7 +31,7 @@ def PRIDE_get_project_files(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

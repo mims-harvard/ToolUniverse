@@ -16,7 +16,7 @@ def ensembl_get_structural_variants(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get structural variants overlapping a genomic region from Ensembl. Returns known SVs from DGVa (D...
 
@@ -37,7 +37,7 @@ def ensembl_get_structural_variants(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

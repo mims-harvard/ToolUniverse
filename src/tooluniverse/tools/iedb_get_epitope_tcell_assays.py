@@ -18,7 +18,7 @@ def iedb_get_epitope_tcell_assays(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get T-cell assay data linked to a specific epitope structure ID. Given an epitope_id (from iedb_s...
 
@@ -43,7 +43,7 @@ def iedb_get_epitope_tcell_assays(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -17,7 +17,7 @@ def AllenBrain_get_expression_datasets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get Allen Mouse Brain ISH expression datasets for a gene with exact RMA row pagination. Failed ex...
 
@@ -40,7 +40,7 @@ def AllenBrain_get_expression_datasets(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

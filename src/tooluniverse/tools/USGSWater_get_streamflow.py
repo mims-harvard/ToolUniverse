@@ -16,7 +16,7 @@ def USGSWater_get_streamflow(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get recent streamflow (discharge) readings from USGS stream gages, in cubic feet per second (ft^3...
 
@@ -37,7 +37,7 @@ def USGSWater_get_streamflow(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

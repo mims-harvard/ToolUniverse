@@ -14,7 +14,7 @@ def MetaboAnalyst_biomarker_enrichment(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Find statistically enriched metabolite sets (biomarker panels) from a list of metabolites. Tests ...
 
@@ -31,7 +31,7 @@ def MetaboAnalyst_biomarker_enrichment(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

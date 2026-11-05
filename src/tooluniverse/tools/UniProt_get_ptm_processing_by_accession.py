@@ -14,7 +14,7 @@ def UniProt_get_ptm_processing_by_accession(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Extract all UniProtKB post-translational modification and chain-processing features: modified res...
 
@@ -31,7 +31,7 @@ def UniProt_get_ptm_processing_by_accession(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

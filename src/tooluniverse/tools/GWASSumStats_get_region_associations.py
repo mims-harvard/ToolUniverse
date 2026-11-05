@@ -19,7 +19,7 @@ def GWASSumStats_get_region_associations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     RETIRED: region-level summary statistics are no longer served over REST. EBI retired /gwas/summar...
 
@@ -46,7 +46,7 @@ def GWASSumStats_get_region_associations(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

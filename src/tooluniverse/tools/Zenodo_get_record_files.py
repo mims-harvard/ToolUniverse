@@ -14,7 +14,7 @@ def Zenodo_get_record_files(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get the list of files for a specific Zenodo record including file names, sizes, checksums, and do...
 
@@ -31,7 +31,7 @@ def Zenodo_get_record_files(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

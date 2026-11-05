@@ -15,7 +15,7 @@ def Mcule_lookup_compound(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Look up purchasable compounds on Mcule by SMILES, InChIKey, or Mcule ID. Mcule aggregates 30M+ co...
 
@@ -34,7 +34,7 @@ def Mcule_lookup_compound(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

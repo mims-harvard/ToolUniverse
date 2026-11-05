@@ -16,7 +16,7 @@ def ensembl_get_regulatory_features(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get regulatory features (promoters, enhancers, transcription factor binding sites) in a genomic r...
 
@@ -37,7 +37,7 @@ def ensembl_get_regulatory_features(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

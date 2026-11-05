@@ -17,7 +17,7 @@ def DOAJ_search_articles(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search DOAJ for open-access articles or journals with exact recoverable pagination. Start with pa...
 
@@ -40,7 +40,7 @@ def DOAJ_search_articles(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -21,7 +21,7 @@ def iedb_search_tcell_assays(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search T-cell assay data from the IEDB. Returns T-cell response assays with epitope sequences, MH...
 
@@ -52,7 +52,7 @@ def iedb_search_tcell_assays(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

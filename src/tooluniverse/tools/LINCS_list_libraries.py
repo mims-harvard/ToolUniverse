@@ -16,7 +16,7 @@ def LINCS_list_libraries(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     List and optionally keyword-filter the complete LINCS SigCom library catalog. Filtering is applie...
 
@@ -37,7 +37,7 @@ def LINCS_list_libraries(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

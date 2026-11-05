@@ -15,7 +15,7 @@ def KEGG_convert_ids(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Convert KEGG gene/compound identifiers to external database IDs using the KEGG /conv API. Maps KE...
 
@@ -34,7 +34,7 @@ def KEGG_convert_ids(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -19,7 +19,7 @@ def iedb_get_epitope_mhc(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Given an epitope `structure_id`, get linked MHC restriction association rows (IEDB Query API). Re...
 
@@ -46,7 +46,7 @@ def iedb_get_epitope_mhc(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

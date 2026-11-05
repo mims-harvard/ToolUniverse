@@ -16,7 +16,7 @@ def EMPIAR_search_entries(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search the EMPIAR raw electron-microscopy archive by keyword with exact EBI offset pagination. Me...
 
@@ -37,7 +37,7 @@ def EMPIAR_search_entries(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

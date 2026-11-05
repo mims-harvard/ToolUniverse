@@ -16,7 +16,7 @@ def HOCOMOCO_search_motifs(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search HOCOMOCO v14 for transcription factor binding motifs by gene or protein name. Returns moti...
 
@@ -37,7 +37,7 @@ def HOCOMOCO_search_motifs(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

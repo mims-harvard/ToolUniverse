@@ -15,7 +15,7 @@ def ChEMBL_get_molecule_image(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> str:
+) -> str | dict[str, Any]:
     """
     Get molecular structure image (SVG or PNG format) for a molecule by ChEMBL ID. Returns the image ...
 
@@ -34,7 +34,7 @@ def ChEMBL_get_molecule_image(
 
     Returns
     -------
-    str
+    str | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

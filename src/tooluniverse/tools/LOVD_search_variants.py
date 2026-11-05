@@ -16,7 +16,7 @@ def LOVD_search_variants(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search LOVD variants by exactly one DBID or HGVS DNA notation. The wrapper verifies every returne...
 
@@ -37,7 +37,7 @@ def LOVD_search_variants(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -17,7 +17,7 @@ def ORCID_search_researchers(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search ORCID expanded-search with strict start/rows controls. Returns names, other names, institu...
 
@@ -40,7 +40,7 @@ def ORCID_search_researchers(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

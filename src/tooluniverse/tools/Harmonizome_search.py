@@ -17,7 +17,7 @@ def Harmonizome_search(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search Harmonizome across genes, datasets, or attributes. Results are recoverably paginated: star...
 
@@ -40,7 +40,7 @@ def Harmonizome_search(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

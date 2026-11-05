@@ -15,7 +15,7 @@ def CellPainting_search_screens(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     List available Cell Painting screens/studies in the Image Data Resource (IDR). Returns screen nam...
 
@@ -34,7 +34,7 @@ def CellPainting_search_screens(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

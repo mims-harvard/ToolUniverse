@@ -16,7 +16,7 @@ def DBLP_search_publications(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search DBLP publications with offset pagination while preserving the historical list return type....
 
@@ -37,7 +37,7 @@ def DBLP_search_publications(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

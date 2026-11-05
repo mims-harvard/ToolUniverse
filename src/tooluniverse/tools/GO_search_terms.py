@@ -16,7 +16,7 @@ def GO_search_terms(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Searches non-obsolete Gene Ontology terms by a keyword or phrase in term labels and synonyms usin...
 
@@ -37,7 +37,7 @@ def GO_search_terms(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

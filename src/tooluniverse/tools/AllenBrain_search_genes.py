@@ -17,7 +17,7 @@ def AllenBrain_search_genes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search Allen Brain Atlas genes by symbol or name with exact RMA row pagination. Metadata reports ...
 
@@ -40,7 +40,7 @@ def AllenBrain_search_genes(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

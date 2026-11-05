@@ -16,7 +16,7 @@ def MaveDB_search_score_sets(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search MaveDB for variant effect score sets from Multiplexed Assays of Variant Effect (MAVE) expe...
 
@@ -37,7 +37,7 @@ def MaveDB_search_score_sets(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -13,7 +13,7 @@ def cBioPortal_get_cancer_types(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get all cancer types from cBioPortal including TCGA, Pan-Cancer Atlas, and other studies. Returns...
 
@@ -29,7 +29,7 @@ def cBioPortal_get_cancer_types(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

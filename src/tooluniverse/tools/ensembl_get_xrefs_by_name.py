@@ -16,7 +16,7 @@ def ensembl_get_xrefs_by_name(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get cross-references for an Ensembl object by its name/symbol. Returns mappings to external datab...
 
@@ -37,7 +37,7 @@ def ensembl_get_xrefs_by_name(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

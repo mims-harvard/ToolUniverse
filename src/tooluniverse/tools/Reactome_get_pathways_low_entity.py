@@ -14,7 +14,7 @@ def Reactome_get_pathways_low_entity(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get low-level pathways (most specific pathways) containing a specific entity. Returns pathways at...
 
@@ -31,7 +31,7 @@ def Reactome_get_pathways_low_entity(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

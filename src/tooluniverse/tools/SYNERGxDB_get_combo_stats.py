@@ -14,7 +14,7 @@ def SYNERGxDB_get_combo_stats(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get per-dataset combination statistics from SYNERGxDB. Returns the number of unique drug combinat...
 
@@ -31,7 +31,7 @@ def SYNERGxDB_get_combo_stats(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

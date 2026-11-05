@@ -15,7 +15,7 @@ def get_clinical_trial_locations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Retrieves the locations where the clinical trials are being conducted, using their NCT IDs.
 
@@ -34,7 +34,7 @@ def get_clinical_trial_locations(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

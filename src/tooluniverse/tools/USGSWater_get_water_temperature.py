@@ -16,7 +16,7 @@ def USGSWater_get_water_temperature(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get recent water temperature readings from USGS monitoring stations, in degrees Celsius, with sit...
 
@@ -37,7 +37,7 @@ def USGSWater_get_water_temperature(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

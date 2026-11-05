@@ -15,7 +15,7 @@ def XMLToolOptimizer(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> str:
+) -> str | dict[str, Any]:
     """
     Optimizes tools defined in XML format based on test results and quality feedback
 
@@ -34,7 +34,7 @@ def XMLToolOptimizer(
 
     Returns
     -------
-    str
+    str | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

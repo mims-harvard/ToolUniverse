@@ -14,7 +14,7 @@ def NEB_Tm_list_polymerases(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     List all NEB DNA polymerase products available for Tm calculation. Returns product codes (prodcod...
 
@@ -31,7 +31,7 @@ def NEB_Tm_list_polymerases(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

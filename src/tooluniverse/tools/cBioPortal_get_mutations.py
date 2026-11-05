@@ -16,7 +16,7 @@ def cBioPortal_get_mutations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get mutation data for specific genes in a cancer study. This uses the updated cBioPortal API that...
 
@@ -37,7 +37,7 @@ def cBioPortal_get_mutations(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

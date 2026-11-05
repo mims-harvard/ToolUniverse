@@ -14,7 +14,7 @@ def Reactome_get_participants(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get all participants (physical entities) of a reaction or event. Returns list of physical entitie...
 
@@ -31,7 +31,7 @@ def Reactome_get_participants(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

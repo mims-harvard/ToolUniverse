@@ -18,7 +18,7 @@ def ELM_list_classes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     List ELM short linear motif classes with exact total and recoverable offset pagination. Continue ...
 
@@ -43,7 +43,7 @@ def ELM_list_classes(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -14,7 +14,7 @@ def metabolights_get_study_assays(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get all assays associated with a MetaboLights study. Returns assay metadata including assay types...
 
@@ -31,7 +31,7 @@ def metabolights_get_study_assays(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

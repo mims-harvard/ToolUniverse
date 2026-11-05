@@ -16,7 +16,7 @@ def SYNERGxDB_get_combo_matrix(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get the dose-response matrix data for a specific drug combination experiment in SYNERGxDB. Return...
 
@@ -37,7 +37,7 @@ def SYNERGxDB_get_combo_matrix(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -20,7 +20,7 @@ def iedb_search_epitopes(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search immune epitopes (IEDB Query API). Use this to discover epitope `structure_id` values, then...
 
@@ -49,7 +49,7 @@ def iedb_search_epitopes(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

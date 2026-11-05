@@ -17,7 +17,7 @@ def intact_search_interactions(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search IntAct interactions through EBI Search. The first parameter is a zero-based offset and is ...
 
@@ -40,7 +40,7 @@ def intact_search_interactions(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

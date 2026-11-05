@@ -15,7 +15,7 @@ def proteins_api_get_proteomics(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get proteomics data for a protein including mass spectrometry evidence, PTM sites, and expression...
 
@@ -34,7 +34,7 @@ def proteins_api_get_proteomics(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

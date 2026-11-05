@@ -13,7 +13,7 @@ def Crossref_list_types(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> Optional[list[Any]]:
+) -> Optional[list[Any] | dict[str, Any]]:
     """
     List all publication types available in Crossref (e.g., journal-article, book-chapter, conference...
 
@@ -29,7 +29,7 @@ def Crossref_list_types(
 
     Returns
     -------
-    Optional[list[Any]]
+    Optional[list[Any] | dict[str, Any]]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -18,7 +18,7 @@ def Monarch_get_associations(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Query disease-gene-phenotype associations in Monarch with exact offset pagination. Provide a subj...
 
@@ -43,7 +43,7 @@ def Monarch_get_associations(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

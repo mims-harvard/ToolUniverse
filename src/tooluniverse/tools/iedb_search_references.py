@@ -18,7 +18,7 @@ def iedb_search_references(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search references/citations (IEDB Query API). Use this to discover `reference_id` values, PubMed ...
 
@@ -43,7 +43,7 @@ def iedb_search_references(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

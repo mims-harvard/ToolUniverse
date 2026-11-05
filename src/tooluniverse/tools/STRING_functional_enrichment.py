@@ -16,7 +16,7 @@ def STRING_functional_enrichment(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Identify enriched biological functions, pathways, and processes for a protein set using STRING (S...
 
@@ -37,7 +37,7 @@ def STRING_functional_enrichment(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

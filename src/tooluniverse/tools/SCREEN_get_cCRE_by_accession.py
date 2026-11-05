@@ -15,7 +15,7 @@ def SCREEN_get_cCRE_by_accession(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Look up one or more candidate cis-Regulatory Elements (cCREs) in the ENCODE SCREEN registry by SC...
 
@@ -34,7 +34,7 @@ def SCREEN_get_cCRE_by_accession(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

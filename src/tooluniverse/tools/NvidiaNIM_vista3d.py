@@ -15,7 +15,7 @@ def NvidiaNIM_vista3d(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> str:
+) -> str | dict[str, Any]:
     """
     3D medical image segmentation using VISTA-3D via NVIDIA NIM. Segment organs and structures from C...
 
@@ -34,7 +34,7 @@ def NvidiaNIM_vista3d(
 
     Returns
     -------
-    str
+    str | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

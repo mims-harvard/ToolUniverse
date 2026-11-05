@@ -14,7 +14,7 @@ def Reactome_list_top_pathways(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     List top-level pathways for a specific species. Returns pathways that have no parent pathways, in...
 
@@ -31,7 +31,7 @@ def Reactome_list_top_pathways(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

@@ -17,7 +17,7 @@ def MGnify_search_studies(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Search MGnify studies with explicit page pagination. Preserves upstream JSON:API links and pagina...
 
@@ -40,7 +40,7 @@ def MGnify_search_studies(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

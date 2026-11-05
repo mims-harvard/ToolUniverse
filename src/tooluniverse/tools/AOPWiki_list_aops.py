@@ -14,7 +14,7 @@ def AOPWiki_list_aops(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     List the complete AOP-Wiki Adverse Outcome Pathway catalog. Every upstream page is fetched and ch...
 
@@ -31,7 +31,7 @@ def AOPWiki_list_aops(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

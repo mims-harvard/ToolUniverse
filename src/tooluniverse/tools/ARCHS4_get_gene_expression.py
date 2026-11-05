@@ -16,7 +16,7 @@ def ARCHS4_get_gene_expression(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get gene expression levels across human or mouse tissues and cell lines from ARCHS4 (All RNA-seq ...
 
@@ -37,7 +37,7 @@ def ARCHS4_get_gene_expression(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

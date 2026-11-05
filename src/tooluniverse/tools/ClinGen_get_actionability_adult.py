@@ -16,7 +16,7 @@ def ClinGen_get_actionability_adult(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get ClinGen clinical actionability curations for adult context, including actionable findings, in...
 
@@ -37,7 +37,7 @@ def ClinGen_get_actionability_adult(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

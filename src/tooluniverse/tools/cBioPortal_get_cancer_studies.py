@@ -15,7 +15,7 @@ def cBioPortal_get_cancer_studies(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get one page of the cBioPortal study catalogue. This returns a SLICE, not the whole catalogue: `l...
 
@@ -34,7 +34,7 @@ def cBioPortal_get_cancer_studies(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

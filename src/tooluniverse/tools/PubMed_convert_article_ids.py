@@ -15,7 +15,7 @@ def PubMed_convert_article_ids(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Convert between PubMed IDs (PMIDs), PubMed Central IDs (PMCIDs), DOIs and NIH manuscript IDs with...
 
@@ -34,7 +34,7 @@ def PubMed_convert_article_ids(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 

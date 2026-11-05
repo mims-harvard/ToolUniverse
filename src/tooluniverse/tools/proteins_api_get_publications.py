@@ -15,7 +15,7 @@ def proteins_api_get_publications(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> list[Any]:
+) -> list[Any] | dict[str, Any]:
     """
     Get publications associated with a protein from the Proteins API. Supports batch operations: pass...
 
@@ -34,7 +34,7 @@ def proteins_api_get_publications(
 
     Returns
     -------
-    list[Any]
+    list[Any] | dict[str, Any]
     """
     # Handle mutable defaults to avoid B006 linting error
 
