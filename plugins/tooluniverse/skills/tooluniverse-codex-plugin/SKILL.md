@@ -6,7 +6,7 @@ description: "Install, set up, verify, update, pin, uninstall, or troubleshoot t
 
 # Install the ToolUniverse Plugin for OpenAI Codex
 
-One-step install on Codex: an MCP server exposing 2,700+ scientific tools plus 130+ research skills — all auto-configured. (For the Claude Code version, see `tooluniverse-claude-code-plugin`.)
+One-step install on Codex: an MCP server exposing 2,700+ scientific tools plus 160+ research skills — all auto-configured. (For the Claude Code version, see `tooluniverse-claude-code-plugin`.)
 
 ## Prerequisites (check once)
 
@@ -50,7 +50,7 @@ The research skills auto-activate on matching questions, and the MCP tools are d
 | Component | What it does | How it's used |
 |---|---|---|
 | **MCP server** | 2,700+ tools via `find_tools`, `get_tool_info`, `execute_tool` | Auto-loaded; no action needed |
-| **130+ skills** | Structured research workflows — drug discovery, variant interpretation, pharmacovigilance, phylogenetics, statistical modeling, and more | Auto-activate on matching questions |
+| **160+ skills** | Structured research workflows — drug discovery, variant interpretation, pharmacovigilance, phylogenetics, statistical modeling, and more | Auto-activate on matching questions |
 
 > Unlike the Claude Code plugin, the Codex plugin ships **MCP tools + skills only** — there are no slash commands. You drive everything by asking naturally.
 

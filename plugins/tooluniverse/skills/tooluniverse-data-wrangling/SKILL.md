@@ -303,7 +303,7 @@ For these 14 additional domains, read [references/specialized-domains.md](refere
 
 These sources require registration or have no ToolUniverse tool. For each, the table shows access requirements and how to get data programmatically once credentialed.
 
-**Note**: ToolUniverse has 2300+ tools — use `find_tools("your topic")` to discover tools not listed above. Section B covers the most common API *patterns*; many more databases use the same patterns (e.g., all EBI databases follow the EBI REST pattern in #2).
+**Note**: ToolUniverse has 2,700+ tools — use `find_tools("your topic")` to discover tools not listed above. Section B covers the most common API *patterns*; many more databases use the same patterns (e.g., all EBI databases follow the EBI REST pattern in #2).
 
 | Source | Access | Wait Time | Format | Contents |
 |--------|--------|-----------|--------|----------|

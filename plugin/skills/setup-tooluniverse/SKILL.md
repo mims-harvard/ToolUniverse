@@ -173,7 +173,7 @@ codex plugin add tooluniverse -m tooluniverse
 See the `tooluniverse-codex-plugin` skill for verification, updates, and
 troubleshooting.
 
-Both install the MCP server plus 180+ skills in one step. Google Antigravity
+Both install the MCP server plus 160+ skills in one step. Google Antigravity
 users: see the `tooluniverse-antigravity-plugin` skill instead — its install
 flow differs (`agy plugin install`, not a marketplace add).
 

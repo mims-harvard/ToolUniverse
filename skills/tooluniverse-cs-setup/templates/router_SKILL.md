@@ -5,7 +5,7 @@ description: Biomedical and scientific research via ToolUniverse's 2,700+ tools 
 
 # ToolUniverse Research
 
-Brings ToolUniverse's 2,700+ scientific tools and 133 structured research workflows into Claude Science. The `tooluniverse` PyPI package supplies the tools; this skill bundles the workflows and a kernel sidecar that wires them up.
+Brings ToolUniverse's 2,700+ scientific tools and 160 structured research workflows into Claude Science. The `tooluniverse` PyPI package supplies the tools; this skill bundles the workflows and a kernel sidecar that wires them up.
 
 ## Setup
 

@@ -154,6 +154,13 @@ def _advertised_floors(text):
             "plugin/.claude-plugin/plugin.json",
             (REPO / "plugin/.claude-plugin/plugin.json").read_text(),
         ),
+        # The two plugin READMEs were missed by a hand-written replacement list
+        # that only globbed the three skills/ trees.
+        ("plugin/README.md", (REPO / "plugin/README.md").read_text()),
+        (
+            "plugins/tooluniverse/README.md",
+            (REPO / "plugins/tooluniverse/README.md").read_text(),
+        ),
     ],
 )
 def test_a_listing_never_advertises_more_tools_than_exist_nor_far_fewer(label, text):
@@ -267,4 +274,48 @@ def test_the_plugin_version_is_the_version_that_was_released(path):
     assert version, f"{path} has no version field"
     assert version == _pyproject_version(), (
         f"{path} says {version}, pyproject.toml says {_pyproject_version()}"
+    )
+
+
+# ── The standard that told everyone to write the stale number ────────────────
+
+
+DOC_STANDARD_FILES = [
+    "docs/dev_docs/DOCUMENTATION_STANDARDS.md",
+    "docs/dev_docs/VALIDATION_GUIDE.md",
+]
+
+
+@pytest.mark.parametrize("path", DOC_STANDARD_FILES)
+def test_the_documentation_standard_names_a_current_tool_count(path):
+    """The drift had a source, and it was the style guide.
+
+    Both files carried ``Use `1000+ tools` consistently``, and
+    VALIDATION_GUIDE.md shipped ``sed -i 's/[0-9]*+ tools/1000+ tools/g'`` to
+    enforce it. Anyone following the documented standard would have undone the
+    corrections in #859 -- and now trips the guard above while doing it. So the
+    standard is held to the same count as the listings it governs.
+    """
+    text = (REPO / path).read_text()
+    stated = re.findall(r"Use `([\d,]+)\+? tools` consistently", text)
+    assert stated, f"{path} no longer states a standard tool count"
+    actual = _tool_config_count()
+    for figure in stated:
+        n = int(figure.replace(",", ""))
+        assert n <= actual, f"{path} standardises {n} tools, catalogue has {actual}"
+        assert n >= actual * 0.8, (
+            f"{path} standardises {n} tools against a catalogue of {actual} -- "
+            "this is the text other docs are written from, so it goes stale first"
+        )
+
+
+def test_the_enforcing_sed_rewrites_to_the_standard_figure():
+    """The one-liner is the standard in executable form; it must agree."""
+    text = (REPO / "docs/dev_docs/VALIDATION_GUIDE.md").read_text()
+    seds = re.findall(r"sed -i 's/\[0-9\]\*\+ tools/([\d,]+)\+ tools/g'", text)
+    assert seds, "VALIDATION_GUIDE.md no longer ships the normalising sed"
+    stated = re.findall(r"Use `([\d,]+)\+? tools` consistently", text)
+    assert stated, "VALIDATION_GUIDE.md states no standard count"
+    assert set(seds) == set(stated), (
+        f"the sed rewrites to {set(seds)} while the standard says {set(stated)}"
     )
