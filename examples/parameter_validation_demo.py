@@ -2,118 +2,121 @@
 """
 Parameter Validation Demo
 
-Demonstrates real parameter validation errors with actual tool schemas
+Demonstrates real parameter validation errors with actual tool schemas.
+
+A tool call RETURNS its error; it does not raise. `tooluniverse.exceptions`
+defines ToolValidationError and friends, but the call path converts them with
+`_create_dual_format_error` and hands back
+`{"status": "error", "error": ..., "error_details": {...}}`. This file used to
+wrap every case in `try`/`except ToolValidationError` and read `e.message`,
+`e.field` and `e.value` -- the except never fired, and none of those three
+attributes exists on the class. Each case below prints what the call really
+returns; every message quoted in a comment was produced by running it.
 """
 
 from tooluniverse import ToolUniverse
-from tooluniverse.exceptions import ToolValidationError
+
+tu = ToolUniverse()
+tu.load_tools()
+
+
+def report(label, result):
+    """Print a result the way the error contract actually works."""
+    if isinstance(result, dict) and result.get("status") == "error":
+        # .get(): a tool reporting an upstream failure of its own may send no
+        # error_details at all, so do not index into it.
+        details = result.get("error_details") or {}
+        print(f"{label}: error")
+        print(f"  message   : {result['error']}")
+        print(f"  kind      : {details.get('type')}")  # the exception class name
+        print(f"  retriable : {details.get('retriable')}")
+        print(f"  next steps: {details.get('next_steps')}")
+    else:
+        print(f"{label}: ok ({type(result).__name__})")
+
 
 # =============================================================================
 # Method 1: Missing Required Parameter
 # =============================================================================
-# Description: Test validation when required parameters are missing
 # Syntax: tu.tools.ToolName() - missing required parameter
-tu = ToolUniverse()
-tu.load_tools()
-
-# Test missing required parameter
-try:
-    result1 = tu.tools.UniProt_get_entry_by_accession()
-except Exception as e:
-    # Handle missing required parameter error
-    pass
+# -> error_details["type"] == "ToolValidationError"
+#    "Parameter validation failed for 'root': 'accession' is a required property"
+report("missing required", tu.tools.UniProt_get_entry_by_accession())
 
 # =============================================================================
 # Method 2: Wrong Parameter Type
 # =============================================================================
-# Description: Test validation when parameter types are incorrect
 # Syntax: tu.tools.ToolName(param="string") when param expects integer
-
-# Wrong parameter type - string instead of integer
-try:
-    result2 = tu.tools.openalex_literature_search(
-        search_keywords="AI", 
-        max_results="ten"  # Should be integer
-    )
-except Exception as e:
-    # Handle type validation error
-    pass
+# -> "Parameter validation failed for 'max_results': 'ten' is not of type 'integer'"
+report(
+    "wrong type",
+    tu.tools.openalex_literature_search(
+        search_keywords="AI",
+        max_results="ten",  # schema says integer
+    ),
+)
 
 # =============================================================================
 # Method 3: Value Out of Range
 # =============================================================================
-# Description: Test validation when parameter values exceed allowed range
 # Syntax: tu.tools.ToolName(param=value) when value exceeds maximum
-
-# Value out of range - exceeds maximum allowed
-try:
-    result3 = tu.tools.openalex_literature_search(
-        search_keywords="AI", 
-        max_results=500  # Above maximum of 200
-    )
-except Exception as e:
-    # Handle range validation error
-    pass
+# -> "Parameter validation failed for 'max_results': 500 is greater than the
+#     maximum of 200"
+report(
+    "out of range",
+    tu.tools.openalex_literature_search(
+        search_keywords="AI",
+        max_results=500,  # schema maximum is 200
+    ),
+)
 
 # =============================================================================
 # Method 4: Valid Parameters
 # =============================================================================
-# Description: Test with correct parameters that should work
-# Syntax: tu.tools.ToolName(required_param=valid_value)
+report("valid", tu.tools.UniProt_get_entry_by_accession(accession="P05067"))
 
-# Valid parameters - should work without errors
+# =============================================================================
+# Method 5: Not Every Error Is a Validation Error
+# =============================================================================
+# An empty accession satisfies the schema -- it is a string -- so validation
+# passes, the call goes out, and UniProt answers 404. The result is still an
+# error dict, but one with NO error_details:
+#   {"status": "error", "error": "UniProt API returned status code: 404"}
+# This is why `kind` prints None here and why error_details must be read with
+# .get() rather than indexed.
+report("empty accession", tu.tools.UniProt_get_entry_by_accession(accession=""))
+
+# =============================================================================
+# Method 6: Skipping Validation
+# =============================================================================
+# validate=True is the default. Turning it off sends the arguments as given, so
+# a schema violation becomes whatever the upstream API makes of it instead of a
+# ToolValidationError.
+report(
+    "validate=False",
+    tu.tools.openalex_literature_search(
+        search_keywords="AI",
+        max_results=500,
+        validate=False,
+    ),
+)
+
+# =============================================================================
+# The one exception you do get
+# =============================================================================
+# It does not come from a call. `tu.tools` raises AttributeError for a tool name
+# that does not exist.
 try:
-    result4 = tu.tools.UniProt_get_entry_by_accession(accession="P05067")
-    # Success: Got result of expected type
-except Exception as e:
-    # Handle unexpected error
-    pass
+    tu.tools.NameThatDoesNotExist(param="x")
+except AttributeError as e:
+    print(f"unknown tool name: AttributeError - {e}")
 
 # =============================================================================
-# Method 5: Structured Error Handling
+# Summary
 # =============================================================================
-# Description: Handle validation errors with structured exception handling
-# Syntax: try/except with ToolValidationError
-
-try:
-    result5 = tu.tools.UniProt_get_entry_by_accession(accession="")
-except ToolValidationError as e:
-    # Handle structured validation error
-    # e.message contains error description
-    # e.field contains the problematic field name
-    # e.value contains the invalid value
-    pass
-except Exception as e:
-    # Handle other types of errors
-    pass
-
-# =============================================================================
-# Method 6: Custom Validation in Tools
-# =============================================================================
-# Description: Tools can perform additional validation beyond schema validation
-# Syntax: Custom validation logic in tool.run() method
-
-# Example of how tools might implement custom validation
-def example_custom_validation():
-    try:
-        # This might trigger custom validation logic in the tool
-        result6 = tu.tools.UniProt_get_entry_by_accession(accession="INVALID_FORMAT")
-    except Exception as e:
-        # Handle custom validation error
-        pass
-
-# =============================================================================
-# Summary of Validation Types
-# =============================================================================
-# Parameter validation catches various error types:
-# - Missing required parameters
-# - Incorrect parameter types (string vs integer, etc.)
-# - Values outside allowed ranges
-# - Invalid parameter names
-# - Malformed parameter values
-# 
-# Validation provides:
-# - Clear error messages
-# - Structured error information
-# - Field-specific error details
-# - Suggestion for corrections
+# Validation catches missing required parameters, wrong types, and values
+# outside the declared range, and reports each as an error dict whose
+# error_details["type"] is "ToolValidationError", with next_steps and retriable
+# alongside. Everything else that can go wrong -- an upstream 404, a timeout, a
+# missing credential -- also arrives as an error dict, so branch on
+# result["status"], never on an exception.

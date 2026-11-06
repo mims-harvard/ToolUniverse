@@ -103,17 +103,30 @@ tu.load_tools(categories=["proteins", "drugs"])
 
 ## Error Handling
 
-```python
-from tooluniverse.exceptions import ToolError, ToolUnavailableError, ToolValidationError
+A failed call **returns** its error; it does not raise. The classes in
+`tooluniverse.exceptions` never reach the caller — every calling pattern
+(`tu.run`, `tu.tools.X`, the generated wrappers, and their `await` forms)
+converts them into the dict below. Wrapping a call in
+`except ToolValidationError` catches nothing and the error is then used as if
+it were data.
 
-try:
-    result = tu.tools.some_tool(param="value")
-except ToolUnavailableError:
-    ...  # Tool service down
-except ToolValidationError as e:
-    tool_info = tu.all_tool_dict["some_tool"]
-    print(f"Required: {tool_info['parameter'].get('required', [])}")
+```python
+result = tu.tools.some_tool(param="value")
+
+if isinstance(result, dict) and result.get("status") == "error":
+    details = result.get("error_details", {})
+    kind = details.get("type")          # e.g. "ToolValidationError"
+    print(result["error"])
+    print(details.get("next_steps"))    # suggested actions
+    if details.get("retriable"):
+        ...                             # worth another attempt
+    if kind == "ToolValidationError":
+        tool_info = tu.all_tool_dict["some_tool"]
+        print(f"Required: {tool_info['parameter'].get('required', [])}")
 ```
+
+The one exception that does reach you is `AttributeError`, raised by `tu.tools`
+for a tool name that does not exist — not by the call itself.
 
 ## Tool Categories
 

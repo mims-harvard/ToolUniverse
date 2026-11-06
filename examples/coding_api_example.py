@@ -45,18 +45,21 @@ tu.tools.eager_load(["UniProt_get_entry_by_accession"])
 
 # Import generated tools
 from tooluniverse.tools import UniProt_get_entry_by_accession
-from tooluniverse.exceptions import ToolValidationError
 
 # Call tool function directly
 result3 = UniProt_get_entry_by_accession(accession="P05067")
 
-# Structured error handling
-try:
-    result4 = UniProt_get_entry_by_accession(accession="invalid")
-except ToolValidationError as e:
-    # Handle structured validation errors
-    # e.next_steps contains suggested actions
-    # e.retriable indicates if retry is possible
+# Structured error handling.
+# A failed call RETURNS the error; it does not raise. The classes in
+# tooluniverse.exceptions never reach the caller -- the call path converts them
+# into this dict -- so `except ToolValidationError` here would catch nothing and
+# the error would be used as if it were data.
+result4 = UniProt_get_entry_by_accession(accession="invalid")
+if isinstance(result4, dict) and result4.get("status") == "error":
+    details = result4.get("error_details", {})
+    # details["type"] is the error class name, e.g. "ToolValidationError"
+    # details["next_steps"] holds suggested actions
+    # details["retriable"] says whether a retry is worth making
     pass
 
 # =============================================================================
