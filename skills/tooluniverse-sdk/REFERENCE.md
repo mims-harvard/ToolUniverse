@@ -344,30 +344,36 @@ def analyze_disease_targets(disease_efo_id):
 
 ### Error Handling Wrapper
 
-```python
-from tooluniverse.exceptions import ToolError, ToolUnavailableError
+A failed call **returns** its error rather than raising, so a fallback written
+as `except ToolUnavailableError` never fires and the caller keeps the error dict
+as though it were a result. Branch on the value instead; `error_details["type"]`
+carries the error class name.
 
+```python
 def safe_tool_executor(tu, tool_name, arguments, fallback_tool=None):
     """Execute tool with comprehensive error handling"""
     try:
-        return tu.run({
+        result = tu.run({
             "name": tool_name,
             "arguments": arguments
         })
-    except ToolUnavailableError:
-        if fallback_tool:
-            print(f"⚠️ {tool_name} unavailable, trying {fallback_tool}")
-            return tu.run({
-                "name": fallback_tool,
-                "arguments": arguments
-            })
-        return {"error": f"Tool {tool_name} unavailable"}
-    except ToolError as e:
-        print(f"❌ Tool error: {e}")
-        return {"error": str(e)}
-    except Exception as e:
+    except Exception as e:                      # only the unexpected gets here
         print(f"❌ Unexpected error: {e}")
         return {"error": str(e)}
+
+    if not (isinstance(result, dict) and result.get("status") == "error"):
+        return result
+
+    details = result.get("error_details", {})
+    if details.get("type") == "ToolUnavailableError" and fallback_tool:
+        print(f"⚠️ {tool_name} unavailable, trying {fallback_tool}")
+        return tu.run({
+            "name": fallback_tool,
+            "arguments": arguments
+        })
+
+    print(f"❌ Tool error: {result['error']}")
+    return {"error": result["error"], "retriable": details.get("retriable", False)}
 
 # Usage
 result = safe_tool_executor(

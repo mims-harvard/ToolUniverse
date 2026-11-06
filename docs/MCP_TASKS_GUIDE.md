@@ -471,9 +471,12 @@ print(f"Completed: {successful}/{len(results)}")
 
 ### Handling Task Failures
 
-```python
-from tooluniverse.exceptions import ToolError, ToolUnavailableError
+A failed tool call **returns** its error; it does not raise. The classes in
+`tooluniverse.exceptions` never reach the caller — the call path converts them
+into an error dict — so inspect the value. `TimeoutError` and a cancellation
+`RuntimeError` do come out of the task machinery and are still worth catching.
 
+```python
 async def safe_docking(pdb_id):
     tu = ToolUniverse()
     tu.load_tools()
@@ -482,13 +485,6 @@ async def safe_docking(pdb_id):
         result = await tu.tools.ProteinsPlus_predict_binding_sites(
             pdb_id=pdb_id
         )
-        return {"status": "success", "data": result}
-    except ToolError as e:
-        # Tool execution error
-        return {"status": "failed", "error": str(e)}
-    except ToolUnavailableError as e:
-        # Tool not available
-        return {"status": "unavailable", "error": str(e)}
     except TimeoutError:
         # Task exceeded TTL
         return {"status": "timeout", "error": "Task timed out"}
@@ -497,6 +493,18 @@ async def safe_docking(pdb_id):
         if "cancelled" in str(e).lower():
             return {"status": "cancelled", "error": "Task was cancelled"}
         raise
+
+    if isinstance(result, dict) and result.get("status") == "error":
+        details = result.get("error_details", {})
+        # details["type"] is the error class name, e.g. "ToolUnavailableError"
+        return {
+            "status": "failed",
+            "kind": details.get("type"),
+            "error": result["error"],
+            "retriable": details.get("retriable", False),
+        }
+
+    return {"status": "success", "data": result}
 ```
 
 ### Batch Error Isolation
