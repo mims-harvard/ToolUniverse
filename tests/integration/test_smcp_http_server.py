@@ -41,7 +41,7 @@ class TestSMCPHTTPServer:
         """Start SMCP HTTP server in background process."""
         # Start server on a different port to avoid conflicts
         process = subprocess.Popen([
-            "python", "-m", "tooluniverse.smcp_server",
+            sys.executable, "-m", "tooluniverse.smcp_server",
             "--port", "8002",
             "--host", "127.0.0.1",
             "--tool-categories", "uniprot,pubmed"
