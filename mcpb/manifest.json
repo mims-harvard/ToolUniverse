@@ -101,7 +101,7 @@
         "ncbi_api_key": {
             "type": "string",
             "title": "NCBI API key",
-            "description": "Optional. Raises NCBI rate limits for 34 tools that work without it.",
+            "description": "Optional. Raises NCBI rate limits for 35 tools that work without it.",
             "required": false,
             "sensitive": true
         },

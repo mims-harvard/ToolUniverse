@@ -319,3 +319,96 @@ def test_the_enforcing_sed_rewrites_to_the_standard_figure():
     assert set(seds) == set(stated), (
         f"the sed rewrites to {set(seds)} while the standard says {set(stated)}"
     )
+
+
+# ── A per-key claim is a different quantity, and needs an exact check ────────
+#
+# The guards above compare a *catalogue* claim against the catalogue, as a
+# floor: "an exact count would fail on every tool added", so a listing may
+# round down. The bundle's key prompts make a different claim -- how many tools
+# a given API key raises the limits for -- and it slipped through all of it:
+#
+#   mcpb/manifest.json  "Raises NCBI rate limits for 34 tools"   -- 35 of them
+#                       "Raises openFDA rate limits for 18 tools"
+#
+# Nothing checked it, for two reasons. `_advertised_floors` reads only
+# MANIFEST["description"], so the user_config prompts were never scanned; and
+# its pattern requires three digits or more, so a two-digit claim could not
+# have matched even there. The 34 was written in #653 and was never revisited.
+#
+# A floor is the wrong shape for this one. "35 tools" is a precise statement
+# about a small number an operator reads while deciding whether a key is worth
+# getting, 80% of it is not a useful answer, and the correction when a tool is
+# added is one character in one file. So this is exact.
+
+
+def _tools_declaring(env_var):
+    """Tool configs naming `env_var` in required_api_keys or optional_api_keys."""
+    data_dir = REPO / "src" / "tooluniverse" / "data"
+    names = set()
+    for path in data_dir.glob("*.json"):
+        if path.name in {"api_keys_catalog.json", "mcp_contracts.lock.json"}:
+            continue
+        try:
+            entries = json.loads(path.read_text())
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            continue
+        if not isinstance(entries, list):
+            continue
+        for entry in entries:
+            if not isinstance(entry, dict) or "name" not in entry:
+                continue
+            for field in ("required_api_keys", "optional_api_keys"):
+                declared = entry.get(field)
+                if isinstance(declared, list) and env_var in declared:
+                    names.add(entry["name"])
+    return names
+
+
+def _env_var_for(user_config_key):
+    """The variable the bundle exports from a user_config entry, per the manifest.
+
+    Read from `server.mcp_config.env` rather than by upper-casing the key: the
+    mapping is stated in the file, and a prompt whose variable is not exported
+    at all is a thing worth failing on rather than guessing about.
+    """
+    for variable, value in MANIFEST["server"]["mcp_config"]["env"].items():
+        if value == "${user_config.%s}" % user_config_key:
+            return variable
+    return None
+
+
+def _key_claims():
+    """`(user_config key, claimed count)` for every prompt stating a tool count."""
+    claims = []
+    for key, config in MANIFEST.get("user_config", {}).items():
+        for figure in re.findall(r"(\d[\d,]*)\s+tools", config.get("description", "")):
+            claims.append((key, int(figure.replace(",", ""))))
+    return claims
+
+
+@pytest.mark.parametrize("key, claimed", _key_claims(), ids=lambda v: str(v))
+def test_a_key_prompt_states_exactly_how_many_tools_use_that_key(key, claimed):
+    variable = _env_var_for(key)
+
+    assert variable, (
+        f"user_config.{key} claims {claimed} tools but the manifest exports no "
+        "environment variable for it, so the claim is about nothing"
+    )
+    actual = len(_tools_declaring(variable))
+    assert claimed == actual, (
+        f"user_config.{key} says {claimed} tools use {variable}; "
+        f"{actual} declare it. Adding a tool that uses this key means updating "
+        "this prompt -- it is what a Desktop user reads to decide whether the "
+        "key is worth getting."
+    )
+
+
+def test_the_two_prompts_that_carry_a_count_still_carry_one():
+    """Dropping the number would make the claim un-checkable rather than wrong.
+
+    Both of these are optional keys whose tools work without them, so the count
+    is the whole of what the prompt tells an operator. A new prompt that states
+    a count is welcome -- add it here and the test above starts checking it.
+    """
+    assert {key for key, _ in _key_claims()} == {"ncbi_api_key", "fda_api_key"}
