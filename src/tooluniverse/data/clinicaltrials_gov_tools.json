@@ -1568,6 +1568,21 @@
               }
             },
             "other_outcome_count": {"type": "integer"},
+            "has_results": {"type": "boolean", "description": "Whether the record has a posted results section. This handler reads protocolSection only -- what the trial set out to do -- and a trial with results was indistinguishable from one without."},
+            "results_summary": {
+              "type": "object",
+              "description": "How much is in the posted results: NCT04280705 has 43 outcome-measure results, 100 serious adverse events and 10 other events. Empty when there are no results. The rows themselves belong to the tools named in results_section_tools.",
+              "properties": {
+                "outcome_measure_results": {"type": "integer"},
+                "serious_adverse_events": {"type": "integer"},
+                "other_adverse_events": {"type": "integer"},
+                "adverse_event_groups": {"type": "integer"},
+                "adverse_event_frequency_threshold": {"type": ["string", "number", "null"], "description": "The percentage above which non-serious events were reported, so an absent event can be read as below threshold rather than as absent"},
+                "participant_flow_groups": {"type": "integer"},
+                "baseline_measures": {"type": "integer"}
+              }
+            },
+            "results_section_tools": {"type": "object", "description": "Which tool returns each part of the results section; empty when there are no results."},
             "eligibility_criteria": {
               "type": [
                 "string",

@@ -243,6 +243,50 @@ OUTCOMES_PER_SEARCH_ROW = 5
 ARMS_PER_SEARCH_ROW = 5
 
 
+def _results_summary(study: dict) -> dict:
+    """What the posted results hold, and which tool returns each part.
+
+    The protocol section says what a trial set out to do; the results section
+    says what happened. This handler reads the protocol only, so the summary
+    states that the results exist and how much is in them rather than
+    implying there are none -- and names the tool for each part instead of
+    copying hundreds of rows.
+    """
+    results = study.get("resultsSection") or {}
+    adverse = results.get("adverseEventsModule") or {}
+    outcomes = results.get("outcomeMeasuresModule") or {}
+    flow = results.get("participantFlowModule") or {}
+    baseline = results.get("baselineCharacteristicsModule") or {}
+
+    def count(node, key):
+        value = node.get(key)
+        return len(value) if isinstance(value, list) else 0
+
+    has_results = study.get("hasResults")
+    if has_results is None:
+        has_results = bool(results)
+    return {
+        "has_results": bool(has_results),
+        "results_summary": {
+            "outcome_measure_results": count(outcomes, "outcomeMeasures"),
+            "serious_adverse_events": count(adverse, "seriousEvents"),
+            "other_adverse_events": count(adverse, "otherEvents"),
+            "adverse_event_groups": count(adverse, "eventGroups"),
+            "adverse_event_frequency_threshold": adverse.get("frequencyThreshold"),
+            "participant_flow_groups": count(flow, "groups"),
+            "baseline_measures": count(baseline, "measures"),
+        }
+        if has_results
+        else {},
+        "results_section_tools": {
+            "outcome_results": "extract_clinical_trial_outcomes",
+            "adverse_events": "extract_clinical_trial_adverse_events",
+        }
+        if has_results
+        else {},
+    }
+
+
 @register_tool("ClinicalTrialsTool")
 class ClinicalTrialsTool(RESTfulTool):
     _BASE_URL = "https://clinicaltrials.gov/api/v2"
@@ -776,6 +820,15 @@ class ClinicalTrialsTool(RESTfulTool):
         data = resp.json()
         proto = data.get("protocolSection", {})
 
+        # NCT04280705 has posted results -- 43 outcome measures with their
+        # numbers, 100 serious adverse events with organ system and
+        # assessment type, 10 other events, a participant flow and 7 baseline
+        # measures -- and this handler reads `protocolSection` only, from a
+        # tool whose first sentence is "get full details". The sections have
+        # tools of their own, so what belongs here is the fact that they
+        # exist, how much is in each, and which tool returns it.
+        results_summary = _results_summary(data)
+
         arms_module = proto.get("armsInterventionsModule", {})
         arms = [
             {
@@ -855,6 +908,7 @@ class ClinicalTrialsTool(RESTfulTool):
             "primary_outcome_count": len(primary_outcomes),
             "secondary_outcomes": secondary_outcomes,
             "secondary_outcome_count": len(secondary_outcomes),
+            **results_summary,
             "other_outcomes": other_outcomes,
             "other_outcome_count": len(other_outcomes),
             "eligibility_criteria": proto.get("eligibilityModule", {}).get(

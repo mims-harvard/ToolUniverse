@@ -1495,6 +1495,29 @@ class AllianceGenomeTool(BaseTool):
                 }
             )
 
+        # The models endpoint names the gene on every row -- its curie, its
+        # external id and its display symbol -- and a caller who passed
+        # "MGI:97490" got back `query_gene_id: MGI:97490` and never the word
+        # "Pax6". The symbol belongs once in the metadata rather than on every
+        # row, because the row's gene is fixed by the request.
+        gene_reference = {}
+        for row in model_data.get("results", []):
+            gene = row.get("gene") if isinstance(row, dict) else None
+            if not isinstance(gene, dict) or not gene:
+                continue
+            symbol = gene.get("geneSymbol") or {}
+            gene_reference = {
+                "curie": gene.get("curie"),
+                "primary_external_id": gene.get("primaryExternalId"),
+                "symbol": symbol.get("displayText") or symbol.get("formatText")
+                if isinstance(symbol, dict)
+                else symbol,
+                "full_name": (gene.get("geneFullName") or {}).get("displayText")
+                if isinstance(gene.get("geneFullName"), dict)
+                else gene.get("geneFullName"),
+            }
+            break
+
         allele_total = allele_data.get("total", len(alleles))
         model_total = model_data.get("total", len(models))
         allele_has_more = page * limit < allele_total
@@ -1511,6 +1534,7 @@ class AllianceGenomeTool(BaseTool):
             },
             "metadata": {
                 "query_gene_id": gene_id,
+                "gene": gene_reference,
                 "page": page,
                 "limit": limit,
                 "has_more": has_more,

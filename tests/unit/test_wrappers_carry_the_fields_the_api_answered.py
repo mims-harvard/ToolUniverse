@@ -1167,6 +1167,11 @@ UPSTREAM_KEYS = [
         '"taxon_lineage_nodes"',
         "the taxon ids of a lineage returned as bare names",
     ),
+    (
+        "ctg_tool.py",
+        "def _results_summary",
+        "that a trial has posted results at all, from a tool promising full details",
+    ),
 ]
 
 
@@ -1436,6 +1441,8 @@ DECLARED = [
     ("Orphanet_get_genes", "ExternalReferences"),
     ("UniProtRef_search_proteomes", "taxon_lineage_nodes"),
     ("UniProtRef_search_proteomes", "component_names"),
+    ("ClinicalTrials_get_study", "has_results"),
+    ("ClinicalTrials_get_study", "results_summary"),
 ]
 
 
@@ -2345,4 +2352,44 @@ def test_cbioportal_says_which_mutation_profile_it_read():
     assert 'found["resolution"] = "matched"' in source
     assert 'found["resolution"] = "guessed"' in source
     assert '"molecular_profile_resolution": profile_found.get("resolution")' in source
+
+
+def test_a_trial_with_posted_results_says_so():
+    """"Get full details" read protocolSection and nothing else.
+
+    NCT04280705 has a results section: 43 outcome-measure results, 100
+    serious adverse events with their organ system and assessment type, 10
+    other events above a 5% reporting threshold, a participant flow and 7
+    baseline measures. The handler read the protocol -- what the trial set
+    out to do -- so a trial with results was indistinguishable from one
+    without. The rows belong to the sibling extract_* tools, so what is
+    reported here is that they exist, how much is in each, and which tool
+    returns it.
+    """
+    source = _source("ctg_tool.py")
+    assert "def _results_summary" in source
+    assert '"serious_adverse_events"' in source
+    assert "extract_clinical_trial_adverse_events" in source
+    schema = json.dumps(_config("ClinicalTrials_get_study").get("return_schema") or {})
+    assert '"adverse_event_frequency_threshold"' in schema
+
+
+def test_alliance_names_the_gene_whose_alleles_these_are():
+    """A caller who passed MGI:97490 never saw the word "Pax6".
+
+    The models endpoint carries the gene on every row -- its curie, its
+    external id and its display symbol -- and the rows reported the allele
+    and the model only, with `query_gene_id` echoing the id back. The symbol
+    goes in the metadata once rather than on every row, because the row's
+    gene is fixed by the request; the per-row copy is the reason this one was
+    flagged and is deliberately not added.
+
+    The field is on the response envelope, which this tool's return_schema
+    does not describe (it declares the inner data), so it is guarded here.
+    """
+    source = _source("alliance_genome_tool.py")
+    # `gene.get("geneSymbol")` was already in the file twice before the fix,
+    # in other handlers, so the anchor has to be the new assignment.
+    assert "gene_reference = {}" in source
+    assert '"gene": gene_reference' in source
 
