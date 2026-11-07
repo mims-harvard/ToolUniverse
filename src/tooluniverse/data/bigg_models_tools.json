@@ -608,5 +608,271 @@
     "fields": {
       "operation": "download_model"
     }
+  },
+  {
+    "name": "BiGG_list_model_genes",
+    "type": "BiGGModelsTool",
+    "description": "List every gene in a BiGG metabolic model, with its BiGG id, name and the organism the model describes. Use it to find the gene_id that BiGG_get_gene takes, or to size a model's gene set. iRC1080 returns 1086 genes, iJO1366 1367. Example: model_id='iJO1366'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get_model_genes"
+          ],
+          "description": "Operation type",
+          "default": "get_model_genes"
+        },
+        "model_id": {
+          "type": "string",
+          "description": "Required: BiGG model ID (e.g., 'iJO1366', 'iMM904', 'iRC1080')"
+        }
+      },
+      "required": [
+        "model_id"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "genes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "bigg_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "organism": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "model_bigg_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "model_id": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        },
+        "count": {
+          "type": "integer",
+          "description": "Number of genes in the model."
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_model_genes",
+        "model_id": "iJO1366"
+      }
+    ],
+    "fields": {
+      "operation": "get_model_genes"
+    }
+  },
+  {
+    "name": "BiGG_get_gene",
+    "type": "BiGGModelsTool",
+    "description": "Get the full gene record for one gene in a BiGG metabolic model: its protein and DNA sequences, genomic position (leftpos, rightpos, strand), the chromosome NCBI accession and genome name, the reactions the gene participates in with their gene-reaction rules, cross-references to other databases, and any older identifiers the gene has carried. Gene ids come from BiGG_list_model_genes or from the gene_reaction_rule of a reaction. Sequence and position fields are null for models BiGG could not map to GenBank (mapped_to_genbank false), which is the case for many non-model organisms. Example: model_id='iJO1366', gene_id='b0008'.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "get_gene"
+          ],
+          "description": "Operation type",
+          "default": "get_gene"
+        },
+        "model_id": {
+          "type": "string",
+          "description": "Required: BiGG model ID (e.g., 'iJO1366', 'iMM904', 'iRC1080')"
+        },
+        "gene_id": {
+          "type": "string",
+          "description": "Required: BiGG gene ID within that model (e.g., 'b0008')"
+        }
+      },
+      "required": [
+        "model_id",
+        "gene_id"
+      ]
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "gene": {
+          "type": "object",
+          "properties": {
+            "bigg_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "protein_sequence": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Amino-acid sequence; null when the model is not mapped to GenBank."
+            },
+            "dna_sequence": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Nucleotide sequence; null when the model is not mapped to GenBank."
+            },
+            "leftpos": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Start coordinate on the chromosome."
+            },
+            "rightpos": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "End coordinate on the chromosome."
+            },
+            "strand": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "'+' or '-'."
+            },
+            "chromosome_ncbi_accession": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "genome_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "genome_ref_string": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "mapped_to_genbank": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "False when BiGG has no genome mapping, in which case the sequence and position fields are null."
+            },
+            "model_bigg_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "old_identifiers": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "database_links": {
+              "type": "object",
+              "description": "Cross-references keyed by database name."
+            },
+            "reactions": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "bigg_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene_reaction_rule": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Boolean rule over gene ids for this reaction."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "gene_id": {
+          "type": "string"
+        },
+        "model_id": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "operation": "get_gene",
+        "model_id": "iJO1366",
+        "gene_id": "b0008"
+      },
+      {
+        "operation": "get_gene",
+        "model_id": "iRC1080",
+        "gene_id": "CRv4_Au5_s10_g101_t1"
+      }
+    ],
+    "fields": {
+      "operation": "get_gene"
+    }
   }
 ]

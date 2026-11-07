@@ -42,7 +42,9 @@ ToolUniverse integrates with the following scientific sources, AI models, and se
 * **NCBI Entrez** - `NCBI Entrez <https://eutils.ncbi.nlm.nih.gov/entrez/eutils/>`_
 * **OpenAlex** - `OpenAlex <https://openalex.org/>`_
 * **OpenTargets** - `OpenTargets <https://www.opentargets.org/>`_
-* **OpenTargets Genetics API** - `OpenTargets Genetics API <https://api.genetics.opentargets.org/>`_
+* **OpenTargets Genetics** - folded into the `Open Targets Platform API
+  <https://api.platform.opentargets.org/api/v4/graphql>`_; the separate
+  ``api.genetics.opentargets.org`` host no longer resolves
 * **OpenTargets Platform API** - `OpenTargets Platform API <https://api.platform.opentargets.org/>`_
 * **PINNACLE** - `PINNACLE <https://zitniklab.hms.harvard.edu/projects/PINNACLE/>`_
 * **PubChem** - `PubChem <https://pubchem.ncbi.nlm.nih.gov/>`_

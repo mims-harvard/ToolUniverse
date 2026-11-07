@@ -141,6 +141,109 @@ def _aggregate_classification(
     return {"description": None, "review_status": None}
 
 
+def _observed_in_details(assertion: ET.Element) -> Dict[str, Any]:
+    """Who was observed, how, and with what features, from an SCV's ObservedInList.
+
+    These are per-submission facts the aggregate record cannot carry, and a
+    caller weighing two disagreeing submitters needs them: "clinical testing on
+    an affected germline sample" and "curation from literature" are not the
+    same evidence. Measured on VCV000013961 (BRAF V600E, 45 submissions):
+    MethodType, Origin and AffectedStatus are present on all 45, Sex on 5 and
+    Age on 4, and clinical features arrive as HPO cross-references under a
+    Finding TraitSet rather than a ClinicalFeaturesList.
+
+    An assertion may carry several ObservedIn blocks, so each value is a list
+    in document order with duplicates removed, and an absent element yields an
+    empty list rather than a null that reads like "unknown".
+    """
+
+    def _uniq(values):
+        seen, out = set(), []
+        for value in values:
+            text = (value or "").strip()
+            if text and text not in seen:
+                seen.add(text)
+                out.append(text)
+        return out
+
+    methods, origins, affected, sexes, ages, features = [], [], [], [], [], []
+    families = None
+    for observed in assertion.findall("ObservedInList/ObservedIn"):
+        methods.extend(e.text for e in observed.findall("Method/MethodType"))
+        sample = observed.find("Sample")
+        if sample is not None:
+            origins.extend(e.text for e in sample.findall("Origin"))
+            affected.extend(e.text for e in sample.findall("AffectedStatus"))
+            sexes.extend(e.text for e in sample.findall("Sex"))
+            for age in sample.findall("Age"):
+                value = (age.text or "").strip()
+                if not value:
+                    continue
+                ages.append(
+                    {
+                        "type": age.get("Type"),
+                        "value": value,
+                        "unit": age.get("age_unit"),
+                    }
+                )
+            family = sample.find("FamilyData")
+            if family is not None and family.get("NumFamiliesWithVariant"):
+                families = family.get("NumFamiliesWithVariant")
+        for trait in observed.findall('TraitSet[@Type="Finding"]/Trait'):
+            name = None
+            for element in trait.findall("Name/ElementValue"):
+                if (element.text or "").strip():
+                    name = element.text.strip()
+                    break
+            hpo = None
+            for xref in trait.findall("XRef"):
+                if xref.get("DB") == "HP":
+                    hpo = xref.get("ID")
+                    break
+            if name or hpo:
+                features.append(
+                    {
+                        "name": name,
+                        "hpo_id": hpo,
+                        "status": trait.get("ClinicalFeaturesAffectedStatus"),
+                    }
+                )
+
+    return {
+        "collection_methods": _uniq(methods),
+        "origins": _uniq(origins),
+        "affected_status": _uniq(affected),
+        "sex": _uniq(sexes),
+        "ages": ages,
+        "clinical_features": features,
+        "families_with_variant": families,
+    }
+
+
+def _assertion_method(assertion: ET.Element) -> Optional[str]:
+    """The guideline the submitter says it classified under, when declared."""
+    for attribute in assertion.findall("AttributeSet/Attribute"):
+        if attribute.get("Type") == "AssertionMethod":
+            text = (attribute.text or "").strip()
+            if text:
+                return text
+    return None
+
+
+def _citation_ids(assertion: ET.Element) -> List[str]:
+    """PubMed ids cited by this submission's classification, in document order."""
+    seen, out = set(), []
+    for citation in assertion.findall("Classification/Citation"):
+        for identifier in citation.findall("ID"):
+            if identifier.get("Source") != "PubMed":
+                continue
+            text = (identifier.text or "").strip()
+            if text and text not in seen:
+                seen.add(text)
+                out.append(text)
+    return out
+
+
 @register_tool("ClinVarSubmittedRecordsTool")
 class ClinVarSubmittedRecordsTool(BaseTool):
     """Return per-submitter (SCV / ClinicalAssertion) ClinVar records."""
@@ -282,22 +385,41 @@ class ClinVarSubmittedRecordsTool(BaseTool):
             classification = _assertion_classification(assertion.find("Classification"))
             scv_accession = None
             submitter = None
+            org_id = None
+            org_category = None
             if accession is not None:
                 scv_accession = accession.get("Accession")
                 version = accession.get("Version")
                 if scv_accession and version:
                     scv_accession = f"{scv_accession}.{version}"
                 submitter = accession.get("SubmitterName")
+                org_id = accession.get("OrgID")
+                org_category = accession.get("OrganizationCategory")
 
-            submissions.append(
-                {
-                    "scv_accession": scv_accession,
-                    "classification": classification["classification"],
-                    "classification_type": classification["classification_type"],
-                    "review_status": classification["review_status"],
-                    "submitter": submitter,
-                    "condition": _first_preferred_condition(assertion.find("TraitSet")),
-                    "last_evaluated": classification["last_evaluated"],
-                }
-            )
+            # ContributesToAggregateClassification is an attribute of the
+            # ClinicalAssertion itself. ClinVar shows it as the C/N badge
+            # beside each submission, and without it a caller cannot tell
+            # which of several disagreeing submitters the aggregate actually
+            # counted.
+            contributes = assertion.get("ContributesToAggregateClassification")
+            record = {
+                "scv_accession": scv_accession,
+                "classification": classification["classification"],
+                "classification_type": classification["classification_type"],
+                "review_status": classification["review_status"],
+                "submitter": submitter,
+                "submitter_org_id": org_id,
+                "submitter_category": org_category,
+                "condition": _first_preferred_condition(assertion.find("TraitSet")),
+                "last_evaluated": classification["last_evaluated"],
+                "submission_date": assertion.get("SubmissionDate"),
+                "date_last_updated": assertion.get("DateLastUpdated"),
+                "contributes_to_aggregate_classification": (
+                    None if contributes is None else contributes.lower() == "true"
+                ),
+                "assertion_method": _assertion_method(assertion),
+                "citations": _citation_ids(assertion),
+            }
+            record.update(_observed_in_details(assertion))
+            submissions.append(record)
         return submissions

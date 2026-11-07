@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2888 scientific tools.
+Type-safe Python interface to 2891 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -54,6 +54,7 @@ from .AMPSphere_get_amp import AMPSphere_get_amp
 from .AMPSphere_get_amp_distributions import AMPSphere_get_amp_distributions
 from .AMPSphere_get_amp_features import AMPSphere_get_amp_features
 from .AMPSphere_get_family import AMPSphere_get_family
+from .AMPSphere_get_statistics import AMPSphere_get_statistics
 from .AMPSphere_search_amps import AMPSphere_search_amps
 from .AMPSphere_sequence_match import AMPSphere_sequence_match
 from .AOPWiki_get_aop import AOPWiki_get_aop
@@ -149,10 +150,12 @@ from .Bgee_list_species import Bgee_list_species
 from .Bgee_search_genes import Bgee_search_genes
 from .BiGG_download_model import BiGG_download_model
 from .BiGG_get_database_version import BiGG_get_database_version
+from .BiGG_get_gene import BiGG_get_gene
 from .BiGG_get_metabolite import BiGG_get_metabolite
 from .BiGG_get_model import BiGG_get_model
 from .BiGG_get_model_reactions import BiGG_get_model_reactions
 from .BiGG_get_reaction import BiGG_get_reaction
+from .BiGG_list_model_genes import BiGG_list_model_genes
 from .BiGG_list_models import BiGG_list_models
 from .BiGG_search import BiGG_search
 from .BindingDB_get_ligands_by_pdb import BindingDB_get_ligands_by_pdb
@@ -3480,6 +3483,7 @@ __all__ = [
     "AMPSphere_get_amp_distributions",
     "AMPSphere_get_amp_features",
     "AMPSphere_get_family",
+    "AMPSphere_get_statistics",
     "AMPSphere_search_amps",
     "AMPSphere_sequence_match",
     "AOPWiki_get_aop",
@@ -3569,10 +3573,12 @@ __all__ = [
     "Bgee_search_genes",
     "BiGG_download_model",
     "BiGG_get_database_version",
+    "BiGG_get_gene",
     "BiGG_get_metabolite",
     "BiGG_get_model",
     "BiGG_get_model_reactions",
     "BiGG_get_reaction",
+    "BiGG_list_model_genes",
     "BiGG_list_models",
     "BiGG_search",
     "BindingDB_get_ligands_by_pdb",

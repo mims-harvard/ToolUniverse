@@ -1,7 +1,7 @@
 """
 civic_get_evidence_item
 
-Get detailed information about a specific evidence item in CIViC database by evidence ID. Evidenc...
+Get a specific CIViC evidence item by evidence ID. Evidence items link molecular profiles or vari...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def civic_get_evidence_item(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get detailed information about a specific evidence item in CIViC database by evidence ID. Evidenc...
+    Get a specific CIViC evidence item by evidence ID. Evidence items link molecular profiles or vari...
 
     Parameters
     ----------

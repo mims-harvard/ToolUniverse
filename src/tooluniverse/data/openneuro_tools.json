@@ -58,16 +58,28 @@
                                 "type": "string"
                               },
                               "name": {
-                                "type": ["string", "null"]
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
                               },
                               "public": {
-                                "type": ["boolean", "null"]
+                                "type": [
+                                  "boolean",
+                                  "null"
+                                ]
                               },
                               "analytics": {
-                                "type": ["object", "null"]
+                                "type": [
+                                  "object",
+                                  "null"
+                                ]
                               },
                               "latestSnapshot": {
-                                "type": ["object", "null"]
+                                "type": [
+                                  "object",
+                                  "null"
+                                ]
                               }
                             }
                           }
@@ -75,14 +87,20 @@
                       }
                     },
                     "pageInfo": {
-                      "type": ["object", "null"]
+                      "type": [
+                        "object",
+                        "null"
+                      ]
                     }
                   }
                 }
               }
             },
             "extensions": {
-              "type": ["object", "null"]
+              "type": [
+                "object",
+                "null"
+              ]
             }
           }
         },
@@ -94,7 +112,9 @@
               "description": "Error message if the request failed"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -143,28 +163,52 @@
                       "type": "string"
                     },
                     "name": {
-                      "type": ["string", "null"]
+                      "type": [
+                        "string",
+                        "null"
+                      ]
                     },
                     "public": {
-                      "type": ["boolean", "null"]
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
                     },
                     "publishDate": {
-                      "type": ["string", "null"]
+                      "type": [
+                        "string",
+                        "null"
+                      ]
                     },
                     "analytics": {
-                      "type": ["object", "null"]
+                      "type": [
+                        "object",
+                        "null"
+                      ]
                     },
                     "latestSnapshot": {
-                      "type": ["object", "null"],
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "summary": {
-                          "type": ["object", "null"]
+                          "type": [
+                            "object",
+                            "null"
+                          ]
                         },
                         "description": {
-                          "type": ["object", "null"]
+                          "type": [
+                            "object",
+                            "null"
+                          ]
                         },
                         "readme": {
-                          "type": ["string", "null"]
+                          "type": [
+                            "string",
+                            "null"
+                          ]
                         }
                       }
                     }
@@ -173,7 +217,10 @@
               }
             },
             "extensions": {
-              "type": ["object", "null"]
+              "type": [
+                "object",
+                "null"
+              ]
             }
           }
         },
@@ -185,7 +232,9 @@
               "description": "Error message if the request failed"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -234,10 +283,16 @@
                       "type": "string"
                     },
                     "name": {
-                      "type": ["string", "null"]
+                      "type": [
+                        "string",
+                        "null"
+                      ]
                     },
                     "snapshots": {
-                      "type": ["array", "null"],
+                      "type": [
+                        "array",
+                        "null"
+                      ],
                       "items": {
                         "type": "object",
                         "properties": {
@@ -248,7 +303,10 @@
                             "type": "string"
                           },
                           "created": {
-                            "type": ["string", "null"]
+                            "type": [
+                              "string",
+                              "null"
+                            ]
                           }
                         }
                       }
@@ -258,7 +316,10 @@
               }
             },
             "extensions": {
-              "type": ["object", "null"]
+              "type": [
+                "object",
+                "null"
+              ]
             }
           }
         },
@@ -270,7 +331,9 @@
               "description": "Error message if the request failed"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -350,13 +413,22 @@
                                 "type": "string"
                               },
                               "name": {
-                                "type": ["string", "null"]
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
                               },
                               "created": {
-                                "type": ["string", "null"]
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
                               },
                               "public": {
-                                "type": ["boolean", "null"]
+                                "type": [
+                                  "boolean",
+                                  "null"
+                                ]
                               }
                             }
                           }
@@ -364,10 +436,16 @@
                       }
                     },
                     "pageInfo": {
-                      "type": ["object", "null"],
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "count": {
-                          "type": ["integer", "null"],
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
                           "description": "Total matching datasets"
                         },
                         "hasNextPage": {
@@ -386,7 +464,10 @@
               }
             },
             "extensions": {
-              "type": ["object", "null"]
+              "type": [
+                "object",
+                "null"
+              ]
             }
           }
         },
@@ -398,7 +479,9 @@
               "description": "Error message if the request failed"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -447,7 +530,10 @@
               "type": "object",
               "properties": {
                 "snapshot": {
-                  "type": ["object", "null"],
+                  "type": [
+                    "object",
+                    "null"
+                  ],
                   "properties": {
                     "id": {
                       "type": "string"
@@ -456,7 +542,10 @@
                       "type": "string"
                     },
                     "files": {
-                      "type": ["array", "null"],
+                      "type": [
+                        "array",
+                        "null"
+                      ],
                       "items": {
                         "type": "object",
                         "properties": {
@@ -464,13 +553,22 @@
                             "type": "string"
                           },
                           "size": {
-                            "type": ["integer", "null"]
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
                           },
                           "directory": {
-                            "type": ["boolean", "null"]
+                            "type": [
+                              "boolean",
+                              "null"
+                            ]
                           },
                           "urls": {
-                            "type": ["array", "null"],
+                            "type": [
+                              "array",
+                              "null"
+                            ],
                             "items": {
                               "type": "string"
                             },
@@ -484,7 +582,10 @@
               }
             },
             "extensions": {
-              "type": ["object", "null"]
+              "type": [
+                "object",
+                "null"
+              ]
             }
           }
         },
@@ -496,7 +597,9 @@
               "description": "Error message if the request failed"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -545,7 +648,10 @@
               "type": "object",
               "properties": {
                 "snapshot": {
-                  "type": ["object", "null"],
+                  "type": [
+                    "object",
+                    "null"
+                  ],
                   "properties": {
                     "id": {
                       "type": "string"
@@ -554,24 +660,42 @@
                       "type": "string"
                     },
                     "issuesStatus": {
-                      "type": ["object", "null"],
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "errors": {
-                          "type": ["integer", "null"]
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
                         },
                         "warnings": {
-                          "type": ["integer", "null"]
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
                         }
                       }
                     },
                     "validation": {
-                      "type": ["object", "null"],
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "errors": {
-                          "type": ["integer", "null"]
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
                         },
                         "warnings": {
-                          "type": ["integer", "null"]
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
                         }
                       }
                     }
@@ -580,7 +704,10 @@
               }
             },
             "extensions": {
-              "type": ["object", "null"]
+              "type": [
+                "object",
+                "null"
+              ]
             }
           }
         },
@@ -592,88 +719,138 @@
               "description": "Error message if the request failed"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
   },
   {
     "name": "OpenNeuro_advanced_search",
-    "description": "Faceted search across all OpenNeuro datasets plus the archive-wide total participant count. Returns the exact matching dataset count and cursor pagination metadata. Continue with metadata.next_cursor while metadata.has_more is true. Some matched datasets are not anonymously readable, so metadata reports both returned_readable and permission_omitted_on_page; a short readable page is not necessarily the final page.",
+    "description": "Faceted search across all OpenNeuro datasets plus the archive-wide total participant count. Each readable match carries the same record OpenNeuro_list_datasets returns -- name, created and publish dates, download and view counts, and the latest snapshot's modalities, subjects, file count, size and BIDS description -- so a search result does not have to be re-fetched one dataset at a time. Returns the exact matching dataset count and cursor pagination metadata. Continue with metadata.next_cursor while metadata.has_more is true. Some matched datasets are not anonymously readable, so metadata reports both returned_readable and permission_omitted_on_page; a short readable page is not necessarily the final page.",
     "parameter": {
       "type": "object",
       "properties": {
         "species": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Species facet (e.g., 'human')"
         },
         "sex": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Participant sex facet (e.g., 'Male', 'Female')"
         },
         "diagnosis": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Clinical diagnosis facet"
         },
         "modality": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Imaging modality facet (e.g., 'MRI', 'EEG', 'PET')"
         },
         "tasks": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Task name facet"
         },
         "keywords": {
-          "type": ["array", "null"],
+          "type": [
+            "array",
+            "null"
+          ],
           "items": {
             "type": "string"
           },
           "description": "Keyword facets (list of strings)"
         },
         "scannerManufacturers": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Scanner manufacturer facet (e.g., 'Siemens')"
         },
         "tracerNames": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "PET tracer name facet"
         },
         "tracerRadionuclides": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "PET tracer radionuclide facet"
         },
         "studyDomains": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Study domain facet"
         },
         "bodyParts": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Body part facet"
         },
         "authors": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Author name facet"
         },
         "bidsDatasetType": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "BIDS dataset type facet (e.g., 'raw', 'derivative')"
         },
         "ageRange": {
-          "type": ["array", "null"],
+          "type": [
+            "array",
+            "null"
+          ],
           "items": {
             "type": "integer"
           },
           "description": "Participant age range as [min, max]"
         },
         "subjectCountRange": {
-          "type": ["array", "null"],
+          "type": [
+            "array",
+            "null"
+          ],
           "items": {
             "type": "integer"
           },
           "description": "Subject-count range as [min, max]"
         },
         "first": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "minimum": 1,
           "maximum": 25,
           "default": 10,
@@ -689,7 +866,7 @@
       },
       "additionalProperties": false
     },
-    "query_schema": "query AdvancedSearch($query: DatasetSearchInput!, $first: Int, $after: String) {\n  participantCount\n  advancedSearch(query: $query, first: $first, after: $after) {\n    pageInfo {\n      count\n      hasNextPage\n      endCursor\n    }\n    edges {\n      node {\n        id\n      }\n    }\n  }\n}",
+    "query_schema": "query AdvancedSearch($query: DatasetSearchInput!, $first: Int, $after: String) {\n  participantCount\n  advancedSearch(query: $query, first: $first, after: $after) {\n    pageInfo {\n      count\n      hasNextPage\n      endCursor\n    }\n    edges {\n      node {\n        id\n        created\n        name\n        public\n        publishDate\n        analytics { downloads views }\n        latestSnapshot {\n          id\n          tag\n          summary { modalities subjects totalFiles size primaryModality }\n          description { Name BIDSVersion License Authors DatasetDOI }\n        }\n      }\n    }\n  }\n}",
     "fields": {},
     "type": "OpenNeuroTool",
     "test_examples": [
@@ -714,17 +891,29 @@
               "type": "object",
               "properties": {
                 "participantCount": {
-                  "type": ["integer", "null"],
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
                   "description": "Total subject count across the whole OpenNeuro archive"
                 },
                 "advancedSearch": {
-                  "type": ["object", "null"],
+                  "type": [
+                    "object",
+                    "null"
+                  ],
                   "properties": {
                     "pageInfo": {
-                      "type": ["object", "null"],
+                      "type": [
+                        "object",
+                        "null"
+                      ],
                       "properties": {
                         "count": {
-                          "type": ["integer", "null"],
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
                           "description": "Number of datasets matching the facet filters"
                         },
                         "hasNextPage": {
@@ -739,15 +928,180 @@
                       }
                     },
                     "edges": {
-                      "type": ["array", "null"],
+                      "type": [
+                        "array",
+                        "null"
+                      ],
                       "items": {
-                        "type": ["object", "null"],
+                        "type": [
+                          "object",
+                          "null"
+                        ],
                         "properties": {
                           "node": {
-                            "type": ["object", "null"],
+                            "type": [
+                              "object",
+                              "null"
+                            ],
+                            "description": "Null when the matched dataset is not anonymously readable or has been deleted; metadata.permission_omitted_on_page counts those.",
                             "properties": {
                               "id": {
-                                "type": "string"
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "description": "OpenNeuro accession, e.g. ds009055."
+                              },
+                              "created": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "name": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "public": {
+                                "type": [
+                                  "boolean",
+                                  "null"
+                                ]
+                              },
+                              "publishDate": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "analytics": {
+                                "type": [
+                                  "object",
+                                  "null"
+                                ],
+                                "properties": {
+                                  "downloads": {
+                                    "type": [
+                                      "integer",
+                                      "null"
+                                    ]
+                                  },
+                                  "views": {
+                                    "type": [
+                                      "integer",
+                                      "null"
+                                    ]
+                                  }
+                                }
+                              },
+                              "latestSnapshot": {
+                                "type": [
+                                  "object",
+                                  "null"
+                                ],
+                                "properties": {
+                                  "id": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "tag": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ],
+                                    "description": "Snapshot version, e.g. 1.0.0."
+                                  },
+                                  "summary": {
+                                    "type": [
+                                      "object",
+                                      "null"
+                                    ],
+                                    "properties": {
+                                      "modalities": {
+                                        "type": [
+                                          "array",
+                                          "null"
+                                        ],
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      },
+                                      "subjects": {
+                                        "type": [
+                                          "array",
+                                          "null"
+                                        ],
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      },
+                                      "totalFiles": {
+                                        "type": [
+                                          "integer",
+                                          "null"
+                                        ]
+                                      },
+                                      "size": {
+                                        "type": [
+                                          "integer",
+                                          "null"
+                                        ],
+                                        "description": "Bytes."
+                                      },
+                                      "primaryModality": {
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      }
+                                    }
+                                  },
+                                  "description": {
+                                    "type": [
+                                      "object",
+                                      "null"
+                                    ],
+                                    "properties": {
+                                      "Name": {
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      },
+                                      "BIDSVersion": {
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      },
+                                      "License": {
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      },
+                                      "Authors": {
+                                        "type": [
+                                          "array",
+                                          "null"
+                                        ],
+                                        "items": {
+                                          "type": "string"
+                                        }
+                                      },
+                                      "DatasetDOI": {
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      }
+                                    }
+                                  }
+                                }
                               }
                             }
                           }
@@ -759,7 +1113,10 @@
               }
             },
             "metadata": {
-              "type": ["object", "null"]
+              "type": [
+                "object",
+                "null"
+              ]
             }
           }
         },
@@ -771,7 +1128,9 @@
               "description": "Error message if the request failed"
             }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }

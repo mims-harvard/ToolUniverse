@@ -210,7 +210,10 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
+          "type": [
+            "object",
+            "null"
+          ],
           "properties": {
             "complex_id": {
               "type": [
@@ -348,7 +351,8 @@
           },
           "required": [
             "complex_id"
-          ]
+          ],
+          "description": "null when the record does not exist. The query was well-formed and the upstream answered 'no such record', which this tool reports as a successful empty result rather than an error; the reason is in `message`."
         },
         {
           "type": "object",

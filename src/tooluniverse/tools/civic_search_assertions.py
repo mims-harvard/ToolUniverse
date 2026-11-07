@@ -1,7 +1,7 @@
 """
 civic_search_assertions
 
-Search CIViC assertions with exact totalCount and cursor pagination. When metadata.has_more is tr...
+Search CIViC assertions with exact totalCount and cursor pagination. Each row carries the asserti...
 """
 
 from typing import Any, Optional, Callable
@@ -22,7 +22,7 @@ def civic_search_assertions(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search CIViC assertions with exact totalCount and cursor pagination. When metadata.has_more is tr...
+    Search CIViC assertions with exact totalCount and cursor pagination. Each row carries the asserti...
 
     Parameters
     ----------

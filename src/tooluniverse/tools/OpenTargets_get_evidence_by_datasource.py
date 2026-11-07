@@ -1,7 +1,7 @@
 """
 OpenTargets_get_evidence_by_datasource
 
-Get target-disease evidence from Open Targets filtered by configurable data sources. Unlike OpenT...
+Get target-disease evidence from Open Targets filtered by configurable data sources. Each row car...
 """
 
 from typing import Any, Optional, Callable
@@ -21,7 +21,7 @@ def OpenTargets_get_evidence_by_datasource(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get target-disease evidence from Open Targets filtered by configurable data sources. Unlike OpenT...
+    Get target-disease evidence from Open Targets filtered by configurable data sources. Each row car...
 
     Parameters
     ----------

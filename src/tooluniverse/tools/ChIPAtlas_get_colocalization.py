@@ -1,7 +1,7 @@
 """
 ChIPAtlas_get_colocalization
 
-ChIP-Atlas colocalization partners ranked by genome-wide overlap score. Results are recoverably p...
+ChIP-Atlas colocalization partners ranked by genome-wide overlap score. best_overlap_score is ChI...
 """
 
 from typing import Any, Optional, Callable
@@ -21,7 +21,7 @@ def ChIPAtlas_get_colocalization(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    ChIP-Atlas colocalization partners ranked by genome-wide overlap score. Results are recoverably p...
+    ChIP-Atlas colocalization partners ranked by genome-wide overlap score. best_overlap_score is ChI...
 
     Parameters
     ----------

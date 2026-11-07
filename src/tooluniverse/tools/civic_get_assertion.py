@@ -1,7 +1,7 @@
 """
 civic_get_assertion
 
-Get detailed information about a specific assertion in CIViC database by assertion ID. Assertions...
+Get a specific CIViC assertion by assertion ID. Assertions are higher-level clinical interpretati...
 """
 
 from typing import Any, Optional, Callable
@@ -16,7 +16,7 @@ def civic_get_assertion(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Get detailed information about a specific assertion in CIViC database by assertion ID. Assertions...
+    Get a specific CIViC assertion by assertion ID. Assertions are higher-level clinical interpretati...
 
     Parameters
     ----------

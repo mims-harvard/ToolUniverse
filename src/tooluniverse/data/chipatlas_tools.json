@@ -68,7 +68,7 @@
         },
         "distance": {
           "type": "string",
-          "description": "Distance from Transcription Start Site (TSS) in base pairs for gene-TF association. Defines promoter region. Default 5000 (\u00b15kb, captures typical promoters). Use 1000-2000 for narrow promoters, 10000+ for enhancer regions.",
+          "description": "Distance from Transcription Start Site (TSS) in base pairs for gene-TF association. Defines promoter region. Default 5000 (±5kb, captures typical promoters). Use 1000-2000 for narrow promoters, 10000+ for enhancer regions.",
           "default": "5000"
         }
       },
@@ -469,7 +469,7 @@
   {
     "name": "ChIPAtlas_get_colocalization",
     "type": "ChIPAtlasTool",
-    "description": "ChIP-Atlas colocalization partners ranked by genome-wide overlap score. Results are recoverably paginated: start with offset=0 and continue with data.next_offset while data.has_more is true; data.partner_count is the complete count.",
+    "description": "ChIP-Atlas colocalization partners ranked by genome-wide overlap score. best_overlap_score is ChIP-Atlas's CoLo score, NOT a fold enrichment, an odds ratio or a Jaccard index: for each pair of experiments ChIP-Atlas z-scores the MACS2 scores within each peak file, bins them high/medium/low and reads an integer 1-9 off a weight table (HH 9, HM and MH 6, MM 4, HL and LH 3, ML and LM 2, LL 1), taking the highest combination observed. The value here is the best such score for the partner protein, so it sits on a 1-9 scale rather than the open-ended MACS2 scale ChIPAtlas_get_target_genes reports, and the two must not be compared. Pairs are only evaluated within the same cell-type class. Results are recoverably paginated: start with offset=0 and continue with data.next_offset while data.has_more is true; data.partner_count is the complete count.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -570,7 +570,8 @@
                     "type": "string"
                   },
                   "best_overlap_score": {
-                    "type": "number"
+                    "type": "number",
+                    "description": "ChIP-Atlas CoLo score for the best experiment pair, on the 1-9 high/medium/low weight scale. Not comparable with the MACS2-derived average_binding_score from ChIPAtlas_get_target_genes."
                   },
                   "best_experiment": {
                     "type": "string"
@@ -621,7 +622,7 @@
   {
     "name": "ChIPAtlas_get_target_genes",
     "type": "ChIPAtlasTool",
-    "description": "ChIP-Atlas transcription-factor target genes ranked by average TSS-proximal binding score. Results are recoverably paginated: start with offset=0 and continue with data.next_offset while data.has_more is true; data.gene_count is the complete count.",
+    "description": "ChIP-Atlas transcription-factor target genes ranked by average TSS-proximal binding score. average_binding_score is a MACS2 score, which ChIP-Atlas defines as -10 * log10(MACS2 Q-value): a significance scale, NOT a read count, a percentage or a probability, growing without a documented ceiling. ChIP-Atlas colours its own heatmap at 0, 500 and 1000, and peaks enter the calculation only at Q < 1e-05. Per gene it takes the highest-scoring peak in each experiment and reports the mean across experiments (ChIP-Atlas does not document the denominator). It is on a different scale from ChIPAtlas_get_colocalization's best_overlap_score and the two must not be compared. Results are recoverably paginated: start with offset=0 and continue with data.next_offset while data.has_more is true; data.gene_count is the complete count.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -655,7 +656,7 @@
         },
         "distance": {
           "type": "string",
-          "description": "TSS-distance window in kb defining 'bound near a gene'. '1' (\u00b11kb, strict promoter), '5' (\u00b15kb, default), '10' (\u00b110kb, includes nearby enhancers).",
+          "description": "TSS-distance window in kb defining 'bound near a gene'. '1' (±1kb, strict promoter), '5' (±5kb, default), '10' (±10kb, includes nearby enhancers).",
           "enum": [
             "1",
             "5",
@@ -726,7 +727,8 @@
                     "type": "string"
                   },
                   "average_binding_score": {
-                    "type": "number"
+                    "type": "number",
+                    "description": "Mean MACS2 score across experiments, where MACS2 score = -10 * log10(Q-value). 50 is the Q < 1e-05 entry threshold and 500 is ChIP-Atlas's mid heatmap anchor. Not comparable with the CoLo score from ChIPAtlas_get_colocalization."
                   }
                 }
               }

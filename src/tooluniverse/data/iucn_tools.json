@@ -5,16 +5,40 @@
     "parameter": {
       "type": "object",
       "properties": {
-        "scientific_name": {"type": ["string", "null"], "description": "Binomial 'Genus species', e.g. 'Panthera leo', 'Loxodonta africana'."},
-        "genus_name": {"type": ["string", "null"], "description": "Genus (alternative to scientific_name), e.g. 'Panthera'."},
-        "species_name": {"type": ["string", "null"], "description": "Species epithet (alternative to scientific_name), e.g. 'leo'."}
+        "scientific_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Binomial 'Genus species', e.g. 'Panthera leo', 'Loxodonta africana'."
+        },
+        "genus_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Genus (alternative to scientific_name), e.g. 'Panthera'."
+        },
+        "species_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Species epithet (alternative to scientific_name), e.g. 'leo'."
+        }
       },
       "required": []
     },
     "fields": {},
     "type": "IUCNTool",
-    "test_examples": [{"scientific_name": "Panthera leo"}],
-    "required_api_keys": ["IUCN_API_KEY"],
+    "test_examples": [
+      {
+        "scientific_name": "Panthera leo"
+      }
+    ],
+    "required_api_keys": [
+      "IUCN_API_KEY"
+    ],
     "api_key_info": {
       "IUCN_API_KEY": {
         "domain": "Ecology & Biodiversity",
@@ -26,8 +50,53 @@
     },
     "return_schema": {
       "oneOf": [
-        {"type": ["object", "null"], "not": {"required": ["error"]}, "properties": {"scientific_name": {"type": "string"}, "red_list_category_code": {"type": ["string", "null"]}, "red_list_category": {"type": ["string", "null"]}, "year_published": {"type": ["string", "integer", "null"]}}},
-        {"type": "object", "properties": {"error": {"type": "string"}}, "required": ["error"]}
+        {
+          "type": [
+            "object",
+            "null"
+          ],
+          "not": {
+            "required": [
+              "error"
+            ],
+            "type": "object"
+          },
+          "properties": {
+            "scientific_name": {
+              "type": "string"
+            },
+            "red_list_category_code": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "red_list_category": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "year_published": {
+              "type": [
+                "string",
+                "integer",
+                "null"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
       ]
     }
   }
