@@ -20,6 +20,35 @@ HPO_BASE_URL = "https://ontology.jax.org/api/hp"
 HPO_ANNOTATION_URL = "https://ontology.jax.org/api/network/annotation"
 
 
+def _hpo_medical_actions(payload):
+    """MAxO curated treatments, as the JAX annotation endpoint reports them.
+
+    Written once because two handlers read the same endpoint: the disease
+    annotation tool already returned these, and the phenotype association
+    tools read the same payload for an obsolescence probe and then discarded
+    them -- so a phenotype's medical actions were unreachable through any
+    tool while sitting in a response already paid for.
+    """
+    out = []
+    for action in payload.get("medicalActions") or []:
+        if not isinstance(action, dict):
+            continue
+        out.append(
+            {
+                "id": action.get("id"),
+                "name": action.get("name"),
+                "relations": action.get("relations") or [],
+                "sources": action.get("sources") or [],
+                "targets": [
+                    {"id": t.get("id"), "name": t.get("name")}
+                    for t in (action.get("targets") or [])
+                    if isinstance(t, dict)
+                ],
+            }
+        )
+    return out
+
+
 def _normalize_hpo_id(term_id: str) -> str:
     """Normalize an HPO term id to the canonical colon CURIE 'HP:0001250'.
 
@@ -157,22 +186,7 @@ class HPOTool(BaseTool):
         data = response.json()
 
         # --- Medical actions (MAxO curated treatments / management) ---
-        medical_actions = []
-        for ma in data.get("medicalActions") or []:
-            if not isinstance(ma, dict):
-                continue
-            targets = []
-            for t in ma.get("targets") or []:
-                if isinstance(t, dict):
-                    targets.append({"id": t.get("id"), "name": t.get("name")})
-            medical_actions.append(
-                {
-                    "id": ma.get("id"),
-                    "name": ma.get("name"),
-                    "relations": ma.get("relations") or [],
-                    "targets": targets,
-                }
-            )
+        medical_actions = _hpo_medical_actions(data)
 
         # --- Phenotypes grouped by body system ---
         categories = []
@@ -306,7 +320,25 @@ class HPOTool(BaseTool):
         ):
             metadata.update(self._merge_metadata(term_id))
 
-        return {"status": "success", "data": {kind: trimmed}, "metadata": metadata}
+        # One request answers genes, diseases, assays AND medical actions, and
+        # the counts are already in hand from the probe above. A caller asking
+        # for genes could not see that the same phenotype has 3,136 diseases
+        # and 14 curated medical actions behind it without asking again.
+        metadata["also_in_this_response"] = {
+            key: len(data.get(key) or [])
+            for key in ("genes", "diseases", "assays", "medicalActions")
+            if key != kind
+        }
+        return {
+            "status": "success",
+            "data": {
+                kind: trimmed,
+                # The only route to a PHENOTYPE's medical actions: the disease
+                # tool reports them per disease, and nothing else exposes them.
+                "medical_actions": _hpo_medical_actions(data),
+            },
+            "metadata": metadata,
+        }
 
     def _merge_metadata(self, term_id: str) -> Dict[str, Any]:
         """Report the replacement term when `term_id` was merged, else {}.
@@ -440,6 +472,12 @@ class HPOTool(BaseTool):
                     "descendant_count": term.get("descendantCount"),
                     "synonyms": term.get("synonyms", []) or [],
                     "synonym_count": len(term.get("synonyms", []) or []),
+                    # What the term's definition rests on, and what the
+                    # curators said about it. A definition with no reference
+                    # cannot be followed to the paper it came from.
+                    "publication_references": term.get("publicationReferences") or [],
+                    "comment": term.get("comment"),
+                    "xrefs": term.get("xrefs") or [],
                 }
             )
 
@@ -488,6 +526,11 @@ class HPOTool(BaseTool):
                     {
                         "id": term.get("id"),
                         "name": term.get("name"),
+                        # How many terms sit under this one. Walking a
+                        # hierarchy without it means expanding every child to
+                        # find out which branch is worth expanding.
+                        "descendant_count": term.get("descendantCount"),
+                        "definition": term.get("definition"),
                     }
                 )
 

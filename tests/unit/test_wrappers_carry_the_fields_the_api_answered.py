@@ -410,6 +410,42 @@ UPSTREAM_KEYS = [
         '"countries": countries',
         "where a trial runs, which is what a trial search is filtered on",
     ),
+    # Round three.
+    (
+        "graphql_tool.py",
+        '"total_associated_targets": total_count',
+        "the denominator: 918 targets with a score is 918 of 4,461, not of nothing",
+    ),
+    (
+        "zooma_tool.py",
+        '"derived_from": {',
+        "the database that curated the mapping, where the tool reported its own inference step",
+    ),
+    (
+        "zooma_tool.py",
+        '"title": s.get("title")',
+        "the name of each datasource, from a tool whose only job is to list them",
+    ),
+    (
+        "oma_tool.py",
+        'orth.get("entry_nr")',
+        "the key OMA's own endpoints take, without which a result is a dead end",
+    ),
+    (
+        "hpo_tool.py",
+        "_hpo_medical_actions",
+        "a phenotype's curated treatments, which no tool exposed while sitting in the response",
+    ),
+    (
+        "hpo_tool.py",
+        "also_in_this_response",
+        "that the one request also answered 3,136 diseases and 14 medical actions",
+    ),
+    (
+        "hpo_tool.py",
+        'term.get("publicationReferences")',
+        "what a term's definition rests on",
+    ),
     (
         "ctg_tool.py",
         'ref.get("pmid")',

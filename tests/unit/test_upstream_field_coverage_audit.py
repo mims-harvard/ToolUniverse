@@ -293,6 +293,26 @@ def test_a_surrogate_id_beside_a_link_is_not_the_record(audit):
     assert audit.surrogate_id_paths(bare) == set()
 
 
+def test_pages_of_one_endpoint_are_one_response(audit):
+    """Comparing each page against the merged output reported the same field
+    once per page, with a different total each time.
+
+    Every `disease_target_score` tool showed
+    `data.disease.associatedTargets.rows[].datasourceScores[].id` five times
+    over, and page 1's target symbols scored zero because the output holds a
+    later page's rows. Grouped by URL, a value that reached the caller from
+    any page counts once.
+    """
+    page_one = {"rows": [{"symbol": f"GENE{i}"} for i in range(6)]}
+    page_two = {"rows": [{"symbol": f"GENE{i}"} for i in range(6, 12)]}
+    returned = {"hits": [{"symbol": f"GENE{i}"} for i in range(12)]}
+
+    rows = {r["field"]: r for r in audit.compare([page_one, page_two], returned)}
+
+    assert rows["[].rows[].symbol"]["kept"] == 12
+    assert rows["[].rows[].symbol"]["total"] == 12
+
+
 def test_the_summariser_merges_the_shards_and_records_the_count(summarize, tmp_path):
     """Measured and then thrown away is the failure mode to avoid."""
     shard = tmp_path / "shards" / "a"

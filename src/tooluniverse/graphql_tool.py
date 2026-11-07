@@ -846,8 +846,32 @@ class DiseaseTargetScoreTool(GraphQLTool):
             "disease_info": disease_info,
             "datasource": datasource_id,
             "total_targets_with_scores": len(results),
+            # The denominator. `total_targets_with_scores` is how many targets
+            # carry a score from THIS datasource, and on its own it does not
+            # say whether that is 12 of 45 or 12 of 4,500 -- which is the
+            # difference between a datasource that covers the disease and one
+            # that barely touches it. Open Targets answers the total in the
+            # same response, and it was read for pagination and then dropped.
+            "total_associated_targets": total_count,
+            # How many were actually examined. The scan can stop early on the
+            # time budget, and a short answer then looked the same as a
+            # complete one.
+            "targets_examined": total_fetched,
+            "scan_complete": total_count is not None and total_fetched >= total_count,
             "target_scores": results,
         }
+        if not data["scan_complete"]:
+            scanned = (
+                f"{total_fetched} of {total_count}"
+                if total_count is not None
+                else f"{total_fetched} of an unreported number of"
+            )
+            data["coverage_warning"] = (
+                f"Examined {scanned} targets associated with this disease before "
+                f"stopping, so a target with a '{datasource_id}' score may be "
+                "missing from this answer. It is not evidence that no further "
+                "targets have one."
+            )
         if renamed_from:
             data["datasource_rename_note"] = (
                 f"Retired Open Targets datasource ID '{renamed_from}' remapped to "

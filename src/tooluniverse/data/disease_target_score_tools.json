@@ -609,6 +609,21 @@
               }
             }
           }
+        },
+        "total_associated_targets": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "targets_examined": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "scan_complete": {
+          "type": "boolean"
         }
       }
     },

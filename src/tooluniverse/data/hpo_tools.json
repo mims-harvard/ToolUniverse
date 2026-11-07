@@ -205,6 +205,21 @@
               },
               "synonym_count": {
                 "type": "integer"
+              },
+              "publication_references": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "comment": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "xrefs": {
+                "type": "array"
               }
             }
           }
@@ -279,6 +294,18 @@
                   "null"
                 ],
                 "description": "Term name"
+              },
+              "descendant_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "definition": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
           }
@@ -364,9 +391,27 @@
                       "null"
                     ],
                     "description": "Name"
+                  },
+                  "relations": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "sources": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "targets": {
+                    "type": "array"
                   }
                 }
               }
+            },
+            "medical_actions": {
+              "type": "array"
             }
           },
           "not": {
@@ -463,9 +508,27 @@
                       "null"
                     ],
                     "description": "Cross-referenced MONDO disease ID"
+                  },
+                  "relations": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "sources": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "targets": {
+                    "type": "array"
                   }
                 }
               }
+            },
+            "medical_actions": {
+              "type": "array"
             }
           },
           "not": {
@@ -490,7 +553,7 @@
   },
   {
     "name": "HPO_get_disease_annotations",
-    "description": "Get the full curated HPO annotation profile for a disease, keyed by a disease ID (OMIM / ORPHA / DECIPHER), from the JAX HPO network annotations. Returns three things: (1) medical_actions \u2014 MAxO curated treatments / management actions, each with TREATS / PREVENTS relations and the specific phenotypes they target; (2) categories \u2014 the disease's phenotypes grouped by body system (e.g., Cardiovascular, Nervous System, Eye), each with frequency / onset; (3) genes \u2014 the causative genes (NCBI gene IDs and symbols). Use to retrieve evidence-based management options and the organ-system phenotype breakdown for a known disease. Example: OMIM:154700 (Marfan syndrome) returns 3 medical actions including MAXO:0000653 'angiotensin receptor blocker therapy' (PREVENTS/TREATS aortic root aneurysm), 13 body systems, and gene NCBIGene:2200 (FBN1). Other examples: OMIM:277900 (Wilson disease) \u2192 copper chelator / zinc therapy; OMIM:261600 (phenylketonuria) \u2192 dietary phenylalanine avoidance.",
+    "description": "Get the full curated HPO annotation profile for a disease, keyed by a disease ID (OMIM / ORPHA / DECIPHER), from the JAX HPO network annotations. Returns three things: (1) medical_actions — MAxO curated treatments / management actions, each with TREATS / PREVENTS relations and the specific phenotypes they target; (2) categories — the disease's phenotypes grouped by body system (e.g., Cardiovascular, Nervous System, Eye), each with frequency / onset; (3) genes — the causative genes (NCBI gene IDs and symbols). Use to retrieve evidence-based management options and the organ-system phenotype breakdown for a known disease. Example: OMIM:154700 (Marfan syndrome) returns 3 medical actions including MAXO:0000653 'angiotensin receptor blocker therapy' (PREVENTS/TREATS aortic root aneurysm), 13 body systems, and gene NCBIGene:2200 (FBN1). Other examples: OMIM:277900 (Wilson disease) → copper chelator / zinc therapy; OMIM:261600 (phenylketonuria) → dietary phenylalanine avoidance.",
     "parameter": {
       "type": "object",
       "properties": {

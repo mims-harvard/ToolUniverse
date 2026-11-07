@@ -463,10 +463,22 @@ def audit(
         thin = []
         mapped_but_unseen = []
         not_record_data = []
+        # Calls to the SAME URL are one logical response. A tool that pages
+        # through an endpoint makes several, and comparing each against the
+        # single merged output reported the same field once per page with a
+        # different total each time -- `datasourceScores[].id` five times over
+        # on every disease_target_score tool -- and scored page 1's rows as
+        # dropped because the output holds a later page's. Grouped, a value
+        # that reached the caller from any page counts.
+        by_url = {}
         for call in calls:
-            surrogates = surrogate_id_paths(call["body"])
-            for row in compare(call["body"], returned):
-                row["url"] = call["url"]
+            by_url.setdefault(call["url"], []).append(call["body"])
+
+        for url, bodies in by_url.items():
+            body = bodies[0] if len(bodies) == 1 else bodies
+            surrogates = surrogate_id_paths(body)
+            for row in compare(body, returned):
+                row["url"] = url
                 if row["total"] < min_values:
                     continue  # a single value that moved is a rename, not a loss
                 # Zero survivors, not a low ratio. A ratio flags PAGINATION:
