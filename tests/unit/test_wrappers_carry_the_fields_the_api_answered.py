@@ -1172,6 +1172,21 @@ UPSTREAM_KEYS = [
         "def _results_summary",
         "that a trial has posted results at all, from a tool promising full details",
     ),
+    (
+        "ucsc_cell_browser_tool.py",
+        'dataset.get("sampleCount")',
+        "how many cells a single-cell dataset has",
+    ),
+    (
+        "ucsc_cell_browser_tool.py",
+        'dataset.get("hasFiles")',
+        "which files exist for a dataset, so it can be fetched rather than browsed",
+    ),
+    (
+        "screen_ccre_tool.py",
+        '"length": length,',
+        "a regulatory element's own width, used to compute `end` and dropped",
+    ),
 ]
 
 
@@ -1443,6 +1458,9 @@ DECLARED = [
     ("UniProtRef_search_proteomes", "component_names"),
     ("ClinicalTrials_get_study", "has_results"),
     ("ClinicalTrials_get_study", "results_summary"),
+    ("UCSCCellBrowser_search_datasets", "sample_count"),
+    ("UCSCCellBrowser_search_datasets", "has_files"),
+    ("SCREEN_search_cCREs_by_region", "length"),
 ]
 
 
