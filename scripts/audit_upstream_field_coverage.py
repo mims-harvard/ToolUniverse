@@ -273,6 +273,9 @@ NOT_RECORD_DATA = re.compile(
     # Alliance's display ordering, a map keyed by taxon id.
   | (^|\.)speciesOrder(\.|\[)
   | (^|\.)phylogeneticSortingIndex$
+    # USDA's per-state map extents. The fact is which states the plant occurs
+    # in; the four corners are for drawing the map, like bigBed's thickStart.
+  | (^|\.)MapCoordinates\[\]\.(XMin|YMin|XMax|YMax)$
     """
 )
 
@@ -552,7 +555,12 @@ def audit(
             )
             continue
 
-        returned = result.get("data", result)
+        # The WHOLE envelope, not just `data`. A wrapper's metadata is part
+        # of what the caller is handed, and it is where this sweep's own
+        # fixes put several things that belong there: the plant a USDA symbol
+        # resolved to, a pagination disclosure, a note that a page was cut.
+        # Comparing against `data` alone scored those as dropped.
+        returned = result
         thin = []
         mapped_but_unseen = []
         not_record_data = []

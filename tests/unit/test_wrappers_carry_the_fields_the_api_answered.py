@@ -664,6 +664,26 @@ UPSTREAM_KEYS = [
         "detectionMethod",
         "how an interaction was detected, without which the pair is not a result",
     ),
+    (
+        "usda_plants_tool.py",
+        "def _plant_identity",
+        "which plant a symbol resolved to, from a profile every one of these tools fetched",
+    ),
+    (
+        "usda_plants_tool.py",
+        'profile.get("Ancestors")',
+        "the classification, nine ranks of it, from a plant profile tool",
+    ),
+    (
+        "usda_plants_tool.py",
+        'profile.get("MapCoordinates")',
+        "where the plant occurs, where fips_distribution is null on most records",
+    ),
+    (
+        "usda_plants_tool.py",
+        'profile.get("AcceptedSymbol")',
+        "where a symbol resolves when USDA names an accepted taxon separately",
+    ),
 ]
 
 
@@ -785,6 +805,11 @@ DECLARED = [
     ("WormBase_get_interactions", "phenotypes_or_traits"),
     ("WormBase_get_human_diseases", "annotated_disease_count"),
     ("WormBase_get_human_diseases", "has_annotations"),
+    ("USDA_plants_get_profile", "ancestors"),
+    ("USDA_plants_get_profile", "map_coordinates"),
+    ("USDA_plants_get_profile", "available_data"),
+    ("USDA_plants_get_profile", "synonym_note"),
+    ("USDA_plants_search_by_name", "accepted_symbol"),
 ]
 
 
@@ -800,6 +825,23 @@ def test_the_return_schema_declares_the_field_the_wrapper_now_returns(tool, fiel
     assert f'"{field}"' in schema, (
         f"{tool} returns `{field}` and its return_schema does not declare it"
     )
+
+
+def test_usda_says_when_a_symbol_was_a_synonym():
+    """USDA redirects a synonym to the accepted taxon in silence.
+
+    `symbol=AGRE2` answers the profile of ELRE4, Elymus repens -- and the
+    symbol asked for and the symbol answered sat in two different parts of
+    the response, data and metadata, with nothing stating the substitution.
+    Four sibling tools paid for the same profile only to turn a symbol into a
+    numeric id and then threw it away, so a wetland or invasive answer named
+    neither the species nor the swap.
+    """
+    source = _source("usda_plants_tool.py")
+    assert "def _plant_identity" in source
+    assert "is a synonym; USDA PLANTS answered" in source
+    # The resolver hands back the profile it already paid for.
+    assert "return profile.get(\"Id\"), symbol, None, profile" in source
 
 
 def test_wormbase_phenotypes_name_the_allele_they_belong_to():
