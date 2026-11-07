@@ -1,7 +1,7 @@
 """
 ChIPAtlas_get_target_genes
 
-ChIP-Atlas transcription-factor target genes ranked by average TSS-proximal binding score. Result...
+ChIP-Atlas transcription-factor target genes ranked by average TSS-proximal binding score. averag...
 """
 
 from typing import Any, Optional, Callable
@@ -21,7 +21,7 @@ def ChIPAtlas_get_target_genes(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    ChIP-Atlas transcription-factor target genes ranked by average TSS-proximal binding score. Result...
+    ChIP-Atlas transcription-factor target genes ranked by average TSS-proximal binding score. averag...
 
     Parameters
     ----------
