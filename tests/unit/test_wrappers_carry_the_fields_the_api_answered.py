@@ -791,6 +791,47 @@ UPSTREAM_KEYS = [
         "terms_tried",
         "which name variants were tried, so an empty answer is not read as no associations",
     ),
+    # Round twelve.
+    (
+        "uniprot_tool.py",
+        'entry.get("entryType")',
+        "reviewed against unreviewed, the biggest quality distinction in UniProt",
+    ),
+    (
+        "uniprot_ref_tool.py",
+        "taxonLineage",
+        "where a proteome's organism sits in the tree, 30 ranks of it",
+    ),
+    (
+        "uniprot_ref_tool.py",
+        'r.get("citations")',
+        "the papers describing a proteome, with their 2,840 author names",
+    ),
+    (
+        "quickgo_tool.py",
+        "id_to_term",
+        "what a GO term means, from the record the name backfill already fetched",
+    ),
+    (
+        "reactome_content_tool.py",
+        'entry.get("summation")',
+        "the paragraph describing a pathway, answered for all 30 search hits",
+    ),
+    (
+        "reactome_content_tool.py",
+        "orthologousEvent",
+        "the same reaction inferred in other species",
+    ),
+    (
+        "pfam_tool.py",
+        "entry_integrated",
+        "the InterPro entry a Pfam family is integrated into",
+    ),
+    (
+        "openfda_adv_tool.py",
+        'openfda.get("rxcui")',
+        "the RxNorm concept that resolves TYLENOL and acetaminophen to one drug",
+    ),
 ]
 
 
@@ -952,6 +993,18 @@ DECLARED = [
     ("Progenetix_list_cohorts", "reference"),
     ("HMDB_get_diseases", "mesh_chemical_id"),
     ("HMDB_get_diseases", "ctd_terms_tried"),
+    ("UniProt_search", "reviewed"),
+    ("UniProt_search", "feature_types"),
+    ("UniProt_search", "cross_reference_databases"),
+    ("UniProtRef_get_proteome", "citations"),
+    ("UniProtRef_get_proteome", "busco"),
+    ("UniProtRef_search_keywords", "gene_ontologies"),
+    ("QuickGO_annotations_by_goterm", "reference"),
+    ("QuickGO_get_term_detail", "children"),
+    ("ReactomeContent_search", "summation"),
+    ("Pfam_get_protein_annotations", "protein_accession"),
+    ("Pfam_get_family_proteins", "source_database"),
+    ("FAERS_search_adverse_event_reports", "rxcui"),
 ]
 
 
@@ -967,6 +1020,22 @@ def test_the_return_schema_declares_the_field_the_wrapper_now_returns(tool, fiel
     assert f'"{field}"' in schema, (
         f"{tool} returns `{field}` and its return_schema does not declare it"
     )
+
+
+def test_a_uniprot_search_hit_says_whether_it_is_reviewed():
+    """Swiss-Prot or TrEMBL is the biggest quality distinction in UniProt.
+
+    `entryType` is "UniProtKB reviewed (Swiss-Prot)" or "UniProtKB unreviewed
+    (TrEMBL)" on every entry of every search, and the row carried six fields
+    that did not include it -- so a curated human entry and an unreviewed
+    machine annotation came back looking identical. The annotation score and
+    the protein-existence evidence level, the other two quality signals on
+    the same entry, went with it.
+    """
+    source = _source("uniprot_tool.py")
+    assert 'entry.get("entryType")' in source
+    assert '"reviewed"' in source
+    assert 'entry.get("annotationScore")' in source
 
 
 def test_an_impc_phenotype_hit_says_how_it_was_called():

@@ -121,6 +121,32 @@
                   "is_disease": {
                     "type": "boolean",
                     "description": "Whether this is a disease-related pathway"
+                  },
+                  "summation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The paragraph describing the pathway or reaction, which Reactome answers for all 30 entries of a search while the row carried a name"
+                  },
+                  "db_id": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "compartment_accessions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "exact_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
@@ -232,6 +258,26 @@
                       "null"
                     ],
                     "description": "Schema class (Pathway)"
+                  },
+                  "orthologous_events": {
+                    "type": "array",
+                    "description": "The same event inferred in other species. \"This reaction exists in mouse as R-MMU-...\" is the answer to half the questions asked of a pathway.",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "species": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "db_id": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }

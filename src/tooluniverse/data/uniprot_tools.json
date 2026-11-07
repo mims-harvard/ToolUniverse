@@ -958,6 +958,88 @@
                       "integer",
                       "number"
                     ]
+                  },
+                  "entry_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "\"UniProtKB reviewed (Swiss-Prot)\" or \"UniProtKB unreviewed (TrEMBL)\""
+                  },
+                  "reviewed": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "The single biggest quality distinction in UniProt, which a search result used not to state"
+                  },
+                  "annotation_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "protein_existence": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "e.g. \"1: Evidence at protein level\""
+                  },
+                  "organism_taxon_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "organism_common_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "gene_synonyms": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "keywords": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "secondary_accessions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "feature_count": {
+                    "type": "integer",
+                    "description": "Sequence features on the entry -- 48 on human insulin"
+                  },
+                  "feature_types": {
+                    "type": "object",
+                    "description": "The features broken down by type: signal peptides, disulfide bonds, natural variants. The features themselves come from UniProt_get_entry_by_accession, which a search of 500 entries cannot repeat."
+                  },
+                  "reference_count": {
+                    "type": "integer"
+                  },
+                  "first_reference": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "The first citation in full, so a hit can be cited without a second call"
+                  },
+                  "cross_reference_count": {
+                    "type": "integer"
+                  },
+                  "cross_reference_databases": {
+                    "type": "object",
+                    "description": "Which databases the entry links to, with a count each -- \"this hit has PDB structures\" is what a search is scanned for"
                   }
                 }
               }

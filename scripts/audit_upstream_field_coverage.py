@@ -297,6 +297,9 @@ NOT_RECORD_DATA = re.compile(
     # A licence notice on a response block, which several BioThings APIs
     # attach under an underscore-prefixed key.
   | (^|\.)_license$
+    # Reactome's own edit log: who changed an instance and when, which is
+    # curation history rather than the pathway.
+  | (^|\.)updateTrackers(\.|\[)
   | (^|\.)dedicatedColor$
     """
 )

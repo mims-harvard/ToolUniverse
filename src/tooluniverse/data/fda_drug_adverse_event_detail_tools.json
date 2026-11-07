@@ -62,6 +62,57 @@
             "Yes"
           ],
           "description": "Optional: Pass 'Yes' to filter for reports where death was an outcome. Omit this parameter to include all reports regardless of death outcome."
+        },
+        "rxcui": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ],
+          "description": "The RxNorm concept. `medicinalproduct` is free text the reporter typed -- \"TYLENOL\", \"acetaminophen\", \"PARACETAMOL\" are three strings for one drug -- and this is what resolves them to one thing."
+        },
+        "unii": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ]
+        },
+        "openfda_generic_name": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ]
+        },
+        "openfda_brand_name": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ]
+        },
+        "openfda_substance_name": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ]
+        },
+        "pharm_class_epc": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ],
+          "description": "Established pharmacologic class, so a class effect can be seen across reports"
+        },
+        "pharm_class_moa": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ]
         }
       },
       "required": [
@@ -212,6 +263,57 @@
                             "drugdosagetext": {
                               "type": "string",
                               "description": "Drug dosage information"
+                            },
+                            "rxcui": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ],
+                              "description": "The RxNorm concept. `medicinalproduct` is free text the reporter typed -- \"TYLENOL\", \"acetaminophen\", \"PARACETAMOL\" are three strings for one drug -- and this is what resolves them to one thing."
+                            },
+                            "unii": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "openfda_generic_name": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "openfda_brand_name": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "openfda_substance_name": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "pharm_class_epc": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ],
+                              "description": "Established pharmacologic class, so a class effect can be seen across reports"
+                            },
+                            "pharm_class_moa": {
+                              "type": [
+                                "array",
+                                "string",
+                                "null"
+                              ]
                             }
                           }
                         }
@@ -365,6 +467,57 @@
             "No"
           ],
           "description": "Optional: Filter by event seriousness. Omit this parameter if you don't want to filter by seriousness."
+        },
+        "rxcui": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ],
+          "description": "The RxNorm concept. `medicinalproduct` is free text the reporter typed -- \"TYLENOL\", \"acetaminophen\", \"PARACETAMOL\" are three strings for one drug -- and this is what resolves them to one thing."
+        },
+        "unii": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ]
+        },
+        "openfda_generic_name": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ]
+        },
+        "openfda_brand_name": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ]
+        },
+        "openfda_substance_name": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ]
+        },
+        "pharm_class_epc": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ],
+          "description": "Established pharmacologic class, so a class effect can be seen across reports"
+        },
+        "pharm_class_moa": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ]
         }
       },
       "required": [
@@ -566,6 +719,57 @@
             "No"
           ],
           "description": "Optional: 'Yes' returns only reports FAERS flags as serious (openFDA serious=1), 'No' only non-serious ones (serious=2). Omit to return both, which is this tool's default despite its name."
+        },
+        "rxcui": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ],
+          "description": "The RxNorm concept. `medicinalproduct` is free text the reporter typed -- \"TYLENOL\", \"acetaminophen\", \"PARACETAMOL\" are three strings for one drug -- and this is what resolves them to one thing."
+        },
+        "unii": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ]
+        },
+        "openfda_generic_name": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ]
+        },
+        "openfda_brand_name": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ]
+        },
+        "openfda_substance_name": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ]
+        },
+        "pharm_class_epc": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ],
+          "description": "Established pharmacologic class, so a class effect can be seen across reports"
+        },
+        "pharm_class_moa": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ]
         }
       },
       "required": [
@@ -768,6 +972,57 @@
             "No"
           ],
           "description": "Optional: Filter by event seriousness. Omit this parameter if you don't want to filter by seriousness."
+        },
+        "rxcui": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ],
+          "description": "The RxNorm concept. `medicinalproduct` is free text the reporter typed -- \"TYLENOL\", \"acetaminophen\", \"PARACETAMOL\" are three strings for one drug -- and this is what resolves them to one thing."
+        },
+        "unii": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ]
+        },
+        "openfda_generic_name": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ]
+        },
+        "openfda_brand_name": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ]
+        },
+        "openfda_substance_name": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ]
+        },
+        "pharm_class_epc": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ],
+          "description": "Established pharmacologic class, so a class effect can be seen across reports"
+        },
+        "pharm_class_moa": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ]
         }
       },
       "required": [
@@ -947,6 +1202,57 @@
             "No"
           ],
           "description": "Optional: Filter by event seriousness. Omit this parameter if you don't want to filter by seriousness."
+        },
+        "rxcui": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ],
+          "description": "The RxNorm concept. `medicinalproduct` is free text the reporter typed -- \"TYLENOL\", \"acetaminophen\", \"PARACETAMOL\" are three strings for one drug -- and this is what resolves them to one thing."
+        },
+        "unii": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ]
+        },
+        "openfda_generic_name": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ]
+        },
+        "openfda_brand_name": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ]
+        },
+        "openfda_substance_name": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ]
+        },
+        "pharm_class_epc": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ],
+          "description": "Established pharmacologic class, so a class effect can be seen across reports"
+        },
+        "pharm_class_moa": {
+          "type": [
+            "array",
+            "string",
+            "null"
+          ]
         }
       },
       "required": [

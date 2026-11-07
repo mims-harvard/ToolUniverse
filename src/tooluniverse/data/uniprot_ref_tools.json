@@ -72,6 +72,16 @@
                     },
                     "id": {
                       "type": "string"
+                    },
+                    "properties": {
+                      "type": "array",
+                      "description": "MIM cross-references carry the property that says which KIND of entry the id is -- UniProt sends these as plain strings such as \"phenotype\" or \"gene\", and an OMIM gene id used as a disease id is a different claim",
+                      "items": {
+                        "type": [
+                          "string",
+                          "object"
+                        ]
+                      }
                     }
                   }
                 }
@@ -81,6 +91,21 @@
                   "integer",
                   "number"
                 ]
+              },
+              "unreviewed_protein_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "keywords": {
+                "type": "array",
+                "items": {
+                  "type": [
+                    "object",
+                    "string"
+                  ]
+                }
               }
             }
           }
@@ -262,6 +287,50 @@
                   "integer",
                   "number"
                 ]
+              },
+              "unreviewed_protein_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "A keyword on 300 Swiss-Prot entries and 40,000 TrEMBL ones is a different thing from one on 300 and 12"
+              },
+              "category_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "parents": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "children": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "gene_ontologies": {
+                "type": "array",
+                "description": "The GO terms the keyword corresponds to, which is how a keyword search is carried into an enrichment analysis",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "synonyms": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "links": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
               }
             }
           }
@@ -485,6 +554,64 @@
                 "integer",
                 "number"
               ]
+            },
+            "taxon_lineage": {
+              "type": "array",
+              "description": "The organism's place in the tree; 30 ranks are in the same record",
+              "items": {
+                "type": "object"
+              }
+            },
+            "strain": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "synonyms": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "citations": {
+              "type": "array",
+              "description": "The papers describing the proteome, with their authors and cross-references",
+              "items": {
+                "type": "object"
+              }
+            },
+            "genome_assembly": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "genome_annotation": {
+              "type": [
+                "object",
+                "null"
+              ]
+            },
+            "annotation_score": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "busco": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "BUSCO completeness: complete, duplicated, fragmented and missing counts"
+            },
+            "cpd": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "UniProt's own Complete Proteome Detector report"
             }
           },
           "required": [
@@ -576,6 +703,56 @@
                   "integer",
                   "number"
                 ]
+              },
+              "taxon_lineage": {
+                "type": "array",
+                "description": "Lineage names, summarised; UniProtRef_get_proteome has the ranked records",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "taxon_rank": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "strain": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "component_count": {
+                "type": "integer"
+              },
+              "citation_count": {
+                "type": "integer"
+              },
+              "annotation_score": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "genome_assembly_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "busco_complete_percent": {
+                "type": [
+                  "number",
+                  "integer",
+                  "null"
+                ]
+              },
+              "component_databases": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
               }
             }
           }
