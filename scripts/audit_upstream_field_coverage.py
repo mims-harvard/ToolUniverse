@@ -219,6 +219,17 @@ NOT_RECORD_DATA = re.compile(
   | (^|\.)(translationstack|translationset|idlist|uids?|webenv|querykey)(\.|\[|$)
   | (^|\.)(page|per_page|pageSize|page_size|total_pages|pageInfo)(\.|\[|$)
   | (^|\.)@                                   # JSON-LD framing
+    # GlyGen serves its own web tables with the record. `section_stats` is the
+    # per-table row counts and column list the site renders, `sort_fields` is
+    # which of those columns are sortable, and `hit_info.contributions` is the
+    # breakdown of a relevance score into field, weight and contribution --
+    # why this hit ranked where it did, not anything about the glycan.
+  | (^|\.)section_stats(\.|\[)
+  | (^|\.)sort_fields(\.|\[|$)
+  | (^|\.)hit_info(\.|\[)
+    # The bitmask that drives those tables' facet filters:
+    # "0001000.1101111.100000.000000000001000000.1100000000000.100.00000".
+  | (^|\.)filter_code$
     """
 )
 

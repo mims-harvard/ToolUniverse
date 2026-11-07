@@ -522,6 +522,42 @@ UPSTREAM_KEYS = [
         'assoc.get("id")',
         "the outcome trait each repurposing estimate was measured against",
     ),
+    # Round five.
+    (
+        "glygen_tool.py",
+        'raw.get("enzyme")',
+        "the biosynthetic enzymes the class docstring names, which no GlyGen tool exposed",
+    ),
+    (
+        "glygen_tool.py",
+        'raw.get("residues")',
+        "the structure residue by residue, where number_monosaccharides was all that was said",
+    ),
+    (
+        "glygen_tool.py",
+        'raw.get("glycation")',
+        "glycation at a site, the one of the three PTM sections the site tool never read",
+    ),
+    (
+        "glygen_tool.py",
+        'raw.get("neighbors")',
+        "the annotated sites around this one, with distance and direction",
+    ),
+    (
+        "glygen_tool.py",
+        "reported_n_glycosites",
+        "the key a /protein/list row actually carries; the two that were read do not exist",
+    ),
+    (
+        "glygen_tool.py",
+        'v.get("glycoeffect")',
+        "what an SNV does to the glycosylation, which is the question GlyGen answers",
+    ),
+    (
+        "glygen_tool.py",
+        'item.get("ec_number_list")',
+        "the EC numbers of a protein a glycoprotein search returned 51 of",
+    ),
 ]
 
 
@@ -597,6 +633,20 @@ DECLARED = [
     ("EpiGraphDB_get_drugs_for_trait", "evidence"),
     ("EpiGraphDB_get_drugs_for_trait", "exposure_trait_id"),
     ("EpiGraphDB_get_literature_evidence", "pval"),
+    # Round five.
+    ("GlyGen_get_glycan", "enzymes"),
+    ("GlyGen_get_glycan", "residues"),
+    ("GlyGen_get_glycan", "biosynthesis_steps"),
+    ("GlyGen_get_glycan", "publications"),
+    ("GlyGen_get_glycoprotein", "diseases"),
+    ("GlyGen_get_glycoprotein", "snvs"),
+    ("GlyGen_get_glycoprotein", "glycoeffect"),
+    ("GlyGen_get_glycoprotein", "pathways"),
+    ("GlyGen_get_site", "glycation"),
+    ("GlyGen_get_site", "neighbors"),
+    ("GlyGen_get_site", "protein_name"),
+    ("GlyGen_search_glycoproteins", "n_linked_site_count"),
+    ("GlyGen_search_glycoproteins", "ec_numbers"),
 ]
 
 
@@ -611,6 +661,28 @@ def test_the_return_schema_declares_the_field_the_wrapper_now_returns(tool, fiel
     schema = json.dumps(_config(tool).get("return_schema") or {})
     assert f'"{field}"' in schema, (
         f"{tool} returns `{field}` and its return_schema does not declare it"
+    )
+
+
+def test_glygen_search_counts_the_sites_the_row_actually_reports():
+    """Every result of every glycoprotein search said 0.
+
+    `total_n_glycosites` and `total_o_glycosites` are not keys a
+    /protein/list row carries; `reported_n_glycosites` and
+    `reported_o_glycosites` are. With `or 0` wrapped around each missing key
+    the sum came out as 0 on every row -- from a tool whose description
+    promises "glycosylation-site counts" -- and HGF, which has four N-linked
+    and one O-linked reported site, was indistinguishable from a protein with
+    none. A count the API never sent now reads as null.
+    """
+    source = _source("glygen_tool.py")
+    assert "reported_n_glycosites" in source
+    assert "reported_o_glycosites" in source
+    assert '(item.get("total_n_glycosites") or 0)' not in source, (
+        "the sum of two absent keys was the bug, not the fix"
+    )
+    assert "_first_number" in source, (
+        "a count must come back null when the row does not carry it"
     )
 
 
