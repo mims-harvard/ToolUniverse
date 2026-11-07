@@ -109,6 +109,36 @@
                             "string",
                             "null"
                           ]
+                        },
+                        "start_intron_offset": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "Offset into the intron from `start`. When set, the position is start-offset or start+offset per start_intron_direction, not `start` itself."
+                        },
+                        "start_intron_direction": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "'-' or '+': which way the offset runs from the exon boundary"
+                        },
+                        "end_intron_offset": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "end_intron_direction": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "is_intronic": {
+                          "type": "boolean",
+                          "description": "True when either offset is set, i.e. `start`/`end` alone do not name the position"
                         }
                       }
                     }
@@ -258,6 +288,36 @@
                             "string",
                             "null"
                           ]
+                        },
+                        "start_intron_offset": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "Offset into the intron from `start`. When set, the position is start-offset or start+offset per start_intron_direction, not `start` itself."
+                        },
+                        "start_intron_direction": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "'-' or '+': which way the offset runs from the exon boundary"
+                        },
+                        "end_intron_offset": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "end_intron_direction": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "is_intronic": {
+                          "type": "boolean",
+                          "description": "True when either offset is set, i.e. `start`/`end` alone do not name the position"
                         }
                       }
                     }
@@ -507,6 +567,36 @@
                             "string",
                             "null"
                           ]
+                        },
+                        "start_intron_offset": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "Offset into the intron from `start`. When set, the position is start-offset or start+offset per start_intron_direction, not `start` itself."
+                        },
+                        "start_intron_direction": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "'-' or '+': which way the offset runs from the exon boundary"
+                        },
+                        "end_intron_offset": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "end_intron_direction": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "is_intronic": {
+                          "type": "boolean",
+                          "description": "True when either offset is set, i.e. `start`/`end` alone do not name the position"
                         }
                       }
                     }
@@ -722,6 +812,36 @@
                                   "string",
                                   "null"
                                 ]
+                              },
+                              "start_intron_offset": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ],
+                                "description": "Offset into the intron from `start`. When set, the position is start-offset or start+offset per start_intron_direction, not `start` itself."
+                              },
+                              "start_intron_direction": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "description": "'-' or '+': which way the offset runs from the exon boundary"
+                              },
+                              "end_intron_offset": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "end_intron_direction": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "is_intronic": {
+                                "type": "boolean",
+                                "description": "True when either offset is set, i.e. `start`/`end` alone do not name the position"
                               }
                             }
                           }
@@ -863,6 +983,36 @@
                                   "string",
                                   "null"
                                 ]
+                              },
+                              "start_intron_offset": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ],
+                                "description": "Offset into the intron from `start`. When set, the position is start-offset or start+offset per start_intron_direction, not `start` itself."
+                              },
+                              "start_intron_direction": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "description": "'-' or '+': which way the offset runs from the exon boundary"
+                              },
+                              "end_intron_offset": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "end_intron_direction": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "is_intronic": {
+                                "type": "boolean",
+                                "description": "True when either offset is set, i.e. `start`/`end` alone do not name the position"
                               }
                             }
                           }

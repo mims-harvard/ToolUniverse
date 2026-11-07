@@ -477,3 +477,39 @@ def test_the_weekly_workflow_runs_the_audit_and_keeps_its_output():
     assert "--coverage 'shards/*/FIELD_COVERAGE_*.json'" in workflow
     # The sweep is a canary, not a gate, and so is this.
     assert workflow.count("continue-on-error: true") >= 3
+
+
+def test_a_serialisers_type_tag_is_not_a_dropped_field(audit):
+    """ITIS stamps the Java class of every nested object onto it.
+
+    `scientificNames[].class` is
+    "gov.usgs.itis.itis_service.data.SvcScientificName" on all four hits, and
+    the same tag sits on every hierarchy row, synonym, publication and
+    geographic division -- five ITIS tools flagged for it. The rule is scoped
+    to those list containers on purpose, because `class` elsewhere IS the
+    record: GBIF answers "class": "Aves".
+    """
+    assert not audit.is_record_data("scientificNames[].class")
+    assert not audit.is_record_data("hierarchyList[].class")
+    assert not audit.is_record_data("synonymList.synonyms[].class")
+    assert not audit.is_record_data("publicationList.publications[].referenceFor[].class")
+    # The taxonomic rank keeps counting.
+    assert audit.is_record_data("results[].class")
+    assert audit.is_record_data("class")
+    assert audit.is_record_data("gnCoordinate[].class")
+
+
+def test_the_elasticsearch_envelope_is_not_the_hit(audit):
+    """ChEBI's advanced_search wraps each hit in a Lucene document.
+
+    `_index` is "chebi-prod-compounds-07112026", `_type` is "_doc" and
+    `_source.structures` is the internal structure-row ids; the hit itself is
+    under `_source`. `_score` is the ranking, which the tool now reports as
+    relevance_score, and `_id` restates the accession -- both of those stay
+    countable, so only the envelope is filtered.
+    """
+    assert not audit.is_record_data("results[]._index")
+    assert not audit.is_record_data("results[]._type")
+    assert not audit.is_record_data("results[]._source.structures[]")
+    assert audit.is_record_data("results[]._source.smiles")
+    assert audit.is_record_data("results[]._source.chebi_accession")

@@ -40,19 +40,33 @@ def _snake(key: str) -> str:
 
 
 def _coordinates(node: Dict[str, Any]) -> list:
-    """Where the allele sits and what it replaces, in this representation."""
+    """Where the allele sits and what it replaces, in this representation.
+
+    For an intronic variant the registry gives the position as an exon
+    boundary plus an offset into the intron: 6 of BRAF c.1799T>A's 48
+    transcript alleles read start 1258 with startIntronOffset 3918 in the
+    '-' direction, i.e. 1258-3918. Reporting the 1258 alone does not omit a
+    field, it names a different position.
+    """
     out = []
     for coord in node.get("coordinates") or []:
         if not isinstance(coord, dict):
             continue
-        out.append(
-            {
-                "start": coord.get("start"),
-                "end": coord.get("end"),
-                "reference_allele": coord.get("referenceAllele"),
-                "allele": coord.get("allele"),
-            }
+        row = {
+            "start": coord.get("start"),
+            "end": coord.get("end"),
+            "reference_allele": coord.get("referenceAllele"),
+            "allele": coord.get("allele"),
+            "start_intron_offset": coord.get("startIntronOffset"),
+            "start_intron_direction": coord.get("startIntronDirection"),
+            "end_intron_offset": coord.get("endIntronOffset"),
+            "end_intron_direction": coord.get("endIntronDirection"),
+        }
+        row["is_intronic"] = (
+            row["start_intron_offset"] is not None
+            or row["end_intron_offset"] is not None
         )
+        out.append(row)
     return out
 
 

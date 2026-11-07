@@ -1755,3 +1755,21 @@ def test_a_binding_site_names_what_binds_there():
         _config("EBIProteins_get_domains_sites").get("return_schema") or {}
     )
     assert '"ligand"' in schema
+
+
+def test_an_intronic_clingen_coordinate_keeps_its_offset():
+    """`start: 1258` is not where the variant is when the offset is 3918.
+
+    For an intronic variant the registry gives the position as an exon
+    boundary plus an offset into the intron and a direction: 12 of the
+    transcript alleles on the page for rs113488022 read start 1258 with
+    startIntronOffset 3918 in the '-' direction, i.e. 1258-3918. Reporting
+    1258 alone is not a field omitted, it is a different position asserted --
+    an exonic one.
+    """
+    source = _source("clingen_ar_tool.py")
+    assert 'coord.get("startIntronOffset")' in source
+    assert 'coord.get("startIntronDirection")' in source
+    assert '"is_intronic"' in source
+    schema = json.dumps(_config("ClinGenAR_lookup_allele").get("return_schema") or {})
+    assert '"start_intron_offset"' in schema

@@ -301,6 +301,22 @@ NOT_RECORD_DATA = re.compile(
     # curation history rather than the pathway.
   | (^|\.)updateTrackers(\.|\[)
   | (^|\.)dedicatedColor$
+    # ITIS's JSON service stamps the Java class of every nested object onto
+    # it: "gov.usgs.itis.itis_service.data.SvcScientificName" on a name,
+    # SvcHierarchyRecord on a rank, SvcTaxonPublication on a reference. It is
+    # the serialiser's own type tag. Scoped to ITIS's list containers,
+    # because `class` elsewhere is a taxonomic rank -- GBIF answers
+    # "class": "Aves", which is the record.
+  | (^|\.)(scientificNames|commonNames|hierarchyList|synonyms|publications
+         |experts|otherSources|geoDivisions|jurisdictionalOrigins|comments
+         |acceptedNames|referenceFor)(\[\])?\.class$
+    # The Elasticsearch envelope ChEBI's advanced_search returns each hit in:
+    # the index it came from (chebi-prod-compounds-07112026), the Lucene doc
+    # type, and the internal structure-row ids. `_id` restates the accession
+    # the hit already carries and `_score` is the ranking, which the tool now
+    # reports as relevance_score.
+  | (^|\.)_(index|type)$
+  | (^|\.)_source\.structures(\[|$)
     """
 )
 

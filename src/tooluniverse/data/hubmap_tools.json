@@ -447,6 +447,52 @@
                 },
                 "contributors_count": {
                   "type": "integer"
+                },
+                "direct_ancestors": {
+                  "type": "array",
+                  "description": "The samples this dataset was derived from, with the spatial registration that says where in the organ the tissue came from",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "entity_type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "hubmap_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "uuid": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "sample_category": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "protocol_url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "spatial_annotations": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "UBERON IRIs from rui_location.ccf_annotations"
+                      }
+                    }
+                  }
                 }
               }
             },
@@ -641,6 +687,13 @@
                       "type": "string"
                     },
                     "description": "UBERON IRIs the sample's spatial registration overlaps, from rui_location.ccf_annotations -- where in the organ the tissue came from"
+                  },
+                  "contributor_count": {
+                    "type": "integer",
+                    "description": "How many contributors the ancestor entity credits; call HuBMAP_get_dataset with its hubmap_id for the records"
+                  },
+                  "contact_count": {
+                    "type": "integer"
                   }
                 }
               }

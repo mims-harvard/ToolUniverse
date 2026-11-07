@@ -342,6 +342,21 @@ class HuBMAPTool(BaseTool):
                 format_person(contributor) for contributor in contributors
             ],
             "contributors_count": len(contributors),
+            # The dataset record names the samples it was derived from, and
+            # their spatial registration says where in the organ the tissue
+            # came from. Only the organ name was read.
+            "direct_ancestors": [
+                {
+                    "entity_type": ancestor.get("entity_type"),
+                    "hubmap_id": ancestor.get("hubmap_id"),
+                    "uuid": ancestor.get("uuid"),
+                    "sample_category": ancestor.get("sample_category"),
+                    "protocol_url": ancestor.get("protocol_url"),
+                    "spatial_annotations": _ccf_annotations(ancestor),
+                }
+                for ancestor in (data.get("direct_ancestors") or [])
+                if isinstance(ancestor, dict)
+            ],
         }
 
         return {"status": "success", "data": result}
@@ -406,6 +421,11 @@ class HuBMAPTool(BaseTool):
                     # response, under metadata.organ_donor_data, and the
                     # lineage row carried seven keys that did not include it.
                     "donor_attributes": _donor_attributes(entity),
+                    # The ancestor entities credit people too. Their records
+                    # belong to HuBMAP_get_dataset for that hubmap_id, so the
+                    # count says they exist rather than duplicating them here.
+                    "contributor_count": len(entity.get("contributors") or []),
+                    "contact_count": len(entity.get("contacts") or []),
                     # Where in the organ the sample was taken from.
                     "spatial_annotations": _ccf_annotations(entity),
                 }
