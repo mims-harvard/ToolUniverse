@@ -29,6 +29,25 @@ single value that was transformed rather than dropped: ComplexPortal splits
 `species` into `species` and `taxonomy_id`, so the combined upstream string
 matches nothing.
 
+A FIELD CAN ALSO BE SELECTED AND STILL HAVE NOTHING TO SHOW. The same MediaDive
+wrapper does carry `description` and `reference`, but every row matching
+'nutrient agar' is null in both, so they scored 0/68 and 0/36 on the first
+sampled run and cost real triage time. So zero-survivor fields are split by a
+second signal -- whether the field's own name, normalised, reaches the caller.
+Named and empty goes to `mapped_but_unseen`; never asked for goes to
+`thin_fields`, which is what the sweep reports. Only `link` survives that split
+for MediaDive, and `link` really is dropped. The same signal also catches a
+transformation the value comparison cannot: Synapse maps `type` through
+`_short_type`, turning `org.sagebionetworks.repo.model.FileEntity` into `file`,
+so no value matches while the field is there under its own name.
+
+The signal is a key-name match, so on its own a generic name is met by an
+unrelated key elsewhere in the output: GEO's esummary carries `accession` twice,
+the series' own and `samples[].accession`, and the first vouched for the second
+until a leaf name that already reaches the caller from another path stopped
+counting as an excuse. Nothing is discarded either way -- a tool with an empty
+`thin_fields` and a long `mapped_but_unseen` is still worth a look.
+
 Measured on CPX-1, what survives the two filters is real: the subunit records
 drop `participants[].linkedFeatures[].*` -- which region of each subunit binds
 which partner -- along with `bioRole` and the ontology ids used for
@@ -53,25 +72,35 @@ from __future__ import annotations
 import argparse
 import json
 import pathlib
+import re
 import sys
 
 REPO = pathlib.Path(__file__).resolve().parent.parent
+# Upstream fields are enumerated to MAX_DEPTH, which keeps the report readable.
+# What the caller RECEIVED is read much deeper, because a value that reached
+# them is a survivor however deep the wrapper nests it -- and wrappers nest
+# deeper than the API does. Measured: the by-rsID variation output puts a
+# disease's OMIM id at depth 9 (data > entries > features > associations >
+# db_references > database), so at a shared limit of 8 its 132 values were
+# invisible and all three `dbReferences` fields read as dropped while the
+# caller had them.
 MAX_DEPTH = 8
+SURVIVOR_DEPTH = 24
 MIN_VALUE_LENGTH = 2  # one-character values match by accident
 
 
-def leaf_values(node, out=None, depth=0):
+def leaf_values(node, out=None, depth=0, limit=SURVIVOR_DEPTH):
     """Scalar leaf values reachable from `node`, as a list of strings."""
     if out is None:
         out = []
-    if depth > MAX_DEPTH:
+    if depth > limit:
         return out
     if isinstance(node, dict):
         for value in node.values():
-            leaf_values(value, out, depth + 1)
+            leaf_values(value, out, depth + 1, limit)
     elif isinstance(node, list):
         for value in node:
-            leaf_values(value, out, depth + 1)
+            leaf_values(value, out, depth + 1, limit)
     elif node is None or isinstance(node, bool):
         pass
     else:
@@ -106,15 +135,191 @@ def leaf_fields(node, prefix="", out=None, depth=0):
     return out
 
 
+def normalise_key(name):
+    """`max_pH`, `maxPh` and `max-ph` all collapse to one spelling."""
+    return re.sub(r"[^a-z0-9]", "", name.lower())
+
+
+def key_names(node, out=None, depth=0, limit=SURVIVOR_DEPTH):
+    """Every dict key reachable from `node`, normalised."""
+    if out is None:
+        out = set()
+    if depth > limit:
+        return out
+    if isinstance(node, dict):
+        for key, value in node.items():
+            out.add(normalise_key(str(key)))
+            key_names(value, out, depth + 1, limit)
+    elif isinstance(node, list):
+        for value in node:
+            key_names(value, out, depth + 1, limit)
+    return out
+
+
+# Paths that are not the record, whatever the API. Each is a structural class
+# -- transport, search machinery, link construction, audit trail -- and not a
+# guess about whether some field matters. They are reported under
+# `not_record_data` rather than dropped, so a wrong call here is visible.
+NOT_RECORD_DATA = re.compile(
+    r"""(?x)
+    (^|\.)_?links?(\.|\[|$)                  # HATEOAS
+  | (^|\.)relationships(\.|\[)                # JSON:API relationship stubs
+  | (^|\.)data\[\]\.type$                       # JSON:API resource type, which
+                                                # restates the endpoint
+  | (^|\.)self$
+  | resourceDescriptorPage                     # URL templates for a curie
+  | (^|\.)urlTemplate$ | idPattern$ | idExample$ | resourcePages
+  | supplementalData\.distinctFieldValues      # search facet values
+  | (^|\.)aggregations(\.|\[)                 # search facet counts
+  | (^|\.)facets?(\.|\[)                      # ENCODE portal facet terms
+  | (^|\.)facet_fields(\.|\[)                  # Monarch's name for the same
+  | (^|\.)facet_groups(\.|\[)                 # how the portal groups them
+  | (^|\.)(filters|clear_filters)(\.|\[|$)    # the query as the portal echoes it
+  | (^|\.)(columns|sort|notification)(\.|\[|$)  # portal result-table state
+  | (^|\.)highlight(s|ing)?(\.|\[)             # search result highlighting
+  | (^|\.)subsets?(\.|\[|$)                   # ontology subset tags
+  | (^|\.)grouping_key$                        # Monarch's internal row key
+  | ((^|\.)|_)namespace$                        # the curie prefix, derivable
+  | (^|\.)alternativeUrl$                       # a second link to what url
+                                                # already points at
+  | _links?(\.|\[)                             # {id, url} link objects beside
+                                                # the field they link
+  | (^|\.)(createdBy|updatedBy)(\.|\[)        # audit trail
+  | _searchable(\[\])?$ | _closure            # Solr expansions
+  | (^|\.)(_score|_version_|maxScore|numFound|QTime|responseHeader)$
+    # bigBed display columns. `reserved` is the item RGB -- "0,176,240" for a
+    # cCRE whose `cCRE_class` the tool does return -- and thickStart/thickEnd
+    # are where the thick box is drawn. `bin` is UCSC's genomic index; a real
+    # histogram bin is named bins[] or bin_count, not a bare `bin` beside
+    # chromStart.
+  | (^|\.)(reserved|thickStart|thickEnd|itemRgb|blockCount|blockSizes|chromStarts|bin)$
+  | [Dd]efinition(\[\])?$                     # paragraphs of ontology prose
+  | (^|\.)(translationstack|translationset|idlist|uids?|webenv|querykey)(\.|\[|$)
+  | (^|\.)(page|per_page|pageSize|page_size|total_pages|pageInfo)(\.|\[|$)
+  | (^|\.)@                                   # JSON-LD framing
+    """
+)
+
+
+def is_record_data(field):
+    """False when a field path is transport, search machinery or an audit trail."""
+    return not NOT_RECORD_DATA.search(field)
+
+
+def key_names_raw(node, out=None, depth=0, limit=SURVIVOR_DEPTH):
+    """Every dict key reachable from `node`, unnormalised."""
+    if out is None:
+        out = set()
+    if depth > limit:
+        return out
+    if isinstance(node, dict):
+        for key, value in node.items():
+            out.add(str(key).strip())
+            key_names_raw(value, out, depth + 1, limit)
+    elif isinstance(node, list):
+        for value in node:
+            key_names_raw(value, out, depth + 1, limit)
+    return out
+
+
+STUB_SIBLINGS = ("link", "display_name", "format_name", "href", "url")
+
+
+def surrogate_id_paths(node, prefix="", out=None, depth=0):
+    """Paths of a bare numeric `id` that sits beside a link or a display name.
+
+    An entity stub -- SGD answers `{"id": 823128, "display_name": "CAA84998.1",
+    "link": "/locus/S000000259"}` for every referenced object -- carries the
+    database's own row number alongside the identifier that means something.
+    The row number reaches no caller and should not: the wrapper reads the
+    SGDID out of `link`. Scoped to this shape on purpose, because a bare
+    numeric `id` IS the identifier in other APIs (a PubChem CID, an OMIM
+    number), and those records do not carry a `link` beside it.
+    """
+    if out is None:
+        out = set()
+    if depth > MAX_DEPTH:
+        return out
+    if isinstance(node, dict):
+        value = node.get("id")
+        if (
+            isinstance(value, (int, float))
+            or (isinstance(value, str) and value.strip().isdigit())
+        ) and any(node.get(sibling) for sibling in STUB_SIBLINGS):
+            out.add(f"{prefix}.id" if prefix else "id")
+        for key, child in node.items():
+            surrogate_id_paths(
+                child, f"{prefix}.{key}" if prefix else key, out, depth + 1
+            )
+    elif isinstance(node, list):
+        for child in node:
+            surrogate_id_paths(child, f"{prefix}[]", out, depth + 1)
+    return out
+
+
 def compare(upstream, returned):
-    """Per upstream field: how many of its leaf values reached the caller."""
-    survivors = set(leaf_values(returned))
+    """Per upstream field: how many of its leaf values reached the caller.
+
+    `mapped` records the second signal, which exists because value survival
+    alone has a false positive the first sampled run spent time on. MediaDive's
+    wrapper does carry `description` and `reference`; on the rows that matched
+    'nutrient agar' both are null upstream, so they have no value to survive and
+    scored 0/68 and 0/36 while being fully exposed. A field whose own name
+    reaches the caller was selected, whatever this page happened to hold, so it
+    is reported apart from the fields the wrapper never asked for.
+    """
+    # Object KEYS count as survivors, because pivoting a long-format response
+    # into a map is how a wrapper legitimately exposes it.
+    # `OmniPath_get_annotation_resource_geneset` turns rows of
+    # {label, value} into `annotations: {<label>: <value>}`, so every one of
+    # 9,755 `label` values reaches the caller as a key and none of them as a
+    # value. Diffing values alone called that the largest drop in the
+    # catalogue.
+    survivors = set(leaf_values(returned)) | {
+        key for key in key_names_raw(returned) if len(key) >= MIN_VALUE_LENGTH
+    }
+    present = key_names(returned)
     rows = []
     for field, values in leaf_fields(upstream).items():
         kept = sum(1 for value in values if value in survivors)
-        rows.append({"field": field, "kept": kept, "total": len(values)})
+        leaf = normalise_key(field.rstrip("[]").split(".")[-1].rstrip("[]"))
+        rows.append({"field": field, "kept": kept, "total": len(values), "leaf": leaf})
+
+    # A leaf name that already reaches the caller from SOME other upstream path
+    # explains the key match on its own, so it cannot excuse this path. GEO's
+    # esummary carries `accession` twice: the series' own, which the tool
+    # returns, and `samples[].accession`, which it drops. Without this the
+    # series accession would vouch for the sample accessions.
+    explained = {row["leaf"] for row in rows if row["kept"]}
+    for row in rows:
+        row["mapped"] = row["leaf"] in present and row["leaf"] not in explained
+        del row["leaf"]
     rows.sort(key=lambda r: (r["kept"] / r["total"], -r["total"]))
     return rows
+
+
+SELF_DESCRIPTION = re.compile(
+    r"/(schema|openapi|swagger|_mapping|api-docs|metadata/fields)(\.json)?/?$",
+    re.IGNORECASE,
+)
+
+
+def describes_the_api_not_a_record(call):
+    """True when a captured response is the API describing itself.
+
+    A tool may fetch its endpoint's own field list beside the data. ChEMBL's
+    wrappers call `/molecule/CHEMBL25.json` and then
+    `/molecule/schema.json`, and that second document's leaf values are FIELD
+    NAMES -- `ordering`, `fields.molecule_properties.schema.filtering.ro3_pass`
+    -- which of course never reach the caller. Diffing it reported all 20
+    ChEMBL tools as dropping data and none of them were: it is the largest
+    single false-positive class in the catalogue after pagination.
+
+    An OPTIONS request is the same thing by another route.
+    """
+    if (call.get("method") or "").upper() == "OPTIONS":
+        return True
+    return bool(SELF_DESCRIPTION.search(call.get("url") or ""))
 
 
 def record_http():
@@ -234,17 +439,46 @@ def audit(
                 )
             )
             continue
-        bodies = [c["body"] for c in captured if isinstance(c["body"], (dict, list))]
-        if not bodies:
+        calls = [c for c in captured if isinstance(c["body"], (dict, list))]
+        described = [c for c in calls if describes_the_api_not_a_record(c)]
+        calls = [c for c in calls if not describes_the_api_not_a_record(c)]
+        if not calls:
             findings.append(
-                _emit({"tool": name, "skipped": "no JSON upstream response"}, on_result)
+                _emit(
+                    {
+                        "tool": name,
+                        "skipped": "no JSON upstream response"
+                        + (
+                            " that is not the API describing itself"
+                            if described
+                            else ""
+                        ),
+                    },
+                    on_result,
+                )
             )
             continue
 
         returned = result.get("data", result)
         thin = []
-        for body in bodies:
+        mapped_but_unseen = []
+        not_record_data = []
+        # Calls to the SAME URL are one logical response. A tool that pages
+        # through an endpoint makes several, and comparing each against the
+        # single merged output reported the same field once per page with a
+        # different total each time -- `datasourceScores[].id` five times over
+        # on every disease_target_score tool -- and scored page 1's rows as
+        # dropped because the output holds a later page's. Grouped, a value
+        # that reached the caller from any page counts.
+        by_url = {}
+        for call in calls:
+            by_url.setdefault(call["url"], []).append(call["body"])
+
+        for url, bodies in by_url.items():
+            body = bodies[0] if len(bodies) == 1 else bodies
+            surrogates = surrogate_id_paths(body)
             for row in compare(body, returned):
+                row["url"] = url
                 if row["total"] < min_values:
                     continue  # a single value that moved is a rename, not a loss
                 # Zero survivors, not a low ratio. A ratio flags PAGINATION:
@@ -254,16 +488,30 @@ def audit(
                 # which #824 already discloses. A field the wrapper drops has
                 # NO surviving value; a field it exposes has at least the
                 # current page's.
-                if row["kept"] == 0:
+                if row["kept"]:
+                    continue
+                # ... unless the page it exposes is all nulls. Then the field is
+                # selected and has nothing to show, which is the upstream being
+                # sparse, not the wrapper dropping anything.
+                if row["field"] in surrogates or not is_record_data(row["field"]):
+                    not_record_data.append(row)
+                elif row["mapped"]:
+                    mapped_but_unseen.append(row)
+                else:
                     thin.append(row)
         thin.sort(key=lambda r: -r["total"])
+        mapped_but_unseen.sort(key=lambda r: -r["total"])
+        not_record_data.sort(key=lambda r: -r["total"])
         findings.append(
             _emit(
                 {
                     "tool": name,
                     "upstream_calls": len(captured),
-                    "urls": sorted({c["url"] for c in captured})[:3],
+                    "urls": sorted({c["url"] for c in calls})[:3],
+                    "self_description_urls": sorted({c["url"] for c in described})[:3],
                     "thin_fields": thin[:12],
+                    "mapped_but_unseen": mapped_but_unseen[:12],
+                    "not_record_data": not_record_data[:12],
                 },
                 on_result,
             )
@@ -298,6 +546,9 @@ def main():
         rows = finding["thin_fields"]
         label = "THIN" if rows else "ok  "
         detail = ", ".join(f"{r['field']} {r['kept']}/{r['total']}" for r in rows[:5])
+        sparse = finding.get("mapped_but_unseen") or []
+        if sparse and not rows:
+            detail = f"({len(sparse)} selected field(s) null on this page)"
         print(f"  {label}  {finding['tool']:44s} {detail}", flush=True)
         if args.json_output:
             pathlib.Path(args.json_output).write_text(json.dumps(seen, indent=2))

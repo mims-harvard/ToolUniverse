@@ -213,6 +213,60 @@
               },
               "chromosome": {
                 "type": "string"
+              },
+              "entry_nr": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "oma_hog_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "oma_group": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "entry_url": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "genome_url": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "locus_start": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "locus_end": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "locus_strand": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "sequence_md5": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
           }
@@ -414,6 +468,54 @@
                   },
                   "chromosome": {
                     "type": "string"
+                  },
+                  "entry_nr": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "oma_hog_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "entry_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "genome_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "locus_start": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "locus_end": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "locus_strand": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "sequence_md5": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
@@ -694,6 +796,36 @@
                 "type": "string"
               },
               "reference": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "entry_nr": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "annotation_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "with_from": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "assigned_by": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "date": {
                 "type": [
                   "string",
                   "null"

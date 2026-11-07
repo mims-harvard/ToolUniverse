@@ -152,6 +152,11 @@ class SGDProteinTool(BaseTool):
                     "start": row.get("start"),
                     "end": row.get("end"),
                     "domain_link": dom.get("link"),
+                    # How many yeast loci carry this domain. A domain found
+                    # in one protein and one found in 300 are different
+                    # evidence about the protein, and the count sat in the
+                    # same row.
+                    "loci_with_domain": dom.get("count"),
                 }
             )
 
@@ -185,6 +190,9 @@ class SGDProteinTool(BaseTool):
                     "position": row.get("site_index"),
                     "reference": ref.get("display_name"),
                     "pubmed_id": ref.get("pubmed_id"),
+                    # Which database asserted the modification, and by what.
+                    "source": (row.get("source") or {}).get("display_name"),
+                    "modifier": (row.get("modifier") or {}).get("display_name"),
                 }
             )
 

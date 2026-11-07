@@ -152,6 +152,129 @@
               },
               "num_proteins": {
                 "type": "integer"
+              },
+              "gc_content": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "accession": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ena_genome_accession": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ena_sample_accession": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ena_study_accession": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ncbi_genome_accession": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "geographic_origin": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "geographic_range": {
+                "type": "array"
+              },
+              "num_contigs": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "n_50": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "busco_completeness": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "rna_5s": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "rna_16s": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "rna_23s": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "trnas": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "eggnog_coverage": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "ipr_coverage": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "first_created": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "num_genomes_total": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "pangenome_size": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "last_update": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
           }
@@ -420,6 +543,15 @@
           },
           "lineage": {
             "type": "string"
+          },
+          "pipeline_version": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "hierarchy": {
+            "type": "object"
           }
         }
       }
@@ -721,6 +853,39 @@
                   "string",
                   "null"
                 ]
+              },
+              "sample_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "sample_alias": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "sample_desc": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "species": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "last_update": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "sample_metadata": {
+                "type": "object"
               }
             }
           }
@@ -842,6 +1007,18 @@
                 ]
               },
               "download_url": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "alias": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "extension": {
                 "type": [
                   "string",
                   "null"

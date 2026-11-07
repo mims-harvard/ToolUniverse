@@ -122,6 +122,7 @@ class UniProtTaxonomyTool(BaseTool):
                 {
                     "taxon_id": item.get("taxonId"),
                     "scientific_name": item.get("scientificName"),
+                    "common_name": item.get("commonName"),
                     "rank": item.get("rank"),
                     "hidden": item.get("hidden", False),
                 }
@@ -149,7 +150,15 @@ class UniProtTaxonomyTool(BaseTool):
             "common_name": data.get("commonName"),
             "mnemonic": data.get("mnemonic"),
             "rank": data.get("rank"),
+            # Synonyms and misspellings UniProt itself records for this taxon.
+            # The tool's own description calls it "essential for
+            # cross-referencing species in protein databases", and a name that
+            # appears in one database's record and not in the lookup's answer
+            # is precisely what defeats cross-referencing: taxon 9606 answers
+            # "human" and 16 variants, none of which reached the caller.
+            "other_names": data.get("otherNames") or [],
             "lineage": lineage,
+            "external_links": data.get("links") or [],
             "statistics": {
                 "reviewed_protein_count": stats.get("reviewedProteinCount", 0),
                 "unreviewed_protein_count": stats.get("unreviewedProteinCount", 0),
@@ -170,7 +179,11 @@ class UniProtTaxonomyTool(BaseTool):
             inactive.get("inactiveReasonType") if isinstance(inactive, dict) else None
         )
         obsolete_id = stated_from or (requested_id if merged_to else None)
-        if obsolete_id is None and requested_id is not None and returned_id != requested_id:
+        if (
+            obsolete_id is None
+            and requested_id is not None
+            and returned_id != requested_id
+        ):
             obsolete_id = requested_id
 
         if obsolete_id is not None and obsolete_id != returned_id:

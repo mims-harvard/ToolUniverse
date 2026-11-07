@@ -193,6 +193,58 @@
                 "integer",
                 "null"
               ]
+            },
+            "secondary_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Retired accessions for the gene. Older literature cites these, and nothing else recovers them."
+            },
+            "notes": {
+              "type": "array",
+              "description": "Curator notes the model-organism database wrote about the gene",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "note_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What kind of note this is, as the source database classifies it"
+                  },
+                  "text": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The note's text"
+                  }
+                }
+              }
+            },
+            "reference_curies": {
+              "type": "array",
+              "description": "Publication curies for the gene. Alliance lists thousands for a well-studied gene, so this is capped; reference_curies_total is the true count."
+            },
+            "reference_curies_total": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many publications Alliance links to the gene"
+            },
+            "reference_curies_returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many are carried on this response"
+            },
+            "reference_curies_truncated": {
+              "type": "boolean",
+              "description": "True when reference_curies is a prefix of the full list"
             }
           },
           "not": {
@@ -302,6 +354,50 @@
                   "string",
                   "null"
                 ]
+              },
+              "diseases": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Diseases linked to this record"
+              },
+              "automated_description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Alliance's generated one-line description of the gene"
+              },
+              "synonyms": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "gene_synopsis": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "search_score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Alliance's relevance score, which is the order the hits come back in"
+              },
+              "so_term": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Sequence Ontology type of the hit"
+              },
+              "related_data_counts": {
+                "type": "object",
+                "description": "How much of each kind of evidence the gene has, for picking a hit worth following up"
               }
             }
           }
@@ -379,6 +475,74 @@
               "phenotype_statement": {
                 "type": [
                   "string",
+                  "null"
+                ]
+              },
+              "references": {
+                "type": "array",
+                "description": "The publications behind this record",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "agr_curie": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Alliance reference curie"
+                    },
+                    "pubmed_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "e.g. PMID:29735293"
+                    },
+                    "mod_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The model-organism database's own reference id"
+                    },
+                    "citation": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Short citation"
+                    },
+                    "cross_references": {
+                      "type": "array",
+                      "description": "Every curie Alliance cross-references, DOI included",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              },
+              "inferred_allele": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The allele the phenotype was observed in"
+              },
+              "inferred_allele_synonyms": {
+                "type": "array",
+                "description": "Other names for that allele, which is how it is matched across databases"
+              },
+              "conditions": {
+                "type": "array",
+                "description": "Experimental conditions the phenotype was observed under; 'standard conditions' versus a treatment changes what the statement means"
+              },
+              "pubmed_publications": {
+                "type": "array"
+              },
+              "annotation_count": {
+                "type": [
+                  "integer",
                   "null"
                 ]
               }
@@ -479,6 +643,57 @@
                   "string",
                   "null"
                 ]
+              },
+              "references": {
+                "type": "array",
+                "description": "The publications behind this record",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "agr_curie": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Alliance reference curie"
+                    },
+                    "pubmed_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "e.g. PMID:29735293"
+                    },
+                    "mod_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The model-organism database's own reference id"
+                    },
+                    "citation": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Short citation"
+                    },
+                    "cross_references": {
+                      "type": "array",
+                      "description": "Every curie Alliance cross-references, DOI included",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              },
+              "evidence_codes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Evidence codes Alliance assigned to the association"
               }
             }
           }
@@ -679,6 +894,24 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "paralog_gene_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "paralog_symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "paralog_species": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
@@ -799,9 +1032,164 @@
               },
               "references": {
                 "type": "array",
+                "description": "The publications behind this interaction. Empty when Alliance reports none.",
                 "items": {
-                  "type": "string"
+                  "type": "object",
+                  "properties": {
+                    "agr_curie": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Alliance reference curie"
+                    },
+                    "pubmed_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "e.g. PMID:29735293"
+                    },
+                    "mod_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The model-organism database's own reference id, e.g. FB:FBrf0238983"
+                    },
+                    "citation": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Short citation, e.g. 'Wang XC (2018) Eur J Cell Biol 97(4):308-317'"
+                    },
+                    "cross_references": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Every curie Alliance cross-references, DOI included"
+                    }
+                  }
                 }
+              },
+              "relation": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The association's own relation, e.g. genetically_interacts_with"
+              },
+              "subject_role": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "MI ontology id, e.g. MI:0582"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "description": "The queried gene's part in the interaction, e.g. 'suppressed gene'. Without it an interaction type names a pair but not a direction."
+              },
+              "interactor_role": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "MI ontology id, e.g. MI:0582"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "description": "The partner gene's part, e.g. 'suppressor gene'"
+              },
+              "subject_type": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "MI ontology id, e.g. MI:0582"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "description": "Interactor type of the queried gene, e.g. 'gene', 'protein'"
+              },
+              "interactor_type": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "MI ontology id, e.g. MI:0582"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "description": "Interactor type of the partner"
+              },
+              "interaction_source": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "MI ontology id, e.g. MI:0582"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "description": "The database that asserted the interaction, e.g. MI:0478 flybase"
               }
             }
           }
@@ -913,6 +1301,176 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "variants": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "variant_type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "e.g. point_mutation, deletion"
+                        },
+                        "nucleotide_change": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "locations": {
+                          "type": "array",
+                          "description": "Curated genomic locations of the variant",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "start": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "end": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "hgvs": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "description": "Genomic HGVS"
+                              },
+                              "hgvs_coding": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "description": "Coding HGVS"
+                              },
+                              "reference_sequence": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "variant_sequence": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "most_severe_consequence": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "description": "The most severe predicted consequence at this location"
+                              },
+                              "predicted_consequences": {
+                                "type": "array",
+                                "description": "Predicted functional consequences, per transcript",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "transcript": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ],
+                                      "description": "The transcript the consequence is predicted on, e.g. XM_073919248.1"
+                                    },
+                                    "transcript_type": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ],
+                                      "description": "e.g. mRNA"
+                                    },
+                                    "vep_impact": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ],
+                                      "description": "VEP impact class: HIGH, MODERATE, LOW, MODIFIER"
+                                    },
+                                    "vep_consequences": {
+                                      "type": "array",
+                                      "description": "VEP consequence terms, e.g. splice_donor_variant",
+                                      "items": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "hgvs_coding": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ],
+                                      "description": "HGVS coding nomenclature, e.g. XM_073919248.1:c.396+1G>A"
+                                    },
+                                    "sequence_feature": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ],
+                                      "description": "The change as the source states it, e.g. c.396+1G>A"
+                                    },
+                                    "intron_exon_location": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ],
+                                      "description": "e.g. 'Intron 6/6'"
+                                    },
+                                    "gene_level_consequence": {
+                                      "type": [
+                                        "boolean",
+                                        "null"
+                                      ]
+                                    },
+                                    "amino_acid_reference": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "amino_acid_variant": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "codon_reference": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    },
+                                    "codon_variant": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "variants_total": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many variants the record has, as opposed to how many are carried"
                   }
                 }
               }
@@ -948,6 +1506,62 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "model_curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The curie Alliance's endpoints take for the model"
+                  },
+                  "phenotypes": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The phenotypes associated with this record. A hasPhenotype boolean beside no phenotypes is a success beside no data."
+                  },
+                  "modifier_relationship_types": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "diseases": {
+                    "type": "array",
+                    "description": "Diseases linked to this record",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Disease name"
+                        },
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Disease curie, e.g. DOID:162"
+                        },
+                        "association_type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "e.g. is_model_of"
+                        }
+                      }
+                    }
+                  },
+                  "has_disease_annotations": {
+                    "type": "boolean"
+                  },
+                  "has_phenotype_annotations": {
+                    "type": "boolean"
                   }
                 }
               }

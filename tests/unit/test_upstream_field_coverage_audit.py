@@ -134,6 +134,185 @@ def test_a_single_transformed_value_is_below_the_reporting_floor(audit, monkeypa
     assert rows[0]["total"] == 1  # below the default --min-values of 4
 
 
+def test_a_selected_field_that_is_null_on_this_page_is_not_a_drop(audit):
+    """The third false positive, and the one that cost real triage time.
+
+    MediaDive's wrapper does carry `description` and `reference`. Every medium
+    matching 'nutrient agar' is null in both, so neither had a value to
+    survive and both scored zero -- 0/68 and 0/36 -- in a list of candidates to
+    go and fix. A field whose own name reaches the caller was selected,
+    whatever this page happened to hold.
+    """
+    upstream = {"data": [{"reference": f"ref {i}"} for i in range(8)]}
+    returned = {"data": [{"reference": None} for _ in range(3)]}
+
+    rows = {r["field"]: r for r in audit.compare(upstream, returned)}
+
+    assert rows["data[].reference"]["kept"] == 0
+    assert rows["data[].reference"]["mapped"] is True
+
+
+def test_a_field_never_asked_for_is_not_excused_by_the_split(audit):
+    """The same split must still report what the wrapper never selected."""
+    upstream = {"data": [{"link": f"https://example.org/{i}"} for i in range(8)]}
+    returned = {"data": [{"name": "medium"} for _ in range(3)]}
+
+    rows = {r["field"]: r for r in audit.compare(upstream, returned)}
+
+    assert rows["data[].link"]["kept"] == 0
+    assert rows["data[].link"]["mapped"] is False
+
+
+def test_a_surviving_sibling_of_the_same_name_does_not_vouch_for_a_drop(audit):
+    """What the key-name signal gets wrong on its own, and the correction.
+
+    GEO's esummary carries `accession` twice: the series' own, which the tool
+    returns, and `samples[].accession`, which it dropped. A plain key-name
+    match found `accession` in the output and called the sample accessions
+    selected -- hiding the one finding worth having. A leaf name that already
+    reaches the caller from another path explains the match on its own and
+    cannot excuse this path.
+    """
+    upstream = {
+        "accession": "GSE313540",
+        "samples": [{"accession": f"GSM{i}"} for i in range(9000, 9008)],
+    }
+    returned = {"accession": "GSE313540"}
+
+    rows = {r["field"]: r for r in audit.compare(upstream, returned)}
+
+    assert rows["accession"]["kept"] == 1
+    assert rows["samples[].accession"]["kept"] == 0
+    assert rows["samples[].accession"]["mapped"] is False
+
+
+def test_a_transformed_value_keeps_its_field_out_of_the_drop_list(audit):
+    """Synapse maps `type` through a shortener, so no value matches.
+
+    `org.sagebionetworks.repo.model.FileEntity` becomes `file`. The field is
+    there under its own name and nothing else in the output supplies a `type`,
+    so it is a transformation rather than a drop.
+    """
+    upstream = {
+        "page": [
+            {"type": f"org.sagebionetworks.repo.model.FileEntity{i}"} for i in range(6)
+        ]
+    }
+    returned = {"data": [{"type": "file"} for _ in range(6)]}
+
+    rows = {r["field"]: r for r in audit.compare(upstream, returned)}
+
+    assert rows["page[].type"]["kept"] == 0
+    assert rows["page[].type"]["mapped"] is True
+
+
+def test_a_schema_document_is_not_a_record(audit):
+    """The largest single false-positive class after pagination.
+
+    ChEMBL's wrappers fetch `/molecule/CHEMBL25.json` and then
+    `/molecule/schema.json`. The second document's leaf values are FIELD
+    NAMES, so none of them reach the caller and all 20 ChEMBL tools were
+    reported as dropping data. None of them were.
+    """
+    assert audit.describes_the_api_not_a_record(
+        {
+            "method": "GET",
+            "url": "https://www.ebi.ac.uk/chembl/api/data/molecule/schema.json",
+        }
+    )
+    assert audit.describes_the_api_not_a_record(
+        {"method": "OPTIONS", "url": "https://x/y"}
+    )
+    assert not audit.describes_the_api_not_a_record(
+        {
+            "method": "GET",
+            "url": "https://www.ebi.ac.uk/chembl/api/data/molecule/CHEMBL25.json",
+        }
+    )
+
+
+def test_a_value_promoted_to_a_key_still_reached_the_caller(audit):
+    """Pivoting a long-format response into a map is not a loss.
+
+    `OmniPath_get_annotation_resource_geneset` turns rows of {label, value}
+    into `annotations: {<label>: <value>}`. All 9,755 `label` values reach the
+    caller as keys and none as values, which read as the biggest drop in the
+    catalogue.
+    """
+    upstream = {"rows": [{"label": f"annotation {i}"} for i in range(8)]}
+    returned = {"annotations": {f"annotation {i}": 1 for i in range(8)}}
+
+    rows = {r["field"]: r for r in audit.compare(upstream, returned)}
+
+    assert rows["rows[].label"]["kept"] == 8
+
+
+def test_transport_and_search_machinery_are_not_the_record(audit):
+    """Reported apart from the candidates, because they are never the answer.
+
+    Alliance answers a `resourceDescriptorPage` per cross-reference holding
+    the URL template used to build the link the wrapper already returns, and a
+    `supplementalData.distinctFieldValues` holding the search facets. Both
+    scored as dropped fields on every Alliance tool.
+    """
+    for field in [
+        "gene.crossReferences[].resourceDescriptorPage.urlTemplate",
+        "supplementalData.distinctFieldValues.molecularConsequence[]",
+        "data[].links.self",
+        "data[].relationships.pipeline.links.related",
+        "results[].highlights.symbol[]",
+        "results[].subject.createdBy.dateCreated",
+        "doTerm.definition",
+        "esearchresult.translationstack[].term",
+    ]:
+        assert not audit.is_record_data(field), field
+    for field in [
+        "samples[].accession",
+        "profiles.rows[].expressionUnit",
+        "result[].effective_domain_size",
+        "participants[].linkedFeatures[].name",
+        "[].references",
+    ]:
+        assert audit.is_record_data(field), field
+
+
+def test_a_surrogate_id_beside_a_link_is_not_the_record(audit):
+    """SGD answers its own row number for every referenced object.
+
+    `{"id": 823128, "display_name": "CAA84998.1", "link": "/locus/S000000259"}`
+    -- the id is the database's row number and the identifier that means
+    something is in the link, which is what the wrapper reads. Scoped to this
+    shape on purpose: a bare numeric `id` IS the identifier in other APIs, and
+    those records carry no link beside it.
+    """
+    stub = {"rows": [{"id": 823128, "display_name": "X", "link": "/locus/S1"}]}
+    assert audit.surrogate_id_paths(stub) == {"rows[].id"}
+
+    # A PubChem-shaped record, where the numeric id is the identifier.
+    bare = {"rows": [{"id": 2244, "name": "aspirin"}]}
+    assert audit.surrogate_id_paths(bare) == set()
+
+
+def test_pages_of_one_endpoint_are_one_response(audit):
+    """Comparing each page against the merged output reported the same field
+    once per page, with a different total each time.
+
+    Every `disease_target_score` tool showed
+    `data.disease.associatedTargets.rows[].datasourceScores[].id` five times
+    over, and page 1's target symbols scored zero because the output holds a
+    later page's rows. Grouped by URL, a value that reached the caller from
+    any page counts once.
+    """
+    page_one = {"rows": [{"symbol": f"GENE{i}"} for i in range(6)]}
+    page_two = {"rows": [{"symbol": f"GENE{i}"} for i in range(6, 12)]}
+    returned = {"hits": [{"symbol": f"GENE{i}"} for i in range(12)]}
+
+    rows = {r["field"]: r for r in audit.compare([page_one, page_two], returned)}
+
+    assert rows["[].rows[].symbol"]["kept"] == 12
+    assert rows["[].rows[].symbol"]["total"] == 12
+
+
 def test_the_summariser_merges_the_shards_and_records_the_count(summarize, tmp_path):
     """Measured and then thrown away is the failure mode to avoid."""
     shard = tmp_path / "shards" / "a"

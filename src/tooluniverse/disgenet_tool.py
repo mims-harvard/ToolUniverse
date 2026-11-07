@@ -133,26 +133,78 @@ class DisGeNETTool(BaseTool):
         return payload, warnings
 
     @staticmethod
-    def _fmt_gda(row: Dict[str, Any]) -> Dict[str, Any]:
+    def _common_fields(row: Dict[str, Any]) -> Dict[str, Any]:
+        """The parts of a DisGeNET summary row shared by gene and variant hits.
+
+        A summary row carries 37 fields and seven were read. Three groups
+        mattered and are carried now:
+
+        * the disease's other identifiers. `diseaseUMLSCUI` alone pins the
+          disease in one vocabulary; `diseaseVocabularies` is where the MONDO,
+          DO, MeSH, ORDO and NCI ids are, and without them an association
+          cannot be joined to anything else.
+        * the evidence counts. The tool's own description promises "evidence
+          counts" and returned only the PMID count, while the same row states
+          how many clinical trials and dbSNP records support the association,
+          and over what years.
+        * what the score is made of. `scoreBreakdown` names the sources behind
+          each component and their weights, so a 1.25 can be read as five
+          curated sources at weight 0.7 plus one clinical at 0.1 rather than
+          taken on faith.
+        """
         return {
-            "gene_symbol": row.get("symbolOfGene"),
-            "gene_ncbi_id": row.get("geneNcbiID"),
+            "assoc_id": row.get("assocID"),
             "disease_name": row.get("diseaseName"),
             "disease_umls_cui": row.get("diseaseUMLSCUI"),
+            "disease_type": row.get("diseaseType"),
+            "disease_vocabularies": row.get("diseaseVocabularies") or [],
+            "disease_classes": {
+                "mesh": row.get("diseaseClasses_MSH") or [],
+                "do": row.get("diseaseClasses_DO") or [],
+                "hpo": row.get("diseaseClasses_HPO") or [],
+                "umls_semantic_type": row.get("diseaseClasses_UMLS_ST") or [],
+            },
             "score": row.get("score"),
+            "normalized_score": row.get("normalized_score"),
+            "score_breakdown": row.get("scoreBreakdown") or [],
             "n_pmids": row.get("numPMIDs"),
+            "n_clinical_trials": row.get("numCTsupportingAssociation"),
+            "n_dbsnps": row.get("numDBSNPsupportingAssociation"),
+            # The chemicals named in the evidence are a dimension of their own
+            # -- BRCA1 alone answers 727 of them with 3,206 cross-references --
+            # so the count is reported and the list is not. Query DisGeNET's
+            # chemical endpoints with `assoc_id` for the list itself.
+            "n_chemicals_in_evidence": row.get("numChemsIncludedInEvidences"),
+            "year_first": row.get("yearInitial"),
+            "year_last": row.get("yearFinal"),
             "ei": row.get("ei"),
+            "el": row.get("el"),
         }
 
     @staticmethod
-    def _fmt_vda(row: Dict[str, Any]) -> Dict[str, Any]:
+    def _gene_fields(row: Dict[str, Any]) -> Dict[str, Any]:
+        """The gene's own identifiers and DisGeNET's gene-level indices."""
+        return {
+            "gene_symbol": row.get("symbolOfGene"),
+            "gene_ncbi_id": row.get("geneNcbiID"),
+            "gene_ensembl_ids": row.get("geneEnsemblIDs") or [],
+            "gene_ncbi_type": row.get("geneNcbiType"),
+            "gene_uniprot_ids": row.get("geneProteinStrIDs") or [],
+            "gene_dsi": row.get("geneDSI"),
+            "gene_dpi": row.get("geneDPI"),
+            "gene_pli": row.get("genepLI"),
+        }
+
+    @classmethod
+    def _fmt_gda(cls, row: Dict[str, Any]) -> Dict[str, Any]:
+        return {**cls._gene_fields(row), **cls._common_fields(row)}
+
+    @classmethod
+    def _fmt_vda(cls, row: Dict[str, Any]) -> Dict[str, Any]:
         return {
             "variant": row.get("variantStrID"),
-            "gene_symbol": row.get("symbolOfGene"),
-            "disease_name": row.get("diseaseName"),
-            "disease_umls_cui": row.get("diseaseUMLSCUI"),
-            "score": row.get("score"),
-            "n_pmids": row.get("numPMIDs"),
+            **cls._gene_fields(row),
+            **cls._common_fields(row),
         }
 
     @staticmethod
@@ -321,6 +373,17 @@ class DisGeNETTool(BaseTool):
                         "ncbi_id": row.get("geneNcbiID"),
                         "score": row.get("score"),
                         "n_pmids": row.get("numPMIDs"),
+                        # Same row, same gap: the specificity indices are what
+                        # say whether a gene on a disease's list is specific to
+                        # it or associated with hundreds of diseases, and the
+                        # trial and dbSNP counts are evidence counts too.
+                        "ensembl_ids": row.get("geneEnsemblIDs") or [],
+                        "ncbi_type": row.get("geneNcbiType"),
+                        "dsi": row.get("geneDSI"),
+                        "dpi": row.get("geneDPI"),
+                        "pli": row.get("genepLI"),
+                        "n_clinical_trials": row.get("numCTsupportingAssociation"),
+                        "n_dbsnps": row.get("numDBSNPsupportingAssociation"),
                     }
                 )
         genes = self._apply_filters(

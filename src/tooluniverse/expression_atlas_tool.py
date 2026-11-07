@@ -503,6 +503,53 @@ class ExpressionAtlasTool(BaseTool):
 
             experiment = data.get("experiment", data)
 
+            # The `experiment` object really is sparse here -- measured live on
+            # E-MTAB-2836, experimentalFactors, technologyType, contrasts,
+            # numberOfAssays and pubmedIds are all null. The experiment's
+            # DESIGN is not missing from the response, though: it is in
+            # `columnHeaders`, one entry per assay group, which this tool did
+            # not read while its description said the API "does not expose
+            # per-experiment design ... through this endpoint".
+            column_headers = data.get("columnHeaders") or []
+            assay_groups = []
+            factor_names = []
+            for col in column_headers:
+                if not isinstance(col, dict):
+                    continue
+                summary = col.get("assayGroupSummary") or {}
+                properties = []
+                for prop in summary.get("properties") or []:
+                    if not isinstance(prop, dict):
+                        continue
+                    properties.append(
+                        {
+                            "property_name": prop.get("propertyName"),
+                            "value": prop.get("testValue"),
+                            "property_type": prop.get("contrastPropertyType"),
+                        }
+                    )
+                    if (
+                        prop.get("contrastPropertyType") == "FACTOR"
+                        and prop.get("propertyName")
+                        and prop["propertyName"] not in factor_names
+                    ):
+                        factor_names.append(prop["propertyName"])
+                assay_groups.append(
+                    {
+                        "assay_group_id": col.get("assayGroupId"),
+                        "factor_value": col.get("factorValue"),
+                        "ontology_term_id": col.get("factorValueOntologyTermId"),
+                        "replicates": summary.get("replicates"),
+                        "properties": properties,
+                    }
+                )
+
+            replicate_total = sum(
+                group["replicates"]
+                for group in assay_groups
+                if isinstance(group.get("replicates"), int)
+            )
+
             return {
                 "status": "success",
                 "data": {
@@ -510,10 +557,14 @@ class ExpressionAtlasTool(BaseTool):
                     "type": experiment.get("type"),
                     "description": experiment.get("description"),
                     "species": experiment.get("species"),
-                    "factors": experiment.get("experimentalFactors", []),
+                    "urls": experiment.get("urls") or [],
+                    "factors": experiment.get("experimentalFactors") or factor_names,
                     "technology": experiment.get("technologyType", []),
                     "contrasts": experiment.get("contrasts", []),
-                    "assay_count": experiment.get("numberOfAssays"),
+                    "assay_groups": assay_groups,
+                    "assay_group_count": len(assay_groups),
+                    "assay_count": experiment.get("numberOfAssays")
+                    or (replicate_total or None),
                     "last_update": experiment.get("lastUpdate"),
                     "pubmed_ids": experiment.get("pubmedIds", []),
                 },

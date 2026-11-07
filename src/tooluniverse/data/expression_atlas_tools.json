@@ -470,7 +470,7 @@
   },
   {
     "name": "ExpressionAtlas_get_experiment",
-    "description": "Get metadata for a specific Expression Atlas experiment by accession (e.g., E-MTAB-2836): accession, type, species, and description/URLs. Caveat: the underlying GXA API does not expose per-experiment design/technology/contrasts/PubMed/assay-count data through this endpoint (confirmed live: those fields are always empty) -- for that level of detail, visit the experiment's page on https://www.ebi.ac.uk/gxa directly.",
+    "description": "Get metadata for a specific Expression Atlas experiment by accession (e.g., E-MTAB-2836): accession, type, species, and description/URLs. The experiment's design comes back in `assay_groups`: one entry per condition with its factor value, ontology term, replicate count and full sample properties (FACTOR = varied, SAMPLE = held fixed), plus `factors`, `assay_group_count` and an `assay_count` summed from the replicates. Caveat: GXA leaves `experimentalFactors`, `technologyType`, `contrasts`, `numberOfAssays`, `pubmedIds` and `lastUpdate` null on its own experiment object (confirmed live), so `technology`, `contrasts`, `pubmed_ids` and `last_update` are usually empty; for those, visit the experiment's page on https://www.ebi.ac.uk/gxa directly. This tool returns metadata and design only; for the per-gene expression values use GxA_get_experiment_expression, which reports them with their unit.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -513,7 +513,11 @@
               "type": "string"
             },
             "factors": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "The experiment's varied factors. GXA leaves experiment.experimentalFactors null, so these are read off the assay groups' FACTOR properties."
             },
             "technology": {
               "type": "array"
@@ -522,13 +526,93 @@
               "type": "array"
             },
             "assay_count": {
-              "type": "null"
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Assays in the experiment. GXA leaves experiment.numberOfAssays null, so this is the sum of the assay groups' replicates (103 for E-MTAB-2836) and null when neither is available."
             },
             "last_update": {
               "type": "null"
             },
             "pubmed_ids": {
               "type": "array"
+            },
+            "assay_group_count": {
+              "type": "integer",
+              "description": "How many assay groups (conditions) the experiment contrasts"
+            },
+            "urls": {
+              "type": [
+                "object",
+                "array",
+                "null"
+              ],
+              "description": "GXA's own links for the experiment: main_page, download, genome_browsers"
+            },
+            "assay_groups": {
+              "type": "array",
+              "description": "The experiment's design, one entry per assay group. GXA answers this under columnHeaders in the same response that leaves experiment.experimentalFactors and contrasts null.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "assay_group_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "e.g. g1"
+                  },
+                  "factor_value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The condition this group represents, e.g. 'adipose tissue'"
+                  },
+                  "ontology_term_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "e.g. UBERON_0001013"
+                  },
+                  "replicates": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Assays in this group"
+                  },
+                  "properties": {
+                    "type": "array",
+                    "description": "Every sample property behind the group. property_type FACTOR is varied in this experiment; SAMPLE is held fixed.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "property_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "value": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "property_type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
           },
           "required": [
