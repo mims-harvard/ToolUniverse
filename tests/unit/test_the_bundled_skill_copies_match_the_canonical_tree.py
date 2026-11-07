@@ -18,6 +18,14 @@ canonical tree. Of the Codex copy's 615, 452 are identical and 163 differ --
 exactly one per skill, each of them `SKILL.md`, which the Codex sync rewrites
 to satisfy that host's frontmatter limits. So the Claude copy is compared
 directly, and the Codex copy is compared against a fresh run of its own sync.
+
+Both compare what git tracks, not what is on disk. The first version of this
+walked the directories and was red in the full suite while green on its own:
+`test_peptide_deorphanization_scripts.py` executes scripts inside
+`plugin/skills/.../scripts/`, Python leaves `__pycache__/*.pyc` beside them,
+and those were reported as files "in the copy but not in skills/". The syncs
+exclude `__pycache__/` and `*.pyc`, so none is ever committed -- and what is
+committed is the whole of what this guard is about.
 """
 
 import hashlib
@@ -72,14 +80,44 @@ def _eligible_skills():
     return names
 
 
-def _files_under(root):
-    return sorted(p.relative_to(root) for p in root.rglob("*") if p.is_file())
+def _tracked_under(root):
+    """Repo-relative-to-`root` paths of the files git tracks beneath it.
+
+    `git ls-files` rather than a directory walk: the trees hold build artifacts
+    at test time that no sync ever copies and git never stores.
+    """
+    listing = subprocess.run(
+        ["git", "ls-files", "-z", "--", str(root.relative_to(REPO))],
+        cwd=REPO,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    prefix = root.relative_to(REPO)
+    return sorted(
+        pathlib.PurePosixPath(entry).relative_to(prefix)
+        for entry in listing.stdout.split("\0")
+        if entry
+    )
+
+
+def _skill_names(paths):
+    """The skill directory names a set of relative paths covers."""
+    return {p.parts[0] for p in paths if len(p.parts) > 1 and p.name == "SKILL.md"}
+
+
+def _files_in(root):
+    return sorted(
+        pathlib.PurePosixPath(p.relative_to(root).as_posix())
+        for p in root.rglob("*")
+        if p.is_file()
+    )
 
 
 def test_the_claude_copy_is_byte_identical_to_the_canonical_tree():
     """It is an unmodified filtered copy, so any difference is staleness."""
     stale = []
-    for rel in _files_under(CLAUDE_COPY):
+    for rel in _tracked_under(CLAUDE_COPY):
         source = CANONICAL / rel
         if not source.is_file():
             stale.append(f"{rel} is in the copy but not in skills/")
@@ -95,7 +133,7 @@ def test_the_claude_copy_is_byte_identical_to_the_canonical_tree():
 def test_every_skill_the_claude_packaging_ships_is_present():
     """A newly added skill that was never synced is missing, not merely stale."""
     expected = _eligible_skills() - _claude_excluded()
-    present = {p.name for p in CLAUDE_COPY.iterdir() if (p / "SKILL.md").is_file()}
+    present = _skill_names(_tracked_under(CLAUDE_COPY))
 
     assert expected - present == set(), (
         f"skills missing from plugin/skills/: {sorted(expected - present)}; {RESYNC}"
@@ -106,8 +144,15 @@ def test_every_skill_the_claude_packaging_ships_is_present():
     )
 
 
-def test_the_codex_copy_matches_a_fresh_run_of_its_own_sync(tmp_path):
-    """The Codex copy rewrites each SKILL.md, so it is compared to a rebuild.
+@pytest.fixture(scope="module")
+def fresh_codex_tree(tmp_path_factory):
+    """One rebuild of the Codex copy, shared by the two tests that read it.
+
+    Module-scoped because the sync takes ~35 s against `pytest.ini`'s 60 s
+    timeout: running it per test spent the budget twice and the second one blew
+    it on a loaded machine. The tests below stay separate because they answer
+    different questions, and the timeout mark covers the test that pays for the
+    fixture.
 
     `scripts/sync-codex-plugin-skills.sh` takes `CODEX_PLUGIN_SKILLS_DEST` for
     exactly this -- building somewhere else so a test never regenerates tracked
@@ -115,7 +160,7 @@ def test_the_codex_copy_matches_a_fresh_run_of_its_own_sync(tmp_path):
     description step needs PyYAML, and a `python3` on PATH without it once
     rewrote real descriptions down to a bare `">-"`.
     """
-    fresh = tmp_path / "skills"
+    fresh = tmp_path_factory.mktemp("codex") / "skills"
     env = dict(os.environ)
     env["CODEX_PLUGIN_SKILLS_DEST"] = str(fresh)
     env["CODEX_PLUGIN_PYTHON"] = sys.executable
@@ -124,8 +169,15 @@ def test_the_codex_copy_matches_a_fresh_run_of_its_own_sync(tmp_path):
         [str(CODEX_SYNC)], cwd=REPO, env=env, capture_output=True, text=True
     )
     assert result.returncode == 0, f"the Codex sync failed:\n{result.stderr[-2000:]}"
+    return fresh
 
-    tracked_files, fresh_files = _files_under(CODEX_COPY), _files_under(fresh)
+
+@pytest.mark.timeout(300)
+def test_the_codex_copy_matches_a_fresh_run_of_its_own_sync(fresh_codex_tree):
+    """The Codex copy rewrites each SKILL.md, so it is compared to a rebuild."""
+    fresh = fresh_codex_tree
+
+    tracked_files, fresh_files = _tracked_under(CODEX_COPY), _files_in(fresh)
     assert tracked_files == fresh_files, (
         "plugins/tooluniverse/skills/ holds a different set of files than its "
         f"sync produces; {RESYNC}\n"
@@ -141,4 +193,39 @@ def test_the_codex_copy_matches_a_fresh_run_of_its_own_sync(tmp_path):
     assert not stale, (
         f"{len(stale)} file(s) in plugins/tooluniverse/skills/ are not what the "
         f"sync produces; {RESYNC}\n  " + "\n  ".join(stale[:20])
+    )
+
+
+@pytest.mark.timeout(300)
+def test_the_sync_never_produces_a_file_the_repository_would_refuse(fresh_codex_tree):
+    """A synced file that `.gitignore` covers can never equal what is committed.
+
+    `.gitignore` line 159 ignores `*_SUMMARY.md`. The canonical copy of
+    `setup-tooluniverse/SKILL_SUMMARY.md` predates the rule and is tracked, so
+    the syncs copied it into both plugin trees -- where the rule does apply.
+    The result was a file present on every machine that ran the sync and absent
+    for everyone who installed a plugin from git, and a tracked copy that could
+    not match its own generator no matter who ran it.
+
+    Stated as the invariant rather than the instance: whatever the ignore rules
+    grow into, output the repository will not store is output no packaging can
+    ship.
+    """
+    fresh = fresh_codex_tree
+
+    # check-ignore is asked about the paths as they would land in the tracked
+    # tree, not about their temp-directory twins, which no rule mentions.
+    candidates = [str(CODEX_COPY.relative_to(REPO) / rel) for rel in _files_in(fresh)]
+    ignored = subprocess.run(
+        ["git", "check-ignore", "--stdin"],
+        cwd=REPO,
+        input="\n".join(candidates),
+        capture_output=True,
+        text=True,
+    )
+
+    assert not ignored.stdout.strip(), (
+        "the sync produces files .gitignore covers, so they cannot be committed "
+        "and users installing from git will not get them:\n  "
+        + "\n  ".join(ignored.stdout.split())
     )

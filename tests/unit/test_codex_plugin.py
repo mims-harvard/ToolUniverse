@@ -218,6 +218,14 @@ class TestCodexSkillDescriptionCompaction:
 
 
 @pytest.mark.unit
+# Measured while adding test_the_bundled_skill_copies_match_the_canonical_tree.py,
+# which runs the same sync: 35 s on an idle machine and 66 s on a loaded one,
+# against pytest.ini's 60 s default. This test has the same shape and the same
+# budget, so it was one busy runner away from a red build nobody could
+# reproduce. A hang reported at 300 s is worse than one reported at 60 s; a
+# spurious failure that sends someone hunting a phantom regression is worse
+# than both.
+@pytest.mark.timeout(300)
 def test_build_codex_plugin(tmp_path):
     """The build script assembles a complete plugin bundle.
 
