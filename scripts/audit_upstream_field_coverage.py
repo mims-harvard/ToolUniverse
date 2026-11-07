@@ -135,26 +135,37 @@ def leaf_fields(node, prefix="", out=None, depth=0):
     return out
 
 
-def record_count(node, depth=0, limit=SURVIVOR_DEPTH):
-    """How many records a structure holds: the longest list of dicts in it.
+def record_count(node, limit=SURVIVOR_DEPTH):
+    """How many records a structure holds: the SHALLOWEST list of dicts in it.
 
     A proxy, and a deliberately crude one. It exists to tell a response that
     was CUT from one that was not, which is the difference between a field the
     wrapper dropped and a field whose values all sit in rows the caller was
     told it would not get.
+
+    Shallowest, not largest. With the largest, one record carrying a longer
+    inner list than the record list itself decided the answer: a MaveDB
+    score-set search answers 44 score sets and one of their papers has 100
+    authors, so "largest" read the author list as the record count on both
+    sides and the comparison said nothing was cut.
     """
-    if depth > limit:
-        return 0
-    best = 0
-    if isinstance(node, dict):
-        for value in node.values():
-            best = max(best, record_count(value, depth + 1, limit))
-    elif isinstance(node, list):
-        if sum(1 for item in node if isinstance(item, dict)) > 1:
-            best = len(node)
-        for item in node:
-            best = max(best, record_count(item, depth + 1, limit))
-    return best
+    frontier = [node]
+    for _ in range(limit):
+        if not frontier:
+            return 0
+        best = 0
+        children = []
+        for item in frontier:
+            if isinstance(item, dict):
+                children.extend(item.values())
+            elif isinstance(item, list):
+                if sum(1 for element in item if isinstance(element, dict)) > 1:
+                    best = max(best, len(item))
+                children.extend(item)
+        if best:
+            return best
+        frontier = children
+    return 0
 
 
 def normalise_key(name):
@@ -206,7 +217,12 @@ NOT_RECORD_DATA = re.compile(
                                                 # already points at
   | _links?(\.|\[)                             # {id, url} link objects beside
                                                 # the field they link
-  | (^|\.)(createdBy|updatedBy)(\.|\[)        # audit trail
+  | (^|\.)(createdBy|updatedBy|modifiedBy)(\.|\[)   # audit trail
+  | (^|\.)(creationDate|modificationDate)$    # and its timestamps
+  | (^|\.)recordType$                          # MaveDB's type discriminator:
+                                                # ShortTargetGene,
+                                                # PublicationIdentifier,
+                                                # ClinicalControlWithClinvarLinks
   | _searchable(\[\])?$ | _closure            # Solr expansions
   | (^|\.)(_score|_version_|maxScore|numFound|QTime|responseHeader)$
     # bigBed display columns. `reserved` is the item RGB -- "0,176,240" for a
@@ -257,7 +273,10 @@ def key_names_raw(node, out=None, depth=0, limit=SURVIVOR_DEPTH):
     return out
 
 
-STUB_SIBLINGS = ("link", "display_name", "format_name", "href", "url")
+# A numeric `id` beside one of these is the database's own row number, and the
+# identifier that means something is the sibling. `urn` is MaveDB's: every
+# record carries both, and only the urn can be passed back to the API.
+STUB_SIBLINGS = ("link", "display_name", "format_name", "href", "url", "urn")
 
 
 def surrogate_id_paths(node, prefix="", out=None, depth=0):

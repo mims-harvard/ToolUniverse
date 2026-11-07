@@ -326,6 +326,18 @@ def test_a_record_count_tells_a_cut_response_from_a_whole_one(audit):
     assert audit.record_count({"wrapped": [{"only": "one"}]}) == 0
     assert audit.record_count({"scalars": [1, 2, 3]}) == 0
 
+    # The shallowest list of records, not the largest one anywhere. A MaveDB
+    # score-set search answers 44 score sets and one of their papers carries
+    # 100 authors; reading the author list as the record count made both
+    # sides look the same size and the cut invisible.
+    nested = {
+        "scoreSets": [
+            {"urn": f"urn:{i}", "authors": [{"name": str(n)} for n in range(100)]}
+            for i in range(44)
+        ]
+    }
+    assert audit.record_count(nested) == 44
+
 
 def test_a_sparse_field_behind_a_declared_cut_is_not_a_drop(audit, monkeypatch):
     """The last false-positive class the three families turned up.

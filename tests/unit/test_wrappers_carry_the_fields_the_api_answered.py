@@ -598,6 +598,37 @@ UPSTREAM_KEYS = [
         "supplement_number",
         "which PMA decision a row is, where one number covers the approval and every change",
     ),
+    # Round six.
+    (
+        "mavedb_tool.py",
+        "clinvarLinks",
+        "the link from a ClinVar control to the measured score, read from a key that is not there",
+    ),
+    (
+        "mavedb_tool.py",
+        "def _publication",
+        "the paper's title, journal, year and authors beside the PubMed number",
+    ),
+    (
+        "mavedb_tool.py",
+        "uniprotIdFromMappedMetadata",
+        "the target's UniProt accession, which was read from a key a target sequence does not have",
+    ),
+    (
+        "mavedb_tool.py",
+        "scoreCalibrations",
+        "the score ranges that map onto ACMG evidence strengths",
+    ),
+    (
+        "mavedb_tool.py",
+        "scoreDistribution",
+        "the range and histogram the caller needs to pick a threshold",
+    ),
+    (
+        "mavedb_tool.py",
+        "def _keywords",
+        "the controlled keywords an experiment is indexed under",
+    ),
 ]
 
 
@@ -702,6 +733,14 @@ DECLARED = [
     ("OpenFDADevice_get_classification", "definition"),
     ("OpenFDADevice_search_510k", "decision_code"),
     ("OpenFDADevice_search_pma", "supplement_number"),
+    ("MaveDB_get_score_set", "score_calibrations"),
+    ("MaveDB_get_score_set", "score_distribution"),
+    ("MaveDB_get_score_set", "dataset_columns"),
+    ("MaveDB_get_score_set", "experiment"),
+    ("MaveDB_get_clinical_controls", "variant_links"),
+    ("MaveDB_search_experiments", "keywords"),
+    ("MaveDB_search_experiments", "method"),
+    ("MaveDB_search_score_sets", "target_gene_details"),
 ]
 
 
@@ -716,6 +755,23 @@ def test_the_return_schema_declares_the_field_the_wrapper_now_returns(tool, fiel
     schema = json.dumps(_config(tool).get("return_schema") or {})
     assert f'"{field}"' in schema, (
         f"{tool} returns `{field}` and its return_schema does not declare it"
+    )
+
+
+def test_mavedb_clinical_controls_link_to_the_score_sets_own_variants():
+    """The endpoint exists to connect a ClinVar call to a measured score.
+
+    A clinical control answers "ClinVar calls 65709 in BRCA2 Pathogenic, by
+    expert panel". The link to the score set's own variant arrives under
+    `clinvarLinks` and was read from `mappedVariants`, which the response does
+    not carry -- so `mapped_variant_urns` was empty on all 2,122 controls of
+    urn:mavedb:00001263-a-2 and the one thing the caller came for was absent.
+    """
+    source = _source("mavedb_tool.py")
+    assert 'entry.get("clinvarLinks")' in source
+    assert 'entry.get("mappedVariants")' in source, (
+        "keep the old spelling as a fallback rather than swapping one guess "
+        "for another"
     )
 
 
