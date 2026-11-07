@@ -684,6 +684,31 @@ UPSTREAM_KEYS = [
         'profile.get("AcceptedSymbol")',
         "where a symbol resolves when USDA names an accepted taxon separately",
     ),
+    (
+        "cancer_prognosis_tool.py",
+        "_study_counts",
+        "samples per modality, where max() of three of them was the whole answer",
+    ),
+    (
+        "cancer_prognosis_tool.py",
+        "referenceGenome",
+        "whether a study's coordinates are hg19 or hg38",
+    ),
+    (
+        "cancer_prognosis_tool.py",
+        'p.get("datatype")',
+        "whether expression values are Z-scores, which was being inferred from the profile id",
+    ),
+    (
+        "fda_orange_book_tool.py",
+        "def _identifiers",
+        "the NDC and SPL codes an approval is joined to a claim or a label by",
+    ),
+    (
+        "fda_orange_book_tool.py",
+        "reference_standard",
+        "which product generics are tested against, and which product a TE code is for",
+    ),
 ]
 
 
@@ -810,6 +835,15 @@ DECLARED = [
     ("USDA_plants_get_profile", "available_data"),
     ("USDA_plants_get_profile", "synonym_note"),
     ("USDA_plants_search_by_name", "accepted_symbol"),
+    ("CancerPrognosis_search_studies", "sample_counts"),
+    ("CancerPrognosis_search_studies", "reference_genome"),
+    ("CancerPrognosis_search_studies", "cancer_type_name"),
+    ("CancerPrognosis_get_study_summary", "datatype"),
+    ("CancerPrognosis_get_gene_expression", "profile_datatype"),
+    ("FDA_OrangeBook_get_approval_history", "products"),
+    ("FDA_OrangeBook_get_approval_history", "identifiers"),
+    ("FDA_OrangeBook_get_te_code", "dosage_form"),
+    ("FDA_OrangeBook_search_drug", "identifiers"),
 ]
 
 
@@ -825,6 +859,33 @@ def test_the_return_schema_declares_the_field_the_wrapper_now_returns(tool, fiel
     assert f'"{field}"' in schema, (
         f"{tool} returns `{field}` and its return_schema does not declare it"
     )
+
+
+def test_a_te_code_names_the_product_it_applies_to():
+    """"AB" for the 80 mg tablet says nothing about the oral solution.
+
+    Therapeutic equivalence is a property of a product -- a dosage form, a
+    route and a strength -- and the row carried the brand name, the code and
+    the application number, leaving the caller to assume one TE code covered
+    every form the brand is sold in.
+    """
+    source = _source("fda_orange_book_tool.py")
+    assert '"dosage_form": product.get("dosage_form")' in source
+    assert '"active_ingredients": product.get(' in source
+
+
+def test_cbioportal_sample_counts_are_not_one_number():
+    """`max()` of three counts, and no way to tell which one it was.
+
+    BRCA TCGA has 1,108 samples, 982 sequenced, 1,080 with CNA, 1,100 with
+    RNA-seq v2, 529 with microarray, 316 with HM27 methylation and 892 with
+    RPPA. A study that can answer an expression question may not be able to
+    answer a methylation one, and `sample_count` could not tell them apart.
+    """
+    source = _source("cancer_prognosis_tool.py")
+    assert "_study_counts" in source
+    assert "methylationHm27SampleCount" in source
+    assert "rppaSampleCount" in source
 
 
 def test_usda_says_when_a_symbol_was_a_synonym():

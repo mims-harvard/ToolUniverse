@@ -276,6 +276,10 @@ NOT_RECORD_DATA = re.compile(
     # USDA's per-state map extents. The fact is which states the plant occurs
     # in; the four corners are for drawing the map, like bigBed's thickStart.
   | (^|\.)MapCoordinates\[\]\.(XMin|YMin|XMax|YMax)$
+    # cBioPortal's base64 internal row keys, derivable from the sample and
+    # study ids it returns beside them, and a colour for its own UI.
+  | (^|\.)unique(Patient|Sample)Key$
+  | (^|\.)dedicatedColor$
     """
 )
 
@@ -361,6 +365,14 @@ def compare(upstream, returned):
         key for key in key_names_raw(returned) if len(key) >= MIN_VALUE_LENGTH
     }
     present = key_names(returned)
+    # A value can also reach the caller as a KEY whose spelling the wrapper
+    # normalised. cBioPortal's survival records are long-format rows of
+    # {clinicalAttributeId: "OS_MONTHS", value: 31.1}, and the wrapper pivots
+    # them into `os_months` -- the attribute NAME reaches the caller as a key, in
+    # a different case and with a different separator, so neither the raw
+    # value diff nor the raw key set matched it.
+    normalised_keys = {normalise_key(key) for key in key_names_raw(returned)}
+
     def reached(value):
         """Did this upstream value reach the caller, prefix or no prefix?
 
@@ -371,6 +383,8 @@ def compare(upstream, returned):
         while it was plainly there.
         """
         if value in survivors:
+            return True
+        if normalise_key(value) in normalised_keys:
             return True
         head, _, tail = value.partition(":")
         return bool(tail) and len(tail) >= MIN_VALUE_LENGTH and tail in survivors

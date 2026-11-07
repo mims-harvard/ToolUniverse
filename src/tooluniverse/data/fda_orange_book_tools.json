@@ -48,7 +48,91 @@
       "type": "object",
       "properties": {
         "drugs": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "application_number": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "sponsor_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "identifiers": {
+                "type": "object",
+                "description": "The codes a Drugs@FDA record is joined to the rest of the world by: NDC product and package codes, RxCUI, UNII, the SPL set id, the substance and manufacturer names. Without the NDCs an approval cannot be matched to a billing claim or a shortage notice; without the SPL set id, not to the label."
+              },
+              "products": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "product_number": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "brand_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "active_ingredients": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
+                      }
+                    },
+                    "dosage_form": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "route": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "marketing_status": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "te_code": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "reference_drug": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "reference_standard": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Whether this is the product generics are tested against, which is not the same as reference_drug"
+                    }
+                  }
+                }
+              }
+            }
+          }
         },
         "count": {
           "type": "integer"
@@ -121,10 +205,132 @@
           "type": "string"
         },
         "submissions": {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "submission_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "submission_number": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "submission_status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "submission_status_date": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "review_priority": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "submission_class": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "submission_class_code": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The code behind the description, which the FDA's own datasets key on"
+              },
+              "documents": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            }
+          }
         },
         "submission_count": {
           "type": "integer"
+        },
+        "identifiers": {
+          "type": "object",
+          "description": "The codes a Drugs@FDA record is joined to the rest of the world by: NDC product and package codes, RxCUI, UNII, the SPL set id, the substance and manufacturer names. Without the NDCs an approval cannot be matched to a billing claim or a shortage notice; without the SPL set id, not to the label."
+        },
+        "products": {
+          "type": "array",
+          "description": "WHAT was approved. An approval history with no products is a list of dates.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "product_number": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "brand_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "active_ingredients": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "dosage_form": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "route": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "marketing_status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "te_code": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "reference_drug": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "reference_standard": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Whether this is the product generics are tested against, which is not the same as reference_drug"
+              }
+            }
+          }
         }
       }
     },
@@ -465,7 +671,89 @@
       "type": "object",
       "properties": {
         "te_codes": {
-          "type": "array"
+          "type": "array",
+          "description": "A TE code applies to a PRODUCT, not to a brand: \"AB\" for the 80 mg tablet says nothing about the oral solution of the same name. The row named the brand and the code and left out which product they belong to.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "brand_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "te_code": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "application_number": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "interpretation": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "reference_drug": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "product_number": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "dosage_form": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "route": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "active_ingredients": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "marketing_status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "reference_standard": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "sponsor_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "identifiers": {
+                "type": "object",
+                "description": "The codes a Drugs@FDA record is joined to the rest of the world by: NDC product and package codes, RxCUI, UNII, the SPL set id, the substance and manufacturer names. Without the NDCs an approval cannot be matched to a billing claim or a shortage notice; without the SPL set id, not to the label."
+              }
+            }
+          }
         },
         "count": {
           "type": "integer"

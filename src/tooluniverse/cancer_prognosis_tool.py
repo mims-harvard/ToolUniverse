@@ -20,6 +20,11 @@ from .tool_registry import register_tool
 
 CBIOPORTAL_BASE = "https://www.cbioportal.org/api"
 
+# A study description is a paragraph with HTML links in it. The cut stays,
+# because a search answers up to 100 of them, but it is disclosed per row
+# rather than applied in silence at 200 characters.
+DESCRIPTION_CHARACTERS = 1000
+
 # Map TCGA abbreviations to cBioPortal study IDs (Firehose Legacy)
 TCGA_STUDY_MAP = {
     "ACC": "acc_tcga",
@@ -306,7 +311,18 @@ class CancerPrognosisTool(BaseTool):
                     and pid.endswith(suffix)
                     and not pid.endswith("_Zscores")
                 ):
-                    return (pid, p.get("name", ""))
+                    # The profile record states its own datatype -- Z-SCORE,
+                    # CONTINUOUS, DISCRETE -- and the alteration type. The
+                    # units were being inferred from substrings of the
+                    # profile id, which the code's own comment says is
+                    # unreliable; the response says it outright.
+                    return (
+                        pid,
+                        p.get("name", ""),
+                        p.get("datatype"),
+                        p.get("molecularAlterationType"),
+                        p.get("description"),
+                    )
         return None
 
     def _get_gene_entrez_id(self, symbol):
@@ -578,7 +594,7 @@ class CancerPrognosisTool(BaseTool):
             cancer == study_id_arg and study_id_arg and "_" in str(study_id_arg)
         )
         study_id = self._resolve_study(cancer)
-        # Feature-54A-002: _get_mrna_profile now returns (profile_id, profile_name) tuple
+        # _get_mrna_profile returns (profile_id, name, datatype, type, description)
         profile_result = self._get_mrna_profile(study_id)
         if not profile_result:
             # Feature-58B-007: distinguish "not a TCGA type" from "study exists but no expression data".
@@ -593,7 +609,9 @@ class CancerPrognosisTool(BaseTool):
                     " available studies and confirm they include an mRNA expression profile."
                 ).format(cancer, study_id, ", ".join(tcga_types), cancer.lower()),
             }
-        profile_id, profile_name = profile_result
+        profile_id, profile_name, profile_datatype, profile_type, profile_description = (
+            profile_result
+        )
 
         entrez_id = self._get_gene_entrez_id(gene)
         if not entrez_id:
@@ -739,6 +757,12 @@ class CancerPrognosisTool(BaseTool):
             "entrez_gene_id": entrez_id,
             "profile_id": profile_id,
             "expression_units": expression_units,
+            # What cBioPortal says the values ARE, beside the units inferred
+            # from the profile name. A Z-SCORE and a CONTINUOUS value cannot
+            # be compared and the answer did not distinguish them.
+            "profile_datatype": profile_datatype,
+            "profile_type": profile_type,
+            "profile_description": profile_description,
             "n_samples_with_expression_data": len(values),
             "n_samples_returned": len(values[:max_samples]),
             "expression_summary": {
@@ -767,6 +791,54 @@ class CancerPrognosisTool(BaseTool):
                 )
             )
         return response
+
+    @staticmethod
+    def _study_counts(record):
+        # type: (Dict[str, Any]) -> Dict[str, Any]
+        """Per-modality sample counts, which `max()` of three of them hid.
+
+        A study with 1,108 samples of which 982 are sequenced and 316 have
+        HM27 methylation is three different studies depending on what is
+        being asked, and `sample_count` was the largest of three numbers with
+        no way to tell which modality it came from. cBioPortal's DETAILED
+        projection names twelve of them.
+        """
+        keys = (
+            ("all", "allSampleCount"),
+            ("sequenced", "sequencedSampleCount"),
+            ("cna", "cnaSampleCount"),
+            ("mrna_rna_seq", "mrnaRnaSeqSampleCount"),
+            ("mrna_rna_seq_v2", "mrnaRnaSeqV2SampleCount"),
+            ("mrna_microarray", "mrnaMicroarraySampleCount"),
+            ("mirna", "miRnaSampleCount"),
+            ("methylation_hm27", "methylationHm27SampleCount"),
+            ("rppa", "rppaSampleCount"),
+            ("mass_spectrometry", "massSpectrometrySampleCount"),
+            ("complete", "completeSampleCount"),
+        )
+        return {name: record.get(key) for name, key in keys if key in record}
+
+    @classmethod
+    def _study_fields(cls, record):
+        # type: (Dict[str, Any]) -> Dict[str, Any]
+        """The study attributes that decide whether a study can answer a question."""
+        cancer_type = record.get("cancerType") or {}
+        return {
+            # What the cancer IS. `cancer_type_id` is "brca"; the name is
+            # "Invasive Breast Carcinoma", and the record carries it.
+            "cancer_type_name": cancer_type.get("name"),
+            "cancer_type_short_name": cancer_type.get("shortName"),
+            "cancer_type_parent": cancer_type.get("parent"),
+            # Which assembly the study's coordinates are in. hg19 and hg38
+            # are not interchangeable and nothing said which this was.
+            "reference_genome": record.get("referenceGenome"),
+            "import_date": record.get("importDate"),
+            "public_study": record.get("publicStudy"),
+            "groups": record.get("groups"),
+            "treatment_count": record.get("treatmentCount"),
+            "structural_variant_count": record.get("structuralVariantCount"),
+            "sample_counts": cls._study_counts(record),
+        }
 
     def _search_studies(self, arguments):
         # type: (Dict[str, Any]) -> Dict[str, Any]
@@ -807,21 +879,26 @@ class CancerPrognosisTool(BaseTool):
                 or keyword_lower in study_id.lower()
                 or keyword_lower in cancer_type_id.lower()
             ):
-                studies.append(
-                    {
-                        "study_id": study_id,
-                        "name": name,
-                        "description": description[:200],
-                        "cancer_type_id": cancer_type_id,
-                        "sample_count": max(
-                            s.get("allSampleCount") or 0,
-                            s.get("sequencedSampleCount") or 0,
-                            s.get("cnaSampleCount") or 0,
-                        )
-                        or None,
-                        "reference_pmid": s.get("pmid"),
-                    }
-                )
+                row = {
+                    "study_id": study_id,
+                    "name": name,
+                    "description": description[:DESCRIPTION_CHARACTERS],
+                    # The cut used to be silent at 200 characters, in the
+                    # middle of a sentence.
+                    "description_truncated": len(description)
+                    > DESCRIPTION_CHARACTERS,
+                    "description_length": len(description),
+                    "cancer_type_id": cancer_type_id,
+                    "sample_count": max(
+                        s.get("allSampleCount") or 0,
+                        s.get("sequencedSampleCount") or 0,
+                        s.get("cnaSampleCount") or 0,
+                    )
+                    or None,
+                    "reference_pmid": s.get("pmid"),
+                }
+                row.update(self._study_fields(s))
+                studies.append(row)
             if len(studies) >= limit:
                 break
 
@@ -871,6 +948,16 @@ class CancerPrognosisTool(BaseTool):
                     "profile_id": p.get("molecularProfileId"),
                     "name": p.get("name"),
                     "type": p.get("molecularAlterationType"),
+                    # MRNA_EXPRESSION says what is measured; `datatype` says
+                    # how it is expressed -- Z-SCORE, CONTINUOUS, DISCRETE --
+                    # which decides whether a value can be compared across
+                    # studies at all.
+                    "datatype": p.get("datatype"),
+                    "description": p.get("description"),
+                    "show_profile_in_analysis_tab": p.get(
+                        "showProfileInAnalysisTab"
+                    ),
+                    "patient_level": p.get("patientLevel"),
                 }
             )
 
@@ -898,6 +985,10 @@ class CancerPrognosisTool(BaseTool):
                 "study_id": study_id,
                 "name": study_info.get("name"),
                 "description": (study_info.get("description", "") or "")[:500],
+                "description_truncated": len(
+                    study_info.get("description", "") or ""
+                )
+                > 500,
                 "cancer_type_id": study_info.get("cancerTypeId"),
                 "sample_count": max(
                     study_info.get("allSampleCount") or 0,
@@ -907,6 +998,7 @@ class CancerPrognosisTool(BaseTool):
                 or None,
                 "pmid": study_info.get("pmid"),
                 "molecular_profiles": profile_summary,
+                **self._study_fields(study_info),
                 "survival_attributes": [
                     {"id": a.get("clinicalAttributeId"), "name": a.get("displayName")}
                     for a in survival_attrs

@@ -300,6 +300,25 @@
                       "type": "string"
                     }
                   }
+                },
+                "profile_datatype": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "What cBioPortal says the values ARE, beside the units inferred from the profile name. A Z-SCORE and a CONTINUOUS value cannot be compared."
+                },
+                "profile_type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "profile_description": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 }
               }
             }
@@ -406,6 +425,85 @@
                       },
                       "sample_count": {
                         "type": "integer"
+                      },
+                      "cancer_type_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "What the cancer IS. cancer_type_id is \"brca\"; this is \"Invasive Breast Carcinoma\"."
+                      },
+                      "cancer_type_short_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "cancer_type_parent": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "reference_genome": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "hg19 or hg38. They are not interchangeable and nothing said which this was."
+                      },
+                      "import_date": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "public_study": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "groups": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "treatment_count": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "structural_variant_count": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "sample_counts": {
+                        "type": "object",
+                        "description": "Samples per modality -- sequenced, CNA, RNA-seq, microarray, miRNA, methylation, RPPA, mass spectrometry, complete. `sample_count` is the largest of three of these with no way to tell which, and a study with 1,108 samples of which 982 are sequenced and 316 have HM27 methylation is three studies depending on the question."
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Cut at 1000 characters, which description_truncated discloses; it used to be cut at 200 in silence"
+                      },
+                      "description_truncated": {
+                        "type": "boolean"
+                      },
+                      "description_length": {
+                        "type": "integer"
+                      },
+                      "reference_pmid": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
                       }
                     }
                   }
@@ -498,17 +596,53 @@
                 },
                 "molecular_profiles": {
                   "type": "array",
+                  "description": "Each profile with the datatype that says how its values are expressed",
                   "items": {
                     "type": "object",
                     "properties": {
                       "profile_id": {
-                        "type": "string"
+                        "type": [
+                          "string",
+                          "null"
+                        ]
                       },
                       "name": {
-                        "type": "string"
+                        "type": [
+                          "string",
+                          "null"
+                        ]
                       },
                       "type": {
-                        "type": "string"
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "e.g. MRNA_EXPRESSION, COPY_NUMBER_ALTERATION"
+                      },
+                      "datatype": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Z-SCORE, CONTINUOUS or DISCRETE -- which decides whether a value can be compared across studies"
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "show_profile_in_analysis_tab": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "patient_level": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
                       }
                     }
                   }
@@ -532,6 +666,69 @@
                   "items": {
                     "type": "string"
                   }
+                },
+                "cancer_type_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "What the cancer IS. cancer_type_id is \"brca\"; this is \"Invasive Breast Carcinoma\"."
+                },
+                "cancer_type_short_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "cancer_type_parent": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "reference_genome": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "hg19 or hg38. They are not interchangeable and nothing said which this was."
+                },
+                "import_date": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "public_study": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                },
+                "groups": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "treatment_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "structural_variant_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "sample_counts": {
+                  "type": "object",
+                  "description": "Samples per modality -- sequenced, CNA, RNA-seq, microarray, miRNA, methylation, RPPA, mass spectrometry, complete. `sample_count` is the largest of three of these with no way to tell which, and a study with 1,108 samples of which 982 are sequenced and 316 have HM27 methylation is three studies depending on the question."
+                },
+                "description_truncated": {
+                  "type": "boolean"
                 }
               }
             },
