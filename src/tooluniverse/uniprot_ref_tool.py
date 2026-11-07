@@ -20,6 +20,11 @@ from .uniprot_pagination import pagination_metadata
 UNIPROT_BASE_URL = "https://rest.uniprot.org"
 
 
+# A proteome search row names this many of its components; a plant
+# proteome can list hundreds of scaffolds.
+COMPONENT_NAMES_PER_PROTEOME = 50
+
+
 def _validated_search_size(arguments: Dict[str, Any]) -> tuple[int | None, str | None]:
     """Validate the shared UniProt REST search page size (official max 500)."""
     raw_size = arguments.get("size")
@@ -519,7 +524,27 @@ class UniProtRefTool(BaseTool):
                     ],
                     "taxon_rank": tax.get("rank"),
                     "strain": tax.get("strain"),
+                    # `taxon_lineage` is names only, and the id is how a
+                    # lineage is followed rather than matched; the rank is
+                    # what makes "Mammalia" a class rather than a guess.
+                    "taxon_lineage_nodes": [
+                        {
+                            "scientific_name": node.get("scientificName"),
+                            "taxon_id": node.get("taxonId"),
+                            "rank": node.get("rank"),
+                        }
+                        for node in (r.get("taxonLineage") or [])
+                        if isinstance(node, dict)
+                    ],
                     "component_count": len(r.get("components") or []),
+                    # What the components are -- "Chromosome 1", "Mitochondrion"
+                    # -- where the row gave only how many there were and which
+                    # databases they cross-reference.
+                    "component_names": [
+                        component.get("name")
+                        for component in (r.get("components") or [])
+                        if isinstance(component, dict) and component.get("name")
+                    ][:COMPONENT_NAMES_PER_PROTEOME],
                     "citation_count": len(r.get("citations") or []),
                     "annotation_score": r.get("annotationScore"),
                     "genome_assembly_id": (r.get("genomeAssembly") or {}).get(

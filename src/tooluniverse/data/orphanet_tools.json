@@ -243,6 +243,34 @@
                   "AssociationType": {
                     "type": "string",
                     "description": "Type of gene-disease association"
+                  },
+                  "Synonyms": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The gene's other symbols. A disease-to-gene answer is matched against other datasets by symbol, and a renamed symbol matches nothing: TGFBR1 is also ALK5 and TBRI."
+                  },
+                  "ExternalReferences": {
+                    "type": "array",
+                    "description": "Orphadata's cross-references for the gene, so the symbol can be resolved rather than matched",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "Source": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "Reference": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
                   }
                 }
               }

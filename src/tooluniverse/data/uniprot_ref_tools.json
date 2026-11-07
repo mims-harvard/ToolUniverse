@@ -753,6 +753,40 @@
                 "items": {
                   "type": "string"
                 }
+              },
+              "taxon_lineage_nodes": {
+                "type": "array",
+                "description": "The lineage with each node's taxon id and rank. `taxon_lineage` is names only, and the id is how a lineage is followed rather than matched.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "scientific_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "taxon_id": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "rank": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              },
+              "component_names": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "What the components are -- 'Chromosome 1', 'Mitochondrion' -- capped at 50. The row gave only how many there were."
               }
             }
           }

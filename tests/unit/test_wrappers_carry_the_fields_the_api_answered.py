@@ -1147,6 +1147,26 @@ UPSTREAM_KEYS = [
         'data.get("pdb_segments")',
         "the residue ranges that define the domain",
     ),
+    (
+        "humanbase_tool.py",
+        "def _top_evidence_datasets",
+        "which experiments support an interaction, where only a count was printed",
+    ),
+    (
+        "cbioportal_tool.py",
+        '"alteration_type": profile.get("molecularAlterationType")',
+        "which molecular profile the mutations came from",
+    ),
+    (
+        "orphanet_tool.py",
+        'gene_info.get("Synonym")',
+        "a gene's other symbols, which is how the answer is matched elsewhere",
+    ),
+    (
+        "uniprot_ref_tool.py",
+        '"taxon_lineage_nodes"',
+        "the taxon ids of a lineage returned as bare names",
+    ),
 ]
 
 
@@ -1412,6 +1432,10 @@ DECLARED = [
     ("OpenGenes_get_gene", "aging_mechanisms"),
     ("CATH_get_domain_summary", "go_terms"),
     ("CATH_get_domain_summary", "pdb_segments"),
+    ("Orphanet_get_genes", "Synonyms"),
+    ("Orphanet_get_genes", "ExternalReferences"),
+    ("UniProtRef_search_proteomes", "taxon_lineage_nodes"),
+    ("UniProtRef_search_proteomes", "component_names"),
 ]
 
 
@@ -2285,3 +2309,40 @@ def test_a_spearman_p_value_is_not_rounded_to_zero():
     assert "round(float(pval), 6)" not in source, (
         "decimal rounding flattens a small p-value to zero"
     )
+
+
+def test_an_interaction_names_the_experiments_behind_it():
+    """"Evidence Datasets: complete 466" and not one of their names.
+
+    HumanBase answers 466 datasets for BRCA1-TP53 and 479 for TP53-MDM2,
+    each with the database it is (IntAct, BioGRID), the kind of evidence it
+    provides and the posterior it contributed. The report fetched all of
+    them, counted them, and printed the count -- so "evidence" was a number.
+    The strongest are named now, by posterior, with the remainder disclosed.
+    """
+    source = _source("humanbase_tool.py")
+    assert "def _top_evidence_datasets" in source
+    assert "EVIDENCE_DATASETS_NAMED" in source
+
+
+def test_cbioportal_says_which_mutation_profile_it_read():
+    """"Mutations" and "Mutations (uncalled)" are different profiles.
+
+    The resolver matched a profile by alteration type, took its id and
+    discarded the record -- the name, the datatype (MAF) and the description
+    that says the calls came from whole-exome sequencing. An empty mutation
+    result means different things in a called and an uncalled profile. It
+    also falls back to a naming-convention guess when no profile matches,
+    and the caller could not tell a matched id from a guessed one.
+
+    The record goes out through an out-parameter: three tests assert on the
+    scalar return of _get_mutation_profile_id. The new fields are on the
+    response envelope, which this tool's return_schema does not describe --
+    it declares the inner mutation array -- so they are guarded here rather
+    than by a schema row.
+    """
+    source = _source("cbioportal_tool.py")
+    assert 'found["resolution"] = "matched"' in source
+    assert 'found["resolution"] = "guessed"' in source
+    assert '"molecular_profile_resolution": profile_found.get("resolution")' in source
+
