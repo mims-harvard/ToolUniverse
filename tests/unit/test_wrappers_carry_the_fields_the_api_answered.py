@@ -1187,6 +1187,26 @@ UPSTREAM_KEYS = [
         '"length": length,',
         "a regulatory element's own width, used to compute `end` and dropped",
     ),
+    (
+        "sgd_tool.py",
+        'entry.get("display_name")',
+        "the GO Slim TERM, where the row carried the name of the slim set",
+    ),
+    (
+        "sgd_tool.py",
+        "def _phenotype_summary",
+        "the phenotypes themselves, beside the count of assay categories",
+    ),
+    (
+        "genome_nexus_tool.py",
+        'canonical.get("hgvspShort")',
+        "which hotspot, for an answer that said only that there is one",
+    ),
+    (
+        "ensembl_info_tool.py",
+        's.get("groups")',
+        "which Ensembl data sets exist for a species",
+    ),
 ]
 
 
@@ -1461,6 +1481,12 @@ DECLARED = [
     ("UCSCCellBrowser_search_datasets", "sample_count"),
     ("UCSCCellBrowser_search_datasets", "has_files"),
     ("SCREEN_search_cCREs_by_region", "length"),
+    ("SGD_get_gene", "phenotype_summary"),
+    ("SGD_get_gene", "allele_records"),
+    ("SGD_get_gene", "slim_set"),
+    ("GenomeNexus_get_cancer_hotspots", "variant_summary"),
+    ("GenomeNexus_get_cancer_hotspots", "colocated_variant_ids"),
+    ("Ensembl_get_species_info", "groups"),
 ]
 
 
@@ -2410,4 +2436,39 @@ def test_alliance_names_the_gene_whose_alleles_these_are():
     # in other handlers, so the anchor has to be the new assignment.
     assert "gene_reference = {}" in source
     assert '"gene": gene_reference' in source
+
+
+def test_the_sgd_go_slim_row_carries_the_term_and_not_the_slim_set():
+    """Both fields of a row I added in an earlier round were wrong.
+
+    SGD's go_slim entries carry `slim_name` (the name of the slim SET --
+    "Yeast GO-Slim", "Macromolecular complex terms"), `display_name` (the
+    term, "U4/U6 x U5 tri-snRNP complex"), `go_id` (SGD's internal numeric
+    id, 294137) and `link` ("/go/GO:0046540", which holds the GO accession).
+    The row read `{"go_id": entry["go_id"], "term": entry["slim_name"]}`, so
+    for PRP6 every one of the six rows reported the slim set as the term and
+    an internal id as the GO id. Two plausible names over two wrong values,
+    which is worse than the omission it replaced.
+    """
+    source = _source("sgd_tool.py")
+    assert 'entry.get("slim_name")' in source, "the slim set is still reported"
+    assert '"slim_set": entry.get("slim_name")' in source
+    assert '"term": entry.get("display_name")' in source
+    assert "def _go_accession" in source
+    assert '"go_id": entry.get("go_id")' not in source
+
+
+def test_a_cancer_hotspot_answer_says_which_hotspot():
+    """`is_hotspot: true` and the gene, and not the protein change.
+
+    The handler fetches the annotation summary to read the gene symbol, and
+    the canonical transcript consequence in it carries p.V600E, the
+    Missense_Mutation classification, the transcript, the exon and the
+    SIFT/PolyPhen/AlphaMissense calls. All of it was discarded, so a caller
+    knew BRAF had a hotspot at some residue and not which.
+    """
+    source = _source("genome_nexus_tool.py")
+    assert 'canonical.get("hgvspShort")' in source
+    assert '"colocated_variant_ids"' in source
+    assert '"most_severe_consequence": data.get("most_severe_consequence")' in source
 

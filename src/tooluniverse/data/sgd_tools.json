@@ -113,7 +113,46 @@
               ]
             },
             "go_slim": {
-              "type": "array"
+              "type": "array",
+              "description": "The gene's GO Slim terms. Both fields of this row used to carry the wrong thing: `go_id` held SGD's internal numeric id and `term` held the name of the slim SET ('Yeast GO-Slim'), so every row read the same. The term is the annotation and the GO accession comes out of the link.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "term": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The GO term, e.g. 'U4/U6 x U5 tri-snRNP complex'"
+                  },
+                  "go_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The GO accession, e.g. GO:0046540"
+                  },
+                  "slim_set": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which slim set the term belongs to, e.g. 'Yeast GO-Slim'"
+                  },
+                  "sgd_internal_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "link": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
             },
             "phenotype_experiment_categories": {
               "type": "array"
@@ -171,6 +210,67 @@
                 "string",
                 "null"
               ]
+            },
+            "allele_records": {
+              "type": "array",
+              "description": "The same alleles as `alleles`, with the SGD id out of the link so one can be looked up",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "sgd_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "link": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "phenotype_summary": {
+              "type": "object",
+              "description": "The phenotypes themselves. `phenotype_experiment_categories` counts assay kinds; 'toxin resistance: increased' is the phenotype, and SGD buckets the large-scale ones by mutant type (null, repressible, reduction of function, conditional), which says whether a phenotype follows from losing the gene or from over-expressing it.",
+              "properties": {
+                "paragraph": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "classical_phenotypes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "classical_phenotype_count": {
+                  "type": "integer"
+                },
+                "classical_phenotypes_truncated": {
+                  "type": "boolean"
+                },
+                "large_scale_phenotypes": {
+                  "type": "object",
+                  "description": "Keyed by mutant type; each holds up to 25 phenotypes, the full count and whether it was cut"
+                },
+                "strains": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
             }
           },
           "not": {

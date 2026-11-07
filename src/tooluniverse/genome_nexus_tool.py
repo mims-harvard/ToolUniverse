@@ -339,6 +339,52 @@ class GenomeNexusTool(BaseTool):
                 "gene_symbol": gene_symbol,
                 "is_hotspot": len(flat_hotspots) > 0,
                 "hotspots": flat_hotspots,
+                # `is_hotspot: true` without the protein change does not say
+                # WHICH hotspot. The canonical summary this handler already
+                # fetched to read the gene symbol carries p.V600E, the
+                # Missense_Mutation classification, the transcript, the exon
+                # and the SIFT/PolyPhen/AlphaMissense calls, and all of it was
+                # dropped.
+                "variant_summary": {
+                    "protein_change": canonical.get("hgvspShort"),
+                    "protein_change_long": canonical.get("hgvsp"),
+                    "coding_change": canonical.get("hgvsc"),
+                    "variant_classification": canonical.get("variantClassification"),
+                    "consequence_terms": canonical.get("consequenceTerms"),
+                    "transcript_id": canonical.get("transcriptId"),
+                    "exon": canonical.get("exon"),
+                    "protein_position": canonical.get("proteinPosition"),
+                    "codon_change": canonical.get("codonChange"),
+                    "amino_acids": canonical.get("aminoAcids"),
+                    "uniprot_id": canonical.get("uniprotId"),
+                    "refseq": canonical.get("refSeq"),
+                    "entrez_gene_id": canonical.get("entrezGeneId"),
+                    "sift_prediction": canonical.get("siftPrediction"),
+                    "sift_score": canonical.get("siftScore"),
+                    "polyphen_prediction": canonical.get("polyphenPrediction"),
+                    "polyphen_score": canonical.get("polyphenScore"),
+                    "alpha_missense": canonical.get("alphaMissense"),
+                },
+                "most_severe_consequence": data.get("most_severe_consequence"),
+                # Every consequence term across the transcripts, which differ:
+                # the same base change is a missense on three BRAF transcripts
+                # and a 3'-UTR variant on a fourth.
+                "consequence_terms": sorted(
+                    {
+                        term
+                        for tc in (data.get("transcript_consequences") or [])
+                        if isinstance(tc, dict)
+                        for term in (tc.get("consequence_terms") or [])
+                        if isinstance(term, str)
+                    }
+                ),
+                # The ids this position is already known by -- COSMIC, dbSNP
+                # -- which is how a hotspot call is cross-checked.
+                "colocated_variant_ids": [
+                    cv.get("dbSnpId")
+                    for cv in (data.get("colocatedVariants") or [])
+                    if isinstance(cv, dict) and cv.get("dbSnpId")
+                ],
             },
             "metadata": {
                 "source": "Genome Nexus Cancer Hotspots (genomenexus.org)",

@@ -176,6 +176,33 @@
                         "variant": {"type": "string"},
                         "gene_symbol": {"type": ["string", "null"]},
                         "is_hotspot": {"type": "boolean"},
+                        "variant_summary": {
+                          "type": "object",
+                          "description": "What the variant is. `is_hotspot: true` without the protein change does not say WHICH hotspot, and the canonical transcript summary -- already fetched to read the gene symbol -- carries p.V600E, the Missense_Mutation classification, the transcript, the exon and the SIFT/PolyPhen/AlphaMissense calls.",
+                          "properties": {
+                            "protein_change": {"type": ["string", "null"], "description": "e.g. p.V600E"},
+                            "protein_change_long": {"type": ["string", "null"]},
+                            "coding_change": {"type": ["string", "null"]},
+                            "variant_classification": {"type": ["string", "null"]},
+                            "consequence_terms": {"type": ["string", "null"]},
+                            "transcript_id": {"type": ["string", "null"]},
+                            "exon": {"type": ["string", "null"]},
+                            "protein_position": {"type": ["object", "null"]},
+                            "codon_change": {"type": ["string", "null"]},
+                            "amino_acids": {"type": ["string", "null"]},
+                            "uniprot_id": {"type": ["string", "null"]},
+                            "refseq": {"type": ["string", "null"]},
+                            "entrez_gene_id": {"type": ["string", "integer", "null"]},
+                            "sift_prediction": {"type": ["string", "null"]},
+                            "sift_score": {"type": ["number", "null"]},
+                            "polyphen_prediction": {"type": ["string", "null"]},
+                            "polyphen_score": {"type": ["number", "null"]},
+                            "alpha_missense": {"type": ["object", "null"]}
+                          }
+                        },
+                        "most_severe_consequence": {"type": ["string", "null"]},
+                        "consequence_terms": {"type": "array", "items": {"type": "string"}, "description": "Every consequence term across the transcripts, which differ: the same base change is a missense on three BRAF transcripts and a 3'-UTR variant on a fourth."},
+                        "colocated_variant_ids": {"type": "array", "items": {"type": "string"}, "description": "The ids this position is already known by -- COSMIC, dbSNP -- which is how a hotspot call is cross-checked."},
                         "hotspots": {
                             "type": "array",
                             "items": {

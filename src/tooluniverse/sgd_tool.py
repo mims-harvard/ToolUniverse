@@ -15,6 +15,84 @@ from typing import Dict, Any
 from .base_tool import BaseTool
 from .tool_registry import register_tool
 
+
+# A heavily studied gene can carry dozens of phenotypes per mutant type, so
+# each bucket is capped and its full count reported.
+PHENOTYPES_PER_MUTANT_TYPE = 25
+
+
+def _sgd_id(link: Any) -> "str | None":
+    """The SGD identifier out of a link: "/allele/S000278213" -> S000278213."""
+    if not isinstance(link, str):
+        return None
+    for part in reversed(link.strip("/").split("/")):
+        if part.upper().startswith("S") and part[1:].isdigit():
+            return part
+    return None
+
+
+def _phenotype_terms(entries: Any) -> list:
+    """One bucket of phenotype annotations, as terms with their SGD links."""
+    out = []
+    for entry in entries if isinstance(entries, list) else []:
+        if not isinstance(entry, dict):
+            continue
+        if entry.get("display_name"):
+            out.append(
+                {"phenotype": entry.get("display_name"), "link": entry.get("link")}
+            )
+    return out
+
+
+def _phenotype_summary(overview: Any) -> Dict[str, Any]:
+    """The gene's phenotypes, by how the mutant was made.
+
+    `experiment_categories`, which the tool already returned, counts assay
+    kinds. This is what was observed: the classical annotations, and the
+    large-scale ones bucketed by mutant type, which is what distinguishes a
+    phenotype of losing the gene from one of over-expressing it.
+    """
+    if not isinstance(overview, dict):
+        return {}
+    classical = _phenotype_terms(overview.get("classical_phenotypes"))
+    if isinstance(overview.get("classical_phenotypes"), dict):
+        classical = []
+        for entries in overview["classical_phenotypes"].values():
+            classical.extend(_phenotype_terms(entries))
+    large_scale = {}
+    raw_large = overview.get("large_scale_phenotypes")
+    if isinstance(raw_large, dict):
+        for mutant_type, entries in raw_large.items():
+            terms = _phenotype_terms(entries)
+            if not terms:
+                continue
+            large_scale[mutant_type] = {
+                "phenotypes": terms[:PHENOTYPES_PER_MUTANT_TYPE],
+                "count": len(terms),
+                "truncated": len(terms) > PHENOTYPES_PER_MUTANT_TYPE,
+            }
+    return {
+        "paragraph": overview.get("paragraph"),
+        "classical_phenotypes": classical[:PHENOTYPES_PER_MUTANT_TYPE],
+        "classical_phenotype_count": len(classical),
+        "classical_phenotypes_truncated": len(classical)
+        > PHENOTYPES_PER_MUTANT_TYPE,
+        "large_scale_phenotypes": large_scale,
+        "strains": overview.get("strains") or [],
+    }
+
+
+
+def _go_accession(link: Any) -> "str | None":
+    """The GO accession out of an SGD link: "/go/GO:0046540" -> "GO:0046540"."""
+    if not isinstance(link, str):
+        return None
+    for part in reversed(link.strip("/").split("/")):
+        if part.upper().startswith("GO:"):
+            return part
+    return None
+
+
 SGD_BASE_URL = "https://www.yeastgenome.org/backend"
 
 
@@ -171,11 +249,37 @@ class SGDTool(BaseTool):
                 for a in (raw.get("alleles") or [])
                 if isinstance(a, dict) and a.get("display_name")
             ],
+            # The same alleles with the SGD id out of `link_url`
+            # ("/allele/S000278213"), which is how one is looked up. The name
+            # list stays as it was.
+            "allele_records": [
+                {
+                    "name": a.get("display_name"),
+                    "sgd_id": _sgd_id(a.get("link_url")),
+                    "link": a.get("link_url"),
+                }
+                for a in (raw.get("alleles") or [])
+                if isinstance(a, dict) and a.get("display_name")
+            ],
             "references_count": raw.get("references_count"),
             # SGD's own summaries of the gene, which are the fastest answer to
             # "what is known about this gene" and were dropped whole.
+            # Both fields of this row used to carry the wrong thing. `go_id`
+            # is SGD's internal numeric id (294137), not a GO accession, and
+            # `slim_name` is the name of the SLIM SET -- "Yeast GO-Slim",
+            # "Macromolecular complex terms" -- so every row read
+            # `term: "Yeast GO-Slim"`. The term is `display_name`
+            # ("U4/U6 x U5 tri-snRNP complex") and the GO accession is in
+            # `link` ("/go/GO:0046540"). Two plausible names over two wrong
+            # values is worse than the omission this replaced.
             "go_slim": [
-                {"go_id": entry.get("go_id"), "term": entry.get("slim_name")}
+                {
+                    "term": entry.get("display_name"),
+                    "go_id": _go_accession(entry.get("link")),
+                    "slim_set": entry.get("slim_name"),
+                    "sgd_internal_id": entry.get("go_id"),
+                    "link": entry.get("link"),
+                }
                 for entry in ((raw.get("go_overview") or {}).get("go_slim") or [])
                 if isinstance(entry, dict)
             ],
@@ -183,6 +287,13 @@ class SGDTool(BaseTool):
                 raw.get("phenotype_overview") or {}
             ).get("experiment_categories")
             or [],
+            # The phenotypes themselves. `experiment_categories` counts the
+            # kinds of assay; "toxin resistance: increased" is the phenotype,
+            # and SGD buckets the large-scale ones by mutant type -- null,
+            # repressible, reduction of function, conditional -- which is what
+            # says whether a phenotype follows from losing the gene or from
+            # over-expressing it. All of it was dropped.
+            "phenotype_summary": _phenotype_summary(raw.get("phenotype_overview")),
             "protein_overview": raw.get("protein_overview") or {},
         }
 

@@ -189,6 +189,15 @@ class EnsemblInfoTool(BaseTool):
                     "division": s.get("division"),
                     "strain": s.get("strain"),
                     "strain_collection": s.get("strain_collection"),
+                    # Which Ensembl data sets exist for the species -- core,
+                    # variation, regulation, compara -- 985 group entries
+                    # across the listing, and the row said only which division
+                    # the species is in. A caller asking "can I get variation
+                    # data for this species" had to try it and see.
+                    "groups": s.get("groups") or [],
+                    # The Ensembl release the entry is from, so an assembly can
+                    # be pinned to a version.
+                    "release": s.get("release"),
                 }
             )
 
