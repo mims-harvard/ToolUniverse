@@ -53,6 +53,9 @@
                   "gene_dsi": {"type": ["number", "null"], "description": "Disease Specificity Index: low means the gene is associated with many diseases"},
                   "gene_dpi": {"type": ["number", "null"], "description": "Disease Pleiotropy Index"},
                   "gene_pli": {"type": ["number", "null"], "description": "gnomAD pLI, probability of loss-of-function intolerance"},
+                  "gene_symbols": {"type": "array", "items": {"type": "string"}, "description": "Every gene the row names. A /vda/summary row spells this geneSymbol_keyword and a /gda/summary row symbolOfGene; reading only the GDA spelling returned null on every variant result."},
+                  "gene_ncbi_ids": {"type": "array", "items": {"type": ["integer", "string"]}, "description": "NCBI gene ids as the row lists them"},
+                  "gene_protein_classes": {"type": "array", "description": "What kind of protein the gene codes for: Enzyme, Transcription factor, GPCR", "items": {"type": "object", "properties": {"id": {"type": ["string", "null"]}, "name": {"type": ["string", "null"]}}}},
                   "variant": {"type": ["string", "null"], "description": "Present on variant-disease results only"},
                   "disease_name": {"type": ["string", "null"]},
                   "disease_umls_cui": {"type": ["string", "null"]},
@@ -73,7 +76,27 @@
                   "year_first": {"type": ["integer", "string", "null"], "description": "Year of the earliest supporting publication"},
                   "year_last": {"type": ["integer", "string", "null"], "description": "Year of the latest"},
                   "ei": {"type": ["number", "null"], "description": "Evidence Index: agreement among the publications"},
-                  "el": {"type": ["string", "null"], "description": "Evidence Level, where DisGeNET assigns one"}
+                  "el": {"type": ["string", "null"], "description": "Evidence Level, where DisGeNET assigns one"},
+                  "disease_inheritance": {"type": ["string", "null"], "description": "How the disease is inherited, e.g. Autosomal dominant. DisGeNET writes an unknown value as an empty string; this is null then."},
+                  "disease_prevalence_class": {"type": ["string", "null"], "description": "Orphanet prevalence band, e.g. 1-9 / 100 000"},
+                  "disease_prevalence_type": {"type": ["string", "null"], "description": "Whether the prevalence is point prevalence, birth prevalence or annual incidence"},
+                  "disease_prevalence_geo_area": {"type": ["string", "null"], "description": "Where the prevalence was measured"},
+                  "chromosome": {"type": ["string", "null"], "description": "Variant-disease results only: chromosome the variant is on"},
+                  "position": {"type": ["string", "integer", "null"], "description": "Variant-disease results only: genomic coordinate"},
+                  "reference_allele": {"type": ["string", "null"], "description": "Variant-disease results only"},
+                  "alternate_alleles": {"type": "array", "items": {"type": "string"}, "description": "Variant-disease results only"},
+                  "most_severe_consequence": {"type": ["string", "null"], "description": "Variant-disease results only, e.g. missense_variant"},
+                  "hgvs_c": {"type": "array", "items": {"type": "string"}, "description": "Variant-disease results only. NOT paired with alternate_alleles: rs1801133 has three alternate alleles and two HGVS strings, so pairing by position would attach one allele's notation to another."},
+                  "hgvs_p": {"type": "array", "items": {"type": "string"}, "description": "Variant-disease results only; see hgvs_c on pairing"},
+                  "protein_changes": {"type": "array", "items": {"type": "string"}, "description": "Variant-disease results only. Every transcript's numbering of every allele, sorted: 12 labels for rs113488022's 3 alleles, naming V157, V299, V600 and V640 for the same substitution. A set of names for the variant, not a per-allele list."},
+                  "protein_changes_three_letter": {"type": "array", "items": {"type": "string"}, "description": "Variant-disease results only; see protein_changes"},
+                  "allele_frequencies": {"type": ["array", "null"], "description": "Variant-disease results only. gnomAD frequencies paired with alternate_alleles, which the two lists match in length on every variant checked. Null when the lengths disagree, rather than guessing the pairing.", "items": {"type": "object", "properties": {"allele": {"type": ["string", "null"]}, "frequency_exome": {"type": ["number", "null"]}, "frequency_genome": {"type": ["number", "null"]}}}},
+                  "allele_frequency_exome": {"type": "array", "items": {"type": ["number", "null"]}, "description": "Variant-disease results only, as DisGeNET sends it. -1.0 means gnomAD never observed the allele and is reported as null."},
+                  "allele_frequency_genome": {"type": "array", "items": {"type": ["number", "null"]}, "description": "Variant-disease results only; -1.0 becomes null as above"},
+                  "sift_score": {"type": ["number", "null"], "description": "Variant-disease results only"},
+                  "polyphen_score": {"type": ["number", "null"], "description": "Variant-disease results only"},
+                  "variant_dsi": {"type": ["number", "null"], "description": "Variant-disease results only: Disease Specificity Index of the variant"},
+                  "variant_dpi": {"type": ["number", "null"], "description": "Variant-disease results only: Disease Pleiotropy Index of the variant"}
                 }
               }
             },
@@ -159,6 +182,9 @@
                   "gene_dsi": {"type": ["number", "null"], "description": "Disease Specificity Index: low means the gene is associated with many diseases"},
                   "gene_dpi": {"type": ["number", "null"], "description": "Disease Pleiotropy Index"},
                   "gene_pli": {"type": ["number", "null"], "description": "gnomAD pLI, probability of loss-of-function intolerance"},
+                  "gene_symbols": {"type": "array", "items": {"type": "string"}, "description": "Every gene the row names. A /vda/summary row spells this geneSymbol_keyword and a /gda/summary row symbolOfGene; reading only the GDA spelling returned null on every variant result."},
+                  "gene_ncbi_ids": {"type": "array", "items": {"type": ["integer", "string"]}, "description": "NCBI gene ids as the row lists them"},
+                  "gene_protein_classes": {"type": "array", "description": "What kind of protein the gene codes for: Enzyme, Transcription factor, GPCR", "items": {"type": "object", "properties": {"id": {"type": ["string", "null"]}, "name": {"type": ["string", "null"]}}}},
                   "variant": {"type": ["string", "null"], "description": "Present on variant-disease results only"},
                   "disease_name": {"type": ["string", "null"]},
                   "disease_umls_cui": {"type": ["string", "null"]},
@@ -179,7 +205,27 @@
                   "year_first": {"type": ["integer", "string", "null"], "description": "Year of the earliest supporting publication"},
                   "year_last": {"type": ["integer", "string", "null"], "description": "Year of the latest"},
                   "ei": {"type": ["number", "null"], "description": "Evidence Index: agreement among the publications"},
-                  "el": {"type": ["string", "null"], "description": "Evidence Level, where DisGeNET assigns one"}
+                  "el": {"type": ["string", "null"], "description": "Evidence Level, where DisGeNET assigns one"},
+                  "disease_inheritance": {"type": ["string", "null"], "description": "How the disease is inherited, e.g. Autosomal dominant. DisGeNET writes an unknown value as an empty string; this is null then."},
+                  "disease_prevalence_class": {"type": ["string", "null"], "description": "Orphanet prevalence band, e.g. 1-9 / 100 000"},
+                  "disease_prevalence_type": {"type": ["string", "null"], "description": "Whether the prevalence is point prevalence, birth prevalence or annual incidence"},
+                  "disease_prevalence_geo_area": {"type": ["string", "null"], "description": "Where the prevalence was measured"},
+                  "chromosome": {"type": ["string", "null"], "description": "Variant-disease results only: chromosome the variant is on"},
+                  "position": {"type": ["string", "integer", "null"], "description": "Variant-disease results only: genomic coordinate"},
+                  "reference_allele": {"type": ["string", "null"], "description": "Variant-disease results only"},
+                  "alternate_alleles": {"type": "array", "items": {"type": "string"}, "description": "Variant-disease results only"},
+                  "most_severe_consequence": {"type": ["string", "null"], "description": "Variant-disease results only, e.g. missense_variant"},
+                  "hgvs_c": {"type": "array", "items": {"type": "string"}, "description": "Variant-disease results only. NOT paired with alternate_alleles: rs1801133 has three alternate alleles and two HGVS strings, so pairing by position would attach one allele's notation to another."},
+                  "hgvs_p": {"type": "array", "items": {"type": "string"}, "description": "Variant-disease results only; see hgvs_c on pairing"},
+                  "protein_changes": {"type": "array", "items": {"type": "string"}, "description": "Variant-disease results only. Every transcript's numbering of every allele, sorted: 12 labels for rs113488022's 3 alleles, naming V157, V299, V600 and V640 for the same substitution. A set of names for the variant, not a per-allele list."},
+                  "protein_changes_three_letter": {"type": "array", "items": {"type": "string"}, "description": "Variant-disease results only; see protein_changes"},
+                  "allele_frequencies": {"type": ["array", "null"], "description": "Variant-disease results only. gnomAD frequencies paired with alternate_alleles, which the two lists match in length on every variant checked. Null when the lengths disagree, rather than guessing the pairing.", "items": {"type": "object", "properties": {"allele": {"type": ["string", "null"]}, "frequency_exome": {"type": ["number", "null"]}, "frequency_genome": {"type": ["number", "null"]}}}},
+                  "allele_frequency_exome": {"type": "array", "items": {"type": ["number", "null"]}, "description": "Variant-disease results only, as DisGeNET sends it. -1.0 means gnomAD never observed the allele and is reported as null."},
+                  "allele_frequency_genome": {"type": "array", "items": {"type": ["number", "null"]}, "description": "Variant-disease results only; -1.0 becomes null as above"},
+                  "sift_score": {"type": ["number", "null"], "description": "Variant-disease results only"},
+                  "polyphen_score": {"type": ["number", "null"], "description": "Variant-disease results only"},
+                  "variant_dsi": {"type": ["number", "null"], "description": "Variant-disease results only: Disease Specificity Index of the variant"},
+                  "variant_dpi": {"type": ["number", "null"], "description": "Variant-disease results only: Disease Pleiotropy Index of the variant"}
                 }
               }
             },
@@ -271,6 +317,9 @@
                   "gene_dsi": {"type": ["number", "null"], "description": "Disease Specificity Index: low means the gene is associated with many diseases"},
                   "gene_dpi": {"type": ["number", "null"], "description": "Disease Pleiotropy Index"},
                   "gene_pli": {"type": ["number", "null"], "description": "gnomAD pLI, probability of loss-of-function intolerance"},
+                  "gene_symbols": {"type": "array", "items": {"type": "string"}, "description": "Every gene the row names. A /vda/summary row spells this geneSymbol_keyword and a /gda/summary row symbolOfGene; reading only the GDA spelling returned null on every variant result."},
+                  "gene_ncbi_ids": {"type": "array", "items": {"type": ["integer", "string"]}, "description": "NCBI gene ids as the row lists them"},
+                  "gene_protein_classes": {"type": "array", "description": "What kind of protein the gene codes for: Enzyme, Transcription factor, GPCR", "items": {"type": "object", "properties": {"id": {"type": ["string", "null"]}, "name": {"type": ["string", "null"]}}}},
                   "variant": {"type": ["string", "null"], "description": "Present on variant-disease results only"},
                   "disease_name": {"type": ["string", "null"]},
                   "disease_umls_cui": {"type": ["string", "null"]},
@@ -291,7 +340,27 @@
                   "year_first": {"type": ["integer", "string", "null"], "description": "Year of the earliest supporting publication"},
                   "year_last": {"type": ["integer", "string", "null"], "description": "Year of the latest"},
                   "ei": {"type": ["number", "null"], "description": "Evidence Index: agreement among the publications"},
-                  "el": {"type": ["string", "null"], "description": "Evidence Level, where DisGeNET assigns one"}
+                  "el": {"type": ["string", "null"], "description": "Evidence Level, where DisGeNET assigns one"},
+                  "disease_inheritance": {"type": ["string", "null"], "description": "How the disease is inherited, e.g. Autosomal dominant. DisGeNET writes an unknown value as an empty string; this is null then."},
+                  "disease_prevalence_class": {"type": ["string", "null"], "description": "Orphanet prevalence band, e.g. 1-9 / 100 000"},
+                  "disease_prevalence_type": {"type": ["string", "null"], "description": "Whether the prevalence is point prevalence, birth prevalence or annual incidence"},
+                  "disease_prevalence_geo_area": {"type": ["string", "null"], "description": "Where the prevalence was measured"},
+                  "chromosome": {"type": ["string", "null"], "description": "Variant-disease results only: chromosome the variant is on"},
+                  "position": {"type": ["string", "integer", "null"], "description": "Variant-disease results only: genomic coordinate"},
+                  "reference_allele": {"type": ["string", "null"], "description": "Variant-disease results only"},
+                  "alternate_alleles": {"type": "array", "items": {"type": "string"}, "description": "Variant-disease results only"},
+                  "most_severe_consequence": {"type": ["string", "null"], "description": "Variant-disease results only, e.g. missense_variant"},
+                  "hgvs_c": {"type": "array", "items": {"type": "string"}, "description": "Variant-disease results only. NOT paired with alternate_alleles: rs1801133 has three alternate alleles and two HGVS strings, so pairing by position would attach one allele's notation to another."},
+                  "hgvs_p": {"type": "array", "items": {"type": "string"}, "description": "Variant-disease results only; see hgvs_c on pairing"},
+                  "protein_changes": {"type": "array", "items": {"type": "string"}, "description": "Variant-disease results only. Every transcript's numbering of every allele, sorted: 12 labels for rs113488022's 3 alleles, naming V157, V299, V600 and V640 for the same substitution. A set of names for the variant, not a per-allele list."},
+                  "protein_changes_three_letter": {"type": "array", "items": {"type": "string"}, "description": "Variant-disease results only; see protein_changes"},
+                  "allele_frequencies": {"type": ["array", "null"], "description": "Variant-disease results only. gnomAD frequencies paired with alternate_alleles, which the two lists match in length on every variant checked. Null when the lengths disagree, rather than guessing the pairing.", "items": {"type": "object", "properties": {"allele": {"type": ["string", "null"]}, "frequency_exome": {"type": ["number", "null"]}, "frequency_genome": {"type": ["number", "null"]}}}},
+                  "allele_frequency_exome": {"type": "array", "items": {"type": ["number", "null"]}, "description": "Variant-disease results only, as DisGeNET sends it. -1.0 means gnomAD never observed the allele and is reported as null."},
+                  "allele_frequency_genome": {"type": "array", "items": {"type": ["number", "null"]}, "description": "Variant-disease results only; -1.0 becomes null as above"},
+                  "sift_score": {"type": ["number", "null"], "description": "Variant-disease results only"},
+                  "polyphen_score": {"type": ["number", "null"], "description": "Variant-disease results only"},
+                  "variant_dsi": {"type": ["number", "null"], "description": "Variant-disease results only: Disease Specificity Index of the variant"},
+                  "variant_dpi": {"type": ["number", "null"], "description": "Variant-disease results only: Disease Pleiotropy Index of the variant"}
                 }
               }
             },
@@ -368,6 +437,9 @@
                   "gene_dsi": {"type": ["number", "null"], "description": "Disease Specificity Index: low means the gene is associated with many diseases"},
                   "gene_dpi": {"type": ["number", "null"], "description": "Disease Pleiotropy Index"},
                   "gene_pli": {"type": ["number", "null"], "description": "gnomAD pLI, probability of loss-of-function intolerance"},
+                  "gene_symbols": {"type": "array", "items": {"type": "string"}, "description": "Every gene the row names. A /vda/summary row spells this geneSymbol_keyword and a /gda/summary row symbolOfGene; reading only the GDA spelling returned null on every variant result."},
+                  "gene_ncbi_ids": {"type": "array", "items": {"type": ["integer", "string"]}, "description": "NCBI gene ids as the row lists them"},
+                  "gene_protein_classes": {"type": "array", "description": "What kind of protein the gene codes for: Enzyme, Transcription factor, GPCR", "items": {"type": "object", "properties": {"id": {"type": ["string", "null"]}, "name": {"type": ["string", "null"]}}}},
                   "variant": {"type": ["string", "null"], "description": "Present on variant-disease results only"},
                   "disease_name": {"type": ["string", "null"]},
                   "disease_umls_cui": {"type": ["string", "null"]},
@@ -388,7 +460,27 @@
                   "year_first": {"type": ["integer", "string", "null"], "description": "Year of the earliest supporting publication"},
                   "year_last": {"type": ["integer", "string", "null"], "description": "Year of the latest"},
                   "ei": {"type": ["number", "null"], "description": "Evidence Index: agreement among the publications"},
-                  "el": {"type": ["string", "null"], "description": "Evidence Level, where DisGeNET assigns one"}
+                  "el": {"type": ["string", "null"], "description": "Evidence Level, where DisGeNET assigns one"},
+                  "disease_inheritance": {"type": ["string", "null"], "description": "How the disease is inherited, e.g. Autosomal dominant. DisGeNET writes an unknown value as an empty string; this is null then."},
+                  "disease_prevalence_class": {"type": ["string", "null"], "description": "Orphanet prevalence band, e.g. 1-9 / 100 000"},
+                  "disease_prevalence_type": {"type": ["string", "null"], "description": "Whether the prevalence is point prevalence, birth prevalence or annual incidence"},
+                  "disease_prevalence_geo_area": {"type": ["string", "null"], "description": "Where the prevalence was measured"},
+                  "chromosome": {"type": ["string", "null"], "description": "Variant-disease results only: chromosome the variant is on"},
+                  "position": {"type": ["string", "integer", "null"], "description": "Variant-disease results only: genomic coordinate"},
+                  "reference_allele": {"type": ["string", "null"], "description": "Variant-disease results only"},
+                  "alternate_alleles": {"type": "array", "items": {"type": "string"}, "description": "Variant-disease results only"},
+                  "most_severe_consequence": {"type": ["string", "null"], "description": "Variant-disease results only, e.g. missense_variant"},
+                  "hgvs_c": {"type": "array", "items": {"type": "string"}, "description": "Variant-disease results only. NOT paired with alternate_alleles: rs1801133 has three alternate alleles and two HGVS strings, so pairing by position would attach one allele's notation to another."},
+                  "hgvs_p": {"type": "array", "items": {"type": "string"}, "description": "Variant-disease results only; see hgvs_c on pairing"},
+                  "protein_changes": {"type": "array", "items": {"type": "string"}, "description": "Variant-disease results only. Every transcript's numbering of every allele, sorted: 12 labels for rs113488022's 3 alleles, naming V157, V299, V600 and V640 for the same substitution. A set of names for the variant, not a per-allele list."},
+                  "protein_changes_three_letter": {"type": "array", "items": {"type": "string"}, "description": "Variant-disease results only; see protein_changes"},
+                  "allele_frequencies": {"type": ["array", "null"], "description": "Variant-disease results only. gnomAD frequencies paired with alternate_alleles, which the two lists match in length on every variant checked. Null when the lengths disagree, rather than guessing the pairing.", "items": {"type": "object", "properties": {"allele": {"type": ["string", "null"]}, "frequency_exome": {"type": ["number", "null"]}, "frequency_genome": {"type": ["number", "null"]}}}},
+                  "allele_frequency_exome": {"type": "array", "items": {"type": ["number", "null"]}, "description": "Variant-disease results only, as DisGeNET sends it. -1.0 means gnomAD never observed the allele and is reported as null."},
+                  "allele_frequency_genome": {"type": "array", "items": {"type": ["number", "null"]}, "description": "Variant-disease results only; -1.0 becomes null as above"},
+                  "sift_score": {"type": ["number", "null"], "description": "Variant-disease results only"},
+                  "polyphen_score": {"type": ["number", "null"], "description": "Variant-disease results only"},
+                  "variant_dsi": {"type": ["number", "null"], "description": "Variant-disease results only: Disease Specificity Index of the variant"},
+                  "variant_dpi": {"type": ["number", "null"], "description": "Variant-disease results only: Disease Pleiotropy Index of the variant"}
                 }
               }
             },
@@ -500,9 +592,60 @@
                   },
                   "n_dbsnps": {
                     "type": ["integer", "null"]
+                  },
+                  "assoc_id": {
+                    "type": ["string", "null"],
+                    "description": "DisGeNET's id for this gene-disease association, which its chemical and evidence endpoints take"
+                  },
+                  "uniprot_ids": {
+                    "type": "array",
+                    "items": {"type": "string"}
+                  },
+                  "protein_classes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "What kind of protein the gene codes for"
+                  },
+                  "score_breakdown": {
+                    "type": "array",
+                    "items": {"type": "object"},
+                    "description": "What the score is made of, per component: the contributing sources, their count and their weight. 0.8 from two curated sources and 0.8 from text mining are not the same claim."
+                  },
+                  "year_first": {
+                    "type": ["integer", "null"],
+                    "description": "Year of the earliest publication supporting the association"
+                  },
+                  "year_last": {
+                    "type": ["integer", "null"],
+                    "description": "Year of the latest. 2,248 papers ending in 1998 is a different candidate from 2,248 ending this year."
                   }
                 }
               }
+            },
+            "disease_name": {
+              "type": ["string", "null"],
+              "description": "The disease the code resolved to, as DisGeNET names it. A caller who passed the wrong CUI could not tell from the gene list alone."
+            },
+            "disease_type": {
+              "type": ["string", "null"]
+            },
+            "disease_vocabularies": {
+              "type": "array",
+              "items": {"type": "string"},
+              "description": "The disease's ids in MONDO, DO, MeSH, ORDO, NCI and the rest"
+            },
+            "disease_classes": {
+              "type": "object",
+              "description": "The disease's classification in four schemes",
+              "properties": {
+                "mesh": {"type": "array", "items": {"type": "string"}},
+                "do": {"type": "array", "items": {"type": "string"}},
+                "hpo": {"type": "array", "items": {"type": "string"}},
+                "umls_semantic_type": {"type": "array", "items": {"type": "string"}}
+              }
+            },
+            "disease_inheritance": {
+              "type": ["string", "null"]
             },
             "gene_count": {
               "type": "integer"

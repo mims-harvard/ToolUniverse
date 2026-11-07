@@ -313,6 +313,81 @@ def test_pages_of_one_endpoint_are_one_response(audit):
     assert rows["[].rows[].symbol"]["total"] == 12
 
 
+def test_a_record_count_tells_a_cut_response_from_a_whole_one(audit):
+    """The longest list of dicts, which is as crude as it needs to be.
+
+    It exists for one decision: whether the response the caller got holds
+    fewer records than the endpoint answered. A single dict in a list is not
+    a record set -- one-element lists are how APIs wrap a single object -- so
+    two or more are required.
+    """
+    assert audit.record_count({"payload": [{"a": 1}, {"a": 2}, {"a": 3}]}) == 3
+    assert audit.record_count({"results": [{"x": [{"y": 1}, {"y": 2}]}]}) == 2
+    assert audit.record_count({"wrapped": [{"only": "one"}]}) == 0
+    assert audit.record_count({"scalars": [1, 2, 3]}) == 0
+
+
+def test_a_sparse_field_behind_a_declared_cut_is_not_a_drop(audit, monkeypatch):
+    """The last false-positive class the three families turned up.
+
+    DisGeNET's VDA example asks for 20 of 100 associations. `alleles_ref` is
+    multi-character on 14 of the 100 -- an indel rather than a SNV -- and all
+    14 sat outside the page, so a field the wrapper does carry scored 0/14.
+    The mapped-but-unseen signal cannot excuse it either, because the wrapper
+    renames it to `reference_allele`.
+
+    The rule is narrow on purpose: it applies only when the response was cut
+    (fewer records out than in) AND the field is not on every record. A field
+    present on all 100 and absent from the output is still reported, which is
+    how `yearInitial` stayed visible on the same response.
+    """
+    upstream = {
+        "payload": [
+            {"name": f"row{i}", "rare": "indel" if i > 50 else None}
+            for i in range(100)
+        ]
+    }
+    returned = {"rows": [{"label": f"row{i}"} for i in range(20)]}
+
+    captured = {
+        "method": "GET",
+        "url": "https://example.test/summary",
+        "status": 200,
+        "body": upstream,
+    }
+    findings = _run_audit_over(audit, monkeypatch, captured, returned)
+    buckets = findings[0]
+    assert buckets["thin_fields"] == []
+    assert [row["field"] for row in buckets["sparse_behind_a_cut"]] == [
+        "payload[].rare"
+    ]
+    assert buckets["sparse_behind_a_cut"][0]["upstream_records"] == 100
+    assert buckets["sparse_behind_a_cut"][0]["returned_records"] == 20
+
+
+def _run_audit_over(audit, monkeypatch, captured, returned):
+    """Drive audit() once with one captured response and one tool result."""
+
+    class FakeUniverse:
+        def load_tools(self, include_tools=None):
+            return None
+
+        def run(self, call):
+            return {"status": "success", "data": returned}
+
+    monkeypatch.setattr(
+        audit, "tool_configs", lambda *a, **k: {"T": {"test_examples": [{}]}}
+    )
+    monkeypatch.setattr(audit, "record_http", lambda: ([captured], lambda: None))
+    import sys
+    import types
+
+    module = types.ModuleType("tooluniverse")
+    module.ToolUniverse = FakeUniverse
+    monkeypatch.setitem(sys.modules, "tooluniverse", module)
+    return audit.audit(names=["T"], min_values=4)
+
+
 def test_the_summariser_merges_the_shards_and_records_the_count(summarize, tmp_path):
     """Measured and then thrown away is the failure mode to avoid."""
     shard = tmp_path / "shards" / "a"

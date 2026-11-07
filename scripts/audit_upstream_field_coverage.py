@@ -135,6 +135,28 @@ def leaf_fields(node, prefix="", out=None, depth=0):
     return out
 
 
+def record_count(node, depth=0, limit=SURVIVOR_DEPTH):
+    """How many records a structure holds: the longest list of dicts in it.
+
+    A proxy, and a deliberately crude one. It exists to tell a response that
+    was CUT from one that was not, which is the difference between a field the
+    wrapper dropped and a field whose values all sit in rows the caller was
+    told it would not get.
+    """
+    if depth > limit:
+        return 0
+    best = 0
+    if isinstance(node, dict):
+        for value in node.values():
+            best = max(best, record_count(value, depth + 1, limit))
+    elif isinstance(node, list):
+        if sum(1 for item in node if isinstance(item, dict)) > 1:
+            best = len(node)
+        for item in node:
+            best = max(best, record_count(item, depth + 1, limit))
+    return best
+
+
 def normalise_key(name):
     """`max_pH`, `maxPh` and `max-ph` all collapse to one spelling."""
     return re.sub(r"[^a-z0-9]", "", name.lower())
@@ -463,6 +485,7 @@ def audit(
         thin = []
         mapped_but_unseen = []
         not_record_data = []
+        sparse_behind_a_cut = []
         # Calls to the SAME URL are one logical response. A tool that pages
         # through an endpoint makes several, and comparing each against the
         # single merged output reported the same field once per page with a
@@ -477,6 +500,18 @@ def audit(
         for url, bodies in by_url.items():
             body = bodies[0] if len(bodies) == 1 else bodies
             surrogates = surrogate_id_paths(body)
+            # Was the response cut, and by how much? A tool with a declared
+            # `limit` returns fewer records than the endpoint answered, and a
+            # field that is not on every record then has a way of scoring zero
+            # while being carried perfectly: none of its values happened to
+            # fall in the rows the caller got. DisGeNET's VDA example asks for
+            # 20 of 100 associations, and `alleles_ref` is multi-character on
+            # 14 of them -- all 14 outside the page -- so a field the wrapper
+            # does return read as dropped. The mapped-but-unseen signal cannot
+            # catch it either, because the wrapper also renames the field.
+            upstream_records = record_count(body)
+            returned_records = record_count(returned)
+            was_cut = upstream_records > returned_records > 0
             for row in compare(body, returned):
                 row["url"] = url
                 if row["total"] < min_values:
@@ -495,6 +530,10 @@ def audit(
                 # sparse, not the wrapper dropping anything.
                 if row["field"] in surrogates or not is_record_data(row["field"]):
                     not_record_data.append(row)
+                elif was_cut and row["total"] < upstream_records:
+                    row["upstream_records"] = upstream_records
+                    row["returned_records"] = returned_records
+                    sparse_behind_a_cut.append(row)
                 elif row["mapped"]:
                     mapped_but_unseen.append(row)
                 else:
@@ -502,6 +541,7 @@ def audit(
         thin.sort(key=lambda r: -r["total"])
         mapped_but_unseen.sort(key=lambda r: -r["total"])
         not_record_data.sort(key=lambda r: -r["total"])
+        sparse_behind_a_cut.sort(key=lambda r: -r["total"])
         findings.append(
             _emit(
                 {
@@ -512,6 +552,7 @@ def audit(
                     "thin_fields": thin[:12],
                     "mapped_but_unseen": mapped_but_unseen[:12],
                     "not_record_data": not_record_data[:12],
+                    "sparse_behind_a_cut": sparse_behind_a_cut[:12],
                 },
                 on_result,
             )

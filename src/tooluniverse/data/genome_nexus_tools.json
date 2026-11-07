@@ -80,7 +80,18 @@
                                             "score": {"type": "number"},
                                             "pathogenicity": {"type": "string"}
                                         }
-                                    }
+                                    },
+                                    "biotype": {"type": ["string", "null"], "description": "Transcript biotype, e.g. protein_coding or nonsense_mediated_decay. A consequence on an NMD transcript is not the same claim as one on a coding transcript."},
+                                    "protein_start": {"type": ["integer", "null"], "description": "First residue of the protein the change affects"},
+                                    "protein_end": {"type": ["integer", "null"], "description": "Last residue of the protein the change affects"},
+                                    "gene_id": {"type": ["string", "null"], "description": "Ensembl gene ID"},
+                                    "protein_id": {"type": ["string", "null"], "description": "Ensembl protein ID"},
+                                    "hgnc_id": {"type": ["string", "null"], "description": "HGNC gene ID"},
+                                    "refseq_transcript_ids": {"type": "array", "items": {"type": "string"}, "description": "RefSeq transcripts matching this Ensembl transcript"},
+                                    "variant_allele": {"type": ["string", "null"], "description": "Alternate allele as VEP reports it for this transcript"},
+                                    "canonical": {"type": ["string", "integer", "boolean", "null"], "description": "Set when this is Ensembl's canonical transcript; VEP sends the string \"1\""},
+                                    "exon": {"type": ["string", "null"], "description": "Exon the change falls in, as 'n/total'"},
+                                    "codons": {"type": ["string", "null"]}
                                 }
                             }
                         },
@@ -100,6 +111,19 @@
                                 "properties": {
                                     "dbSnpId": {"type": "string"}
                                 }
+                            }
+                        },
+                        "mutation_assessor": {
+                            "type": ["object", "null"],
+                            "description": "Mutation Assessor functional impact. Requested in the same call as the hotspots and the annotation summary.",
+                            "properties": {
+                                "uniprotId": {"type": ["string", "null"]},
+                                "hgvspShort": {"type": ["string", "null"]},
+                                "functionalImpactScore": {"type": ["number", "null"]},
+                                "functionalImpactPrediction": {"type": ["string", "null"], "description": "high, medium, low or neutral"},
+                                "msa": {"type": ["string", "null"]},
+                                "mav": {"type": ["integer", "null"]},
+                                "sv": {"type": ["integer", "null"]}
                             }
                         }
                     }
@@ -159,8 +183,15 @@
                                 "properties": {
                                     "hugoSymbol": {"type": "string"},
                                     "residue": {"type": "string"},
-                                    "tumorCount": {"type": "integer"},
-                                    "type": {"type": "string", "description": "single residue or 3d"}
+                                    "tumorCount": {"type": "integer", "description": "Tumours with any mutation at this residue; the counts below say what kind"},
+                                    "type": {"type": "string", "description": "single residue or 3d"},
+                                    "transcriptId": {"type": ["string", "null"], "description": "Transcript the residue number is counted against"},
+                                    "transcriptIdVersion": {"type": ["string", "null"]},
+                                    "missenseCount": {"type": ["integer", "null"]},
+                                    "truncatingCount": {"type": ["integer", "null"]},
+                                    "inframeCount": {"type": ["integer", "null"]},
+                                    "spliceCount": {"type": ["integer", "null"]},
+                                    "version": {"type": ["string", "null"], "description": "Cancer Hotspots release the counts come from"}
                                 }
                             }
                         }
@@ -218,6 +249,37 @@
                         "hugoSymbols": {"type": "array", "items": {"type": "string"}},
                         "refseqMrnaId": {"type": ["string", "null"]},
                         "ccdsId": {"type": ["string", "null"]},
+                        "transcriptIdVersion": {"type": ["string", "null"]},
+                        "uniprotId": {"type": ["string", "null"], "description": "UniProt accession of this transcript's protein"},
+                        "exon_count": {"type": "integer", "description": "Number of exons returned"},
+                        "exons": {
+                            "type": "array",
+                            "description": "Exon structure of the canonical transcript, in the order Ensembl reports it",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "exonId": {"type": ["string", "null"]},
+                                    "exonStart": {"type": ["integer", "null"]},
+                                    "exonEnd": {"type": ["integer", "null"]},
+                                    "rank": {"type": ["integer", "null"], "description": "Exon number along the transcript"},
+                                    "strand": {"type": ["integer", "null"]},
+                                    "version": {"type": ["integer", "null"]}
+                                }
+                            }
+                        },
+                        "utrs": {
+                            "type": "array",
+                            "description": "Untranslated regions, which is how a coding exon is told from a UTR",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {"type": ["string", "null"], "description": "five_prime_UTR or three_prime_UTR"},
+                                    "start": {"type": ["integer", "null"]},
+                                    "end": {"type": ["integer", "null"]},
+                                    "strand": {"type": ["integer", "null"]}
+                                }
+                            }
+                        },
                         "pfamDomains": {
                             "type": "array",
                             "items": {
@@ -314,6 +376,19 @@
                         "colocated_variants": {
                             "type": "array",
                             "items": {"type": "object"}
+                        },
+                        "mutation_assessor": {
+                            "type": ["object", "null"],
+                            "description": "Mutation Assessor functional impact. Requested in the same call as the hotspots and the annotation summary.",
+                            "properties": {
+                                "uniprotId": {"type": ["string", "null"]},
+                                "hgvspShort": {"type": ["string", "null"]},
+                                "functionalImpactScore": {"type": ["number", "null"]},
+                                "functionalImpactPrediction": {"type": ["string", "null"], "description": "high, medium, low or neutral"},
+                                "msa": {"type": ["string", "null"]},
+                                "mav": {"type": ["integer", "null"]},
+                                "sv": {"type": ["integer", "null"]}
+                            }
                         }
                     }
                 },
@@ -388,7 +463,18 @@
                                             "score": {"type": "number"},
                                             "pathogenicity": {"type": "string"}
                                         }
-                                    }
+                                    },
+                                    "biotype": {"type": ["string", "null"], "description": "Transcript biotype, e.g. protein_coding or nonsense_mediated_decay. A consequence on an NMD transcript is not the same claim as one on a coding transcript."},
+                                    "protein_start": {"type": ["integer", "null"], "description": "First residue of the protein the change affects"},
+                                    "protein_end": {"type": ["integer", "null"], "description": "Last residue of the protein the change affects"},
+                                    "gene_id": {"type": ["string", "null"], "description": "Ensembl gene ID"},
+                                    "protein_id": {"type": ["string", "null"], "description": "Ensembl protein ID"},
+                                    "hgnc_id": {"type": ["string", "null"], "description": "HGNC gene ID"},
+                                    "refseq_transcript_ids": {"type": "array", "items": {"type": "string"}, "description": "RefSeq transcripts matching this Ensembl transcript"},
+                                    "variant_allele": {"type": ["string", "null"], "description": "Alternate allele as VEP reports it for this transcript"},
+                                    "canonical": {"type": ["string", "integer", "boolean", "null"], "description": "Set when this is Ensembl's canonical transcript; VEP sends the string \"1\""},
+                                    "exon": {"type": ["string", "null"], "description": "Exon the change falls in, as 'n/total'"},
+                                    "codons": {"type": ["string", "null"]}
                                 }
                             }
                         },
@@ -396,6 +482,19 @@
                         "colocated_variants": {
                             "type": "array",
                             "items": {"type": "object"}
+                        },
+                        "mutation_assessor": {
+                            "type": ["object", "null"],
+                            "description": "Mutation Assessor functional impact. Requested in the same call as the hotspots and the annotation summary.",
+                            "properties": {
+                                "uniprotId": {"type": ["string", "null"]},
+                                "hgvspShort": {"type": ["string", "null"]},
+                                "functionalImpactScore": {"type": ["number", "null"]},
+                                "functionalImpactPrediction": {"type": ["string", "null"], "description": "high, medium, low or neutral"},
+                                "msa": {"type": ["string", "null"]},
+                                "mav": {"type": ["integer", "null"]},
+                                "sv": {"type": ["integer", "null"]}
+                            }
                         }
                     }
                 },

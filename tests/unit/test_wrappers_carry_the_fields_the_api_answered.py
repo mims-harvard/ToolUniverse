@@ -456,6 +456,72 @@ UPSTREAM_KEYS = [
         "predictionMethodsNotMatched",
         "the methods that did NOT support an ortholog call, which is what makes method_count mean anything",
     ),
+    # Round four.
+    (
+        "genome_nexus_tool.py",
+        'data.get("mutation_assessor")',
+        "a predictor the call asks for in its own fields= parameter and then dropped",
+    ),
+    (
+        "genome_nexus_tool.py",
+        'tc.get("biotype")',
+        "whether the consequence is on a coding transcript or one marked for decay",
+    ),
+    (
+        "genome_nexus_tool.py",
+        'item.get("missenseCount")',
+        "what a hotspot's tumour count is made of; 897 missense and 0 truncating at BRAF V600",
+    ),
+    (
+        "genome_nexus_tool.py",
+        'data.get("exons")',
+        "the exon structure, from the tool whose whole job is the canonical transcript",
+    ),
+    (
+        "genome_nexus_tool.py",
+        "transcriptConsequenceSummary",
+        "the canonical summary, read before the list so the symbol is not whichever came first",
+    ),
+    (
+        "disgenet_tool.py",
+        'row.get("geneSymbol_keyword")',
+        "the gene a variant sits in; a VDA row spells it differently and returned null",
+    ),
+    (
+        "disgenet_tool.py",
+        'row.get("mostSevereConsequences")',
+        "what the variant does, from a variant-disease association tool",
+    ),
+    (
+        "disgenet_tool.py",
+        "alleleFreqExome",
+        "how common the allele is; rs1801133's C677T is 32% and that bears on the association",
+    ),
+    (
+        "disgenet_tool.py",
+        'row.get("polyphen_score")',
+        "the pathogenicity prediction on the same row as the rsID",
+    ),
+    (
+        "epigraphdb_tool.py",
+        'rel.get("action_type")',
+        "whether the drug inhibits or activates; all 43 EGFR rows carry it and none of the CPIC fields",
+    ),
+    (
+        "epigraphdb_tool.py",
+        'pick("rg_intercept")',
+        "the LDSC intercept that says whether an rg of 0.95 is sample overlap",
+    ),
+    (
+        "epigraphdb_tool.py",
+        'gs.get("pval")',
+        "the p-value this tool takes pval_threshold to filter on and did not report",
+    ),
+    (
+        "epigraphdb_tool.py",
+        'assoc.get("id")',
+        "the outcome trait each repurposing estimate was measured against",
+    ),
 ]
 
 
@@ -509,6 +575,28 @@ DECLARED = [
     ("MediaDive_search_media", "link"),
     ("IDR_search_images", "location"),
     ("Synapse_list_children", "benefactor_id"),
+    # Round four.
+    ("GenomeNexus_annotate_variant", "mutation_assessor"),
+    ("GenomeNexus_annotate_variant", "biotype"),
+    ("GenomeNexus_annotate_variant", "protein_start"),
+    ("GenomeNexus_get_canonical_transcript", "exons"),
+    ("GenomeNexus_get_canonical_transcript", "utrs"),
+    ("GenomeNexus_get_cancer_hotspots", "missenseCount"),
+    ("DisGeNET_get_vda", "most_severe_consequence"),
+    ("DisGeNET_get_vda", "allele_frequencies"),
+    ("DisGeNET_get_vda", "polyphen_score"),
+    ("DisGeNET_get_vda", "gene_symbols"),
+    ("DisGeNET_get_disease_genes", "disease_name"),
+    ("DisGeNET_get_disease_genes", "score_breakdown"),
+    ("DisGeNET_get_disease_genes", "year_first"),
+    ("DisGeNET_get_gda", "gene_protein_classes"),
+    ("DisGeNET_get_gda", "disease_inheritance"),
+    ("EpiGraphDB_get_gene_drug_associations", "action_type"),
+    ("EpiGraphDB_get_genetic_correlations", "rg_intercept"),
+    ("EpiGraphDB_get_genetic_correlations", "h2_se"),
+    ("EpiGraphDB_get_drugs_for_trait", "evidence"),
+    ("EpiGraphDB_get_drugs_for_trait", "exposure_trait_id"),
+    ("EpiGraphDB_get_literature_evidence", "pval"),
 ]
 
 
