@@ -123,8 +123,21 @@
               "bioentity_label": {"type": ["string", "null"]},
               "annotation_class": {"type": ["string", "null"]},
               "annotation_class_label": {"type": ["string", "null"]},
-              "taxon_label": {"type": ["string", "null"]}
-            }
+              "taxon_label": {"type": ["string", "null"]},
+              "bioentity_name": {"type": ["string", "null"], "description": "The gene's full name where Planteome records one"},
+              "synonym": {"type": ["array", "string", "null"], "items": {"type": "string"}, "description": "Other identifiers and names for the gene, which is how a hit found under one id is matched to another source"},
+              "aspect": {"type": ["string", "null"], "description": "Ontology aspect: P (biological process), F (molecular function), C (cellular component)"},
+              "taxon": {"type": ["string", "null"], "description": "NCBITaxon id behind taxon_label, e.g. NCBITaxon:3702"},
+              "evidence_type": {"type": ["string", "null"], "description": "Three-letter evidence code, e.g. IEA, IDA, IMP"},
+              "evidence": {"type": ["string", "null"], "description": "The ECO term for the evidence code, e.g. ECO:0000501"},
+              "evidence_label": {"type": ["string", "null"], "description": "The ECO term's label, e.g. 'evidence used in automatic assertion'"},
+              "evidence_with": {"type": ["array", "string", "null"], "items": {"type": "string"}, "description": "What the annotation was inferred from, e.g. InterPro:IPR001388 -- what makes a computed (IEA) annotation checkable"},
+              "assigned_by": {"type": ["string", "null"], "description": "The source database that made the annotation, e.g. InterPro, TAIR. The description promises annotations across source databases; this names the source."},
+              "source": {"type": ["string", "null"], "description": "The gene identifier's namespace, e.g. AGI_LocusCode"},
+              "date": {"type": ["string", "null"], "description": "When the annotation was made, YYYYMMDD"},
+              "reference": {"type": ["array", "string", "null"], "items": {"type": "string"}, "description": "Supporting references, e.g. TAIR:AnalysisReference:501756966, PMID:..."}
+            },
+            "description": "One annotation. Planteome's Solr documents also carry ancestor expansions (taxon_closure, isa_partof_closure, evidence_closure and their label variants); those restate the term's own hierarchy and are deliberately not returned."
           }
         },
         {

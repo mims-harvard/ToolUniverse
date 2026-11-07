@@ -78,7 +78,7 @@
                       "string",
                       "null"
                     ],
-                    "description": "Group name, when the per-group /tab enrichment completed"
+                    "description": "Group name, from the /search response's own bigdata record"
                   },
                   "level_taxid": {
                     "type": [
@@ -93,7 +93,7 @@
                       "complete",
                       "unavailable"
                     ],
-                    "description": "Whether name and level metadata were successfully retrieved from OrthoDB /tab"
+                    "description": "Whether the group's attributes were resolved. complete when the /search bigdata record or the per-group /tab lookup supplied them."
                   },
                   "enrichment_error": {
                     "type": [
@@ -101,6 +101,43 @@
                       "null"
                     ],
                     "description": "Explicit reason enrichment was unavailable; absent on complete records"
+                  },
+                  "public_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OrthoDB's public id for the group"
+                  },
+                  "level_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The taxonomic level the group is defined at, e.g. 'Bacteria', 'Vertebrata'. The same gene family yields different groups at different levels, so this is what tells two hits apart."
+                  },
+                  "gene_count": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ],
+                    "description": "Genes in the group at this level"
+                  },
+                  "species_count": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ],
+                    "description": "Species the group is present in at this level (OrthoDB's present_in)"
+                  },
+                  "search_relevance": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "OrthoDB's own relevance score for this hit against the query, which is the order the groups come back in"
                   }
                 }
               },

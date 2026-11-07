@@ -33,7 +33,8 @@
               "min_pH": {"type": ["number", "null"]},
               "max_pH": {"type": ["number", "null"]},
               "description": {"type": ["string", "null"]},
-              "reference": {"type": ["string", "null"]}
+              "reference": {"type": ["string", "null"]},
+              "link": {"type": ["string", "null"], "description": "The medium's page at MediaDive (DSMZ). Most of the catalogue has neither a description nor a reference, so this is the only handle a bare match carries."}
             }
           }
         },

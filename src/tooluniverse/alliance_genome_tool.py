@@ -98,6 +98,45 @@ def _allele_summary(record):
     }
 
 
+def _mi_term(node):
+    """An MI-ontology term as `{id, name}`, or None.
+
+    Alliance answers these as `{curie, name, definition}`; the definition is a
+    paragraph of ontology prose, so only the id and the name are carried.
+    """
+    if not isinstance(node, dict):
+        return None
+    curie = node.get("curie")
+    name = node.get("name")
+    if curie is None and name is None:
+        return None
+    return {"id": curie, "name": name}
+
+
+def _alliance_references(evidence):
+    """The publications behind an association, as Alliance reports them."""
+    if not isinstance(evidence, list):
+        return []
+    out = []
+    for item in evidence:
+        if not isinstance(item, dict):
+            continue
+        out.append(
+            {
+                "agr_curie": item.get("curie"),
+                "pubmed_id": item.get("referenceID"),
+                "mod_id": item.get("pubModID"),
+                "citation": item.get("shortCitation"),
+                "cross_references": [
+                    xref.get("referencedCurie")
+                    for xref in (item.get("crossReferences") or [])
+                    if isinstance(xref, dict) and xref.get("referencedCurie")
+                ],
+            }
+        )
+    return out
+
+
 @register_tool("AllianceGenomeTool")
 class AllianceGenomeTool(BaseTool):
     """
@@ -855,6 +894,20 @@ class AllianceGenomeTool(BaseTool):
                     if obj
                     else None,
                     "interaction_type": int_type,
+                    "relation": (gi.get("relation") or {}).get("name"),
+                    # Which gene plays which part. Alliance answers
+                    # interactorARole "suppressed gene" and interactorBRole
+                    # "suppressor gene"; without them "genetic suppression"
+                    # names a pair but not a direction, and direction is the
+                    # whole content of a suppression or enhancement result.
+                    "subject_role": _mi_term(gi.get("interactorARole")),
+                    "interactor_role": _mi_term(gi.get("interactorBRole")),
+                    "subject_type": _mi_term(gi.get("interactorAType")),
+                    "interactor_type": _mi_term(gi.get("interactorBType")),
+                    # Which database asserted it, and the paper behind it. An
+                    # interaction with no reference cannot be cited or checked.
+                    "interaction_source": _mi_term(gi.get("interactionSource")),
+                    "references": _alliance_references(gi.get("evidence")),
                 }
             )
 

@@ -134,6 +134,78 @@ def test_a_single_transformed_value_is_below_the_reporting_floor(audit, monkeypa
     assert rows[0]["total"] == 1  # below the default --min-values of 4
 
 
+def test_a_selected_field_that_is_null_on_this_page_is_not_a_drop(audit):
+    """The third false positive, and the one that cost real triage time.
+
+    MediaDive's wrapper does carry `description` and `reference`. Every medium
+    matching 'nutrient agar' is null in both, so neither had a value to
+    survive and both scored zero -- 0/68 and 0/36 -- in a list of candidates to
+    go and fix. A field whose own name reaches the caller was selected,
+    whatever this page happened to hold.
+    """
+    upstream = {"data": [{"reference": f"ref {i}"} for i in range(8)]}
+    returned = {"data": [{"reference": None} for _ in range(3)]}
+
+    rows = {r["field"]: r for r in audit.compare(upstream, returned)}
+
+    assert rows["data[].reference"]["kept"] == 0
+    assert rows["data[].reference"]["mapped"] is True
+
+
+def test_a_field_never_asked_for_is_not_excused_by_the_split(audit):
+    """The same split must still report what the wrapper never selected."""
+    upstream = {"data": [{"link": f"https://example.org/{i}"} for i in range(8)]}
+    returned = {"data": [{"name": "medium"} for _ in range(3)]}
+
+    rows = {r["field"]: r for r in audit.compare(upstream, returned)}
+
+    assert rows["data[].link"]["kept"] == 0
+    assert rows["data[].link"]["mapped"] is False
+
+
+def test_a_surviving_sibling_of_the_same_name_does_not_vouch_for_a_drop(audit):
+    """What the key-name signal gets wrong on its own, and the correction.
+
+    GEO's esummary carries `accession` twice: the series' own, which the tool
+    returns, and `samples[].accession`, which it dropped. A plain key-name
+    match found `accession` in the output and called the sample accessions
+    selected -- hiding the one finding worth having. A leaf name that already
+    reaches the caller from another path explains the match on its own and
+    cannot excuse this path.
+    """
+    upstream = {
+        "accession": "GSE313540",
+        "samples": [{"accession": f"GSM{i}"} for i in range(9000, 9008)],
+    }
+    returned = {"accession": "GSE313540"}
+
+    rows = {r["field"]: r for r in audit.compare(upstream, returned)}
+
+    assert rows["accession"]["kept"] == 1
+    assert rows["samples[].accession"]["kept"] == 0
+    assert rows["samples[].accession"]["mapped"] is False
+
+
+def test_a_transformed_value_keeps_its_field_out_of_the_drop_list(audit):
+    """Synapse maps `type` through a shortener, so no value matches.
+
+    `org.sagebionetworks.repo.model.FileEntity` becomes `file`. The field is
+    there under its own name and nothing else in the output supplies a `type`,
+    so it is a transformation rather than a drop.
+    """
+    upstream = {
+        "page": [
+            {"type": f"org.sagebionetworks.repo.model.FileEntity{i}"} for i in range(6)
+        ]
+    }
+    returned = {"data": [{"type": "file"} for _ in range(6)]}
+
+    rows = {r["field"]: r for r in audit.compare(upstream, returned)}
+
+    assert rows["page[].type"]["kept"] == 0
+    assert rows["page[].type"]["mapped"] is True
+
+
 def test_the_summariser_merges_the_shards_and_records_the_count(summarize, tmp_path):
     """Measured and then thrown away is the failure mode to avoid."""
     shard = tmp_path / "shards" / "a"

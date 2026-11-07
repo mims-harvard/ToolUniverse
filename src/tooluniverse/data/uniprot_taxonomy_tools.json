@@ -88,6 +88,13 @@
                   },
                   "hidden": {
                     "type": "boolean"
+                  },
+                  "common_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The ancestor's common name where UniProt records one, e.g. 'primates'"
                   }
                 }
               }
@@ -108,6 +115,20 @@
                   ]
                 }
               }
+            },
+            "other_names": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Every other name UniProt records for this taxon -- common names, authority forms and recorded misspellings. Taxon 9606 carries 17, including 'human'."
+            },
+            "external_links": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "The taxon's external resource URLs as UniProt lists them (Wikipedia, Ensembl, ITIS, ...)"
             }
           },
           "required": [

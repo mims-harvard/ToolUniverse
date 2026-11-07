@@ -879,18 +879,79 @@
                     "type": "boolean"
                   },
                   "evidences": {
-                    "type": "array",
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Evidence for the peptide, with the measurements that make it evidence",
                     "items": {
                       "type": "object",
                       "properties": {
+                        "code": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "ECO evidence code, e.g. ECO:0007829"
+                        },
                         "source": {
                           "type": [
-                            "null",
-                            "string"
+                            "string",
+                            "null"
+                          ],
+                          "description": "e.g. HppPeptideAtlas, PeptideAtlas, MaxQB"
+                        },
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The source's own identifier for this observation"
+                        },
+                        "url": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Resolvable URL for the observation at the source"
+                        },
+                        "support": {
+                          "type": "object",
+                          "description": "The source's reported support, keys lower-cased with underscores: best_probability, times_of_observations, number_of_sample, score, number_of_psms. Values are strings as the API sends them. Empty when the source reports none.",
+                          "additionalProperties": {
+                            "type": [
+                              "string",
+                              "number",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "xrefs": {
+                    "type": "array",
+                    "description": "Cross-references the API attaches to the peptide, e.g. the proteome it came from",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": [
+                            "string",
+                            "null"
                           ]
                         },
                         "id": {
-                          "type": "string"
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "url": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
                         }
                       }
                     }
@@ -1423,19 +1484,74 @@
                       "array",
                       "null"
                     ],
+                    "description": "Evidence for the peptide, with the measurements that make it evidence",
                     "items": {
                       "type": "object",
                       "properties": {
+                        "code": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "ECO evidence code, e.g. ECO:0007829"
+                        },
                         "source": {
                           "type": [
-                            "null",
-                            "string"
+                            "string",
+                            "null"
+                          ],
+                          "description": "e.g. HppPeptideAtlas, PeptideAtlas, MaxQB"
+                        },
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The source's own identifier for this observation"
+                        },
+                        "url": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Resolvable URL for the observation at the source"
+                        },
+                        "support": {
+                          "type": "object",
+                          "description": "The source's reported support, keys lower-cased with underscores: best_probability, times_of_observations, number_of_sample, score, number_of_psms. Values are strings as the API sends them. Empty when the source reports none.",
+                          "additionalProperties": {
+                            "type": [
+                              "string",
+                              "number",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "xrefs": {
+                    "type": "array",
+                    "description": "Cross-references the API attaches to the peptide, e.g. the proteome it came from",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": [
+                            "string",
+                            "null"
                           ]
                         },
                         "id": {
                           "type": [
-                            "null",
-                            "string"
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "url": {
+                          "type": [
+                            "string",
+                            "null"
                           ]
                         }
                       }

@@ -18,6 +18,47 @@ PROTEINS_API_BASE_URL = "https://www.ebi.ac.uk/proteins/api"
 UNIPROT_REST_BASE_URL = "https://rest.uniprot.org"
 
 
+def _peptide_evidence(feature):
+    """Peptide evidence with the numbers that make it evidence.
+
+    The Proteins API answers each peptide's source with a `properties` map
+    holding the mass-spectrometry support -- "Best Probability": "1.000",
+    "Times of observations": "2", and per source also Score, Number of PSMs
+    and Number of sample. Only the source name and id were carried, so a
+    caller was told that a peptide has HPP evidence and nothing about how
+    strong it is, for a tool whose description calls this "the stringent HPP
+    evidence set". The ECO code and the source URL were dropped the same way.
+    """
+    out = []
+    for ev in feature.get("evidences") or []:
+        if not isinstance(ev, dict):
+            continue
+        src = ev.get("source") or {}
+        properties = src.get("properties") if isinstance(src, dict) else None
+        out.append(
+            {
+                "code": ev.get("code"),
+                "source": src.get("name"),
+                "id": src.get("id"),
+                "url": src.get("url"),
+                "support": {
+                    str(key).strip().lower().replace(" ", "_"): value
+                    for key, value in (properties or {}).items()
+                },
+            }
+        )
+    return out
+
+
+def _feature_xrefs(feature):
+    """The feature's cross-references, as the API lists them."""
+    return [
+        {"name": x.get("name"), "id": x.get("id"), "url": x.get("url")}
+        for x in (feature.get("xrefs") or [])
+        if isinstance(x, dict)
+    ]
+
+
 def _paginate(items, arguments: Dict[str, Any], default_limit: int = 100):
     """Return one local page plus explicit collection completeness metadata."""
     limit = int(arguments.get("limit", default_limit))
@@ -507,16 +548,7 @@ class EBIProteinsExtTool(BaseTool):
         page_features, paging = _paginate(raw_features, arguments)
         peptides = []
         for f in page_features:
-            evidences = []
-            for ev in f.get("evidences", []):
-                src = ev.get("source", {})
-                evidences.append(
-                    {
-                        "source": src.get("name"),
-                        "id": src.get("id"),
-                    }
-                )
-
+            evidences = _peptide_evidence(f)
             peptides.append(
                 {
                     "type": f.get("type"),
@@ -524,6 +556,7 @@ class EBIProteinsExtTool(BaseTool):
                     "position_end": f.get("end"),
                     "peptide": f.get("peptide"),
                     "unique": f.get("unique"),
+                    "xrefs": _feature_xrefs(f),
                     "evidences": evidences if evidences else None,
                 }
             )
@@ -644,9 +677,7 @@ class EBIProteinsExtTool(BaseTool):
                     }
                 )
             for text in (comment.get("note") or {}).get("texts") or []:
-                notes.append(
-                    {"text": text.get("value"), "evidences": _evidences(text)}
-                )
+                notes.append({"text": text.get("value"), "evidences": _evidences(text)})
 
         return {
             "status": "success",
@@ -671,9 +702,7 @@ class EBIProteinsExtTool(BaseTool):
             },
         }
 
-    def _parse_variation_entries(
-        self, data: Any, arguments: Dict[str, Any]
-    ) -> list:
+    def _parse_variation_entries(self, data: Any, arguments: Dict[str, Any]) -> list:
         """Normalize variation-by-id responses (list of UniProt entries)."""
         if not isinstance(data, list):
             data = [data] if isinstance(data, dict) else []
@@ -818,15 +847,7 @@ class EBIProteinsExtTool(BaseTool):
         page_features, paging = _paginate(raw_features, arguments)
         peptides = []
         for f in page_features:
-            evidences = []
-            for ev in f.get("evidences", []):
-                src = ev.get("source", {}) or {}
-                evidences.append(
-                    {
-                        "source": src.get("name"),
-                        "id": src.get("id"),
-                    }
-                )
+            evidences = _peptide_evidence(f)
             peptides.append(
                 {
                     "type": f.get("type"),
@@ -834,6 +855,7 @@ class EBIProteinsExtTool(BaseTool):
                     "position_end": f.get("end"),
                     "peptide": f.get("peptide"),
                     "unique": f.get("unique"),
+                    "xrefs": _feature_xrefs(f),
                     "evidences": evidences if evidences else None,
                 }
             )

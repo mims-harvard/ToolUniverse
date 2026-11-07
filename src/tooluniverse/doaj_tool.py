@@ -89,15 +89,29 @@ class DOAJTool(BaseTool):
                 except Exception:
                     year = b.get("year")
 
-                # Extract author information
+                # Extract author information. Names alone lose the
+                # affiliation DOAJ records beside each one, which is what
+                # disambiguates two authors of the same name.
                 authors = [a.get("name") for a in b.get("author", []) if a.get("name")]
+                author_records = [
+                    {"name": a.get("name"), "affiliation": a.get("affiliation")}
+                    for a in b.get("author", [])
+                    if isinstance(a, dict) and a.get("name")
+                ]
 
-                # Extract DOI
+                # Extract DOI, and keep every other identifier with its type.
+                # A record's identifier list is [{id: "1978-2993", type:
+                # "eissn"}, {id: "10.9767/...", type: "doi"}]; only the DOI was
+                # read, so the ISSN that ties the article to its journal was
+                # dropped along with each identifier's type.
                 doi = None
+                identifiers = []
                 for i in b.get("identifier", []):
-                    if i.get("type") == "doi":
+                    if not isinstance(i, dict):
+                        continue
+                    identifiers.append({"id": i.get("id"), "type": i.get("type")})
+                    if i.get("type") == "doi" and doi is None:
                         doi = i.get("id")
-                        break
 
                 # Extract URL
                 url = None
@@ -118,17 +132,35 @@ class DOAJTool(BaseTool):
                     abstract = re.sub(r"<[^>]+>", "", abstract)
                     abstract = abstract.strip()
 
-                # Extract keywords
-                keywords = []
+                # Keywords and subjects are two different things in DOAJ and
+                # were being conflated: `keywords` was built from
+                # `bibjson.subject`, the journal's LCC classification
+                # ("Chemical engineering"), while `bibjson.keywords` -- the
+                # article's own terms ("oil palm shell", "pyrolysis") -- was
+                # never read. So the field named keywords held neither the
+                # article's keywords nor, under its own name, the subject
+                # classification. Both are reported now, each as itself.
+                keywords = [
+                    kw for kw in (b.get("keywords") or []) if isinstance(kw, str) and kw
+                ]
+                subjects = []
                 subject_list = b.get("subject", [])
                 if isinstance(subject_list, list):
                     for subject in subject_list:
                         if isinstance(subject, dict):
                             term = subject.get("term", "")
                             if term:
-                                keywords.append(term)
+                                subjects.append(
+                                    {
+                                        "term": term,
+                                        "scheme": subject.get("scheme"),
+                                        "code": subject.get("code"),
+                                    }
+                                )
                         elif isinstance(subject, str):
-                            keywords.append(subject)
+                            subjects.append(
+                                {"term": subject, "scheme": None, "code": None}
+                            )
 
                 # Extract citation count (DOAJ usually doesn't provide this)
                 citations = 0
@@ -160,6 +192,9 @@ class DOAJTool(BaseTool):
                         "citations": citations,
                         "open_access": open_access,
                         "keywords": keywords if keywords else "Keywords not available",
+                        "subjects": subjects,
+                        "author_affiliations": author_records,
+                        "identifiers": identifiers,
                         "article_type": article_type,
                         "publisher": publisher or "Publisher information not available",
                         "source": "DOAJ",

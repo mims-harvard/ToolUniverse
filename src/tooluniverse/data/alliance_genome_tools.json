@@ -799,9 +799,164 @@
               },
               "references": {
                 "type": "array",
+                "description": "The publications behind this interaction. Empty when Alliance reports none.",
                 "items": {
-                  "type": "string"
+                  "type": "object",
+                  "properties": {
+                    "agr_curie": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Alliance reference curie"
+                    },
+                    "pubmed_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "e.g. PMID:29735293"
+                    },
+                    "mod_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The model-organism database's own reference id, e.g. FB:FBrf0238983"
+                    },
+                    "citation": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Short citation, e.g. 'Wang XC (2018) Eur J Cell Biol 97(4):308-317'"
+                    },
+                    "cross_references": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Every curie Alliance cross-references, DOI included"
+                    }
+                  }
                 }
+              },
+              "relation": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The association's own relation, e.g. genetically_interacts_with"
+              },
+              "subject_role": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "MI ontology id, e.g. MI:0582"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "description": "The queried gene's part in the interaction, e.g. 'suppressed gene'. Without it an interaction type names a pair but not a direction."
+              },
+              "interactor_role": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "MI ontology id, e.g. MI:0582"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "description": "The partner gene's part, e.g. 'suppressor gene'"
+              },
+              "subject_type": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "MI ontology id, e.g. MI:0582"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "description": "Interactor type of the queried gene, e.g. 'gene', 'protein'"
+              },
+              "interactor_type": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "MI ontology id, e.g. MI:0582"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "description": "Interactor type of the partner"
+              },
+              "interaction_source": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "MI ontology id, e.g. MI:0582"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "description": "The database that asserted the interaction, e.g. MI:0478 flybase"
               }
             }
           }

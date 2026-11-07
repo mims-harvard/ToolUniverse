@@ -706,6 +706,24 @@ class MaveDBTool(BaseTool):
                     "allele_count": entry.get("alleleCount"),
                     "allele_number": entry.get("alleleNumber"),
                     "allele_frequency": entry.get("alleleFrequency"),
+                    # The filtering allele frequency: the 95% confidence upper
+                    # bound in the ancestry group where it is highest. This,
+                    # not the raw alleleFrequency, is what ACMG BA1/BS1
+                    # thresholds are read against, and gnomAD publishes it for
+                    # exactly that reason.
+                    "faf95_max": entry.get("faf95Max"),
+                    "faf95_max_ancestry": entry.get("faf95MaxAncestry"),
+                    # Which rows of THIS score set the variant was observed in.
+                    # The tool exists to connect a score set to gnomAD, and
+                    # that connection is the join key.
+                    "score_set_variants": [
+                        {
+                            "variant_urn": link.get("variantUrn"),
+                            "allele_digest": link.get("alleleDigest"),
+                        }
+                        for link in (entry.get("variantLinks") or [])
+                        if isinstance(link, dict)
+                    ],
                     "mapped_genomic_alleles": mapped_post,
                 }
             )

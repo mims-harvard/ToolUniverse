@@ -850,6 +850,43 @@
                       "null"
                     ]
                   },
+                  "faf95_max": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Filtering allele frequency: the 95% confidence upper bound in the ancestry group where it is highest. This, not allele_frequency, is what ACMG BA1/BS1 thresholds are read against. Null where gnomAD publishes none."
+                  },
+                  "faf95_max_ancestry": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The gnomAD ancestry group faf95_max came from, e.g. 'nfe'"
+                  },
+                  "score_set_variants": {
+                    "type": "array",
+                    "description": "Which rows of this score set the gnomAD variant was observed in -- the join between the assay and the population data",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "variant_urn": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "e.g. urn:mavedb:00001263-a-2#324"
+                        },
+                        "allele_digest": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "GA4GH VRS allele digest for the same variant"
+                        }
+                      }
+                    }
+                  },
                   "mapped_genomic_alleles": {
                     "type": "array",
                     "items": {

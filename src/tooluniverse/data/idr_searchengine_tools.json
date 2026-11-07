@@ -168,6 +168,87 @@
                         }
                       }
                     }
+                  },
+                  "image_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The image's own IDR page (webclient img_detail)"
+                  },
+                  "thumb_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Rendered thumbnail URL, for previewing a hit without opening it"
+                  },
+                  "location": {
+                    "type": "object",
+                    "description": "Where the image sits inside its study. A screen's images carry screen/plate/well; a project's carry project/dataset. The unused pair is null.",
+                    "properties": {
+                      "screen_id": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "screen_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "plate_id": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "plate_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "How the paper and the study's own files refer to the plate"
+                      },
+                      "well_id": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "wellsample_id": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "project_id": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "project_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "dataset_id": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "dataset_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
                   }
                 }
               }

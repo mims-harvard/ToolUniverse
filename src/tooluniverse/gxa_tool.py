@@ -188,12 +188,27 @@ class GxATool(BaseTool):
         column_headers = data.get("columnHeaders", [])
         columns = []
         for col in column_headers:
+            summary = col.get("assayGroupSummary") or {}
+            # `factor_value` alone names the condition but not which factor it
+            # varies: E-MTAB-2836's g1 is "adipose tissue" under `organism
+            # part`, with `developmental stage`, `organism` and `sex` held
+            # fixed. Without the properties a caller cannot tell the varied
+            # factor from the held-fixed sample annotation.
+            properties = [
+                {
+                    "property_name": prop.get("propertyName"),
+                    "value": prop.get("testValue"),
+                    "property_type": prop.get("contrastPropertyType"),
+                }
+                for prop in (summary.get("properties") or [])
+            ]
             columns.append(
                 {
                     "assay_group_id": col.get("assayGroupId"),
                     "factor_value": col.get("factorValue"),
                     "ontology_term_id": col.get("factorValueOntologyTermId"),
-                    "replicates": col.get("assayGroupSummary", {}).get("replicates"),
+                    "replicates": summary.get("replicates"),
+                    "properties": properties,
                 }
             )
 
@@ -265,6 +280,12 @@ class GxATool(BaseTool):
                     {
                         "gene_id": row.get("id"),
                         "gene_name": row.get("name"),
+                        # A bare 381.0 is not an expression level. Upstream
+                        # answers `expressionUnit` per row -- "tpms" for
+                        # E-MTAB-2836 -- and without it the number cannot be
+                        # compared to anything, including the other rows of
+                        # this same response when an experiment mixes units.
+                        "expression_unit": row.get("expressionUnit"),
                         "expressions": expressions,
                     }
                 )
@@ -287,6 +308,13 @@ class GxATool(BaseTool):
                     else None
                 ),
                 "gene_profiles": gene_profiles,
+                "expression_units": sorted(
+                    {
+                        profile["expression_unit"]
+                        for profile in gene_profiles
+                        if profile.get("expression_unit")
+                    }
+                ),
                 "profiles_returned_by_upstream": profiles_returned_by_upstream,
                 "profiles_available_upstream": profiles_available_upstream,
                 "coverage_warning": coverage_warning,

@@ -40,7 +40,42 @@
             },
             "associations": {
               "type": "array",
-              "description": "Gene-disease associations"
+              "description": "Gene-disease associations",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "assoc_id": {"type": ["string", "null"], "description": "DisGeNET's id for this association, which its chemical and evidence endpoints take"},
+                  "gene_symbol": {"type": ["string", "null"]},
+                  "gene_ncbi_id": {"type": ["integer", "string", "null"]},
+                  "gene_ensembl_ids": {"type": "array", "items": {"type": "string"}},
+                  "gene_ncbi_type": {"type": ["string", "null"], "description": "e.g. protein-coding"},
+                  "gene_uniprot_ids": {"type": "array", "items": {"type": "string"}, "description": "UniProt accessions for the gene, for joining to protein-level sources"},
+                  "gene_dsi": {"type": ["number", "null"], "description": "Disease Specificity Index: low means the gene is associated with many diseases"},
+                  "gene_dpi": {"type": ["number", "null"], "description": "Disease Pleiotropy Index"},
+                  "gene_pli": {"type": ["number", "null"], "description": "gnomAD pLI, probability of loss-of-function intolerance"},
+                  "variant": {"type": ["string", "null"], "description": "Present on variant-disease results only"},
+                  "disease_name": {"type": ["string", "null"]},
+                  "disease_umls_cui": {"type": ["string", "null"]},
+                  "disease_type": {"type": ["string", "null"], "description": "e.g. disease, phenotype, group"},
+                  "disease_vocabularies": {"type": "array", "items": {"type": "string"}, "description": "The disease's ids in every other vocabulary DisGeNET maps -- MONDO, DO, MeSH, ORDO, NCI -- which is what lets the association be joined to another source"},
+                  "disease_classes": {"type": "object", "description": "The disease's classification in four schemes", "properties": {
+                    "mesh": {"type": "array", "items": {"type": "string"}},
+                    "do": {"type": "array", "items": {"type": "string"}},
+                    "hpo": {"type": "array", "items": {"type": "string"}},
+                    "umls_semantic_type": {"type": "array", "items": {"type": "string"}}}},
+                  "score": {"type": ["number", "null"], "description": "DisGeNET association score"},
+                  "normalized_score": {"type": ["number", "null"]},
+                  "score_breakdown": {"type": "array", "description": "What the score is made of: per component (curated, clinical, inferred, models, literature) the contributing sources, their count and their weight. A 1.25 is then readable rather than taken on faith.", "items": {"type": "object"}},
+                  "n_pmids": {"type": ["integer", "null"], "description": "Publications supporting the association"},
+                  "n_clinical_trials": {"type": ["integer", "null"], "description": "Clinical trials supporting it"},
+                  "n_dbsnps": {"type": ["integer", "null"], "description": "dbSNP records supporting it"},
+                  "n_chemicals_in_evidence": {"type": ["integer", "null"], "description": "How many chemicals appear in the evidence. The chemicals themselves are NOT returned -- BRCA1 answers 727 of them with 3,206 cross-references -- so query DisGeNET's chemical endpoints with assoc_id for the list."},
+                  "year_first": {"type": ["integer", "string", "null"], "description": "Year of the earliest supporting publication"},
+                  "year_last": {"type": ["integer", "string", "null"], "description": "Year of the latest"},
+                  "ei": {"type": ["number", "null"], "description": "Evidence Index: agreement among the publications"},
+                  "el": {"type": ["string", "null"], "description": "Evidence Level, where DisGeNET assigns one"}
+                }
+              }
             },
             "count": {
               "type": "integer"
@@ -111,7 +146,42 @@
               "type": "string"
             },
             "associations": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "assoc_id": {"type": ["string", "null"], "description": "DisGeNET's id for this association, which its chemical and evidence endpoints take"},
+                  "gene_symbol": {"type": ["string", "null"]},
+                  "gene_ncbi_id": {"type": ["integer", "string", "null"]},
+                  "gene_ensembl_ids": {"type": "array", "items": {"type": "string"}},
+                  "gene_ncbi_type": {"type": ["string", "null"], "description": "e.g. protein-coding"},
+                  "gene_uniprot_ids": {"type": "array", "items": {"type": "string"}, "description": "UniProt accessions for the gene, for joining to protein-level sources"},
+                  "gene_dsi": {"type": ["number", "null"], "description": "Disease Specificity Index: low means the gene is associated with many diseases"},
+                  "gene_dpi": {"type": ["number", "null"], "description": "Disease Pleiotropy Index"},
+                  "gene_pli": {"type": ["number", "null"], "description": "gnomAD pLI, probability of loss-of-function intolerance"},
+                  "variant": {"type": ["string", "null"], "description": "Present on variant-disease results only"},
+                  "disease_name": {"type": ["string", "null"]},
+                  "disease_umls_cui": {"type": ["string", "null"]},
+                  "disease_type": {"type": ["string", "null"], "description": "e.g. disease, phenotype, group"},
+                  "disease_vocabularies": {"type": "array", "items": {"type": "string"}, "description": "The disease's ids in every other vocabulary DisGeNET maps -- MONDO, DO, MeSH, ORDO, NCI -- which is what lets the association be joined to another source"},
+                  "disease_classes": {"type": "object", "description": "The disease's classification in four schemes", "properties": {
+                    "mesh": {"type": "array", "items": {"type": "string"}},
+                    "do": {"type": "array", "items": {"type": "string"}},
+                    "hpo": {"type": "array", "items": {"type": "string"}},
+                    "umls_semantic_type": {"type": "array", "items": {"type": "string"}}}},
+                  "score": {"type": ["number", "null"], "description": "DisGeNET association score"},
+                  "normalized_score": {"type": ["number", "null"]},
+                  "score_breakdown": {"type": "array", "description": "What the score is made of: per component (curated, clinical, inferred, models, literature) the contributing sources, their count and their weight. A 1.25 is then readable rather than taken on faith.", "items": {"type": "object"}},
+                  "n_pmids": {"type": ["integer", "null"], "description": "Publications supporting the association"},
+                  "n_clinical_trials": {"type": ["integer", "null"], "description": "Clinical trials supporting it"},
+                  "n_dbsnps": {"type": ["integer", "null"], "description": "dbSNP records supporting it"},
+                  "n_chemicals_in_evidence": {"type": ["integer", "null"], "description": "How many chemicals appear in the evidence. The chemicals themselves are NOT returned -- BRCA1 answers 727 of them with 3,206 cross-references -- so query DisGeNET's chemical endpoints with assoc_id for the list."},
+                  "year_first": {"type": ["integer", "string", "null"], "description": "Year of the earliest supporting publication"},
+                  "year_last": {"type": ["integer", "string", "null"], "description": "Year of the latest"},
+                  "ei": {"type": ["number", "null"], "description": "Evidence Index: agreement among the publications"},
+                  "el": {"type": ["string", "null"], "description": "Evidence Level, where DisGeNET assigns one"}
+                }
+              }
             },
             "count": {
               "type": "integer"
@@ -188,7 +258,42 @@
           "type": "object",
           "properties": {
             "associations": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "assoc_id": {"type": ["string", "null"], "description": "DisGeNET's id for this association, which its chemical and evidence endpoints take"},
+                  "gene_symbol": {"type": ["string", "null"]},
+                  "gene_ncbi_id": {"type": ["integer", "string", "null"]},
+                  "gene_ensembl_ids": {"type": "array", "items": {"type": "string"}},
+                  "gene_ncbi_type": {"type": ["string", "null"], "description": "e.g. protein-coding"},
+                  "gene_uniprot_ids": {"type": "array", "items": {"type": "string"}, "description": "UniProt accessions for the gene, for joining to protein-level sources"},
+                  "gene_dsi": {"type": ["number", "null"], "description": "Disease Specificity Index: low means the gene is associated with many diseases"},
+                  "gene_dpi": {"type": ["number", "null"], "description": "Disease Pleiotropy Index"},
+                  "gene_pli": {"type": ["number", "null"], "description": "gnomAD pLI, probability of loss-of-function intolerance"},
+                  "variant": {"type": ["string", "null"], "description": "Present on variant-disease results only"},
+                  "disease_name": {"type": ["string", "null"]},
+                  "disease_umls_cui": {"type": ["string", "null"]},
+                  "disease_type": {"type": ["string", "null"], "description": "e.g. disease, phenotype, group"},
+                  "disease_vocabularies": {"type": "array", "items": {"type": "string"}, "description": "The disease's ids in every other vocabulary DisGeNET maps -- MONDO, DO, MeSH, ORDO, NCI -- which is what lets the association be joined to another source"},
+                  "disease_classes": {"type": "object", "description": "The disease's classification in four schemes", "properties": {
+                    "mesh": {"type": "array", "items": {"type": "string"}},
+                    "do": {"type": "array", "items": {"type": "string"}},
+                    "hpo": {"type": "array", "items": {"type": "string"}},
+                    "umls_semantic_type": {"type": "array", "items": {"type": "string"}}}},
+                  "score": {"type": ["number", "null"], "description": "DisGeNET association score"},
+                  "normalized_score": {"type": ["number", "null"]},
+                  "score_breakdown": {"type": "array", "description": "What the score is made of: per component (curated, clinical, inferred, models, literature) the contributing sources, their count and their weight. A 1.25 is then readable rather than taken on faith.", "items": {"type": "object"}},
+                  "n_pmids": {"type": ["integer", "null"], "description": "Publications supporting the association"},
+                  "n_clinical_trials": {"type": ["integer", "null"], "description": "Clinical trials supporting it"},
+                  "n_dbsnps": {"type": ["integer", "null"], "description": "dbSNP records supporting it"},
+                  "n_chemicals_in_evidence": {"type": ["integer", "null"], "description": "How many chemicals appear in the evidence. The chemicals themselves are NOT returned -- BRCA1 answers 727 of them with 3,206 cross-references -- so query DisGeNET's chemical endpoints with assoc_id for the list."},
+                  "year_first": {"type": ["integer", "string", "null"], "description": "Year of the earliest supporting publication"},
+                  "year_last": {"type": ["integer", "string", "null"], "description": "Year of the latest"},
+                  "ei": {"type": ["number", "null"], "description": "Evidence Index: agreement among the publications"},
+                  "el": {"type": ["string", "null"], "description": "Evidence Level, where DisGeNET assigns one"}
+                }
+              }
             },
             "count": {
               "type": "integer"
@@ -250,7 +355,42 @@
           "type": "object",
           "properties": {
             "associations": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "assoc_id": {"type": ["string", "null"], "description": "DisGeNET's id for this association, which its chemical and evidence endpoints take"},
+                  "gene_symbol": {"type": ["string", "null"]},
+                  "gene_ncbi_id": {"type": ["integer", "string", "null"]},
+                  "gene_ensembl_ids": {"type": "array", "items": {"type": "string"}},
+                  "gene_ncbi_type": {"type": ["string", "null"], "description": "e.g. protein-coding"},
+                  "gene_uniprot_ids": {"type": "array", "items": {"type": "string"}, "description": "UniProt accessions for the gene, for joining to protein-level sources"},
+                  "gene_dsi": {"type": ["number", "null"], "description": "Disease Specificity Index: low means the gene is associated with many diseases"},
+                  "gene_dpi": {"type": ["number", "null"], "description": "Disease Pleiotropy Index"},
+                  "gene_pli": {"type": ["number", "null"], "description": "gnomAD pLI, probability of loss-of-function intolerance"},
+                  "variant": {"type": ["string", "null"], "description": "Present on variant-disease results only"},
+                  "disease_name": {"type": ["string", "null"]},
+                  "disease_umls_cui": {"type": ["string", "null"]},
+                  "disease_type": {"type": ["string", "null"], "description": "e.g. disease, phenotype, group"},
+                  "disease_vocabularies": {"type": "array", "items": {"type": "string"}, "description": "The disease's ids in every other vocabulary DisGeNET maps -- MONDO, DO, MeSH, ORDO, NCI -- which is what lets the association be joined to another source"},
+                  "disease_classes": {"type": "object", "description": "The disease's classification in four schemes", "properties": {
+                    "mesh": {"type": "array", "items": {"type": "string"}},
+                    "do": {"type": "array", "items": {"type": "string"}},
+                    "hpo": {"type": "array", "items": {"type": "string"}},
+                    "umls_semantic_type": {"type": "array", "items": {"type": "string"}}}},
+                  "score": {"type": ["number", "null"], "description": "DisGeNET association score"},
+                  "normalized_score": {"type": ["number", "null"]},
+                  "score_breakdown": {"type": "array", "description": "What the score is made of: per component (curated, clinical, inferred, models, literature) the contributing sources, their count and their weight. A 1.25 is then readable rather than taken on faith.", "items": {"type": "object"}},
+                  "n_pmids": {"type": ["integer", "null"], "description": "Publications supporting the association"},
+                  "n_clinical_trials": {"type": ["integer", "null"], "description": "Clinical trials supporting it"},
+                  "n_dbsnps": {"type": ["integer", "null"], "description": "dbSNP records supporting it"},
+                  "n_chemicals_in_evidence": {"type": ["integer", "null"], "description": "How many chemicals appear in the evidence. The chemicals themselves are NOT returned -- BRCA1 answers 727 of them with 3,206 cross-references -- so query DisGeNET's chemical endpoints with assoc_id for the list."},
+                  "year_first": {"type": ["integer", "string", "null"], "description": "Year of the earliest supporting publication"},
+                  "year_last": {"type": ["integer", "string", "null"], "description": "Year of the latest"},
+                  "ei": {"type": ["number", "null"], "description": "Evidence Index: agreement among the publications"},
+                  "el": {"type": ["string", "null"], "description": "Evidence Level, where DisGeNET assigns one"}
+                }
+              }
             },
             "count": {
               "type": "integer"
@@ -325,11 +465,41 @@
                   "symbol": {
                     "type": "string"
                   },
+                  "ncbi_id": {
+                    "type": ["integer", "string", "null"]
+                  },
+                  "ensembl_ids": {
+                    "type": "array",
+                    "items": {"type": "string"}
+                  },
+                  "ncbi_type": {
+                    "type": ["string", "null"],
+                    "description": "e.g. protein-coding"
+                  },
                   "score": {
                     "type": "number"
                   },
-                  "evidence_count": {
-                    "type": "integer"
+                  "dsi": {
+                    "type": ["number", "null"],
+                    "description": "Disease Specificity Index: low means the gene is associated with many diseases, so a hit on this list is less specific"
+                  },
+                  "dpi": {
+                    "type": ["number", "null"],
+                    "description": "Disease Pleiotropy Index"
+                  },
+                  "pli": {
+                    "type": ["number", "null"],
+                    "description": "gnomAD pLI, probability of loss-of-function intolerance"
+                  },
+                  "n_pmids": {
+                    "type": ["integer", "null"],
+                    "description": "Publications supporting the association. This is the field the tool returns; an earlier schema named it evidence_count, which nothing ever set."
+                  },
+                  "n_clinical_trials": {
+                    "type": ["integer", "null"]
+                  },
+                  "n_dbsnps": {
+                    "type": ["integer", "null"]
                   }
                 }
               }
