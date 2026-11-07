@@ -7,9 +7,16 @@
 #
 # Claude side — FILTERED COPIES of ../skills/, user-facing skills only.
 # Includes: tooluniverse, tooluniverse-*, setup-tooluniverse
-# Excludes (per-skill): test_*.py, *_test.py, evals/, __pycache__/, *.pyc, .pytest_cache/,
-#                      .coverage*, coverage.xml, htmlcov/, .mypy_cache/, .ruff_cache/,
-#                      .DS_Store
+# Excludes (per-skill): test_*.py, *_test.py, evals/, *_SUMMARY.md, __pycache__/, *.pyc,
+#                      .pytest_cache/, .coverage*, coverage.xml, htmlcov/, .mypy_cache/,
+#                      .ruff_cache/, .DS_Store
+#
+# *_SUMMARY.md is excluded because .gitignore line 159 ignores it, so copying it
+# produced output that could not be committed: both plugin trees held an
+# untracked setup-tooluniverse/SKILL_SUMMARY.md, present on every machine that
+# ran this script and absent for everyone who installed the plugin from git. It
+# is a development record anyway -- "Skill Created Successfully", pointing at
+# ~/.cursor/skills/ -- not something a user of either plugin reads.
 #
 # WHY copies instead of symlinks: the public marketplace.json points users to
 # `./plugin` and Claude Code clones the repo. With symlinks, users got the
@@ -54,6 +61,7 @@ for dir in ../skills/tooluniverse ../skills/tooluniverse-* ../skills/setup-toolu
     --exclude='test_*.py' \
     --exclude='*_test.py' \
     --exclude='evals/' \
+    --exclude='*_SUMMARY.md' \
     --exclude='__pycache__/' \
     --exclude='*.pyc' \
     --exclude='.pytest_cache/' \

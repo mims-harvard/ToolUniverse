@@ -45,6 +45,7 @@ for skill_dir in "$REPO_ROOT/skills/tooluniverse" "$REPO_ROOT"/skills/tooluniver
         --exclude='test_*.py' \
         --exclude='*_test.py' \
         --exclude='evals/' \
+        --exclude='*_SUMMARY.md' \
         --exclude='__pycache__/' \
         --exclude='*.pyc' \
         --exclude='.pytest_cache/' \
