@@ -147,6 +147,52 @@ def key_names(node, out=None, depth=0):
     return out
 
 
+# Paths that are not the record, whatever the API. Each is a structural class
+# -- transport, search machinery, link construction, audit trail -- and not a
+# guess about whether some field matters. They are reported under
+# `not_record_data` rather than dropped, so a wrong call here is visible.
+NOT_RECORD_DATA = re.compile(
+    r"""(?x)
+    (^|\.)_?links?(\.|\[|$)                  # HATEOAS
+  | (^|\.)relationships(\.|\[)                # JSON:API relationship stubs
+  | (^|\.)self$
+  | resourceDescriptorPage                     # URL templates for a curie
+  | (^|\.)urlTemplate$ | idPattern$ | idExample$ | resourcePages
+  | supplementalData\.distinctFieldValues      # search facet values
+  | (^|\.)aggregations(\.|\[)                 # search facet counts
+  | (^|\.)highlights?(\.|\[)                  # search result highlighting
+  | (^|\.)(createdBy|updatedBy)(\.|\[)        # audit trail
+  | _searchable(\[\])?$ | _closure            # Solr expansions
+  | (^|\.)(_score|_version_|maxScore|numFound|QTime|responseHeader)$
+  | [Dd]efinition(\[\])?$                     # paragraphs of ontology prose
+  | (^|\.)(translationstack|idlist|uids?|webenv|querykey)(\.|\[|$)
+  | (^|\.)(page|per_page|pageSize|page_size|total_pages|pageInfo)(\.|\[|$)
+  | (^|\.)@                                   # JSON-LD framing
+    """
+)
+
+
+def is_record_data(field):
+    """False when a field path is transport, search machinery or an audit trail."""
+    return not NOT_RECORD_DATA.search(field)
+
+
+def key_names_raw(node, out=None, depth=0):
+    """Every dict key reachable from `node`, unnormalised."""
+    if out is None:
+        out = set()
+    if depth > MAX_DEPTH:
+        return out
+    if isinstance(node, dict):
+        for key, value in node.items():
+            out.add(str(key).strip())
+            key_names_raw(value, out, depth + 1)
+    elif isinstance(node, list):
+        for value in node:
+            key_names_raw(value, out, depth + 1)
+    return out
+
+
 def compare(upstream, returned):
     """Per upstream field: how many of its leaf values reached the caller.
 
@@ -158,7 +204,16 @@ def compare(upstream, returned):
     reaches the caller was selected, whatever this page happened to hold, so it
     is reported apart from the fields the wrapper never asked for.
     """
-    survivors = set(leaf_values(returned))
+    # Object KEYS count as survivors, because pivoting a long-format response
+    # into a map is how a wrapper legitimately exposes it.
+    # `OmniPath_get_annotation_resource_geneset` turns rows of
+    # {label, value} into `annotations: {<label>: <value>}`, so every one of
+    # 9,755 `label` values reaches the caller as a key and none of them as a
+    # value. Diffing values alone called that the largest drop in the
+    # catalogue.
+    survivors = set(leaf_values(returned)) | {
+        key for key in key_names_raw(returned) if len(key) >= MIN_VALUE_LENGTH
+    }
     present = key_names(returned)
     rows = []
     for field, values in leaf_fields(upstream).items():
@@ -177,6 +232,30 @@ def compare(upstream, returned):
         del row["leaf"]
     rows.sort(key=lambda r: (r["kept"] / r["total"], -r["total"]))
     return rows
+
+
+SELF_DESCRIPTION = re.compile(
+    r"/(schema|openapi|swagger|_mapping|api-docs|metadata/fields)(\.json)?/?$",
+    re.IGNORECASE,
+)
+
+
+def describes_the_api_not_a_record(call):
+    """True when a captured response is the API describing itself.
+
+    A tool may fetch its endpoint's own field list beside the data. ChEMBL's
+    wrappers call `/molecule/CHEMBL25.json` and then
+    `/molecule/schema.json`, and that second document's leaf values are FIELD
+    NAMES -- `ordering`, `fields.molecule_properties.schema.filtering.ro3_pass`
+    -- which of course never reach the caller. Diffing it reported all 20
+    ChEMBL tools as dropping data and none of them were: it is the largest
+    single false-positive class in the catalogue after pagination.
+
+    An OPTIONS request is the same thing by another route.
+    """
+    if (call.get("method") or "").upper() == "OPTIONS":
+        return True
+    return bool(SELF_DESCRIPTION.search(call.get("url") or ""))
 
 
 def record_http():
@@ -296,18 +375,33 @@ def audit(
                 )
             )
             continue
-        bodies = [c["body"] for c in captured if isinstance(c["body"], (dict, list))]
-        if not bodies:
+        calls = [c for c in captured if isinstance(c["body"], (dict, list))]
+        described = [c for c in calls if describes_the_api_not_a_record(c)]
+        calls = [c for c in calls if not describes_the_api_not_a_record(c)]
+        if not calls:
             findings.append(
-                _emit({"tool": name, "skipped": "no JSON upstream response"}, on_result)
+                _emit(
+                    {
+                        "tool": name,
+                        "skipped": "no JSON upstream response"
+                        + (
+                            " that is not the API describing itself"
+                            if described
+                            else ""
+                        ),
+                    },
+                    on_result,
+                )
             )
             continue
 
         returned = result.get("data", result)
         thin = []
         mapped_but_unseen = []
-        for body in bodies:
-            for row in compare(body, returned):
+        not_record_data = []
+        for call in calls:
+            for row in compare(call["body"], returned):
+                row["url"] = call["url"]
                 if row["total"] < min_values:
                     continue  # a single value that moved is a rename, not a loss
                 # Zero survivors, not a low ratio. A ratio flags PAGINATION:
@@ -322,17 +416,25 @@ def audit(
                 # ... unless the page it exposes is all nulls. Then the field is
                 # selected and has nothing to show, which is the upstream being
                 # sparse, not the wrapper dropping anything.
-                (mapped_but_unseen if row["mapped"] else thin).append(row)
+                if not is_record_data(row["field"]):
+                    not_record_data.append(row)
+                elif row["mapped"]:
+                    mapped_but_unseen.append(row)
+                else:
+                    thin.append(row)
         thin.sort(key=lambda r: -r["total"])
         mapped_but_unseen.sort(key=lambda r: -r["total"])
+        not_record_data.sort(key=lambda r: -r["total"])
         findings.append(
             _emit(
                 {
                     "tool": name,
                     "upstream_calls": len(captured),
-                    "urls": sorted({c["url"] for c in captured})[:3],
+                    "urls": sorted({c["url"] for c in calls})[:3],
+                    "self_description_urls": sorted({c["url"] for c in described})[:3],
                     "thin_fields": thin[:12],
                     "mapped_but_unseen": mapped_but_unseen[:12],
+                    "not_record_data": not_record_data[:12],
                 },
                 on_result,
             )

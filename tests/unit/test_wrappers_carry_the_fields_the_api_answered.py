@@ -258,6 +258,62 @@ UPSTREAM_KEYS = [
         "benefactorId",
         "the entity whose access rules govern the child",
     ),
+    # Second round: the families the catalogue-wide run ranked highest.
+    (
+        "omnipath_tool.py",
+        "_omnipath_references",
+        "the papers behind an interaction; `sources` names the databases, not the evidence",
+    ),
+    (
+        "omnipath_tool.py",
+        '"source": item.get("source"),\n                    "consensus_score"',
+        "whether an intercell row is about a protein, a complex or a miRNA",
+    ),
+    (
+        "alliance_genome_tool.py",
+        "referenceCuries",
+        "the literature about the gene -- 4,461 publications on the MGI record",
+    ),
+    (
+        "alliance_genome_tool.py",
+        "geneSecondaryIds",
+        "retired accessions, which is how the older literature cites the gene",
+    ),
+    (
+        "alliance_genome_tool.py",
+        "relatedNotes",
+        "the curator notes the model-organism database wrote about the gene",
+    ),
+    (
+        "alliance_genome_tool.py",
+        "predictedVariantConsequences",
+        "the VEP impact and transcript consequence, which is the content of an allele record",
+    ),
+    (
+        "alliance_genome_tool.py",
+        "associatedPhenotype",
+        "what is wrong with the mutant strain, beside a hasPhenotype boolean that said only that something is",
+    ),
+    (
+        "alliance_genome_tool.py",
+        '"stringency": r.get("stringencyFilter"),\n                    "subject_taxon_id"',
+        "which stringency band an ortholog row met, for a call that takes a stringency",
+    ),
+    (
+        "alliance_genome_tool.py",
+        "conditionRelations",
+        "the conditions a phenotype was observed under",
+    ),
+    (
+        "alliance_genome_tool.py",
+        "automatedGeneDescription",
+        "what a search hit is known for, so hits can be ranked without a call each",
+    ),
+    (
+        "alliance_genome_tool.py",
+        "predictionMethodsNotMatched",
+        "the methods that did NOT support an ortholog call, which is what makes method_count mean anything",
+    ),
 ]
 
 
@@ -265,7 +321,7 @@ UPSTREAM_KEYS = [
     "module, key, why",
     UPSTREAM_KEYS,
     ids=[
-        f"{m.removesuffix('.py')}:{k.split(chr(34))[1] if chr(34) in k else k}"
+        f"{m.removesuffix('.py')}:{k.split(chr(34))[1] if chr(34) in k else k}"[:60]
         for m, k, _ in UPSTREAM_KEYS
     ],
 )

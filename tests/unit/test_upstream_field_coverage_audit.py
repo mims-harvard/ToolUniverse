@@ -206,6 +206,76 @@ def test_a_transformed_value_keeps_its_field_out_of_the_drop_list(audit):
     assert rows["page[].type"]["mapped"] is True
 
 
+def test_a_schema_document_is_not_a_record(audit):
+    """The largest single false-positive class after pagination.
+
+    ChEMBL's wrappers fetch `/molecule/CHEMBL25.json` and then
+    `/molecule/schema.json`. The second document's leaf values are FIELD
+    NAMES, so none of them reach the caller and all 20 ChEMBL tools were
+    reported as dropping data. None of them were.
+    """
+    assert audit.describes_the_api_not_a_record(
+        {
+            "method": "GET",
+            "url": "https://www.ebi.ac.uk/chembl/api/data/molecule/schema.json",
+        }
+    )
+    assert audit.describes_the_api_not_a_record(
+        {"method": "OPTIONS", "url": "https://x/y"}
+    )
+    assert not audit.describes_the_api_not_a_record(
+        {
+            "method": "GET",
+            "url": "https://www.ebi.ac.uk/chembl/api/data/molecule/CHEMBL25.json",
+        }
+    )
+
+
+def test_a_value_promoted_to_a_key_still_reached_the_caller(audit):
+    """Pivoting a long-format response into a map is not a loss.
+
+    `OmniPath_get_annotation_resource_geneset` turns rows of {label, value}
+    into `annotations: {<label>: <value>}`. All 9,755 `label` values reach the
+    caller as keys and none as values, which read as the biggest drop in the
+    catalogue.
+    """
+    upstream = {"rows": [{"label": f"annotation {i}"} for i in range(8)]}
+    returned = {"annotations": {f"annotation {i}": 1 for i in range(8)}}
+
+    rows = {r["field"]: r for r in audit.compare(upstream, returned)}
+
+    assert rows["rows[].label"]["kept"] == 8
+
+
+def test_transport_and_search_machinery_are_not_the_record(audit):
+    """Reported apart from the candidates, because they are never the answer.
+
+    Alliance answers a `resourceDescriptorPage` per cross-reference holding
+    the URL template used to build the link the wrapper already returns, and a
+    `supplementalData.distinctFieldValues` holding the search facets. Both
+    scored as dropped fields on every Alliance tool.
+    """
+    for field in [
+        "gene.crossReferences[].resourceDescriptorPage.urlTemplate",
+        "supplementalData.distinctFieldValues.molecularConsequence[]",
+        "data[].links.self",
+        "data[].relationships.pipeline.links.related",
+        "results[].highlights.symbol[]",
+        "results[].subject.createdBy.dateCreated",
+        "doTerm.definition",
+        "esearchresult.translationstack[].term",
+    ]:
+        assert not audit.is_record_data(field), field
+    for field in [
+        "samples[].accession",
+        "profiles.rows[].expressionUnit",
+        "result[].effective_domain_size",
+        "participants[].linkedFeatures[].name",
+        "[].references",
+    ]:
+        assert audit.is_record_data(field), field
+
+
 def test_the_summariser_merges_the_shards_and_records_the_count(summarize, tmp_path):
     """Measured and then thrown away is the failure mode to avoid."""
     shard = tmp_path / "shards" / "a"

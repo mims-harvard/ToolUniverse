@@ -16,7 +16,9 @@
           "description": "Maximum number of results to return (default: 10, max: 50)."
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "fields": {
       "endpoint_type": "search_genes"
@@ -42,19 +44,31 @@
         "type": "object",
         "properties": {
           "symbol": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Official gene symbol (e.g., 'Trp53')"
           },
           "name": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Gene name"
           },
           "gene_id": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "MGI identifier (e.g., 'MGI:98834')"
           },
           "category": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Entity category (always 'gene')"
           }
         }
@@ -73,7 +87,9 @@
           "description": "MGI gene identifier with 'MGI:' prefix. Examples: 'MGI:98834' (Trp53/p53), 'MGI:104537' (Brca1), 'MGI:96677' (Kit), 'MGI:88039' (Apoe), 'MGI:88276' (Braf)."
         }
       },
-      "required": ["gene_id"]
+      "required": [
+        "gene_id"
+      ]
     },
     "fields": {
       "endpoint_type": "gene_detail"
@@ -91,50 +107,115 @@
       "description": "Mouse gene details from MGI",
       "properties": {
         "id": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "MGI identifier (e.g., 'MGI:98834')"
         },
         "symbol": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Official gene symbol (e.g., 'Trp53')"
         },
         "name": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Full gene name (e.g., 'transformation related protein 53')"
         },
         "species": {
           "type": "object",
           "properties": {
-            "name": {"type": ["string", "null"]},
-            "short_name": {"type": ["string", "null"]},
-            "taxon_id": {"type": ["string", "null"]},
-            "data_provider": {"type": ["string", "null"]}
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "short_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "taxon_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "data_provider": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
           }
         },
         "gene_synopsis": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Curated gene synopsis from MGI"
         },
         "automated_gene_synopsis": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Automatically generated gene synopsis"
         },
         "synonyms": {
           "type": "array",
-          "items": {"type": "string"}
+          "items": {
+            "type": "string"
+          }
         },
         "so_term": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Sequence Ontology term (e.g., 'protein_coding_gene')"
         },
         "genomic_location": {
           "type": "object",
           "properties": {
-            "chromosome": {"type": ["string", "null"]},
-            "start": {"type": ["integer", "null"]},
-            "end": {"type": ["integer", "null"]},
-            "assembly": {"type": ["string", "null"]},
-            "strand": {"type": ["string", "null"]}
+            "chromosome": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "start": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "end": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "assembly": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "strand": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
           }
         },
         "cross_references": {
@@ -142,10 +223,105 @@
           "items": {
             "type": "object",
             "properties": {
-              "name": {"type": ["string", "null"]},
-              "url": {"type": ["string", "null"]}
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "url": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "curie": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
             }
           }
+        },
+        "secondary_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Retired accessions for the gene. Older literature cites these, and nothing else recovers them."
+        },
+        "cross_references_total": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "xref_offset": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "cross_references_returned": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "cross_references_truncated": {
+          "type": "boolean"
+        },
+        "next_xref_offset": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "notes": {
+          "type": "array",
+          "description": "Curator notes the model-organism database wrote about the gene",
+          "items": {
+            "type": "object",
+            "properties": {
+              "note_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "What kind of note this is, as the source database classifies it"
+              },
+              "text": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The note's text"
+              }
+            }
+          }
+        },
+        "reference_curies": {
+          "type": "array",
+          "description": "Publication curies for the gene. Alliance lists thousands for a well-studied gene, so this is capped; reference_curies_total is the true count."
+        },
+        "reference_curies_total": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many publications Alliance links to the gene"
+        },
+        "reference_curies_returned": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many are carried on this response"
+        },
+        "reference_curies_truncated": {
+          "type": "boolean",
+          "description": "True when reference_curies is a prefix of the full list"
         }
       }
     }
@@ -172,7 +348,9 @@
           "description": "Page number for pagination (default: 1)."
         }
       },
-      "required": ["gene_id"]
+      "required": [
+        "gene_id"
+      ]
     },
     "fields": {
       "endpoint_type": "gene_phenotypes"
@@ -194,16 +372,93 @@
         "type": "object",
         "properties": {
           "gene_symbol": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Gene symbol"
           },
           "gene_id": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "MGI gene ID"
           },
           "phenotype_statement": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "description": "Phenotype description from MP ontology annotation"
+          },
+          "references": {
+            "type": "array",
+            "description": "The publications behind this record",
+            "items": {
+              "type": "object",
+              "properties": {
+                "agr_curie": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Alliance reference curie"
+                },
+                "pubmed_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "e.g. PMID:29735293"
+                },
+                "mod_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The model-organism database's own reference id"
+                },
+                "citation": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Short citation"
+                },
+                "cross_references": {
+                  "type": "array",
+                  "description": "Every curie Alliance cross-references, DOI included",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "inferred_allele": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The allele the phenotype was observed in"
+          },
+          "inferred_allele_synonyms": {
+            "type": "array",
+            "description": "Other names for that allele, which is how it is matched across databases"
+          },
+          "conditions": {
+            "type": "array",
+            "description": "Experimental conditions the phenotype was observed under; 'standard conditions' versus a treatment changes what the statement means"
+          },
+          "pubmed_publications": {
+            "type": "array"
+          },
+          "annotation_count": {
+            "type": [
+              "integer",
+              "null"
+            ]
           }
         }
       }

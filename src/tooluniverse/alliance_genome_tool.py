@@ -46,6 +46,68 @@ def _display(value):
     return value
 
 
+def _variant_consequence(node):
+    """One predicted consequence of a variant, as Alliance reports it."""
+    transcript = node.get("variantTranscript") or {}
+    return {
+        "transcript": transcript.get("name"),
+        "transcript_type": (transcript.get("transcriptType") or {}).get("name"),
+        "vep_impact": (node.get("vepImpact") or {}).get("name"),
+        "vep_consequences": [
+            c.get("name")
+            for c in (node.get("vepConsequences") or [])
+            if isinstance(c, dict) and c.get("name")
+        ],
+        "hgvs_coding": node.get("hgvsCodingNomenclature"),
+        "sequence_feature": node.get("sequenceFeatureName"),
+        "intron_exon_location": node.get("intronExonLocation"),
+        "gene_level_consequence": node.get("geneLevelConsequence"),
+        "amino_acid_reference": node.get("aminoAcidReference"),
+        "amino_acid_variant": node.get("aminoAcidVariant"),
+        "codon_reference": node.get("codonReference"),
+        "codon_variant": node.get("codonVariant"),
+    }
+
+
+def _allele_variants(variant_list):
+    """An allele's variants with their locations and predicted consequences."""
+    out = []
+    for variant in variant_list or []:
+        if not isinstance(variant, dict):
+            continue
+        locations = []
+        for loc in variant.get("curatedVariantGenomicLocations") or []:
+            if not isinstance(loc, dict):
+                continue
+            locations.append(
+                {
+                    "start": loc.get("start"),
+                    "end": loc.get("end"),
+                    "hgvs": loc.get("hgvs"),
+                    "hgvs_coding": loc.get("hgvsC"),
+                    "reference_sequence": loc.get("referenceSequence"),
+                    "variant_sequence": loc.get("variantSequence"),
+                    "most_severe_consequence": _display(
+                        loc.get("mostSevereConsequence")
+                    ),
+                    "predicted_consequences": [
+                        _variant_consequence(pc)
+                        for pc in (loc.get("predictedVariantConsequences") or [])
+                        if isinstance(pc, dict)
+                    ],
+                }
+            )
+        out.append(
+            {
+                "variant_type": _display(variant.get("variantType"))
+                or variant.get("type"),
+                "nucleotide_change": variant.get("nucleotideChange"),
+                "locations": locations,
+            }
+        )
+    return out
+
+
 def _allele_summary(record):
     """Flatten one /gene/{id}/alleles record.
 
@@ -58,8 +120,9 @@ def _allele_summary(record):
     """
     allele = record.get("allele") or {}
     symbol = _display(allele.get("alleleSymbol")) or record.get("symbol")
+    all_variants = record.get("variantList") or []
     variants = []
-    for v in (record.get("variantList") or [])[:3]:
+    for v in all_variants[:VARIANTS_PER_ALLELE]:
         locations = v.get("curatedVariantGenomicLocations") or []
         loc = locations[0] if locations else {}
         consequence = loc.get("mostSevereConsequence")
@@ -85,6 +148,10 @@ def _allele_summary(record):
         "id": allele.get("primaryExternalId")
         or allele.get("curie")
         or record.get("id"),
+        # The curie Alliance's own endpoints take. For a curated allele
+        # `primaryExternalId` wins the `or` above and the curie never reached
+        # the caller, so the id in hand was not the one the next call wants.
+        "alliance_curie": allele.get("curie"),
         "symbol": symbol,
         "symbol_text": symbol or record.get("symbolText"),
         "synonyms": [
@@ -95,7 +162,24 @@ def _allele_summary(record):
         "has_disease": record.get("hasDisease"),
         "has_phenotype": record.get("hasPhenotype"),
         "variants": variants,
+        # The variant list was cut to three with nothing said, which is the row
+        # axis inside a record: an allele with 40 variants read as an allele
+        # with 3.
+        "variants_total": len(all_variants),
+        "variants_returned": len(variants),
+        "variants_truncated": len(variants) < len(all_variants),
     }
+
+
+# How many variants of one allele are carried. Three was the existing cut and
+# is kept; `variants_total` now says what it is a cut of.
+VARIANTS_PER_ALLELE = 3
+
+
+# How many publication curies a gene detail carries. The MGI record for a
+# well-studied gene lists 4,461; returning all of them would make the
+# literature list the response. `reference_curies_total` is the true count.
+REFERENCE_CURIE_CAP = 50
 
 
 def _mi_term(node):
@@ -362,10 +446,37 @@ class AllianceGenomeTool(BaseTool):
 
         gene_type = data.get("geneType") or data.get("soTerm") or {}
 
+        # The literature about the gene. Alliance answers `referenceCuries` as
+        # a flat list of publication curies -- 2,172 for FlyBase dpp, 4,461 for
+        # the MGI record -- and none of them reached the caller, so a gene
+        # detail carried no way to read anything about the gene. Capped and
+        # disclosed the way the cross-references beside it already are,
+        # because the full list would otherwise be the whole response.
+        reference_curies = data.get("referenceCuries") or []
+        ref_page = reference_curies[:REFERENCE_CURIE_CAP]
+        # Curator notes, which on a FlyBase gene are 102 free-text statements
+        # the model-organism database wrote about it.
+        notes = [
+            {
+                "note_type": (note.get("noteType") or {}).get("name"),
+                "text": note.get("freeText"),
+            }
+            for note in (data.get("relatedNotes") or [])
+            if isinstance(note, dict)
+        ]
+        # Retired accessions. A gene renamed or merged is cited in the older
+        # literature under the secondary id, and nothing else recovers it.
+        secondary_ids = [
+            sid.get("secondaryId")
+            for sid in (data.get("geneSecondaryIds") or [])
+            if isinstance(sid, dict) and sid.get("secondaryId")
+        ]
+
         return {
             "status": "success",
             "data": {
                 "id": data.get("primaryExternalId") or data.get("id"),
+                "secondary_ids": secondary_ids,
                 "symbol": _text(data.get("geneSymbol")) or data.get("symbol"),
                 "name": _text(data.get("geneFullName")) or data.get("name"),
                 "species": {
@@ -398,6 +509,11 @@ class AllianceGenomeTool(BaseTool):
                 "next_xref_offset": (
                     xref_offset + len(xref_page) if xrefs_truncated else None
                 ),
+                "notes": notes,
+                "reference_curies": ref_page,
+                "reference_curies_total": len(reference_curies),
+                "reference_curies_returned": len(ref_page),
+                "reference_curies_truncated": len(ref_page) < len(reference_curies),
             },
             "metadata": {
                 "query_gene_id": gene_id,
@@ -474,6 +590,29 @@ class AllianceGenomeTool(BaseTool):
                 "gene_id": r.get("curie"),
                 "category": "gene",
                 "species": r.get("species"),
+                # What the hit is known for. A gene search returned symbol,
+                # name and species while the same rows carried 141 disease
+                # names and Alliance's own one-line description of the gene --
+                # the two things that let a caller pick among hits without a
+                # follow-up call each.
+                "diseases": [
+                    d for d in (r.get("diseases") or []) if isinstance(d, str)
+                ],
+                "automated_description": r.get("automatedGeneDescription"),
+                "synonyms": [
+                    x for x in (r.get("synonyms") or []) if isinstance(x, str)
+                ],
+                "gene_synopsis": r.get("geneSynopsis"),
+                # The order the hits come back in, and what the hit is.
+                "search_score": r.get("score"),
+                "so_term": r.get("soTermName"),
+                # How much of each kind of evidence the gene has, which is how
+                # a caller picks a hit worth following up without a call each.
+                "related_data_counts": {
+                    item["targetField"]: item.get("count")
+                    for item in (r.get("relatedData") or [])
+                    if isinstance(item, dict) and item.get("targetField")
+                },
             }
             for r in gene_results
         ]
@@ -558,11 +697,56 @@ class AllianceGenomeTool(BaseTool):
                 if isinstance(gene_symbol_obj, dict)
                 else subject.get("symbol")
             )
+            annotations = [
+                a for a in (r.get("primaryAnnotations") or []) if isinstance(a, dict)
+            ]
             phenotypes.append(
                 {
                     "gene_symbol": gene_symbol,
                     "gene_id": subject.get("primaryExternalId"),
                     "phenotype_statement": _strip_html(r.get("phenotypeStatement")),
+                    # A phenotype statement with no citation cannot be
+                    # checked, and the response carries one per annotation:
+                    # 168 reference cross-references on the ZFIN record alone.
+                    "references": _alliance_references(r.get("references")),
+                    # Which allele the phenotype was observed in, and under
+                    # what conditions. "standard conditions" versus a chemical
+                    # or temperature treatment changes what the statement
+                    # means.
+                    "inferred_allele": _display(
+                        (annotations[0].get("inferredAllele") or {}).get("alleleSymbol")
+                    )
+                    if annotations
+                    else None,
+                    "inferred_allele_synonyms": sorted(
+                        {
+                            _display(syn)
+                            for annotation in annotations
+                            for syn in (
+                                (annotation.get("inferredAllele") or {}).get(
+                                    "alleleSynonyms"
+                                )
+                                or []
+                            )
+                            if _display(syn)
+                        }
+                    ),
+                    "conditions": sorted(
+                        {
+                            cond.get("conditionSummary")
+                            for annotation in annotations
+                            for relation in (annotation.get("conditionRelations") or [])
+                            if isinstance(relation, dict)
+                            for cond in (relation.get("conditions") or [])
+                            if isinstance(cond, dict) and cond.get("conditionSummary")
+                        }
+                    ),
+                    "pubmed_publications": [
+                        pub.get("curie") or pub.get("referenceID")
+                        for pub in (r.get("pubmedPublications") or [])
+                        if isinstance(pub, dict)
+                    ],
+                    "annotation_count": len(annotations),
                 }
             )
 
@@ -614,6 +798,23 @@ class AllianceGenomeTool(BaseTool):
                     "disease_name": disease_obj.get("name"),
                     "disease_id": disease_obj.get("curie"),
                     "association_type": r.get("associationType"),
+                    # The papers behind the association, and the evidence codes
+                    # Alliance assigned. 38 reference cross-references on the
+                    # first page alone, and a gene-disease link with neither is
+                    # not usable as evidence.
+                    "references": _alliance_references(r.get("references")),
+                    "evidence_codes": sorted(
+                        {
+                            code
+                            for annotation in (r.get("primaryAnnotations") or [])
+                            if isinstance(annotation, dict)
+                            for code in (
+                                _display(term)
+                                for term in (annotation.get("evidenceCodes") or [])
+                            )
+                            if code
+                        }
+                    ),
                 }
             )
 
@@ -711,6 +912,19 @@ class AllianceGenomeTool(BaseTool):
                     ),
                     "methods": [m.get("name") for m in methods],
                     "method_count": len(methods),
+                    "methods_not_matched": [
+                        m.get("name")
+                        for m in (orth.get("predictionMethodsNotMatched") or [])
+                        if isinstance(m, dict) and m.get("name")
+                    ],
+                    # Which stringency band this row satisfies. The parameter
+                    # asks for a stringency and the answer never said what each
+                    # row met, so a "stringent" and a "moderate" call returned
+                    # rows that looked identical.
+                    "stringency": r.get("stringencyFilter"),
+                    "subject_taxon_id": (subject.get("taxon") or {}).get("curie"),
+                    "ortholog_taxon_id": (obj_gene.get("taxon") or {}).get("curie"),
+                    "confidence": _display(orth.get("confidence")),
                 }
             )
 
@@ -1013,6 +1227,16 @@ class AllianceGenomeTool(BaseTool):
                 "gene_id": allele_of_gene.get("primaryExternalId"),
                 "gene_symbol": allele_of_gene.get("geneSymbol", {}).get("displayText"),
                 "synonyms": synonym_list,
+                "has_phenotype": data.get("hasPhenotype"),
+                "has_disease": data.get("hasDisease"),
+                # What the allele actually does. An allele detail returned the
+                # allele's name, species and gene and nothing about the
+                # variant: no HGVS, no VEP impact, no transcript. For
+                # ZFIN:ZDB-ALT-980203-1091 the response carries
+                # "XM_073919248.1:c.396+1G>A", vepImpact HIGH and
+                # splice_donor_variant, which is the whole content of the
+                # record.
+                "variants": _allele_variants(data.get("variantList")),
             },
             "metadata": {
                 "query_allele_id": allele_id,
@@ -1216,7 +1440,12 @@ class AllianceGenomeTool(BaseTool):
                     "alteration_type": r.get("alterationType"),
                     "has_disease": r.get("hasDisease"),
                     "has_phenotype": r.get("hasPhenotype"),
+                    # `variant_locations` kept only each variant's HGVS and
+                    # dropped its coordinates and type. The allele's own
+                    # variant records carry both.
                     "variant_locations": [v for v in variant_locs if v],
+                    "variants": _allele_variants(variant_list),
+                    "variants_total": len(variant_list),
                 }
             )
 
@@ -1230,6 +1459,7 @@ class AllianceGenomeTool(BaseTool):
             models.append(
                 {
                     "model_id": model.get("primaryExternalId"),
+                    "model_curie": model.get("curie"),
                     "model_name": full_name.get("displayText")
                     if isinstance(full_name, dict)
                     else model.get("name"),
@@ -1237,6 +1467,31 @@ class AllianceGenomeTool(BaseTool):
                     "data_provider": (model.get("dataProvider") or {}).get(
                         "abbreviation"
                     ),
+                    # What is actually wrong with the mutant strain. The
+                    # response lists them per model -- "microphthalmia",
+                    # "cornea opacity", "abnormal iris morphology" for MGI
+                    # Pax6 models -- and the row carried the strain's name and
+                    # nothing it does. `hasPhenotypeAnnotations: true` beside
+                    # no phenotypes is the same shape as a success beside no
+                    # data.
+                    "phenotypes": [
+                        ph
+                        for ph in (r.get("associatedPhenotype") or [])
+                        if isinstance(ph, str)
+                    ],
+                    "modifier_relationship_types": r.get("modifierRelationshipTypes")
+                    or [],
+                    "diseases": [
+                        {
+                            "name": (dm.get("disease") or {}).get("name"),
+                            "id": (dm.get("disease") or {}).get("curie"),
+                            "association_type": dm.get("associationType"),
+                        }
+                        for dm in (r.get("diseaseModels") or [])
+                        if isinstance(dm, dict)
+                    ],
+                    "has_disease_annotations": r.get("hasDiseaseAnnotations"),
+                    "has_phenotype_annotations": r.get("hasPhenotypeAnnotations"),
                 }
             )
 

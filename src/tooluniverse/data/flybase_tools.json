@@ -153,9 +153,94 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
+            },
+            "secondary_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Retired accessions for the gene. Older literature cites these, and nothing else recovers them."
+            },
+            "cross_references_total": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "xref_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "cross_references_returned": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "cross_references_truncated": {
+              "type": "boolean"
+            },
+            "next_xref_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "notes": {
+              "type": "array",
+              "description": "Curator notes the model-organism database wrote about the gene",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "note_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What kind of note this is, as the source database classifies it"
+                  },
+                  "text": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The note's text"
+                  }
+                }
+              }
+            },
+            "reference_curies": {
+              "type": "array",
+              "description": "Publication curies for the gene. Alliance lists thousands for a well-studied gene, so this is capped; reference_curies_total is the true count."
+            },
+            "reference_curies_total": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many publications Alliance links to the gene"
+            },
+            "reference_curies_returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many are carried on this response"
+            },
+            "reference_curies_truncated": {
+              "type": "boolean",
+              "description": "True when reference_curies is a prefix of the full list"
             }
           },
           "not": {
@@ -282,6 +367,38 @@
               },
               "method_count": {
                 "type": "integer"
+              },
+              "methods_not_matched": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Ortholog prediction methods that did NOT support the call, which is what makes method_count interpretable"
+              },
+              "stringency": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which stringency band this ortholog row satisfies. The request asks for a stringency and the rows did not say what each one met."
+              },
+              "subject_taxon_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ortholog_taxon_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "confidence": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
           }
@@ -389,28 +506,99 @@
                       "type": [
                         "string",
                         "null"
-                      ]
+                      ],
+                      "description": "The variant's id"
                     },
                     "name": {
                       "type": [
                         "string",
                         "null"
-                      ]
+                      ],
+                      "description": "The variant's genomic HGVS"
                     },
                     "type": {
                       "type": [
                         "string",
                         "null"
-                      ]
+                      ],
+                      "description": "e.g. point_mutation, deletion"
                     },
                     "location": {
                       "type": [
                         "object",
                         "null"
-                      ]
+                      ],
+                      "properties": {
+                        "chromosome": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "start": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "end": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "hgvs": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    },
+                    "most_severe_consequence": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The most severe predicted consequence"
                     }
                   }
-                }
+                },
+                "description": "The allele's variants. variants_total says how many it has; the list is cut to three."
+              },
+              "alliance_curie": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The curie Alliance's own endpoints take, which differs from the source database's primary id"
+              },
+              "synonyms": {
+                "type": "array"
+              },
+              "alteration_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "variants_total": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many variants the record has, as opposed to how many are carried"
+              },
+              "variants_returned": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many variants are carried on this response"
+              },
+              "variants_truncated": {
+                "type": "boolean",
+                "description": "True when the variant list is a prefix"
               }
             }
           }
