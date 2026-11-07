@@ -199,6 +199,39 @@ def first_errors(patterns: list) -> dict:
     return found
 
 
+def parse_coverage(patterns: list) -> dict:
+    """Merge the per-shard field-coverage reports.
+
+    `audit_upstream_field_coverage.py` writes one JSON per shard: for each tool
+    it either records why it was skipped, or lists upstream fields whose values
+    mostly do not reach the caller. A thin field is a candidate and not a
+    verdict -- whether it matters depends on what the tool's own description
+    promises -- so this counts and lists them without deciding anything.
+    """
+    audited, thin, skipped = 0, {}, 0
+    for pattern in patterns or []:
+        for path in sorted(glob.glob(pattern)):
+            try:
+                findings = json.loads(Path(path).read_text())
+            except (OSError, ValueError):
+                continue
+            if not isinstance(findings, list):
+                continue
+            for finding in findings:
+                if not isinstance(finding, dict):
+                    continue
+                if "thin_fields" not in finding:
+                    skipped += 1
+                    continue
+                audited += 1
+                rows = finding.get("thin_fields") or []
+                if rows:
+                    thin[finding["tool"]] = [
+                        f"{r['field']} {r['kept']}/{r['total']}" for r in rows[:6]
+                    ]
+    return {"audited": audited, "skipped": skipped, "thin": thin}
+
+
 def load_baseline(path: str | Path) -> set:
     file = Path(path)
     if not file.exists():
@@ -212,8 +245,16 @@ def load_baseline(path: str | Path) -> set:
 
 
 def build_summary(
-    results, counts, timed_out, baseline, expected_total,
-    shards_seen=0, shards_expected=0, no_verdict=None, errors=None,
+    results,
+    counts,
+    timed_out,
+    baseline,
+    expected_total,
+    shards_seen=0,
+    shards_expected=0,
+    no_verdict=None,
+    errors=None,
+    coverage=None,
 ) -> tuple[str, dict]:
     failing = {c for c, ok in results.items() if not ok}
     passing = set(results) - failing
@@ -222,9 +263,7 @@ def build_summary(
     )
     recovered = sorted(baseline & passing)
     known = sorted(failing & baseline)
-    no_verdict = {
-        c: s for c, s in (no_verdict or {}).items() if c not in results
-    }
+    no_verdict = {c: s for c, s in (no_verdict or {}).items() if c not in results}
     skipped = sorted(c for c, s in no_verdict.items() if s == "SKIPPED")
     no_tests = sorted(c for c, s in no_verdict.items() if s == "NO TESTS")
     reached = len(results) + len(no_verdict)
@@ -309,6 +348,35 @@ def build_summary(
             "",
         ]
 
+    if coverage and coverage.get("audited"):
+        thin = coverage["thin"]
+        lines += [
+            "",
+            "## Upstream field coverage",
+            "",
+            f"- Tools audited against their upstream's own response: "
+            f"**{coverage['audited']}** "
+            f"({coverage['skipped']} not auditable: no JSON upstream, or the "
+            f"tool errored)",
+            f"- Carrying an upstream field whose values mostly do not reach "
+            f"the caller: **{len(thin)}**",
+            "",
+            "A thin field is a candidate, not a verdict: a wrapper may select "
+            "narrowly on purpose. It is a defect when the skipped field is the "
+            "substance of what the tool's own description promises.",
+            "",
+        ]
+        if thin:
+            lines += [
+                f"<details><summary>Thin fields by tool ({len(thin)})</summary>",
+                "",
+            ]
+            for tool in sorted(thin)[:60]:
+                lines.append(f"- `{tool}`: " + "; ".join(thin[tool]))
+            if len(thin) > 60:
+                lines.append(f"- ... and {len(thin) - 60} more")
+            lines += ["", "</details>", ""]
+
     row = {
         "reported": reached,
         "expected": expected_total,
@@ -323,6 +391,11 @@ def build_summary(
         "baseline_size": len(baseline),
         "shards_reported": shards_seen,
         "shards_expected": shards_expected,
+        # Recorded so the field axis can be tracked across runs the way the
+        # row axis is. One number per run is the whole history.
+        "coverage_audited": (coverage or {}).get("audited", 0),
+        "coverage_not_auditable": (coverage or {}).get("skipped", 0),
+        "coverage_thin_tools": len((coverage or {}).get("thin", {})),
     }
     return "\n".join(lines), row
 
@@ -337,6 +410,15 @@ def main(argv=None) -> int:
         nargs="*",
         default=[],
         help="glob(s) of the sweep's JSON results, for each failure's own message",
+    )
+    parser.add_argument(
+        "--coverage",
+        nargs="*",
+        default=[],
+        help=(
+            "glob(s) of audit_upstream_field_coverage.py's per-shard JSON. "
+            "Without it the field axis is measured and then thrown away."
+        ),
     )
     parser.add_argument("--baseline", required=True)
     parser.add_argument("--history", help="JSONL file to append one row to")
@@ -367,12 +449,13 @@ def main(argv=None) -> int:
     results, counts, timed_out, parsed_total, shards_seen = parse_logs(args.logs)
     no_verdict = parse_no_verdict(args.logs)
     errors = first_errors(args.results)
+    coverage = parse_coverage(args.coverage)
     # The shards state their own slice size, so the run's expected total is
     # known without being told. Passing --expected-total still wins.
     expected_total = args.expected_total or parsed_total
 
     baseline = load_baseline(args.baseline)
-    text, row = build_summary(
+    full_text, row = build_summary(
         results,
         counts,
         timed_out,
@@ -382,7 +465,9 @@ def main(argv=None) -> int:
         no_verdict=no_verdict,
         errors=errors,
         shards_expected=args.shard_count,
+        coverage=coverage,
     )
+    text = full_text
 
     if not results:
         # This is how the check failed silently for weeks: the progress format
@@ -396,6 +481,12 @@ def main(argv=None) -> int:
         )
         print(message, file=sys.stderr)
         text = f"# Weekly Tool Health Check\n\n> **{message}**\n"
+        # The field-coverage audit does not depend on the sweep's log format,
+        # so a parsing failure there must not throw its findings away too.
+        # build_summary already rendered them; keep that section.
+        marker = "## Upstream field coverage"
+        if coverage and coverage.get("audited") and marker in full_text:
+            text += "\n" + marker + full_text.split(marker, 1)[1]
 
     print(text)
     if args.summary:
