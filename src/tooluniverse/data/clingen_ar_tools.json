@@ -66,10 +66,252 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "hgvs_all": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Every HGVS spelling for this assembly, not only the first"
+                  },
+                  "chromosome": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "coordinates": {
+                    "type": "array",
+                    "description": "Where the allele sits in this reference sequence and what it replaces",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "start": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "end": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "reference_allele": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "allele": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "reference_sequence": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               },
               "description": "Genomic coordinates in different assemblies"
+            },
+            "allele_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The kind of allele the registry normalised, e.g. 'nucleotide'"
+            },
+            "community_standard_titles": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Every community standard title, where community_standard_title is the first"
+            },
+            "gene_symbol": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The gene the allele is in, when the transcript alleles name exactly one"
+            },
+            "gene_symbols": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Every gene named by a transcript allele (an allele can overlap several)"
+            },
+            "gene_ncbi_id": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "NCBI Gene ID of the gene"
+            },
+            "protein_effect": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Protein consequence (p.) from the MANE Select transcript, else from the first transcript allele"
+            },
+            "mane_select_transcript": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The MANE Select transcript allele, surfaced whatever its position in the list; same shape as a transcript_alleles item. Null when the registry lists no MANE transcript."
+            },
+            "transcript_allele_count": {
+              "type": "integer",
+              "description": "How many transcript alleles the registry holds for this allele"
+            },
+            "transcript_alleles": {
+              "type": "array",
+              "description": "Per-transcript representations, capped at TRANSCRIPTS_PER_ALLELE (25)",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "hgvs": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The transcript-level HGVS (c.) expression"
+                  },
+                  "hgvs_all": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Every HGVS spelling the registry lists for this transcript"
+                  },
+                  "gene_symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "HGNC symbol of the gene this transcript belongs to"
+                  },
+                  "gene_ncbi_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "NCBI Gene ID of that gene"
+                  },
+                  "gene_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "protein_hgvs": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The protein consequence (p.) on this transcript"
+                  },
+                  "protein_hgvs_well_defined": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "coordinates": {
+                    "type": "array",
+                    "description": "Where the allele sits in this reference sequence and what it replaces",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "start": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "end": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "reference_allele": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "allele": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "reference_sequence": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "mane_status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "'MANE Select' or 'MANE Plus Clinical' when this is a MANE transcript, else null"
+                  },
+                  "mane_version": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "mane_refseq_hgvs": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The MANE RefSeq c. expression, the clinically standard representation"
+                  },
+                  "mane_ensembl_hgvs": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "mane_refseq_protein_hgvs": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "mane_ensembl_protein_hgvs": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "transcript_alleles_truncated": {
+              "type": "boolean",
+              "description": "True when transcript_allele_count exceeds the cap"
             }
           },
           "not": {
@@ -134,11 +376,191 @@
             },
             "databases": {
               "type": "object",
-              "description": "External database records keyed by database name (ClinVarAlleles, ClinVarVariations, dbSNP, COSMIC, gnomAD_2, gnomAD_3, gnomAD_4, ExAC, MyVariantInfo_hg19, MyVariantInfo_hg38)"
+              "description": "External database records keyed by database name (ClinVarAlleles, ClinVarVariations, dbSNP, COSMIC, gnomAD_2, gnomAD_3, gnomAD_4, ExAC, MyVariantInfo_hg19, MyVariantInfo_hg38). Each record carries every key that database sent, snake_cased, with `@id` as `url` and an `id` filled from whichever key names the identifier (dbSNP sends `rs`, ClinVar alleles `alleleId`, ClinVar variations `variationId`)."
             },
             "database_count": {
               "type": "integer",
               "description": "Number of external databases with records"
+            },
+            "record_count": {
+              "type": "integer",
+              "description": "Total external records across all databases"
+            },
+            "gene_symbol": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The gene the allele is in, when the transcript alleles name exactly one"
+            },
+            "gene_symbols": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Every gene named by a transcript allele (an allele can overlap several)"
+            },
+            "gene_ncbi_id": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "NCBI Gene ID of the gene"
+            },
+            "protein_effect": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Protein consequence (p.) from the MANE Select transcript, else from the first transcript allele"
+            },
+            "mane_select_transcript": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The MANE Select transcript allele, surfaced whatever its position in the list; same shape as a transcript_alleles item. Null when the registry lists no MANE transcript."
+            },
+            "transcript_allele_count": {
+              "type": "integer",
+              "description": "How many transcript alleles the registry holds for this allele"
+            },
+            "transcript_alleles": {
+              "type": "array",
+              "description": "Per-transcript representations, capped at TRANSCRIPTS_PER_ALLELE (25)",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "hgvs": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The transcript-level HGVS (c.) expression"
+                  },
+                  "hgvs_all": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Every HGVS spelling the registry lists for this transcript"
+                  },
+                  "gene_symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "HGNC symbol of the gene this transcript belongs to"
+                  },
+                  "gene_ncbi_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "NCBI Gene ID of that gene"
+                  },
+                  "gene_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "protein_hgvs": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The protein consequence (p.) on this transcript"
+                  },
+                  "protein_hgvs_well_defined": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "coordinates": {
+                    "type": "array",
+                    "description": "Where the allele sits in this reference sequence and what it replaces",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "start": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "end": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ]
+                        },
+                        "reference_allele": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "allele": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "reference_sequence": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "mane_status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "'MANE Select' or 'MANE Plus Clinical' when this is a MANE transcript, else null"
+                  },
+                  "mane_version": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "mane_refseq_hgvs": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The MANE RefSeq c. expression, the clinically standard representation"
+                  },
+                  "mane_ensembl_hgvs": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "mane_refseq_protein_hgvs": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "mane_ensembl_protein_hgvs": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "transcript_alleles_truncated": {
+              "type": "boolean",
+              "description": "True when transcript_allele_count exceeds the cap"
             }
           },
           "not": {
@@ -257,9 +679,244 @@
                             "string",
                             "null"
                           ]
+                        },
+                        "hgvs_all": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "Every HGVS spelling for this assembly, not only the first"
+                        },
+                        "chromosome": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "coordinates": {
+                          "type": "array",
+                          "description": "Where the allele sits in this reference sequence and what it replaces",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "start": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "end": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "reference_allele": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "allele": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              }
+                            }
+                          }
+                        },
+                        "reference_sequence": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
                         }
                       }
                     }
+                  },
+                  "allele_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The kind of allele the registry normalised, e.g. 'nucleotide'"
+                  },
+                  "gene_symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The gene the allele is in, when the transcript alleles name exactly one"
+                  },
+                  "gene_symbols": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Every gene named by a transcript allele (an allele can overlap several)"
+                  },
+                  "gene_ncbi_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "NCBI Gene ID of the gene"
+                  },
+                  "protein_effect": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Protein consequence (p.) from the MANE Select transcript, else from the first transcript allele"
+                  },
+                  "mane_select_transcript": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "The MANE Select transcript allele, surfaced whatever its position in the list; same shape as a transcript_alleles item. Null when the registry lists no MANE transcript."
+                  },
+                  "transcript_allele_count": {
+                    "type": "integer",
+                    "description": "How many transcript alleles the registry holds for this allele"
+                  },
+                  "transcript_alleles": {
+                    "type": "array",
+                    "description": "Per-transcript representations, capped at TRANSCRIPTS_PER_ALLELE (25)",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "hgvs": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The transcript-level HGVS (c.) expression"
+                        },
+                        "hgvs_all": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "Every HGVS spelling the registry lists for this transcript"
+                        },
+                        "gene_symbol": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "HGNC symbol of the gene this transcript belongs to"
+                        },
+                        "gene_ncbi_id": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "NCBI Gene ID of that gene"
+                        },
+                        "gene_url": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "protein_hgvs": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The protein consequence (p.) on this transcript"
+                        },
+                        "protein_hgvs_well_defined": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "coordinates": {
+                          "type": "array",
+                          "description": "Where the allele sits in this reference sequence and what it replaces",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "start": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "end": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ]
+                              },
+                              "reference_allele": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "allele": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              }
+                            }
+                          }
+                        },
+                        "reference_sequence": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "mane_status": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "'MANE Select' or 'MANE Plus Clinical' when this is a MANE transcript, else null"
+                        },
+                        "mane_version": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "mane_refseq_hgvs": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The MANE RefSeq c. expression, the clinically standard representation"
+                        },
+                        "mane_ensembl_hgvs": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "mane_refseq_protein_hgvs": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "mane_ensembl_protein_hgvs": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "transcript_alleles_truncated": {
+                    "type": "boolean",
+                    "description": "True when transcript_allele_count exceeds the cap"
                   }
                 }
               }

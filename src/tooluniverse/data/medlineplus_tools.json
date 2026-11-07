@@ -225,6 +225,38 @@
               "url": {
                 "type": "string",
                 "description": "URL of the matched MedlinePlus page"
+              },
+              "links": {
+                "type": "array",
+                "description": "Every link on the entry, where `url` is the first. An entry can carry patient and provider pages and other languages.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string"
+                    },
+                    "rel": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "updated": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When MedlinePlus last updated the page"
+              },
+              "entry_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The entry's own tag URI"
               }
             }
           }
@@ -232,6 +264,49 @@
         "error": {
           "type": "string",
           "description": "Error message if no match found"
+        },
+        "returned": {
+          "type": "integer",
+          "description": "Number of matched pages"
+        },
+        "resolved_query": {
+          "type": "object",
+          "description": "How MedlinePlus read the request. The tool takes a code-system OID, and this is the only confirmation that the OID meant what was intended: code_system is the name it resolved to, e.g. 'ICD10CM'.",
+          "properties": {
+            "code": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "code_system": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The code system MedlinePlus resolved the OID to"
+            },
+            "display_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "information_recipient": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "'PAT' for the patient page set, 'PROV' for the provider set"
+            }
+          }
+        },
+        "resolved_query_description": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The feed's own sentence describing what it searched, e.g. 'MedlinePlus Connect results for ICD-10-CM E11.9'"
         }
       }
     }
@@ -311,6 +386,73 @@
         "error": {
           "type": "string",
           "description": "Error message if condition not found"
+        },
+        "gene_records": {
+          "type": "array",
+          "description": "The same related genes as `genes`, with the symbol and the page as separate fields instead of one formatted string",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Gene symbol"
+              },
+              "url": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "inheritance_patterns": {
+          "type": "array",
+          "description": "Inheritance patterns with MedlinePlus's own code beside the wording",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "e.g. 'ad' for autosomal dominant, 'u' for unknown"
+              },
+              "pattern": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "cross_references": {
+          "type": "array",
+          "description": "Codes MedlinePlus lists for the condition: GTR concept ids, ICD-10-CM, MeSH, OMIM and SNOMED CT. Alzheimer disease carries 19.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "database": {
+                "type": "string"
+              },
+              "key": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "reviewed": {
+          "type": "string",
+          "description": "Month MedlinePlus last reviewed the page (YYYY-MM)"
+        },
+        "published": {
+          "type": "string",
+          "description": "Date the current version was published"
+        },
+        "resolved_name": {
+          "type": "object",
+          "description": "Present when the requested name was not the page's own name; `query` is what was asked for and `page` is the page that answered",
+          "properties": {
+            "query": {
+              "type": "string"
+            },
+            "page": {
+              "type": "string"
+            }
+          }
         }
       }
     }
@@ -356,7 +498,7 @@
       "properties": {
         "name": {
           "type": "string",
-          "description": "Gene name"
+          "description": "The protein name MedlinePlus titles the page with, e.g. 'apolipoprotein E' for APOE; see gene_symbol for the symbol"
         },
         "function": {
           "type": "string",
@@ -383,6 +525,60 @@
         "error": {
           "type": "string",
           "description": "Error message if gene not found"
+        },
+        "gene_symbol": {
+          "type": "string",
+          "description": "The gene symbol, which `name` is not"
+        },
+        "health_condition_records": {
+          "type": "array",
+          "description": "The same conditions as `health_conditions`, with the name and the page as separate fields instead of one formatted string",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "cross_references": {
+          "type": "array",
+          "description": "Codes MedlinePlus lists for the gene, e.g. NCBI Gene and OMIM",
+          "items": {
+            "type": "object",
+            "properties": {
+              "database": {
+                "type": "string"
+              },
+              "key": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "reviewed": {
+          "type": "string",
+          "description": "Month MedlinePlus last reviewed the page (YYYY-MM)"
+        },
+        "published": {
+          "type": "string",
+          "description": "Date the current version was published"
+        },
+        "resolved_name": {
+          "type": "object",
+          "description": "Present when the requested name was not the page's own name",
+          "properties": {
+            "query": {
+              "type": "string"
+            },
+            "page": {
+              "type": "string"
+            }
+          }
         }
       }
     }

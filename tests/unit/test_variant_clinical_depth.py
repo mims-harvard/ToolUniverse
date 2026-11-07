@@ -351,3 +351,118 @@ def test_clingen_external_id_empty_result_is_error():
 
 if __name__ == "__main__":  # pragma: no cover
     raise SystemExit(pytest.main([__file__, "-q"]))
+
+
+# --------------------------------------------------------------------------- #
+# ClinGenAR_get_external_records  (ClinGenARTool endpoint)
+# --------------------------------------------------------------------------- #
+def _clingen_records_tool():
+    return ClinGenARTool(
+        {
+            "name": "ClinGenAR_get_external_records",
+            "type": "ClinGenARTool",
+            "fields": {"endpoint": "get_external_records"},
+            "parameter": {"type": "object", "properties": {}},
+        }
+    )
+
+
+# The live shape of /allele/CA123643, trimmed to the four databases whose
+# identifier key is not "id".
+_CLINGEN_RECORDS_BODY = {
+    "@id": "http://reg.genome.network/allele/CA123643",
+    "communityStandardTitle": ["NM_004333.6(BRAF):c.1799T>A (p.Val600Glu)"],
+    "type": "nucleotide",
+    "externalRecords": {
+        "dbSNP": [{"@id": "http://www.ncbi.nlm.nih.gov/snp/113488022", "rs": 113488022}],
+        "ClinVarAlleles": [
+            {
+                "@id": "http://www.ncbi.nlm.nih.gov/clinvar/?term=29000[alleleid]",
+                "alleleId": 29000,
+                "preferredName": "NM_004333.6(BRAF):c.1799T>A (p.Val600Glu)",
+            }
+        ],
+        "ClinVarVariations": [
+            {
+                "@id": "http://www.ncbi.nlm.nih.gov/clinvar/variation/13961",
+                "variationId": 13961,
+                "RCV": ["RCV000014992", "RCV000014993"],
+            }
+        ],
+        "COSMIC": [
+            {
+                "@id": "http://cancer.sanger.ac.uk/cosmic/mutation/overview?id=476",
+                "id": "COSM476",
+                "active": True,
+            }
+        ],
+    },
+    "transcriptAlleles": [
+        {
+            "geneSymbol": "BRAF",
+            "geneNCBI_id": 673,
+            "hgvs": ["ENST00000646891.2:c.1799T>A"],
+            "proteinEffect": {"hgvs": "ENSP00000493543.1:p.Val600Glu"},
+            "MANE": {
+                "maneStatus": "MANE Select",
+                "nucleotide": {"RefSeq": {"hgvs": "NM_004333.6:c.1799T>A"}},
+                "protein": {"RefSeq": {"hgvs": "NP_004324.2:p.Val600Glu"}},
+            },
+        }
+    ],
+}
+
+
+def test_clingen_records_report_an_rsid_and_not_a_null():
+    """The tool promises "dbSNP rsIDs" and `rec.get("id")` is None for dbSNP.
+
+    dbSNP sends `rs`, ClinVar alleles send `alleleId`, ClinVar variations send
+    `variationId`; none of them sends `id`. Every record was reduced to
+    `{"id": rec.get("id"), "url": rec.get("@id")}`, so the rsID survived only
+    inside a URL and the ClinVar preferred name, the RCV accessions and the
+    COSMIC active flag were dropped.
+    """
+    tool = _clingen_records_tool()
+    with patch(
+        "tooluniverse.clingen_ar_tool.requests.get",
+        return_value=_fake_response(200, _CLINGEN_RECORDS_BODY),
+    ):
+        out = tool.run({"allele_id": "CA123643"})
+
+    assert out["status"] == "success"
+    databases = out["data"]["databases"]
+    assert databases["dbSNP"][0]["rs"] == 113488022
+    assert databases["dbSNP"][0]["id"] == "rs113488022"
+    assert databases["ClinVarAlleles"][0]["allele_id"] == 29000
+    assert databases["ClinVarAlleles"][0]["preferred_name"].startswith("NM_004333.6")
+    assert databases["ClinVarVariations"][0]["rcv"] == ["RCV000014992", "RCV000014993"]
+    assert databases["COSMIC"][0]["active"] is True
+    # `@id` keeps reaching the caller, under the name it always had.
+    assert databases["COSMIC"][0]["url"].endswith("id=476")
+    assert out["data"]["record_count"] == 4
+
+
+def test_clingen_records_name_the_gene_and_the_protein_change():
+    """A CA id with no gene and no p. is not an answer about a variant.
+
+    The gene symbol, the NCBI gene id and the protein consequence are all on
+    `transcriptAlleles`, which neither endpoint read, and the MANE Select
+    transcript is the representation the registry normalises to.
+    """
+    tool = _clingen_records_tool()
+    with patch(
+        "tooluniverse.clingen_ar_tool.requests.get",
+        return_value=_fake_response(200, _CLINGEN_RECORDS_BODY),
+    ):
+        out = tool.run({"allele_id": "CA123643"})
+
+    data = out["data"]
+    assert data["gene_symbol"] == "BRAF"
+    assert data["gene_ncbi_id"] == 673
+    assert data["protein_effect"] == "ENSP00000493543.1:p.Val600Glu"
+    assert data["transcript_allele_count"] == 1
+    assert data["transcript_alleles_truncated"] is False
+    mane = data["mane_select_transcript"]
+    assert mane["mane_status"] == "MANE Select"
+    assert mane["mane_refseq_hgvs"] == "NM_004333.6:c.1799T>A"
+    assert mane["mane_refseq_protein_hgvs"] == "NP_004324.2:p.Val600Glu"

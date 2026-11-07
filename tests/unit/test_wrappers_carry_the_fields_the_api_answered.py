@@ -832,6 +832,71 @@ UPSTREAM_KEYS = [
         'openfda.get("rxcui")',
         "the RxNorm concept that resolves TYLENOL and acetaminophen to one drug",
     ),
+    (
+        "clingen_ar_tool.py",
+        'ta.get("geneSymbol")',
+        "the gene the allele is in, which the tool's own example promises",
+    ),
+    (
+        "clingen_ar_tool.py",
+        '"MANE"',
+        "the MANE Select transcript, the representation the registry normalises to",
+    ),
+    (
+        "clingen_ar_tool.py",
+        '_ID_KEYS = ("rs", "alleleId", "variationId"',
+        "the dbSNP rsID, read from `id`, a key the dbSNP record does not send",
+    ),
+    (
+        "epmc_annotations_tool.py",
+        '"tags": tags',
+        "both ends of a relationship annotation, where only tags[0] was read",
+    ),
+    (
+        "epmc_annotations_tool.py",
+        'ann.get("section")',
+        "whether a gene was mentioned in the Methods or in the Results",
+    ),
+    (
+        "epmc_annotations_tool.py",
+        'ann.get("provider")',
+        "which text-mining pipeline made the claim",
+    ),
+    (
+        "drugcentral_tool.py",
+        'dc.get("pharmacology_class")',
+        "the drug's FDA Established Pharmacologic Class, from a drug-information tool",
+    ),
+    (
+        "drugcentral_tool.py",
+        'rec.get("llr_threshold")',
+        "the threshold an llr is a signal against; one without the other says nothing",
+    ),
+    (
+        "drugcentral_tool.py",
+        'u.get("swissprot_entry")',
+        "the Swiss-Prot entry name of a target the tool exists to name",
+    ),
+    (
+        "bgee_tool.py",
+        'call.get("fdr")',
+        "the FDR behind a present/absent expression call",
+    ),
+    (
+        "bgee_tool.py",
+        'match.get("match")',
+        "which synonym a SYNONYM match matched",
+    ),
+    (
+        "medlineplus_tool.py",
+        '"db-key-list"',
+        "the OMIM, NCBI Gene, GTR and ICD-10-CM codes for the page",
+    ),
+    (
+        "medlineplus_tool.py",
+        'gene_summary.get("gene-symbol"',
+        "the gene symbol, where `name` is the protein name",
+    ),
 ]
 
 
@@ -1005,6 +1070,27 @@ DECLARED = [
     ("Pfam_get_protein_annotations", "protein_accession"),
     ("Pfam_get_family_proteins", "source_database"),
     ("FAERS_search_adverse_event_reports", "rxcui"),
+    ("ClinGenAR_lookup_allele", "gene_symbol"),
+    ("ClinGenAR_lookup_allele", "protein_effect"),
+    ("ClinGenAR_lookup_allele", "mane_select_transcript"),
+    ("ClinGenAR_lookup_allele", "transcript_alleles_truncated"),
+    ("ClinGenAR_get_external_records", "record_count"),
+    ("ClinGenAR_lookup_by_external_id", "transcript_alleles"),
+    ("EPMC_get_text_mined_annotations", "tags"),
+    ("EPMC_get_text_mined_annotations", "providers"),
+    ("EPMC_get_article_genes", "mentions"),
+    ("EPMC_get_article_genes", "returned_entities"),
+    ("DrugCentral_get_drug", "pharmacologic_classes"),
+    ("DrugCentral_get_drug", "adverse_event_signals_truncated"),
+    ("DrugCentral_get_drug", "dosages"),
+    ("DrugCentral_get_targets", "swissprot_entries"),
+    ("DrugCentral_search", "cross_references"),
+    ("Bgee_get_gene_expression", "fdr"),
+    ("Bgee_search_genes", "matched_text"),
+    ("Bgee_list_species", "parent_taxon_id"),
+    ("MedlinePlus_get_genetics_condition_by_name", "cross_references"),
+    ("MedlinePlus_get_genetics_gene_by_name", "gene_symbol"),
+    ("MedlinePlus_connect_lookup_by_code", "resolved_query"),
 ]
 
 
@@ -1345,3 +1431,86 @@ def test_sgd_says_which_strain_a_sequence_came_from():
     source = _source("sgd_tool.py")
     assert '"strains_available"' in source
     assert '"is_reference_strain"' in source
+
+
+def test_a_clingen_allele_names_its_gene_and_protein_change():
+    """The tool's own description promises 'CA000387 (TP53 p.Arg248Gln)'.
+
+    Both of those live only on `transcriptAlleles`, which the wrapper never
+    read: it returned the CA id, the community standard title and the first
+    genomic HGVS. CA000387 has 65 transcript alleles and the MANE Select one
+    is the representation the registry exists to normalise to, so it is
+    surfaced whatever its position in the list, the rest are capped, and the
+    cap is disclosed.
+    """
+    source = _source("clingen_ar_tool.py")
+    assert "TRANSCRIPTS_PER_ALLELE" in source
+    assert '"mane_select_transcript": mane' in source
+    assert '"transcript_alleles_truncated": len(rows) > TRANSCRIPTS_PER_ALLELE' in source
+    schema = json.dumps(_config("ClinGenAR_lookup_allele").get("return_schema") or {})
+    assert '"mane_refseq_hgvs"' in schema
+
+
+def test_a_clingen_external_record_has_an_id_under_the_name_it_uses():
+    """`rec.get("id")` returned None for the databases that matter most.
+
+    dbSNP sends `rs`, ClinVar alleles send `alleleId` and ClinVar variations
+    send `variationId`; none of them sends `id`. So a tool whose description
+    promises "dbSNP rsIDs" answered `{"id": null, "url": ".../snp/113488022"}`
+    -- the rsID only inside a URL -- and dropped the ClinVar preferred name,
+    the 30 RCV accessions and the gnomAD variant string with it.
+    """
+    source = _source("clingen_ar_tool.py")
+    assert '_ID_KEYS = ("rs", "alleleId", "variationId"' in source
+    assert 'f"rs{rec[key]}" if key == "rs" else str(rec[key])' in source
+
+
+def test_an_epmc_relationship_annotation_keeps_both_ends():
+    """A Gene Disease Relationship has two tags, and tags[0] is one of them.
+
+    Open Targets contributes relationship annotations to Europe PMC whose
+    `tags` carry the gene and the disease together: on PMID 33332779 one of
+    them is interleukin-6 receptor *and* pneumonia *and* Covid-19. The
+    wrapper read `tags[0]`, so the relationship arrived as its subject with
+    the object silently gone -- and 17 of that article's 347 annotations are
+    of that shape.
+    """
+    source = _source("epmc_annotations_tool.py")
+    assert "def _tags(" in source
+    assert '"tags": tags' in source
+    assert '"tag_count"' in source
+    schema = json.dumps(
+        _config("EPMC_get_text_mined_annotations").get("return_schema") or {}
+    )
+    assert '"mentions_truncated"' in schema
+
+
+def test_a_drugcentral_signal_comes_with_the_threshold_it_is_measured_against():
+    """An llr of 44808 means nothing without llr_threshold of 9.445.
+
+    DrugCentral ships a FAERS disproportionality row per MedDRA term -- 1,534
+    for metformin, the strongest of them lactic acidosis -- and the whole
+    section was dropped from a tool whose description promises "comprehensive
+    drug data". Rows are ranked by llr, capped, and the cut is disclosed; the
+    pair is reported together with is_signal, and the metadata says a signal
+    is a reporting association and not causation.
+    """
+    source = _source("drugcentral_tool.py")
+    assert "SIGNALS_PER_DRUG" in source
+    assert '"is_signal"' in source
+    assert "not evidence of causation" in source
+    assert '"adverse_event_signals_truncated"' in source
+
+
+def test_a_bgee_expression_call_reports_its_fdr():
+    """`quality: "gold"` is the summary of the FDR, not the FDR.
+
+    All 145 calls for TP53 carry `fdr` and all 145 lost it, while the
+    qualitative grade derived from it was kept. The gene the response was
+    answered for was dropped too, so a wrong gene id and a gene with no calls
+    were the same empty answer.
+    """
+    source = _source("bgee_tool.py")
+    assert 'call.get("fdr")' in source
+    assert '"cluster_index": call.get("clusterIndex")' in source
+    assert '"gene": {' in source
