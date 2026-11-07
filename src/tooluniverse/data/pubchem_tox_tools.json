@@ -67,6 +67,118 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "source_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Who stated it, e.g. ECHA, HSDB, ChemIDplus, IARC"
+                  },
+                  "source_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "license_note": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Terms the source attaches to reuse of the statement"
+                  },
+                  "license_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "reference": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "The PUG View reference the statement points into: source name and id, the collection's description, its URL and its licence terms",
+                    "properties": {
+                      "source_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "source_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "reference_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "license_note": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "license_url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "ancestor_node_id": {
+                        "type": [
+                          "integer",
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "unit": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Where PUG View gives the value as a number with a unit"
+                  },
+                  "external_table": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Set when PubChem holds this section's data in an external table rather than inline. The address is reported and not fetched; an empty value beside it is not evidence that no data exists."
+                  },
+                  "note": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "reference_number": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ],
+                    "description": "The PUG View reference this entry points into"
                   }
                 }
               }
@@ -160,9 +272,129 @@
             },
             "toxicity_values": {
               "type": "array",
-              "description": "LD50/LC50 values and other toxicity measurements",
+              "description": "LD50/LC50 values and other toxicity measurements. Each row is the statement and the source that stated it; it used to be the bare string, with no way to tell whether ECHA, HSDB or ChemIDplus said so.",
               "items": {
-                "type": "string"
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "An LD50/LC50 statement as PubChem words it"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The PUG View entry's own name, where it has one"
+                  },
+                  "source_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Who stated it, e.g. ECHA, HSDB, ChemIDplus, IARC"
+                  },
+                  "source_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "license_note": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Terms the source attaches to reuse of the statement"
+                  },
+                  "license_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "reference": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "The PUG View reference the statement points into: source name and id, the collection's description, its URL and its licence terms",
+                    "properties": {
+                      "source_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "source_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "reference_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "license_note": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "license_url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "ancestor_node_id": {
+                        "type": [
+                          "integer",
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "unit": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Where PUG View gives the value as a number with a unit"
+                  },
+                  "external_table": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Set when PubChem holds this section's data in an external table rather than inline. The address is reported and not fetched; an empty value beside it is not evidence that no data exists."
+                  },
+                  "note": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
               }
             }
           },
@@ -254,9 +486,129 @@
             },
             "ecotoxicity_values": {
               "type": "array",
-              "description": "Aquatic/environmental LC50/EC50 value strings (species, concentration, duration)",
+              "description": "Aquatic/environmental LC50/EC50 value strings (species, concentration, duration). Each row is the statement and the source that stated it; it used to be the bare string, with no way to tell whether ECHA, HSDB or ChemIDplus said so.",
               "items": {
-                "type": "string"
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "An aquatic or environmental toxicity statement"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The PUG View entry's own name, where it has one"
+                  },
+                  "source_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Who stated it, e.g. ECHA, HSDB, ChemIDplus, IARC"
+                  },
+                  "source_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "license_note": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Terms the source attaches to reuse of the statement"
+                  },
+                  "license_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "reference": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "The PUG View reference the statement points into: source name and id, the collection's description, its URL and its licence terms",
+                    "properties": {
+                      "source_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "source_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "reference_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "license_note": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "license_url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "ancestor_node_id": {
+                        "type": [
+                          "integer",
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "unit": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Where PUG View gives the value as a number with a unit"
+                  },
+                  "external_table": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Set when PubChem holds this section's data in an external table rather than inline. The address is reported and not fetched; an empty value beside it is not evidence that no data exists."
+                  },
+                  "note": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
               }
             }
           },
@@ -348,9 +700,129 @@
             },
             "human_toxicity_values": {
               "type": "array",
-              "description": "Human lethal dose / IDLH / fatal exposure threshold strings",
+              "description": "Human lethal dose / IDLH / fatal exposure threshold strings. Each row is the statement and the source that stated it; it used to be the bare string, with no way to tell whether ECHA, HSDB or ChemIDplus said so.",
               "items": {
-                "type": "string"
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "A human toxicity statement"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The PUG View entry's own name, where it has one"
+                  },
+                  "source_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Who stated it, e.g. ECHA, HSDB, ChemIDplus, IARC"
+                  },
+                  "source_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "license_note": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Terms the source attaches to reuse of the statement"
+                  },
+                  "license_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "reference": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "The PUG View reference the statement points into: source name and id, the collection's description, its URL and its licence terms",
+                    "properties": {
+                      "source_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "source_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "reference_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "license_note": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "license_url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "ancestor_node_id": {
+                        "type": [
+                          "integer",
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "unit": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Where PUG View gives the value as a number with a unit"
+                  },
+                  "external_table": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Set when PubChem holds this section's data in an external table rather than inline. The address is reported and not fetched; an empty value beside it is not evidence that no data exists."
+                  },
+                  "note": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
               }
             }
           },
@@ -435,11 +907,95 @@
                       "string",
                       "null"
                     ],
-                    "description": "Source organization (e.g., IARC, NTP)"
+                    "description": "The PUG View entry's own name, e.g. 'IARC Carcinogenic Agent'. This is not the collection it came from -- that is source_name."
                   },
                   "classification": {
                     "type": "string",
                     "description": "Classification text"
+                  },
+                  "source_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Who stated it, e.g. ECHA, HSDB, ChemIDplus, IARC"
+                  },
+                  "source_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "license_note": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Terms the source attaches to reuse of the statement"
+                  },
+                  "license_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "reference": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "The PUG View reference the statement points into: source name and id, the collection's description, its URL and its licence terms",
+                    "properties": {
+                      "source_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "source_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "reference_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "license_note": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "license_url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "ancestor_node_id": {
+                        "type": [
+                          "integer",
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
                   }
                 }
               }
@@ -516,9 +1072,129 @@
             },
             "target_organs": {
               "type": "array",
-              "description": "Affected organs and body systems",
+              "description": "Affected organs and body systems. Each row is the statement and the source that stated it; it used to be the bare string, with no way to tell whether ECHA, HSDB or ChemIDplus said so.",
               "items": {
-                "type": "string"
+                "type": "object",
+                "properties": {
+                  "value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The target organs as the source lists them"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The PUG View entry's own name, where it has one"
+                  },
+                  "source_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Who stated it, e.g. ECHA, HSDB, ChemIDplus, IARC"
+                  },
+                  "source_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "license_note": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Terms the source attaches to reuse of the statement"
+                  },
+                  "license_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "reference": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "The PUG View reference the statement points into: source name and id, the collection's description, its URL and its licence terms",
+                    "properties": {
+                      "source_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "source_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "reference_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "license_note": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "license_url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "ancestor_node_id": {
+                        "type": [
+                          "integer",
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "unit": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Where PUG View gives the value as a number with a unit"
+                  },
+                  "external_table": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Set when PubChem holds this section's data in an external table rather than inline. The address is reported and not fetched; an empty value beside it is not evidence that no data exists."
+                  },
+                  "note": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
               }
             }
           },
@@ -621,7 +1297,85 @@
                   },
                   "effect": {
                     "type": "string",
-                    "description": "Description of the acute effect"
+                    "description": "Description of the acute effect, cut at 2000 characters. effect_truncated says when the cut happened; it used to be applied silently at 500."
+                  },
+                  "effect_truncated": {
+                    "type": "boolean"
+                  },
+                  "effect_length": {
+                    "type": "integer",
+                    "description": "Length of the full description before the cut"
+                  },
+                  "source_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Who stated it, e.g. ECHA, HSDB, ChemIDplus, IARC"
+                  },
+                  "source_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "reference": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "The PUG View reference the statement points into: source name and id, the collection's description, its URL and its licence terms",
+                    "properties": {
+                      "source_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "source_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "reference_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "license_note": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "license_url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "ancestor_node_id": {
+                        "type": [
+                          "integer",
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
                   }
                 }
               }
@@ -713,17 +1467,140 @@
                         },
                         "info_count": {
                           "type": "integer",
-                          "description": "Number of data entries in this topic"
+                          "description": "Statements under this topic at any depth. It used to count only the entries hanging directly off it, so a topic whose statements sit one level further down reported none."
                         },
                         "preview": {
                           "type": [
                             "string",
                             "null"
                           ],
-                          "description": "Preview of first data entry"
+                          "description": "First statement, cut at 500 characters"
+                        },
+                        "description": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "What PubChem says the topic is"
+                        },
+                        "url": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "preview_truncated": {
+                          "type": "boolean"
+                        },
+                        "statements": {
+                          "type": "array",
+                          "description": "The statements themselves, so a topic reported as having seven can be read and not only counted",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "value": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "source_name": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "source_url": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "reference": {
+                                "type": [
+                                  "object",
+                                  "null"
+                                ],
+                                "description": "The PUG View reference the statement points into: source name and id, the collection's description, its URL and its licence terms",
+                                "properties": {
+                                  "source_name": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "source_id": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "reference_name": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "url": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "description": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "license_note": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "license_url": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "ancestor_node_id": {
+                                    "type": [
+                                      "integer",
+                                      "string",
+                                      "null"
+                                    ]
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "statements_truncated": {
+                          "type": "boolean"
                         }
                       }
                     }
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What PubChem says the section is"
+                  },
+                  "url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }

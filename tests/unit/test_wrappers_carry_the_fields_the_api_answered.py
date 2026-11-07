@@ -558,6 +558,21 @@ UPSTREAM_KEYS = [
         'item.get("ec_number_list")',
         "the EC numbers of a protein a glycoprotein search returned 51 of",
     ),
+    (
+        "pubchem_tox_tool.py",
+        "_reference_index",
+        "who stated an LD50, which every statement points at and none of them carried",
+    ),
+    (
+        "pubchem_tox_tool.py",
+        "ExternalTableName",
+        "PubChem answering that the data is in a table elsewhere, which read as no data",
+    ),
+    (
+        "pubchem_tox_tool.py",
+        "_statements_in_subtree",
+        "the statements a summary topic counted, at the depth they actually sit",
+    ),
 ]
 
 
@@ -647,6 +662,11 @@ DECLARED = [
     ("GlyGen_get_site", "protein_name"),
     ("GlyGen_search_glycoproteins", "n_linked_site_count"),
     ("GlyGen_search_glycoproteins", "ec_numbers"),
+    ("PubChemTox_get_toxicity_values", "source_name"),
+    ("PubChemTox_get_toxicity_values", "license_note"),
+    ("PubChemTox_get_carcinogen_classification", "source_url"),
+    ("PubChemTox_get_acute_effects", "effect_truncated"),
+    ("PubChemTox_get_toxicity_summary", "statements"),
 ]
 
 
@@ -662,6 +682,27 @@ def test_the_return_schema_declares_the_field_the_wrapper_now_returns(tool, fiel
     assert f'"{field}"' in schema, (
         f"{tool} returns `{field}` and its return_schema does not declare it"
     )
+
+
+def test_pubchem_tox_statements_say_who_stated_them():
+    """An LD50 with no source is a number a reader cannot weigh.
+
+    Every PUG View statement carries a `ReferenceNumber` and the record
+    carries the references it points into -- ECHA for aspirin's GHS
+    classification, IARC with its own copyright note for arsenic's carcinogen
+    listing, ILO-WHO's ICSC for the acute signs. None of it reached the
+    caller, and the licence terms travel with the source.
+    """
+    source = _source("pubchem_tox_tool.py")
+    assert "_reference_index" in source
+    assert '"license_note": reference.get("license_note")' in source or (
+        'reference.get("license_note")' in source
+    )
+    # And the cut that used to happen in silence now says so.
+    assert 'item["value"][:500]' not in source, (
+        "a clinical description cut at 500 characters with no flag was the bug"
+    )
+    assert "effect_truncated" in source
 
 
 def test_glygen_search_counts_the_sites_the_row_actually_reports():

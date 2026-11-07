@@ -230,6 +230,8 @@ NOT_RECORD_DATA = re.compile(
     # The bitmask that drives those tables' facet filters:
     # "0001000.1101111.100000.000000000001000000.1100000000000.100.00000".
   | (^|\.)filter_code$
+    # PubChem's display order for the references it attaches to a record.
+  | (^|\.)SortOrder$
     """
 )
 

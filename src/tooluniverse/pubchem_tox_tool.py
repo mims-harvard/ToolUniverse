@@ -21,6 +21,17 @@ from .base_tool import BaseTool
 
 
 PUGVIEW_BASE_URL = "https://pubchem.ncbi.nlm.nih.gov/rest/pug_view/data/compound"
+
+# An acute-effect description can run long. The cut is kept, because these
+# lists are read by an agent and a full HSDB narrative is pages of prose, but
+# it is disclosed per row rather than applied in silence at 500 characters.
+EFFECT_CHARACTERS = 2000
+
+# The summary tool stays a summary: a preview per topic plus the first few
+# statements, both with the cut disclosed. The per-section tools return the
+# statements in full.
+PREVIEW_CHARACTERS = 500
+STATEMENTS_PER_TOPIC = 5
 PUG_BASE_URL = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound"
 
 
@@ -159,8 +170,35 @@ class PubChemToxTool(BaseTool):
             found.extend(self._find_sections_recursive(s.get("Section", []), heading))
         return found
 
+    @staticmethod
+    def _reference_index(record: Dict) -> Dict[Any, Dict]:
+        """`Record.Reference` keyed by ReferenceNumber.
+
+        Every statement in a PUG View record carries a `ReferenceNumber` and
+        the record carries the references it points into. None of it reached
+        the caller: an LD50 of "500 mg/kg" arrived with no way to tell whether
+        ECHA, HSDB or ChemIDplus said so, which for a toxicity value is most
+        of what decides whether it can be used. The license note travels with
+        the source, and PubChem attaches one to several of these collections.
+        """
+        index = {}
+        for ref in record.get("Reference") or []:
+            if not isinstance(ref, dict):
+                continue
+            index[ref.get("ReferenceNumber")] = {
+                "source_name": ref.get("SourceName"),
+                "source_id": ref.get("SourceID"),
+                "reference_name": ref.get("Name"),
+                "url": ref.get("URL"),
+                "description": ref.get("Description"),
+                "license_note": ref.get("LicenseNote"),
+                "license_url": ref.get("LicenseURL"),
+                "ancestor_node_id": ref.get("ANID"),
+            }
+        return index
+
     def _extract_info_from_sections(
-        self, sections: List[Dict], heading: str
+        self, sections: List[Dict], heading: str, references: Dict[Any, Dict] = None
     ) -> List[Dict]:
         """Find sections matching heading recursively and extract their Information entries.
 
@@ -172,23 +210,124 @@ class PubChemToxTool(BaseTool):
         back as H225/H401 -- flammable and toxic to aquatic life -- with H350
         "May cause cancer" among the fourteen statements silently lost.
         """
+        references = references or {}
         matched = self._find_sections_recursive(sections, heading)
         results = []
         for section in matched:
             for info in section.get("Information", []):
                 name = info.get("Name", "")
                 val = info.get("Value", {})
-                for sw in val.get("StringWithMarkup", []):
+                reference = references.get(info.get("ReferenceNumber"))
+                strings = val.get("StringWithMarkup") or []
+                for sw in strings:
                     markups = sw.get("Markup", [])
                     extras = [m.get("Extra", "") for m in markups if m.get("Extra")]
                     entry = {
                         "name": name,
                         "value": self._strip_html(sw.get("String", "")),
+                        "reference_number": info.get("ReferenceNumber"),
+                        "reference": reference,
                     }
                     if extras:
                         entry["pictogram_labels"] = extras
                     results.append(entry)
+                if strings:
+                    continue
+                # Not every statement is a string. PubChem answers some
+                # sections with the address of an external table instead --
+                # arsenic trioxide's Acute Effects is
+                # `collection=chemidplus&query_type=sid&query=134991231` --
+                # and a loop over StringWithMarkup alone yielded nothing for
+                # it, so "the data is in a table over there" was reported as
+                # no data at all. The address is reported now; it is not
+                # fetched, because that is a different request to a different
+                # endpoint and the caller should know it is being made.
+                external = val.get("ExternalTableName")
+                if external:
+                    results.append(
+                        {
+                            "name": name,
+                            "value": None,
+                            "reference_number": info.get("ReferenceNumber"),
+                            "reference": reference,
+                            "external_table": external,
+                            "note": (
+                                "PubChem holds this section's data in an "
+                                "external table rather than inline. The table "
+                                "address is in external_table; it has not been "
+                                "fetched. An empty value here is not evidence "
+                                "that no data exists."
+                            ),
+                        }
+                    )
+                elif val.get("Number") is not None:
+                    results.append(
+                        {
+                            "name": name,
+                            "value": ", ".join(str(n) for n in val["Number"]),
+                            "unit": val.get("Unit"),
+                            "reference_number": info.get("ReferenceNumber"),
+                            "reference": reference,
+                        }
+                    )
         return results
+
+    def _statements_in_subtree(
+        self, section: Dict, references: Dict[Any, Dict]
+    ) -> List[Dict]:
+        """Every statement under `section`, at any depth, with its source."""
+        found = []
+        for info in section.get("Information", []) or []:
+            reference = references.get(info.get("ReferenceNumber")) or {}
+            for sw in info.get("Value", {}).get("StringWithMarkup") or []:
+                found.append(
+                    {
+                        "name": info.get("Name") or None,
+                        "value": self._strip_html(sw.get("String", "")),
+                        "source_name": reference.get("source_name"),
+                        "source_url": reference.get("url"),
+                        "reference": reference or None,
+                    }
+                )
+        for child in section.get("Section", []) or []:
+            found.extend(self._statements_in_subtree(child, references))
+        return found
+
+    @staticmethod
+    def _value_records(raw_info: List[Dict]) -> List[Dict]:
+        """One statement per row, with the source that stated it.
+
+        These lists used to be bare strings: "LD50 Rat oral 500 mg/kg" and no
+        way to tell whether ECHA, HSDB or ChemIDplus said it, nor what licence
+        it carries. The statement keeps its place and its text under `value`;
+        what is added beside it is who said so.
+        """
+        records = []
+        for item in raw_info:
+            if not item.get("value") and not item.get("external_table"):
+                continue
+            reference = item.get("reference") or {}
+            records.append(
+                {
+                    "value": item.get("value"),
+                    "name": item.get("name") or None,
+                    "source_name": reference.get("source_name"),
+                    "source_url": reference.get("url"),
+                    "license_note": reference.get("license_note"),
+                    "license_url": reference.get("license_url"),
+                    "reference": reference or None,
+                    **(
+                        {
+                            "external_table": item["external_table"],
+                            "note": item.get("note"),
+                        }
+                        if item.get("external_table")
+                        else {}
+                    ),
+                    **({"unit": item["unit"]} if item.get("unit") else {}),
+                }
+            )
+        return records
 
     def _get_pugview_data(self, cid: int, heading: str) -> Dict:
         """Get PUG View data for a specific heading."""
@@ -207,7 +346,9 @@ class PubChemToxTool(BaseTool):
         title = record.get("RecordTitle", "")
 
         sections = record.get("Section", [])
-        ghs_info = self._extract_info_from_sections(sections, "GHS Classification")
+        ghs_info = self._extract_info_from_sections(
+            sections, "GHS Classification", self._reference_index(record)
+        )
 
         return {
             "status": "success",
@@ -232,9 +373,9 @@ class PubChemToxTool(BaseTool):
 
         sections = record.get("Section", [])
         raw_info = self._extract_info_from_sections(
-            sections, "Non-Human Toxicity Values"
+            sections, "Non-Human Toxicity Values", self._reference_index(record)
         )
-        tox_values = [item["value"] for item in raw_info if item.get("value")]
+        tox_values = self._value_records(raw_info)
         page, pagination = self._paginate(arguments, tox_values, 30)
 
         return {
@@ -263,8 +404,10 @@ class PubChemToxTool(BaseTool):
         title = record.get("RecordTitle", "")
 
         sections = record.get("Section", [])
-        raw_info = self._extract_info_from_sections(sections, "Ecotoxicity Values")
-        eco_values = [item["value"] for item in raw_info if item.get("value")]
+        raw_info = self._extract_info_from_sections(
+            sections, "Ecotoxicity Values", self._reference_index(record)
+        )
+        eco_values = self._value_records(raw_info)
         page, pagination = self._paginate(arguments, eco_values, 30)
 
         return {
@@ -294,8 +437,10 @@ class PubChemToxTool(BaseTool):
         title = record.get("RecordTitle", "")
 
         sections = record.get("Section", [])
-        raw_info = self._extract_info_from_sections(sections, "Human Toxicity Values")
-        human_values = [item["value"] for item in raw_info if item.get("value")]
+        raw_info = self._extract_info_from_sections(
+            sections, "Human Toxicity Values", self._reference_index(record)
+        )
+        human_values = self._value_records(raw_info)
         page, pagination = self._paginate(arguments, human_values, 30)
 
         return {
@@ -326,17 +471,28 @@ class PubChemToxTool(BaseTool):
 
         sections = record.get("Section", [])
         raw_info = self._extract_info_from_sections(
-            sections, "Carcinogen Classification"
+            sections, "Carcinogen Classification", self._reference_index(record)
         )
         classifications = []
         for item in raw_info:
-            if item.get("value"):
-                classifications.append(
-                    {
-                        "source": item["name"] if item.get("name") else None,
-                        "classification": item["value"],
-                    }
-                )
+            if not item.get("value"):
+                continue
+            reference = item.get("reference") or {}
+            classifications.append(
+                {
+                    # `source` here is the Information entry's own Name --
+                    # "IARC Carcinogenic Agents" -- which is not the same
+                    # thing as the collection PubChem took it from. Both are
+                    # reported, under names that say which is which.
+                    "source": item["name"] if item.get("name") else None,
+                    "classification": item["value"],
+                    "source_name": reference.get("source_name"),
+                    "source_url": reference.get("url"),
+                    "license_note": reference.get("license_note"),
+                    "license_url": reference.get("license_url"),
+                    "reference": reference or None,
+                }
+            )
 
         return {
             "status": "success",
@@ -361,8 +517,10 @@ class PubChemToxTool(BaseTool):
         title = record.get("RecordTitle", "")
 
         sections = record.get("Section", [])
-        raw_info = self._extract_info_from_sections(sections, "Target Organs")
-        target_organs = [item["value"] for item in raw_info if item.get("value")]
+        raw_info = self._extract_info_from_sections(
+            sections, "Target Organs", self._reference_index(record)
+        )
+        target_organs = self._value_records(raw_info)
 
         return {
             "status": "success",
@@ -404,15 +562,28 @@ class PubChemToxTool(BaseTool):
                 if not title:
                     title = record.get("RecordTitle", "")
                 sections = record.get("Section", [])
-                raw_info = self._extract_info_from_sections(sections, heading)
+                raw_info = self._extract_info_from_sections(
+                    sections, heading, self._reference_index(record)
+                )
                 for item in raw_info:
-                    if item.get("value"):
-                        effects.append(
-                            {
-                                "source": label,
-                                "effect": item["value"][:500],
-                            }
-                        )
+                    if not item.get("value"):
+                        continue
+                    reference = item.get("reference") or {}
+                    text = item["value"]
+                    effects.append(
+                        {
+                            "source": label,
+                            # The cut used to be silent at 500 characters, in
+                            # the middle of a clinical sign description. It is
+                            # longer now and it says when it happened.
+                            "effect": text[:EFFECT_CHARACTERS],
+                            "effect_truncated": len(text) > EFFECT_CHARACTERS,
+                            "effect_length": len(text),
+                            "source_name": reference.get("source_name"),
+                            "source_url": reference.get("url"),
+                            "reference": reference or None,
+                        }
+                    )
             except Exception:
                 continue
 
@@ -443,35 +614,48 @@ class PubChemToxTool(BaseTool):
         title = record.get("RecordTitle", "")
 
         sections = record.get("Section", [])
+        references = self._reference_index(record)
         summary_sections = []
 
-        # Walk through sections to get subsection headings and brief info
+        # Walk through sections to get subsection headings and brief info.
+        # `info_count` used to count only the Information entries hanging
+        # directly off a topic, three levels down and no deeper, so a topic
+        # whose statements sit in a further subsection was reported as having
+        # none. It counts the whole subtree now, and the section's own
+        # description and source link -- which PubChem answers for 25 of
+        # these topics and which say what the section IS -- are carried
+        # instead of being passed over for a 200-character preview of the
+        # first statement in it.
         for s in sections:
             for ss in s.get("Section", []):
                 subsection_name = ss.get("TOCHeading", "")
                 sub_items = []
-                for sss in ss.get("Section", []):
+                for sss in ss.get("Section", []) or [ss]:
                     sub_heading = sss.get("TOCHeading", "")
-                    info_count = len(sss.get("Information", []))
-                    # Get first info item as preview
-                    preview = ""
-                    infos = sss.get("Information", [])
-                    if infos:
-                        val = infos[0].get("Value", {})
-                        sws = val.get("StringWithMarkup", [])
-                        if sws:
-                            preview = self._strip_html(sws[0].get("String", ""))[:200]
+                    statements = self._statements_in_subtree(sss, references)
+                    preview = statements[0]["value"] if statements else ""
                     sub_items.append(
                         {
                             "heading": sub_heading,
-                            "info_count": info_count,
-                            "preview": preview if preview else None,
+                            "description": sss.get("Description"),
+                            "url": sss.get("URL"),
+                            "info_count": len(statements),
+                            "preview": preview[:PREVIEW_CHARACTERS] or None,
+                            "preview_truncated": len(preview) > PREVIEW_CHARACTERS,
+                            # The statements themselves, so a topic reported
+                            # as having 7 of them can be read rather than
+                            # only counted. Each one says who stated it.
+                            "statements": statements[:STATEMENTS_PER_TOPIC],
+                            "statements_truncated": len(statements)
+                            > STATEMENTS_PER_TOPIC,
                         }
                     )
                 if sub_items:
                     summary_sections.append(
                         {
                             "section": subsection_name,
+                            "description": ss.get("Description"),
+                            "url": ss.get("URL"),
                             "topics": sub_items,
                         }
                     )
