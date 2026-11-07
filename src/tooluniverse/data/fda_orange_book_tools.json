@@ -130,6 +130,30 @@
                     }
                   }
                 }
+              },
+              "original_approval_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When the ORIG submission was approved, as YYYYMMDD. Drugs@FDA sends the submission history with every search result, and the search rows carried none of it -- so 'a generic exists' could not be told from 'a generic was approved in 2015'."
+              },
+              "original_approval_status": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "'AP' for approved, 'TA' for tentative approval"
+              },
+              "submission_count": {
+                "type": "integer",
+                "description": "How many submissions the application has; see FDA_OrangeBook_get_approval_history for them"
+              },
+              "latest_submission_date": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
           }
@@ -202,7 +226,11 @@
           "type": "string"
         },
         "original_approval_date": {
-          "type": "string"
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "When the ORIG submission was approved, as YYYYMMDD. Drugs@FDA sends the submission history with every search result, and the search rows carried none of it -- so 'a generic exists' could not be told from 'a generic was approved in 2015'."
         },
         "submissions": {
           "type": "array",
@@ -262,7 +290,8 @@
           }
         },
         "submission_count": {
-          "type": "integer"
+          "type": "integer",
+          "description": "How many submissions the application has; see FDA_OrangeBook_get_approval_history for them"
         },
         "identifiers": {
           "type": "object",
@@ -331,6 +360,19 @@
               }
             }
           }
+        },
+        "original_approval_status": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "'AP' for approved, 'TA' for tentative approval"
+        },
+        "latest_submission_date": {
+          "type": [
+            "string",
+            "null"
+          ]
         }
       }
     },
@@ -610,13 +652,125 @@
       "type": "object",
       "properties": {
         "reference_drugs": {
-          "type": "array"
+          "type": "array",
+          "description": "One row per application with a product flagged reference_drug='Yes'",
+          "items": {
+            "type": "object",
+            "properties": {
+              "application_number": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "brand_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "sponsor": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "marketing_status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "original_approval_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When the ORIG submission was approved, as YYYYMMDD. Drugs@FDA sends the submission history with every search result, and the rows carried none of it -- so 'a generic exists' could not be told from 'a generic was approved in 2015'."
+              },
+              "original_approval_status": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "'AP' for approved, 'TA' for tentative approval"
+              },
+              "submission_count": {
+                "type": "integer"
+              },
+              "latest_submission_date": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
         },
         "reference_count": {
           "type": "integer"
         },
         "generic_drugs": {
-          "type": "array"
+          "type": "array",
+          "description": "One row per ANDA application",
+          "items": {
+            "type": "object",
+            "properties": {
+              "application_number": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "brand_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "sponsor": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "marketing_status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "te_code": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "original_approval_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When the ORIG submission was approved, as YYYYMMDD. Drugs@FDA sends the submission history with every search result, and the rows carried none of it -- so 'a generic exists' could not be told from 'a generic was approved in 2015'."
+              },
+              "original_approval_status": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "'AP' for approved, 'TA' for tentative approval"
+              },
+              "submission_count": {
+                "type": "integer"
+              },
+              "latest_submission_date": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
         },
         "generic_count": {
           "type": "integer"
@@ -632,6 +786,10 @@
         },
         "classification_criteria": {
           "type": "object"
+        },
+        "submission_history_tool": {
+          "type": "string",
+          "description": "Names the sibling tool that returns every submission for one application_number"
         }
       }
     },
@@ -751,6 +909,30 @@
               "identifiers": {
                 "type": "object",
                 "description": "The codes a Drugs@FDA record is joined to the rest of the world by: NDC product and package codes, RxCUI, UNII, the SPL set id, the substance and manufacturer names. Without the NDCs an approval cannot be matched to a billing claim or a shortage notice; without the SPL set id, not to the label."
+              },
+              "original_approval_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When the ORIG submission was approved, as YYYYMMDD. Drugs@FDA sends the submission history with every search result, and the search rows carried none of it -- so 'a generic exists' could not be told from 'a generic was approved in 2015'."
+              },
+              "original_approval_status": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "'AP' for approved, 'TA' for tentative approval"
+              },
+              "submission_count": {
+                "type": "integer",
+                "description": "How many submissions the application has; see FDA_OrangeBook_get_approval_history for them"
+              },
+              "latest_submission_date": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
           }

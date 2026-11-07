@@ -84,6 +84,26 @@
                   },
                   "last_update": {
                     "type": "string"
+                  },
+                  "experimental_factors": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Which variables the experiment measured across -- organism part, cell type, developmental stage -- which is how a caller picks among a species' baseline experiments. 7,159 factor values came back across one listing and the rows carried none."
+                  },
+                  "technology_type": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "e.g. 'RNA-Seq mRNA' against a microarray platform"
+                  },
+                  "kingdom": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
@@ -245,6 +265,26 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "experimental_factors": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Which variables the experiment measured across -- organism part, cell type, developmental stage -- which is how a caller picks among a species' baseline experiments. 7,159 factor values came back across one listing and the rows carried none."
+                  },
+                  "technology_type": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "e.g. 'RNA-Seq mRNA' against a microarray platform"
+                  },
+                  "kingdom": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
@@ -398,6 +438,26 @@
                   "gene_mentioned": {
                     "type": [
                       "boolean",
+                      "null"
+                    ]
+                  },
+                  "experimental_factors": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Which variables the experiment measured across -- organism part, cell type, developmental stage -- which is how a caller picks among a species' baseline experiments. 7,159 factor values came back across one listing and the rows carried none."
+                  },
+                  "technology_type": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "e.g. 'RNA-Seq mRNA' against a microarray platform"
+                  },
+                  "kingdom": {
+                    "type": [
+                      "string",
                       "null"
                     ]
                   }

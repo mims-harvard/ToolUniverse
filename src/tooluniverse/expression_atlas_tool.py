@@ -199,6 +199,15 @@ class ExpressionAtlasTool(BaseTool):
                     "species": exp.get("species"),
                     "num_assays": exp.get("numberOfAssays"),
                     "last_update": exp.get("lastUpdate"),
+                    # Which variables the experiment measured across --
+                    # organism part, cell type, developmental stage -- which
+                    # is how a caller picks among 30 baseline experiments for
+                    # one species. 7,159 factor values came back across the
+                    # listing and the rows carried none of them, along with
+                    # the technology that produced the data.
+                    "experimental_factors": exp.get("experimentalFactors") or [],
+                    "technology_type": exp.get("technologyType") or [],
+                    "kingdom": exp.get("kingdom"),
                 }
                 for exp in baseline_exps
             ]

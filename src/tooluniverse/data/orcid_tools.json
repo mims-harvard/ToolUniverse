@@ -401,6 +401,101 @@
                   "string",
                   "null"
                 ]
+              },
+              "external_ids": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "value": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "relationship": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "'self' or 'part-of'"
+                    },
+                    "url": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "description": "The review's own external ids. Only the GROUP's were read, and these are what identify the individual review."
+              },
+              "subgroup_external_ids": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "value": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "relationship": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "'self' or 'part-of'"
+                    },
+                    "url": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "description": "The review group's external ids, which identify the venue the review belongs to"
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Who deposited the record; an ORCID record is an assertion by a client, and the assertion's provenance was dropped"
+              },
+              "created_date": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Epoch milliseconds"
+              },
+              "last_modified_date": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Epoch milliseconds"
+              },
+              "visibility": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
           }

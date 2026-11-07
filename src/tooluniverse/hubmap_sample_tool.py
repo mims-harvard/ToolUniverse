@@ -229,6 +229,42 @@ class HuBMAPSampleTool(BaseTool):
                 demo[key] = value
         return demo
 
+    @staticmethod
+    def _donor_demographic_codes(src: dict[str, Any]) -> list[dict[str, Any]]:
+        """The same attributes with the codes that define them.
+
+        The flat label->value map loses the coded form -- "Race: White" is
+        SNOMEDCT_US 413773004 in the record -- and the provenance tool reports
+        the code while this one did not. Returned beside `demographics` rather
+        than inside it, so the flat map keeps its shape.
+        """
+        metadata = src.get("metadata") or {}
+        rows = list(metadata.get("organ_donor_data") or [])
+        rows += list(metadata.get("living_donor_data") or [])
+        out = []
+        for row in rows:
+            if not isinstance(row, dict):
+                continue
+            label = (
+                row.get("grouping_concept_preferred_term")
+                or row.get("preferred_term")
+                or ""
+            )
+            if not label:
+                continue
+            out.append(
+                {
+                    "attribute": label.strip(),
+                    "value": row.get("data_value"),
+                    "units": row.get("units") or None,
+                    "data_type": row.get("data_type"),
+                    "code": row.get("code"),
+                    "concept_id": row.get("concept_id"),
+                    "vocabulary": row.get("sab"),
+                }
+            )
+        return out
+
     # ------------------------------------------------------------------ #
     # operations
     # ------------------------------------------------------------------ #
@@ -351,6 +387,7 @@ class HuBMAPSampleTool(BaseTool):
                 "rui_location": self._parse_rui(src.get("rui_location")),
                 "created_timestamp": src.get("created_timestamp"),
                 "donor_demographics": self._donor_demographics(donor),
+                "donor_demographics_coded": self._donor_demographic_codes(donor),
                 # What was made from this sample. The record lists 67
                 # descendant ids and 45 descendant entities for HBM554.HDXT.966
                 # and the answer named none of them, so "which datasets exist
@@ -431,6 +468,7 @@ class HuBMAPSampleTool(BaseTool):
                     "uuid": src.get("uuid"),
                     "group_name": src.get("group_name"),
                     "demographics": self._donor_demographics(src),
+                    "demographics_coded": self._donor_demographic_codes(src),
                 }
             )
 

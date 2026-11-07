@@ -1092,6 +1092,41 @@ UPSTREAM_KEYS = [
         'c.get("conceptStatus")',
         "whether a terminology concept has been retired",
     ),
+    (
+        "nextstrain_tool.py",
+        "def _coloring_values",
+        "the values a build covers for a coloring, where only the key was given",
+    ),
+    (
+        "orcid_tool.py",
+        's.get("external-ids")',
+        "a review's own external ids, where only its group's were read",
+    ),
+    (
+        "orcid_tool.py",
+        "def _source_name",
+        "who deposited an ORCID assertion",
+    ),
+    (
+        "fda_orange_book_tool.py",
+        "_submission_summary(result.get(\"submissions\"))",
+        "when an application was approved, in a row that answers whether a generic exists",
+    ),
+    (
+        "expression_atlas_tool.py",
+        'exp.get("experimentalFactors")',
+        "which variables a baseline experiment measured across",
+    ),
+    (
+        "hubmap_sample_tool.py",
+        "def _donor_demographic_codes",
+        "the SNOMED codes behind a donor's attributes",
+    ),
+    (
+        "ddbj_tool.py",
+        "def _xref_type_counts",
+        "what a cross-reference count was counting",
+    ),
 ]
 
 
@@ -1340,6 +1375,16 @@ DECLARED = [
     ("CxGDisc_list_collections", "tissue_count"),
     ("CxGDisc_list_collections", "datasets_with_cell_count"),
     ("NCIEVS_search_terminology", "concept_status"),
+    ("Nextstrain_get_dataset", "colorings"),
+    ("ORCID_get_peer_reviews", "subgroup_external_ids"),
+    ("ORCID_get_peer_reviews", "visibility"),
+    ("FDA_OrangeBook_check_generic_availability", "original_approval_date"),
+    ("FDA_OrangeBook_search_drug", "submission_count"),
+    ("ExpressionAtlas_get_baseline", "experimental_factors"),
+    ("ExpressionAtlas_get_baseline", "technology_type"),
+    ("HuBMAP_get_sample", "donor_demographics_coded"),
+    ("HuBMAP_search_donors", "demographics_coded"),
+    ("DDBJ_get_entry", "cross_reference_types"),
 ]
 
 
@@ -2083,4 +2128,36 @@ def test_a_cellxgene_collection_can_be_cited_and_is_not_zero_cells():
     assert "def _publication" in source
     assert "total_cells = sum(counted) if counted else None" in source
     assert '"datasets_with_cell_count"' in source
+
+
+def test_an_availability_answer_says_when_the_generic_was_approved():
+    """"A generic exists" and "a generic was approved in 2015" differ.
+
+    Drugs@FDA sends the whole submission history with every search result --
+    284 rows across one availability check -- and the row the search builds
+    dropped it, so neither the availability answer nor the search carried an
+    approval date. ADVIL's first ANDA, ANDA206581, was approved 2015-08-03.
+    The summary is computed once in the search row and carried down, and the
+    full history stays the sibling tool's job, which the output now names.
+    """
+    source = _source("fda_orange_book_tool.py")
+    assert "def _submission_summary" in source
+    assert '_submission_summary(result.get("submissions"))' in source
+    assert "_SUBMISSION_SUMMARY_KEYS" in source
+    assert "submission_history_tool" in source
+
+
+def test_a_nextstrain_coloring_is_more_than_its_key():
+    """"gt" is genotype and "num_date" is date, and the response says so.
+
+    Each coloring carries its own `title` and `type`, and a categorical one
+    carries the values the build covers -- zika's `country` has 36 -- paired
+    with the colour used to draw it. The summary reported the keys and called
+    the list complete, which it was, of the keys.
+    """
+    source = _source("nextstrain_tool.py")
+    assert "def _coloring_values" in source
+    assert "COLORING_VALUES_PER_DIMENSION" in source
+    schema = json.dumps(_config("Nextstrain_get_dataset").get("return_schema") or {})
+    assert '"value_count"' in schema
 

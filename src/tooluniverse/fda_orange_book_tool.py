@@ -38,6 +38,41 @@ _AND = " AND "
 _OR = " OR "
 
 
+_SUBMISSION_SUMMARY_KEYS = (
+    "original_approval_date",
+    "original_approval_status",
+    "submission_count",
+    "latest_submission_date",
+)
+
+
+def _submission_summary(submissions):
+    """The approval date and submission count for one application.
+
+    Drugs@FDA gives the whole submission history per application and the
+    availability answer needs one fact from it: when the ORIG submission was
+    approved. The full history is FDA_OrangeBook_get_approval_history's job,
+    so this summarises rather than copies.
+    """
+    rows = submissions if isinstance(submissions, list) else []
+    rows = [row for row in rows if isinstance(row, dict)]
+    original = next(
+        (row for row in rows if str(row.get("submission_type")).upper() == "ORIG"),
+        None,
+    )
+    dates = sorted(
+        str(row.get("submission_status_date"))
+        for row in rows
+        if row.get("submission_status_date")
+    )
+    return {
+        "original_approval_date": (original or {}).get("submission_status_date"),
+        "original_approval_status": (original or {}).get("submission_status"),
+        "submission_count": len(rows),
+        "latest_submission_date": dates[-1] if dates else None,
+    }
+
+
 @register_tool("FDAOrangeBookTool")
 class FDAOrangeBookTool(BaseTool):
     """
@@ -209,6 +244,12 @@ class FDAOrangeBookTool(BaseTool):
                     "sponsor_name": result.get("sponsor_name"),
                     "identifiers": self._identifiers(result),
                     "products": [],
+                    # When the application was approved. Drugs@FDA sends the
+                    # whole submission history with every search result --
+                    # 284 rows across one availability check -- and the row
+                    # carried none of it, so "a generic exists" could not be
+                    # told from "a generic was approved in 2015".
+                    **_submission_summary(result.get("submissions")),
                 }
 
                 for product in result.get("products", []):
@@ -680,6 +721,10 @@ class FDAOrangeBookTool(BaseTool):
                             "marketing_status": reference_product.get(
                                 "marketing_status"
                             ),
+                            **{
+                                key: drug.get(key)
+                                for key in _SUBMISSION_SUMMARY_KEYS
+                            },
                         }
                     )
 
@@ -692,6 +737,12 @@ class FDAOrangeBookTool(BaseTool):
                             "sponsor": drug.get("sponsor_name"),
                             "marketing_status": product.get("marketing_status"),
                             "te_code": product.get("te_code"),
+                            # When the ANDA was approved, carried down from
+                            # the search row.
+                            **{
+                                key: drug.get(key)
+                                for key in _SUBMISSION_SUMMARY_KEYS
+                            },
                         }
                     )
 
@@ -704,6 +755,12 @@ class FDAOrangeBookTool(BaseTool):
                 "generics_available": len(generic_drugs) > 0,
                 "applications_scanned": len(drugs),
                 "counts_complete": True,
+                "submission_history_tool": (
+                    "FDA_OrangeBook_get_approval_history returns every "
+                    "submission for one application_number; the rows here "
+                    "carry the original approval date and the submission "
+                    "count only."
+                ),
                 "classification_criteria": {
                     "generic": (
                         "application_number starts with ANDA (Abbreviated New "
