@@ -573,6 +573,31 @@ UPSTREAM_KEYS = [
         "_statements_in_subtree",
         "the statements a summary topic counted, at the depth they actually sit",
     ),
+    (
+        "openfda_device_tool.py",
+        "_mdr_texts",
+        "what happened, from a MAUDE row that carried problem codes and no narrative",
+    ),
+    (
+        "openfda_device_tool.py",
+        "code_info",
+        "which models and serial numbers a recall covers",
+    ),
+    (
+        "openfda_device_tool.py",
+        "mri_safety",
+        "whether a device is safe near an MRI, which the UDI record states",
+    ),
+    (
+        "openfda_device_tool.py",
+        "_openfda_ids",
+        "the clearance and establishment numbers the device endpoints take as input",
+    ),
+    (
+        "openfda_device_tool.py",
+        "supplement_number",
+        "which PMA decision a row is, where one number covers the approval and every change",
+    ),
 ]
 
 
@@ -667,6 +692,16 @@ DECLARED = [
     ("PubChemTox_get_carcinogen_classification", "source_url"),
     ("PubChemTox_get_acute_effects", "effect_truncated"),
     ("PubChemTox_get_toxicity_summary", "statements"),
+    ("OpenFDADevice_search_adverse_events", "narratives"),
+    ("OpenFDADevice_search_adverse_events", "devices"),
+    ("OpenFDADevice_search_adverse_events", "report_number"),
+    ("OpenFDADevice_search_recalls", "code_info"),
+    ("OpenFDADevice_search_recalls", "identifiers"),
+    ("OpenFDADevice_search_udi", "mri_safety"),
+    ("OpenFDADevice_search_udi", "is_labeled_as_nrl"),
+    ("OpenFDADevice_get_classification", "definition"),
+    ("OpenFDADevice_search_510k", "decision_code"),
+    ("OpenFDADevice_search_pma", "supplement_number"),
 ]
 
 
