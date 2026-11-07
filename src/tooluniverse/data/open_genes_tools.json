@@ -16,7 +16,36 @@
                   "error"
                 ]
               },
-              "type": "object"
+              "type": "object",
+              "description": "The gene's aging profile. This branch declared no properties at all, so none of the fourteen fields the tool returns was discoverable from the schema.",
+              "properties": {
+                "symbol": {"type": ["string", "null"]},
+                "name": {"type": ["string", "null"]},
+                "ncbi_id": {"type": ["integer", "string", "null"]},
+                "uniprot": {"type": ["string", "null"]},
+                "ensembl": {"type": ["string", "null"]},
+                "aging_mechanisms": {"type": "array", "items": {"type": "string"}, "description": "e.g. 'INS/IGF-1 pathway dysregulation'"},
+                "functional_clusters": {"type": "array", "items": {"type": "string"}},
+                "disease_categories": {"type": "array", "items": {"type": "string"}, "description": "Broad ICD chapter groupings"},
+                "diseases": {"type": "array", "items": {"type": "string"}, "description": "Specific named disease associations"},
+                "confidence_level": {"type": ["string", "null"]},
+                "expression_change": {"type": ["string", "number", "null"]},
+                "protein_description": {"type": ["string", "null"]},
+                "evidence_counts": {"type": "object", "description": "How many records of each evidence type; see evidence_summary for what they say"},
+                "evidence_summary": {
+                  "type": "object",
+                  "description": "Per evidence type, what the records actually say: the distinct longevity effects, intervention results, change types, model organisms and ethnicities, plus the DOIs. GHR has 57 longevity associations and 14 lifespan studies, and the tool reported '57' and '14' -- counts, for a tool whose description says to use it to assess whether and HOW a gene is implicated in aging, with no other tool in the family returning the records.",
+                  "additionalProperties": {
+                    "type": "object",
+                    "properties": {
+                      "count": {"type": "integer"},
+                      "dois": {"type": "array", "items": {"type": "string"}},
+                      "doi_count": {"type": "integer"},
+                      "dois_truncated": {"type": "boolean"}
+                    }
+                  }
+                }
+              }
             },
             {
               "type": "object",

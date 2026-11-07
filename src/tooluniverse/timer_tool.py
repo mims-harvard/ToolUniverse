@@ -13,6 +13,7 @@ Operations:
   - survival_association: Overall-survival log-rank test for high/low gene expression
 """
 
+import math
 import time
 import requests
 from typing import Dict, Any, List, Optional, Tuple
@@ -62,6 +63,32 @@ IMMUNE_MARKERS: Dict[str, str] = {
     "Macrophage": "CD68",
     "Dendritic_cell": "ITGAX",
 }
+
+
+# The immune estimate is a mean over however many samples were fetched, so the
+# cap is a parameter of the statistic and not an implementation detail. BRCA
+# has over a thousand samples and the default reads the first 100.
+SAMPLES_PER_ESTIMATE = 100
+
+
+def _p_value(value: Any) -> Optional[float]:
+    """A p-value rounded to six SIGNIFICANT figures, not six decimals.
+
+    `round(p, 6)` turns every p below 5e-7 into 0.0, and a Spearman r of 0.73
+    over 120 samples has one: it was reported as "p_value: 0.0", which is a
+    claim no test can make. Significant-figure rounding keeps 1.2e-20 as
+    1.2e-20 and still shortens 0.0314159265 to 0.0314159.
+    """
+    try:
+        p_float = float(value)
+    except (TypeError, ValueError):
+        return None
+    if not math.isfinite(p_float):
+        return None
+    if p_float == 0.0:
+        # scipy can underflow to exactly 0; say so as a bound rather than as 0.
+        return 0.0
+    return float(f"{p_float:.6g}")
 
 
 @register_tool("TIMERTool")
@@ -149,6 +176,28 @@ class TIMERTool(BaseTool):
                     and not pid.endswith("_Zscores")
                 ):
                     return pid
+        return None
+
+    def _get_study_sample_count(self, study_id: str) -> Optional[int]:
+        """How many samples the study has, so a capped estimate can say so."""
+        try:
+            r = requests.get(
+                f"{CBIOPORTAL_BASE}/studies/{study_id}",
+                params={"projection": "SUMMARY"},
+                timeout=20,
+            )
+        except requests.exceptions.RequestException:
+            return None
+        if r.status_code != 200:
+            return None
+        try:
+            payload = r.json()
+        except ValueError:
+            return None
+        for key in ("allSampleCount", "sequencedSampleCount", "cnaSampleCount"):
+            value = payload.get(key)
+            if isinstance(value, int) and value > 0:
+                return value
         return None
 
     def _get_samples(self, study_id: str, n: int = 200) -> List[str]:
@@ -261,27 +310,41 @@ class TIMERTool(BaseTool):
                 entrez_ids.append(eid)
                 symbol_to_entrez[sym] = eid
 
-        sample_ids = self._get_samples(study_id, n=100)
+        max_samples = arguments.get("max_samples")
+        if not isinstance(max_samples, int) or max_samples <= 0:
+            max_samples = SAMPLES_PER_ESTIMATE
+        max_samples = min(max_samples, 1000)
+        sample_ids = self._get_samples(study_id, n=max_samples)
         if not sample_ids:
             return {"status": "error", "error": f"No samples found for {cancer}"}
+        study_sample_total = self._get_study_sample_count(study_id)
 
         records = self._get_expression(profile_id, entrez_ids, sample_ids)
         if not records:
             return {"status": "error", "error": "Expression data not available"}
 
-        # Group by gene
-        expr_by_entrez: Dict[int, List[float]] = {}
+        # Group by gene AND sample. The sample id was dropped and the values
+        # appended in response order, which made the correlation below pair
+        # marker_vals[i] with target_vals[i] -- two lists built from separate
+        # groupings, in whatever order cBioPortal returned the records. The
+        # sibling handler `_gene_correlation` in this module has always built
+        # per-sample maps and intersected them ("paired samples only"); this
+        # one now does the same, so a Spearman r is over the same patient's
+        # two measurements rather than over two positions.
+        expr_by_entrez: Dict[int, Dict[str, float]] = {}
         for rec in records:
             eid = rec.get("entrezGeneId")
+            sid = rec.get("sampleId")
             val = rec.get("value")
-            if eid and val is not None:
-                expr_by_entrez.setdefault(eid, []).append(float(val))
+            if eid and sid and val is not None:
+                expr_by_entrez.setdefault(eid, {})[sid] = float(val)
 
         # Build immune infiltration summary
         immune_scores: Dict[str, Dict] = {}
         for cell_type, sym in IMMUNE_MARKERS.items():
             eid = symbol_to_entrez.get(sym)
-            vals = expr_by_entrez.get(eid, []) if eid else []
+            by_sample = expr_by_entrez.get(eid, {}) if eid else {}
+            vals = list(by_sample.values())
             if vals:
                 mean_val = sum(vals) / len(vals)
                 sorted_vals = sorted(vals)
@@ -300,24 +363,33 @@ class TIMERTool(BaseTool):
 
         if correlate_gene:
             eid = symbol_to_entrez.get(correlate_gene)
-            target_vals = expr_by_entrez.get(eid, []) if eid else []
-            if target_vals:
+            target_by_sample = expr_by_entrez.get(eid, {}) if eid else {}
+            if target_by_sample:
                 for cell_type, sym in IMMUNE_MARKERS.items():
                     m_eid = symbol_to_entrez.get(sym)
-                    marker_vals = expr_by_entrez.get(m_eid, []) if m_eid else []
-                    if marker_vals and target_vals:
-                        n = min(len(marker_vals), len(target_vals))
-                        try:
-                            from scipy.stats import spearmanr
-
-                            corr, pval = spearmanr(marker_vals[:n], target_vals[:n])
-                            immune_scores[cell_type]["correlation_with_gene"] = {
-                                "gene": correlate_gene,
-                                "spearman_r": round(float(corr), 4),
-                                "p_value": round(float(pval), 6),
-                            }
-                        except ImportError:
-                            pass
+                    marker_by_sample = (
+                        expr_by_entrez.get(m_eid, {}) if m_eid else {}
+                    )
+                    common = sorted(set(marker_by_sample) & set(target_by_sample))
+                    if not common:
+                        continue
+                    try:
+                        from scipy.stats import spearmanr
+                    except ImportError:
+                        continue
+                    corr, pval = spearmanr(
+                        [marker_by_sample[sid] for sid in common],
+                        [target_by_sample[sid] for sid in common],
+                    )
+                    immune_scores[cell_type]["correlation_with_gene"] = {
+                        "gene": correlate_gene,
+                        "spearman_r": round(float(corr), 4),
+                        "p_value": _p_value(pval),
+                        # How many samples the r is actually over, which is
+                        # the intersection of the two genes' samples and not
+                        # the length of either list.
+                        "n_paired_samples": len(common),
+                    }
 
         return {
             "status": "success",
@@ -326,6 +398,24 @@ class TIMERTool(BaseTool):
                 "study_id": study_id,
                 "profile_id": profile_id,
                 "n_samples": len(sample_ids),
+                # `n_samples` is how many samples were REQUESTED, which is the
+                # cap, not the study's size: BRCA has over a thousand and the
+                # estimate used the first 100 cBioPortal lists. The mean and
+                # median below are over that subset, so the subset has to be
+                # stated for them to mean anything.
+                "samples_requested": len(sample_ids),
+                "study_sample_total": study_sample_total,
+                "samples_are_a_subset": (
+                    None
+                    if study_sample_total is None
+                    else len(sample_ids) < study_sample_total
+                ),
+                "sampling": (
+                    "The first max_samples samples cBioPortal lists for the "
+                    "study, in its own order -- not a random sample. Raise "
+                    "max_samples (up to 1000) to widen it."
+                ),
+                "max_samples": max_samples,
                 "immune_infiltration": immune_scores,
                 "method": "Marker gene expression (CD19, CD4, CD8A, FCGR3B, CD68, ITGAX) via cBioPortal TCGA data",
                 "note": "TIMER2.0/3.0 API is unavailable; using cBioPortal TCGA expression as proxy",
@@ -428,7 +518,7 @@ class TIMERTool(BaseTool):
                 "gene2": gene2,
                 "n_samples": len(common),
                 "spearman_r": round(float(corr), 4),
-                "p_value": round(float(pval), 6) if pval is not None else None,
+                "p_value": _p_value(pval) if pval is not None else None,
                 "profile_id": profile_id,
                 "note": "TIMER2.0/3.0 API unavailable; correlation computed from cBioPortal TCGA expression",
             },

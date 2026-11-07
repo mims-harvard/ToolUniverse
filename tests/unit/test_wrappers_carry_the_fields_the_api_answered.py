@@ -1127,6 +1127,26 @@ UPSTREAM_KEYS = [
         "def _xref_type_counts",
         "what a cross-reference count was counting",
     ),
+    (
+        "timer_tool.py",
+        "def _get_study_sample_count",
+        "how many samples the study has, against the 100 the estimate used",
+    ),
+    (
+        "open_genes_tool.py",
+        "def _evidence_digest",
+        "what 57 longevity-association records say, where only '57' was reported",
+    ),
+    (
+        "cath_tool.py",
+        "def _go_terms",
+        "a domain's GO annotations, which its sibling handler returns",
+    ),
+    (
+        "cath_tool.py",
+        'data.get("pdb_segments")',
+        "the residue ranges that define the domain",
+    ),
 ]
 
 
@@ -1385,6 +1405,13 @@ DECLARED = [
     ("HuBMAP_get_sample", "donor_demographics_coded"),
     ("HuBMAP_search_donors", "demographics_coded"),
     ("DDBJ_get_entry", "cross_reference_types"),
+    ("TIMER2_immune_estimation", "study_sample_total"),
+    ("TIMER2_immune_estimation", "sampling"),
+    ("TIMER2_immune_estimation", "n_paired_samples"),
+    ("OpenGenes_get_gene", "evidence_summary"),
+    ("OpenGenes_get_gene", "aging_mechanisms"),
+    ("CATH_get_domain_summary", "go_terms"),
+    ("CATH_get_domain_summary", "pdb_segments"),
 ]
 
 
@@ -2161,3 +2188,100 @@ def test_a_nextstrain_coloring_is_more_than_its_key():
     schema = json.dumps(_config("Nextstrain_get_dataset").get("return_schema") or {})
     assert '"value_count"' in schema
 
+
+def test_an_immune_estimate_pairs_by_sample_not_by_position():
+    """The correlation was over two lists, not over patients.
+
+    `_immune_estimation` grouped expression records by gene and appended the
+    values in response order, then correlated `marker_vals[:n]` against
+    `target_vals[:n]` with `n = min(len(a), len(b))` -- two lists built from
+    separate groupings, paired by position.
+
+    Measured on brca_tcga: all six markers return a value for every one of
+    the first 100 samples in the same order, so the positional pairing was
+    in fact correct for that request -- by coincidence, not by construction.
+    cBioPortal documents no ordering guarantee for /molecular-data/fetch,
+    one missing value would shift every later position, and
+    `min(len(a), len(b))` would truncate rather than align. Because the
+    sample id was dropped, nothing in the output could show whether the
+    pairing had held.
+
+    The sibling handler `_gene_correlation` in this module has always built
+    per-sample maps and intersected them ("paired samples only"); this one
+    now does too, and reports how many samples the r is over. The field the
+    fix needed is the one the sweep flagged as dropped: `sampleId`, on all
+    600 records.
+    """
+    source = _source("timer_tool.py")
+    # A substring anchor is no use: `_gene_correlation` already read the
+    # sample id, so the name was in the file before the fix. Count it.
+    assert source.count('rec.get("sampleId")') == 2
+    assert "set(marker_by_sample) & set(target_by_sample)" in source
+    assert '"n_paired_samples": len(common)' in source
+
+
+def test_an_immune_estimate_says_it_used_a_hundred_of_a_thousand_samples():
+    """`n_samples: 100` was the cap, and the study has over a thousand.
+
+    The mean and median are over whatever 100 samples cBioPortal lists
+    first -- not a random sample -- and nothing in the answer said so. The
+    cut is now a parameter with a stated default, the study's own sample
+    count is fetched and reported, and the ordering is spelled out.
+    """
+    source = _source("timer_tool.py")
+    assert "SAMPLES_PER_ESTIMATE" in source
+    assert "def _get_study_sample_count" in source
+    assert "not a random sample" in source
+
+
+def test_open_genes_says_how_a_gene_is_implicated_not_just_how_often():
+    """"Use to assess whether and HOW a gene is implicated in aging", and 57.
+
+    `researches` holds the evidence records -- 57 longevity associations and
+    14 lifespan studies for GHR -- and `_evidence_counts` reduced each list
+    to its length. No other tool in the family returns the records, so the
+    longevity effects, the intervention results, the change types, the model
+    organisms and the DOIs were unreachable. The digest reports the distinct
+    values per evidence type beside the counts, which answers "how" without
+    copying hundreds of records.
+    """
+    source = _source("open_genes_tool.py")
+    assert "def _evidence_digest" in source
+    assert "_EVIDENCE_DIGEST_FIELDS" in source
+    assert '"evidence_counts"' in source, "the counts stay"
+    schema = json.dumps(_config("OpenGenes_get_gene").get("return_schema") or {})
+    # The success branch used to declare no properties at all.
+    assert '"aging_mechanisms"' in schema
+    assert '"evidence_summary"' in schema
+
+
+def test_a_cath_domain_summary_carries_its_function_and_its_boundaries():
+    """A domain is its segments, and its summary dropped both.
+
+    `go_terms` -- with the evidence code that qualifies each and the aspect it
+    belongs to -- and `ec_terms` are the functional annotation, and
+    `pdb_segments` are the residue ranges that make the domain a domain. The
+    summary reported a residue COUNT and the CATH classification. The sibling
+    handler `_get_funfam` has always returned `go_terms`.
+    """
+    source = _source("cath_tool.py")
+    assert "def _go_terms" in source
+    assert 'data.get("pdb_segments")' in source
+    assert 'data.get("ec_terms")' in source
+    assert source.count('"go_terms"') >= 2, "both handlers must carry them"
+
+
+
+def test_a_spearman_p_value_is_not_rounded_to_zero():
+    """`round(p, 6)` reports every p below 5e-7 as 0.0.
+
+    A Spearman r of 0.71 between CD19 and PDCD1 over 100 BRCA tumours has
+    p = 1.1e-16, and the tool said `p_value: 0.0` -- a claim no test can
+    make. Six SIGNIFICANT figures keeps 1.1e-16 and still shortens
+    0.0314159265 to 0.0314159.
+    """
+    source = _source("timer_tool.py")
+    assert "def _p_value" in source
+    assert "round(float(pval), 6)" not in source, (
+        "decimal rounding flattens a small p-value to zero"
+    )

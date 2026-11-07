@@ -42,10 +42,90 @@
               "type": "string"
             },
             "immune_infiltration": {
-              "type": "object"
+              "type": "object",
+              "description": "Per immune cell type: the marker gene, the mean and median of its expression over the sampled tumours, and the number of samples that had a value. With a correlate gene, also the Spearman r over the samples the two genes SHARE -- which is what n_paired_samples reports, and what the positional pairing it replaces did not compute.",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "marker_gene": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "mean_expression": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "median_expression": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "n_samples": {
+                    "type": "integer"
+                  },
+                  "correlation_with_gene": {
+                    "type": "object",
+                    "properties": {
+                      "gene": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "spearman_r": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "p_value": {
+                        "type": [
+                          "number",
+                          "null"
+                        ]
+                      },
+                      "n_paired_samples": {
+                        "type": "integer",
+                        "description": "Samples with a value for BOTH genes, which is what the correlation is over"
+                      }
+                    }
+                  }
+                }
+              }
             },
             "n_samples": {
+              "type": "integer",
+              "description": "How many samples were REQUESTED, which is the cap and not the study's size. See study_sample_total."
+            },
+            "samples_requested": {
               "type": "integer"
+            },
+            "study_sample_total": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many samples the study has. BRCA has over a thousand and the default estimate reads the first 100, so the mean and median are over a subset."
+            },
+            "samples_are_a_subset": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when fewer samples were used than the study has"
+            },
+            "sampling": {
+              "type": "string",
+              "description": "States that the samples are the first max_samples cBioPortal lists, in its own order, and not a random sample"
+            },
+            "max_samples": {
+              "type": "integer",
+              "description": "The cap in force, raisable up to 1000"
             }
           },
           "required": [
