@@ -86,7 +86,78 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "diseases": {
+                "type": "array",
+                "description": "The diseases the hit is associated with -- 113 across one page -- which is most of why a caller searches for a gene in RGD",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "disease_count": {
+                "type": "integer"
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "automated_description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "so_term_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "cross_references": {
+                "type": "array",
+                "description": "The gene in other databases; the search answers 236 of these and 528 gene-level ones",
+                "items": {
+                  "type": [
+                    "string",
+                    "object"
+                  ]
+                }
+              },
+              "gene_cross_references": {
+                "type": "array",
+                "items": {
+                  "type": [
+                    "string",
+                    "object"
+                  ]
+                }
+              },
+              "related_data": {
+                "type": "array",
+                "description": "What else RGD holds for this gene, which is how a caller knows what to ask for next",
+                "items": {
+                  "type": "object"
+                }
+              },
+              "search_score": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "category": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
         },
         {
           "type": "object",
@@ -151,7 +222,93 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "object_symbol": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The gene the annotation is on. The row carried the term and the evidence code and left the object unnamed -- 1,114 annotations on one gene."
+              },
+              "object_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "annotated_object_rgd_id": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ]
+              },
+              "reference_rgd_id": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "The reference supporting the annotation, without which it cannot be cited"
+              },
+              "with_from": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "qualifier2": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "alteration": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "An annotation against an allele or a specific molecular entity is not the same claim as one against the gene"
+              },
+              "alteration_location": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "molecular_entity": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "annotation_extension": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "created_date": {
+                "type": [
+                  "string",
+                  "integer",
+                  "null"
+                ],
+                "description": "RGD answers these as epoch milliseconds, not a date string"
+              },
+              "last_modified_date": {
+                "type": [
+                  "string",
+                  "integer",
+                  "null"
+                ],
+                "description": "RGD answers these as epoch milliseconds, not a date string"
+              }
+            }
+          }
         },
         {
           "type": "object",
@@ -194,7 +351,74 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "array"
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Protein-coding against pseudogene"
+              },
+              "so_acc_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "refseq_status": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "VALIDATED against PREDICTED"
+              },
+              "ncbi_annotation_status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "agr_description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ensembl_gene_symbol": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "ensembl_gene_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "nomenclature_source": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "notes": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
         },
         {
           "type": "object",
@@ -316,6 +540,77 @@
                 ]
               },
               "inheritance_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "flank1_rgd_id": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "A QTL is defined by its flanking markers and its peak; the row gave a chromosome"
+              },
+              "flank2_rgd_id": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ]
+              },
+              "peak_rgd_id": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ]
+              },
+              "flank1_rs_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "flank2_rs_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "peak_rs_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "peak_offset": {
+                "type": [
+                  "integer",
+                  "number",
+                  "null"
+                ]
+              },
+              "p_value_mlog": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "most_significant_cmo_term": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "notes": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "source_url": {
                 "type": [
                   "string",
                   "null"

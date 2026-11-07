@@ -745,6 +745,32 @@ UPSTREAM_KEYS = [
         "term_replaced_by",
         "what an obsolete term was replaced by, where the tool said only that it is obsolete",
     ),
+    # Round ten.
+    (
+        "rgd_tool.py",
+        'ann.get("objectSymbol")',
+        "what an annotation is on, from 1,114 rows that named only the term",
+    ),
+    (
+        "rgd_tool.py",
+        'q.get("peakRgdId")',
+        "the peak and flanking markers that define where a QTL is",
+    ),
+    (
+        "rgd_tool.py",
+        'r.get("diseases")',
+        "the diseases a gene hit is associated with, which is why RGD is searched",
+    ),
+    (
+        "rgd_strain_tool.py",
+        'rec.get("lastStatus")',
+        "whether a strain can still be obtained",
+    ),
+    (
+        "impc_tool.py",
+        'gene_data.get("allele_name"',
+        "which alleles IMPC phenotyped, beside the phenotype status",
+    ),
 ]
 
 
@@ -893,6 +919,15 @@ DECLARED = [
     ("Genebass_gene_burden_phewas", "pval_skato"),
     ("ols_get_efo_term", "term_replaced_by"),
     ("ols_list_ontologies", "languages"),
+    ("RGD_get_annotations", "object_symbol"),
+    ("RGD_get_annotations", "reference_rgd_id"),
+    ("RGD_get_qtls_in_region", "peak_rgd_id"),
+    ("RGD_search_genes", "diseases"),
+    ("RGD_get_orthologs", "refseq_status"),
+    ("RGD_search_strains", "last_status"),
+    ("IMPC_get_phenotypes_by_gene", "statistical_method"),
+    ("IMPC_get_gene_summary", "allele_names"),
+    ("IMPC_search_genes", "marker_type"),
 ]
 
 
@@ -908,6 +943,21 @@ def test_the_return_schema_declares_the_field_the_wrapper_now_returns(tool, fiel
     assert f'"{field}"' in schema, (
         f"{tool} returns `{field}` and its return_schema does not declare it"
     )
+
+
+def test_an_impc_phenotype_hit_says_how_it_was_called():
+    """A phenotype hit is a statistical result.
+
+    Which pipeline ran it, which test produced the p-value and which IMPC
+    data release it comes from were all in the Solr `fields` the tool itself
+    asked for, and the row dropped them -- so "preweaning lethality,
+    incomplete penetrance, p=1e-6" arrived with no way to tell a
+    Supplied-as-data call from a Fisher exact one.
+    """
+    source = _source("impc_tool.py")
+    assert source.count('doc.get("statistical_method")') >= 2
+    assert 'doc.get("pipeline_name")' in source
+    assert 'doc.get("resource_name")' in source
 
 
 def test_an_obsolete_efo_term_says_what_replaced_it():

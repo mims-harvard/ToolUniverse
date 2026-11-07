@@ -110,6 +110,31 @@
             },
             "disease_associations": {
               "type": "array"
+            },
+            "allele_names": {
+              "type": "array",
+              "description": "The alleles IMPC phenotyped -- 147 on one response. A summary that reports a phenotype status and not which allele produced it cannot be ordered from.",
+              "items": {
+                "type": "string"
+              }
+            },
+            "es_cell_status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "mouse_status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "assignment_status": {
+              "type": [
+                "string",
+                "null"
+              ]
             }
           },
           "required": [
@@ -303,6 +328,40 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "statistical_method": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which test produced the p-value. A phenotype hit is a statistical result and the query asked for this already."
+                  },
+                  "pipeline_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which IMPC pipeline ran it"
+                  },
+                  "resource_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which IMPC data release the call comes from"
+                  },
+                  "allele_accession_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The allele's own accession; a symbol is not a key"
+                  },
+                  "marker_accession_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   }
                 }
               }
@@ -472,6 +531,26 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "assignment_status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "`production_status` falls back from mouse_production_status to this, so neither was visible on its own: a gene with an assignment but no mouse yet read the same as one in production"
+                  },
+                  "mouse_production_status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "marker_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Protein-coding against pseudogene"
                   }
                 }
               }
@@ -701,6 +780,41 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "pipeline_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which IMPC pipeline ran it"
+                  },
+                  "resource_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which IMPC data release the call comes from"
+                  },
+                  "allele_accession_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The allele's own accession; a symbol is not a key"
+                  },
+                  "marker_accession_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "top_level_mp_term_id": {
+                    "type": [
+                      "string",
+                      "array",
+                      "null"
+                    ],
+                    "description": "The MP term's top-level id beside its name, which is what groups hits across genes"
                   }
                 }
               }

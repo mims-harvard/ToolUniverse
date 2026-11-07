@@ -248,6 +248,14 @@ class IMPCTool(BaseTool):
                 "has_phenotype_data": has_real_phenotype_calls
                 or gene_data.get("imits_phenotype_complete") == "1"
                 or bool(gene_data.get("mp_id")),
+                # The alleles IMPC phenotyped. A gene summary that reports a
+                # phenotype status and not which allele produced it cannot be
+                # ordered from, and the query asked for the names already --
+                # 147 of them on one response.
+                "allele_names": gene_data.get("allele_name", []),
+                "es_cell_status": gene_data.get("es_cell_status"),
+                "mouse_status": gene_data.get("mouse_status"),
+                "assignment_status": gene_data.get("assignment_status"),
                 "mp_terms": gene_data.get("mp_term", []),
                 "mp_ids": gene_data.get("mp_id", []),
                 "top_level_mp_terms": gene_data.get("top_level_mp_term", []),
@@ -329,6 +337,16 @@ class IMPCTool(BaseTool):
                     "effect_size": doc.get("effect_size"),
                     "phenotyping_center": doc.get("phenotyping_center"),
                     "allele_symbol": doc.get("allele_symbol"),
+                    # HOW the call was made. A phenotype hit is a statistical
+                    # result: which pipeline ran it, which test produced the
+                    # p-value, and which IMPC data release it comes from. The
+                    # query asked for all three and the row dropped them.
+                    "statistical_method": doc.get("statistical_method"),
+                    "pipeline_name": doc.get("pipeline_name"),
+                    "resource_name": doc.get("resource_name"),
+                    # And which allele, by accession -- a symbol is not a key.
+                    "allele_accession_id": doc.get("allele_accession_id"),
+                    "marker_accession_id": doc.get("marker_accession_id"),
                 }
 
         phenotypes = list(phenotype_map.values())
@@ -421,6 +439,15 @@ class IMPCTool(BaseTool):
                     "phenotype_status": doc.get("phenotype_status"),
                     "production_status": doc.get("mouse_production_status")
                     or doc.get("assignment_status"),
+                    # `production_status` falls back from one of these to the
+                    # other, so neither was visible on its own: a gene with an
+                    # assignment but no mouse yet reads the same as one in
+                    # production. And `marker_type` separates a protein-coding
+                    # gene from a pseudogene, which a phenotyping search
+                    # should not hide.
+                    "assignment_status": doc.get("assignment_status"),
+                    "mouse_production_status": doc.get("mouse_production_status"),
+                    "marker_type": doc.get("marker_type"),
                 }
             )
 
@@ -473,7 +500,10 @@ class IMPCTool(BaseTool):
             "p_value,effect_size,statistical_method,significant,"
             "female_ko_parameter_estimate,male_ko_parameter_estimate,"
             "female_percentage_change,male_percentage_change,"
-            "classification_tag,life_stage_name"
+            "classification_tag,life_stage_name,"
+            # Requested because the rows now report them: the allele's own
+            # accession and the IMPC data release the call comes from.
+            "allele_accession_id,resource_name"
         )
 
         result = self._solr_query(
@@ -512,6 +542,13 @@ class IMPCTool(BaseTool):
                     "male_ko_estimate": doc.get("male_ko_parameter_estimate"),
                     "phenotyping_center": doc.get("phenotyping_center"),
                     "allele_symbol": doc.get("allele_symbol"),
+                    "pipeline_name": doc.get("pipeline_name"),
+                    "marker_accession_id": doc.get("marker_accession_id"),
+                    "allele_accession_id": doc.get("allele_accession_id"),
+                    # The MP term's top-level id beside its name, which is
+                    # what groups hits across genes.
+                    "top_level_mp_term_id": doc.get("top_level_mp_term_id"),
+                    "resource_name": doc.get("resource_name"),
                 }
             )
 

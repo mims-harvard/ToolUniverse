@@ -219,7 +219,8 @@ NOT_RECORD_DATA = re.compile(
                                                 # already points at
   | _links?(\.|\[)                             # {id, url} link objects beside
                                                 # the field they link
-  | (^|\.)(createdBy|updatedBy|modifiedBy)(\.|\[)   # audit trail
+  | (^|\.)(created|updated|modified|lastModified|lastUpdated)By(\.|\[|$)
+                                                # audit trail
   | (^|\.)(creationDate|modificationDate|dateCreated|dateUpdated)$
                                                 # and its timestamps
   | (^|\.)recordType$                          # MaveDB's type discriminator:
@@ -308,11 +309,27 @@ def key_names_raw(node, out=None, depth=0, limit=SURVIVOR_DEPTH):
 # A numeric `id` beside one of these is the database's own row number, and the
 # identifier that means something is the sibling. `urn` is MaveDB's: every
 # record carries both, and only the urn can be passed back to the API.
-STUB_SIBLINGS = ("link", "display_name", "format_name", "href", "url", "urn")
+STUB_SIBLINGS = (
+    "link",
+    "display_name",
+    "format_name",
+    "href",
+    "url",
+    "urn",
+    # RGD's accession, which its own REST paths take where `key` is only a
+    # row number.
+    "rgdId",
+)
+
+
+# The field names a database uses for its own row number, beside the
+# identifier that means something. RGD answers both on every record: `key` is
+# the row and `rgdId` is the accession its own URLs take.
+SURROGATE_NAMES = ("id", "key")
 
 
 def surrogate_id_paths(node, prefix="", out=None, depth=0):
-    """Paths of a bare numeric `id` that sits beside a link or a display name.
+    """Paths of a bare numeric `id` or `key` beside a link or a real identifier.
 
     An entity stub -- SGD answers `{"id": 823128, "display_name": "CAA84998.1",
     "link": "/locus/S000000259"}` for every referenced object -- carries the
@@ -327,12 +344,23 @@ def surrogate_id_paths(node, prefix="", out=None, depth=0):
     if depth > MAX_DEPTH:
         return out
     if isinstance(node, dict):
-        value = node.get("id")
-        if (
-            isinstance(value, (int, float))
-            or (isinstance(value, str) and value.strip().isdigit())
-        ) and any(node.get(sibling) for sibling in STUB_SIBLINGS):
-            out.add(f"{prefix}.id" if prefix else "id")
+        for name in SURROGATE_NAMES:
+            value = node.get(name)
+            if (
+                isinstance(value, (int, float))
+                or (isinstance(value, str) and value.strip().isdigit())
+            ) and (
+                any(node.get(sibling) for sibling in STUB_SIBLINGS)
+                # RGD's annotation rows carry no bare `rgdId`; they carry
+                # `annotatedObjectRgdId` and `refRgdId`, which are the
+                # accessions its own URLs take, beside a `key` that is the
+                # row number. Any sibling in that family counts.
+                or any(
+                    sibling.endswith("RgdId") and node.get(sibling)
+                    for sibling in node
+                )
+            ):
+                out.add(f"{prefix}.{name}" if prefix else name)
         for key, child in node.items():
             surrogate_id_paths(
                 child, f"{prefix}.{key}" if prefix else key, out, depth + 1
