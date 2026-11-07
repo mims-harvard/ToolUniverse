@@ -629,6 +629,41 @@ UPSTREAM_KEYS = [
         "def _keywords",
         "the controlled keywords an experiment is indexed under",
     ),
+    (
+        "wormbase_tool.py",
+        "alleleSymbol",
+        "which allele a phenotype belongs to; the annotation's subject is not the gene",
+    ),
+    (
+        "wormbase_tool.py",
+        "def _reference",
+        "the PMID behind an annotation, where only Alliance's own curie came back",
+    ),
+    (
+        "wormbase_tool.py",
+        "phenotypesOrTraits",
+        "the phenotype a genetic interaction was scored by, which is the result",
+    ),
+    (
+        "wormbase_tool.py",
+        "predictionMethodsNotCalled",
+        "the methods that ran and did not call an ortholog",
+    ),
+    (
+        "wormbase_tool.py",
+        "def _perturbation",
+        "which allele or RNAi a genetic interaction was measured with",
+    ),
+    (
+        "wormbase_tool.py",
+        "nb_annotations",
+        "how many disease annotations the gene has, against a ribbon of all categories",
+    ),
+    (
+        "wormbase_tool.py",
+        "detectionMethod",
+        "how an interaction was detected, without which the pair is not a result",
+    ),
 ]
 
 
@@ -741,6 +776,15 @@ DECLARED = [
     ("MaveDB_search_experiments", "keywords"),
     ("MaveDB_search_experiments", "method"),
     ("MaveDB_search_score_sets", "target_gene_details"),
+    ("WormBase_get_phenotypes", "subjects"),
+    ("WormBase_get_phenotypes", "reference_details"),
+    ("WormBase_get_phenotypes", "annotation_types"),
+    ("WormBase_get_expression", "annotations"),
+    ("WormBase_get_orthologs", "methods_not_called"),
+    ("WormBase_get_interactions", "detection_method"),
+    ("WormBase_get_interactions", "phenotypes_or_traits"),
+    ("WormBase_get_human_diseases", "annotated_disease_count"),
+    ("WormBase_get_human_diseases", "has_annotations"),
 ]
 
 
@@ -756,6 +800,36 @@ def test_the_return_schema_declares_the_field_the_wrapper_now_returns(tool, fiel
     assert f'"{field}"' in schema, (
         f"{tool} returns `{field}` and its return_schema does not declare it"
     )
+
+
+def test_wormbase_phenotypes_name_the_allele_they_belong_to():
+    """A phenotype annotation's subject is the allele, not the gene.
+
+    unc-26's "aldicarb resistant" is the phenotype of allele m2
+    (WB:WBVar00088530); `inferredGene` is how it maps back to the gene. The
+    tool reported the statement against the gene with no allele named, so two
+    alleles with different phenotypes arrived as one undifferentiated list.
+    """
+    source = _source("wormbase_tool.py")
+    assert 'subject_of.get("alleleSymbol")' in source or (
+        '_text(subject_of.get("alleleSymbol"))' in source
+    )
+    assert 'a.get("inferredGene")' in source
+
+
+def test_wormbase_disease_ribbon_counts_this_genes_annotations():
+    """`disease_count` is the same for every gene: it counts ribbon categories.
+
+    The ribbon answers two things and only one was read. `categories` is the
+    Disease Ontology skeleton, every top-level category whether or not the
+    gene has an annotation in it, and `subjects` carries this gene's counts
+    per group. unc-26 has two disease annotations and was reported with five
+    "diseases", none of them marked as the ones it actually has.
+    """
+    source = _source("wormbase_tool.py")
+    assert "nb_annotations" in source
+    assert '"has_annotations"' in source
+    assert '"annotated_disease_count"' in source
 
 
 def test_mavedb_clinical_controls_link_to_the_score_sets_own_variants():

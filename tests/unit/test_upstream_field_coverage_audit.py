@@ -339,6 +339,27 @@ def test_a_record_count_tells_a_cut_response_from_a_whole_one(audit):
     assert audit.record_count(nested) == 44
 
 
+def test_stripping_a_curie_prefix_is_not_dropping_the_field(audit):
+    """WormBase's `_wb_id` turns "WB:WBGene00006818" into "WBGene00006818".
+
+    Alliance answers `primaryExternalId` in the prefixed form, so a value diff
+    reported it missing on every row of every WormBase tool while it was
+    plainly in the output. Only the tail is accepted, and only when it is
+    long enough to mean something -- a one-character tail would match by
+    accident.
+    """
+    upstream = {"rows": [{"primaryExternalId": f"WB:WBGene0000{i}"} for i in range(6)]}
+    returned = {"genes": [{"id": f"WBGene0000{i}"} for i in range(6)]}
+
+    rows = {r["field"]: r for r in audit.compare(upstream, returned)}
+    assert rows["rows[].primaryExternalId"]["kept"] == 6
+
+    # And the reverse does not hold: a prefix alone is not the value.
+    only_prefix = {"genes": [{"id": "WB"} for _ in range(6)]}
+    rows = {r["field"]: r for r in audit.compare(upstream, only_prefix)}
+    assert rows["rows[].primaryExternalId"]["kept"] == 0
+
+
 def test_a_sparse_field_behind_a_declared_cut_is_not_a_drop(audit, monkeypatch):
     """The last false-positive class the three families turned up.
 

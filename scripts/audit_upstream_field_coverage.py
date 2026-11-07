@@ -200,7 +200,9 @@ NOT_RECORD_DATA = re.compile(
   | (^|\.)data\[\]\.type$                       # JSON:API resource type, which
                                                 # restates the endpoint
   | (^|\.)self$
-  | resourceDescriptorPage                     # URL templates for a curie
+  | [Rr]esourceDescriptorPage                   # URL templates for a curie,
+                                                # including Alliance's
+                                                # homepageResourceDescriptorPage
   | (^|\.)urlTemplate$ | idPattern$ | idExample$ | resourcePages
   | supplementalData\.distinctFieldValues      # search facet values
   | (^|\.)aggregations(\.|\[)                 # search facet counts
@@ -218,7 +220,8 @@ NOT_RECORD_DATA = re.compile(
   | _links?(\.|\[)                             # {id, url} link objects beside
                                                 # the field they link
   | (^|\.)(createdBy|updatedBy|modifiedBy)(\.|\[)   # audit trail
-  | (^|\.)(creationDate|modificationDate)$    # and its timestamps
+  | (^|\.)(creationDate|modificationDate|dateCreated|dateUpdated)$
+                                                # and its timestamps
   | (^|\.)recordType$                          # MaveDB's type discriminator:
                                                 # ShortTargetGene,
                                                 # PublicationIdentifier,
@@ -248,6 +251,28 @@ NOT_RECORD_DATA = re.compile(
   | (^|\.)filter_code$
     # PubChem's display order for the references it attaches to a record.
   | (^|\.)SortOrder$
+    # Alliance embeds the Java class of each nested object as `type`:
+    # "Reference" on an evidenceItem, "Gene" on a subject, "DataProvider" on
+    # a provider. Scoped to those containers on purpose -- a bare `type` IS
+    # the record elsewhere, as it is on a UDI identifier ("Primary") or an
+    # interaction type.
+  | (^|\.)(evidenceItem|evidence|dataProvider|subjectGene|objectGene
+         |geneAssociationSubject|geneGeneAssociationObject
+         |phenotypeAnnotationSubject|expressionAnnotationSubject
+         |inferredGene|subject|relation
+         |expressionPattern|whenExpressed|whereExpressed
+         |crossReferences|references)(\[\])?\.type$
+    # Alliance's own concatenated row key, and the display map it returns
+    # keyed by the gene the caller asked about.
+  | (^|\.)uniqueId$
+  | (^|\.)geneAnnotationsMap(\.|\[)
+    # Display variants of a species name Alliance already gives in full, and
+    # its provider-side cross-reference stub.
+  | (^|\.)taxon\.species\.(abbreviation|displayName|shortName|phylogeneticOrder)$
+  | (^|\.)dataProviderCrossReference(\.|\[)
+    # Alliance's display ordering, a map keyed by taxon id.
+  | (^|\.)speciesOrder(\.|\[)
+  | (^|\.)phylogeneticSortingIndex$
     """
 )
 
@@ -333,9 +358,23 @@ def compare(upstream, returned):
         key for key in key_names_raw(returned) if len(key) >= MIN_VALUE_LENGTH
     }
     present = key_names(returned)
+    def reached(value):
+        """Did this upstream value reach the caller, prefix or no prefix?
+
+        A wrapper that strips a curie prefix has not dropped the field.
+        WormBase's `_wb_id` turns "WB:WBGene00006818" into "WBGene00006818",
+        and Alliance answers `primaryExternalId` in the prefixed form, so the
+        value diff reported it as missing on every row of every WormBase tool
+        while it was plainly there.
+        """
+        if value in survivors:
+            return True
+        head, _, tail = value.partition(":")
+        return bool(tail) and len(tail) >= MIN_VALUE_LENGTH and tail in survivors
+
     rows = []
     for field, values in leaf_fields(upstream).items():
-        kept = sum(1 for value in values if value in survivors)
+        kept = sum(1 for value in values if reached(value))
         leaf = normalise_key(field.rstrip("[]").split(".")[-1].rstrip("[]"))
         rows.append({"field": field, "kept": kept, "total": len(values), "leaf": leaf})
 
