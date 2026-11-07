@@ -662,8 +662,11 @@ class UniProtRESTTool(BaseTool):
                 # existence.
                 entry_type = entry.get("entryType") or ""
                 formatted_entry["entry_type"] = entry_type or None
+                # "unreviewed" CONTAINS "reviewed", so the obvious substring
+                # test calls every TrEMBL entry reviewed. Test for the
+                # negative string instead.
                 formatted_entry["reviewed"] = (
-                    "reviewed" in entry_type.lower() if entry_type else None
+                    "unreviewed" not in entry_type.lower() if entry_type else None
                 )
                 formatted_entry["annotation_score"] = entry.get("annotationScore")
                 formatted_entry["protein_existence"] = entry.get("proteinExistence")

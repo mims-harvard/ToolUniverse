@@ -204,7 +204,12 @@ class HuBMAPSampleTool(BaseTool):
     def _donor_demographics(src: dict[str, Any]) -> dict[str, Any]:
         """Normalize metadata.organ_donor_data UMLS rows into age/sex/race/bmi/etc."""
         demo: dict[str, Any] = {}
-        rows = (src.get("metadata") or {}).get("organ_donor_data") or []
+        metadata = src.get("metadata") or {}
+        # A living donor's attributes are under `living_donor_data`, not
+        # `organ_donor_data`, so reading only the latter returned an empty
+        # demographics dict for every living donor in the index.
+        rows = list(metadata.get("organ_donor_data") or [])
+        rows += list(metadata.get("living_donor_data") or [])
         for row in rows:
             if not isinstance(row, dict):
                 continue
@@ -345,6 +350,33 @@ class HuBMAPSampleTool(BaseTool):
                 "donor_hubmap_id": donor.get("hubmap_id"),
                 "rui_location": self._parse_rui(src.get("rui_location")),
                 "created_timestamp": src.get("created_timestamp"),
+                "donor_demographics": self._donor_demographics(donor),
+                # What was made from this sample. The record lists 67
+                # descendant ids and 45 descendant entities for HBM554.HDXT.966
+                # and the answer named none of them, so "which datasets exist
+                # for this tissue" needed a separate search.
+                # This index stores a descendant as {uuid, dataset_type} --
+                # 31 of the 45 for HBM658.BXNB.873 have the type -- so the row
+                # is whichever of these keys the record actually carries,
+                # rather than six keys padded with nulls.
+                "descendants": [
+                    {
+                        key: descendant[key]
+                        for key in (
+                            "uuid",
+                            "hubmap_id",
+                            "entity_type",
+                            "dataset_type",
+                            "status",
+                            "sample_category",
+                        )
+                        if key in descendant
+                    }
+                    for descendant in (src.get("descendants") or [])
+                    if isinstance(descendant, dict)
+                ],
+                "descendant_count": len(src.get("descendant_ids") or []),
+                "immediate_descendant_ids": src.get("immediate_descendant_ids") or [],
             },
         }
 

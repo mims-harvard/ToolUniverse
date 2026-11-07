@@ -987,6 +987,71 @@ UPSTREAM_KEYS = [
         'by_name.get("Relation")',
         "DIRECT against INDIRECT membership, which are not the same claim",
     ),
+    (
+        "ebi_proteins_coordinates_tool.py",
+        'gc.get("feature")',
+        "the 1,514 annotations per transcript the mapping response already carried",
+    ),
+    (
+        "ebi_proteins_coordinates_tool.py",
+        'genomic_loc.get("assemblyName")',
+        "which assembly the genome positions are against",
+    ),
+    (
+        "ebi_proteins_interactions_tool.py",
+        'row.get("dbReference")',
+        "the OMIM id of a disease the tool listed by name only",
+    ),
+    (
+        "swissmodel_tool.py",
+        's.get("ligand_chains")',
+        "what is bound in the model, where the protein partners were reported",
+    ),
+    (
+        "swissmodel_tool.py",
+        's.get("oligo-state")',
+        "whether the model is a monomer or an oligomer",
+    ),
+    (
+        "hubmap_sample_tool.py",
+        'metadata.get("living_donor_data")',
+        "a living donor's attributes, which organ_donor_data does not hold",
+    ),
+    (
+        "hubmap_sample_tool.py",
+        'src.get("descendants")',
+        "which datasets were made from the sample",
+    ),
+    (
+        "nasa_osdr_tool.py",
+        'metadata.get("study protocol description")',
+        "the methods of a study whose tool promises its full metadata",
+    ),
+    (
+        "nasa_osdr_tool.py",
+        'source.get("Data Source Type")',
+        "which repository a search row actually came from",
+    ),
+    (
+        "uniprot_idmapping_tool.py",
+        'item.get("to", False)',
+        "whether a database can be mapped TO, where only FROM was reported",
+    ),
+    (
+        "uniprot_idmapping_tool.py",
+        'item.get("uriLink")',
+        "how to resolve a mapped id, which is what mapping it was for",
+    ),
+    (
+        "uniprot_idmapping_tool.py",
+        '"unreviewed" not in entry_type.lower()',
+        "Swiss-Prot against TrEMBL, tested on the string that is not a substring",
+    ),
+    (
+        "uniprot_tool.py",
+        '"unreviewed" not in entry_type.lower()',
+        "the same test, where the substring form called every TrEMBL entry reviewed",
+    ),
 ]
 
 
@@ -1205,6 +1270,24 @@ DECLARED = [
     ("RxClass_get_class_members", "relation"),
     ("RxClass_find_classes", "classUrl"),
     ("RxClass_get_disease_relations", "relaSource"),
+    ("EBIProteins_get_coordinate_mapping", "feature_type_counts"),
+    ("EBIProteins_get_coordinate_mapping", "assembly_name"),
+    ("EBIProteins_get_proteins_by_genomic_loc", "features_truncated"),
+    ("EBIProteins_get_interaction_details", "disease_records"),
+    ("EBIProteins_get_interaction_details", "subcellular_location_records"),
+    ("EBIProteins_get_interaction_details", "intact_id_a"),
+    ("SwissModel_get_models", "ligands"),
+    ("SwissModel_get_models", "oligo_state"),
+    ("SwissModel_get_summary", "models_with_ligands"),
+    ("HuBMAP_get_sample", "descendant_count"),
+    ("HuBMAP_get_sample", "donor_demographics"),
+    ("OSDR_get_study", "protocol_descriptions"),
+    ("OSDR_get_study", "investigator"),
+    ("OSDR_search_studies", "data_source_type"),
+    ("OSDR_list_files", "organization"),
+    ("UniProtIDMap_list_databases", "to_supported"),
+    ("UniProtIDMap_list_databases", "uri_template"),
+    ("UniProtIDMap_gene_to_uniprot", "reviewed"),
 ]
 
 
@@ -1773,3 +1856,111 @@ def test_an_intronic_clingen_coordinate_keeps_its_offset():
     assert '"is_intronic"' in source
     schema = json.dumps(_config("ClinGenAR_lookup_allele").get("return_schema") or {})
     assert '"start_intron_offset"' in schema
+
+
+def test_both_ebi_interaction_tools_return_the_intact_ids():
+    """One handler returned them and its sibling over the same endpoint did not.
+
+    `interactor1` and `interactor2` are the IntAct interactor ids, without
+    which a row cannot be followed into IntAct. A substring anchor is no use
+    here -- the name was already in the file once, in the handler that did
+    read it -- so this counts both reads.
+    """
+    source = _source("ebi_proteins_interactions_tool.py")
+    assert source.count('interaction.get("interactor1")') == 2, (
+        "get_interactions reads the IntAct ids and get_interaction_details "
+        "must read them too"
+    )
+    assert source.count('interaction.get("interactor2")') == 2
+
+
+
+def test_a_coordinate_mapping_returns_the_annotations_it_mapped():
+    """16,654 features came back for TP53 and none reached the caller.
+
+    `/coordinates/{acc}` attaches UniProt's whole feature table to each
+    transcript mapping, already projected onto the genome -- 1,514 on TP53's
+    first transcript, 1,363 of them sequence variants with their VAR ids and
+    their genome positions. The tool paged the exons carefully and never
+    looked at the features. It also dropped `assemblyName`, so the genome
+    positions it did return came without the assembly they are against.
+    """
+    source = _source("ebi_proteins_coordinates_tool.py")
+    assert "FEATURES_PER_MAPPING" in source
+    assert "def _feature_page" in source
+    assert 'genomic_loc.get("assemblyName")' in source
+    schema = json.dumps(
+        _config("EBIProteins_get_coordinate_mapping").get("return_schema") or {}
+    )
+    assert '"feature_type_counts"' in schema
+
+
+def test_an_ebi_disease_annotation_keeps_its_omim_id_and_its_text():
+    """`diseaseId or acronym` and discard the rest dropped three things.
+
+    The OMIM id is in `dbReference`, the definition in `description`, and one
+    of TP53's nine disease records has no diseaseId at all -- it is the
+    free-text disease involvement paragraph, so the name list dropped it
+    entirely rather than listing it without a name.
+    """
+    source = _source("ebi_proteins_interactions_tool.py")
+    assert "def _disease_rows" in source
+    assert 'row.get("dbReference")' in source
+    assert "def _location_rows" in source
+    # The name lists stay, so a caller reading `diseases` still works.
+    assert '"diseases": sorted(diseases)' in source
+
+
+def test_a_swiss_model_structure_names_what_is_bound_in_it():
+    """266 of P04637's 325 models carry a ligand and said nothing about it.
+
+    The flattener reported `in_complex_with` protein partners and dropped
+    `ligand_chains` -- zinc and magnesium on the p53 models -- along with
+    `oligo-state`, which is the only thing that distinguishes a monomer from
+    a 4-mer when there are no protein partners. The summary built its own
+    narrower dict than the model list, so it was missing them twice over.
+    """
+    source = _source("swissmodel_tool.py")
+    assert 's.get("ligand_chains")' in source
+    assert 's.get("oligo-state")' in source
+    assert 'summary["best_model"] = self._flatten_structure(best)' in source
+
+
+def test_a_living_donor_has_demographics_too():
+    """Reading only organ_donor_data returned {} for every living donor.
+
+    HuBMAP stores a deceased donor's attributes under
+    `metadata.organ_donor_data` and a living donor's under
+    `metadata.living_donor_data`, and the normaliser knew only the first --
+    so `demographics` came back empty with nothing to say why.
+    """
+    source = _source("hubmap_sample_tool.py")
+    assert 'metadata.get("living_donor_data")' in source
+
+
+def test_an_osdr_study_returns_its_protocols():
+    """"Full metadata for one OSDR study" without the methods.
+
+    OSD-1 lists eight protocols with their types and their full descriptions,
+    and all three fields were dropped, along with the investigator, the
+    funding agency and the grant number. `assays` and `files` on that
+    endpoint hold only a REST_URL each, so the link is what there is to
+    report -- counting the object gave 1 for every study.
+    """
+    source = _source("nasa_osdr_tool.py")
+    assert 'metadata.get("study protocol description")' in source
+    assert "def _person" in source
+    assert '"assays_url"' in source
+
+
+def test_an_id_mapping_database_says_both_directions():
+    """Mapping has two directions and the listing reported one.
+
+    All 95 databases say whether they can be mapped `from` and `to`, and only
+    `from` was read -- so a caller choosing a target database had nothing to
+    choose on. 90 of them also carry the URI template that resolves an id in
+    that database, which is what having a mapped id is for.
+    """
+    source = _source("uniprot_idmapping_tool.py")
+    assert 'item.get("to", False)' in source
+    assert 'item.get("uriLink")' in source

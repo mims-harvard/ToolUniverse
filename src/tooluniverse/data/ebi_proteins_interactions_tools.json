@@ -211,6 +211,20 @@
                   },
                   "organism_differ": {
                     "type": "boolean"
+                  },
+                  "intact_id_a": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "IntAct interactor id for the query protein, as the sibling tool returns"
+                  },
+                  "intact_id_b": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "IntAct interactor id for the partner"
                   }
                 }
               },
@@ -247,6 +261,145 @@
                 "type": "string"
               },
               "description": "Subcellular location terms"
+            },
+            "disease_records": {
+              "type": "array",
+              "description": "The disease annotations behind `diseases`. `diseases` is the list of names of the records that have one; these carry the OMIM id, the definition and the evidence, and include the record that has no diseaseId at all -- TP53's free-text disease involvement paragraph, which the name list therefore dropped entirely.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "acronym": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "reference_database": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Usually MIM"
+                  },
+                  "reference_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "notes": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "evidences": {
+                    "type": "array",
+                    "description": "Who says so: the ECO code and the publication, capped at 10 per record",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "source": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "url": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "subcellular_location_records": {
+              "type": "array",
+              "description": "The same locations as `subcellular_locations`, with the membrane topology, the orientation and the publications behind each",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "location": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "topology": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "orientation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "evidences": {
+                    "type": "array",
+                    "description": "Who says so: the ECO code and the publication, capped at 10 per record",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "source": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "url": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
           },
           "not": {

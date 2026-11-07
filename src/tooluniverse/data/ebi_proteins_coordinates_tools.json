@@ -61,7 +61,9 @@
                     "type": "object",
                     "properties": {
                         "accession": {"type": "string"},
-                        "protein_name": {"type": ["string", "null"]},
+                        "protein_name": {"type": ["string", "null"], "description": "The UniProt entry name (P53_HUMAN). See `protein` for the recommended protein name, which is a different thing."},
+                        "protein": {"type": ["object", "null"], "description": "The recommended and alternative protein names, as upstream sends them."},
+                        "sequence_length": {"type": ["integer", "null"], "description": "Length of the canonical sequence the protein positions are against."},
                         "taxid": {"type": "integer"},
                         "gene": {
                             "type": "array",
@@ -79,6 +81,34 @@
                                 "type": "object",
                                 "properties": {
                                     "ensembl_gene_id": {"type": ["string", "null"]},
+                                    "assembly_name": {"type": ["string", "null"], "description": "Which genome assembly the positions are against; a coordinate without its assembly is not a coordinate."},
+                                    "nucleotide_id": {"type": ["string", "null"], "description": "The nucleotide record the positions came from, e.g. CM000679.2."},
+                                    "features": {
+                                      "type": "array",
+                                      "description": "The annotations UniProt has mapped onto the genome for this transcript -- sequence variants with their VAR ids, binding sites, helices. TP53's first transcript carries 1,514 of them and 16,654 across its eleven transcripts, and none reached the caller. Paged with feature_offset/feature_limit, default 50.",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "type": {"type": ["string", "null"], "description": "e.g. 'sequence variant', 'binding site', 'helix'"},
+                                          "id": {"type": ["string", "null"], "description": "e.g. VAR_045806"},
+                                          "description": {"type": ["string", "null"]},
+                                          "original": {"type": ["string", "null"], "description": "The reference residue, for a variant"},
+                                          "variation": {"type": "array", "items": {"type": "string"}},
+                                          "protein_position": {"type": ["integer", "null"]},
+                                          "protein_start": {"type": ["integer", "null"]},
+                                          "protein_end": {"type": ["integer", "null"]},
+                                          "genome_start": {"type": ["integer", "null"]},
+                                          "genome_end": {"type": ["integer", "null"]},
+                                          "evidence_count": {"type": "integer"}
+                                        }
+                                      }
+                                    },
+                                    "feature_count": {"type": "integer"},
+                                    "feature_type_counts": {"type": "object", "description": "How many features of each type, so the page can be read against the whole"},
+                                    "feature_offset": {"type": "integer"},
+                                    "features_returned": {"type": "integer"},
+                                    "features_truncated": {"type": "boolean"},
+                                    "next_feature_offset": {"type": ["integer", "null"]},
                                     "ensembl_transcript_id": {"type": ["string", "null"]},
                                     "ensembl_translation_id": {
                                         "type": [
@@ -214,6 +244,32 @@
                           "null"
                         ]
                       },
+                      "features": {
+                        "type": "array",
+                        "description": "The annotations at the position asked about, which is what a genome-to-protein lookup is for: 264 came back for 17:7676154 and none was reported. Paged with feature_offset/feature_limit, default 50.",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "type": {"type": ["string", "null"]},
+                            "id": {"type": ["string", "null"]},
+                            "description": {"type": ["string", "null"]},
+                            "original": {"type": ["string", "null"]},
+                            "variation": {"type": "array", "items": {"type": "string"}},
+                            "protein_position": {"type": ["integer", "null"]},
+                            "protein_start": {"type": ["integer", "null"]},
+                            "protein_end": {"type": ["integer", "null"]},
+                            "genome_start": {"type": ["integer", "null"]},
+                            "genome_end": {"type": ["integer", "null"]},
+                            "evidence_count": {"type": "integer"}
+                          }
+                        }
+                      },
+                      "feature_count": {"type": "integer"},
+                      "feature_type_counts": {"type": "object"},
+                      "feature_offset": {"type": "integer"},
+                      "features_returned": {"type": "integer"},
+                      "features_truncated": {"type": "boolean"},
+                      "next_feature_offset": {"type": ["integer", "null"]},
                       "entry_type": {
                         "type": [
                           "string",
