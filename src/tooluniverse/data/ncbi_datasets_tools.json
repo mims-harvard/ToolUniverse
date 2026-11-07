@@ -125,6 +125,16 @@
                                         "type": "string"
                                     }
                                 },
+                                "gene_ontology": {"type": "object", "description": "GO annotations on the record, dropped whole before: TP53 carries 122 biological processes, each with the GO id, the evidence code, the qualifier (acts_upstream_of_or_within is not involved_in) and the PMIDs it was asserted from.", "properties": {"assigned_by": {"type": ["string", "null"]}, "biological_processes": {"type": "array", "items": {"type": "object", "properties": {"go_id": {"type": ["string", "null"]}, "name": {"type": ["string", "null"]}, "evidence_code": {"type": ["string", "null"]}, "qualifier": {"type": ["string", "null"]}, "pmids": {"type": "array", "items": {"type": "string"}}}}}, "molecular_functions": {"type": "array", "items": {"type": "object"}}, "cellular_components": {"type": "array", "items": {"type": "object"}}}},
+                                "summary": {"type": "array", "description": "RefSeq's own paragraph on what the gene does; `description` is \"tumor protein p53\"", "items": {"type": "object"}},
+                                "transcript_count": {"type": ["integer", "null"]},
+                                "protein_count": {"type": ["integer", "null"]},
+                                "transcript_type_counts": {"type": ["object", "array", "null"]},
+                                "annotation_releases": {"type": "array", "description": "Which annotation release the coordinates come from, with its accession and release date -- what makes a coordinate reproducible", "items": {"type": "object"}},
+                                "reference_standards": {"type": "array", "description": "The RefSeqGene record, the stable coordinate system clinical variant nomenclature is written against", "items": {"type": "object"}},
+                                "gene_groups": {"type": "array", "items": {"type": "object"}},
+                                "alternate_names": {"type": "array", "items": {"type": "string"}},
+                                "map_locations": {"type": "array", "items": {"type": "object"}},
                                 "nomenclature_authority": {
                                     "type": [
                                         "object",
@@ -250,6 +260,20 @@
                     "items": {
                                 "type": "object",
                                 "properties": {
+                                    "gene_ontology": {"type": "object", "description": "GO annotations: biological processes, molecular functions and cellular components, each with the GO id, evidence code, qualifier and PMIDs", "properties": {"assigned_by": {"type": ["string", "null"]}, "biological_processes": {"type": "array", "items": {"type": "object"}}, "molecular_functions": {"type": "array", "items": {"type": "object"}}, "cellular_components": {"type": "array", "items": {"type": "object"}}}},
+                                    "summary": {"type": "array", "description": "RefSeq's own paragraph on what the gene does", "items": {"type": "object"}},
+                                    "transcript_count": {"type": ["integer", "null"]},
+                                    "protein_count": {"type": ["integer", "null"]},
+                                    "transcript_type_counts": {"type": ["object", "array", "null"]},
+                                    "annotation_releases": {"type": "array", "items": {"type": "object"}},
+                                    "reference_standards": {"type": "array", "items": {"type": "object"}},
+                                    "gene_groups": {"type": "array", "items": {"type": "object"}},
+                                    "alternate_names": {"type": "array", "items": {"type": "string"}},
+                                    "map_locations": {"type": "array", "items": {"type": "object"}},
+                                    "omim_ids": {"type": "array", "items": {"type": "string"}},
+                                    "orientation": {"type": ["string", "null"]},
+                                    "nomenclature_authority": {"type": ["object", "string", "null"]},
+                                    "genomic_locations": {"type": "array", "items": {"type": "object"}},
                                     "gene_id": {
                                         "type": [
                                             "string",
@@ -378,6 +402,13 @@
                     "items": {
                                 "type": "object",
                                 "properties": {
+                                    "gene_ontology_counts": {"type": "object", "description": "GO term counts per aspect. An orthologs page answers the same full gene records as the single-gene tool -- 2,622 GO terms across one page -- so the counts are here and the terms are in NCBIDatasets_get_gene."},
+                                    "transcript_count": {"type": ["integer", "null"]},
+                                    "protein_count": {"type": ["integer", "null"]},
+                                    "swiss_prot_accessions": {"type": "array", "items": {"type": "string"}},
+                                    "ensembl_gene_ids": {"type": "array", "items": {"type": "string"}},
+                                    "orientation": {"type": ["string", "null"]},
+                                    "genomic_locations": {"type": "array", "items": {"type": "object"}},
                                     "gene_id": {
                                         "type": [
                                             "string",
@@ -544,6 +575,13 @@
                                         }
                                     }
                                 },
+                                "genetic_code": {"type": ["object", "null"], "description": "Which translation tables apply: 1/Standard for the nuclear genome and 2/Vertebrate Mitochondrial for the mitochondrion. Reading a mitochondrial ORF with the standard code gives the wrong protein."},
+                                "genomic_moltype": {"type": ["string", "null"]},
+                                "scientific_name_authority": {"type": ["string", "null"], "description": "The authority that published the name, which in taxonomy is part of the name"},
+                                "scientific_name_is_formal": {"type": ["boolean", "null"]},
+                                "classification": {"type": ["object", "array", "null"]},
+                                "group_name": {"type": ["string", "null"]},
+                                "curator_common_name": {"type": ["string", "null"]},
                                 "children": {
                                     "type": "array",
                                     "items": {

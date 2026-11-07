@@ -709,6 +709,42 @@ UPSTREAM_KEYS = [
         "reference_standard",
         "which product generics are tested against, and which product a TE code is for",
     ),
+    # Round nine.
+    (
+        "ncbi_datasets_tool.py",
+        "_gene_ontology",
+        "122 GO terms on a gene record, with their evidence codes and PMIDs",
+    ),
+    (
+        "ncbi_datasets_tool.py",
+        "genetic_code",
+        "which translation tables a taxon uses, nuclear and mitochondrial",
+    ),
+    (
+        "clingen_tool.py",
+        'item.get("warnings")',
+        "a curator's stated disagreement with ClinVar about a pathogenicity call",
+    ),
+    (
+        "ewas_atlas_tool.py",
+        "posToTss",
+        "how far a CpG probe sits from a transcript's start site",
+    ),
+    (
+        "pheweb_phewas_tool.py",
+        'p.get("num_samples")',
+        "the n behind a quantitative-trait association, where there are no cases to count",
+    ),
+    (
+        "pheweb_phewas_tool.py",
+        "resolved_variant",
+        "what an rsID resolved to, from the Ensembl record the resolution fetched",
+    ),
+    (
+        "efo_tool.py",
+        "term_replaced_by",
+        "what an obsolete term was replaced by, where the tool said only that it is obsolete",
+    ),
 ]
 
 
@@ -844,6 +880,19 @@ DECLARED = [
     ("FDA_OrangeBook_get_approval_history", "identifiers"),
     ("FDA_OrangeBook_get_te_code", "dosage_form"),
     ("FDA_OrangeBook_search_drug", "identifiers"),
+    ("NCBIDatasets_get_gene", "gene_ontology"),
+    ("NCBIDatasets_get_gene", "summary"),
+    ("NCBIDatasets_get_taxonomy", "genetic_code"),
+    ("NCBIDatasets_get_orthologs", "gene_ontology_counts"),
+    ("ClinGen_get_variant_classifications", "Warnings"),
+    ("ClinGen_get_variant_classifications", "Guidelines"),
+    ("EWASAtlas_search_by_gene", "transcripts"),
+    ("EWASAtlas_get_study", "sd_age"),
+    ("BioBankJapan_phewas_by_variant", "num_samples"),
+    ("Genebass_gene_burden_phewas", "n_cases"),
+    ("Genebass_gene_burden_phewas", "pval_skato"),
+    ("ols_get_efo_term", "term_replaced_by"),
+    ("ols_list_ontologies", "languages"),
 ]
 
 
@@ -859,6 +908,34 @@ def test_the_return_schema_declares_the_field_the_wrapper_now_returns(tool, fiel
     assert f'"{field}"' in schema, (
         f"{tool} returns `{field}` and its return_schema does not declare it"
     )
+
+
+def test_an_obsolete_efo_term_says_what_replaced_it():
+    """EFO:0000400 is "obsolete_diabetes mellitus" and MONDO_0005015 replaced it.
+
+    The tool reported `is_obsolete: true` and stopped there, from a record
+    that names the replacement in `annotation.term_replaced_by` -- so a caller
+    looking up diabetes got a dead term and no pointer to the live one.
+    """
+    source = _source("efo_tool.py")
+    assert 'annotation.get("term_replaced_by")' in source
+    assert 'annotation.get("has_alternative_id")' in source
+
+
+def test_a_burden_p_value_comes_with_its_sample_size():
+    """4,529 Genebass associations, and not one of them said n.
+
+    The case and control counts are on the phenotype catalogue the tool
+    already fetches to get each phenotype's description, and only the
+    description was kept. A burden p-value with no n cannot be read.
+    """
+    source = _source("pheweb_phewas_tool.py")
+    assert 'p.get("n_cases")' in source
+    assert 'record.get("description")' in source, (
+        "the catalogue join is what carries them"
+    )
+    # And a quantitative trait's n, which is not a case count at all.
+    assert 'p.get("num_samples")' in source
 
 
 def test_a_te_code_names_the_product_it_applies_to():

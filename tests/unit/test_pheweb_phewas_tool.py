@@ -231,6 +231,49 @@ def test_genebass_joins_phenotype_descriptions():
     assert "_key" not in assoc  # internal join key stripped
 
 
+def test_genebass_joins_the_cohort_a_burden_test_ran_on():
+    """A burden p-value with no n cannot be read.
+
+    The case and control counts, the heritability and the SAIGE version are on
+    the phenotype catalogue the tool already fetches to get each phenotype's
+    description -- and only the description was kept, so 4,529 associations of
+    one gene came back without a sample size. The cache now holds the record;
+    a bare description string is still accepted, because that is what it used
+    to hold.
+    """
+    tool = GenebassTool(_genebass_cfg())
+    phewas_body = {
+        "gene": {"gene_id": "ENSG00000084674", "symbol": "APOB"},
+        "phewas": [
+            {"phenocode": "LDL", "trait_type": "continuous", "pheno_sex": "both_sexes",
+             "coding": "", "modifier": "", "Pvalue_Burden": 1e-299, "Pvalue": 2e-299,
+             "BETA_Burden": -0.5, "total_variants": 30},
+        ],
+    }
+    catalogue = {
+        "continuous-LDL-both_sexes--": {
+            "description": "LDL direct",
+            "n_cases": 398950,
+            "n_controls": None,
+            "heritability": 0.21,
+            "saige_version": "SAIGE_0.44.5",
+            "category": "Biological samples > Assay results",
+        }
+    }
+    with patch.object(tool, "_phenotype_descriptions", return_value=catalogue), \
+         patch("tooluniverse.pheweb_phewas_tool.requests.get",
+               return_value=_resp(200, phewas_body)):
+        out = tool.run({"gene": "ENSG00000084674", "burden_set": "pLoF"})
+
+    assoc = out["data"]["associations"][0]
+    assert assoc["description"] == "LDL direct"
+    assert assoc["n_cases"] == 398950
+    assert assoc["heritability"] == 0.21
+    assert assoc["saige_version"] == "SAIGE_0.44.5"
+    # And the third p-value Genebass reports beside Burden and SKAT.
+    assert assoc["pval_skato"] == 2e-299
+
+
 def test_genebass_burden_aliases_normalize():
     tool = GenebassTool(_genebass_cfg())
     captured = {}

@@ -395,6 +395,13 @@
       "items": {
         "type": "object",
         "properties": {
+          "Guidelines": {"type": "array", "description": "WHICH specification was applied. A pathogenicity call under the ENIGMA BRCA1 panel's version 1.0.0 of the ACMG/AMP guidelines is a different claim from one under the generic rules.", "items": {"type": "object", "properties": {"label": {"type": ["string", "null"]}, "version": {"type": ["string", "null"]}, "outcome": {"type": ["string", "null"]}, "cspec_id": {"type": ["string", "null"]}, "id": {"type": ["string", "null"]}, "agents": {"type": "array", "items": {"type": "object"}}}}},
+          "Warnings": {"type": "array", "description": "The curator's warnings on this interpretation, dropped whole before. One of BRCA1's reads \"Gene obtained from curated document aligns with the Allele Registry but not with ClinVar data\" -- a stated disagreement with ClinVar about a pathogenicity classification.", "items": {"type": "object", "properties": {"id": {"type": ["string", "null"]}, "message": {"type": ["string", "null"]}}}},
+          "Published Date": {"type": ["string", "null"]},
+          "UUID": {"type": ["string", "null"]},
+          "CAID": {"type": ["string", "null"]},
+          "HGVS": {"type": "array", "items": {"type": "string"}},
+          "Evidence Links": {"type": "array", "items": {"type": ["object", "string"]}},
           "Variation": {"type": ["string", "null"]},
           "ClinVar Variation Id": {"type": ["string", "null"]},
           "HGNC Gene Symbol": {"type": ["string", "null"]},

@@ -238,6 +238,27 @@ class DetailedTermInfo(TermInfo):
     synonyms: Optional[List[str]] = Field(
         None, description="List of synonyms for the term"
     )
+    # An ontology merges terms, and the retired id becomes an alternative id
+    # on the surviving one. Without it, a caller holding an old EFO id cannot
+    # tell that the term they were given is the replacement -- and OLS answers
+    # it in the same record, under `annotation.has_alternative_id`.
+    alternative_ids: Optional[List[str]] = Field(
+        None,
+        description=(
+            "Other ids this term is known by, including ids merged into it. "
+            "From annotation.has_alternative_id."
+        ),
+    )
+    synonym_scopes: Optional[List[Dict[str, Any]]] = Field(
+        None,
+        description=(
+            "Each synonym with the scope OBO assigns it -- hasExactSynonym "
+            "against hasRelatedSynonym -- which `synonyms` flattens away. An "
+            "exact synonym can be substituted for the label; a related one "
+            "cannot."
+        ),
+    )
+    lang: Optional[str] = Field(None, description="Language of the label")
 
 
 @register_tool("OLSTool")
@@ -496,6 +517,21 @@ class OLSTool(BaseTool):
         term_data = terms[0]
         if "ontologyId" in term_data and "ontologyName" not in term_data:
             term_data["ontologyName"] = term_data["ontologyId"]
+        annotation = term_data.get("annotation")
+        if isinstance(annotation, dict) and annotation.get("has_alternative_id"):
+            term_data["alternative_ids"] = annotation["has_alternative_id"]
+        obo_synonyms = term_data.get("obo_synonym")
+        if isinstance(obo_synonyms, list) and obo_synonyms:
+            term_data["synonym_scopes"] = [
+                {
+                    "name": item.get("name"),
+                    "scope": item.get("scope"),
+                    "type": item.get("type"),
+                    "xrefs": item.get("xrefs") or [],
+                }
+                for item in obo_synonyms
+                if isinstance(item, dict)
+            ]
 
         term = DetailedTermInfo.model_validate(term_data)
         # Convert HttpUrl objects to strings for JSON compatibility

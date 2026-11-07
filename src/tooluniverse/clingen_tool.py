@@ -638,6 +638,54 @@ class ClinGenTool(BaseTool):
             "Mondo Id": condition.get("@id"),
             "Assertion": (first_guideline.get("outcome") or {}).get("label"),
             "Expert Panel": first_agent.get("affiliation"),
+            # WHICH specification was applied. A pathogenicity call under the
+            # ENIGMA BRCA1 panel's version 1.0.0 of the ACMG/AMP guidelines is
+            # a different claim from one under the generic rules, and the
+            # record names the specification, its version and its CSPEC id.
+            "Guidelines": [
+                {
+                    "label": guideline.get("label"),
+                    "version": guideline.get("version"),
+                    "outcome": (guideline.get("outcome") or {}).get("label"),
+                    "cspec_id": guideline.get("cspecId"),
+                    "id": guideline.get("@id"),
+                    "agents": [
+                        {
+                            "label": agent.get("label"),
+                            "affiliation": agent.get("affiliation"),
+                            "id": agent.get("@id"),
+                        }
+                        for agent in (guideline.get("agents") or [])
+                        if isinstance(agent, dict)
+                    ],
+                }
+                for guideline in guidelines
+                if isinstance(guideline, dict)
+            ],
+            # The curator's warnings on this interpretation, dropped whole.
+            # One of BRCA1's reads "Gene obtained from curated document aligns
+            # with the Allele Registry but not with ClinVar data" -- a stated
+            # disagreement with ClinVar about a pathogenicity classification,
+            # and the caller saw the classification without it.
+            "Warnings": [
+                {
+                    "id": (warning.get("warningId") or {}).get("value"),
+                    "message": (
+                        (
+                            ((warning.get("warningId") or {}).get("properties") or {})
+                            .get("msg")
+                            or {}
+                        ).get("value")
+                    ),
+                }
+                for warning in (item.get("warnings") or [])
+                if isinstance(warning, dict)
+            ],
+            "Published Date": item.get("publishedDate"),
+            "UUID": item.get("uuid"),
+            "CAID": item.get("caid"),
+            "HGVS": hgvs,
+            "Evidence Links": item.get("evidenceLinks") or [],
         }
 
     @staticmethod
