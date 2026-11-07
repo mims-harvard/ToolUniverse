@@ -562,8 +562,16 @@ class TestToolComposition:
         if "error" in result:
             assert "parameter" in str(result["error"]).lower()
 
+    @pytest.mark.network
     def test_compose_tool_performance_real(self):
-        """Test real performance characteristics of compose tools."""
+        """Test real performance characteristics of compose tools.
+
+        Marked `network`: `assert execution_time < 30` around a live
+        UniProt_get_entry_by_accession call measures UniProt, not this
+        repository. It failed `main` at 43.78 s on 2026-11-07 while UniProt
+        was answering single requests in 8.4-13.6 s, on a merge that touched
+        no UniProt code.
+        """
 
         # Test execution time
         start_time = time.time()
