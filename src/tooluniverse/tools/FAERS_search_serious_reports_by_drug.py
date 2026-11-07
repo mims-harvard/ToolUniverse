@@ -19,13 +19,6 @@ def FAERS_search_serious_reports_by_drug(
     patientsex: Optional[str] = None,
     patientagegroup: Optional[str] = None,
     serious: Optional[str] = None,
-    rxcui: Optional[list[Any] | str] = None,
-    unii: Optional[list[Any] | str] = None,
-    openfda_generic_name: Optional[list[Any] | str] = None,
-    openfda_brand_name: Optional[list[Any] | str] = None,
-    openfda_substance_name: Optional[list[Any] | str] = None,
-    pharm_class_epc: Optional[list[Any] | str] = None,
-    pharm_class_moa: Optional[list[Any] | str] = None,
     *,
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
@@ -56,20 +49,6 @@ def FAERS_search_serious_reports_by_drug(
         Optional: Filter by patient age group. Omit this parameter if you don't want ...
     serious : str
         Optional: 'Yes' returns only reports FAERS flags as serious (openFDA serious=...
-    rxcui : list[Any] | str
-        The RxNorm concept. `medicinalproduct` is free text the reporter typed -- "TY...
-    unii : list[Any] | str
-
-    openfda_generic_name : list[Any] | str
-
-    openfda_brand_name : list[Any] | str
-
-    openfda_substance_name : list[Any] | str
-
-    pharm_class_epc : list[Any] | str
-        Established pharmacologic class, so a class effect can be seen across reports
-    pharm_class_moa : list[Any] | str
-
     stream_callback : Callable, optional
         Callback for streaming output
     use_cache : bool, default False
@@ -97,13 +76,6 @@ def FAERS_search_serious_reports_by_drug(
             "patientsex": patientsex,
             "patientagegroup": patientagegroup,
             "serious": serious,
-            "rxcui": rxcui,
-            "unii": unii,
-            "openfda_generic_name": openfda_generic_name,
-            "openfda_brand_name": openfda_brand_name,
-            "openfda_substance_name": openfda_substance_name,
-            "pharm_class_epc": pharm_class_epc,
-            "pharm_class_moa": pharm_class_moa,
         }.items()
         if v is not None
     }
