@@ -30,7 +30,10 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "object",
+          "type": [
+            "object",
+            "null"
+          ],
           "properties": {
             "mgi_id": {
               "type": "string"
@@ -57,22 +60,34 @@
               "type": "string"
             },
             "phenotype_status": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "IMPC phenotyping state, e.g. 'Phenotyping data available'. Set on 140 of 300 genes measured in the 'gene' core, null for the rest."
             },
             "production_status": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "description": "Mouse production state, e.g. 'Mice Produced', falling back to the assignment state. Set on 208 of 300 genes measured."
             },
             "phenotyping_centre": {
-              "type": ["array", "null"],
+              "type": [
+                "array",
+                "null"
+              ],
               "items": {
                 "type": "string"
               },
               "description": "Centres that phenotyped the line; IMPC returns a list. Set on 140 of 300 genes measured."
             },
             "production_centre": {
-              "type": ["array", "null"],
+              "type": [
+                "array",
+                "null"
+              ],
               "items": {
                 "type": "string"
               },
@@ -99,7 +114,8 @@
           },
           "required": [
             "mgi_id"
-          ]
+          ],
+          "description": "null when the record does not exist. The query was well-formed and the upstream answered 'no such record', which this tool reports as a successful empty result rather than an error; the reason is in `message`."
         },
         {
           "type": "object",

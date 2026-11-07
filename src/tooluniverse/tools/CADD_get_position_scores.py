@@ -16,7 +16,7 @@ def CADD_get_position_scores(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Optional[dict[str, Any]]:
     """
     Get CADD scores for all possible substitutions at a genomic position. Returns PHRED scores for A,...
 
@@ -37,7 +37,7 @@ def CADD_get_position_scores(
 
     Returns
     -------
-    dict[str, Any]
+    Optional[dict[str, Any]]
     """
     # Handle mutable defaults to avoid B006 linting error
 

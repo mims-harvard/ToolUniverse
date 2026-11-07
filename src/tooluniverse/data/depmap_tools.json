@@ -1,265 +1,426 @@
 [
-    {
-        "name": "DepMap_get_cell_lines",
-        "description": "Get list of cancer cell lines from DepMap/Sanger with metadata. Filter by tissue or cancer type. Returns cell line IDs, tissue, and cancer type for target validation studies.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "tissue": {
-                    "type": "string",
-                    "description": "Filter by tissue type (e.g., 'Lung', 'Breast', 'Colon')"
-                },
-                "cancer_type": {
-                    "type": "string",
-                    "description": "Filter by cancer type (e.g., 'Non-Small Cell Lung Carcinoma')"
-                },
-                "page_size": {
-                    "type": "integer",
-                    "default": 20,
-                    "minimum": 1,
-                    "maximum": 100,
-                    "description": "Number of results (1-100)"
-                }
-            }
+  {
+    "name": "DepMap_get_cell_lines",
+    "description": "Get list of cancer cell lines from DepMap/Sanger with metadata. Filter by tissue or cancer type. Returns cell line IDs, tissue, and cancer type for target validation studies.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "tissue": {
+          "type": "string",
+          "description": "Filter by tissue type (e.g., 'Lung', 'Breast', 'Colon')"
         },
-        "fields": {
-            "operation": "get_cell_lines"
+        "cancer_type": {
+          "type": "string",
+          "description": "Filter by cancer type (e.g., 'Non-Small Cell Lung Carcinoma')"
         },
-        "type": "DepMapTool",
-        "test_examples": [
-            {"tissue": "Lung", "page_size": 5},
-            {"page_size": 10}
-        ],
-        "return_schema": {
-            "type": "object",
-            "properties": {
-                "status": {"type": "string", "enum": ["success", "error"]},
-                "data": {
-                    "type": "object",
-                    "properties": {
-                        "cell_lines": {"type": "array"},
-                        "count": {"type": "integer"},
-                        "total": {"type": "integer"}
-                    }
-                },
-                "error": {"type": "string"}
-            }
-        },
-        "label": ["DepMap", "Cell Lines", "Cancer"],
-        "metadata": {
-            "tags": ["cell_lines", "cancer_models", "target_validation"],
-            "estimated_execution_time": "< 5 seconds"
+        "page_size": {
+          "type": "integer",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Number of results (1-100)"
         }
+      }
     },
-    {
-        "name": "DepMap_get_cell_line",
-        "description": "Get detailed metadata for a specific cancer cell line. Returns tissue, cancer type, MSI status, ploidy, mutational burden. Use model_id (e.g., 'SIDM00001') or model_name (e.g., 'A549').",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "model_id": {
-                    "type": "string",
-                    "description": "Cell Model Passport ID (e.g., 'SIDM00001')"
-                },
-                "model_name": {
-                    "type": "string",
-                    "description": "Cell line name (e.g., 'A549', 'MCF7', 'HeLa')"
-                }
-            }
-        },
-        "fields": {
-            "operation": "get_cell_line"
-        },
-        "type": "DepMapTool",
-        "test_examples": [
-            {"model_name": "A549"},
-            {"model_name": "MCF7"}
-        ],
-        "return_schema": {
-            "type": "object",
-            "properties": {
-                "status": {"type": "string", "enum": ["success", "error"]},
-                "data": {
-                    "type": "object",
-                    "properties": {
-                        "model_id": {"type": ["string", "null"]},
-                        "model_name": {"type": ["string", "null"]},
-                        "tissue": {"type": ["string", "null"]},
-                        "cancer_type": {"type": ["string", "null"]},
-                        "msi_status": {"type": ["string", "null"]},
-                        "ploidy": {"type": ["number", "null"]}
-                    }
-                },
-                "error": {"type": "string"}
-            }
-        },
-        "label": ["DepMap", "Cell Line", "Metadata"],
-        "metadata": {
-            "tags": ["cell_line", "metadata", "characterization"],
-            "estimated_execution_time": "< 3 seconds"
-        }
+    "fields": {
+      "operation": "get_cell_lines"
     },
-    {
-        "name": "DepMap_search_cell_lines",
-        "description": "Search cancer cell lines by name. Returns matching cell lines with IDs and cancer types. Use for finding cell models by common names (A549, HeLa, MCF7, etc.).",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "query": {
-                    "type": "string",
-                    "description": "Search query (cell line name like 'A549', 'MCF7')"
-                }
+    "type": "DepMapTool",
+    "test_examples": [
+      {
+        "tissue": "Lung",
+        "page_size": 5
+      },
+      {
+        "page_size": 10
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "error"
+          ]
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "cell_lines": {
+              "type": "array"
             },
-            "required": ["query"]
-        },
-        "fields": {
-            "operation": "search_cell_lines"
-        },
-        "type": "DepMapTool",
-        "test_examples": [
-            {"query": "A549"},
-            {"query": "MCF"}
-        ],
-        "return_schema": {
-            "type": "object",
-            "properties": {
-                "status": {"type": "string", "enum": ["success", "error"]},
-                "data": {
-                    "type": "object",
-                    "properties": {
-                        "query": {"type": "string"},
-                        "cell_lines": {"type": "array"},
-                        "count": {"type": "integer"}
-                    }
-                },
-                "error": {"type": "string"}
-            }
-        },
-        "label": ["DepMap", "Search", "Cell Lines"],
-        "metadata": {
-            "tags": ["search", "cell_lines"],
-            "estimated_execution_time": "< 3 seconds"
-        }
-    },
-    {
-        "name": "DepMap_get_gene_dependencies",
-        "description": "Get gene dependency information from CRISPR knockout screens. Returns gene IDs and annotations. Negative gene effect scores indicate essentiality (cell death upon knockout).",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "gene_symbol": {
-                    "type": "string",
-                    "description": "Gene symbol (e.g., 'EGFR', 'KRAS', 'TP53')"
-                },
-                "model_id": {
-                    "type": "string",
-                    "description": "Optional: Filter by specific cell line"
-                }
+            "count": {
+              "type": "integer"
             },
-            "required": ["gene_symbol"]
-        },
-        "fields": {
-            "operation": "get_gene_dependencies"
-        },
-        "type": "DepMapTool",
-        "test_examples": [
-            {"gene_symbol": "EGFR"},
-            {"gene_symbol": "KRAS"}
-        ],
-        "return_schema": {
-            "type": "object",
-            "properties": {
-                "status": {"type": "string", "enum": ["success", "error"]},
-                "data": {
-                    "type": "object",
-                    "properties": {
-                        "gene_symbol": {"type": "string"},
-                        "genes": {"type": "array"}
-                    }
-                },
-                "error": {"type": "string"}
+            "total": {
+              "type": "integer"
             }
+          }
         },
-        "label": ["DepMap", "CRISPR", "Dependencies"],
-        "metadata": {
-            "tags": ["crispr", "gene_effect", "essentiality", "target_validation"],
-            "estimated_execution_time": "< 5 seconds"
+        "error": {
+          "type": "string"
         }
+      }
     },
-    {
-        "name": "DepMap_search_genes",
-        "description": "Search the full DepMap/Sanger gene catalog by exact symbol or symbol prefix. Prefix matches spanning multiple upstream catalog pages are collected, then exposed through recoverable offset pagination with total_genes (all matches), count/returned (this page), has_more, and next_offset.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "query": {
-                    "type": "string",
-                    "description": "Gene symbol or name to search (e.g., 'WDR7', 'EGFR', 'TP53')"
-                },
-                "limit": {
-                    "type": "integer",
-                    "minimum": 1,
-                    "maximum": 500,
-                    "default": 20,
-                    "description": "Number of matching genes per page (1-500; default 20)."
-                },
-                "offset": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "default": 0,
-                    "description": "Zero-based offset into the complete prefix match set."
-                }
-            },
-            "required": ["query"]
-        },
-        "fields": {
-            "operation": "search_genes"
-        },
-        "type": "DepMapTool",
-        "test_examples": [
-            {"query": "EGFR"},
-            {"query": "WDR7"}
-        ],
-        "return_schema": {
-            "type": "object",
-            "properties": {
-                "status": {"type": "string", "enum": ["success", "error"]},
-                "data": {
-                    "type": "object",
-                    "properties": {
-                        "query": {"type": "string"},
-                        "genes": {"type": "array"},
-                        "count": {"type": "integer"},
-                        "total_genes": {
-                            "type": "integer"
-                        },
-                        "offset": {
-                            "type": "integer"
-                        },
-                        "limit": {
-                            "type": "integer"
-                        },
-                        "returned": {
-                            "type": "integer"
-                        },
-                        "has_more": {
-                            "type": "boolean"
-                        },
-                        "next_offset": {
-                            "type": [
-                                "integer",
-                                "null"
-                            ]
-                        }
-                    }
-                },
-                "error": {"type": "string"}
-            }
-        },
-        "label": ["DepMap", "Gene Search"],
-        "metadata": {
-            "tags": ["gene_search", "symbol_validation"],
-            "estimated_execution_time": "< 3 seconds"
-        }
+    "label": [
+      "DepMap",
+      "Cell Lines",
+      "Cancer"
+    ],
+    "metadata": {
+      "tags": [
+        "cell_lines",
+        "cancer_models",
+        "target_validation"
+      ],
+      "estimated_execution_time": "< 5 seconds"
     }
+  },
+  {
+    "name": "DepMap_get_cell_line",
+    "description": "Get detailed metadata for a specific cancer cell line. Returns tissue, cancer type, MSI status, ploidy, mutational burden. Use model_id (e.g., 'SIDM00001') or model_name (e.g., 'A549').",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "model_id": {
+          "type": "string",
+          "description": "Cell Model Passport ID (e.g., 'SIDM00001')"
+        },
+        "model_name": {
+          "type": "string",
+          "description": "Cell line name (e.g., 'A549', 'MCF7', 'HeLa')"
+        }
+      }
+    },
+    "fields": {
+      "operation": "get_cell_line"
+    },
+    "type": "DepMapTool",
+    "test_examples": [
+      {
+        "model_name": "A549"
+      },
+      {
+        "model_name": "MCF7"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "error"
+          ]
+        },
+        "data": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "model_id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "model_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "tissue": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "cancer_type": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "msi_status": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "ploidy": {
+              "type": [
+                "number",
+                "null"
+              ]
+            }
+          },
+          "description": "null when the record does not exist. The query was well-formed and the upstream answered 'no such record', which this tool reports as a successful empty result rather than an error; the reason is in `message`."
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "label": [
+      "DepMap",
+      "Cell Line",
+      "Metadata"
+    ],
+    "metadata": {
+      "tags": [
+        "cell_line",
+        "metadata",
+        "characterization"
+      ],
+      "estimated_execution_time": "< 3 seconds"
+    }
+  },
+  {
+    "name": "DepMap_search_cell_lines",
+    "description": "Search cancer cell lines by name. Returns matching cell lines with IDs and cancer types. Use for finding cell models by common names (A549, HeLa, MCF7, etc.).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Search query (cell line name like 'A549', 'MCF7')"
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "operation": "search_cell_lines"
+    },
+    "type": "DepMapTool",
+    "test_examples": [
+      {
+        "query": "A549"
+      },
+      {
+        "query": "MCF"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "error"
+          ]
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string"
+            },
+            "cell_lines": {
+              "type": "array"
+            },
+            "count": {
+              "type": "integer"
+            }
+          }
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "label": [
+      "DepMap",
+      "Search",
+      "Cell Lines"
+    ],
+    "metadata": {
+      "tags": [
+        "search",
+        "cell_lines"
+      ],
+      "estimated_execution_time": "< 3 seconds"
+    }
+  },
+  {
+    "name": "DepMap_get_gene_dependencies",
+    "description": "Get gene dependency information from CRISPR knockout screens. Returns gene IDs and annotations. Negative gene effect scores indicate essentiality (cell death upon knockout).",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene_symbol": {
+          "type": "string",
+          "description": "Gene symbol (e.g., 'EGFR', 'KRAS', 'TP53')"
+        },
+        "model_id": {
+          "type": "string",
+          "description": "Optional: Filter by specific cell line"
+        }
+      },
+      "required": [
+        "gene_symbol"
+      ]
+    },
+    "fields": {
+      "operation": "get_gene_dependencies"
+    },
+    "type": "DepMapTool",
+    "test_examples": [
+      {
+        "gene_symbol": "EGFR"
+      },
+      {
+        "gene_symbol": "KRAS"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "error"
+          ]
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "gene_symbol": {
+              "type": "string"
+            },
+            "genes": {
+              "type": "array"
+            }
+          }
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "label": [
+      "DepMap",
+      "CRISPR",
+      "Dependencies"
+    ],
+    "metadata": {
+      "tags": [
+        "crispr",
+        "gene_effect",
+        "essentiality",
+        "target_validation"
+      ],
+      "estimated_execution_time": "< 5 seconds"
+    }
+  },
+  {
+    "name": "DepMap_search_genes",
+    "description": "Search the full DepMap/Sanger gene catalog by exact symbol or symbol prefix. Prefix matches spanning multiple upstream catalog pages are collected, then exposed through recoverable offset pagination with total_genes (all matches), count/returned (this page), has_more, and next_offset.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "description": "Gene symbol or name to search (e.g., 'WDR7', 'EGFR', 'TP53')"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 500,
+          "default": 20,
+          "description": "Number of matching genes per page (1-500; default 20)."
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based offset into the complete prefix match set."
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "fields": {
+      "operation": "search_genes"
+    },
+    "type": "DepMapTool",
+    "test_examples": [
+      {
+        "query": "EGFR"
+      },
+      {
+        "query": "WDR7"
+      }
+    ],
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "success",
+            "error"
+          ]
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string"
+            },
+            "genes": {
+              "type": "array"
+            },
+            "count": {
+              "type": "integer"
+            },
+            "total_genes": {
+              "type": "integer"
+            },
+            "offset": {
+              "type": "integer"
+            },
+            "limit": {
+              "type": "integer"
+            },
+            "returned": {
+              "type": "integer"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
+          }
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "label": [
+      "DepMap",
+      "Gene Search"
+    ],
+    "metadata": {
+      "tags": [
+        "gene_search",
+        "symbol_validation"
+      ],
+      "estimated_execution_time": "< 3 seconds"
+    }
+  }
 ]

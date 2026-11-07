@@ -765,3 +765,97 @@ class AMPSphereGetAmpFeaturesTool(BaseTool):
                 "accession": accession,
             },
         }
+
+
+@register_tool(
+    "AMPSphereStatisticsTool",
+    config={
+        "name": "AMPSphere_get_statistics",
+        "type": "AMPSphereStatisticsTool",
+        "description": (
+            "Get AMPSphere's catalogue-wide totals from /v1/statistics: how "
+            "many AMPs the resource holds (num_amps), how many predicted smORF "
+            "genes they were called from (num_genes), how many SPHERE families "
+            "they cluster into (num_families), and how many habitats, genomes "
+            "and metagenomes they were surveyed across. Use it to size the "
+            "resource before a filtered search, to report a denominator "
+            "alongside a hit count, or to check whether a cached figure is "
+            "still current -- the other AMPSphere tools quote 863,498 AMPs in "
+            "their descriptions and that number comes from here. Takes no "
+            "parameters. Keyless AMPSphere REST API."
+        ),
+        "parameter": {"type": "object", "properties": {}, "required": []},
+        "return_schema": {
+            "type": "object",
+            "properties": {
+                "status": {"type": "string", "description": '"success" or "error".'},
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "num_amps": {
+                            "type": "integer",
+                            "description": "Antimicrobial peptides in the catalogue.",
+                        },
+                        "num_genes": {
+                            "type": "integer",
+                            "description": "Predicted smORF genes the AMPs were called from.",
+                        },
+                        "num_families": {
+                            "type": "integer",
+                            "description": "SPHERE families the AMPs cluster into.",
+                        },
+                        "num_habitats": {
+                            "type": "integer",
+                            "description": "Distinct habitat labels represented.",
+                        },
+                        "num_genomes": {
+                            "type": "integer",
+                            "description": "Genomes contributing at least one AMP.",
+                        },
+                        "num_metagenomes": {
+                            "type": "integer",
+                            "description": "Metagenomes contributing at least one AMP.",
+                        },
+                    },
+                },
+                "metadata": {"type": "object"},
+                "error": {"type": "string"},
+            },
+        },
+        "test_examples": [{}],
+        "label": ["AMPSphere", "Statistics", "Catalogue", "AMP", "Peptide"],
+        "metadata": {
+            "tags": [
+                "antimicrobial peptide",
+                "AMP",
+                "AMPSphere",
+                "statistics",
+                "catalogue size",
+            ],
+            "estimated_execution_time": "1-3 seconds",
+        },
+    },
+)
+class AMPSphereStatisticsTool(BaseTool):
+    """Catalogue-wide totals, which no other AMPSphere tool exposed.
+
+    `/v1/statistics` is the only place the resource states its own size, and
+    three tool descriptions quote one of its numbers (863,498 AMPs) as a
+    literal. A caller that wants the denominator for a hit count, or that
+    wants to know whether the literal is still true, had no way to ask.
+    """
+
+    def run(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+        url = f"{_BASE_URL}/statistics"
+        payload, error = _get("/statistics")
+        if error is not None:
+            return error
+
+        if not isinstance(payload, dict) or "num_amps" not in payload:
+            return _err("AMPSphere /v1/statistics returned no totals.", url=url)
+
+        return {
+            "status": "success",
+            "data": payload,
+            "metadata": {"source": _SOURCE, "url": url},
+        }

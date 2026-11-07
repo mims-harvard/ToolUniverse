@@ -163,4 +163,20 @@ def test_the_success_branch_says_it_is_not_an_error(stem, tool):
     success = [b for b in branches if "error" not in (b.get("required") or [])]
     assert success, tool
     for branch in success:
-        assert branch.get("not") == {"required": ["error"]}, tool
+        guard = branch.get("not")
+        # A branch that also admits null carries the guard scoped to objects.
+        # `required` applies only to objects, so for a null the unscoped guard
+        # is vacuously satisfied and `not` then rejects the very null the
+        # branch allows -- four schemas hit that. Scoping changes nothing for
+        # an error envelope, which is an object carrying `error` either way,
+        # so the invariant above still holds for both shapes.
+        declared = branch.get("type")
+        nullable = declared == "null" or (
+            isinstance(declared, list) and "null" in declared
+        )
+        expected = (
+            {"type": "object", "required": ["error"]}
+            if nullable
+            else {"required": ["error"]}
+        )
+        assert guard == expected, (tool, guard)

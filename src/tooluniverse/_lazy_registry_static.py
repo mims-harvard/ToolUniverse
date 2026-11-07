@@ -15,6 +15,7 @@ STATIC_LAZY_REGISTRY = {
     "AMPSphereGetFamilyTool": "ampsphere_tool",
     "AMPSphereSearchAmpsTool": "ampsphere_tool",
     "AMPSphereSequenceMatchTool": "ampsphere_record_tool",
+    "AMPSphereStatisticsTool": "ampsphere_tool",
     "AOPWikiDetailTool": "aopwiki_tool",
     "AOPWikiListTool": "aopwiki_tool",
     "APPRISTool": "appris_tool",

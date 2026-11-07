@@ -55,11 +55,17 @@
           "description": "Net-charge-at-pH-7 range as 'min,max', e.g. '0,10'. Catalogue range is ~-57 to 44."
         },
         "page_size": {
-          "type": ["integer", "string"],
+          "type": [
+            "integer",
+            "string"
+          ],
           "description": "Results per page (default 20)."
         },
         "page": {
-          "type": ["integer", "string"],
+          "type": [
+            "integer",
+            "string"
+          ],
           "description": "Zero-based page index (default 0)."
         }
       },
@@ -89,13 +95,37 @@
       ]
     },
     "test_examples": [
-      {"habitat": "human gut", "page_size": 2, "page": 0},
-      {"family": "SPHERE-III.001_396", "page_size": 3, "page": 0},
-      {"list_options": true}
+      {
+        "habitat": "human gut",
+        "page_size": 2,
+        "page": 0
+      },
+      {
+        "family": "SPHERE-III.001_396",
+        "page_size": 3,
+        "page": 0
+      },
+      {
+        "list_options": true
+      }
     ],
-    "label": ["AMPSphere", "Antimicrobial Peptide", "AMP", "smORF", "Peptide"],
+    "label": [
+      "AMPSphere",
+      "Antimicrobial Peptide",
+      "AMP",
+      "smORF",
+      "Peptide"
+    ],
     "metadata": {
-      "tags": ["antimicrobial peptide", "AMP", "AMPSphere", "smORF", "metagenome", "microbiome", "peptide"],
+      "tags": [
+        "antimicrobial peptide",
+        "AMP",
+        "AMPSphere",
+        "smORF",
+        "metagenome",
+        "microbiome",
+        "peptide"
+      ],
       "estimated_execution_time": "1-3 seconds"
     }
   },
@@ -111,7 +141,9 @@
           "description": "SPHERE family accession. Example: 'SPHERE-III.001_396' (23 member AMPs, consensus 'GDKLXXXXXVDXXXXGGLIVKXGSRMXDXSLXXKLXXLXXAMKXXG')."
         }
       },
-      "required": ["accession"]
+      "required": [
+        "accession"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -165,12 +197,30 @@
       ]
     },
     "test_examples": [
-      {"accession": "SPHERE-III.001_396"},
-      {"accession": "SPHERE-III.001_493"}
+      {
+        "accession": "SPHERE-III.001_396"
+      },
+      {
+        "accession": "SPHERE-III.001_493"
+      }
     ],
-    "label": ["AMPSphere", "Protein Family", "SPHERE", "AMP", "Peptide"],
+    "label": [
+      "AMPSphere",
+      "Protein Family",
+      "SPHERE",
+      "AMP",
+      "Peptide"
+    ],
     "metadata": {
-      "tags": ["antimicrobial peptide", "AMP", "AMPSphere", "protein family", "SPHERE", "consensus", "peptide"],
+      "tags": [
+        "antimicrobial peptide",
+        "AMP",
+        "AMPSphere",
+        "protein family",
+        "SPHERE",
+        "consensus",
+        "peptide"
+      ],
       "estimated_execution_time": "1-3 seconds"
     }
   },
@@ -186,7 +236,9 @@
           "description": "AMPSphere AMP accession. Example: 'AMP10.000_000'."
         }
       },
-      "required": ["accession"]
+      "required": [
+        "accession"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -222,12 +274,30 @@
       ]
     },
     "test_examples": [
-      {"accession": "AMP10.000_000"},
-      {"accession": "AMP10.000_001"}
+      {
+        "accession": "AMP10.000_000"
+      },
+      {
+        "accession": "AMP10.000_001"
+      }
     ],
-    "label": ["AMPSphere", "Biogeography", "Habitat", "AMP", "Peptide"],
+    "label": [
+      "AMPSphere",
+      "Biogeography",
+      "Habitat",
+      "AMP",
+      "Peptide"
+    ],
     "metadata": {
-      "tags": ["antimicrobial peptide", "AMP", "AMPSphere", "biogeography", "habitat", "microbial source", "peptide"],
+      "tags": [
+        "antimicrobial peptide",
+        "AMP",
+        "AMPSphere",
+        "biogeography",
+        "habitat",
+        "microbial source",
+        "peptide"
+      ],
       "estimated_execution_time": "1-3 seconds"
     }
   },
@@ -243,7 +313,9 @@
           "description": "AMPSphere AMP accession. Example: 'AMP10.000_000'."
         }
       },
-      "required": ["accession"]
+      "required": [
+        "accession"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -318,12 +390,112 @@
       ]
     },
     "test_examples": [
-      {"accession": "AMP10.000_000"},
-      {"accession": "AMP10.000_001"}
+      {
+        "accession": "AMP10.000_000"
+      },
+      {
+        "accession": "AMP10.000_001"
+      }
     ],
-    "label": ["AMPSphere", "Physicochemical", "Secondary Structure", "AMP", "Peptide"],
+    "label": [
+      "AMPSphere",
+      "Physicochemical",
+      "Secondary Structure",
+      "AMP",
+      "Peptide"
+    ],
     "metadata": {
-      "tags": ["antimicrobial peptide", "AMP", "AMPSphere", "physicochemical", "GRAVY", "secondary structure", "peptide"],
+      "tags": [
+        "antimicrobial peptide",
+        "AMP",
+        "AMPSphere",
+        "physicochemical",
+        "GRAVY",
+        "secondary structure",
+        "peptide"
+      ],
+      "estimated_execution_time": "1-3 seconds"
+    }
+  },
+  {
+    "name": "AMPSphere_get_statistics",
+    "type": "AMPSphereStatisticsTool",
+    "description": "Get AMPSphere's catalogue-wide totals from /v1/statistics: how many AMPs the resource holds (num_amps), how many predicted smORF genes they were called from (num_genes), how many SPHERE families they cluster into (num_families), and how many habitats, genomes and metagenomes they were surveyed across. Use it to size the resource before a filtered search, to report a denominator alongside a hit count, or to check whether a cached figure is still current -- the other AMPSphere tools quote 863,498 AMPs in their descriptions and that number comes from here. Takes no parameters. Keyless AMPSphere REST API.",
+    "parameter": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    },
+    "return_schema": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "\"success\" or \"error\"."
+        },
+        "data": {
+          "type": "object",
+          "properties": {
+            "num_amps": {
+              "type": "integer",
+              "description": "Antimicrobial peptides in the catalogue."
+            },
+            "num_genes": {
+              "type": "integer",
+              "description": "Predicted smORF genes the AMPs were called from."
+            },
+            "num_families": {
+              "type": "integer",
+              "description": "SPHERE families the AMPs cluster into."
+            },
+            "num_habitats": {
+              "type": "integer",
+              "description": "Distinct habitat labels represented."
+            },
+            "num_genomes": {
+              "type": "integer",
+              "description": "Genomes contributing at least one AMP."
+            },
+            "num_metagenomes": {
+              "type": "integer",
+              "description": "Metagenomes contributing at least one AMP."
+            }
+          }
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "source": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string"
+            }
+          }
+        },
+        "error": {
+          "type": "string"
+        }
+      }
+    },
+    "test_examples": [
+      {}
+    ],
+    "label": [
+      "AMPSphere",
+      "Statistics",
+      "Catalogue",
+      "AMP",
+      "Peptide"
+    ],
+    "metadata": {
+      "tags": [
+        "antimicrobial peptide",
+        "AMP",
+        "AMPSphere",
+        "statistics",
+        "catalogue size"
+      ],
       "estimated_execution_time": "1-3 seconds"
     }
   }

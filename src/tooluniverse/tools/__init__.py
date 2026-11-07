@@ -1,7 +1,7 @@
 """
 ToolUniverse Tools
 
-Type-safe Python interface to 2890 scientific tools.
+Type-safe Python interface to 2891 scientific tools.
 Each tool is in its own module for minimal import overhead.
 
 Usage:
@@ -54,6 +54,7 @@ from .AMPSphere_get_amp import AMPSphere_get_amp
 from .AMPSphere_get_amp_distributions import AMPSphere_get_amp_distributions
 from .AMPSphere_get_amp_features import AMPSphere_get_amp_features
 from .AMPSphere_get_family import AMPSphere_get_family
+from .AMPSphere_get_statistics import AMPSphere_get_statistics
 from .AMPSphere_search_amps import AMPSphere_search_amps
 from .AMPSphere_sequence_match import AMPSphere_sequence_match
 from .AOPWiki_get_aop import AOPWiki_get_aop
@@ -3482,6 +3483,7 @@ __all__ = [
     "AMPSphere_get_amp_distributions",
     "AMPSphere_get_amp_features",
     "AMPSphere_get_family",
+    "AMPSphere_get_statistics",
     "AMPSphere_search_amps",
     "AMPSphere_sequence_match",
     "AOPWiki_get_aop",

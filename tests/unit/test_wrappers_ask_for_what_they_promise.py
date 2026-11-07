@@ -281,3 +281,111 @@ def test_no_tool_is_typed_against_the_retired_opentargets_genetics_host():
                 if isinstance(c, dict) and c.get("type") == "OpenTargetGenetics"
             ]
     assert used == [], f"tools still typed OpenTargetGenetics: {used}"
+
+
+# ── A documented empty result its own schema forbids ────────────────────────
+#
+# Nine tool classes answer `{"status": "success", "data": None}` with a message
+# saying the record does not exist. That is deliberate and the repo has reasoned
+# about it: test_alphamissense_failure_visibility.py calls a 404 for a position
+# outside the API's coverage "a legitimate empty result, not a failure", as
+# against a rate limit or a 5xx. 300 other returns in the package report
+# not-found as `status: "error"`, so these 17 sites are the minority -- but they
+# are the considered minority, and this file does not reverse that.
+#
+# What was wrong is that 13 of the 15 tools reachable on those paths declared a
+# `return_schema` that REJECTS the value they return. `jsonschema.validate`
+# refused it: "None is not of type 'object'". A tool answering outside its own
+# contract is the same defect as a wrapper dropping a field, one level up.
+#
+# NOT DERIVABLE AT CLASS LEVEL, which is why this is a list. An AST scan finds
+# the nine classes mechanically, but a class serves several tools and only some
+# of its operations can reach the empty-success return: the rule "every tool
+# typed to such a class must admit null" flags 16 more -- DepMap_search_genes,
+# Pharos_search_targets, ExpressionAtlas_search_experiments and the like, whose
+# empty answer is an empty list, not a null. Declaring those nullable would be
+# a new untruth. The mapping from method to operation is per-class, so the
+# tools below were resolved by reading each dispatcher.
+
+EMPTY_RESULT_TOOLS = [
+    ("AlphaMissense_get_residue_scores", "no AlphaMissense data for the position"),
+    ("AlphaMissense_get_variant_score", "no AlphaMissense data for the position"),
+    ("CADD_get_position_scores", "no CADD score for the position"),
+    ("CADD_get_range_scores", "no CADD scores in the range"),
+    ("CADD_get_variant_score", "no CADD score for the variant"),
+    ("ComplexPortal_get_complex", "complex not found"),
+    ("DepMap_get_cell_line", "cell line not found"),
+    ("EVE_get_gene_info", "gene not found in Ensembl"),
+    ("ExpressionAtlas_get_experiment", "experiment not found"),
+    ("IMPC_get_gene_summary", "gene not yet phenotyped by IMPC"),
+    ("IUCN_get_conservation_status", "no IUCN assessment for the name"),
+    ("Pharos_get_ligand_targets", "no ligand found"),
+    ("Pharos_get_target", "no target found"),
+    ("Pharos_get_target_expression", "no target found"),
+    ("Pharos_get_target_ligands", "no target found"),
+]
+
+
+@pytest.mark.parametrize(
+    "tool, case", EMPTY_RESULT_TOOLS, ids=[t for t, _ in EMPTY_RESULT_TOOLS]
+)
+def test_the_schema_admits_the_empty_result_the_tool_returns(tool, case):
+    jsonschema = pytest.importorskip("jsonschema")
+    schema = _config(tool)["return_schema"]
+
+    # An envelope-kind schema describes the whole return; an inner-data one
+    # describes `data`, and is validated against `result["data"]`.
+    is_envelope = "status" in (schema.get("properties") or {})
+    probe = {"status": "success", "data": None} if is_envelope else None
+
+    try:
+        jsonschema.validate(probe, schema)
+    except jsonschema.ValidationError as exc:
+        pytest.fail(
+            f"{tool} answers a successful empty result for {case}, and its own "
+            f"return_schema rejects it: {str(exc).splitlines()[0]}"
+        )
+
+
+def test_an_exclusivity_guard_does_not_reject_the_null_it_allows():
+    """`not: {required: ["error"]}` is vacuously true for a non-object.
+
+    598 success branches carry that guard. Widening four of them to admit null
+    made the guard reject the very null the branch had just allowed, because
+    JSON Schema applies `required` only to objects and a null satisfies it by
+    default. Scoping the guard with `"type": "object"` is the fix, and this
+    checks no nullable branch is left in the broken state.
+    """
+    jsonschema = pytest.importorskip("jsonschema")
+    offenders = []
+    for path in sorted(DATA.glob("*.json")):
+        try:
+            payload = json.loads(path.read_text())
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            continue
+        if not isinstance(payload, list):
+            continue
+        for cfg in payload:
+            schema = cfg.get("return_schema") if isinstance(cfg, dict) else None
+            if not isinstance(schema, dict):
+                continue
+            for branch in schema.get("oneOf") or []:
+                if not isinstance(branch, dict):
+                    continue
+                guard = branch.get("not")
+                if not (isinstance(guard, dict) and guard.get("required") == ["error"]):
+                    continue
+                declared = branch.get("type")
+                nullable = declared == "null" or (
+                    isinstance(declared, list) and "null" in declared
+                )
+                if not nullable:
+                    continue
+                try:
+                    jsonschema.validate(None, schema)
+                except jsonschema.ValidationError:
+                    offenders.append(cfg.get("name"))
+    assert offenders == [], (
+        "these schemas allow null in the success branch and then reject it in "
+        f"the exclusivity guard: {sorted(set(offenders))}"
+    )

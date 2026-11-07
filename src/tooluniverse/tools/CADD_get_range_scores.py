@@ -17,7 +17,7 @@ def CADD_get_range_scores(
     stream_callback: Optional[Callable[[str], None]] = None,
     use_cache: bool = False,
     validate: bool = True,
-) -> dict[str, Any]:
+) -> Optional[dict[str, Any]]:
     """
     Get CADD scores for all variants in a genomic range (max 100bp). Returns all pre-computed deleter...
 
@@ -40,7 +40,7 @@ def CADD_get_range_scores(
 
     Returns
     -------
-    dict[str, Any]
+    Optional[dict[str, Any]]
     """
     # Handle mutable defaults to avoid B006 linting error
 
