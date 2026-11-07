@@ -222,7 +222,8 @@
                         "type": [
                           "string",
                           "null"
-                        ]
+                        ],
+                        "description": "The two-letter RUI code, which is what this field has always held (not the ontology `code`; see ontology_code)"
                       },
                       "term": {
                         "type": [
@@ -247,6 +248,48 @@
                           "boolean",
                           "null"
                         ]
+                      },
+                      "rui_code": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Same value as `code`, under the name the API uses"
+                      },
+                      "ontology_code": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The HuBMAP ontology code, e.g. C030055 -- the field the API calls `code`"
+                      },
+                      "laterality": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "'Left' or 'Right' for a paired organ, null otherwise. 'Eye (Left)' and 'Eye (Right)' are separate entries whose side was legible only inside the term string."
+                      },
+                      "category_term": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The parent organ a lateralised entry belongs to, e.g. Eye"
+                      },
+                      "category_organ_uberon": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "UBERON id of that parent organ"
+                      },
+                      "sab": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Source vocabulary asserting the entry, e.g. HUBMAP"
                       }
                     }
                   }
@@ -515,6 +558,89 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "protocol_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "created_timestamp": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "data_access_level": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "donor_attributes": {
+                    "type": "array",
+                    "description": "What the Donor was, from metadata.organ_donor_data: Age 66 years, Race, Sex, each with the vocabulary and code that defines it. Empty for non-Donor entities. Capped at 25.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "attribute": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "value": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "units": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "data_type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "code": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "concept_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "vocabulary": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "spatial_annotations": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "UBERON IRIs the sample's spatial registration overlaps, from rui_location.ccf_annotations -- where in the organ the tissue came from"
                   }
                 }
               }

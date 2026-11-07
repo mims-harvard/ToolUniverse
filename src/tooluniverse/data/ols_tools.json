@@ -98,7 +98,28 @@
       "type": "object",
       "properties": {
         "terms": {
-          "type": "array"
+          "type": "array",
+          "description": "The terms, each with the definition and synonyms the same response carried.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "iri": {"type": "string"},
+              "ontologyName": {"type": "string"},
+              "shortForm": {"type": "string"},
+              "label": {"type": "string"},
+              "oboId": {"type": ["string", "null"]},
+              "isObsolete": {"type": ["boolean", "null"]},
+              "description": {
+                "type": ["array", "null"],
+                "items": {"type": "string"},
+                "description": "The term's definition, which the search hit already carries. This is also where OLS records a merge: ZFA:0009046 says 'CL:0000804 and CL:0000812 were merged in the cell ontology into CL:0000084'."
+              },
+              "synonyms": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Exact synonyms, which can be substituted for the label"},
+              "related_synonyms": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Related synonyms, which cannot"},
+              "ontologyPrefix": {"type": ["string", "null"], "description": "Ontology prefix as used in the CURIE, e.g. ZFA"},
+              "type": {"type": ["string", "null"], "description": "class, property or individual"}
+            }
+          }
         },
         "total_items": {
           "type": "integer"
@@ -125,7 +146,8 @@
           "type": "object",
           "properties": {
             "ontology": {
-              "type": "string"
+              "type": ["string", "null"],
+              "description": "The ontology the search was restricted to, or null when it searched all of them -- which is what the tool echoes when no ontology was given."
             },
             "exact_match": {
               "type": "boolean"
@@ -243,7 +265,17 @@
         "repository": {
           "type": ["string", "null"],
           "description": "Source repository URL. Measured for 'go'. Null for ontologies whose config does not set one."
-        }
+        },
+        "importsFrom": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Ontologies this one imports terms from; EFO imports from 40."},
+        "exportsTo": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Ontologies that import terms from this one; 36 import from EFO."},
+        "linksTo": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Property and term IRIs from other ontologies that this one uses."},
+        "creators": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Authors, from dc:creator."},
+        "languages": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Language codes the ontology carries labels in. EFO has eight, so a label search can miss a term labelled only in one."},
+        "license": {"type": ["string", "null"], "description": "Licence the ontology is published under."},
+        "loaded": {"type": ["string", "null"], "description": "When OLS last loaded the ontology, so how current this answer is."},
+        "mailingList": {"type": ["string", "null"]},
+        "numberOfProperties": {"type": ["integer", "null"]},
+        "numberOfIndividuals": {"type": ["integer", "null"]}
       }
     },
     "fields": {
@@ -489,7 +521,13 @@
         },
         "synonyms": {
           "type": "array"
-        }
+        },
+        "related_synonyms": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Related synonyms, which OBO distinguishes from exact ones"},
+        "ontologyPrefix": {"type": ["string", "null"], "description": "Ontology prefix as used in the CURIE"},
+        "type": {"type": ["string", "null"], "description": "class, property or individual"},
+        "alternative_ids": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Other ids this term is known by, including ids merged into it"},
+        "synonym_scopes": {"type": ["array", "null"], "items": {"type": "object"}, "description": "Each synonym with the OBO scope assigned to it"},
+        "lang": {"type": ["string", "null"]}
       }
     },
     "fields": {
@@ -572,7 +610,28 @@
       "type": "object",
       "properties": {
         "terms": {
-          "type": "array"
+          "type": "array",
+          "description": "The terms, each with the definition and synonyms the same response carried.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "iri": {"type": "string"},
+              "ontologyName": {"type": "string"},
+              "shortForm": {"type": "string"},
+              "label": {"type": "string"},
+              "oboId": {"type": ["string", "null"]},
+              "isObsolete": {"type": ["boolean", "null"]},
+              "description": {
+                "type": ["array", "null"],
+                "items": {"type": "string"},
+                "description": "The term's definition, which the search hit already carries. This is also where OLS records a merge: ZFA:0009046 says 'CL:0000804 and CL:0000812 were merged in the cell ontology into CL:0000084'."
+              },
+              "synonyms": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Exact synonyms, which can be substituted for the label"},
+              "related_synonyms": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Related synonyms, which cannot"},
+              "ontologyPrefix": {"type": ["string", "null"], "description": "Ontology prefix as used in the CURIE, e.g. ZFA"},
+              "type": {"type": ["string", "null"], "description": "class, property or individual"}
+            }
+          }
         },
         "total_items": {
           "type": "integer"
@@ -678,7 +737,28 @@
       "type": "object",
       "properties": {
         "terms": {
-          "type": "array"
+          "type": "array",
+          "description": "The terms, each with the definition and synonyms the same response carried.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "iri": {"type": "string"},
+              "ontologyName": {"type": "string"},
+              "shortForm": {"type": "string"},
+              "label": {"type": "string"},
+              "oboId": {"type": ["string", "null"]},
+              "isObsolete": {"type": ["boolean", "null"]},
+              "description": {
+                "type": ["array", "null"],
+                "items": {"type": "string"},
+                "description": "The term's definition, which the search hit already carries. This is also where OLS records a merge: ZFA:0009046 says 'CL:0000804 and CL:0000812 were merged in the cell ontology into CL:0000084'."
+              },
+              "synonyms": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Exact synonyms, which can be substituted for the label"},
+              "related_synonyms": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Related synonyms, which cannot"},
+              "ontologyPrefix": {"type": ["string", "null"], "description": "Ontology prefix as used in the CURIE, e.g. ZFA"},
+              "type": {"type": ["string", "null"], "description": "class, property or individual"}
+            }
+          }
         },
         "total_items": {
           "type": "integer"
@@ -785,6 +865,31 @@
             "string",
             "null"
           ]
+        },
+        "source_term": {
+          "type": "object",
+          "description": "The term the similar ones are similar to. The tool fetches this whole record to read its label and nothing else -- including whether the term is obsolete, which the tool's own test example is: EFO:0000384 is obsolete_Crohn's disease.",
+          "properties": {
+            "iri": {"type": "string"},
+            "label": {"type": ["string", "null"]},
+            "curie": {"type": ["string", "null"]},
+            "definition": {"type": ["array", "null"], "items": {"type": "string"}},
+            "synonyms": {"type": ["array", "null"], "items": {"type": "string"}},
+            "is_obsolete": {"type": ["boolean", "null"], "description": "True when the source term has been retired, in which case the similar terms are probably not what was wanted"},
+            "curated_from_sources": {"type": ["array", "null"], "items": {"type": "string"}, "description": "Which data sources annotated with this term"},
+            "curated_from": {
+              "type": "array",
+              "description": "The text each source annotated with the term, capped at 25",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "text": {"type": ["string", "null"]},
+                  "source": {"type": ["string", "null"]},
+                  "subject_categories": {"type": "array", "items": {"type": "string"}}
+                }
+              }
+            }
+          }
         },
         "ontology": {
           "type": [

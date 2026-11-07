@@ -101,6 +101,94 @@
                       "type": "object"
                     },
                     "description": "Literature evidence"
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The feature category, as upstream labels it"
+                  },
+                  "feature_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "UniProt feature id, e.g. PRO_0000015819 for the insulin B chain; how a processed chain is cited"
+                  },
+                  "molecule": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Isoform the feature applies to; empty on the canonical sequence"
+                  },
+                  "ligand": {
+                    "type": "object",
+                    "description": "What binds at this site. EGFR 718-726 binds ATP (CHEBI:30616) and the whole of that was dropped from a category whose own description is 'binding sites'.",
+                    "properties": {
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "part": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "label": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "note": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "database": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Usually ChEBI"
+                      },
+                      "database_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "ligand_part": {
+                    "type": "object",
+                    "description": "The part of the ligand that binds, where UniProt distinguishes it",
+                    "properties": {
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "database": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "database_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
                   }
                 }
               },
@@ -113,6 +201,20 @@
             "feature_type_counts": {
               "type": "object",
               "description": "Count of each feature type (DNA_BIND, BINDING, REGION, MOTIF, SITE)"
+            },
+            "taxid": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "NCBI taxon id of the organism, which the response carries"
+            },
+            "sequence_checksum": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "CRC64 of the sequence the positions are against"
             }
           },
           "not": {
@@ -237,6 +339,94 @@
                       "type": "object"
                     },
                     "description": "Evidence references"
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The feature category, as upstream labels it"
+                  },
+                  "feature_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "UniProt feature id, e.g. PRO_0000015819 for the insulin B chain; how a processed chain is cited"
+                  },
+                  "molecule": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Isoform the feature applies to; empty on the canonical sequence"
+                  },
+                  "ligand": {
+                    "type": "object",
+                    "description": "What binds at this site. EGFR 718-726 binds ATP (CHEBI:30616) and the whole of that was dropped from a category whose own description is 'binding sites'.",
+                    "properties": {
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "part": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "label": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "note": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "database": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Usually ChEBI"
+                      },
+                      "database_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "ligand_part": {
+                    "type": "object",
+                    "description": "The part of the ligand that binds, where UniProt distinguishes it",
+                    "properties": {
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "database": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "database_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
                   }
                 }
               },
@@ -249,6 +439,20 @@
             "feature_type_counts": {
               "type": "object",
               "description": "Count of each processing type (SIGNAL, CHAIN, PEPTIDE, PROPEP, etc.)"
+            },
+            "taxid": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "NCBI taxon id of the organism, which the response carries"
+            },
+            "sequence_checksum": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "CRC64 of the sequence the positions are against"
             }
           },
           "not": {
@@ -366,6 +570,94 @@
                       "null"
                     ],
                     "description": "Additional description"
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The feature category, as upstream labels it"
+                  },
+                  "feature_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "UniProt feature id, e.g. PRO_0000015819 for the insulin B chain; how a processed chain is cited"
+                  },
+                  "molecule": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Isoform the feature applies to; empty on the canonical sequence"
+                  },
+                  "ligand": {
+                    "type": "object",
+                    "description": "What binds at this site. EGFR 718-726 binds ATP (CHEBI:30616) and the whole of that was dropped from a category whose own description is 'binding sites'.",
+                    "properties": {
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "part": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "label": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "note": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "database": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Usually ChEBI"
+                      },
+                      "database_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "ligand_part": {
+                    "type": "object",
+                    "description": "The part of the ligand that binds, where UniProt distinguishes it",
+                    "properties": {
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "database": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "database_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
                   }
                 }
               },
@@ -378,6 +670,20 @@
             "feature_type_counts": {
               "type": "object",
               "description": "Count of each type (HELIX, STRAND, TURN)"
+            },
+            "taxid": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "NCBI taxon id of the organism, which the response carries"
+            },
+            "sequence_checksum": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "CRC64 of the sequence the positions are against"
             }
           },
           "not": {

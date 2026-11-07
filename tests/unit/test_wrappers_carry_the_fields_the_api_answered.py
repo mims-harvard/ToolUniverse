@@ -897,6 +897,96 @@ UPSTREAM_KEYS = [
         'gene_summary.get("gene-symbol"',
         "the gene symbol, where `name` is the protein name",
     ),
+    (
+        "ebi_proteins_features_tool.py",
+        'f.get("ligand")',
+        "what binds at a BINDING site, from the category whose name is 'binding sites'",
+    ),
+    (
+        "ebi_proteins_features_tool.py",
+        'f.get("ftId")',
+        "the UniProt feature id a processed chain is cited by",
+    ),
+    (
+        "chebi_tool.py",
+        'struct_data.get("standard_inchi", None)',
+        "the InChI, where only its hash was returned",
+    ),
+    (
+        "chebi_tool.py",
+        'raw.get("roles_classification")',
+        "the role classification, which is half of what ChEBI is for",
+    ),
+    (
+        "chebi_tool.py",
+        'rec.get("accession_number")',
+        "the CAS number and the registry, citation and xref accessions beside it",
+    ),
+    (
+        "ols_tool.py",
+        'item.get("exact_synonyms")',
+        "the synonyms every OLS search hit carries",
+    ),
+    (
+        "ols_tool.py",
+        'alias="importsFrom"',
+        "which ontologies an ontology depends on",
+    ),
+    (
+        "ols_tool.py",
+        '"is_obsolete": (term_data or {}).get("isObsolete")',
+        "whether the term the similar ones are similar to has been retired",
+    ),
+    (
+        "itis_tool.py",
+        '_rows(data.get("synonymList"), "synonyms")',
+        "the synonyms, which are the reason to consult a taxonomic authority",
+    ),
+    (
+        "itis_tool.py",
+        '_rows(data.get("acceptedNameList"), "acceptedNames")',
+        "the name that replaced an invalid one, and the reason it was rejected",
+    ),
+    (
+        "itis_tool.py",
+        '"credibility_rating"',
+        "the Taxonomic Work Group's verdict on the record",
+    ),
+    (
+        "gbif_taxonomy_tool.py",
+        '"kingdomKey"',
+        "the rank keys, the handles for walking a tree the tool exists to walk",
+    ),
+    (
+        "gbif_taxonomy_tool.py",
+        '"issues"',
+        "GBIF's own data-quality flags on the usage record",
+    ),
+    (
+        "gbif_taxonomy_tool.py",
+        'rec.get("preferred")',
+        "which of a taxon's common names GBIF marks as the one to show",
+    ),
+    (
+        "hubmap_tool.py",
+        'person.get("orcid_id")',
+        "the contributor ORCID, read from `orcid`, a key HuBMAP does not send",
+    ),
+    (
+        "hubmap_tool.py",
+        "organ_donor_data",
+        "what the donor was -- age, sex, race -- at the end of a provenance chain",
+    ),
+    (
+        "hubmap_tool.py",
+        'org.get("laterality")',
+        "which side a paired organ is, legible only inside the term string",
+    ),
+    (
+        "rxclass_tool.py",
+        'by_name.get("Relation")',
+        "DIRECT against INDIRECT membership, which are not the same claim",
+    ),
 ]
 
 
@@ -1091,6 +1181,30 @@ DECLARED = [
     ("MedlinePlus_get_genetics_condition_by_name", "cross_references"),
     ("MedlinePlus_get_genetics_gene_by_name", "gene_symbol"),
     ("MedlinePlus_connect_lookup_by_code", "resolved_query"),
+    ("EBIProteins_get_domains_sites", "ligand"),
+    ("EBIProteins_get_molecule_processing", "feature_id"),
+    ("ChEBI_get_compound", "inchi"),
+    ("ChEBI_get_compound", "roles"),
+    ("ChEBI_get_compound", "cas_numbers"),
+    ("ChEBI_get_compound", "synonym_details"),
+    ("ChEBI_search", "smiles"),
+    ("ChEBI_get_ontology_parents", "name"),
+    ("ols_search_terms", "related_synonyms"),
+    ("ols_get_ontology_info", "importsFrom"),
+    ("ols_find_similar_terms", "source_term"),
+    ("ITIS_get_full_record", "accepted_names"),
+    ("ITIS_get_full_record", "synonyms_truncated"),
+    ("ITIS_get_full_record", "jurisdictional_origins"),
+    ("ITIS_get_hierarchy", "parent_name"),
+    ("GBIF_get_taxon_children", "kingdomKey"),
+    ("GBIF_get_taxon_children", "issues"),
+    ("GBIF_get_vernacular_names", "preferred"),
+    ("HuBMAP_list_organs", "laterality"),
+    ("HuBMAP_list_organs", "category_term"),
+    ("HuBMAP_get_dataset_provenance", "donor_attributes"),
+    ("RxClass_get_class_members", "relation"),
+    ("RxClass_find_classes", "classUrl"),
+    ("RxClass_get_disease_relations", "relaSource"),
 ]
 
 
@@ -1514,3 +1628,130 @@ def test_a_bgee_expression_call_reports_its_fdr():
     assert 'call.get("fdr")' in source
     assert '"cluster_index": call.get("clusterIndex")' in source
     assert '"gene": {' in source
+
+
+def test_an_itis_invalid_name_says_what_replaced_it():
+    """"invalid" without the accepted name is half an answer.
+
+    TSN 944513 is reported `usage_rating: "invalid"`, and the same response
+    says it is a "junior synonym" of Homo sapiens, TSN 180092 -- both in
+    `acceptedNameList` and `unacceptReason`, neither of which was read. The
+    record also held 29 synonyms, 7 jurisdictional origins (Native in Alaska,
+    and so on), the Taxonomic Work Group's credibility verdict, and the
+    publications and experts the tool's own docstring promises as "authority
+    references".
+    """
+    source = _source("itis_tool.py")
+    assert '_rows(data.get("acceptedNameList"), "acceptedNames")' in source
+    assert '"unaccept_reason"' in source
+    assert '"synonyms_truncated"' in source
+    assert "SYNONYMS_PER_RECORD" in source
+    schema = json.dumps(_config("ITIS_get_full_record").get("return_schema") or {})
+    assert '"unaccept_reason"' in schema
+
+
+def test_a_hubmap_contributor_orcid_is_not_null():
+    """`person.get("orcid")` against an API that sends `orcid_id`.
+
+    Every contributor on HBM626.FHJD.938 has an ORCID and every one of them
+    came back null -- the shape where a key the API does not send is read and
+    the absence looks like missing data upstream.
+    """
+    source = _source("hubmap_tool.py")
+    assert 'person.get("orcid") or person.get("orcid_id")' in source
+
+
+def test_a_hubmap_provenance_chain_says_what_the_donor_was():
+    """The chain ends at a Donor whose attributes were not reported.
+
+    The lineage row carried seven keys, none of them the donor's age, sex or
+    race -- which `metadata.organ_donor_data` holds in the same response, as
+    UMLS-coded assertions. Walking Dataset -> Sample -> Donor and then not
+    saying who the donor was is most of the question left unanswered.
+    """
+    source = _source("hubmap_tool.py")
+    assert "def _donor_attributes" in source
+    assert "organ_donor_data" in source
+    assert '"spatial_annotations": _ccf_annotations(entity)' in source
+
+
+def test_an_rxclass_member_says_whether_it_is_a_direct_member():
+    """DIRECT and INDIRECT membership are different claims.
+
+    RxClass states it per member in `nodeAttr`, along with the source's own id
+    for the member -- M01AE07 for suprofen under ATC M01AE -- and the row
+    reported rxcui, name and tty, so a member of a descendant class was
+    indistinguishable from a member of the class asked about.
+    """
+    source = _source("rxclass_tool.py")
+    assert 'by_name.get("Relation")' in source
+    assert 'by_name.get("SourceId")' in source
+
+
+def test_a_chebi_compound_reports_its_cas_number_and_its_roles():
+    """Aspirin's 50-78-2 was in the response and was not returned.
+
+    `database_accessions` holds four sections -- CAS, registry numbers, 68
+    PubMed citations and the manual cross-references -- and none was read.
+    Nor was `roles_classification`, which is 36 entries for aspirin and is the
+    half of ChEBI that is an ontology rather than a structure database. The
+    synonym list also flattened a ChEMBL BRAND NAME and an IUPAC NAME into one
+    undifferentiated list of strings.
+    """
+    source = _source("chebi_tool.py")
+    assert "def _accessions" in source
+    assert "def _roles" in source
+    assert '"synonym_details": synonym_detail_page' in source
+    schema = json.dumps(_config("ChEBI_get_compound").get("return_schema") or {})
+    assert '"cas_numbers_total"' in schema
+
+
+def test_an_ols_search_hit_carries_the_definition_it_arrived_with():
+    """A term search answering a label and an id costs a call per hit.
+
+    Every /api/search doc carries `description`, `exact_synonyms`,
+    `related_synonyms`, `type` and `ontology_prefix`, and the row model had
+    six fields that included none of them. The definition is also where OLS
+    records a merge: ZFA:0009046's says CL:0000804 and CL:0000812 were merged
+    into CL:0000084.
+    """
+    source = _source("ols_tool.py")
+    assert 'item.get("exact_synonyms")' in source
+    assert "def _as_string_list" in source
+    schema = json.dumps(_config("ols_search_terms").get("return_schema") or {})
+    assert '"related_synonyms"' in schema
+    assert '"items"' in schema, "the terms array declared nothing about its rows"
+
+
+def test_a_gbif_tree_walker_returns_the_keys_to_walk_with():
+    """Seven rank names, no rank keys, on a tool for navigating a tree.
+
+    `_slim_usage` projected onto 19 of the 38 fields a name-usage record
+    carries: the kingdom/phylum/class/order/family/genus/species names were
+    in and the matching `...Key` values were out, so following the lineage
+    needed a name search per step. `issues` -- GBIF's own quality flags, e.g.
+    NAME_PARENT_MISMATCH -- and the dataset the record came from were dropped
+    too.
+    """
+    source = _source("gbif_taxonomy_tool.py")
+    for key in ("kingdomKey", "phylumKey", "classKey", "orderKey", "familyKey",
+                "genusKey", "speciesKey", "issues", "datasetKey"):
+        assert f'"{key}"' in source, f"_slim_usage still drops {key}"
+
+
+def test_a_binding_site_names_what_binds_there():
+    """EGFR 718-726 binds ATP, CHEBI:30616, and said only 718-726.
+
+    Four of P00533's eleven DOMAINS_AND_SITES features carry a `ligand`, and
+    the category's own description is "binding sites, DNA binding regions,
+    motifs, regions". The MOLECULE_PROCESSING features lost `ftId` the same
+    way -- PRO_0000015819 is the insulin B chain, and it is how a processed
+    chain is cited.
+    """
+    source = _source("ebi_proteins_features_tool.py")
+    assert 'f.get("ligand")' in source
+    assert 'f.get("ftId")' in source
+    schema = json.dumps(
+        _config("EBIProteins_get_domains_sites").get("return_schema") or {}
+    )
+    assert '"ligand"' in schema
