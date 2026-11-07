@@ -11,6 +11,7 @@ This module tests the actual SMCP server by:
 
 import asyncio
 import json
+import sys
 import time
 import threading
 import requests
@@ -145,7 +146,7 @@ class TestSMCPRealServer:
         try:
             # Use a different port to avoid conflicts
             process = subprocess.Popen([
-                "python", "-m", "src.tooluniverse.smcp_server",
+                sys.executable, "-m", "src.tooluniverse.smcp_server",
                 "--port", "8001",
                 "--host", "127.0.0.1"
             ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
