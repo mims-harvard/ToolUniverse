@@ -2,7 +2,7 @@
   {
     "type": "ClinVarSubmittedRecordsTool",
     "name": "ClinVar_get_submitted_records",
-    "description": "Retrieve the individual per-submitter assertions (SCV / ClinicalAssertion records) for a ClinVar variant. Unlike ClinVar_search_variants / ClinVar_get_variant_details / ClinVar_get_clinical_significance (which use esummary and return only the single AGGREGATE germline classification), this tool calls NCBI eutils efetch (rettype=vcv) and parses the full VariationArchive XML to expose every submitter's own classification, review status, condition and last-evaluated date. Use this when you need to see who classified a variant and how (e.g. to inspect conflicting interpretations behind a 'Conflicting classifications of pathogenicity' aggregate). Keyless NCBI endpoint.",
+    "description": "Retrieve the individual per-submitter assertions (SCV / ClinicalAssertion records) for a ClinVar variant. Unlike ClinVar_search_variants / ClinVar_get_variant_details / ClinVar_get_clinical_significance (which use esummary and return only the single AGGREGATE germline classification), this tool calls NCBI eutils efetch (rettype=vcv) and parses the full VariationArchive XML to expose every submitter's own classification, review status, condition and last-evaluated date. Use this when you need to see who classified a variant and how (e.g. to inspect conflicting interpretations behind a 'Conflicting classifications of pathogenicity' aggregate). Keyless NCBI endpoint. Each submission also carries whether ClinVar counted it in the aggregate classification (contributes_to_aggregate_classification), how the observation was collected, the allele origin and affected status, the assertion method and cited PubMed ids, and -- where the submitter gave them -- sex, age bounds and HPO clinical features.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -113,6 +113,148 @@
                       "null"
                     ],
                     "description": "Date the submitter last evaluated the classification (YYYY-MM-DD)."
+                  },
+                  "submitter_org_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ClinVar organization id for the submitter."
+                  },
+                  "submitter_category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "e.g. laboratory, clinic, resource."
+                  },
+                  "submission_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Date this assertion was submitted."
+                  },
+                  "date_last_updated": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Date this assertion was last updated."
+                  },
+                  "contributes_to_aggregate_classification": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether ClinVar counted this submission in the record-level aggregate_classification -- the C/N badge in the ClinVar UI. Submissions that disagree with the aggregate are often the ones excluded, so a caller comparing submitters needs it. On VCV000013961, 23 of 45 submissions contribute."
+                  },
+                  "assertion_method": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The guideline the submitter classified under, e.g. 'ACMG Guidelines, 2015'."
+                  },
+                  "citations": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "PubMed ids this submission's classification cites."
+                  },
+                  "collection_methods": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "How the observation was made, e.g. 'clinical testing', 'literature only', 'curation'. Present on every submission of VCV000013961."
+                  },
+                  "origins": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Allele origin as the submitter reported it, e.g. 'germline', 'somatic', 'unknown'."
+                  },
+                  "affected_status": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Whether the observed individuals were affected: 'yes', 'no', 'unknown'."
+                  },
+                  "sex": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Reported sex of the observed individuals, when given."
+                  },
+                  "ages": {
+                    "type": "array",
+                    "description": "Reported age bounds, when given. ClinVar sends minimum and maximum as separate entries.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "'minimum' or 'maximum'."
+                        },
+                        "value": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "unit": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "e.g. 'years'."
+                        }
+                      }
+                    }
+                  },
+                  "clinical_features": {
+                    "type": "array",
+                    "description": "Phenotypes observed in the submitted case, as HPO cross-references.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "hpo_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Human Phenotype Ontology id, e.g. HP:0000543."
+                        },
+                        "status": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "e.g. 'present'."
+                        }
+                      }
+                    }
+                  },
+                  "families_with_variant": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Number of families reported with the variant, when given."
                   }
                 }
               }

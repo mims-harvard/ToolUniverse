@@ -559,7 +559,6 @@ STATIC_LAZY_REGISTRY = {
     "OpenTargetsGraphQLQueryTool": "opentargets_graphql_tool",
     "OpenTargetsGraphQLSchemaTool": "opentargets_graphql_tool",
     "OpenTreeTool": "opentree_tool",
-    "OpentargetGeneticsTool": "graphql_tool",
     "OpentargetTool": "graphql_tool",
     "OpentargetToolDrugNameMatch": "graphql_tool",
     "OrphadataTool": "orphadata_tool",

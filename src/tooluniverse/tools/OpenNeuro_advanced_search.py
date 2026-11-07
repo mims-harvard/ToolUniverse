@@ -1,7 +1,7 @@
 """
 OpenNeuro_advanced_search
 
-Faceted search across all OpenNeuro datasets plus the archive-wide total participant count. Retur...
+Faceted search across all OpenNeuro datasets plus the archive-wide total participant count. Each ...
 """
 
 from typing import Any, Optional, Callable
@@ -32,7 +32,7 @@ def OpenNeuro_advanced_search(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Faceted search across all OpenNeuro datasets plus the archive-wide total participant count. Retur...
+    Faceted search across all OpenNeuro datasets plus the archive-wide total participant count. Each ...
 
     Parameters
     ----------

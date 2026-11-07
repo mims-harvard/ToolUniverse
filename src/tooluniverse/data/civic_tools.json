@@ -308,7 +308,7 @@
   },
   {
     "name": "civic_get_variant",
-    "description": "Get detailed information about a specific variant in CIViC database by variant ID. Associated molecular profiles are cursor-paginated. When metadata.molecular_profiles_has_more is true, pass metadata.next_molecular_profile_cursor as molecular_profile_after to retrieve the next page.",
+    "description": "Get a specific CIViC variant by variant ID. Returns the variant's aliases and types, its genomic coordinates (reference build, chromosome, start, stop, reference and variant bases, representative transcript), the ClinGen allele registry id, the MANE Select transcript, the gene feature, ClinVar ids and HGVS descriptions. Associated molecular profiles are cursor-paginated: when metadata.molecular_profiles_has_more is true, pass metadata.next_molecular_profile_cursor as molecular_profile_after.",
     "type": "CIViCTool",
     "parameter": {
       "type": "object",
@@ -338,7 +338,7 @@
       "additionalProperties": false
     },
     "fields": {
-      "query": "query GetVariant($variant_id: Int!, $molecular_profile_limit: Int, $molecular_profile_after: String) { variant(id: $variant_id) { id name variantAliases variantTypes { id name soid } molecularProfiles(first: $molecular_profile_limit, after: $molecular_profile_after) { totalCount pageInfo { hasNextPage endCursor } nodes { id name molecularProfileScore } } ... on GeneVariant { clinvarIds hgvsDescriptions } } }",
+      "query": "query GetVariant($variant_id: Int!, $molecular_profile_limit: Int, $molecular_profile_after: String) { variant(id: $variant_id) { id name link variantAliases variantTypes { id name soid } molecularProfiles(first: $molecular_profile_limit, after: $molecular_profile_after) { totalCount pageInfo { hasNextPage endCursor } nodes { id name molecularProfileScore } } ... on GeneVariant { clinvarIds hgvsDescriptions alleleRegistryId maneSelectTranscript feature { id name } coordinates { referenceBuild ensemblVersion chromosome start stop representativeTranscript referenceBases variantBases coordinateType } } } }",
       "operation_name": "GetVariant"
     },
     "return_schema": {
@@ -405,6 +405,110 @@
                           }
                         }
                       }
+                    }
+                  }
+                },
+                "link": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "alleleRegistryId": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "ClinGen Allele Registry id (CA...)."
+                },
+                "maneSelectTranscript": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "MANE Select transcript HGVS."
+                },
+                "feature": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Gene symbol."
+                    }
+                  }
+                },
+                "coordinates": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "referenceBuild": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "e.g. GRCH37."
+                    },
+                    "ensemblVersion": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "chromosome": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "start": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "stop": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "representativeTranscript": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "referenceBases": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "variantBases": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "coordinateType": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
                     }
                   }
                 }
@@ -523,7 +627,7 @@
   },
   {
     "name": "civic_get_evidence_item",
-    "description": "Get detailed information about a specific evidence item in CIViC database by evidence ID. Evidence items link molecular profiles or variants to clinical outcomes, therapies, or disease states with curated literature support. Returns evidence description, level (A-E), type (PREDICTIVE, DIAGNOSTIC, PROGNOSTIC), significance, direction, status, disease, therapies, molecular profile, and citation.",
+    "description": "Get a specific CIViC evidence item by evidence ID. Evidence items link molecular profiles or variants to clinical outcomes, therapies, or disease states with curated literature support. Returns the evidence level (A-E), type, direction, significance and curator rating, the disease (with DOID), therapies, phenotypes (with HPO ids) and molecular profile, variant origin, and the full source record: PubMed/ASCO id (citationId), title, journal, authors, publication year and URL -- including whether the source has been RETRACTED (retracted, retractionDate, retractionNature, retractionReasons), which a caller must check before relying on the evidence.",
     "type": "CIViCTool",
     "parameter": {
       "type": "object",
@@ -538,7 +642,7 @@
       ]
     },
     "fields": {
-      "query": "query GetEvidenceItem($evidence_id: Int!) { evidenceItem(id: $evidence_id) { id description evidenceLevel evidenceType evidenceDirection significance status disease { name } therapies { name } molecularProfile { id name } source { citation } } }",
+      "query": "query GetEvidenceItem($evidence_id: Int!) { evidenceItem(id: $evidence_id) { id name description status link evidenceLevel evidenceType evidenceDirection significance evidenceRating variantOrigin therapyInteractionType disease { id name doid link } therapies { id name ncitId link } phenotypes { id name hpoId } molecularProfile { id name link } source { id citation citationId sourceType title journal fullJournalTitle authorString publicationYear publicationDate pmcId sourceUrl link openAccess isPreprint retracted retractionDate retractionNature retractionReasons } } }",
       "operation_name": "GetEvidenceItem"
     },
     "return_schema": {
@@ -552,21 +656,331 @@
           "type": "object",
           "properties": {
             "evidenceItem": {
-              "type": "object",
+              "type": [
+                "object",
+                "null"
+              ],
               "properties": {
                 "id": {
-                  "type": "integer"
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "description": {
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "status": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "link": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "evidenceLevel": {
-                  "type": "string",
-                  "description": "Evidence level (A, B, C, D, E)"
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "A (validated) through E (inferential)."
                 },
                 "evidenceType": {
-                  "type": "string",
-                  "description": "Evidence type (PREDICTIVE, DIAGNOSTIC, PROGNOSTIC, etc.)"
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "PREDICTIVE, DIAGNOSTIC, PROGNOSTIC, PREDISPOSING, ONCOGENIC or FUNCTIONAL."
+                },
+                "evidenceDirection": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "SUPPORTS or DOES_NOT_SUPPORT."
+                },
+                "significance": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "evidenceRating": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Curator confidence, 1-5 stars."
+                },
+                "variantOrigin": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "therapyInteractionType": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "disease": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "doid": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Disease Ontology id."
+                    },
+                    "link": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "therapies": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "ncitId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "NCI Thesaurus id."
+                      },
+                      "link": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "phenotypes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "hpoId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Human Phenotype Ontology id."
+                      }
+                    }
+                  }
+                },
+                "molecularProfile": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "link": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "source": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "citation": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Human-readable citation, e.g. 'Vardiman et al., 2009'."
+                    },
+                    "citationId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Identifier within sourceType -- the PMID for PUBMED sources."
+                    },
+                    "sourceType": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "PUBMED, ASCO or ASH."
+                    },
+                    "title": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "journal": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "fullJournalTitle": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "authorString": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "publicationYear": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "publicationDate": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "pmcId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "sourceUrl": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "link": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "openAccess": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "isPreprint": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ]
+                    },
+                    "retracted": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "True when the source publication has been retracted. Check this before relying on the evidence."
+                    },
+                    "retractionDate": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "retractionNature": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "retractionReasons": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
                 }
               }
             }
@@ -582,7 +996,7 @@
   },
   {
     "name": "civic_search_evidence_items",
-    "description": "Search for curated CIViC evidence items. The tool follows CIViC's 100-record GraphQL pages up to limit and returns exact totalCount plus pageInfo. If pageInfo.hasNextPage is true, pass pageInfo.endCursor as after to continue. Filters include therapy, disease, molecular profile, evidence type, significance, direction, and status.",
+    "description": "Search CIViC evidence items with exact totalCount and cursor pagination. Each row carries the evidence level, type, direction, significance and curator rating, the disease (with DOID), therapies and molecular profile, and a resolvable source: citationId (the PMID for PUBMED sources), title, journal, year, URL, and whether the publication has been RETRACTED. When metadata.has_more is true, pass metadata.next_cursor as after with the same filters.",
     "type": "CIViCTool",
     "parameter": {
       "type": "object",
@@ -656,7 +1070,7 @@
       "required": []
     },
     "fields": {
-      "query": "query SearchEvidenceItems($limit: Int, $after: String, $status: EvidenceStatusFilter, $therapyName: String, $diseaseName: String, $molecularProfileName: String, $evidenceType: EvidenceType, $significance: EvidenceSignificance, $evidenceDirection: EvidenceDirection) { evidenceItems(first: $limit, after: $after, status: $status, therapyName: $therapyName, diseaseName: $diseaseName, molecularProfileName: $molecularProfileName, evidenceType: $evidenceType, significance: $significance, evidenceDirection: $evidenceDirection) { totalCount pageInfo { hasNextPage endCursor } nodes { id description evidenceLevel evidenceType evidenceDirection significance status disease { name } therapies { name } molecularProfile { id name } source { citation } } } }",
+      "query": "query SearchEvidenceItems($limit: Int, $after: String, $status: EvidenceStatusFilter, $therapyName: String, $diseaseName: String, $molecularProfileName: String, $evidenceType: EvidenceType, $significance: EvidenceSignificance, $evidenceDirection: EvidenceDirection) { evidenceItems(first: $limit, after: $after, status: $status, therapyName: $therapyName, diseaseName: $diseaseName, molecularProfileName: $molecularProfileName, evidenceType: $evidenceType, significance: $significance, evidenceDirection: $evidenceDirection) { totalCount pageInfo { hasNextPage endCursor } nodes { id name evidenceRating description evidenceLevel evidenceType evidenceDirection significance status disease { id name doid } therapies { id name ncitId } molecularProfile { id name } source { id citation citationId sourceType title journal publicationYear sourceUrl retracted } } } }",
       "operation_name": "SearchEvidenceItems",
       "param_map": {
         "therapy": "therapyName",
@@ -704,16 +1118,200 @@
                     "type": "object",
                     "properties": {
                       "id": {
-                        "type": "integer"
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
                       },
                       "description": {
-                        "type": "string"
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "status": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
                       },
                       "evidenceLevel": {
-                        "type": "string"
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "A (validated) through E (inferential)."
                       },
                       "evidenceType": {
-                        "type": "string"
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "evidenceDirection": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "significance": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "evidenceRating": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "Curator confidence, 1-5 stars."
+                      },
+                      "disease": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "name": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "doid": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "Disease Ontology id."
+                          }
+                        }
+                      },
+                      "therapies": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "name": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "ncitId": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "description": "NCI Thesaurus id."
+                            }
+                          }
+                        }
+                      },
+                      "molecularProfile": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "name": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "source": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "citation": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "Human-readable citation."
+                          },
+                          "citationId": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "Identifier within sourceType -- the PMID for PUBMED sources."
+                          },
+                          "sourceType": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "PUBMED, ASCO or ASH."
+                          },
+                          "title": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "journal": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "publicationYear": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "sourceUrl": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "retracted": {
+                            "type": [
+                              "boolean",
+                              "null"
+                            ],
+                            "description": "True when the source publication has been retracted. Check before relying on the evidence."
+                          }
+                        }
                       }
                     }
                   }
@@ -734,7 +1332,7 @@
   },
   {
     "name": "civic_get_assertion",
-    "description": "Get detailed information about a specific assertion in CIViC database by assertion ID. Assertions are higher-level clinical interpretations that integrate multiple evidence items into formal statements about clinical actionability. Returns assertion description, evidence summary, and associated molecular profile or variant information.",
+    "description": "Get a specific CIViC assertion by assertion ID. Assertions are higher-level clinical interpretations that integrate multiple evidence items into formal statements about clinical actionability. Returns the assertion's type and direction, its clinical significance, its AMP/ASCO/CAP tier (ampLevel) and any ACMG/ClinGen codes, the disease (with DOID) and therapies it concerns, the molecular profile it is made on, variant origin, whether an FDA companion test and regulatory approval exist, the NCCN guideline and version, how many evidence items support it (evidenceItemsCount), and the curated description and summary.",
     "type": "CIViCTool",
     "parameter": {
       "type": "object",
@@ -749,7 +1347,7 @@
       ]
     },
     "fields": {
-      "query": "query GetAssertion($assertion_id: Int!) { assertion(id: $assertion_id) { id description status } }",
+      "query": "query GetAssertion($assertion_id: Int!) { assertion(id: $assertion_id) { id name description summary status link assertionType assertionDirection significance ampLevel variantOrigin fdaCompanionTest regulatoryApproval evidenceItemsCount nccnGuideline { id name } nccnGuidelineVersion therapyInteractionType acmgCodes { code description } clingenCodes { code description } disease { id name doid link } therapies { id name ncitId link } molecularProfile { id name link } } }",
       "operation_name": "GetAssertion"
     },
     "return_schema": {
@@ -763,17 +1361,267 @@
           "type": "object",
           "properties": {
             "assertion": {
-              "type": "object",
+              "type": [
+                "object",
+                "null"
+              ],
               "properties": {
                 "id": {
-                  "type": "integer"
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "description": {
-                  "type": "string"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "summary": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
                 },
                 "status": {
-                  "type": "string",
-                  "description": "Assertion status (ACCEPTED, SUBMITTED, etc.)"
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "link": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "assertionType": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "PREDICTIVE, DIAGNOSTIC, PROGNOSTIC, PREDISPOSING, ONCOGENIC or FUNCTIONAL."
+                },
+                "assertionDirection": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "SUPPORTS or DOES_NOT_SUPPORT."
+                },
+                "significance": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "e.g. SENSITIVITYRESPONSE, RESISTANCE, POSITIVE, BETTER_OUTCOME."
+                },
+                "ampLevel": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "AMP/ASCO/CAP tier, e.g. TIER_I_LEVEL_A. Null when not tiered."
+                },
+                "variantOrigin": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "SOMATIC, GERMLINE, MIXED, NA or UNKNOWN."
+                },
+                "fdaCompanionTest": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "An FDA companion diagnostic exists for this assertion."
+                },
+                "regulatoryApproval": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "The therapy has regulatory approval in this context."
+                },
+                "evidenceItemsCount": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many evidence items the assertion integrates."
+                },
+                "nccnGuideline": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "nccnGuidelineVersion": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "therapyInteractionType": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "COMBINATION, SEQUENTIAL or SUBSTITUTES when several therapies."
+                },
+                "acmgCodes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "clingenCodes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "disease": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "doid": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Disease Ontology id."
+                    },
+                    "link": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "therapies": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "ncitId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "NCI Thesaurus id."
+                      },
+                      "link": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "molecularProfile": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "link": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
                 }
               }
             }
@@ -789,7 +1637,7 @@
   },
   {
     "name": "civic_search_assertions",
-    "description": "Search CIViC assertions with exact totalCount and cursor pagination. When metadata.has_more is true, pass metadata.next_cursor as after with the same filters.",
+    "description": "Search CIViC assertions with exact totalCount and cursor pagination. Each row carries the assertion's type, direction, significance, AMP/ASCO/CAP tier (ampLevel), variant origin, evidence count, disease (with DOID), therapies and molecular profile, so a result set can be triaged without a civic_get_assertion call per row. When metadata.has_more is true, pass metadata.next_cursor as after with the same filters.",
     "type": "CIViCTool",
     "parameter": {
       "type": "object",
@@ -833,7 +1681,7 @@
       "additionalProperties": false
     },
     "fields": {
-      "query": "query SearchAssertions($limit: Int, $after: String, $therapyName: String, $diseaseName: String, $variantName: String) { assertions(first: $limit, after: $after, therapyName: $therapyName, diseaseName: $diseaseName, variantName: $variantName) { totalCount pageInfo { hasNextPage endCursor } nodes { id description status } } }",
+      "query": "query SearchAssertions($limit: Int, $after: String, $therapyName: String, $diseaseName: String, $variantName: String) { assertions(first: $limit, after: $after, therapyName: $therapyName, diseaseName: $diseaseName, variantName: $variantName) { totalCount pageInfo { hasNextPage endCursor } nodes { id name summary status assertionType assertionDirection significance ampLevel variantOrigin evidenceItemsCount disease { id name doid } therapies { id name } molecularProfile { id name } } } }",
       "operation_name": "SearchAssertions",
       "param_map": {
         "therapy": "therapyName",
@@ -882,13 +1730,141 @@
                     "type": "object",
                     "properties": {
                       "id": {
-                        "type": "integer"
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
                       },
-                      "description": {
-                        "type": "string"
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "summary": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
                       },
                       "status": {
-                        "type": "string"
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "assertionType": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "PREDICTIVE, DIAGNOSTIC, PROGNOSTIC, PREDISPOSING, ONCOGENIC or FUNCTIONAL."
+                      },
+                      "assertionDirection": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "SUPPORTS or DOES_NOT_SUPPORT."
+                      },
+                      "significance": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "ampLevel": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "AMP/ASCO/CAP tier, e.g. TIER_I_LEVEL_A. Null when not tiered."
+                      },
+                      "variantOrigin": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "evidenceItemsCount": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "disease": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "name": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          },
+                          "doid": {
+                            "type": [
+                              "string",
+                              "null"
+                            ],
+                            "description": "Disease Ontology id."
+                          }
+                        }
+                      },
+                      "therapies": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": [
+                                "integer",
+                                "null"
+                              ]
+                            },
+                            "name": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "ncitId": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "description": "NCI Thesaurus id."
+                            }
+                          }
+                        }
+                      },
+                      "molecularProfile": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "properties": {
+                          "id": {
+                            "type": [
+                              "integer",
+                              "null"
+                            ]
+                          },
+                          "name": {
+                            "type": [
+                              "string",
+                              "null"
+                            ]
+                          }
+                        }
                       }
                     }
                   }

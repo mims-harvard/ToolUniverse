@@ -1,7 +1,7 @@
 """
 civic_search_evidence_items
 
-Search for curated CIViC evidence items. The tool follows CIViC's 100-record GraphQL pages up to ...
+Search CIViC evidence items with exact totalCount and cursor pagination. Each row carries the evi...
 """
 
 from typing import Any, Optional, Callable
@@ -26,7 +26,7 @@ def civic_search_evidence_items(
     validate: bool = True,
 ) -> dict[str, Any]:
     """
-    Search for curated CIViC evidence items. The tool follows CIViC's 100-record GraphQL pages up to ...
+    Search CIViC evidence items with exact totalCount and cursor pagination. Each row carries the evi...
 
     Parameters
     ----------

@@ -720,38 +720,16 @@ class OpentargetToolDrugNameMatch(GraphQLTool):
         return {"status": "success", "data": results.get("data", results)}
 
 
-@register_tool("OpenTargetGenetics")
-class OpentargetGeneticsTool(GraphQLTool):
-    def __init__(self, tool_config):
-        endpoint_url = "https://api.genetics.opentargets.org/graphql"
-        super().__init__(tool_config, endpoint_url)
-
-    def run(self, arguments):
-        arguments = copy.deepcopy(arguments)
-        # Resolve disease_name → diseaseIds if not already provided
-        if "diseaseIds" not in arguments:
-            disease_name = None
-            for alias in ("disease_name", "disease", "trait"):
-                if arguments.get(alias):
-                    disease_name = arguments.pop(alias)
-                    break
-            if disease_name:
-                resolved = _ot_resolve_id(
-                    "https://api.platform.opentargets.org/api/v4/graphql",
-                    disease_name,
-                    "disease",
-                )
-                if resolved:
-                    arguments["diseaseIds"] = [resolved]
-                else:
-                    return {
-                        "status": "error",
-                        "error": (
-                            f"Could not resolve '{disease_name}' to a disease ID. "
-                            "Try passing diseaseIds directly (e.g. ['MONDO_0005148'] for type 2 diabetes)."
-                        ),
-                    }
-        return super().run(arguments)
+# `OpenTargetGenetics` was registered here against
+# https://api.genetics.opentargets.org/graphql. That host no longer resolves --
+# Open Targets retired the separate Genetics portal and folded it into the
+# platform API -- and no tool config has ever used the type (0 of 2820, against
+# 71 for OpenTarget and 10 for DiseaseTargetScoreTool). A registered type whose
+# only possible outcome is a DNS failure is a trap for whoever next writes a
+# config against it, so it is gone. The GWAS/variant tools that look like its
+# successors (OpenTargets_get_variant_info, _get_gwas_study,
+# _get_variant_credible_sets and the rest of opentarget_genetics_tools.json) are
+# type OpenTarget and run against the platform endpoint, which is why they work.
 
 
 @register_tool("DiseaseTargetScoreTool")
