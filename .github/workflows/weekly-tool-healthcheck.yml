@@ -116,6 +116,30 @@ jobs:
             --json-output TOOL_TEST_RESULTS_${{ matrix.shard }}.json \
             2>&1 | tee sweep_output_${{ matrix.shard }}.log
 
+      # The field axis of "part of a result returned as all of it". #824 swept
+      # the row axis; this is the other one, and for the 2,786 tools without a
+      # declared GraphQL query it cannot be measured statically -- nothing says
+      # what the upstream offers. So it is measured from a live call: the
+      # script records every JSON response at the HTTP layer, runs each tool's
+      # own first test_example, and reports upstream fields whose values do not
+      # reach the caller. It compares VALUES, not key names, because wrappers
+      # rename.
+      #
+      # Here rather than in a gate for the same reason the sweep itself is a
+      # canary: a thin field is a candidate, not a verdict. Whether a skipped
+      # field is a defect depends on what the tool's own description promises,
+      # which no threshold decides. continue-on-error and a separate artifact,
+      # so a slow upstream cannot turn the run red.
+      - name: Upstream field coverage (live APIs, does not fail the job)
+        id: coverage
+        continue-on-error: true
+        timeout-minutes: 45
+        run: |
+          python scripts/audit_upstream_field_coverage.py \
+            --shard ${{ matrix.shard }}/${{ env.SHARD_COUNT }} \
+            --json-output FIELD_COVERAGE_${{ matrix.shard }}.json \
+            2>&1 | tee coverage_output_${{ matrix.shard }}.log
+
       - name: Upload shard results
         if: always()
         uses: actions/upload-artifact@v4
@@ -129,6 +153,8 @@ jobs:
             TOOL_TEST_REPORT_${{ matrix.shard }}.md
             TOOL_TEST_RESULTS_${{ matrix.shard }}.json
             sweep_output_${{ matrix.shard }}.log
+            FIELD_COVERAGE_${{ matrix.shard }}.json
+            coverage_output_${{ matrix.shard }}.log
           if-no-files-found: warn
           retention-days: 90
 
@@ -160,6 +186,7 @@ jobs:
           python scripts/summarize_health_sweep.py \
             --logs 'shards/*/sweep_output_*.log' \
             --results 'shards/*/TOOL_TEST_RESULTS_*.json' \
+            --coverage 'shards/*/FIELD_COVERAGE_*.json' \
             --baseline .github/known_failing_categories.txt \
             --history .github/tool-health-history.jsonl \
             --summary "$GITHUB_STEP_SUMMARY" \
