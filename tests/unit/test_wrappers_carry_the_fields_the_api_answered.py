@@ -771,6 +771,26 @@ UPSTREAM_KEYS = [
         'gene_data.get("allele_name"',
         "which alleles IMPC phenotyped, beside the phenotype status",
     ),
+    (
+        "progenetix_tool.py",
+        "pathological_tnm_findings",
+        "all three TNM findings, where the first label was reported as the staging",
+    ),
+    (
+        "progenetix_tool.py",
+        's.get("cohorts")',
+        "which study a sample in a CNV search came from",
+    ),
+    (
+        "metabolite_tool.py",
+        'entry.get("mesh_chemical_id")',
+        "which CTD chemical a metabolite name was matched to",
+    ),
+    (
+        "metabolite_tool.py",
+        "terms_tried",
+        "which name variants were tried, so an empty answer is not read as no associations",
+    ),
 ]
 
 
@@ -928,6 +948,10 @@ DECLARED = [
     ("IMPC_get_phenotypes_by_gene", "statistical_method"),
     ("IMPC_get_gene_summary", "allele_names"),
     ("IMPC_search_genes", "marker_type"),
+    ("Progenetix_search_biosamples", "pathological_tnm_findings"),
+    ("Progenetix_list_cohorts", "reference"),
+    ("HMDB_get_diseases", "mesh_chemical_id"),
+    ("HMDB_get_diseases", "ctd_terms_tried"),
 ]
 
 

@@ -280,6 +280,23 @@ NOT_RECORD_DATA = re.compile(
     # cBioPortal's base64 internal row keys, derivable from the sample and
     # study ids it returns beside them, and a colour for its own UI.
   | (^|\.)unique(Patient|Sample)Key$
+    # PubChem's drawing of a molecule: the 2D/3D conformer coordinates, the
+    # bond table they are drawn from, and the release/version stamp on each
+    # computed property. The structure itself is the SMILES and the InChI,
+    # which these tools do return.
+  | PC_Compounds\[\]\.(coords|bonds|atoms|stereo)(\.|\[)
+  | PC_Compounds\[\]\.props\[\]\.urn\.
+                                                # (release, version, software,
+                                                # source, implementation: the
+                                                # stamp on a computed property,
+                                                # not the property)
+    # MeSH's own term record, fetched only to turn a disease id into a label:
+    # its qualifiers ("drug therapy", "genetics") and related terms are not
+    # the metabolite-disease association being answered.
+  | (^|\.)(qualifiers|terms)\[\]\.(resource|label)$
+    # A licence notice on a response block, which several BioThings APIs
+    # attach under an underscore-prefixed key.
+  | (^|\.)_license$
   | (^|\.)dedicatedColor$
     """
 )
