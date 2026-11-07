@@ -86,6 +86,12 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "loci_with_domain": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
                   }
                 }
               }
@@ -200,6 +206,18 @@
                   "pubmed_id": {
                     "type": [
                       "integer",
+                      "null"
+                    ]
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "modifier": {
+                    "type": [
+                      "string",
                       "null"
                     ]
                   }

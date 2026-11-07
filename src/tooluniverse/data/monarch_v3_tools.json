@@ -27,7 +27,208 @@
       }
     ],
     "return_schema": {
-      "type": "object"
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "full_name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "category": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "symbol": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "synonyms": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "xrefs": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "taxon": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "taxon_label": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "provided_by": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "deprecated": {
+              "type": "boolean"
+            },
+            "has_phenotype": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "has_phenotype_label": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "association_counts": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "iri": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "inheritance": {
+              "type": [
+                "object",
+                "string",
+                "null"
+              ]
+            },
+            "causes_disease": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            },
+            "node_relationships": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "relation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "relation_label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "related_entity_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "related_entity_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "not": {
+            "type": "object",
+            "required": [
+              "error"
+            ]
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
     }
   },
   {
@@ -86,7 +287,206 @@
       }
     ],
     "return_schema": {
-      "type": "array"
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "subject": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "subject_label": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "object": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "object_label": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "category": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "predicate": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "negated": {
+                "type": [
+                  "string",
+                  "boolean",
+                  "null"
+                ]
+              },
+              "provided_by": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "primary_knowledge_source": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "knowledge_level": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "agent_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "aggregator_knowledge_source": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "publications": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "evidence_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "frequency_qualifier": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "has_percentage": {
+                "type": [
+                  "string",
+                  "number",
+                  "null"
+                ]
+              },
+              "has_quotient": {
+                "type": [
+                  "string",
+                  "number",
+                  "null"
+                ]
+              },
+              "has_count": {
+                "type": [
+                  "string",
+                  "integer",
+                  "null"
+                ]
+              },
+              "has_total": {
+                "type": [
+                  "string",
+                  "integer",
+                  "null"
+                ]
+              },
+              "onset_qualifier": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "sex_qualifier": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "disease_context_qualifier": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "association_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "original_subject": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "original_object": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "subject_category": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "object_category": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "subject_taxon": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "subject_taxon_label": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
     }
   },
   {
@@ -139,7 +539,108 @@
       }
     ],
     "return_schema": {
-      "type": "array"
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "category": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "symbol": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "taxon": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "taxon_label": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "deprecated": {
+                "type": "boolean"
+              },
+              "score": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "provided_by": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "namespace": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "synonyms": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "xrefs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "match_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
     },
     "aliases": [
       "Monarch_search_diseases"
@@ -173,7 +674,45 @@
       }
     ],
     "return_schema": {
-      "type": "array"
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "body_system": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "phenotype_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
     }
   },
   {
@@ -219,7 +758,87 @@
       }
     ],
     "return_schema": {
-      "type": "array"
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "subject_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "subject_label": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "predicate": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "object_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "object_label": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "mapping_source": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "mapping_justification": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "mapping_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "mapping_provider": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "confidence": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
     }
   },
   {
@@ -272,7 +891,205 @@
       }
     ],
     "return_schema": {
-      "type": "array"
+      "oneOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "disease_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "disease_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "disease_category": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "disease_iri": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "disease_xrefs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "disease_provided_by": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "disease_synonyms": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "score": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "average_score": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "best_score": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "metric": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "object_best_matches": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "query_phenotype": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "query_label": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "matched_phenotype": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "matched_label": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "score": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "ancestor_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "ancestor_label": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "match_subsumer": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "match_subsumer_label": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "jaccard_similarity": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "phenodigm_score": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              },
+              "matched_phenotypes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "query_phenotype": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "query_label": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "matched_phenotype": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "matched_label": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "score": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
     }
   },
   {

@@ -76,22 +76,31 @@ import re
 import sys
 
 REPO = pathlib.Path(__file__).resolve().parent.parent
+# Upstream fields are enumerated to MAX_DEPTH, which keeps the report readable.
+# What the caller RECEIVED is read much deeper, because a value that reached
+# them is a survivor however deep the wrapper nests it -- and wrappers nest
+# deeper than the API does. Measured: the by-rsID variation output puts a
+# disease's OMIM id at depth 9 (data > entries > features > associations >
+# db_references > database), so at a shared limit of 8 its 132 values were
+# invisible and all three `dbReferences` fields read as dropped while the
+# caller had them.
 MAX_DEPTH = 8
+SURVIVOR_DEPTH = 24
 MIN_VALUE_LENGTH = 2  # one-character values match by accident
 
 
-def leaf_values(node, out=None, depth=0):
+def leaf_values(node, out=None, depth=0, limit=SURVIVOR_DEPTH):
     """Scalar leaf values reachable from `node`, as a list of strings."""
     if out is None:
         out = []
-    if depth > MAX_DEPTH:
+    if depth > limit:
         return out
     if isinstance(node, dict):
         for value in node.values():
-            leaf_values(value, out, depth + 1)
+            leaf_values(value, out, depth + 1, limit)
     elif isinstance(node, list):
         for value in node:
-            leaf_values(value, out, depth + 1)
+            leaf_values(value, out, depth + 1, limit)
     elif node is None or isinstance(node, bool):
         pass
     else:
@@ -131,19 +140,19 @@ def normalise_key(name):
     return re.sub(r"[^a-z0-9]", "", name.lower())
 
 
-def key_names(node, out=None, depth=0):
+def key_names(node, out=None, depth=0, limit=SURVIVOR_DEPTH):
     """Every dict key reachable from `node`, normalised."""
     if out is None:
         out = set()
-    if depth > MAX_DEPTH:
+    if depth > limit:
         return out
     if isinstance(node, dict):
         for key, value in node.items():
             out.add(normalise_key(str(key)))
-            key_names(value, out, depth + 1)
+            key_names(value, out, depth + 1, limit)
     elif isinstance(node, list):
         for value in node:
-            key_names(value, out, depth + 1)
+            key_names(value, out, depth + 1, limit)
     return out
 
 
@@ -155,17 +164,37 @@ NOT_RECORD_DATA = re.compile(
     r"""(?x)
     (^|\.)_?links?(\.|\[|$)                  # HATEOAS
   | (^|\.)relationships(\.|\[)                # JSON:API relationship stubs
+  | (^|\.)data\[\]\.type$                       # JSON:API resource type, which
+                                                # restates the endpoint
   | (^|\.)self$
   | resourceDescriptorPage                     # URL templates for a curie
   | (^|\.)urlTemplate$ | idPattern$ | idExample$ | resourcePages
   | supplementalData\.distinctFieldValues      # search facet values
   | (^|\.)aggregations(\.|\[)                 # search facet counts
-  | (^|\.)highlights?(\.|\[)                  # search result highlighting
+  | (^|\.)facets?(\.|\[)                      # ENCODE portal facet terms
+  | (^|\.)facet_fields(\.|\[)                  # Monarch's name for the same
+  | (^|\.)facet_groups(\.|\[)                 # how the portal groups them
+  | (^|\.)(filters|clear_filters)(\.|\[|$)    # the query as the portal echoes it
+  | (^|\.)(columns|sort|notification)(\.|\[|$)  # portal result-table state
+  | (^|\.)highlight(s|ing)?(\.|\[)             # search result highlighting
+  | (^|\.)subsets?(\.|\[|$)                   # ontology subset tags
+  | (^|\.)grouping_key$                        # Monarch's internal row key
+  | ((^|\.)|_)namespace$                        # the curie prefix, derivable
+  | (^|\.)alternativeUrl$                       # a second link to what url
+                                                # already points at
+  | _links?(\.|\[)                             # {id, url} link objects beside
+                                                # the field they link
   | (^|\.)(createdBy|updatedBy)(\.|\[)        # audit trail
   | _searchable(\[\])?$ | _closure            # Solr expansions
   | (^|\.)(_score|_version_|maxScore|numFound|QTime|responseHeader)$
+    # bigBed display columns. `reserved` is the item RGB -- "0,176,240" for a
+    # cCRE whose `cCRE_class` the tool does return -- and thickStart/thickEnd
+    # are where the thick box is drawn. `bin` is UCSC's genomic index; a real
+    # histogram bin is named bins[] or bin_count, not a bare `bin` beside
+    # chromStart.
+  | (^|\.)(reserved|thickStart|thickEnd|itemRgb|blockCount|blockSizes|chromStarts|bin)$
   | [Dd]efinition(\[\])?$                     # paragraphs of ontology prose
-  | (^|\.)(translationstack|idlist|uids?|webenv|querykey)(\.|\[|$)
+  | (^|\.)(translationstack|translationset|idlist|uids?|webenv|querykey)(\.|\[|$)
   | (^|\.)(page|per_page|pageSize|page_size|total_pages|pageInfo)(\.|\[|$)
   | (^|\.)@                                   # JSON-LD framing
     """
@@ -177,19 +206,54 @@ def is_record_data(field):
     return not NOT_RECORD_DATA.search(field)
 
 
-def key_names_raw(node, out=None, depth=0):
+def key_names_raw(node, out=None, depth=0, limit=SURVIVOR_DEPTH):
     """Every dict key reachable from `node`, unnormalised."""
+    if out is None:
+        out = set()
+    if depth > limit:
+        return out
+    if isinstance(node, dict):
+        for key, value in node.items():
+            out.add(str(key).strip())
+            key_names_raw(value, out, depth + 1, limit)
+    elif isinstance(node, list):
+        for value in node:
+            key_names_raw(value, out, depth + 1, limit)
+    return out
+
+
+STUB_SIBLINGS = ("link", "display_name", "format_name", "href", "url")
+
+
+def surrogate_id_paths(node, prefix="", out=None, depth=0):
+    """Paths of a bare numeric `id` that sits beside a link or a display name.
+
+    An entity stub -- SGD answers `{"id": 823128, "display_name": "CAA84998.1",
+    "link": "/locus/S000000259"}` for every referenced object -- carries the
+    database's own row number alongside the identifier that means something.
+    The row number reaches no caller and should not: the wrapper reads the
+    SGDID out of `link`. Scoped to this shape on purpose, because a bare
+    numeric `id` IS the identifier in other APIs (a PubChem CID, an OMIM
+    number), and those records do not carry a `link` beside it.
+    """
     if out is None:
         out = set()
     if depth > MAX_DEPTH:
         return out
     if isinstance(node, dict):
-        for key, value in node.items():
-            out.add(str(key).strip())
-            key_names_raw(value, out, depth + 1)
+        value = node.get("id")
+        if (
+            isinstance(value, (int, float))
+            or (isinstance(value, str) and value.strip().isdigit())
+        ) and any(node.get(sibling) for sibling in STUB_SIBLINGS):
+            out.add(f"{prefix}.id" if prefix else "id")
+        for key, child in node.items():
+            surrogate_id_paths(
+                child, f"{prefix}.{key}" if prefix else key, out, depth + 1
+            )
     elif isinstance(node, list):
-        for value in node:
-            key_names_raw(value, out, depth + 1)
+        for child in node:
+            surrogate_id_paths(child, f"{prefix}[]", out, depth + 1)
     return out
 
 
@@ -400,6 +464,7 @@ def audit(
         mapped_but_unseen = []
         not_record_data = []
         for call in calls:
+            surrogates = surrogate_id_paths(call["body"])
             for row in compare(call["body"], returned):
                 row["url"] = call["url"]
                 if row["total"] < min_values:
@@ -416,7 +481,7 @@ def audit(
                 # ... unless the page it exposes is all nulls. Then the field is
                 # selected and has nothing to show, which is the upstream being
                 # sparse, not the wrapper dropping anything.
-                if not is_record_data(row["field"]):
+                if row["field"] in surrogates or not is_record_data(row["field"]):
                     not_record_data.append(row)
                 elif row["mapped"]:
                     mapped_but_unseen.append(row)

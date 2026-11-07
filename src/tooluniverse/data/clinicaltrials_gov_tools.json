@@ -1,7 +1,7 @@
 [
   {
     "name": "search_clinical_trials",
-    "description": "Search ClinicalTrials.gov for clinical trials by disease/condition, drug/intervention, or keywords. This is the PRIMARY tool for finding clinical trials \u2014 use it when you need to discover trials for a drug (e.g., 'olaparib', 'pembrolizumab'), a disease (e.g., 'lung cancer', 'diabetes'), or any study criteria. Accepts condition names, intervention/treatment names, and free-text queries. Returns NCT IDs and brief descriptions with pagination. Use the returned NCT IDs with 'get_clinical_trial_*' tools for detailed protocol info, or 'extract_clinical_trial_*' tools for efficacy/safety results. Limited to trials beyond phase 1. Query rewriting: multi-word `intervention` values are matched as an EXACT PHRASE against each study's registered intervention names/synonyms, so a phrase no registrant recorded verbatim can match 0 studies even when many trials mention it. The query actually executed is returned in `executed_query` (detail in `query_rewrites`), and a zero-hit rewritten query reports in `relaxed_match_check` how many studies your original wording would have matched. Wrap a value in parentheses (e.g. '(cell therapy)') to send it verbatim.",
+    "description": "Search ClinicalTrials.gov for clinical trials by disease/condition, drug/intervention, or keywords. This is the PRIMARY tool for finding clinical trials — use it when you need to discover trials for a drug (e.g., 'olaparib', 'pembrolizumab'), a disease (e.g., 'lung cancer', 'diabetes'), or any study criteria. Accepts condition names, intervention/treatment names, and free-text queries. Returns NCT IDs and brief descriptions with pagination. Use the returned NCT IDs with 'get_clinical_trial_*' tools for detailed protocol info, or 'extract_clinical_trial_*' tools for efficacy/safety results. Limited to trials beyond phase 1. Query rewriting: multi-word `intervention` values are matched as an EXACT PHRASE against each study's registered intervention names/synonyms, so a phrase no registrant recorded verbatim can match 0 studies even when many trials mention it. The query actually executed is returned in `executed_query` (detail in `query_rewrites`), and a zero-hit rewritten query reports in `relaxed_match_check` how many studies your original wording would have matched. Wrap a value in parentheses (e.g. '(cell therapy)') to send it verbatim.",
     "parameter": {
       "type": "object",
       "additionalProperties": false,
@@ -1178,6 +1178,76 @@
                   "completion_date": {
                     "type": [
                       "string",
+                      "null"
+                    ]
+                  },
+                  "countries": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "locations": {
+                    "type": "array"
+                  },
+                  "location_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ]
+                  },
+                  "locations_truncated": {
+                    "type": "boolean"
+                  },
+                  "intervention_other_names": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "references": {
+                    "type": "array",
+                    "description": "The publications behind this record"
+                  },
+                  "facility": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "city": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "state": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "zip": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "country": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "latitude": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "longitude": {
+                    "type": [
+                      "number",
                       "null"
                     ]
                   }

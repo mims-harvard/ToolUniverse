@@ -276,6 +276,23 @@ def test_transport_and_search_machinery_are_not_the_record(audit):
         assert audit.is_record_data(field), field
 
 
+def test_a_surrogate_id_beside_a_link_is_not_the_record(audit):
+    """SGD answers its own row number for every referenced object.
+
+    `{"id": 823128, "display_name": "CAA84998.1", "link": "/locus/S000000259"}`
+    -- the id is the database's row number and the identifier that means
+    something is in the link, which is what the wrapper reads. Scoped to this
+    shape on purpose: a bare numeric `id` IS the identifier in other APIs, and
+    those records carry no link beside it.
+    """
+    stub = {"rows": [{"id": 823128, "display_name": "X", "link": "/locus/S1"}]}
+    assert audit.surrogate_id_paths(stub) == {"rows[].id"}
+
+    # A PubChem-shaped record, where the numeric id is the identifier.
+    bare = {"rows": [{"id": 2244, "name": "aspirin"}]}
+    assert audit.surrogate_id_paths(bare) == set()
+
+
 def test_the_summariser_merges_the_shards_and_records_the_count(summarize, tmp_path):
     """Measured and then thrown away is the failure mode to avoid."""
     shard = tmp_path / "shards" / "a"

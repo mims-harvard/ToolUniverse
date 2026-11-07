@@ -75,6 +75,102 @@
               "items": {
                 "type": "string"
               }
+            },
+            "qualifier": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "name_description": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "alias_details": {
+              "type": "array"
+            },
+            "qualities": {
+              "type": "object"
+            },
+            "resource_links": {
+              "type": "array"
+            },
+            "paralogs": {
+              "type": "array"
+            },
+            "alleles": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "references_count": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "go_slim": {
+              "type": "array"
+            },
+            "phenotype_experiment_categories": {
+              "type": "array"
+            },
+            "protein_overview": {
+              "type": "object"
+            },
+            "feature_type": {
+              "type": "object"
+            },
+            "id": {
+              "type": "object"
+            },
+            "citation": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "pubmed_id": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "link": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "year": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "journal": {
+              "type": "object"
+            },
+            "authors": {
+              "type": "array"
+            },
+            "urls": {
+              "type": "array"
+            },
+            "category": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
             }
           },
           "not": {
@@ -184,6 +280,39 @@
                   "string",
                   "null"
                 ]
+              },
+              "qualifier": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "experiment_category": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "reference_pubmed_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "experiment_properties": {
+                "type": "array"
+              },
+              "details": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "reference_citation": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
           }
@@ -289,6 +418,18 @@
                   "string",
                   "null"
                 ]
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "reference_pubmed_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
               }
             }
           }
@@ -389,6 +530,81 @@
                   "string",
                   "null"
                 ]
+              },
+              "bait_hit": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "bait_sgdid": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "hit_sgdid": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "bait_systematic_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "hit_systematic_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "phenotype": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "mutant_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "modification": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "note": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "source": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "reference_pubmed_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "reference_sgdid": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "alleles": {
+                "type": "array"
               }
             }
           }
@@ -481,6 +697,18 @@
               "aliases": {
                 "type": [
                   "array",
+                  "null"
+                ]
+              },
+              "status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "bioentity_id": {
+                "type": [
+                  "integer",
                   "null"
                 ]
               }
@@ -702,6 +930,33 @@
                     "string",
                     "null"
                   ]
+                },
+                "strain": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "contig": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "contig_systematic_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "is_reference_strain": {
+                  "type": "boolean"
+                },
+                "strains_available": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
                 }
               }
             },
@@ -854,6 +1109,21 @@
                   "integer",
                   "null"
                 ]
+              },
+              "evidence_code": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "experiment_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "experiment_properties": {
+                "type": "array"
               }
             }
           }

@@ -232,6 +232,12 @@ def _canonicalize_enum(value: str, allowed: tuple):
     return {_key(a): a for a in allowed}.get(_key(value))
 
 
+# How many individual sites a search row carries. A multi-country trial has
+# hundreds, and one page of ten such studies answered 2,203; `countries` and
+# `location_count` carry the shape of the rest.
+LOCATIONS_PER_SEARCH_ROW = 5
+
+
 @register_tool("ClinicalTrialsTool")
 class ClinicalTrialsTool(RESTfulTool):
     _BASE_URL = "https://clinicaltrials.gov/api/v2"
@@ -563,12 +569,62 @@ class ClinicalTrialsTool(RESTfulTool):
                 )
                 if iv.get("name")
             ]
+            # A drug is registered under one name and searched under another.
+            # The response lists the synonyms per intervention and the rows
+            # carried only the primary name, so a search for a trade name
+            # missed trials that list it as an other name.
+            intervention_other_names = sorted(
+                {
+                    other
+                    for iv in proto.get("armsInterventionsModule", {}).get(
+                        "interventions", []
+                    )
+                    for other in (iv.get("otherNames") or [])
+                    if isinstance(other, str) and other
+                }
+            )
+            # Where the trial actually runs. A search answered 2,203 location
+            # records across one page and the rows carried none of them, so
+            # "trials for X in Germany" or "a site near this city" needed a
+            # per-study follow-up call. The countries are summarised because
+            # they are short and are what most searches filter on; the
+            # individual sites are capped and the cut is disclosed.
+            all_locations = (
+                proto.get("contactsLocationsModule", {}).get("locations") or []
+            )
+            countries = sorted(
+                {
+                    loc.get("country")
+                    for loc in all_locations
+                    if isinstance(loc, dict) and loc.get("country")
+                }
+            )
+            location_page = [
+                {
+                    "facility": loc.get("facility"),
+                    "city": loc.get("city"),
+                    "state": loc.get("state"),
+                    "zip": loc.get("zip"),
+                    "country": loc.get("country"),
+                    "status": loc.get("status"),
+                    # Coordinates, so "near me" can be answered without
+                    # geocoding a facility name.
+                    "latitude": (loc.get("geoPoint") or {}).get("lat"),
+                    "longitude": (loc.get("geoPoint") or {}).get("lon"),
+                }
+                for loc in all_locations[:LOCATIONS_PER_SEARCH_ROW]
+                if isinstance(loc, dict)
+            ]
             studies.append(
                 {
                     "nct_id": proto.get("identificationModule", {}).get("nctId"),
                     "brief_title": proto.get("identificationModule", {}).get(
                         "briefTitle"
                     ),
+                    "countries": countries,
+                    "locations": location_page,
+                    "location_count": len(all_locations),
+                    "locations_truncated": len(location_page) < len(all_locations),
                     "status": proto.get("statusModule", {}).get("overallStatus"),
                     "study_type": proto.get("designModule", {}).get("studyType"),
                     "phases": proto.get("designModule", {}).get("phases", []),
@@ -581,6 +637,20 @@ class ClinicalTrialsTool(RESTfulTool):
                     "interventions": all_interventions[:5],
                     "intervention_count": len(all_interventions),
                     "interventions_truncated": len(all_interventions) > 5,
+                    "intervention_other_names": intervention_other_names,
+                    # The trial's own publications. A search result with no
+                    # PMID cannot be followed to what was published.
+                    "references": [
+                        {
+                            "pmid": ref.get("pmid"),
+                            "type": ref.get("type"),
+                            "citation": ref.get("citation"),
+                        }
+                        for ref in (
+                            proto.get("referencesModule", {}).get("references") or []
+                        )
+                        if isinstance(ref, dict)
+                    ],
                     "sponsor": (
                         proto.get("sponsorCollaboratorsModule", {}).get("leadSponsor")
                         or {}
@@ -2298,6 +2368,14 @@ class ClinicalTrialsDetailsTool(ClinicalTrialsTool):
                         continue
 
                 new_outcome["title"] = outcome.get("title")
+                # PRIMARY or SECONDARY. The filter above reads it and the row
+                # did not carry it, so an `outcome_measure="all"` call returned
+                # primary and secondary outcomes mixed with no way to tell
+                # which was which.
+                new_outcome["type"] = outcome.get("type")
+                new_outcome["param_type"] = outcome.get("paramType")
+                new_outcome["unit_of_measure"] = outcome.get("unitOfMeasure")
+                new_outcome["dispersion_type"] = outcome.get("dispersionType")
                 new_outcome["description"] = outcome.get("description")
                 new_outcome["population"] = outcome.get("populationDescription")
                 new_outcome["time_frame"] = outcome.get("timeFrame")
@@ -2450,10 +2528,14 @@ class ClinicalTrialsDetailsTool(ClinicalTrialsTool):
                         if organ_system not in organs:
                             continue
 
-                    if "sourceVocabulary" in ae:
-                        del ae["sourceVocabulary"]
-                    if "assessmentType" in ae:
-                        del ae["assessmentType"]
+                    # `sourceVocabulary` and `assessmentType` used to be
+                    # deleted here. Both change how the numbers read:
+                    # sourceVocabulary names the MedDRA version the term comes
+                    # from, and assessmentType separates a SYSTEMATIC_
+                    # ASSESSMENT -- every participant checked for this event --
+                    # from a NON_SYSTEMATIC one, where a lower count may mean
+                    # only that nobody looked. Comparing arms across that
+                    # difference is not valid, and the caller could not see it.
 
                     if "stats" in ae and len(ae["stats"]) > 0:
                         for group_stats in ae["stats"]:
@@ -2492,8 +2574,12 @@ class ClinicalTrialsDetailsTool(ClinicalTrialsTool):
                             else:
                                 group_stats["percentage"] = None
 
-                            if "numEvents" in group_stats:
-                                del group_stats["numEvents"]
+                            # `numEvents` used to be deleted once
+                            # `percentage` had been computed from it, leaving a
+                            # derived number with its input removed -- and
+                            # events are not participants: 5 events in 3
+                            # patients and 5 affected patients are different
+                            # facts that both arrived as "5".
 
                     serious_aes.append(ae)
 
@@ -2512,10 +2598,14 @@ class ClinicalTrialsDetailsTool(ClinicalTrialsTool):
                         if organ_system not in organs:
                             continue
 
-                    if "sourceVocabulary" in ae:
-                        del ae["sourceVocabulary"]
-                    if "assessmentType" in ae:
-                        del ae["assessmentType"]
+                    # `sourceVocabulary` and `assessmentType` used to be
+                    # deleted here. Both change how the numbers read:
+                    # sourceVocabulary names the MedDRA version the term comes
+                    # from, and assessmentType separates a SYSTEMATIC_
+                    # ASSESSMENT -- every participant checked for this event --
+                    # from a NON_SYSTEMATIC one, where a lower count may mean
+                    # only that nobody looked. Comparing arms across that
+                    # difference is not valid, and the caller could not see it.
 
                     if "stats" in ae and len(ae["stats"]) > 0:
                         for group_stats in ae["stats"]:
@@ -2554,8 +2644,12 @@ class ClinicalTrialsDetailsTool(ClinicalTrialsTool):
                             else:
                                 group_stats["percentage"] = None
 
-                            if "numEvents" in group_stats:
-                                del group_stats["numEvents"]
+                            # `numEvents` used to be deleted once
+                            # `percentage` had been computed from it, leaving a
+                            # derived number with its input removed -- and
+                            # events are not participants: 5 events in 3
+                            # patients and 5 affected patients are different
+                            # facts that both arrived as "5".
 
                     other_aes.append(ae)
 

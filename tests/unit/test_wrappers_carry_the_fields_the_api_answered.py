@@ -309,6 +309,112 @@ UPSTREAM_KEYS = [
         "automatedGeneDescription",
         "what a search hit is known for, so hits can be ranked without a call each",
     ),
+    # Round two: the families the catalogue-wide run ranked highest.
+    (
+        "epigenomics_tool.py",
+        'item.get("sourceIds")',
+        "which ENCODE experiments support a TF cluster, beside a sourceCount that said how many",
+    ),
+    (
+        "epigenomics_tool.py",
+        'feat.get("extended_start")',
+        "the Regulatory Build's flanking bounds, a different overlap question from the core ones",
+    ),
+    (
+        "monarch_v3_tool.py",
+        "knowledge_level",
+        "whether a Biolink association is a curated assertion or a prediction",
+    ),
+    (
+        "monarch_v3_tool.py",
+        "has_percentage",
+        "how often a phenotype occurs in the disease, not merely that it has been seen",
+    ),
+    (
+        "monarch_v3_tool.py",
+        "mapping_justification",
+        "whether a cross-ontology mapping was curated or produced by a string match",
+    ),
+    (
+        "monarch_v3_tool.py",
+        "causes_disease",
+        "the diseases a gene causes, in the same response as its name",
+    ),
+    (
+        "ebi_proteins_ext_tool.py",
+        "predictions",
+        "SIFT and PolyPhen, dropped from a variant tool that answered the position",
+    ),
+    (
+        "ebi_proteins_ext_tool.py",
+        "populationFrequencies",
+        "how common the variant is, without which a clinical significance cannot be weighed",
+    ),
+    (
+        "ebi_proteins_ext_tool.py",
+        '"consequence_type": feature.get("consequenceType")',
+        "what the variant does to the protein; present on all 3,662 features of P04637",
+    ),
+    (
+        "ebi_proteins_ext_tool.py",
+        "reviewStatus",
+        "what separates a reviewed ClinVar assertion from one unreviewed submission",
+    ),
+    (
+        "ebi_proteins_ext_tool.py",
+        '"exons": [',
+        "the exon coordinates, beside a num_exons that was the count of them",
+    ),
+    (
+        "ebi_proteins_ext_tool.py",
+        '"ligand": {',
+        "what binds at a binding site, for a feature that named only the position",
+    ),
+    (
+        "sgd_tool.py",
+        'i.get("bait_hit")',
+        "the direction SGD states; 83 of 180 rows are Hit-Bait and the labels were positional",
+    ),
+    (
+        "sgd_tool.py",
+        '(i.get("experiment") or {}).get("display_name")',
+        "the experiment type, which was read from a key the API does not send",
+    ),
+    (
+        "sgd_tool.py",
+        '"is_reference_strain"',
+        "which of 41 strains the returned sequence is, where the fallback was silent",
+    ),
+    (
+        "sgd_tool.py",
+        "alias_details",
+        "what kind of alias each name is; a GenBank accession is not a gene synonym",
+    ),
+    (
+        "sgd_tool.py",
+        'a.get("sga_score")',
+        "the quantitative strength of a genetic interaction and its p-value",
+    ),
+    (
+        "mgnify_expanded_tool.py",
+        '"rna_16s": attrs.get("rna-16s"),\n                    "rna_23s"',
+        "the MIMAG criteria a MAG's quality is judged by, beside its completeness",
+    ),
+    (
+        "mgnify_expanded_tool.py",
+        "sample-metadata",
+        "the submitter's own pH, temperature and depth, where the fixed fields are null",
+    ),
+    (
+        "ctg_tool.py",
+        '"countries": countries',
+        "where a trial runs, which is what a trial search is filtered on",
+    ),
+    (
+        "ctg_tool.py",
+        'ref.get("pmid")',
+        "the trial's publications, for a search result that could not be followed",
+    ),
     (
         "alliance_genome_tool.py",
         "predictionMethodsNotMatched",
@@ -447,3 +553,70 @@ def test_expression_atlas_caveat_matches_what_the_response_holds():
     assert "GxA_get_experiment_expression" in description, (
         "the tool that does return expression values should be named here"
     )
+
+
+def test_the_clinical_trials_extractor_no_longer_deletes_its_evidence():
+    """It did not omit these fields, it deleted them.
+
+    `sourceVocabulary` names the MedDRA version a term comes from, and
+    `assessmentType` separates a SYSTEMATIC_ASSESSMENT -- every participant
+    checked for this event -- from a NON_SYSTEMATIC one, where a lower count
+    may mean only that nobody looked. Comparing two arms across that
+    difference is not valid. `numEvents` was deleted once a percentage had
+    been computed from it, leaving a derived number with its input removed,
+    and events are not participants: 5 events in 3 patients and 5 affected
+    patients both arrived as "5".
+    """
+    source = _source("ctg_tool.py")
+    assert 'del ae["sourceVocabulary"]' not in source
+    assert 'del ae["assessmentType"]' not in source
+    assert 'del group_stats["numEvents"]' not in source
+
+
+def test_sgd_reads_the_interaction_direction_instead_of_assuming_it():
+    """46% of rows were reported with bait and hit the wrong way round.
+
+    SGD states the direction in `bait_hit`. On S000003219's 180 interactions,
+    83 are "Hit-Bait", meaning locus1 is the hit -- and locus1 was labelled
+    the bait unconditionally, which for a two-hybrid result inverts which
+    protein was the probe.
+    """
+    source = _source("sgd_tool.py")
+    assert 'bait_hit.strip().lower().startswith("hit")' in source, (
+        "the direction must be read from bait_hit, not assumed from position"
+    )
+    assert "bait, hit = locus2, locus1" in source
+
+
+def test_the_monarch_schemas_say_what_the_rows_hold():
+    """Six of seven declared `{"type": "array"}` and nothing else.
+
+    A schema that declares no properties is not a smaller problem than a
+    dropped field; it is the reason a dropped field is invisible. Nothing
+    static could show that `MonarchV3_get_associations` returned 9 of the 37
+    fields Biolink puts on an association.
+    """
+    for tool in [
+        "MonarchV3_get_entity",
+        "MonarchV3_get_associations",
+        "MonarchV3_search",
+        "MonarchV3_get_mappings",
+        "MonarchV3_phenotype_similarity_search",
+    ]:
+        schema = json.dumps(_config(tool).get("return_schema") or {})
+        assert schema not in ('{"type": "array"}', '{"type": "object"}', "{}"), (
+            f"{tool} still declares nothing about its rows"
+        )
+        assert '"properties"' in schema, f"{tool} declares no properties"
+
+
+def test_sgd_says_which_strain_a_sequence_came_from():
+    """ "Take S288C, falling back to the first" across 41 strains, silently.
+
+    A caller comparing the returned coordinates to the reference genome could
+    have been comparing against another isolate, with nothing in the response
+    to say so.
+    """
+    source = _source("sgd_tool.py")
+    assert '"strains_available"' in source
+    assert '"is_reference_strain"' in source

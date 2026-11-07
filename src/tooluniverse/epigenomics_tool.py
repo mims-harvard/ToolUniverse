@@ -41,6 +41,15 @@ _GEO_SEARCH_ENDPOINTS = {
 }
 
 
+def _ucsc_csv(value):
+    """UCSC packs repeated bigBed columns as one comma-joined string."""
+    if value is None or value == "":
+        return []
+    if isinstance(value, list):
+        return [str(part) for part in value]
+    return [part for part in str(value).split(",") if part]
+
+
 def _encode_empty_result_note(biosample: Any = None) -> str:
     """Explain a genuinely empty ENCODE result, hinting at ontology spelling."""
     note = (
@@ -1107,6 +1116,14 @@ class EpigenomicsTool(BaseTool):
                     "end": feat.get("end"),
                     "strand": feat.get("strand", 0),
                     "seq_region_name": feat.get("seq_region_name", ""),
+                    # Which build asserted the element, and its flanking
+                    # bounds. The Regulatory Build gives a core start/end and
+                    # an extended pair; an overlap test against the core
+                    # alone is a different question from one against the
+                    # extended region.
+                    "source": feat.get("source", ""),
+                    "extended_start": feat.get("extended_start"),
+                    "extended_end": feat.get("extended_end"),
                 }
             )
 
@@ -1432,6 +1449,13 @@ class UCSCEpigenomicsTool(BaseTool):
                     "chromEnd": item.get("chromEnd"),
                     "score": item.get("score", 0),
                     "sourceCount": item.get("sourceCount", 0),
+                    # `sourceCount: 1` said how many ENCODE experiments support
+                    # the cluster and not which, nor how strongly each one
+                    # scored it. UCSC answers both as comma-joined strings on
+                    # the same row; a count with no sources behind it cannot be
+                    # traced to a cell type or an assay.
+                    "sourceIds": _ucsc_csv(item.get("sourceIds")),
+                    "sourceScores": _ucsc_csv(item.get("sourceScores")),
                 }
             )
 

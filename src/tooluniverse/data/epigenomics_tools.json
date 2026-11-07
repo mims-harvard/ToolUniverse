@@ -871,6 +871,20 @@
                   },
                   "sourceCount": {
                     "type": "integer"
+                  },
+                  "sourceIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Which ENCODE experiments support the cluster. sourceCount says how many; this says which, so a cluster can be traced to a cell type or assay."
+                  },
+                  "sourceScores": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Each supporting experiment's own score, positionally aligned with sourceIds"
                   }
                 }
               }
@@ -1542,6 +1556,27 @@
                   },
                   "seq_region_name": {
                     "type": "string"
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which build asserted the element, e.g. Ensembl"
+                  },
+                  "extended_start": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Start of the element's flanking region. An overlap test against the core start/end is a different question from one against the extended bounds."
+                  },
+                  "extended_end": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "End of the flanking region"
                   }
                 }
               }
