@@ -513,3 +513,28 @@ def test_the_elasticsearch_envelope_is_not_the_hit(audit):
     assert not audit.is_record_data("results[]._source.structures[]")
     assert audit.is_record_data("results[]._source.smiles")
     assert audit.is_record_data("results[]._source.chebi_accession")
+
+
+def test_alliances_class_tag_is_scoped_to_its_own_containers(audit):
+    """`type` on an Alliance nested object is the Java class name.
+
+    The allele-and-model response puts it on the allele, the model, the gene
+    and each variant -- five tools flagged for it. The rule is anchored on
+    `results[].` rather than added to the container list, because a bare
+    `gene.type` or `allele.type` on some other API could be a biotype or an
+    allele class, which would be the record.
+    """
+    assert not audit.is_record_data("results[].allele.type")
+    assert not audit.is_record_data("results[].model.type")
+    assert not audit.is_record_data("results[].gene.type")
+    assert not audit.is_record_data("results[].variantList[].type")
+    assert not audit.is_record_data(
+        "results[].variantList[].curatedVariantGenomicLocations[]"
+        ".variantGenomicLocationAssociationObject.type"
+    )
+    # Anywhere else, and for any other field, it still counts.
+    assert audit.is_record_data("gene.type")
+    assert audit.is_record_data("data[].gene.type")
+    assert audit.is_record_data("results[].allele.symbol")
+    assert audit.is_record_data("results[].variantList[].name")
+

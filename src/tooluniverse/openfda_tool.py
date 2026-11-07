@@ -120,6 +120,11 @@ LABEL_DECISION_SECTIONS = (
     "warnings_and_cautions",
     "warnings",
     "precautions",
+    # The older labels carry the same content under this name -- dexamethasone
+    # has a general_precautions section and no precautions one -- and it was
+    # the only section with an entry in LABEL_SECTION_TOOLS that this tuple
+    # left out, so the sibling disclosure never mentioned it.
+    "general_precautions",
     "adverse_reactions",
     "drug_interactions",
     "use_in_specific_populations",
@@ -134,6 +139,12 @@ LABEL_DECISION_SECTIONS = (
     "ask_doctor",
     "when_using",
     "stop_use",
+    # These two have tools in LABEL_SECTION_TOOLS and were not checked here,
+    # so `other_section_tools` could never name them -- a tool nobody would be
+    # told to call. test_general_precautions_is_a_decision_section asserts the
+    # invariant: every section with a tool is a section the disclosure checks.
+    "other_safety_information",
+    "user_safety_warnings",
 )
 # Tools for the decision sections LABEL_SECTION_TOOLS has no entry for. That map
 # is not extended, because it also decides which sections the NOT_FOUND probe

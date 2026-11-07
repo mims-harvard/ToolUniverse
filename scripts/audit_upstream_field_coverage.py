@@ -263,6 +263,13 @@ NOT_RECORD_DATA = re.compile(
          |inferredGene|subject|relation
          |expressionPattern|whenExpressed|whereExpressed
          |crossReferences|references)(\[\])?\.type$
+    # The same tag on the allele/model/variant containers of Alliance's
+    # allele-and-model response. Anchored on `results[].` rather than added to
+    # the list above, because a bare `gene.type` or `allele.type` elsewhere
+    # could be a biotype or an allele class rather than a Java class name.
+  | ^results\[\]\.(allele|model|gene)\.type$
+  | ^results\[\]\.variantList\[\]\.type$
+  | (^|\.)variantGenomicLocationAssociationObject\.type$
     # Alliance's own concatenated row key, and the display map it returns
     # keyed by the gene the caller asked about.
   | (^|\.)uniqueId$

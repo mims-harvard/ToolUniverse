@@ -1205,6 +1205,22 @@
                       "type": "string"
                     }
                   },
+                  "primary_outcome_measures": {"type": "array", "items": {"type": "string"}, "description": "What the trial measures, capped at 5. The row carried nothing about the outcomes, so a search for an endpoint needed a per-study call."},
+                  "primary_outcome_count": {"type": "integer"},
+                  "secondary_outcome_count": {"type": "integer"},
+                  "arms": {
+                    "type": "array",
+                    "description": "The trial's arms with what each was given, capped at 5, so a two-arm comparison can be read off the search result.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "label": {"type": ["string", "null"]},
+                        "type": {"type": ["string", "null"]},
+                        "intervention_names": {"type": "array", "items": {"type": "string"}}
+                      }
+                    }
+                  },
+                  "arm_count": {"type": "integer"},
                   "references": {
                     "type": "array",
                     "description": "The publications behind this record"
@@ -1355,7 +1371,7 @@
   },
   {
     "name": "ClinicalTrials_get_study",
-    "description": "Get full details for a specific clinical trial by NCT ID from ClinicalTrials.gov. Returns every arm, intervention, primary outcome, location, and reference supplied by the v2 single-study endpoint, together with explicit counts; these lists are not silently capped. Example: NCT04280705 returns the ACTT remdesivir COVID-19 trial with all details.",
+    "description": "Get full details for a specific clinical trial by NCT ID from ClinicalTrials.gov. Returns every arm, intervention, outcome measure (primary, secondary and other), location, and reference supplied by the v2 single-study endpoint, together with explicit counts; these lists are not silently capped. Example: NCT04280705 returns the ACTT remdesivir COVID-19 trial with all details.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -1526,6 +1542,32 @@
             "primary_outcome_count": {
               "type": "integer"
             },
+            "secondary_outcomes": {
+              "type": "array",
+              "description": "The rest of what the trial set out to measure. NCT04280705 has 39 of these against 4 primary ones, and only the primary ones were returned.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "description": {"type": ["string", "null"]},
+                  "measure": {"type": ["string", "null"]},
+                  "time_frame": {"type": ["string", "null"]}
+                }
+              }
+            },
+            "secondary_outcome_count": {"type": "integer"},
+            "other_outcomes": {
+              "type": "array",
+              "description": "Pre-registered measures ClinicalTrials.gov classes as neither primary nor secondary.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "description": {"type": ["string", "null"]},
+                  "measure": {"type": ["string", "null"]},
+                  "time_frame": {"type": ["string", "null"]}
+                }
+              }
+            },
+            "other_outcome_count": {"type": "integer"},
             "eligibility_criteria": {
               "type": [
                 "string",

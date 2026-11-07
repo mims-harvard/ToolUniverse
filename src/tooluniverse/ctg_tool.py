@@ -237,6 +237,11 @@ def _canonicalize_enum(value: str, allowed: tuple):
 # `location_count` carry the shape of the rest.
 LOCATIONS_PER_SEARCH_ROW = 5
 
+# A search row names this many primary outcome measures and this many
+# arms, with both full counts reported beside them.
+OUTCOMES_PER_SEARCH_ROW = 5
+ARMS_PER_SEARCH_ROW = 5
+
 
 @register_tool("ClinicalTrialsTool")
 class ClinicalTrialsTool(RESTfulTool):
@@ -638,6 +643,41 @@ class ClinicalTrialsTool(RESTfulTool):
                     "intervention_count": len(all_interventions),
                     "interventions_truncated": len(all_interventions) > 5,
                     "intervention_other_names": intervention_other_names,
+                    # What the trial measures. The row carried none of it, so
+                    # "trials with progression-free survival as an endpoint"
+                    # needed a per-study call; the measures are named, capped,
+                    # and both counts are reported.
+                    "primary_outcome_measures": [
+                        outcome.get("measure")
+                        for outcome in (
+                            proto.get("outcomesModule", {}).get("primaryOutcomes")
+                            or []
+                        )[:OUTCOMES_PER_SEARCH_ROW]
+                        if isinstance(outcome, dict) and outcome.get("measure")
+                    ],
+                    "primary_outcome_count": len(
+                        proto.get("outcomesModule", {}).get("primaryOutcomes") or []
+                    ),
+                    "secondary_outcome_count": len(
+                        proto.get("outcomesModule", {}).get("secondaryOutcomes") or []
+                    ),
+                    # Which arms exist and what each was given, so a two-arm
+                    # comparison can be read off the search result.
+                    "arms": [
+                        {
+                            "label": arm.get("label"),
+                            "type": arm.get("type"),
+                            "intervention_names": arm.get("interventionNames") or [],
+                        }
+                        for arm in (
+                            proto.get("armsInterventionsModule", {}).get("armGroups")
+                            or []
+                        )[:ARMS_PER_SEARCH_ROW]
+                        if isinstance(arm, dict)
+                    ],
+                    "arm_count": len(
+                        proto.get("armsInterventionsModule", {}).get("armGroups") or []
+                    ),
                     # The trial's own publications. A search result with no
                     # PMID cannot be followed to what was published.
                     "references": [
@@ -751,17 +791,35 @@ class ClinicalTrialsTool(RESTfulTool):
                 "type": item.get("type"),
                 "name": item.get("name"),
                 "description": item.get("description"),
+                # Which arms the intervention was given in, and the names it
+                # is also registered under. `arms[].intervention_names` joins
+                # one way and this is the other; the other names are how a
+                # trade name matches a trial that lists the INN.
+                "arm_group_labels": item.get("armGroupLabels") or [],
+                "other_names": item.get("otherNames") or [],
             }
             for item in arms_module.get("interventions", [])
         ]
-        primary_outcomes = [
-            {
-                "measure": outcome.get("measure"),
-                "description": outcome.get("description"),
-                "time_frame": outcome.get("timeFrame"),
-            }
-            for outcome in proto.get("outcomesModule", {}).get("primaryOutcomes", [])
-        ]
+
+        def _outcomes(key):
+            return [
+                {
+                    "measure": outcome.get("measure"),
+                    "description": outcome.get("description"),
+                    "time_frame": outcome.get("timeFrame"),
+                }
+                for outcome in proto.get("outcomesModule", {}).get(key, [])
+                if isinstance(outcome, dict)
+            ]
+
+        primary_outcomes = _outcomes("primaryOutcomes")
+        # A trial's secondary outcomes are the rest of what it set out to
+        # measure -- 29 of them on one page of a search -- and only the
+        # primary ones were read, from a tool whose first sentence is "get
+        # full details". The ClinicalTrialsDetailsTool handler in this same
+        # module has always read both.
+        secondary_outcomes = _outcomes("secondaryOutcomes")
+        other_outcomes = _outcomes("otherOutcomes")
         locations = [
             {
                 "facility": location.get("facility"),
@@ -795,6 +853,10 @@ class ClinicalTrialsTool(RESTfulTool):
             "intervention_count": len(interventions),
             "primary_outcomes": primary_outcomes,
             "primary_outcome_count": len(primary_outcomes),
+            "secondary_outcomes": secondary_outcomes,
+            "secondary_outcome_count": len(secondary_outcomes),
+            "other_outcomes": other_outcomes,
+            "other_outcome_count": len(other_outcomes),
             "eligibility_criteria": proto.get("eligibilityModule", {}).get(
                 "eligibilityCriteria"
             ),
@@ -2221,8 +2283,14 @@ class ClinicalTrialsDetailsTool(ClinicalTrialsTool):
                 new_study["secondary_outcomes"] = study["protocolSection"][
                     "outcomesModule"
                 ].get("secondaryOutcomes")
-            # if "otherOutcomes" in study["protocolSection"]["outcomesModule"]:
-            #     new_study["other_outcomes"] = study["protocolSection"]["outcomesModule"].get("otherOutcomes")
+            # Commented out with no reason given, while primary and secondary
+            # were read. ClinicalTrials.gov uses otherOutcomes for the
+            # pre-registered measures that are neither, so leaving it out made
+            # the outcome set look complete when it was not.
+            if "otherOutcomes" in study["protocolSection"]["outcomesModule"]:
+                new_study["other_outcomes"] = study["protocolSection"][
+                    "outcomesModule"
+                ].get("otherOutcomes")
         if "eligibilityModule" in study["protocolSection"]:
             if "eligibilityCriteria" in study["protocolSection"]["eligibilityModule"]:
                 new_study["eligibility_criteria"] = study["protocolSection"][

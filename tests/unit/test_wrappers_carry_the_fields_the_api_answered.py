@@ -1052,6 +1052,46 @@ UPSTREAM_KEYS = [
         '"unreviewed" not in entry_type.lower()',
         "the same test, where the substring form called every TrEMBL entry reviewed",
     ),
+    (
+        "gwas_sumstats_tool.py",
+        'entry.get("summaryStatistics")',
+        "whether a study has summary statistics, from a tool named after them",
+    ),
+    (
+        "gwas_sumstats_tool.py",
+        'entry.get("initialSampleDescription")',
+        "the discovery sample, which is what a GWAS result means",
+    ),
+    (
+        "ctg_tool.py",
+        '_outcomes("secondaryOutcomes")',
+        "the 39 secondary outcomes of a trial that reported 4 primary ones",
+    ),
+    (
+        "ctg_tool.py",
+        'item.get("armGroupLabels")',
+        "which arms an intervention was given in",
+    ),
+    (
+        "fooddata_central_tool.py",
+        'n.get("derivationDescription")',
+        "whether a nutrient value was measured or calculated",
+    ),
+    (
+        "cellxgene_discovery_tool.py",
+        'collection.get("publisher_metadata")',
+        "the paper a collection belongs to, so it can be cited",
+    ),
+    (
+        "cellxgene_discovery_tool.py",
+        "def _ontology_terms",
+        "which tissues a collection covers, which its sibling handler reads",
+    ),
+    (
+        "nci_evs_tool.py",
+        'c.get("conceptStatus")',
+        "whether a terminology concept has been retired",
+    ),
 ]
 
 
@@ -1288,6 +1328,18 @@ DECLARED = [
     ("UniProtIDMap_list_databases", "to_supported"),
     ("UniProtIDMap_list_databases", "uri_template"),
     ("UniProtIDMap_gene_to_uniprot", "reviewed"),
+    ("GWASSumStats_get_trait_studies", "summary_statistics"),
+    ("GWASSumStats_get_trait_studies", "initial_sample_description"),
+    ("GWASSumStats_list_studies", "discovery_sample_ancestry"),
+    ("ClinicalTrials_get_study", "secondary_outcomes"),
+    ("ClinicalTrials_get_study", "other_outcome_count"),
+    ("ClinicalTrials_search_studies", "primary_outcome_measures"),
+    ("ClinicalTrials_search_studies", "arm_count"),
+    ("FoodDataCentral_search_foods", "derivation_description"),
+    ("CxGDisc_list_collections", "publication"),
+    ("CxGDisc_list_collections", "tissue_count"),
+    ("CxGDisc_list_collections", "datasets_with_cell_count"),
+    ("NCIEVS_search_terminology", "concept_status"),
 ]
 
 
@@ -1964,3 +2016,71 @@ def test_an_id_mapping_database_says_both_directions():
     source = _source("uniprot_idmapping_tool.py")
     assert 'item.get("to", False)' in source
     assert 'item.get("uriLink")' in source
+
+
+def test_a_gwas_study_says_whether_it_has_summary_statistics():
+    """The tool is named after summary statistics and did not report them.
+
+    `summaryStatistics` is the FTP path to the deposited statistics, or the
+    literal "NA" when there are none, and the study record dropped it along
+    with the discovery sample ("2,095 European ancestry exposed individuals"
+    against "42,907 ... unexposed"), the per-ancestry counts, the genotyping
+    platform, the paper's title and the gene-environment flag.
+    """
+    source = _source("gwas_sumstats_tool.py")
+    assert 'entry.get("summaryStatistics")' in source
+    assert '"has_summary_statistics"' in source
+    assert 'entry.get("discoverySampleAncestry")' in source
+    schema = json.dumps(
+        _config("GWASSumStats_get_trait_studies").get("return_schema") or {}
+    )
+    assert '"summary_statistics"' in schema
+    # The row used to be declared as study_accession and nothing else.
+    assert '"reported_trait"' in schema
+
+
+def test_a_trial_returns_its_secondary_outcomes():
+    """NCT04280705 has 4 primary outcomes and 39 secondary ones.
+
+    `ClinicalTrials_get_study` begins "get full details" and read
+    primaryOutcomes alone -- while the ClinicalTrialsDetailsTool handler in
+    the same module has always read both, and had otherOutcomes commented out
+    with no reason given. The description, which enumerated "primary
+    outcome", is corrected with the fix rather than left to justify it.
+    """
+    source = _source("ctg_tool.py")
+    assert '_outcomes("secondaryOutcomes")' in source
+    assert '_outcomes("otherOutcomes")' in source
+    assert "OUTCOMES_PER_SEARCH_ROW" in source
+    description = _config("ClinicalTrials_get_study")["description"]
+    assert "primary, secondary and other" in description
+
+
+def test_a_nutrient_value_says_how_it_was_obtained():
+    """"Calculated from value per serving size measure" is not a measurement.
+
+    Every nutrient row carried name, value and unit, and the derivation code
+    that separates an analysed value from a calculated or imputed one was
+    dropped -- along with the USDA nutrient number, which is the identifier a
+    name is not.
+    """
+    source = _source("fooddata_central_tool.py")
+    assert 'n.get("derivationDescription")' in source
+    assert 'n.get("nutrientNumber")' in source
+
+
+def test_a_cellxgene_collection_can_be_cited_and_is_not_zero_cells():
+    """Two defects in one row.
+
+    `publisher_metadata` carries the journal, the date and the 12 authors of
+    the retina atlas, and the row reported the DOI and a contact name, so a
+    collection could not be cited from a listing. And `total_cells` was
+    `sum(ds.get("cell_count", 0) ...)` over datasets that the listing
+    endpoint gives no cell_count for, so it was 0 for every collection --
+    which reads as "no cells" rather than "the listing does not say".
+    """
+    source = _source("cellxgene_discovery_tool.py")
+    assert "def _publication" in source
+    assert "total_cells = sum(counted) if counted else None" in source
+    assert '"datasets_with_cell_count"' in source
+
