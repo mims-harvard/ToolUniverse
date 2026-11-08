@@ -306,8 +306,17 @@ class CBioPortalRESTTool(BaseTool):
         2: "amplification",
     }
 
-    def _get_cna_profile_id(self, study_id: str) -> Optional[str]:
-        """Get the discrete (GISTIC) copy-number molecular profile ID for a study."""
+    def _get_cna_profile_id(
+        self, study_id: str, found: Optional[Dict[str, Any]] = None
+    ) -> Optional[str]:
+        """Get the discrete (GISTIC) copy-number molecular profile ID for a study.
+
+        `found` is the same out-parameter the mutation resolver takes. Round
+        twenty-six gave the mutations path the chosen profile's own record and
+        how the id was arrived at, and left this path reporting the bare id --
+        so a CNA caller could not tell a GISTIC profile from a log2 one, nor a
+        matched id from a guess at the naming convention.
+        """
         return self._resolve_molecular_profile_id(
             study_id,
             lambda profile: (
@@ -315,6 +324,7 @@ class CBioPortalRESTTool(BaseTool):
                 and profile.get("datatype") == "DISCRETE"
             ),
             "gistic",
+            found=found,
         )
 
     def _fetch_discrete_cna(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -338,8 +348,9 @@ class CBioPortalRESTTool(BaseTool):
             event_type = "ALL"
 
         # Resolve molecular profile (allow explicit override).
+        profile_found: Dict[str, Any] = {}
         profile_id = arguments.get("molecular_profile_id") or self._get_cna_profile_id(
-            study_id
+            study_id, found=profile_found
         )
         if profile_id is None:
             return {
@@ -389,6 +400,12 @@ class CBioPortalRESTTool(BaseTool):
             "url": url,
             "count": len(data),
             "molecular_profile_id": profile_id,
+            # Which profile the calls came from, and whether the id was
+            # matched against the study's profile list or guessed from the
+            # naming convention -- the same two fields the mutations path
+            # reports.
+            "molecular_profile": profile_found.get("profile"),
+            "molecular_profile_resolution": profile_found.get("resolution"),
             "entrez_gene_ids": entrez_ids,
             "alteration_type": event_type,
             "alteration_counts": counts,

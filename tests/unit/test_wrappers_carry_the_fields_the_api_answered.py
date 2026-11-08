@@ -110,6 +110,22 @@ the substance of what the tool's own description promises. Measured live on
                               RESEARCH_CODE and one each of ATC, BNF, FDA and
                               MERCK_INDEX, and the 15 shown are alphabetically
                               first, so all brands.
+    OSDR_search_studies       no study descriptions, in a search whose hits a
+                              caller has to choose between, and no
+                              "Study Assay Technology Platform" -- which is
+                              often the only one of the three assay fields
+                              populated: assay_technology_type is empty on the
+                              first microgravity hit while the platform reads
+                              GPL1219. No Project Type either.
+    cBioPortal_get_copy_      the bare profile id. Round 26 gave the mutations
+      number_alterations      path the chosen profile's own record and how the
+                              id was arrived at, and left this path unchanged,
+                              so a CNA caller could not tell a GISTIC profile
+                              from a log2 one nor a matched id from a guess.
+                              The profile's description is also where the value
+                              legend lives -- "-2 = homozygous deletion ...
+                              2 = high level amplification" -- without which
+                              the integers in `data` are uninterpretable.
     GeneBe_classify_variant   a ClinVar conflict with no way to weigh it. The
                               row returned clinvar_classification
                               "Conflicting classifications of pathogenicity"
@@ -1864,6 +1880,18 @@ UPSTREAM_KEYS = [
         "whether the protein whose architecture this is reviewed or "
         "unreviewed, which both sibling endpoints already report",
     ),
+    (
+        "nasa_osdr_tool.py",
+        '"Study Assay Technology Platform"',
+        "the platform the assay ran on, which is often the only one of the "
+        "three assay fields populated",
+    ),
+    (
+        "nasa_osdr_tool.py",
+        'source.get("Study Description")',
+        "what each study was, in a search whose rows a caller has to choose "
+        "between",
+    ),
 ]
 
 
@@ -2150,7 +2178,6 @@ DECLARED = [
     ("MAGICapp_list_guidelines", "institutionName"),
     ("MAGICapp_list_guidelines", "publishLastSearchDate"),
     ("MAGICapp_list_guidelines", "isLatestPublished"),
-    ("MAGICapp_list_guidelines", "description"),
     ("PubChemBioAssay_search_by_gene", "compound_counts"),
     ("PubChemBioAssay_search_by_gene", "source_id"),
     ("PubChemBioAssay_get_assay_summary", "protocol"),
@@ -2239,14 +2266,40 @@ DECLARED = [
     ("InterPro_get_structures_for_domain", "structure_locations"),
     ("InterPro_get_structures_for_domain", "auth_start"),
     ("InterPro_get_structures_for_domain", "chains"),
-    ("NDEx_search_networks", "properties"),
     ("NDEx_search_networks", "cx2_file_size"),
     ("GeneBe_classify_variant", "clinvar_review_status"),
     ("GeneBe_classify_variant", "clinvar_submissions_summary"),
     ("GeneBe_classify_variant", "mane_select"),
     ("GeneBe_classify_variant", "consequence_count"),
     ("InterPro_get_protein_domain_architecture", "protein_source_database"),
+    ("OSDR_search_studies", "assay_technology_platform"),
+    ("OSDR_search_studies", "project_type"),
+    ("cBioPortal_get_copy_number_alterations", "molecular_profile"),
+    ("cBioPortal_get_copy_number_alterations", "molecular_profile_resolution"),
 ]
+
+
+# JSON-Schema's own annotation keys. A DECLARED row naming one of these can
+# never fail -- `"description"` appears in every schema that documents
+# anything -- so the row would look like a guard and be a no-op. OSDR's
+# `description` was exactly that for one commit; assert such a row instead in
+# a named test, against the text of its own declaration.
+SCHEMA_KEYWORDS = frozenset(
+    {
+        "description", "type", "properties", "items", "required", "enum",
+        "oneOf", "anyOf", "allOf", "not", "default", "format", "title",
+        "additionalProperties", "minimum", "maximum", "pattern",
+    }
+)
+
+
+def test_no_declared_row_names_a_json_schema_keyword():
+    """A guard that cannot fail is worse than no guard: it reads as coverage."""
+    vacuous = sorted({f for _, f in DECLARED if f in SCHEMA_KEYWORDS})
+    assert not vacuous, (
+        f"DECLARED rows for {vacuous} would pass against any schema that "
+        "documents anything; assert them in a named test instead"
+    )
 
 
 @pytest.mark.parametrize("tool, field", DECLARED, ids=[f"{t}:{f}" for t, f in DECLARED])
@@ -3265,6 +3318,11 @@ def test_a_guideline_matched_on_a_field_comes_back_with_it():
     # lastEdit of 2026-11-07 on the first row of the public catalogue.
     assert '"lastEdit"' in source
     assert '"isLatestPublished"' in source
+    # The capped description is declared too. Asserted by its own text: a
+    # DECLARED row for "description" cannot fail, because the word is a
+    # JSON-Schema annotation key.
+    schema = json.dumps(_config("MAGICapp_list_guidelines").get("return_schema") or {})
+    assert "one of the fields the query is matched against" in schema
 
 
 def test_a_dandiset_row_says_which_version_its_counts_describe():
@@ -3865,6 +3923,10 @@ def test_a_network_search_says_what_the_networks_are_of():
     # truncated string. One reader now.
     assert source.count("_network_properties(") == 3
     assert 'str(p.get("value", ""))[:300]' not in source
+    # `properties` is a JSON-Schema keyword, so a DECLARED row for it cannot
+    # fail; assert the declaration by the text that is unique to it.
+    schema = json.dumps(_config("NDEx_search_networks").get("return_schema") or {})
+    assert "the fields a caller picks a network BY live" in schema
 
 
 def test_a_clinvar_conflict_comes_with_its_submissions():
@@ -3893,3 +3955,50 @@ def test_a_clinvar_conflict_comes_with_its_submissions():
     assert '"mane_select"' in source
     assert "CONSEQUENCES_PER_VARIANT" in source
     assert '"consequences_truncated"' in source
+
+
+def test_an_osdr_hit_carries_the_study_description():
+    """A study search whose rows a caller has to choose between, with no text.
+
+    OSDR's hit carries `Study Description` -- "Exposure to microgravity
+    causes bone loss in humans..." -- and the row dropped it, along with
+    `Study Assay Technology Platform`. That platform is often the only one of
+    the three assay fields populated: on the first microgravity hit
+    `Study Assay Technology Type` is the empty string while the platform
+    reads GPL1219, so the row reported a null assay type and discarded the
+    field that would have answered.
+
+    The declaration is asserted by its own text rather than by a membership
+    test, because `"description"` is a JSON-Schema annotation key and occurs
+    in every schema that documents anything.
+    """
+    source = _source("nasa_osdr_tool.py")
+    assert 'source.get("Study Description")' in source
+    assert "DESCRIPTION_CHARACTERS" in source
+    schema = json.dumps(_config("OSDR_search_studies").get("return_schema") or {})
+    assert '"description": {"type": ["string", "null"], "description": "What the study was' in schema
+
+
+def test_the_cna_path_names_its_profile_like_the_mutation_path():
+    """Round 26 fixed one path of this module and left the other.
+
+    `_resolve_molecular_profile_id` takes a `found` out-parameter, and round
+    twenty-six used it on the mutations path so a caller learns which profile
+    the calls came from and whether the id was matched against the study's
+    profile list or guessed from the naming convention. `_get_cna_profile_id`
+    never passed it, so the copy-number path reported `brca_tcga_gistic` and
+    nothing else -- and the profile's own description is where the value
+    legend lives: "-2 = homozygous deletion ... 2 = high level
+    amplification". Without it the integers in `data` cannot be read.
+
+    The guard counts occurrences, because the mutations path has had both
+    lines since round 26 and a substring test would have passed against the
+    unfixed CNA path.
+    """
+    source = _source("cbioportal_tool.py")
+    assert source.count("found=profile_found") == 2
+    assert source.count('"molecular_profile": profile_found.get("profile")') == 2
+    assert (
+        source.count('"molecular_profile_resolution": profile_found.get("resolution")')
+        == 2
+    )

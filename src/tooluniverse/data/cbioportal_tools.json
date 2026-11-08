@@ -115,29 +115,171 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "sampleId": {
-                "type": "string"
+          "type": "object",
+          "description": "Discrete copy-number calls for the requested genes",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "sampleId": {
+                    "type": "string"
+                  },
+                  "patientId": {
+                    "type": "string"
+                  },
+                  "entrezGeneId": {
+                    "type": "integer"
+                  },
+                  "studyId": {
+                    "type": "string"
+                  },
+                  "molecularProfileId": {
+                    "type": "string"
+                  },
+                  "alteration": {
+                    "type": "integer"
+                  },
+                  "uniqueSampleKey": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "cBioPortal's internal sample key"
+                  },
+                  "uniquePatientKey": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "cBioPortal's internal patient key"
+                  }
+                }
               },
-              "patientId": {
-                "type": "string"
+              "description": "Per-sample alteration calls"
+            },
+            "count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Rows returned"
+            },
+            "url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The cBioPortal endpoint called"
+            },
+            "molecular_profile_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Profile the calls came from"
+            },
+            "molecular_profile": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "That profile's own record. Its name and description carry the value legend -- '-2 = homozygous deletion ... 2 = high level amplification' -- which is what makes the integers interpretable",
+              "properties": {
+                "molecular_profile_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "description": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "molecularAlterationType": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "COPY_NUMBER_ALTERATION for this tool"
+                },
+                "datatype": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "DISCRETE for a GISTIC profile"
+                },
+                "genericAssayType": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "alteration_type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "cBioPortal's own alteration-type label on the profile"
+                },
+                "patient_level": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "Whether the profile is per patient rather than per sample"
+                }
+              }
+            },
+            "molecular_profile_resolution": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "'matched' when the id came from the study's profile list, 'guessed' when it came from the naming convention"
+            },
+            "entrez_gene_ids": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "integer",
+                  "string"
+                ]
               },
-              "entrezGeneId": {
-                "type": "integer"
-              },
-              "studyId": {
-                "type": "string"
-              },
-              "molecularProfileId": {
-                "type": "string"
-              },
-              "alteration": {
+              "description": "Entrez ids the genes resolved to"
+            },
+            "alteration_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Filter applied: AMP, GAIN, DIPLOID, HETLOSS, HOMDEL or ALL"
+            },
+            "alteration_counts": {
+              "type": "object",
+              "description": "How many samples fall in each alteration class",
+              "additionalProperties": {
                 "type": "integer"
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

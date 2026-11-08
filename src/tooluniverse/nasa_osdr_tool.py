@@ -30,6 +30,18 @@ FILES_URL = "https://osdr.nasa.gov/osdr/data/osd/files"
 DATASET_URL = "https://visualization.osdr.nasa.gov/biodata/api/v2/dataset"
 
 
+DESCRIPTION_CHARACTERS = 600
+
+
+def _capped(value: Any, limit: int) -> "str | None":
+    """One study description, cut at `limit` with an ellipsis rather than
+    silently, since a search page carries one per row."""
+    text = str(value or "").strip()
+    if not text:
+        return None
+    return text if len(text) <= limit else text[:limit].rstrip() + "..."
+
+
 def _person(value: Any) -> "str | None":
     """OSDR gives a study's investigator as separate name parts."""
     if isinstance(value, list):
@@ -144,8 +156,23 @@ class NASAOSDRTool(BaseTool):
                     "assay_technology_type": source.get(
                         "Study Assay Technology Type"
                     ),
+                    # The platform the assay ran on, which is often the only
+                    # one of the three assay fields that is populated:
+                    # "Study Assay Technology Type" is empty on the first
+                    # microgravity hit while the platform reads GPL1219.
+                    "assay_technology_platform": source.get(
+                        "Study Assay Technology Platform"
+                    )
+                    or None,
+                    # The study design, e.g. "Expression profiling by array".
+                    "project_type": source.get("Project Type") or None,
                     "factor_name": source.get("Study Factor Name"),
                     "release_date": source.get("Study Public Release Date"),
+                    # What the study was, which is what a caller reads to
+                    # choose between search hits. Capped per row.
+                    "description": _capped(
+                        source.get("Study Description"), DESCRIPTION_CHARACTERS
+                    ),
                     # Who ran the study, and -- for the cross-referenced rows
                     # the note already warns about -- which repository the
                     # record actually comes from.
