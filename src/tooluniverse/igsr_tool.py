@@ -210,8 +210,13 @@ class IGSRTool(BaseTool):
                     # it came from ("PCR-free high coverage") and the reuse
                     # policy that governs it. The sibling sample search
                     # already read this block, for its titles only.
-                    "data_collections": _data_collections(src),
-                    "data_collection_titles": [
+                    # Named `_details` because `data_collections` already
+                    # means "the titles" in the sample handler below, and its
+                    # schema declares an array of strings. One name, one
+                    # meaning, rather than the same key holding two shapes in
+                    # one module.
+                    "data_collection_details": _data_collections(src),
+                    "data_collections": [
                         dc.get("title")
                         for dc in (src.get("dataCollections") or [])
                         if isinstance(dc, dict) and dc.get("title")
@@ -296,6 +301,10 @@ class IGSRTool(BaseTool):
                     "biosample_id": src.get("biosampleId", ""),
                     "populations": pop_info,
                     "data_collections": dc_titles,
+                    # The same block the population handler returns: the
+                    # titles alone could not say whether a sample has
+                    # alignments or variants.
+                    "data_collection_details": _data_collections(src),
                 }
             )
 

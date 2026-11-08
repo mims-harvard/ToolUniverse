@@ -306,7 +306,8 @@
             },
             "properties": {
               "type": "object",
-              "description": "Custom network properties (key-value pairs)"
+              "description": "NDEx's network-level properties keyed by name, typed as NDEx declares them - the same reader the search uses. Holds organism, disease, tissue, methods and sometimes rights and reference",
+              "additionalProperties": {}
             }
           },
           "not": {

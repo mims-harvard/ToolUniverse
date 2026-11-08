@@ -254,10 +254,11 @@ class NDExTool(BaseTool):
         response.raise_for_status()
         data = response.json()
 
-        # Extract properties
-        properties = {}
-        for p in data.get("properties", []):
-            properties[p.get("predicateString", "")] = str(p.get("value", ""))[:300]
+        # The same reader the search row uses. This built
+        # `str(value)[:300]`, so a numeric property arrived as a truncated
+        # string and the two handlers of one module disagreed about what a
+        # property value is.
+        properties = _network_properties(data)
 
         return {
             "status": "success",

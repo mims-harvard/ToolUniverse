@@ -2193,6 +2193,8 @@ DECLARED = [
     ("NCIThesaurus_get_concept", "annotation_property"),
     ("IGSR_search_populations", "data_collections"),
     ("IGSR_search_populations", "data_reuse_policy"),
+    ("IGSR_search_populations", "data_collection_details"),
+    ("IGSR_search_samples", "data_collection_details"),
     ("InterPro_get_structures_for_domain", "structure_locations"),
     ("InterPro_get_structures_for_domain", "auth_start"),
     ("InterPro_get_structures_for_domain", "chains"),
@@ -3757,7 +3759,12 @@ def test_a_population_says_what_data_exists_for_it():
     """
     source = _source("igsr_tool.py")
     assert "def _data_collections" in source
-    assert '"data_collections": _data_collections(src)' in source
+    # Both handlers call the one reader, and `data_collections` means the
+    # titles in both: the sample handler already used that name for them and
+    # its schema declares an array of strings, so the rich records took a
+    # name of their own rather than giving one key two shapes.
+    assert source.count("_data_collections(src)") == 2
+    assert '"data_collection_details": _data_collections(src)' in source
     assert 'collection.get("dataReusePolicy")' in source
     assert '"overlapping_populations"' in source
 
@@ -3807,3 +3814,8 @@ def test_a_network_search_says_what_the_networks_are_of():
     assert 'row.get("predicateString")' in source
     assert '"description_truncated"' in source
     assert "DESCRIPTION_CHARACTERS" in source
+    # The summary handler built `str(value)[:300]` for the same block, so a
+    # numeric property reached one caller as a number and the other as a
+    # truncated string. One reader now.
+    assert source.count("_network_properties(") == 3
+    assert 'str(p.get("value", ""))[:300]' not in source

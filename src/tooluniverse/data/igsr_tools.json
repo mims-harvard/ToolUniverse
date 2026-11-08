@@ -105,6 +105,34 @@
                   },
                   "data_collections": {
                     "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The collection titles, the same shape IGSR_search_samples returns under this name"
+                  },
+                  "overlapping_populations": {
+                    "type": "array",
+                    "description": "Populations IGSR records as overlapping this one",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "data_collection_details": {
+                    "type": "array",
                     "description": "What data exists for the population, which is what decides whether it can be used",
                     "items": {
                       "type": "object",
@@ -128,7 +156,7 @@
                           "items": {
                             "type": "string"
                           },
-                          "description": "Sequencing behind the alignments, e.g. 'PCR-free high coverage'"
+                          "description": "Sequencing behind the alignments"
                         },
                         "variants": {
                           "type": "array",
@@ -150,34 +178,6 @@
                             "null"
                           ],
                           "description": "Document governing reuse of the collection"
-                        }
-                      }
-                    }
-                  },
-                  "data_collection_titles": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    },
-                    "description": "The collection titles alone, the shape IGSR_search_samples returns"
-                  },
-                  "overlapping_populations": {
-                    "type": "array",
-                    "description": "Populations IGSR records as overlapping this one",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "code": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
-                        },
-                        "name": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
                         }
                       }
                     }
@@ -331,6 +331,57 @@
                     "type": "array",
                     "items": {
                       "type": "string"
+                    }
+                  },
+                  "data_collection_details": {
+                    "type": "array",
+                    "description": "The same block the population search returns: the titles alone could not say whether a sample has alignments or variants",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "title": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Collection name, e.g. '1000 Genomes 30x on GRCh38'"
+                        },
+                        "data_types": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "e.g. alignment, variants, sequence"
+                        },
+                        "alignment": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "Sequencing behind the alignments"
+                        },
+                        "variants": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "Sequencing behind the variant calls"
+                        },
+                        "sequence": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "Sequencing behind the raw sequence"
+                        },
+                        "data_reuse_policy": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Document governing reuse of the collection"
+                        }
+                      }
                     }
                   }
                 }
