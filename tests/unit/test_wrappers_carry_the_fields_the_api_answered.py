@@ -110,6 +110,14 @@ the substance of what the tool's own description promises. Measured live on
                               RESEARCH_CODE and one each of ATC, BNF, FDA and
                               MERCK_INDEX, and the 15 shown are alphabetically
                               first, so all brands.
+    FDAGSRS_get_substance     a name's `references` are uuids into the
+                              record's own 78-entry references array, where
+                              the citation is ("EP 6.5", docType FDA_SRS).
+                              None of it reached the caller, though the
+                              module docstring promises "regulatory
+                              references from the ?view=full record", and a
+                              code's `comments` -- the ATC classification path
+                              a WHO-ATC code stands for -- went with it.
     FinnGen_list_phenotypes   no gc_lambda, the genomic-control inflation
                               factor, though it is on all 2,470 phenotypes of
                               the list endpoint and the single-phenotype
@@ -253,6 +261,25 @@ The flags belong to the `FDA_get_drug_name_by_*` and
 fields, and those tools are named for returning names. Check which tool in a
 family a flagged path belongs to before reading it as a drop.
 
+
+MassIVE's contacts and publications arrive as PSI-MS CV groups; the wrapper
+returns each term's readable label and value, and the flagged `cvLabel` is
+"MS" on every entry while `accession` is the ontology id of a term whose
+label is already there. HuBMAP's provenance lineage reports a
+`contributor_count` and points at HuBMAP_get_dataset, which returns the
+contributor records in full -- a deliberate split recorded in the handler's
+own comment. GoaT's `lineage[].node_depth` is the array index plus one on all
+31 entries of Homo sapiens, and `taxon_names[].source_url` is the source
+database's homepage, which `source` already names.
+
+An AGGREGATION is the sharpest form of the transformation rule.
+`FAERS_analyze_temporal_trends` was flagged for `results[].time` on 2,010
+values: openFDA's `count=receivedate` facet returns one bucket per day, and
+the handler reads `time` and sums the buckets into the years its description
+promises. Every one of the 2,010 daily strings is a zero-survivor because
+the tool exists to collapse them, so a value audit cannot distinguish
+aggregation from loss. Read what the tool says it returns before reading the
+count.
 DEFERRED, with the reason. `get_joint_associated_diseases_by_HPO_ID_list`
 returns disease names and not their MONDO curies, so its answer cannot be
 passed to another tool without re-resolving by name. Adding the ids means
@@ -1622,6 +1649,17 @@ UPSTREAM_KEYS = [
         "one phenotype row for the list and the lookup, which read the same "
         "upstream record shape and reported different fields",
     ),
+    (
+        "fda_gsrs_tool.py",
+        'c.get("comments")',
+        "the ATC classification path a WHO-ATC code stands for",
+    ),
+    (
+        "fda_gsrs_tool.py",
+        "def _reference_index",
+        "the citations a name's reference uuids point at, which the module's "
+        "own docstring promises as regulatory references",
+    ),
 ]
 
 
@@ -1970,6 +2008,10 @@ DECLARED = [
     ("FinnGen_list_phenotypes", "gc_lambda"),
     ("FinnGen_list_phenotypes", "assoc_files"),
     ("FinnGen_get_phenotype", "assoc_files"),
+    ("FDAGSRS_get_substance", "citations"),
+    ("FDAGSRS_get_substance", "comments"),
+    ("FDAGSRS_get_substance", "jurisdictions"),
+    ("FDAGSRS_get_substance", "references"),
 ]
 
 
@@ -3353,3 +3395,32 @@ def test_both_finngen_handlers_report_the_same_phenotype():
     )
     assert 'record.get("assoc_files")' in source
     assert '"num_cases_prev"' in source
+
+
+def test_a_substance_name_says_which_pharmacopoeia_lists_it():
+    """A name's `references` are uuids, and the citations were never resolved.
+
+    GSRS gives each name and code a `references` list of uuids that point
+    into the record's own `references` array, where the citation lives: "EP
+    6.5" with docType FDA_SRS. Aspirin's record carries 78 of them and the
+    tool returned none, although the module docstring above the class
+    promises "regulatory references from the ?view=full record". The uuids
+    alone are useless, which is why resolving them -- rather than passing
+    them through -- is the fix.
+
+    A code's `comments` went with them, and for WHO-ATC that is the
+    classification path the code stands for: C07FX02 is
+    "ATC|CARDIOVASCULAR SYSTEM|BETA BLOCKING AGENTS|...". The names also lost
+    their jurisdictions, languages and standardised forms.
+
+    An entry whose reference uuid is not inlined in the record is reported as
+    the bare uuid rather than dropped, so the caller can see that a citation
+    exists and could not be resolved.
+    """
+    source = _source("fda_gsrs_tool.py")
+    assert "def _reference_index" in source
+    assert "def _citations" in source
+    assert 'c.get("comments")' in source
+    assert 'n.get("nameJurisdiction")' in source
+    assert "CITATIONS_PER_ENTRY" in source
+    assert '"total_references": len(reference_index)' in source

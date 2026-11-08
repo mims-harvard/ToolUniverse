@@ -150,13 +150,301 @@
               "type": "string"
             },
             "structure": {
-              "type": "object"
+              "type": "object",
+              "description": "Chemical structure",
+              "properties": {
+                "smiles": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "SMILES"
+                },
+                "formula": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Molecular formula"
+                },
+                "molfile": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "MDL molfile"
+                },
+                "inchiKey": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "InChIKey"
+                },
+                "charge": {
+                  "type": [
+                    "integer",
+                    "string",
+                    "null"
+                  ]
+                },
+                "mwt": {
+                  "type": [
+                    "number",
+                    "string",
+                    "null"
+                  ],
+                  "description": "Molecular weight"
+                }
+              }
             },
             "names": {
-              "type": "array"
+              "type": "array",
+              "description": "Every name GSRS inlines for the substance",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The name"
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GSRS name type, e.g. sys, cn, of"
+                  },
+                  "preferred": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether GSRS treats it as the preferred name"
+                  },
+                  "display_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Name as GSRS displays it"
+                  },
+                  "standardized_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Standardised form"
+                  },
+                  "languages": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Languages the name is recorded in"
+                  },
+                  "jurisdictions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Jurisdictions the name applies in"
+                  },
+                  "citations": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "citation": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The document, e.g. 'EP 10.5'"
+                        },
+                        "doc_type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "GSRS's type for it, e.g. EP or FDA_SRS"
+                        },
+                        "tags": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "GSRS tags on the reference, e.g. NOMEN"
+                        },
+                        "public_domain": {
+                          "type": [
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "Whether GSRS releases the reference publicly"
+                        },
+                        "uuid": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "GSRS reference uuid; present alone when the record does not inline the reference it points at"
+                        }
+                      }
+                    },
+                    "description": "Which pharmacopoeia or document establishes the name, resolved from the record's own references array"
+                  },
+                  "deprecated": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether GSRS has deprecated the name"
+                  }
+                }
+              }
             },
             "codes": {
-              "type": "array"
+              "type": "array",
+              "description": "Every code GSRS inlines for the substance",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "codeSystem": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Code system, e.g. WHO-ATC, CAS, DRUG BANK"
+                  },
+                  "code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The code"
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GSRS code type, e.g. PRIMARY"
+                  },
+                  "comments": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GSRS's note on the code. For WHO-ATC this is the classification path the code means: 'ATC|CARDIOVASCULAR SYSTEM|BETA BLOCKING AGENTS|...'"
+                  },
+                  "url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Resolver link for the code, where GSRS records one"
+                  },
+                  "citations": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "citation": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The document, e.g. 'EP 10.5'"
+                        },
+                        "doc_type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "GSRS's type for it, e.g. EP or FDA_SRS"
+                        },
+                        "tags": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "GSRS tags on the reference, e.g. NOMEN"
+                        },
+                        "public_domain": {
+                          "type": [
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "Whether GSRS releases the reference publicly"
+                        },
+                        "uuid": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "GSRS reference uuid; present alone when the record does not inline the reference it points at"
+                        }
+                      }
+                    },
+                    "description": "References behind the code"
+                  },
+                  "deprecated": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether GSRS has deprecated the code"
+                  }
+                }
+              }
+            },
+            "references": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "citation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The document, e.g. 'EP 10.5'"
+                  },
+                  "doc_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GSRS's type for it, e.g. EP or FDA_SRS"
+                  },
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "GSRS tags on the reference, e.g. NOMEN"
+                  },
+                  "public_domain": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether GSRS releases the reference publicly"
+                  },
+                  "uuid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GSRS reference uuid; present alone when the record does not inline the reference it points at"
+                  }
+                }
+              },
+              "description": "Every reference the record carries, which the names' and codes' citations are resolved against"
             }
           },
           "required": [
