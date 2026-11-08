@@ -110,6 +110,25 @@ the substance of what the tool's own description promises. Measured live on
                               RESEARCH_CODE and one each of ATC, BNF, FDA and
                               MERCK_INDEX, and the 15 shown are alphabetically
                               first, so all brands.
+    MCSA_get_entry /          a catalytic residue numbered 45 where the PDB,
+      MCSA_search_enzymes     the papers and the entry's own mechanism text
+                              all say 70 (`resid` against `auth_resid`); roles
+                              collapsed from 38 records to a set of names, so
+                              `function_type` -- reactant, interaction or
+                              spectator -- was gone; `reaction_name` read from
+                              a key M-CSA does not send, null on every entry,
+                              while the reaction's compounds and both curated
+                              mechanisms with their 12 references reached
+                              nobody.
+    hca_search_projects       four fields, and the first project the endpoint
+                              returns is Mus musculus with nothing saying so.
+                              No libraryConstructionApproach ("10x 3' v2"), no
+                              cell count (1,330,000), no donor age or count,
+                              and organ and disease read off the first
+                              specimen and donor of several.
+    hca_get_file_manifest     a download manifest with no sha256, version or
+                              uuid, and no isIntermediate to tell a final
+                              matrix from an intermediate.
     OPM_search_structures     `description` is null on all 74 rhodopsin rows
                               while `comments` holds the prose; and no
                               subunit_segments (74/74, the number of bilayer
@@ -1363,6 +1382,45 @@ UPSTREAM_KEYS = [
         'o.get("species_name_cache")',
         "which organism the solved structure came from",
     ),
+    (
+        "mcsa_tool.py",
+        'first.get("auth_resid")',
+        "the PDB numbering of a catalytic residue, which is the number the "
+        "literature and a mutation name use",
+    ),
+    (
+        "mcsa_tool.py",
+        'role.get("function_type")',
+        "whether a catalytic residue is a reactant, an interaction partner or "
+        "a spectator",
+    ),
+    (
+        "mcsa_tool.py",
+        "def _mechanisms",
+        "the curated mechanism the atlas exists for, and its references",
+    ),
+    (
+        "mcsa_tool.py",
+        'compound.get("chebi_id")',
+        "the reaction's substrates and products, promised by the tool's own "
+        "description",
+    ),
+    (
+        "hca_tool.py",
+        '"genusSpecies"',
+        "the species of a project in a catalogue that holds mouse as well as "
+        "human",
+    ),
+    (
+        "hca_tool.py",
+        '"libraryConstructionApproach"',
+        "which single-cell assay a single-cell project used",
+    ),
+    (
+        "hca_tool.py",
+        'f.get("sha256")',
+        "the checksum that makes a download manifest verifiable",
+    ),
 ]
 
 
@@ -1671,6 +1729,19 @@ DECLARED = [
     ("OPM_search_structures", "transmembrane_segments"),
     ("OPM_search_structures", "comments"),
     ("OPM_search_structures", "uniprot_entry_names"),
+    ("MCSA_get_entry", "auth_residue_number"),
+    ("MCSA_get_entry", "role_details"),
+    ("MCSA_get_entry", "function_type"),
+    ("MCSA_get_entry", "reaction_compounds"),
+    ("MCSA_get_entry", "mechanisms"),
+    ("MCSA_search_enzymes", "auth_residue_number"),
+    ("MCSA_search_enzymes", "mechanism_count"),
+    ("hca_search_projects", "genusSpecies"),
+    ("hca_search_projects", "libraryConstructionApproach"),
+    ("hca_search_projects", "totalCells"),
+    ("hca_search_projects", "projectTitle"),
+    ("hca_get_file_manifest", "sha256"),
+    ("hca_get_file_manifest", "is_intermediate"),
 ]
 
 
@@ -2791,3 +2862,64 @@ def test_a_membrane_structure_says_how_many_times_it_crosses():
     assert '"comments": o.get("comments") or None' in source
     assert '"description": o.get("description")' in source
     assert 'o.get("tilterror")' in source
+
+
+def test_a_catalytic_residue_is_numbered_the_way_papers_number_it():
+    """M-CSA entry 2's catalytic serine is Ser70, and the tool said 45.
+
+    A residue chain carries `resid`, M-CSA's own sequential index, and
+    `auth_resid`, the PDB author numbering. For class A beta-lactamase they
+    are 45 and 70, and the mechanism text in the same response calls the
+    residue "Ser70" twice. The row reported 45 under `residue_number`, for a
+    tool whose stated purpose is interpreting active-site mutations: the
+    wrong number under the right name, which is worse than no number.
+
+    A role is `{function, function_type, emo}` and the row collapsed it to a
+    sorted set of `function` strings, so 38 role records on the first residue
+    became a handful of names and `function_type` -- reactant, interaction or
+    spectator -- went with them. Two of entry 2's seven residues are
+    spectators only.
+
+    `reaction_name` was read from a key M-CSA does not send: the reaction
+    object holds ec, compounds, mechanisms and is_polymeric and has never
+    carried a name, so the field was null on every entry ever served, while
+    the compounds (beta-lactam + water -> substituted beta-amino acids, each
+    with its ChEBI id) and both curated mechanisms with their twelve
+    references reached nobody.
+    """
+    source = _source("mcsa_tool.py")
+    assert 'first.get("auth_resid")' in source
+    assert "def _reference_chain" in source, "the first chain is still assumed"
+    assert 'role.get("function_type")' in source
+    assert "def _mechanisms" in source
+    assert 'reaction.get("name")' not in source, "a key M-CSA does not send"
+    assert "MECHANISM_TEXT_CHARACTERS" in source
+
+
+def test_an_hca_project_says_which_species_and_which_assay():
+    """The first project the HCA search returns is mouse.
+
+    `hca_search_projects` returned entryId, projectTitle, organ and
+    donorDisease. The hit it already had in hand carries the donors'
+    `genusSpecies` -- and the first project this endpoint answers is "1M
+    Neurons", Mus musculus -- so a caller filtering for human data took mouse
+    projects as human with nothing in the row to check against. It also
+    carries `libraryConstructionApproach` ("10x 3' v2"), which for a tool
+    that searches *single-cell* projects is the assay identity, the cell
+    counts (1,330,000 for that project), the donor ages and count, the
+    laboratory, and whether the data is accessible at all.
+
+    `organ` and `donorDisease` were read off `specimens[0]` and
+    `donorOrganisms[0]`; a project can have several of each, so they are now
+    the union over all of them.
+
+    The file manifest is a list of downloads that could not be verified:
+    sha256, version, uuid, and `isIntermediate`, which is how a final matrix
+    is told from an intermediate.
+    """
+    source = _source("hca_tool.py")
+    assert '"genusSpecies": _facet(donors, "genusSpecies")' in source
+    assert '"libraryConstructionApproach"' in source
+    assert 'f.get("sha256")' in source
+    assert "def _facet" in source
+    assert 'specimens[0].get("organ")' not in source
