@@ -2027,6 +2027,37 @@ UPSTREAM_KEYS = [
         "which genes a pathogenic deletion covers, for a region search that "
         "reported only its span",
     ),
+    (
+        "sgd_tool.py",
+        # Not a bare `p.get("note")`: sgd_tool.py already contained
+        # `prop.get("note")` in two other handlers, which contains it.
+        '"note": p.get("note")',
+        "the curator's note behind a phenotype call, where the qualitative "
+        "verdict was returned without the measurement that produced it",
+    ),
+    (
+        "cellosaurus_tool.py",
+        "def _cell_line_publications",
+        "the publications a cell line's reference-list points at, where the "
+        "pointers were returned and the records they point at dropped",
+    ),
+    (
+        "inaturalist_tool.py",
+        'photo.get("license_code")',
+        "the licence a photo may be reused under, for a tool that handed "
+        "over the photo's URL alone",
+    ),
+    (
+        "inaturalist_tool.py",
+        'photo.get("attribution")',
+        "the attribution line that licence requires",
+    ),
+    (
+        "inaturalist_tool.py",
+        'r.get("ancestor_ids")',
+        "the lineage that separates two taxa sharing a common name, for a "
+        "search that returned the name and the rank alone",
+    ),
 ]
 
 
@@ -2055,6 +2086,14 @@ def test_the_wrapper_reads_the_field_the_api_answered(module, key, why):
 
 # (tool, output field the schema must declare)
 DECLARED = [
+    ("SGD_get_phenotypes", "note"),
+    ("SGD_get_phenotypes", "experiment_note"),
+    ("cellosaurus_get_cell_line_info", "publications"),
+    ("cellosaurus_get_cell_line_info", "publication_count"),
+    ("iNaturalist_search_taxa", "ancestor_ids"),
+    ("iNaturalist_search_taxa", "iconic_taxon_id"),
+    ("iNaturalist_search_observations", "photos"),
+    ("iNaturalist_search_observations", "license_code"),
     ("gProfiler_enrichment", "effective_domain_size"),
     ("gProfiler_enrichment", "intersection_genes"),
     ("GxA_get_experiment_expression", "expression_unit"),
@@ -4357,3 +4396,112 @@ def test_a_region_hit_says_which_genes_the_deletion_removes():
     assert 'gene.get("source")' in source
     assert "GENES_PER_OVERLAP_ROW" in source
     assert '"accession": rec.get("accession")' in source
+
+
+def test_a_phenotype_call_comes_with_the_measurement_behind_it():
+    """"competitive fitness: normal" -- on what evidence?
+
+    `SGD_get_phenotypes` returned the phenotype, the mutant type, the
+    experiment type and the reference, which is the call and its provenance
+    but not its content. SGD records a note on the annotation and another on
+    the experiment, and the note is where the number lives: under
+    `competitive fitness: normal` the note reads "Relative fitness score:
+    1.000", under `haploproficient` it reads "Relative growth score:
+    0.0044", and under `cellular morphology: abnormal` it reads "large
+    budded cells with nuclei situated at the mother-bud neck".
+
+    For POL3 (S000002260) 22 of the 50 returned annotations carry one. The
+    experiment note says how the assay was run ("mutants grown in 96-well
+    microtiter plates"), which is what tells a reader whether two
+    "decreased" calls are comparable.
+
+    `experiment_properties` was declared as a bare array; its rows have a
+    shape (class_type, role, name, value, unit) and now say so.
+    """
+    source = _source("sgd_tool.py")
+    assert '"note": p.get("note")' in source
+    assert '"experiment_note"' in source
+    assert 'p.get("experiment_details")' in source
+    schema = _config("SGD_get_phenotypes")["return_schema"]
+    rows = (schema.get("oneOf") or [schema])[0]["items"]["properties"]
+    assert "class_type" in rows["experiment_properties"]["items"]["properties"]
+    assert "Relative growth score" in rows["note"]["description"]
+
+
+def test_a_cell_lines_references_are_the_papers_not_the_pointers():
+    """83 references, each an opaque internal id.
+
+    `cellosaurus_get_cell_line_info` returned the cell-line record as
+    Cellosaurus sends it, and in that record `reference-list` is 83 entries
+    of the form {"resource-internal-ref": "CelloPub=CLPUB00047"}. The
+    records those point at travel in a sibling block of the same response,
+    `Cellosaurus.publication-list`, which the wrapper dropped. A caller
+    asking which papers describe HeLa got 83 pointers into nothing.
+
+    They now resolve: CLPUB00047 is "Tissue culture studies of the
+    proliferative capacity of cervical carcinoma and normal epithelium.",
+    Cancer Res. 1952 -- the paper that established the line. Each record
+    carries its authors, journal, volume and pages, and its PubMed id and
+    DOI under cross_references. A pointer with no matching record is
+    reported as its bare internal id rather than silently dropped, and
+    `publication_count` counts the references the cell line holds so a
+    truncated list can be recognised as one.
+    """
+    source = _source("cellosaurus_tool.py")
+    assert "def _cell_line_publications" in source
+    assert "publication-list" in source
+    assert "resource-internal-ref" in source
+    assert "PUBLICATIONS_PER_CELL_LINE" in source
+    assert "AUTHORS_PER_PUBLICATION" in source
+    schema = _config("cellosaurus_get_cell_line_info")["return_schema"]
+    props = (schema.get("oneOf") or [schema])[0]["properties"]
+    assert "publications" in props
+    assert "internal_id" in props["publications"]["items"]["properties"]
+    # The passthrough record's own keys were undeclared too: the comment
+    # list carrying Cellosaurus's contamination warnings, the STR profile
+    # that authenticates the line, 233 cross-references.
+    data = props["data"]["properties"]
+    for key in ("comment-list", "str-list", "xref-list", "reference-list"):
+        assert key in data, key
+    assert "publications" in data["reference-list"]["description"]
+
+
+def test_a_photo_url_says_whether_the_photo_may_be_used():
+    """Three Monarch observations, three different copyright positions.
+
+    `iNaturalist_search_observations` returned `photo_url`, the first
+    photo's URL, and nothing about its terms. iNaturalist photographers keep
+    their own copyright: of three consecutive Danaus plexippus observations
+    one photo was "(c) elliottbucknall100, all rights reserved", one "(c)
+    Michelle W., some rights reserved (CC BY)" and one all rights reserved
+    again. The URLs are indistinguishable -- all three resolve, and nothing
+    in the reply said that reusing the first would infringe.
+
+    Every photo now comes with the attribution line its licence requires and
+    its `license_code`, which is null exactly when the photographer reserved
+    all rights. `photo_count` says how many the observation holds, since only
+    the first was ever returned.
+
+    The taxon search had the same shape of gap in a different place: a search
+    for "monarch" returns Danaus plexippus (iconic 47158, Insecta) and
+    Monarchidae, the Monarch Flycatchers (iconic 3, Aves), and the lineage is
+    what separates them. The search endpoint sends the path as ids only, so
+    `ancestor_ids` is the path, each id accepted back by
+    `iNaturalist_get_taxon`.
+    """
+    source = _source("inaturalist_tool.py")
+    assert "def _photos" in source
+    assert 'photo.get("license_code")' in source
+    assert 'photo.get("attribution")' in source
+    assert "PHOTOS_PER_OBSERVATION" in source
+    assert '"photo_count": len(photos)' in source
+    assert 'r.get("ancestor_ids")' in source
+    # One reader, used by the one handler that has photos.
+    assert source.count("_photos(obs)") == 1
+    obs = _config("iNaturalist_search_observations")["return_schema"]
+    photos = (obs.get("oneOf") or [obs])[0]["items"]["properties"]["photos"]
+    assert "all-rights-reserved" in photos["description"]
+    assert "license_code" in photos["items"]["properties"]
+    taxa = _config("iNaturalist_search_taxa")["return_schema"]
+    rows = (taxa.get("oneOf") or [taxa])[0]["items"]["properties"]
+    assert "Monarch Flycatchers" in rows["ancestor_ids"]["description"]

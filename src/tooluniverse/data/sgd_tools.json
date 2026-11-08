@@ -400,7 +400,48 @@
                 ]
               },
               "experiment_properties": {
-                "type": "array"
+                "type": "array",
+                "description": "The experiment's own properties (condition, reporter, allele and chemical details) as SGD records them.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "class_type": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "What kind of property this is, e.g. BIOITEM, CHEMICAL, CONDITION."
+                    },
+                    "role": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The part it played in the experiment, e.g. Allele, Chemical pending, Media, Temperature."
+                    },
+                    "name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Name of the allele, chemical or condition."
+                    },
+                    "value": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Its value where the property is quantified."
+                    },
+                    "unit": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Unit of value."
+                    }
+                  }
+                }
               },
               "details": {
                 "type": [
@@ -413,6 +454,20 @@
                   "string",
                   "null"
                 ]
+              },
+              "note": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The curator's note on this annotation: the measurement or observation behind the qualitative call, e.g. 'Relative growth score: 0.0044' under haploproficient or 'large budded cells with nuclei situated at the mother-bud neck'."
+              },
+              "experiment_note": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The note attached to the experiment rather than to the annotation, where SGD records one."
               }
             }
           }

@@ -224,6 +224,20 @@
                   "null"
                 ],
                 "description": "iNaturalist's broad group, e.g. Insecta"
+              },
+              "iconic_taxon_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Taxon id of the iconic group named by iconic_taxon_name (47158 Insecta, 3 Aves, ...)."
+              },
+              "ancestor_ids": {
+                "type": "array",
+                "description": "The taxon's lineage as iNaturalist taxon ids, root first. Two taxa can share a common name across kingdoms ('Monarch' the butterfly, 'Monarch Flycatchers' the bird family) and the lineage is what separates them. Each id is accepted as taxon_id by iNaturalist_get_taxon.",
+                "items": {
+                  "type": "integer"
+                }
               }
             }
           }
@@ -547,6 +561,13 @@
                     "null"
                   ],
                   "description": "True when that cap applied"
+                },
+                "iconic_taxon_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Taxon id of the iconic group named by iconic_taxon_name (47158 Insecta, 3 Aves, ...)."
                 }
               }
             },
@@ -736,6 +757,47 @@
                   "null"
                 ],
                 "description": "URL of observation photo"
+              },
+              "photos": {
+                "type": "array",
+                "description": "Each photo of the observation with the terms it may be used under. iNaturalist photos carry their own copyright: license_code is null for an all-rights-reserved photo, otherwise a Creative Commons code such as cc-by or cc-by-nc. photo_url alone does not say which.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Photo id."
+                    },
+                    "url": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Square thumbnail URL of the photo."
+                    },
+                    "attribution": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The attribution line the licence requires, e.g. '(c) micro873, some rights reserved (CC BY-NC)'."
+                    },
+                    "license_code": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Creative Commons licence code, or null when the photographer reserved all rights."
+                    }
+                  }
+                }
+              },
+              "photo_count": {
+                "type": "integer",
+                "description": "Number of photos the observation carries; photos holds at most the first PHOTOS_PER_OBSERVATION of them."
               }
             }
           }

@@ -26,6 +26,7 @@ INAT_BASE_URL = "https://api.inaturalist.org/v1"
 STATUSES_PER_TAXON = 25
 PLACE_LISTINGS_PER_TAXON = 25
 WIKIPEDIA_SUMMARY_CHARACTERS = 600
+PHOTOS_PER_OBSERVATION = 10
 
 
 def _conservation_status(status: dict) -> dict:
@@ -90,6 +91,29 @@ def _place_listings(record: dict) -> list:
         if len(out) >= PLACE_LISTINGS_PER_TAXON:
             break
     return out
+
+
+def _photos(record: dict) -> list:
+    """The observation's photos with the terms they may be used under.
+
+    iNaturalist photos carry their own copyright: some are all rights
+    reserved, some Creative Commons. A bare URL does not say which, so
+    every photo is returned with its attribution line and licence code.
+    ``license_code`` is null for an all-rights-reserved photo.
+    """
+    rows = []
+    for photo in (record.get("photos") or [])[:PHOTOS_PER_OBSERVATION]:
+        if not isinstance(photo, dict):
+            continue
+        rows.append(
+            {
+                "id": photo.get("id"),
+                "url": photo.get("url"),
+                "attribution": photo.get("attribution"),
+                "license_code": photo.get("license_code"),
+            }
+        )
+    return rows
 
 
 @register_tool("INaturalistTool")
@@ -252,6 +276,18 @@ class INaturalistTool(BaseTool):
                     ),
                     "extinct": r.get("extinct"),
                     "iconic_taxon_name": r.get("iconic_taxon_name"),
+                    "iconic_taxon_id": r.get("iconic_taxon_id"),
+                    # Two taxa can share a common name across kingdoms
+                    # ("Monarch" the butterfly, "Monarch Flycatchers" the
+                    # bird family); the lineage is what separates them.
+                    # This endpoint sends the path as ids only, each one a
+                    # taxon id accepted by iNaturalist_get_taxon.
+                    "ancestor_ids": r.get("ancestor_ids")
+                    or [
+                        int(part)
+                        for part in str(r.get("ancestry") or "").split("/")
+                        if part.isdigit()
+                    ],
                     "wikipedia_url": r.get("wikipedia_url"),
                 }
             )
@@ -322,6 +358,7 @@ class INaturalistTool(BaseTool):
                 ),
                 "extinct": r.get("extinct"),
                 "iconic_taxon_name": r.get("iconic_taxon_name"),
+                "iconic_taxon_id": r.get("iconic_taxon_id"),
                 "place_listings": _place_listings(r),
                 "place_listings_returned": len(_place_listings(r)),
                 "place_listings_in_response": len(r.get("listed_taxa") or []),
@@ -412,6 +449,11 @@ class INaturalistTool(BaseTool):
                     "quality_grade": obs.get("quality_grade"),
                     "user": obs.get("user", {}).get("login"),
                     "photo_url": photos[0].get("url") if photos else None,
+                    # photo_url alone says nothing about whether the photo
+                    # may be reused; photos carries each one's attribution
+                    # line and licence code.
+                    "photos": _photos(obs),
+                    "photo_count": len(photos),
                 }
             )
 

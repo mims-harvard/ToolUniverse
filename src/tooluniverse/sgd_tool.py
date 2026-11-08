@@ -359,6 +359,17 @@ class SGDTool(BaseTool):
                     else None,
                     "reference_pubmed_id": (p.get("reference") or {}).get("pubmed_id"),
                     "reference_citation": (p.get("reference") or {}).get("citation"),
+                    # THE MEASUREMENT behind the qualitative call. 25 of
+                    # POL3's 65 annotations carry one: "Relative growth score:
+                    # 0.0044" under `haploproficient`, "Relative fitness
+                    # score: 1.000" under "competitive fitness: normal",
+                    # "metascore strong (multiple hit)" under a chromosome
+                    # instability call. The row reported the label alone.
+                    "note": p.get("note"),
+                    # And the experiment's own note, e.g. "mutants grown in
+                    # 96-well microtiter plates".
+                    "experiment_note": (p.get("experiment") or {}).get("note")
+                    or p.get("experiment_details"),
                     # The experiment's own conditions. SGD lists these as
                     # `properties`, each with a class_type (chemical, allele,
                     # media), the item and the role it played -- which is the
