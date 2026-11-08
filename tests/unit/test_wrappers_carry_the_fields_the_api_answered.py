@@ -110,6 +110,16 @@ the substance of what the tool's own description promises. Measured live on
                               RESEARCH_CODE and one each of ATC, BNF, FDA and
                               MERCK_INDEX, and the 15 shown are alphabetically
                               first, so all brands.
+    SmartAPI_search_apis      `base_url: servers[0]["url"]` handed back a
+                              DEVELOPMENT url as the API's base url for any
+                              entry that lists development first, which the
+                              CFDE Gene Regulation hub does:
+                              genboree.org/cfde-gene-dev against
+                              genboree.org/cfde-gene. A wrong value, not a
+                              missing one. `info.contact` was requested in
+                              _SEARCH_FIELDS and never read, so the
+                              registry's answer to "who maintains this" was
+                              fetched and discarded on every search.
     OSDR_search_studies       no study descriptions, in a search whose hits a
                               caller has to choose between, and no
                               "Study Assay Technology Platform" -- which is
@@ -340,6 +350,18 @@ a drop. InterPro's domain-architecture endpoint keeps `proteins[].accession`
 and `metadata.source_database` out for different reasons: the first is the
 queried accession echoed back and the second is the constant "pfam" from the
 request path.
+
+`OpenFDA_get_approved_products` is about products and formulations, and its
+submissions reach the caller through `FDA_OrangeBook_get_approval_history`,
+which returns all 6 of ANDA078083's with their type, status, dates, class
+codes and documents. I first recorded that pointer as BROKEN after reading
+the result's `approval_history` key, which does not exist -- the key is
+`submissions` -- so the pointer test needs the sibling's real output shape,
+not a guess at it. `PharmGKB_get_variant_annotations` passes the raw
+annotation record through unprojected; its 1,682 flagged diplotype ids are
+the rows beyond the requested page, disclosed by total_results, has_more and
+next_offset. OSDR's `Study Person` name parts are composed into "Hanjoong
+Jo" by `_person` via `key.title()`.
 
 A POINTER CAN BE TESTED, and these three were. `FDAGSRS_search_substances`
 returns ten synonyms with the total and a truncation flag, and the citations
@@ -1892,6 +1914,17 @@ UPSTREAM_KEYS = [
         "what each study was, in a search whose rows a caller has to choose "
         "between",
     ),
+    (
+        "smartapi_tool.py",
+        'server.get("x-maturity")',
+        "whether the url the tool hands over is the production server or the "
+        "development one",
+    ),
+    (
+        "smartapi_tool.py",
+        "def _base_url",
+        "the production server, where servers[0] was a development url",
+    ),
 ]
 
 
@@ -2276,6 +2309,9 @@ DECLARED = [
     ("OSDR_search_studies", "project_type"),
     ("cBioPortal_get_copy_number_alterations", "molecular_profile"),
     ("cBioPortal_get_copy_number_alterations", "molecular_profile_resolution"),
+    ("SmartAPI_search_apis", "base_url_maturity"),
+    ("SmartAPI_search_apis", "servers"),
+    ("SmartAPI_search_apis", "maturity"),
 ]
 
 
@@ -4002,3 +4038,34 @@ def test_the_cna_path_names_its_profile_like_the_mutation_path():
         source.count('"molecular_profile_resolution": profile_found.get("resolution")')
         == 2
     )
+
+
+def test_an_api_registry_hands_over_the_production_server():
+    """`servers[0]["url"]` was a development endpoint for a real entry.
+
+    A SmartAPI entry declares several servers, each with an `x-maturity` of
+    production, staging or development, and the array order is not the order
+    of usefulness. The CFDE Gene Regulation Linked Data Hub lists
+    https://genboree.org/cfde-gene-dev first and
+    https://genboree.org/cfde-gene second, so the row handed a caller the
+    development endpoint as the API's base url with nothing saying so. That
+    is a wrong value rather than a missing one, which is why the fix changes
+    which url `base_url` holds rather than only adding fields.
+
+    `base_url_maturity` makes the choice visible, and an entry whose ONLY
+    server is a development one -- Translator Gene Clustering is -- now says
+    so instead of passing it off as the API.
+
+    `info.contact` was already in `_SEARCH_FIELDS` and never read, so the
+    registry's answer to "who maintains this" was fetched and discarded on
+    every search. It is returned with the email the registry publishes for
+    that purpose: this is an API's own support contact, unlike the specimen
+    collectors' addresses this sweep left out of iDigBio.
+    """
+    source = _source("smartapi_tool.py")
+    assert "def _base_url" in source
+    assert 'server.get("x-maturity")' in source
+    assert '"production", "staging"' in source
+    assert "def _servers" in source
+    assert '"contact": _contact(info)' in source
+    assert 'servers[0].get("url") if servers else None' not in source

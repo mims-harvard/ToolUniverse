@@ -29,16 +29,79 @@ SMARTAPI_BASE_URL = "https://smart-api.info/api"
 _SEARCH_FIELDS = "_id,_meta.slug,info.title,info.description,info.contact,tags,servers"
 
 
+def _servers(hit: Dict[str, Any]) -> list:
+    """Every server a SmartAPI entry declares, with its maturity.
+
+    `x-maturity` is "production", "staging" or "development", and the order
+    of the array is not the order of usefulness: the CFDE gene API lists its
+    development server first and its production server second.
+    """
+    out = []
+    for server in hit.get("servers") or []:
+        if not isinstance(server, dict) or not server.get("url"):
+            continue
+        out.append(
+            {
+                "url": server.get("url"),
+                "description": server.get("description"),
+                "maturity": server.get("x-maturity"),
+            }
+        )
+    return out
+
+
+def _base_url(servers: list) -> tuple:
+    """(url, maturity) of the server to call, production first.
+
+    `servers[0]["url"]` returned a DEVELOPMENT url as the API's base url for
+    any entry that lists development before production, which the CFDE gene
+    API does: https://genboree.org/cfde-gene-dev against
+    https://genboree.org/cfde-gene. A caller was handed a dev endpoint with
+    nothing saying so, which is a wrong value rather than a missing one.
+    """
+    for wanted in ("production", "staging"):
+        for server in servers:
+            if (server.get("maturity") or "").lower() == wanted:
+                return server["url"], server.get("maturity")
+    if servers:
+        return servers[0]["url"], servers[0].get("maturity")
+    return None, None
+
+
+def _contact(info: Dict[str, Any]) -> Dict[str, Any]:
+    """The API's own published support contact.
+
+    `info.contact` is already requested in _SEARCH_FIELDS and was never
+    read, so the registry's answer to "who maintains this" was fetched and
+    discarded on every search.
+    """
+    contact = info.get("contact") or {}
+    if not isinstance(contact, dict):
+        return {}
+    return {
+        "name": contact.get("name"),
+        "email": contact.get("email"),
+        "url": contact.get("url"),
+        "role": contact.get("x-role"),
+    }
+
+
 def _summarize_hit(hit: Dict[str, Any]) -> Dict[str, Any]:
     """Condense one SmartAPI search hit to its useful summary fields."""
     info = hit.get("info") or {}
-    servers = hit.get("servers") or []
+    servers = _servers(hit)
+    base_url, base_url_maturity = _base_url(servers)
     return {
         "api_id": hit.get("_id"),
         "slug": (hit.get("_meta") or {}).get("slug"),
         "title": info.get("title"),
         "description": info.get("description"),
-        "base_url": servers[0].get("url") if servers else None,
+        "base_url": base_url,
+        # Which kind of server base_url is, so a development-only entry is
+        # visible rather than silently handed over as the API.
+        "base_url_maturity": base_url_maturity,
+        "servers": servers,
+        "contact": _contact(info),
         "tags": [t.get("name") for t in hit.get("tags") or [] if t.get("name")],
     }
 

@@ -31,7 +31,30 @@
               "slug": {"type": ["string", "null"]},
               "title": {"type": ["string", "null"]},
               "description": {"type": ["string", "null"]},
-              "base_url": {"type": ["string", "null"]},
+              "base_url": {"type": ["string", "null"], "description": "The server to call, chosen production-first. `servers[0].url` is not that: the CFDE gene API lists its development server first and its production server second."},
+              "base_url_maturity": {"type": ["string", "null"], "description": "Which kind of server base_url is: production, staging or development. An entry whose only server is a development one says so here instead of passing it off as the API."},
+              "servers": {
+                "type": "array",
+                "description": "Every server the registry entry declares.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "url": {"type": ["string", "null"]},
+                    "description": {"type": ["string", "null"], "description": "The entry's own label for the server."},
+                    "maturity": {"type": ["string", "null"], "description": "x-maturity: production, staging or development."}
+                  }
+                }
+              },
+              "contact": {
+                "type": "object",
+                "description": "The API's own published support contact, which the search already requested in _SEARCH_FIELDS and never read.",
+                "properties": {
+                  "name": {"type": ["string", "null"]},
+                  "email": {"type": ["string", "null"], "description": "Contact email as the registry publishes it."},
+                  "url": {"type": ["string", "null"]},
+                  "role": {"type": ["string", "null"], "description": "x-role, e.g. 'responsible developer'."}
+                }
+              },
               "tags": {"type": "array", "items": {"type": "string"}}
             }
           }
