@@ -402,6 +402,9 @@ default_tool_files = {
     "mcp_auto_loader_agingresearch": os.path.join(
         current_dir, "data", "mcp_auto_loader_agingresearch.json"
     ),
+    "mcp_auto_loader_deepdna": os.path.join(
+        current_dir, "data", "mcp_auto_loader_deepdna.json"
+    ),
     "cryoet": os.path.join(current_dir, "data", "cryoet_tools.json"),
     "esm": os.path.join(current_dir, "data", "esm_tools.json"),
     "structure_annotation": os.path.join(
