@@ -445,20 +445,106 @@
           },
           "inferred_allele_synonyms": {
             "type": "array",
-            "description": "Other names for that allele, which is how it is matched across databases"
+            "description": "Other names for that allele, which is how it is matched across databases",
+            "items": {
+              "type": "string"
+            }
           },
           "conditions": {
             "type": "array",
             "description": "Experimental conditions the phenotype was observed under; 'standard conditions' versus a treatment changes what the statement means"
           },
           "pubmed_publications": {
-            "type": "array"
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "PubMed curies behind the annotations"
           },
           "annotation_count": {
             "type": [
               "integer",
               "null"
             ]
+          },
+          "phenotype_terms": {
+            "type": "array",
+            "description": "The ontology terms the statement paraphrases, capped at metadata.phenotype_terms_per_row. MGI annotations carry Mammalian Phenotype terms; ZFIN and WormBase compose free-text statements instead and this list is empty for them",
+            "items": {
+              "type": "object",
+              "properties": {
+                "curie": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Ontology id, e.g. MP:0005193 - the only thing that joins a phenotype to an ontology tool"
+                },
+                "name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Term label"
+                },
+                "definition": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Term definition, capped at PHENOTYPE_DEFINITION_CHARACTERS"
+                },
+                "definition_truncated": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "True when that cap applied"
+                },
+                "descendant_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Terms below this one in the ontology"
+                }
+              }
+            }
+          },
+          "relation": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The row's own relation, e.g. 'is_implicated_in'"
+          },
+          "annotation_relations": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Each annotation's relation, e.g. 'has_phenotype'. A different claim from the row's relation, and both were dropped"
+          },
+          "data_providers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Which Alliance members asserted the annotations, e.g. MGI or ZFIN"
+          },
+          "annotation_types": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Alliance annotation classes, e.g. AGMPhenotypeAnnotation"
+          },
+          "annotation_subjects": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The genotypes or models the phenotype was observed in, which are not the queried gene: MGI:2170872 against a query of MGI:97490"
           }
         }
       }

@@ -110,6 +110,17 @@ the substance of what the tool's own description promises. Measured live on
                               RESEARCH_CODE and one each of ATC, BNF, FDA and
                               MERCK_INDEX, and the 15 shown are alphabetically
                               first, so all brands.
+    MGI_get_phenotypes /      a phenotype returned as free text with no term
+      ZFIN_get_gene_          and no id, in a tool whose description says it
+      phenotypes              returns "Mammalian Phenotype (MP) ontology
+                              annotations". All 125 annotations on MGI:97490
+                              carry MP:0005193 and its definition. The row
+                              relation ("is_implicated_in") and each
+                              annotation's ("has_phenotype") are different
+                              claims and both were dropped, with the data
+                              provider and the genotype the phenotype was
+                              seen in -- MGI:2170872, not the queried
+                              MGI:97490.
     FDAGSRS_get_substance     a name's `references` are uuids into the
                               record's own 78-entry references array, where
                               the citation is ("EP 6.5", docType FDA_SRS).
@@ -271,6 +282,14 @@ contributor records in full -- a deliberate split recorded in the handler's
 own comment. GoaT's `lineage[].node_depth` is the array index plus one on all
 31 entries of Homo sapiens, and `taxon_names[].source_url` is the source
 database's homepage, which `source` already names.
+
+Alliance's `phenotypeAnnotationSubject.curie` is an AGRKB key
+("AGRKB:108000000094293") and `primaryExternalId` beside it is the
+model-organism id a caller can use, so the curie is not reported and the
+external id is. ZFIN and WormBase compose free-text phenotype statements
+rather than annotating single ontology terms, so their `phenotype_terms` is
+empty by upstream design -- measured: 0 terms across 18 WormBase rows and 2
+ZFIN rows, against 125 of 125 for MGI.
 
 An AGGREGATION is the sharpest form of the transformation rule.
 `FAERS_analyze_temporal_trends` was flagged for `results[].time` on 2,010
@@ -1660,6 +1679,18 @@ UPSTREAM_KEYS = [
         "the citations a name's reference uuids point at, which the module's "
         "own docstring promises as regulatory references",
     ),
+    (
+        "alliance_genome_tool.py",
+        'annotation.get("phenotypeTerms")',
+        "the Mammalian Phenotype term and its id, which MGI_get_phenotypes "
+        "names in its own description",
+    ),
+    (
+        "alliance_genome_tool.py",
+        "def _annotation_facet",
+        "the relation, the data provider and the annotated genotype, none of "
+        "which reached the caller",
+    ),
 ]
 
 
@@ -2012,6 +2043,11 @@ DECLARED = [
     ("FDAGSRS_get_substance", "comments"),
     ("FDAGSRS_get_substance", "jurisdictions"),
     ("FDAGSRS_get_substance", "references"),
+    ("MGI_get_phenotypes", "phenotype_terms"),
+    ("MGI_get_phenotypes", "data_providers"),
+    ("MGI_get_phenotypes", "annotation_subjects"),
+    ("ZFIN_get_gene_phenotypes", "phenotype_terms"),
+    ("ZFIN_get_gene_phenotypes", "annotation_relations"),
 ]
 
 
@@ -3424,3 +3460,33 @@ def test_a_substance_name_says_which_pharmacopoeia_lists_it():
     assert 'n.get("nameJurisdiction")' in source
     assert "CITATIONS_PER_ENTRY" in source
     assert '"total_references": len(reference_index)' in source
+
+
+def test_a_phenotype_annotation_carries_the_ontology_term():
+    """MGI_get_phenotypes names MP in its description and returned no MP id.
+
+    Every one of the 125 annotations on MGI:97490 carries
+    `{"curie": "MP:0005193", "name": "abnormal anterior eye segment
+    morphology", "definition": ...}`, and the row returned
+    `phenotype_statement` -- the same words as free text -- with no term and
+    no identifier, so a phenotype could not be joined to any ontology tool.
+
+    Two relations were dropped and they are different claims: the row's is
+    "is_implicated_in" and each annotation's is "has_phenotype". So were the
+    data provider, which matters because the Alliance aggregates several, and
+    `phenotypeAnnotationSubject.primaryExternalId` -- the genotype the
+    phenotype was observed in, MGI:2170872, which is not the queried
+    MGI:97490.
+
+    ZFIN and WormBase compose free-text statements instead of annotating a
+    single term, so `phenotype_terms` is empty for them by upstream design:
+    0 terms across 18 WormBase rows and 2 ZFIN rows against 125 of 125 for
+    MGI.
+    """
+    source = _source("alliance_genome_tool.py")
+    assert "def _phenotype_terms" in source
+    assert 'annotation.get("phenotypeTerms")' in source
+    assert "def _annotation_facet" in source
+    assert '"relation": (r.get("relation") or {}).get("name")' in source
+    assert '("dataProvider", "abbreviation")' in source
+    assert '("phenotypeAnnotationSubject", "primaryExternalId")' in source

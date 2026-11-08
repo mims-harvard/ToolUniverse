@@ -221,6 +221,65 @@ def _alliance_references(evidence):
     return out
 
 
+# Phenotype ontology terms per annotated row. MGI's Pax6 page carries one
+# term on each of 125 annotations, so the cap only guards an outlier.
+PHENOTYPE_TERMS_PER_ROW = 25
+PHENOTYPE_DEFINITION_CHARACTERS = 400
+
+
+def _phenotype_terms(annotations: list) -> list:
+    """The ontology terms behind a phenotype statement.
+
+    MGI_get_phenotypes says in its own description that it returns "Mammalian
+    Phenotype (MP) ontology annotations", and the row returned
+    `phenotype_statement` -- free text -- with no term and no id. Every one
+    of the 125 annotations on MGI:97490 carries
+    `{"curie": "MP:0005193", "name": "abnormal anterior eye segment
+    morphology", "definition": ...}`, and the curie is the only thing that
+    joins a phenotype to any ontology tool.
+    """
+    out, seen = [], set()
+    for annotation in annotations:
+        for term in annotation.get("phenotypeTerms") or []:
+            if not isinstance(term, dict):
+                continue
+            curie = term.get("curie")
+            key = curie or term.get("name")
+            if not key or key in seen:
+                continue
+            seen.add(key)
+            definition = (term.get("definition") or "").strip()
+            truncated = len(definition) > PHENOTYPE_DEFINITION_CHARACTERS
+            if truncated:
+                definition = (
+                    definition[:PHENOTYPE_DEFINITION_CHARACTERS].rstrip() + "..."
+                )
+            out.append(
+                {
+                    "curie": curie,
+                    "name": term.get("name"),
+                    "definition": definition or None,
+                    "definition_truncated": truncated,
+                    "descendant_count": term.get("descendantCount"),
+                }
+            )
+            if len(out) >= PHENOTYPE_TERMS_PER_ROW:
+                return out
+    return out
+
+
+def _annotation_facet(annotations: list, path: tuple) -> list:
+    """A de-duplicated facet across a row's annotations, nulls dropped."""
+    out = []
+    for annotation in annotations:
+        value = annotation
+        for key in path:
+            value = (value or {}).get(key) if isinstance(value, dict) else None
+        if value and value not in out:
+            out.append(value)
+    return out
+
+
 @register_tool("AllianceGenomeTool")
 class AllianceGenomeTool(BaseTool):
     """
@@ -746,6 +805,26 @@ class AllianceGenomeTool(BaseTool):
                         for pub in (r.get("pubmedPublications") or [])
                         if isinstance(pub, dict)
                     ],
+                    # The ontology term the statement paraphrases, and its id.
+                    "phenotype_terms": _phenotype_terms(annotations),
+                    # The row's own relation is "is_implicated_in" while each
+                    # annotation's is "has_phenotype"; they are different
+                    # claims and both were dropped.
+                    "relation": (r.get("relation") or {}).get("name"),
+                    "annotation_relations": _annotation_facet(
+                        annotations, ("relation", "name")
+                    ),
+                    # Which Alliance member asserted it. The Alliance
+                    # aggregates several, and the row did not say which.
+                    "data_providers": _annotation_facet(
+                        annotations, ("dataProvider", "abbreviation")
+                    ),
+                    "annotation_types": _annotation_facet(annotations, ("type",)),
+                    # The genotype or model the phenotype was seen in, which
+                    # is not the queried gene: MGI:2170872 against MGI:97490.
+                    "annotation_subjects": _annotation_facet(
+                        annotations, ("phenotypeAnnotationSubject", "primaryExternalId")
+                    ),
                     "annotation_count": len(annotations),
                 }
             )
@@ -757,6 +836,7 @@ class AllianceGenomeTool(BaseTool):
                 **self._page_metadata(total, len(phenotypes), limit, page),
                 "query_gene_id": gene_id,
                 "source": "Alliance of Genome Resources",
+                "phenotype_terms_per_row": PHENOTYPE_TERMS_PER_ROW,
             },
         }
 
