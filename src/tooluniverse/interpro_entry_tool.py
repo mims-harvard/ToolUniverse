@@ -37,6 +37,41 @@ def _json_or_none(response):
     return response.json()
 
 
+def _match_locations(protein_rows: list) -> list:
+    """Where on a protein an InterPro entry matches.
+
+    `entry_protein_locations` is what "this protein contains this domain"
+    actually means: the residue ranges, each possibly in several fragments,
+    with the signature model and score behind the call. The twin endpoint in
+    the sibling module builds the same shape and the two must agree -- a
+    caller joining a domain's proteins to a protein's domains reads both.
+    """
+    locations = []
+    for row in protein_rows or []:
+        if not isinstance(row, dict):
+            continue
+        for location in row.get("entry_protein_locations") or []:
+            if not isinstance(location, dict):
+                continue
+            locations.append(
+                {
+                    "fragments": [
+                        {
+                            "start": fragment.get("start"),
+                            "end": fragment.get("end"),
+                            "status": fragment.get("dc-status"),
+                        }
+                        for fragment in (location.get("fragments") or [])
+                        if isinstance(fragment, dict)
+                    ],
+                    "model": location.get("model"),
+                    "score": location.get("score"),
+                    "representative": location.get("representative"),
+                }
+            )
+    return locations
+
+
 class InterProEntryTool(BaseTool):
     """
     Tool for InterPro entry API providing protein-to-domain mappings
@@ -172,27 +207,7 @@ class InterProEntryTool(BaseTool):
             protein_rows = [
                 pr for pr in (r.get("proteins") or []) if isinstance(pr, dict)
             ]
-            locations = []
-            for pr in protein_rows:
-                for loc in pr.get("entry_protein_locations") or []:
-                    if not isinstance(loc, dict):
-                        continue
-                    locations.append(
-                        {
-                            "fragments": [
-                                {
-                                    "start": fr.get("start"),
-                                    "end": fr.get("end"),
-                                    "status": fr.get("dc-status"),
-                                }
-                                for fr in (loc.get("fragments") or [])
-                                if isinstance(fr, dict)
-                            ],
-                            "model": loc.get("model"),
-                            "score": loc.get("score"),
-                            "representative": loc.get("representative"),
-                        }
-                    )
+            locations = _match_locations(protein_rows)
             first_protein = protein_rows[0] if protein_rows else {}
             entries.append(
                 {

@@ -199,6 +199,40 @@ def _normalize_curie(entity_id: str) -> str:
     return f"{m.group(1)}:{m.group(2)}" if m else stripped
 
 
+def _search_row(item: Dict[str, Any]) -> Dict[str, Any]:
+    """One hit of Monarch's /search endpoint.
+
+    Both search handlers in this module call that one endpoint and used to
+    build their own row from it: the general one kept fifteen fields and the
+    Mondo one six, so a disease search lost the score that orders the hits,
+    the match_type that says whether the name or a synonym matched, the
+    synonyms themselves, the namespace and who asserted the record. Same
+    endpoint, same row.
+    """
+    return {
+        "id": item.get("id"),
+        "name": item.get("name"),
+        "category": item.get("category"),
+        "symbol": item.get("symbol"),
+        "description": item.get("description"),
+        "taxon": item.get("in_taxon"),
+        "taxon_label": item.get("in_taxon_label"),
+        "deprecated": _is_deprecated(item),
+        # The order the hits come back in, and who asserted each one. A
+        # search that returns ten rows and no score gives no way to tell
+        # the best match from the tenth.
+        "score": item.get("score"),
+        "provided_by": item.get("provided_by"),
+        "namespace": item.get("namespace"),
+        "synonyms": item.get("synonym") or [],
+        "xrefs": item.get("xref") or [],
+        # Whether the row matched on the name, a synonym or the
+        # description, which is what separates an exact hit from a text
+        # match deep in a description.
+        "match_type": item.get("match_type"),
+    }
+
+
 @register_tool("MonarchV3Tool")
 class MonarchV3Tool(BaseTool):
     """
@@ -543,32 +577,7 @@ class MonarchV3Tool(BaseTool):
         response.raise_for_status()
         data = response.json()
 
-        results = []
-        for item in data.get("items", []):
-            results.append(
-                {
-                    "id": item.get("id"),
-                    "name": item.get("name"),
-                    "category": item.get("category"),
-                    "symbol": item.get("symbol"),
-                    "description": item.get("description"),
-                    "taxon": item.get("in_taxon"),
-                    "taxon_label": item.get("in_taxon_label"),
-                    "deprecated": _is_deprecated(item),
-                    # The order the hits come back in, and who asserted each
-                    # one. A search that returns ten rows and no score gives
-                    # no way to tell the best match from the tenth.
-                    "score": item.get("score"),
-                    "provided_by": item.get("provided_by"),
-                    "namespace": item.get("namespace"),
-                    "synonyms": item.get("synonym") or [],
-                    "xrefs": item.get("xref") or [],
-                    # Whether the row matched on the name, a synonym or the
-                    # description, which is what separates an exact hit from a
-                    # text match deep in a description.
-                    "match_type": item.get("match_type"),
-                }
-            )
+        results = [_search_row(item) for item in data.get("items", [])]
 
         metadata = self._pagination_metadata(data, len(results), limit, offset)
         metadata.update(
@@ -611,18 +620,13 @@ class MonarchV3Tool(BaseTool):
         response.raise_for_status()
         data = response.json()
 
+        # `xref` was this handler's name for the same list the general
+        # search calls `xrefs`; both are returned so neither caller breaks.
         results = []
         for item in data.get("items", []):
-            results.append(
-                {
-                    "id": item.get("id"),
-                    "name": item.get("name"),
-                    "category": item.get("category"),
-                    "description": item.get("description"),
-                    "xref": item.get("xref", []),
-                    "deprecated": _is_deprecated(item),
-                }
-            )
+            row = _search_row(item)
+            row["xref"] = row["xrefs"]
+            results.append(row)
 
         metadata = self._pagination_metadata(data, len(results), limit, offset)
         metadata.update(

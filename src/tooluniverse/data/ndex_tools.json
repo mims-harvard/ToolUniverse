@@ -321,16 +321,79 @@
             "nodes": {
               "type": "array",
               "items": {
-                "type": "object"
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "CX element id, which edges reference as source and target"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Node name, usually a gene or protein symbol"
+                  },
+                  "represents": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What the node represents, e.g. a UniProt accession"
+                  },
+                  "attributes": {
+                    "type": "object",
+                    "description": "Every attribute CX records for this element, keyed by its name and coerced to the type CX declares: an AP-MS edge carries Saintscore, BFDR, logOddsScore, Entropy and WD, which is what makes it a finding rather than a line",
+                    "additionalProperties": {}
+                  }
+                }
               },
-              "description": "Network nodes (id, name, represents)"
+              "description": "Network nodes for this page"
             },
             "edges": {
               "type": "array",
               "items": {
-                "type": "object"
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "CX element id"
+                  },
+                  "source": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "id of the source node"
+                  },
+                  "target": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "id of the target node"
+                  },
+                  "interaction": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Interaction type, e.g. 'interacts with'"
+                  },
+                  "attributes": {
+                    "type": "object",
+                    "description": "Every attribute CX records for this element, keyed by its name and coerced to the type CX declares: an AP-MS edge carries Saintscore, BFDR, logOddsScore, Entropy and WD, which is what makes it a finding rather than a line",
+                    "additionalProperties": {}
+                  }
+                }
               },
-              "description": "Network edges (source, target, interaction)"
+              "description": "Network edges for this page"
             },
             "total_nodes": {
               "type": "integer",
@@ -383,6 +446,27 @@
                 "integer",
                 "null"
               ]
+            },
+            "network_attributes": {
+              "type": "object",
+              "description": "CX networkAttributes, each value truncated to 200 characters",
+              "additionalProperties": {
+                "type": "string"
+              }
+            },
+            "node_attribute_names": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Every node attribute name in the whole network, not only this page"
+            },
+            "edge_attribute_names": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Every edge attribute name in the whole network, not only this page"
             }
           },
           "not": {

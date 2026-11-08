@@ -90,6 +90,69 @@
               "deprecated": {
                 "type": "boolean",
                 "description": "True if this Mondo term is obsolete. Obsolete terms still match searches but carry no annotations."
+              },
+              "score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Monarch's relevance score, which is the order the rows are in. 'breast cancer' scores 287.25 and 'sporadic breast cancer' 51.77 for the query 'breast cancer'"
+              },
+              "match_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Whether the hit matched on the name, a synonym or the description"
+              },
+              "synonyms": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The disease's other names, which is often what the query actually matched"
+              },
+              "namespace": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Ontology namespace of the id, e.g. MONDO"
+              },
+              "provided_by": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which Monarch source asserted the record"
+              },
+              "xrefs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Cross-references; the same list as `xref`, under the name the general search uses"
+              },
+              "symbol": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Symbol, for a hit that has one"
+              },
+              "taxon": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Taxon curie, null for a disease"
+              },
+              "taxon_label": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Taxon name, null for a disease"
               }
             }
           }

@@ -110,6 +110,22 @@ the substance of what the tool's own description promises. Measured live on
                               RESEARCH_CODE and one each of ATC, BNF, FDA and
                               MERCK_INDEX, and the 15 shown are alphabetically
                               first, so all brands.
+    NDEx_get_network          a network returned as a bare topology: 82 nodes
+                              carry 378 nodeAttributes and 118 edges 2,222
+                              edgeAttributes -- Saintscore, BFDR,
+                              logOddsScore, Entropy, WD -- and the rows held
+                              id/name/represents and id/source/target/
+                              interaction. The first edge is Saintscore 0.07,
+                              BFDR 0.68, and read like any other.
+    InterPro_get_proteins_    the `entries` block of each hit, which says
+      by_domain               where the domain sits: IPR011615 at 106-281 of
+                              A0A016WYN1's 439 residues, as a `domain` entry.
+                              The row answered which protein and nothing
+                              about the containment.
+    Mondo_search_disease      six fields where its twin on the same /search
+                              endpoint keeps fifteen: no score (287.25 for
+                              "breast cancer" against 51.77 for "sporadic
+                              breast cancer"), no match_type, no synonyms.
     MCSA_get_entry /          a catalytic residue numbered 45 where the PDB,
       MCSA_search_enzymes     the papers and the entry's own mechanism text
                               all say 70 (`resid` against `auth_resid`); roles
@@ -161,6 +177,10 @@ those rows are the output of `ClinicalTrials_get_stats_size`, the tool that
 owns that endpoint. The audit records responses per tool run, so a wrapper
 that calls a sibling endpoint is flagged for every field of it -- check which
 request a flagged path came from before reading it as a drop.
+`OSL_get_efo_id_by_disease_name` names its own omission: its description
+says it returns `{efo_id, name}` and points at the richer sibling for the
+IRI and synonyms. NDEx's cartesianLayout coordinates and cyVisualProperties
+are how to draw the graph, not what is in it.
 """
 
 import json
@@ -1421,6 +1441,35 @@ UPSTREAM_KEYS = [
         'f.get("sha256")',
         "the checksum that makes a download manifest verifiable",
     ),
+    (
+        "ndex_tool.py",
+        "def _cx_attributes",
+        "the per-node and per-edge measurements that make a network a finding "
+        "rather than a drawing",
+    ),
+    (
+        "ndex_tool.py",
+        "edgeAttributes",
+        "2,222 edge attributes on a 118-edge network, none of which reached "
+        "the caller",
+    ),
+    (
+        "interpro_ext_tool.py",
+        "def _match_locations",
+        "where on each protein the requested domain sits, which is what "
+        "'contains this domain' means",
+    ),
+    (
+        "interpro_ext_tool.py",
+        'meta.get("gene")',
+        "the gene name of a protein a domain search returned",
+    ),
+    (
+        "monarch_v3_tool.py",
+        "def _search_row",
+        "one row builder for the one /search endpoint both handlers call, "
+        "instead of six fields in one and fifteen in the other",
+    ),
 ]
 
 
@@ -1742,6 +1791,15 @@ DECLARED = [
     ("hca_search_projects", "projectTitle"),
     ("hca_get_file_manifest", "sha256"),
     ("hca_get_file_manifest", "is_intermediate"),
+    ("NDEx_get_network", "attributes"),
+    ("NDEx_get_network", "edge_attribute_names"),
+    ("NDEx_get_network", "network_attributes"),
+    ("InterPro_get_proteins_by_domain", "match_locations"),
+    ("InterPro_get_proteins_by_domain", "entry_type"),
+    ("InterPro_get_proteins_by_domain", "in_alphafold"),
+    ("Mondo_search_disease", "score"),
+    ("Mondo_search_disease", "match_type"),
+    ("Mondo_search_disease", "synonyms"),
 ]
 
 
@@ -2923,3 +2981,77 @@ def test_an_hca_project_says_which_species_and_which_assay():
     assert 'f.get("sha256")' in source
     assert "def _facet" in source
     assert 'specimens[0].get("organ")' not in source
+
+
+def test_a_network_edge_carries_what_was_measured_on_it():
+    """82 nodes with 378 attributes, 118 edges with 2,222, and none returned.
+
+    NDEx serves CX, where the measurements live in `nodeAttributes` and
+    `edgeAttributes` aspects that point at their element with `po`. The
+    wrapper read `nodes`, `edges` and `networkAttributes` and skipped both
+    attribute aspects, so an AP-MS network came back as a bare topology:
+    "ANAPC4 interacts with X" with no Saintscore, BFDR, logOddsScore,
+    Entropy or WD. The first edge of the audited network scores Saintscore
+    0.07 and BFDR 0.68 -- a low-confidence call that read exactly like a
+    high-confidence one.
+
+    CX declares each attribute's type in `d`, so the values are coerced: a
+    SAINT score that arrives as the string "0.07" cannot be compared to a
+    threshold. Layout coordinates and Cytoscape visual properties are not
+    returned, and the metadata says so.
+    """
+    source = _source("ndex_tool.py")
+    assert "def _cx_attributes" in source
+    assert '"nodeAttributes" in aspect' in source
+    assert '"edgeAttributes" in aspect' in source
+    assert "def _cx_value" in source, "attribute values are still strings"
+    assert "node_attribute_names" in source
+
+
+def test_a_domain_search_says_where_on_the_protein():
+    """`entries` held the match and the row dropped the whole block.
+
+    `InterPro_get_proteins_by_domain` answers which proteins contain a
+    domain, and each hit carries an `entries` block saying where: IPR011615
+    runs 106-281 of A0A016WYN1's 439 residues, as a `domain` entry. The row
+    returned accession, name, source_database, length, organism and tax id --
+    the protein, and nothing about the containment the question was about.
+
+    The location shape is now built by one helper, `_match_locations`, used
+    by this endpoint and by its twin `InterPro_get_entries_for_protein`: a
+    caller joining a domain's proteins to a protein's domains reads both, and
+    the two had no reason to drift.
+    """
+    source = _source("interpro_ext_tool.py")
+    twin = _source("interpro_entry_tool.py")
+    assert "def _match_locations" in source
+    assert "def _match_locations" in twin
+    assert '"match_locations": locations' in source
+    assert "locations = _match_locations(protein_rows)" in twin
+    assert 'meta.get("gene")' in source
+    assert 'matched.get("entry_type")' in source
+
+
+def test_both_monarch_searches_build_the_same_row():
+    """One endpoint, two row builders, six fields against fifteen.
+
+    `Monarch_search_entity` and `Mondo_search_disease` both GET
+    `/search`. The general handler's row carries the score, the match type,
+    the synonyms, the namespace and the provider; the Mondo one carried id,
+    name, category, description, xref and deprecated. So a disease search
+    returned ten rows in relevance order with the relevance removed --
+    "breast cancer" scores 287.25 against 51.77 for "sporadic breast
+    cancer" -- and no way to see that the hit matched a synonym rather than
+    the name.
+
+    They now share `_search_row`, which is the fix for the drift rather than
+    a second copy of the field list. `xref` is kept beside `xrefs` so the
+    Mondo caller's existing key still resolves.
+    """
+    source = _source("monarch_v3_tool.py")
+    assert "def _search_row" in source
+    assert source.count('item.get("match_type")') == 1, (
+        "the row list is duplicated again"
+    )
+    assert '"xref": item.get("xref", [])' not in source
+    assert 'row["xref"] = row["xrefs"]' in source
