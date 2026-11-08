@@ -980,6 +980,92 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "term_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The ontology ids behind `stage` and `location`. 'anal fin' cannot be joined to an anatomy ontology; UBERON:0000026 can. The stage term travels in the same list"
+                  },
+                  "uberon_term_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The UBERON subset of those ids"
+                  },
+                  "assay": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How the call was made, e.g. 'RNA in situ' - a different weight of evidence from a sequencing assay"
+                  },
+                  "assay_curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "That assay's MMO curie, e.g. MMO:0000658"
+                  },
+                  "category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Alliance's category for the annotation row"
+                  },
+                  "cross_references": {
+                    "type": "array",
+                    "description": "The source records the annotation was read off - for ZFIN the FIGURE, with the URL its resolver template builds",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "curie": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Source curie, e.g. ZFIN:ZDB-FIG-140307-27"
+                        },
+                        "display_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "How the source names it"
+                        },
+                        "url": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Resolved link, built from the record's own template"
+                        }
+                      }
+                    }
+                  },
+                  "anatomical_structure": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The anatomy term's name, from the structured expression pattern"
+                  },
+                  "anatomical_structure_curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its SPECIES-specific ontology curie, e.g. ZFA:0001162 for 'anal fin'. Not among the UBERON slim ids in term_ids"
+                  },
+                  "stage_terms": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Stage terms from the structured pattern"
                   }
                 }
               }

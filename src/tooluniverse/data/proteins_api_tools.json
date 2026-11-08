@@ -211,8 +211,117 @@
       "return_format": "JSON"
     },
     "return_schema": {
-      "type": "array",
-      "description": "Proteomics data including PTM comments, modified residues, and related features."
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "Proteomics evidence for the protein",
+          "properties": {
+            "status": {
+              "type": "string"
+            },
+            "data": {
+              "type": "array",
+              "description": "PTM comments, modified residues, sites, variants and mutagenesis features from the entry",
+              "items": {
+                "type": "object"
+              }
+            },
+            "count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Features returned"
+            },
+            "url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The endpoint actually called"
+            },
+            "proteomics_cross_references": {
+              "type": "array",
+              "description": "The entry's pointers to proteomics and PTM resources. P05067 lists 780 cross-references of which these 21 are the proteomics ones",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "database": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "PeptideAtlas, ProteomicsDB, MassIVE, jPOST, PhosphoSitePlus, GlyGen and so on"
+                  },
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The id in that database"
+                  },
+                  "properties": {
+                    "type": "object",
+                    "description": "What the entry records about the link, e.g. GlyGen's '27 sites, 13 N-linked glycans'",
+                    "additionalProperties": {}
+                  }
+                }
+              }
+            },
+            "proteomics_cross_reference_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many there are"
+            },
+            "proteomics_databases": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "The distinct databases above"
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "How the data was obtained"
+            },
+            "fallback_used": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the proteomics endpoint was unavailable and the protein entry was read instead"
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Which endpoint the data came from"
+            }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
     },
     "test_examples": [
       {

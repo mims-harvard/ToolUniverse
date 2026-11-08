@@ -296,6 +296,66 @@ def _evidence_codes(annotations: list) -> list:
     return out
 
 
+def _expression_pattern(pattern: Any) -> dict:
+    """The structured terms behind an expression annotation's two strings.
+
+    `whereExpressed.anatomicalStructure` carries the SPECIES-specific
+    ontology curie -- ZFA:0001162 for "anal fin" -- which is not among the
+    UBERON slim ids in `termIds`, and `whenExpressed.stageUberonSlimTerms`
+    carries the stage terms. The whole nested object is not returned: it
+    repeats the strings the row already has and nests four levels deep.
+    """
+    if not isinstance(pattern, dict):
+        return {
+            "anatomical_structure": None,
+            "anatomical_structure_curie": None,
+            "stage_terms": [],
+        }
+    where = pattern.get("whereExpressed") or {}
+    structure = (where.get("anatomicalStructure") or {}) if isinstance(where, dict) else {}
+    when = pattern.get("whenExpressed") or {}
+    stages = []
+    if isinstance(when, dict):
+        for term in when.get("stageUberonSlimTerms") or []:
+            if isinstance(term, dict) and term.get("name"):
+                stages.append(term["name"])
+    return {
+        "anatomical_structure": structure.get("name")
+        if isinstance(structure, dict)
+        else None,
+        "anatomical_structure_curie": structure.get("curie")
+        if isinstance(structure, dict)
+        else None,
+        "stage_terms": stages,
+    }
+
+
+def _cross_references(block: dict) -> list:
+    """An annotation's source records, with the URL its template builds.
+
+    ZFIN's expression annotations cite the FIGURE the call was made from --
+    ZFIN:ZDB-FIG-140307-27 -- and carry the resolver template beside it, so
+    the link is mechanical rather than guessed.
+    """
+    out = []
+    for xref in block.get("crossReferences") or []:
+        if not isinstance(xref, dict):
+            continue
+        curie = xref.get("referencedCurie")
+        template = ((xref.get("resourceDescriptorPage") or {}).get("urlTemplate")) or ""
+        url = None
+        if curie and "[%s]" in template:
+            url = template.replace("[%s]", curie.split(":", 1)[-1])
+        out.append(
+            {
+                "curie": curie,
+                "display_name": xref.get("displayName"),
+                "url": url,
+            }
+        )
+    return out
+
+
 def _annotation_facet(annotations: list, path: tuple) -> list:
     """A de-duplicated facet across a row's annotations, nulls dropped."""
     out = []
@@ -1186,16 +1246,38 @@ class AllianceGenomeTool(BaseTool):
             ann = r.get("geneExpressionAnnotation", r) if isinstance(r, dict) else {}
             provider = ann.get("dataProvider") or {}
             evidence = ann.get("evidenceItem") or {}
+            assay = ann.get("expressionAssayUsed") or {}
+            term_ids = [t for t in (r.get("termIds") or []) if t]
+            uberon_term_ids = [t for t in (r.get("uberonTermIds") or []) if t]
             annotations.append(
                 {
                     "stage": ann.get("whenExpressedStageName"),
                     "location": ann.get("whereExpressedStatement"),
+                    # The ontology ids behind those two strings. "anal fin"
+                    # cannot be joined to an anatomy ontology; UBERON:0000026
+                    # can. The stage term travels in the same list.
+                    "term_ids": term_ids,
+                    "uberon_term_ids": uberon_term_ids,
+                    # HOW the call was made. "RNA in situ" (MMO:0000658) is a
+                    # different weight of evidence from a sequencing assay,
+                    # and the row said neither.
+                    "assay": assay.get("name") if isinstance(assay, dict) else None,
+                    "assay_curie": (
+                        assay.get("curie") if isinstance(assay, dict) else None
+                    ),
+                    # The species-specific anatomy term, which is NOT in
+                    # termIds: those are the UBERON slim ids, and
+                    # expressionPattern carries ZFA:0001162 for "anal fin".
+                    **_expression_pattern(ann.get("expressionPattern")),
                     "data_provider": provider.get("abbreviation")
                     if isinstance(provider, dict)
                     else provider,
                     "reference": evidence.get("curie")
                     if isinstance(evidence, dict)
                     else None,
+                    # The figure the annotation was read off.
+                    "cross_references": _cross_references(ann),
+                    "category": r.get("category") if isinstance(r, dict) else None,
                 }
             )
 

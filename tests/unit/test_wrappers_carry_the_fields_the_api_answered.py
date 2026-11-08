@@ -110,6 +110,26 @@ the substance of what the tool's own description promises. Measured live on
                               RESEARCH_CODE and one each of ATC, BNF, FDA and
                               MERCK_INDEX, and the 15 shown are alphabetically
                               first, so all brands.
+    ZFIN_get_gene_expression  an expression annotation as two strings.
+                              "anal fin" at "Larval:Days 14-20" cannot be
+                              joined to an anatomy ontology; the same record
+                              carries UBERON:0000026 and UBERON:0001062 in
+                              termIds and ZFA:0001162 under
+                              expressionPattern. The assay went too --
+                              MMO:0000658, RNA in situ, which is a different
+                              weight of evidence from a sequencing assay --
+                              and so did the figure the call was read off,
+                              ZFIN:ZDB-FIG-140307-27.
+    proteins_api_get_         a tool that promises "mass spectrometry
+      proteomics              evidence" and returned 36 features and none of
+                              the pointers to the evidence. The entry it
+                              already fetched lists 780 cross-references, of
+                              which 21 are proteomics resources: PeptideAtlas,
+                              MassIVE, jPOST, eleven ProteomicsDB entries,
+                              PhosphoSitePlus, and GlyGen with "27 sites, 13
+                              N-linked glycans" in its properties. Its schema
+                              declared a bare array while the tool returns a
+                              dict envelope.
     NCIThesaurus_get_concept  `definitions[0]` as THE definition. C3224 has
       (definitions)           four -- NCI-GLOSS, CDISC, NICHD and NCI -- and
                               the first is the patient-facing glossary one,
@@ -1938,6 +1958,23 @@ UPSTREAM_KEYS = [
         "which body wrote a concept's definition, where four bodies wrote one "
         "and the row returned the first with no source",
     ),
+    (
+        "alliance_genome_tool.py",
+        'r.get("uberonTermIds")',
+        "the anatomy ontology ids behind an expression annotation's free text",
+    ),
+    (
+        "alliance_genome_tool.py",
+        "def _expression_pattern",
+        "the species-specific anatomy curie, which is not among the UBERON "
+        "slim ids",
+    ),
+    (
+        "proteins_api_tool.py",
+        "PROTEOMICS_DATABASES",
+        "the pointers to the mass-spectrometry evidence the tool's own "
+        "description promises",
+    ),
 ]
 
 
@@ -2328,6 +2365,11 @@ DECLARED = [
     ("NCIThesaurus_get_concept", "definition_source"),
     ("NCIThesaurus_get_concept", "definition_count"),
     ("GeneBe_classify_variant", "acmg_gene_count"),
+    ("ZFIN_get_gene_expression", "uberon_term_ids"),
+    ("ZFIN_get_gene_expression", "anatomical_structure_curie"),
+    ("ZFIN_get_gene_expression", "assay_curie"),
+    ("proteins_api_get_proteomics", "proteomics_cross_references"),
+    ("proteins_api_get_proteomics", "proteomics_databases"),
 ]
 
 
@@ -4107,3 +4149,55 @@ def test_a_concept_definition_says_who_wrote_it():
     assert '"definition_source"' in source
     assert '(row.get("source") or "") == "NCI"' in source
     assert 'definitions[0].get("definition")' not in source
+
+
+def test_an_expression_annotation_carries_its_anatomy_ids():
+    """"anal fin" at "Larval:Days 14-20", and no ontology id for either.
+
+    The record behind that row carries UBERON:0000026 and UBERON:0001062 in
+    `termIds`, and ZFA:0001162 -- the species-specific anatomy term -- under
+    `expressionPattern.whereExpressed.anatomicalStructure`. The two are not
+    the same set, so both are returned: `term_ids` and `uberon_term_ids` for
+    the slim ids, `anatomical_structure_curie` for the ZFA one.
+
+    `expressionAssayUsed` went too. "RNA in situ" (MMO:0000658) is a
+    different weight of evidence from a sequencing assay, and the row said
+    neither. So did `crossReferences`, which for ZFIN is the FIGURE the call
+    was read off; its resolver template is in the same record, so the link is
+    built rather than guessed.
+
+    The nested `expressionPattern` object is not returned whole: it repeats
+    the strings the row already has and nests four levels deep. The two
+    fields worth having are extracted from it.
+    """
+    source = _source("alliance_genome_tool.py")
+    assert 'r.get("termIds")' in source
+    assert 'r.get("uberonTermIds")' in source
+    assert "def _expression_pattern" in source
+    assert '"anatomical_structure_curie"' in source
+    assert 'ann.get("expressionAssayUsed")' in source
+    assert "def _cross_references" in source
+    assert '"expression_pattern": ann.get("expressionPattern")' not in source
+
+
+def test_a_proteomics_tool_points_at_the_spectrometry_evidence():
+    """36 features, and no link to a single mass-spectrometry dataset.
+
+    `proteins_api_get_proteomics` promises "proteomics data for a protein
+    including mass spectrometry evidence". UniProt's proteomics endpoint is
+    unavailable, which the tool already discloses, so it reads the protein
+    entry and keeps its PTM comments and modified-residue features. That
+    entry also lists 780 cross-references, of which 21 are the proteomics
+    ones -- PeptideAtlas, MassIVE, jPOST, eleven ProteomicsDB entries,
+    PhosphoSitePlus, SwissPalm, iPTMnet, GlyGen -- and all 780 were
+    discarded, so the tool promised the evidence and returned no route to it.
+
+    The named set keeps the output focused: 780 references become the 21 that
+    are about proteomics, each with the properties the entry records, such as
+    GlyGen's "27 sites, 13 N-linked glycans (3 sites), 6 O-linked glycans".
+    """
+    source = _source("proteins_api_tool.py")
+    assert "PROTEOMICS_DATABASES" in source
+    assert "def _proteomics_cross_references" in source
+    assert '"proteomics_cross_references": cross_references' in source
+    assert '"PeptideAtlas"' in source
