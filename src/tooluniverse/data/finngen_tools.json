@@ -54,7 +54,21 @@
           "category": {"type": "string"},
           "num_cases": {"type": "integer"},
           "num_controls": {"type": "integer"},
-          "num_gw_significant": {"type": "integer"}
+          "num_gw_significant": {"type": "integer"},
+          "category_index": {"type": ["integer", "null"], "description": "FinnGen's ordering of the phenotype within its category"},
+          "assoc_files": {"type": "array", "items": {"type": "string"}, "description": "Summary-statistics files behind the phenotype"},
+          "num_cases_prev": {"type": ["integer", "null"], "description": "Cases in the previous release, where the endpoint reports it"},
+          "num_controls_prev": {"type": ["integer", "null"], "description": "Controls in the previous release, where reported"},
+          "gc_lambda": {
+            "type": ["object", "null"],
+            "description": "Genomic-control inflation factor by quantile. How a caller tells a usable GWAS from an inflated or, for a rare phenotype, deflated one: AB1_TUBERCULOSIS_MILIARY reads 0.38 at the 0.5 quantile",
+            "properties": {
+              "0.001": {"type": "number"},
+              "0.01": {"type": "number"},
+              "0.1": {"type": "number"},
+              "0.5": {"type": "number"}
+            }
+          }
         }
       }
     }
@@ -94,7 +108,9 @@
         "num_controls": {"type": "integer"},
         "num_gw_significant": {"type": "integer"},
         "num_cases_prev": {"type": ["integer", "null"]},
-        "num_controls_prev": {"type": ["integer", "null"]},
+        "num_controls_prev": {"type": ["integer", "null"], "description": "Controls in the previous release, where reported"},
+        "category_index": {"type": ["integer", "null"], "description": "FinnGen's ordering of the phenotype within its category"},
+        "assoc_files": {"type": "array", "items": {"type": "string"}, "description": "Summary-statistics files behind the phenotype"},
         "gc_lambda": {
           "type": ["object", "null"],
           "properties": {

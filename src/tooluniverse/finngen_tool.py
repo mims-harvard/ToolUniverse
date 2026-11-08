@@ -18,6 +18,39 @@ from .tool_registry import register_tool
 FINNGEN_BASE_URL = "https://r12.finngen.fi/api"
 
 
+def _phenotype_row(record: dict) -> dict:
+    """One FinnGen phenotype, as both the list and the lookup should report it.
+
+    `gc_lambda` is the genomic-control inflation factor at four quantiles,
+    and it is on all 2,470 phenotypes of the /phenos list. It is how a caller
+    tells a usable GWAS from one whose statistics are inflated or, for a rare
+    phenotype, deflated -- AB1_TUBERCULOSIS_MILIARY reads 0.38 at the 0.5
+    quantile. `assoc_files` is the summary-statistics file behind the
+    phenotype.
+
+    The single-phenotype lookup already returned gc_lambda and the list did
+    not, from the same upstream record shape, so both now build this row and
+    the fields present decide what it carries.
+    """
+    row = {
+        "phenocode": record.get("phenocode"),
+        "phenostring": record.get("phenostring"),
+        "category": record.get("category"),
+        "category_index": record.get("category_index"),
+        "num_cases": record.get("num_cases"),
+        "num_controls": record.get("num_controls"),
+        "num_gw_significant": record.get("num_gw_significant"),
+        # Keyed by quantile: {"0.001": .., "0.01": .., "0.1": .., "0.5": ..}
+        "gc_lambda": record.get("gc_lambda"),
+        "assoc_files": [f for f in (record.get("assoc_files") or []) if f],
+    }
+    # Only the per-phenotype endpoint carries the previous release's counts.
+    for key in ("num_cases_prev", "num_controls_prev"):
+        if key in record:
+            row[key] = record.get(key)
+    return row
+
+
 @register_tool("FinnGenTool")
 class FinnGenTool(BaseTool):
     """
@@ -107,16 +140,7 @@ class FinnGenTool(BaseTool):
                     continue
             if min_cases and p.get("num_cases", 0) < min_cases:
                 continue
-            results.append(
-                {
-                    "phenocode": p.get("phenocode"),
-                    "phenostring": p.get("phenostring"),
-                    "category": p.get("category"),
-                    "num_cases": p.get("num_cases"),
-                    "num_controls": p.get("num_controls"),
-                    "num_gw_significant": p.get("num_gw_significant"),
-                }
-            )
+            results.append(_phenotype_row(p))
 
         results.sort(key=lambda x: x.get("num_cases", 0), reverse=True)
         total = len(results)
@@ -155,17 +179,7 @@ class FinnGenTool(BaseTool):
         resp.raise_for_status()
         data = resp.json()
 
-        result = {
-            "phenocode": data.get("phenocode"),
-            "phenostring": data.get("phenostring"),
-            "category": data.get("category"),
-            "num_cases": data.get("num_cases"),
-            "num_controls": data.get("num_controls"),
-            "num_gw_significant": data.get("num_gw_significant"),
-            "num_cases_prev": data.get("num_cases_prev"),
-            "num_controls_prev": data.get("num_controls_prev"),
-            "gc_lambda": data.get("gc_lambda"),
-        }
+        result = _phenotype_row(data)
 
         return {
             "status": "success",

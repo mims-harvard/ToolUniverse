@@ -110,6 +110,15 @@ the substance of what the tool's own description promises. Measured live on
                               RESEARCH_CODE and one each of ATC, BNF, FDA and
                               MERCK_INDEX, and the 15 shown are alphabetically
                               first, so all brands.
+    FinnGen_list_phenotypes   no gc_lambda, the genomic-control inflation
+                              factor, though it is on all 2,470 phenotypes of
+                              the list endpoint and the single-phenotype
+                              handler beside it already returned it. For a
+                              list used to pick a GWAS to analyse that is the
+                              "is this usable" signal, and
+                              AB1_TUBERCULOSIS_MILIARY reads 0.38 at the 0.5
+                              quantile. No assoc_files either, the summary
+                              statistics the phenotype is for.
     ThreeDBeacons_get_        a list of 375 structures with no model_format,
       structures              so the download URL the description promises came
                               without the format needed to parse it (MMCIF on
@@ -230,6 +239,19 @@ its description says twice and what `OncoTree_search` takes as
 `OncoTree_search`, which returns every upstream field. USGS streamflow's
 `features[].type` is the GeoJSON constant "Feature" and `geometry.type` is
 "Point". PlantReactome's `refEntities[].dbId` is an internal Reactome id.
+
+The openFDA `*_table` flags are not a defect and have now cost triage in
+four shards, so here is the mechanism. `extract_nested_fields` already
+copies `<section>_table` for every requested section, HTML intact and never
+keyword-trimmed, and the nine FDADrugLabel tools named for a section with a
+table sibling do return it: ciprofloxacin through
+`FDA_get_dosage_and_storage_information_by_drug_name` comes back with
+`dosage_and_administration_table` holding the Adult Dosage Guidelines grid.
+The flags belong to the `FDA_get_drug_name_by_*` and
+`FDA_get_drug_names_by_*` family, whose `return_fields` are the dotted
+`openfda.brand_name` / `openfda.generic_name`; the table loop skips dotted
+fields, and those tools are named for returning names. Check which tool in a
+family a flagged path belongs to before reading it as a drop.
 
 DEFERRED, with the reason. `get_joint_associated_diseases_by_HPO_ID_list`
 returns disease names and not their MONDO curies, so its answer cannot be
@@ -1588,6 +1610,18 @@ UPSTREAM_KEYS = [
         "the MONDO curie the differential should be intersected on, rather "
         "than the disease's label",
     ),
+    (
+        "finngen_tool.py",
+        'record.get("gc_lambda")',
+        "the genomic-control factor that says whether a GWAS is usable, on all "
+        "2,470 phenotypes and returned by only one of the two handlers",
+    ),
+    (
+        "finngen_tool.py",
+        "def _phenotype_row",
+        "one phenotype row for the list and the lookup, which read the same "
+        "upstream record shape and reported different fields",
+    ),
 ]
 
 
@@ -1933,6 +1967,9 @@ DECLARED = [
     ("ThreeDBeacons_get_structures", "entities"),
     ("ThreeDBeacons_get_structures", "entity_counts_by_type"),
     ("ThreeDBeacons_get_structures", "sequence_identity"),
+    ("FinnGen_list_phenotypes", "gc_lambda"),
+    ("FinnGen_list_phenotypes", "assoc_files"),
+    ("FinnGen_get_phenotype", "assoc_files"),
 ]
 
 
@@ -3293,3 +3330,26 @@ def test_a_structure_list_says_what_format_and_what_is_in_it():
     assert "def _entities" in source
     assert "ENTITIES_PER_STRUCTURE" in source
     assert '"entity_counts_by_type": entity_counts' in source
+
+
+def test_both_finngen_handlers_report_the_same_phenotype():
+    """gc_lambda was on the lookup and not on the list, from one record shape.
+
+    FinnGen's /phenos list carries `gc_lambda` -- the genomic-control
+    inflation factor at four quantiles -- on all 2,470 phenotypes, and
+    `assoc_files`, the summary statistics behind each. The list row returned
+    six fields and dropped both, while the single-phenotype handler next to
+    it already returned gc_lambda from the same shape. For a list whose
+    purpose is picking a GWAS to analyse, lambda is the "is this usable"
+    reading: AB1_TUBERCULOSIS_MILIARY is 0.38 at the 0.5 quantile.
+
+    Both now build `_phenotype_row`, and the previous-release counts stay
+    conditional because only the per-phenotype endpoint sends them.
+    """
+    source = _source("finngen_tool.py")
+    assert "def _phenotype_row" in source
+    assert source.count('record.get("gc_lambda")') == 1, (
+        "the phenotype row is duplicated again"
+    )
+    assert 'record.get("assoc_files")' in source
+    assert '"num_cases_prev"' in source
