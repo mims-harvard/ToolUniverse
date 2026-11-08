@@ -102,7 +102,49 @@
                   "string",
                   "null"
                 ],
-                "description": "Free-text description"
+                "description": "OPM's own description field, which is null on most records; the prose is usually in comments"
+              },
+              "species": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Species of the solved structure"
+              },
+              "tilt_error_degrees": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Uncertainty on the tilt angle, the counterpart of thickness_error"
+              },
+              "transmembrane_segments": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many times the positioned subunit crosses the bilayer"
+              },
+              "topology_subunit": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Chain the membrane placement was computed for"
+              },
+              "uniprot_entry_names": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "UniProt entry names for the structure, the join out of OPM"
+              },
+              "comments": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "OPM's curator note on the structure - what the protein does and what it interacts with"
               }
             }
           }

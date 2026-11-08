@@ -105,6 +105,17 @@ the substance of what the tool's own description promises. Measured live on
     miRBase_get_mirna_        no pub_id, the one key that tells apart the
       publications            duplicate-PMID records the tool's own metadata
                               warns about.
+    gather_drug_profile       80 ChEMBL synonyms as flat strings capped at 15.
+                              Aspirin's are 65 TRADE_NAME, 8 OTHER, 3
+                              RESEARCH_CODE and one each of ATC, BNF, FDA and
+                              MERCK_INDEX, and the 15 shown are alphabetically
+                              first, so all brands.
+    OPM_search_structures     `description` is null on all 74 rhodopsin rows
+                              while `comments` holds the prose; and no
+                              subunit_segments (74/74, the number of bilayer
+                              crossings), species (74/74), uniprotcodes
+                              (71/74), topology_subunit (74/74) or tilterror
+                              (37/74) beside the thickness error the row kept.
 
 NOT DEFECTS, recorded so the next sweep does not re-litigate them. The 77
 `FDA_get_drug_names_by_*` tools declare `return_fields: ["openfda.brand_name",
@@ -120,7 +131,17 @@ back, and the tool's own name. GO's `subject.iri`, `object.iri` and
 `taxon.iri` are each the returned curie in URL form, and an association's `id`
 is a hex blob of the fields around it. DANDI's `embargo_status` is "OPEN" on
 every record an unauthenticated search can reach: `?embargoed=true` answers
-401, and this tool sends no token.
+401, and this tool sends no token. SABIO-RK's `docs[].Json` is a ~8 kB JSON
+string parsed into `source_record`, so no string value survives to be
+matched while the whole record reaches the caller. ProteomicsDB's
+`__metadata.type`/`uri` are OData envelope internals. CellPainting's flagged
+fields are the OMERO data owner's name, email and institution.
+`ClinicalTrials_get_field_values` was flagged for `ranges[].sizeRange`, which
+belongs to an auxiliary `/stats/size` request it makes for one denominator;
+those rows are the output of `ClinicalTrials_get_stats_size`, the tool that
+owns that endpoint. The audit records responses per tool run, so a wrapper
+that calls a sibling endpoint is flagged for every field of it -- check which
+request a flagged path came from before reading it as a drop.
 """
 
 import json
@@ -1322,6 +1343,26 @@ UPSTREAM_KEYS = [
         "para.get(\"rank\")",
         "how close a paralog is, in a list ordered by it",
     ),
+    (
+        "compound_drug_profile_tool.py",
+        'synonym.get("syn_type")',
+        "which of a drug's 80 synonyms is a brand name and which a lab code",
+    ),
+    (
+        "membrane_topology_tool.py",
+        'o.get("subunit_segments")',
+        "how many times the subunit crosses the bilayer, in a membrane-topology tool",
+    ),
+    (
+        "membrane_topology_tool.py",
+        'o.get("comments")',
+        "the curator's prose, in a row whose `description` is null on every record",
+    ),
+    (
+        "membrane_topology_tool.py",
+        'o.get("species_name_cache")',
+        "which organism the solved structure came from",
+    ),
 ]
 
 
@@ -1625,6 +1666,11 @@ DECLARED = [
     ("FlyBase_get_gene_orthologs", "is_paralogy"),
     ("ZFIN_get_gene_orthologs", "relationship"),
     ("Alliance_get_gene_orthologs", "similarity_percent"),
+    ("gather_drug_profile", "synonym_details"),
+    ("gather_drug_profile", "synonym_type_counts"),
+    ("OPM_search_structures", "transmembrane_segments"),
+    ("OPM_search_structures", "comments"),
+    ("OPM_search_structures", "uniprot_entry_names"),
 ]
 
 
@@ -2704,3 +2750,44 @@ def test_a_publication_record_keeps_the_id_that_tells_it_apart():
     source = _source("mirna_tool.py")
     assert 'pub.get("pub_id")' in source
     assert "pub_id is the source record id" in source
+
+
+def test_a_drug_synonym_says_what_kind_of_name_it_is():
+    """Aspirin's 80 ChEMBL synonyms are 65 trade names and 3 research codes.
+
+    The profile returned a flat list of strings capped at 15, in ChEMBL's own
+    order, which for aspirin is alphabetical: the 15 shown are all obscure
+    brands ("8-hour bayer", "Acetosalic acid"), and nothing said that an ATC
+    name, a BNF name, an FDA name and three research codes were among the
+    other 60. A tool whose description accepts "a drug name ('aspirin',
+    'Tylenol')" cannot tell a brand from a lab code without `syn_type`.
+
+    The type counts are taken over every synonym rather than over the capped
+    page, so the cap's loss is visible: 75 deduped, 64 of them TRADE_NAME,
+    15 shown.
+    """
+    source = _source("compound_drug_profile_tool.py")
+    assert 'synonym.get("syn_type")' in source
+    assert '"synonym_type_counts"' in source
+    assert '"synonym_count": len(details)' in source
+
+
+def test_a_membrane_structure_says_how_many_times_it_crosses():
+    """`description` was null on all 74 rhodopsin rows; `comments` had the prose.
+
+    OPM's record carries `subunit_segments` on every structure it serves -- 7
+    for archaerhodopsin, 21 for the Nanosalina rhodopsin, up to 100 -- which
+    for a tool about membrane topology is the first number a caller wants. It
+    also carries the species (74/74), the UniProt entry names (71/74), the
+    chain the placement was computed for (74/74), and the tilt's uncertainty
+    (37/74) beside the thickness's, which the row already returned.
+
+    `comments` is added under its own name rather than filled into
+    `description`: a field holding a plausible neighbour's value is the defect
+    this file records for DOAJ and SGD, not a fix for one.
+    """
+    source = _source("membrane_topology_tool.py")
+    assert 'o.get("subunit_segments")' in source
+    assert '"comments": o.get("comments") or None' in source
+    assert '"description": o.get("description")' in source
+    assert 'o.get("tilterror")' in source

@@ -14,6 +14,7 @@ as a substitution, with the name that was actually profiled.
 """
 
 import re
+from collections import Counter
 from typing import Any
 
 from .base_tool import BaseTool
@@ -331,12 +332,25 @@ class CompoundDrugProfileTool(BaseTool):
     # ---------------------------------------------------------------- sections
 
     def _identity(self, chembl: dict, resolved: dict) -> dict[str, Any]:
-        synonyms = [
-            s.get("molecule_synonym")
-            for s in (chembl.get("molecule_synonyms") or [])
-            if isinstance(s, dict) and s.get("molecule_synonym")
-        ]
-        deduped = list(dict.fromkeys(synonyms))
+        """ChEMBL types every synonym, and the type is most of the use.
+
+        Aspirin's 80 synonyms are 65 TRADE_NAME, 8 OTHER, 3 RESEARCH_CODE and
+        one each of ATC, BNF, FDA and MERCK_INDEX. A flat list of strings
+        cannot tell a brand from a lab code, and the cap keeps the first 15 in
+        ChEMBL's own order -- all obscure brands -- so the type counts are
+        reported over every synonym rather than over the page.
+        """
+        details: list[dict[str, Any]] = []
+        seen: set[str] = set()
+        for synonym in chembl.get("molecule_synonyms") or []:
+            if not isinstance(synonym, dict):
+                continue
+            name = synonym.get("molecule_synonym")
+            if not name or name in seen:
+                continue
+            seen.add(name)
+            details.append({"synonym": name, "type": synonym.get("syn_type")})
+        counts = Counter(d["type"] for d in details if d["type"])
         return {
             "preferred_name": chembl.get("pref_name") or resolved.get("resolved_name"),
             "molecule_type": chembl.get("molecule_type"),
@@ -344,8 +358,11 @@ class CompoundDrugProfileTool(BaseTool):
             "max_phase": _as_number(chembl.get("max_phase")),
             "withdrawn": chembl.get("withdrawn_flag"),
             "atc_classifications": chembl.get("atc_classifications") or [],
-            "synonyms": deduped[: self.SYNONYMS_CAP],
-            "synonyms_truncated": len(deduped) > self.SYNONYMS_CAP,
+            "synonyms": [d["synonym"] for d in details[: self.SYNONYMS_CAP]],
+            "synonym_details": details[: self.SYNONYMS_CAP],
+            "synonym_count": len(details),
+            "synonym_type_counts": dict(sorted(counts.items())),
+            "synonyms_truncated": len(details) > self.SYNONYMS_CAP,
         }
 
     def _structure(self, chembl: dict, pubchem: dict) -> dict[str, Any]:

@@ -139,12 +139,23 @@ class OPMTool(BaseTool):
                 "name": o.get("name"),
                 "family": o.get("family_name_cache"),
                 "membrane": o.get("membrane_name_cache"),
+                "species": o.get("species_name_cache"),
                 "hydrophobic_thickness_angstrom": o.get("thickness"),
                 "thickness_error": o.get("thicknesserror"),
                 "tilt_angle_degrees": o.get("tilt"),
+                # The thickness came with its error and the tilt did not.
+                "tilt_error_degrees": o.get("tilterror"),
                 "transfer_energy_kcal_per_mol": o.get("gibbs"),
                 "resolution_angstrom": o.get("resolution"),
+                # How many times the subunit crosses the bilayer, on every
+                # record OPM serves, in a tool about membrane topology.
+                "transmembrane_segments": o.get("subunit_segments"),
+                "topology_subunit": o.get("topology_subunit"),
+                "uniprot_entry_names": o.get("uniprotcodes") or [],
                 "description": o.get("description"),
+                # OPM leaves `description` null and puts the prose here: of 74
+                # rhodopsin structures, 0 have a description and 8 a comment.
+                "comments": o.get("comments") or None,
             }
             for o in objects
             if isinstance(o, dict)
