@@ -196,11 +196,23 @@ class NCIThesaurusTool(BaseTool):
         synonyms_raw = data.get("synonyms", [])
         synonyms = []
         for s in synonyms_raw:
+            # `termType` is the term's role WITHIN its source terminology and
+            # NCIt's `type` is the annotation property the synonym came from.
+            # They are not interchangeable: C3224 has ten rows with
+            # termType "PT" -- each the preferred term of a different source
+            # -- and exactly one with type "Preferred_Name", which is NCIt's
+            # own. That one and the Display_Name row carry no termType at
+            # all, so the old row reported them as {"type": null,
+            # "source": null} and nothing marked the concept's actual name.
             synonyms.append(
                 {
                     "name": s.get("name", ""),
                     "type": s.get("termType"),
                     "source": s.get("source"),
+                    "annotation_property": s.get("type"),
+                    "annotation_property_code": s.get("typeCode"),
+                    "is_preferred_name": s.get("type") == "Preferred_Name",
+                    "is_display_name": s.get("type") == "Display_Name",
                 }
             )
 
@@ -212,6 +224,9 @@ class NCIThesaurusTool(BaseTool):
                 {
                     "type": p.get("type", ""),
                     "value": p.get("value", ""),
+                    # The P-code NCIt and its downstream datasets key on; the
+                    # readable type beside it is the label, not the id.
+                    "code": p.get("code"),
                 }
             )
 

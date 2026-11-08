@@ -162,7 +162,7 @@
                       "string",
                       "null"
                     ],
-                    "description": "Synonym type (FULL_SYN, etc.)"
+                    "description": "The term's role within its SOURCE terminology (PT, SY, AB, DN). Ten of C3224's seventeen synonyms are 'PT' -- each a different source's preferred term -- so this does not identify NCIt's own name"
                   },
                   "source": {
                     "type": [
@@ -170,6 +170,34 @@
                       "null"
                     ],
                     "description": "Source database"
+                  },
+                  "annotation_property": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The NCIt annotation property the synonym came from: FULL_SYN, Preferred_Name or Display_Name. The Preferred_Name row is NCIt's own name for the concept and carries no termType at all"
+                  },
+                  "annotation_property_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "That property's P-code, e.g. P108"
+                  },
+                  "is_preferred_name": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True on the single Preferred_Name row"
+                  },
+                  "is_display_name": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True on the single Display_Name row"
                   }
                 }
               },
@@ -185,6 +213,13 @@
                   },
                   "value": {
                     "type": "string"
+                  },
+                  "code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The property's P-code, which NCIt and its downstream datasets key on; `type` beside it is the label"
                   }
                 }
               },

@@ -110,6 +110,21 @@ the substance of what the tool's own description promises. Measured live on
                               RESEARCH_CODE and one each of ATC, BNF, FDA and
                               MERCK_INDEX, and the 15 shown are alphabetically
                               first, so all brands.
+    NCIThesaurus_get_concept  seventeen synonyms with nothing marking which
+                              is the concept's name. The row read `termType`,
+                              which is the term's role in its SOURCE
+                              terminology -- ten of C3224's rows are "PT",
+                              each a different source's preferred term, and
+                              CDISC's is "MELANOMA, MALIGNANT". NCIt's own
+                              name sits on the one row whose annotation
+                              property is Preferred_Name, and that row has no
+                              termType at all, so it came back as
+                              {"type": null, "source": null}.
+    IGSR_search_populations   no dataCollections, so nothing said whether a
+                              population has alignments or variants, what
+                              sequencing they came from, or what reuse policy
+                              governs them -- while the sibling sample search
+                              already read the same block for its titles.
     PGSCatalog_search_traits  a trait search in a score catalogue that
                               reported how many scores a trait has and not
                               which: `associated_pgs_ids` holds 88 for
@@ -1758,6 +1773,18 @@ UPSTREAM_KEYS = [
         "the ECO curie and the three-letter abbreviation an evidence code is "
         "cited by, beside the prose name the row kept",
     ),
+    (
+        "nci_thesaurus_tool.py",
+        's.get("typeCode")',
+        "which of seventeen synonyms is NCIt's own preferred name, when ten "
+        "of them are a source terminology's PT",
+    ),
+    (
+        "igsr_tool.py",
+        "def _data_collections",
+        "what data exists for a population - alignments, variants, the "
+        "sequencing behind them and the reuse policy",
+    ),
 ]
 
 
@@ -2124,6 +2151,10 @@ DECLARED = [
     ("PGSCatalog_search_traits", "trait_synonyms"),
     ("Alliance_get_disease_genes", "evidence_code_details"),
     ("Alliance_get_disease_genes", "annotation_relations"),
+    ("NCIThesaurus_get_concept", "is_preferred_name"),
+    ("NCIThesaurus_get_concept", "annotation_property"),
+    ("IGSR_search_populations", "data_collections"),
+    ("IGSR_search_populations", "data_reuse_policy"),
 ]
 
 
@@ -3641,3 +3672,48 @@ def test_a_disease_gene_evidence_code_keeps_its_identifier():
     assert '"abbreviation": term.get("abbreviation")' in source
     assert '"negated_annotations"' in source
     assert source.count('("relation", "name")') >= 2
+
+
+def test_a_thesaurus_concept_says_which_synonym_is_its_name():
+    """Ten of seventeen synonyms claim "PT" and only one is NCIt's name.
+
+    An NCIt synonym carries two different type fields. `termType` is the
+    term's role within its SOURCE terminology, and C3224 (Melanoma) has ten
+    rows with termType "PT" -- CDISC's is "MELANOMA, MALIGNANT". NCIt's own
+    name is on the single row whose annotation property is `Preferred_Name`,
+    and that row carries no termType, so the old row reported it as
+    `{"name": "Melanoma", "type": null, "source": null}`: the one
+    authoritative name, indistinguishable from noise.
+
+    The annotation property and its P-code are now returned beside termType,
+    with the preferred and display rows flagged. Property codes are carried
+    for the same reason: `type` is the label and `code` is what NCIt's
+    downstream datasets key on.
+    """
+    source = _source("nci_thesaurus_tool.py")
+    assert 's.get("typeCode")' in source
+    assert '"is_preferred_name": s.get("type") == "Preferred_Name"' in source
+    assert '"code": p.get("code")' in source
+    # termType is still what `type` holds, so no caller's key changes meaning.
+    assert '"type": s.get("termType")' in source
+
+
+def test_a_population_says_what_data_exists_for_it():
+    """The sample search read dataCollections; the population search did not.
+
+    An IGSR population record carries ten data collections, each naming its
+    data types ("alignment", "variants"), the sequencing behind them
+    ("PCR-free high coverage") and the document governing reuse. The
+    population row returned the code, name, description, sample count,
+    superpopulation and coordinates -- nothing about whether the population
+    has usable data. `IGSR_search_samples`, in the same module, already read
+    the same block for its titles alone.
+
+    `overlappingPopulations` went with it, which is how IGSR records that two
+    population codes cover the same people.
+    """
+    source = _source("igsr_tool.py")
+    assert "def _data_collections" in source
+    assert '"data_collections": _data_collections(src)' in source
+    assert 'collection.get("dataReusePolicy")' in source
+    assert '"overlapping_populations"' in source

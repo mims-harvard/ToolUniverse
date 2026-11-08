@@ -43,6 +43,32 @@ def _pagination_arguments(
     return limit, offset, None
 
 
+def _data_collections(record: dict) -> list:
+    """The data collections a population or sample belongs to.
+
+    `dataTypes` says whether alignments, variants or sequence exist;
+    `alignment` and `variants` name the sequencing behind each; and
+    `dataReusePolicy` is the document that governs using them. The population
+    search returned none of it, while the sample search beside it read the
+    same block for its titles alone.
+    """
+    out = []
+    for collection in record.get("dataCollections") or []:
+        if not isinstance(collection, dict):
+            continue
+        out.append(
+            {
+                "title": collection.get("title"),
+                "data_types": [t for t in (collection.get("dataTypes") or []) if t],
+                "alignment": [a for a in (collection.get("alignment") or []) if a],
+                "variants": [v for v in (collection.get("variants") or []) if v],
+                "sequence": [q for q in (collection.get("sequence") or []) if q],
+                "data_reuse_policy": collection.get("dataReusePolicy"),
+            }
+        )
+    return out
+
+
 @register_tool("IGSRTool")
 class IGSRTool(BaseTool):
     """
@@ -178,6 +204,23 @@ class IGSRTool(BaseTool):
                     "superpopulation_name": superpop.get("name", ""),
                     "latitude": src.get("latitude"),
                     "longitude": src.get("longitude"),
+                    # WHAT DATA EXISTS for the population, which is what
+                    # decides whether it can be used. Each collection names
+                    # its data types ("alignment", "variants"), the sequencing
+                    # it came from ("PCR-free high coverage") and the reuse
+                    # policy that governs it. The sibling sample search
+                    # already read this block, for its titles only.
+                    "data_collections": _data_collections(src),
+                    "data_collection_titles": [
+                        dc.get("title")
+                        for dc in (src.get("dataCollections") or [])
+                        if isinstance(dc, dict) and dc.get("title")
+                    ],
+                    "overlapping_populations": [
+                        {"code": p.get("code"), "name": p.get("name")}
+                        for p in (src.get("overlappingPopulations") or [])
+                        if isinstance(p, dict)
+                    ],
                 }
             )
         # `total` is the size of the matching result set, not of the page. When the
