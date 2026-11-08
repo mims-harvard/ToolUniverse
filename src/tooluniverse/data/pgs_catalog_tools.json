@@ -32,6 +32,55 @@
               },
               "n_scores": {
                 "type": "integer"
+              },
+              "associated_pgs_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The trait's own polygenic score ids, already in the search response. MONDO_0005010 has 88"
+              },
+              "child_associated_pgs_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Scores attached to CHILD terms of the trait. Measured on MONDO_0005010: 8, and none is returned by PGSCatalog_get_scores_by_trait for this trait_id, so without this field they are reachable through no call this tool makes"
+              },
+              "n_child_scores": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many child-term scores exist, before the cap"
+              },
+              "trait_synonyms": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Why a row matched: the query 'coronary artery disease' is a synonym of the label 'coronary artery disorder'"
+              },
+              "trait_categories": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "PGS Catalog categories, e.g. 'Cardiovascular disease'"
+              },
+              "trait_mapped_terms": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Other ontology terms the trait maps to"
+              },
+              "url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Ontology URL for the trait"
               }
             }
           }

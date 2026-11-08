@@ -110,6 +110,23 @@ the substance of what the tool's own description promises. Measured live on
                               RESEARCH_CODE and one each of ATC, BNF, FDA and
                               MERCK_INDEX, and the 15 shown are alphabetically
                               first, so all brands.
+    PGSCatalog_search_traits  a trait search in a score catalogue that
+                              reported how many scores a trait has and not
+                              which: `associated_pgs_ids` holds 88 for
+                              MONDO_0005010 and `child_associated_pgs_ids`
+                              another 8 that score/search?trait_id= does not
+                              return at all, so they were reachable through
+                              no call. And no trait_synonyms, though the query
+                              "coronary artery disease" is a synonym of the
+                              label it matched, "coronary artery disorder".
+    Alliance_get_disease_     evidence codes as prose only. Alliance sends
+      genes                   {"curie": "ECO:0000270", "abbreviation": "IEP",
+                              "name": ...} and the row kept the name, so
+                              neither the code a paper cites nor the id a
+                              machine reads survived. The relation went too:
+                              "is_implicated_in" and "is_marker_for" are 35
+                              and 23 on one page of DOID:162 and are
+                              different claims.
     NIHDSLD_get_label         a tool that promises "one dietary supplement's
                               full label" returned the ingredient table and
                               none of the label's 23 statements, four of which
@@ -1725,6 +1742,22 @@ UPSTREAM_KEYS = [
         "what the percent daily values the tool already returns are a "
         "percentage of",
     ),
+    (
+        "pgs_catalog_tool.py",
+        't.get("child_associated_pgs_ids")',
+        "8 polygenic scores that no other call this tool makes can reach",
+    ),
+    (
+        "pgs_catalog_tool.py",
+        't.get("trait_synonyms")',
+        "why a trait row matched, when the query is a synonym of the label",
+    ),
+    (
+        "alliance_genome_tool.py",
+        "def _evidence_codes",
+        "the ECO curie and the three-letter abbreviation an evidence code is "
+        "cited by, beside the prose name the row kept",
+    ),
 ]
 
 
@@ -2086,6 +2119,11 @@ DECLARED = [
     ("NIHDSLD_get_label", "other_ingredients"),
     ("NIHDSLD_get_label", "percent_dv_footnote"),
     ("NIHDSLD_get_label", "net_contents"),
+    ("PGSCatalog_search_traits", "associated_pgs_ids"),
+    ("PGSCatalog_search_traits", "child_associated_pgs_ids"),
+    ("PGSCatalog_search_traits", "trait_synonyms"),
+    ("Alliance_get_disease_genes", "evidence_code_details"),
+    ("Alliance_get_disease_genes", "annotation_relations"),
 ]
 
 
@@ -3554,3 +3592,52 @@ def test_a_supplement_label_carries_its_precautions():
     assert 'payload.get("percentDvFootnote")' in source
     assert "STATEMENTS_PER_LABEL" in source
     assert '"events"' in source
+
+
+def test_a_trait_search_says_which_scores_not_how_many():
+    """A polygenic score catalogue returned `n_scores: 88` and no ids.
+
+    `PGSCatalog_search_traits` exists to find the scores for a trait, and the
+    response it already had in hand carries them: `associated_pgs_ids` holds
+    88 for MONDO_0005010. A count plus a sibling that takes the trait_id
+    would be a fair split -- except that `child_associated_pgs_ids` holds 8
+    more, attached to child terms, and measured live not one of them is
+    returned by `score/search?trait_id=MONDO_0005010`. Those 8 were reachable
+    through no call this tool makes.
+
+    `trait_synonyms` went too, and it is what explains a match: the query
+    "coronary artery disease" is a synonym of the label the row reports,
+    "coronary artery disorder".
+    """
+    source = _source("pgs_catalog_tool.py")
+    assert 't.get("associated_pgs_ids")' in source
+    assert 't.get("child_associated_pgs_ids")' in source
+    assert 't.get("trait_synonyms")' in source
+    assert "PGS_IDS_PER_TRAIT" in source
+    note = _config("PGSCatalog_search_traits")
+    assert "child_associated_pgs_ids" in json.dumps(note.get("return_schema"))
+
+
+def test_a_disease_gene_evidence_code_keeps_its_identifier():
+    """IEP and ECO:0000270 were reduced to the prose that describes them.
+
+    Alliance sends each evidence code as `{"curie": "ECO:0000270",
+    "abbreviation": "IEP", "name": "expression pattern evidence used in
+    manual assertion"}`. The row kept the name, so neither the three-letter
+    code a paper cites nor the ECO id a machine reads reached the caller.
+
+    The annotation relation went with them, and it is the claim itself:
+    "is_implicated_in" and "is_marker_for" come back 35 and 23 times on one
+    page of DOID:162 and mean different things about a gene-disease link. The
+    data provider -- RGD on 57 of 58, OMIM on one -- was dropped as well.
+
+    `negated` is carried as a count. None of the 58 annotations measured is
+    negated, so it is latent here; the same field on GO associations was
+    returning genes curated against the function they were listed under,
+    which is why it is reported rather than assumed absent.
+    """
+    source = _source("alliance_genome_tool.py")
+    assert "def _evidence_codes" in source
+    assert '"abbreviation": term.get("abbreviation")' in source
+    assert '"negated_annotations"' in source
+    assert source.count('("relation", "name")') >= 2

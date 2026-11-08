@@ -268,6 +268,34 @@ def _phenotype_terms(annotations: list) -> list:
     return out
 
 
+def _evidence_codes(annotations: list) -> list:
+    """Evidence codes as the identifiers they are cited by.
+
+    Alliance sends `{"curie": "ECO:0000270", "name": "expression pattern
+    evidence used in manual assertion", "abbreviation": "IEP"}` and the row
+    kept only the name. IEP is what a paper writes and ECO:0000270 is what a
+    machine reads; neither reached the caller.
+    """
+    out, seen = [], set()
+    for annotation in annotations:
+        for term in annotation.get("evidenceCodes") or []:
+            if not isinstance(term, dict):
+                continue
+            curie = term.get("curie")
+            key = curie or term.get("abbreviation") or term.get("name")
+            if not key or key in seen:
+                continue
+            seen.add(key)
+            out.append(
+                {
+                    "curie": curie,
+                    "abbreviation": term.get("abbreviation"),
+                    "name": term.get("name"),
+                }
+            )
+    return out
+
+
 def _annotation_facet(annotations: list, path: tuple) -> list:
     """A de-duplicated facet across a row's annotations, nulls dropped."""
     out = []
@@ -894,6 +922,45 @@ class AllianceGenomeTool(BaseTool):
                             )
                             if code
                         }
+                    ),
+                    # The same codes as the identifiers the field is normally
+                    # cited by: IAGP, IEP, IMP, and the ECO curie behind each.
+                    # The row carried only the long prose name.
+                    "evidence_code_details": _evidence_codes(
+                        [
+                            a
+                            for a in (r.get("primaryAnnotations") or [])
+                            if isinstance(a, dict)
+                        ]
+                    ),
+                    # "is_implicated_in" against "is_marker_for" -- 35 and 23
+                    # on one page of DOID:162 -- are different claims about a
+                    # gene-disease link, and neither was reported.
+                    "annotation_relations": _annotation_facet(
+                        [
+                            a
+                            for a in (r.get("primaryAnnotations") or [])
+                            if isinstance(a, dict)
+                        ],
+                        ("relation", "name"),
+                    ),
+                    "data_providers": _annotation_facet(
+                        [
+                            a
+                            for a in (r.get("primaryAnnotations") or [])
+                            if isinstance(a, dict)
+                        ],
+                        ("dataProvider", "abbreviation"),
+                    ),
+                    # A NOT annotation: the gene is curated as NOT associated.
+                    # None of the 58 annotations measured on DOID:162 is
+                    # negated, so this is latent here -- but the same field on
+                    # GO associations was returning genes curated against the
+                    # function they were listed under.
+                    "negated_annotations": sum(
+                        1
+                        for a in (r.get("primaryAnnotations") or [])
+                        if isinstance(a, dict) and a.get("negated")
                     ),
                 }
             )

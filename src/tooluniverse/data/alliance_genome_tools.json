@@ -694,6 +694,57 @@
                   "type": "string"
                 },
                 "description": "Evidence codes Alliance assigned to the association"
+              },
+              "evidence_code_details": {
+                "type": "array",
+                "description": "The evidence codes as the identifiers they are cited by, beside the prose names in evidence_codes",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "curie": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "ECO curie, e.g. ECO:0000270"
+                    },
+                    "abbreviation": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The three-letter code, e.g. IEP, IAGP, IMP"
+                    },
+                    "name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The code's full description"
+                    }
+                  }
+                }
+              },
+              "annotation_relations": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Each annotation's relation. 'is_implicated_in' and 'is_marker_for' are different claims about a gene-disease link - 35 and 23 on one page of DOID:162"
+              },
+              "data_providers": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Which Alliance members asserted the annotations, e.g. RGD or OMIM"
+              },
+              "negated_annotations": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many annotations are NOT annotations: the gene curated as not associated with the disease. 0 across the 58 measured on DOID:162, so latent here"
               }
             }
           }
