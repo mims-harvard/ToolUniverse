@@ -399,6 +399,40 @@
                   "string",
                   "null"
                 ]
+              },
+              "relationship": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Alliance's category for the row: 'gene_to_gene_orthology' or 'gene_to_gene_paralogy'"
+              },
+              "is_paralogy": {
+                "type": "boolean",
+                "description": "True when the row is a paralogy call - a same-species relative, not an ortholog"
+              },
+              "similarity": {
+                "type": [
+                  "number",
+                  "integer",
+                  "null"
+                ],
+                "description": "Sequence similarity percent, paralogy rows only"
+              },
+              "identity": {
+                "type": [
+                  "number",
+                  "integer",
+                  "null"
+                ],
+                "description": "Sequence identity percent, paralogy rows only"
+              },
+              "alignment_length": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Aligned length in residues, paralogy rows only"
               }
             }
           }

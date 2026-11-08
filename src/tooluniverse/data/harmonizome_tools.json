@@ -260,7 +260,47 @@
     ],
     "return_schema": {
       "type": "array",
-      "items": {}
+      "description": "Matching genes, each as the record Harmonizome holds",
+      "items": {
+        "type": "object",
+        "properties": {
+          "symbol": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The gene's current symbol, which is what the other Harmonizome tools take"
+          },
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The gene's full name"
+          },
+          "ncbi_entrez_gene_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "NCBI Entrez Gene id"
+          },
+          "synonyms": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The gene's other symbols. Harmonizome resolves by exact symbol, so these are what a caller holding a renamed or aliased symbol needs"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "RefSeq or Alliance summary of the gene"
+          }
+        }
+      }
     }
   },
   {
@@ -304,14 +344,44 @@
     ],
     "return_schema": {
       "type": "array",
+      "description": "Genes whose symbol or synonyms match the query, each as the record Harmonizome holds",
       "items": {
         "type": "object",
         "properties": {
           "symbol": {
-            "type": "string"
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The gene's current symbol, which is what the other Harmonizome tools take"
           },
-          "href": {
-            "type": "string"
+          "name": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The gene's full name"
+          },
+          "ncbi_entrez_gene_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "NCBI Entrez Gene id"
+          },
+          "synonyms": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The gene's other symbols. Harmonizome resolves by exact symbol, so these are what a caller holding a renamed or aliased symbol needs"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "RefSeq or Alliance summary of the gene"
           }
         }
       }

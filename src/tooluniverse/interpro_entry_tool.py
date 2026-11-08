@@ -163,12 +163,59 @@ class InterProEntryTool(BaseTool):
                 else (str(name_obj) if name_obj else "")
             )
 
+            # Where on the protein the entry matches, which is the point of
+            # asking what entries a protein has: the CDD cd08367 match on P53
+            # runs 109-288, and the row said only that the entry exists. The
+            # response carries the fragments, the model and the score, plus
+            # the entry's GO terms, its member databases and whether the
+            # protein is in AlphaFold.
+            protein_rows = [
+                pr for pr in (r.get("proteins") or []) if isinstance(pr, dict)
+            ]
+            locations = []
+            for pr in protein_rows:
+                for loc in pr.get("entry_protein_locations") or []:
+                    if not isinstance(loc, dict):
+                        continue
+                    locations.append(
+                        {
+                            "fragments": [
+                                {
+                                    "start": fr.get("start"),
+                                    "end": fr.get("end"),
+                                    "status": fr.get("dc-status"),
+                                }
+                                for fr in (loc.get("fragments") or [])
+                                if isinstance(fr, dict)
+                            ],
+                            "model": loc.get("model"),
+                            "score": loc.get("score"),
+                            "representative": loc.get("representative"),
+                        }
+                    )
+            first_protein = protein_rows[0] if protein_rows else {}
             entries.append(
                 {
                     "accession": meta.get("accession"),
                     "name": name,
                     "type": meta.get("type"),
                     "source_database": meta.get("source_database"),
+                    "integrated_interpro": meta.get("integrated"),
+                    "member_databases": meta.get("member_databases") or {},
+                    "go_terms": [
+                        {
+                            "identifier": g.get("identifier"),
+                            "name": g.get("name"),
+                            "category": (g.get("category") or {}).get("name"),
+                        }
+                        for g in (meta.get("go_terms") or [])
+                        if isinstance(g, dict)
+                    ],
+                    "match_locations": locations,
+                    "match_count": len(locations),
+                    "protein_length": first_protein.get("protein_length"),
+                    "protein_source_database": first_protein.get("source_database"),
+                    "in_alphafold": first_protein.get("in_alphafold"),
                 }
             )
 

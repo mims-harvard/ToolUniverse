@@ -30,7 +30,10 @@ CATALOGUE_TTL_S = 3600
 DEFAULT_LIMIT = 20
 MAX_LIMIT = 100
 GUIDELINE_URL = "https://app.magicapp.org/#/guideline/{short_code}"
+DESCRIPTION_CHARACTERS = 800
 # Fields a guideline is searched by, and the fields each returned row keeps.
+# Every searched field is also a returned one: a guideline matched on its
+# institution or its description used to come back with neither.
 SEARCH_FIELDS = ("name", "byName", "owner", "institutionName", "description")
 ROW_FIELDS = (
     "publishedId",
@@ -38,9 +41,27 @@ ROW_FIELDS = (
     "name",
     "byName",
     "owner",
+    "institutionName",
+    "institutionShortName",
+    "institutionUrl",
+    "mainEditor",
     "language",
+    "countryFlag",
+    # A living guideline's dates. publishDate is the date of the guideline
+    # itself and can be a decade before lastEdit; publishLastSearchDate is
+    # the GRADE currency marker - when the evidence was last searched.
     "publishDate",
+    "publishCreationTime",
+    "publishLastSearchDate",
+    "startDate",
+    "lastEdit",
+    "versionLabel",
+    # False when publishedId is a superseded published version.
+    "isLatestPublished",
+    "publishedPicoCount",
     "publishedRecommendationCount",
+    "pdfPublishedPath",
+    "jsonPath",
     "shortCode",
 )
 
@@ -82,6 +103,11 @@ def match(rows: List[dict], query: Optional[str]) -> tuple:
 
 def compact(row: dict) -> dict:
     out = {key: row.get(key) for key in ROW_FIELDS}
+    description = str(row.get("description") or "").strip()
+    out["description_truncated"] = len(description) > DESCRIPTION_CHARACTERS
+    if out["description_truncated"]:
+        description = description[:DESCRIPTION_CHARACTERS].rstrip() + "..."
+    out["description"] = description or None
     if row.get("shortCode"):
         out["url"] = GUIDELINE_URL.format(short_code=row["shortCode"])
     return out
@@ -159,6 +185,11 @@ class MAGICappGuidelineListTool(BaseRESTTool):
             "matched_by": how,
             "id_to_use": "publishedId: pass it as guideline_id to MAGICapp_get_recommendations, "
             "MAGICapp_get_sections or MAGICapp_get_guideline (guidelineId is the unpublished draft)",
+            "dates": "publishDate is the guideline's own date and can be years "
+            "before lastEdit; publishLastSearchDate is when the evidence was "
+            "last searched. isLatestPublished false means publishedId is a "
+            "superseded version.",
+            "description_characters": DESCRIPTION_CHARACTERS,
         }
         if how == "any word":
             metadata["matching_note"] = (

@@ -892,12 +892,35 @@ class AllianceGenomeTool(BaseTool):
         results = data.get("results", [])
         orthologs = []
         for r in results:
-            orth = r.get("geneToGeneOrthologyGenerated", {})
+            # /orthologs answers two kinds of row and the handler read one.
+            # `category` says which: "gene_to_gene_orthology" carries the
+            # relationship under `geneToGeneOrthologyGenerated`, and a
+            # paralogy row carries it under `geneToGeneParalogy`. Reading
+            # only the first meant a paralogy row became a row of nulls --
+            # subject_gene_id None, ortholog_symbol None, methods [] -- and
+            # was still listed as an ortholog. Rows with neither branch are
+            # skipped rather than emitted blank.
+            orth = r.get("geneToGeneOrthologyGenerated") or {}
+            paralogy = r.get("geneToGeneParalogy") or {}
+            relationship = r.get("category")
+            if not orth and paralogy:
+                orth = paralogy
+            if not orth:
+                continue
             subject = orth.get("subjectGene", {})
             obj_gene = orth.get("objectGene", {})
             methods = orth.get("predictionMethodsMatched", [])
             orthologs.append(
                 {
+                    "relationship": relationship,
+                    "is_paralogy": bool(paralogy) and not r.get(
+                        "geneToGeneOrthologyGenerated"
+                    ),
+                    # Present on a paralogy row, which reports sequence
+                    # similarity rather than prediction methods.
+                    "similarity": paralogy.get("similarity") if paralogy else None,
+                    "identity": paralogy.get("identity") if paralogy else None,
+                    "alignment_length": paralogy.get("length") if paralogy else None,
                     "subject_gene_id": subject.get("primaryExternalId"),
                     "subject_symbol": subject.get("geneSymbol", {}).get("displayText"),
                     "subject_species": subject.get("taxon", {}).get("name"),
@@ -1314,6 +1337,27 @@ class AllianceGenomeTool(BaseTool):
                         m.get("name")
                         for m in para.get("predictionMethodsMatched", [])
                         if isinstance(m, dict)
+                    ],
+                    # What makes it a paralog rather than which tools agree it
+                    # is one. Alliance quantifies a paralogy relationship by
+                    # sequence: Pax6's first paralog is 50% similar, 38%
+                    # identical over 473 aligned residues, and ranked 1 of 42.
+                    # The row carried the symbol and the method names, so two
+                    # paralogs predicted by the same three tools looked the
+                    # same whether they shared 38% or 90% of their residues.
+                    "similarity_percent": para.get("similarity"),
+                    "identity_percent": para.get("identity"),
+                    "alignment_length": para.get("length"),
+                    "rank": para.get("rank"),
+                    "methods_not_matched": [
+                        m.get("name")
+                        for m in (para.get("predictionMethodsNotMatched") or [])
+                        if isinstance(m, dict) and m.get("name")
+                    ],
+                    "methods_not_called": [
+                        m.get("name")
+                        for m in (para.get("predictionMethodsNotCalled") or [])
+                        if isinstance(m, dict) and m.get("name")
                     ],
                 }
             )

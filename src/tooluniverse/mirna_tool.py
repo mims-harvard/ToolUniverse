@@ -414,6 +414,10 @@ class miRNAGetTool(BaseTool):
                     "publication": pub.get("publication", ""),
                     "pubmed_id": pub.get("pubmed_id", ""),
                     "doi": pub.get("doi", ""),
+                    # RNAcentral's own record id. It is the only field that
+                    # tells two source records for one PMID apart, which the
+                    # metadata warning below asks the caller to expect.
+                    "pub_id": pub.get("pub_id"),
                     "expert_db": pub.get("expert_db", False),
                 }
             )
@@ -444,7 +448,8 @@ class miRNAGetTool(BaseTool):
                 "warning": (
                     "RNAcentral can expose multiple source records for the same "
                     "PMID with different citation metadata; total_publications is "
-                    "an upstream record count, not a guaranteed unique PMID count."
+                    "an upstream record count, not a guaranteed unique PMID count. "
+                    "pub_id is the source record id that tells such records apart."
                 ),
             },
         }

@@ -922,7 +922,81 @@
             "paralogs": {
               "type": "array",
               "items": {
-                "type": "object"
+                "type": "object",
+                "properties": {
+                  "paralog_gene_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Alliance curie of the paralogous gene"
+                  },
+                  "paralog_symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "That gene's symbol"
+                  },
+                  "paralog_species": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Species, which for a paralog is the query's own"
+                  },
+                  "similarity_percent": {
+                    "type": [
+                      "number",
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Sequence similarity percent of the pair"
+                  },
+                  "identity_percent": {
+                    "type": [
+                      "number",
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Sequence identity percent of the pair"
+                  },
+                  "alignment_length": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Aligned length in residues"
+                  },
+                  "rank": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Alliance's rank of this paralog for the query gene; 1 is closest"
+                  },
+                  "methods": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Prediction methods that called the pair"
+                  },
+                  "methods_not_matched": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Methods that ran and did not call it, which is what makes the method count interpretable"
+                  },
+                  "methods_not_called": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Methods that did not call the pair"
+                  }
+                }
               }
             }
           },

@@ -18,6 +18,53 @@ from .tool_registry import register_tool
 GO_BASE_URL = "https://api.geneontology.org/api"
 
 
+def _evidence(association: Dict[str, Any]) -> Dict[str, Any]:
+    """The evidence code of a GO annotation.
+
+    The API sends it as ``evidence`` with the labelled codes under
+    ``evidence_types``. There is no ``evidence_type`` or ``evidence_label``
+    key, so reading those returned None for every annotation ever served.
+    """
+    types = [t for t in (association.get("evidence_types") or []) if isinstance(t, dict)]
+    codes = [t.get("id") for t in types if t.get("id")]
+    code = association.get("evidence") or (codes[0] if codes else None)
+    labels = [t.get("label") for t in types if t.get("label")]
+    return {
+        "evidence_type": code,
+        "evidence_label": labels[0] if labels else None,
+        "evidence_codes": codes,
+        "evidence_labels": labels,
+    }
+
+
+def _references(association: Dict[str, Any]) -> list:
+    """``publications`` holds the references; there is no ``reference`` key."""
+    out = []
+    for publication in association.get("publications") or []:
+        if isinstance(publication, dict):
+            identifier = publication.get("id")
+            if identifier:
+                out.append(identifier)
+        elif publication:
+            out.append(str(publication))
+    return out
+
+
+def _categories(entity: Dict[str, Any]) -> list:
+    """GO sends ``category: [null]`` on most entities; drop the nulls."""
+    return [c for c in (entity.get("category") or []) if c]
+
+
+def _is_negated(association: Dict[str, Any]) -> bool:
+    """A NOT annotation: the gene is curated as *not* having the function."""
+    if association.get("negated"):
+        return True
+    qualifiers = association.get("qualifier") or association.get("qualifiers") or []
+    if isinstance(qualifiers, str):
+        qualifiers = [qualifiers]
+    return any(str(q).lower() == "not" for q in qualifiers)
+
+
 def _association_page_arguments(
     arguments: Dict[str, Any],
 ) -> tuple[int | None, int | None, str | None]:
@@ -226,20 +273,24 @@ class GOAPITool(BaseTool):
 
         raw_associations = data.get("associations", []) or []
         associations = []
+        negated_count = 0
         for a in raw_associations[:rows]:
             obj = a.get("object", {})
-            categories = obj.get("category", [])
-            category = categories[0] if categories else None
+            categories = _categories(obj)
+            negated = _is_negated(a)
+            negated_count += bool(negated)
 
             associations.append(
                 {
                     "go_id": obj.get("id"),
                     "go_label": obj.get("label"),
-                    "category": category,
-                    "evidence_type": a.get("evidence_type"),
-                    "evidence_label": a.get("evidence_label"),
+                    "category": categories[0] if categories else None,
+                    "categories": categories,
+                    # True when the gene is annotated as NOT having this term.
+                    "negated": negated,
+                    **_evidence(a),
                     "provided_by": a.get("provided_by", []),
-                    "references": a.get("reference", []),
+                    "references": _references(a),
                 }
             )
 
@@ -253,8 +304,15 @@ class GOAPITool(BaseTool):
             {
                 "source": "Gene Ontology (GO)",
                 "gene_id": gene_id,
+                "negated_annotations": negated_count,
             }
         )
+        if negated_count:
+            pagination["negated_note"] = (
+                f"{negated_count} of the returned annotations are NOT "
+                "annotations (negated true): the gene is curated as not "
+                "having that term."
+            )
         return {
             "status": "success",
             "data": associations,
@@ -290,6 +348,11 @@ class GOAPITool(BaseTool):
         target_unique_count = offset + rows + 1
         genes_by_id: Dict[str, Dict[str, Any]] = {}
         gene_order = []
+        # NOT annotations, held aside: they must not make a gene count as
+        # having the function, but a gene that is also annotated positively
+        # should carry them so the conflict is visible.
+        negated_by_gene: Dict[str, list] = {}
+        negated_scanned = 0
         association_start = 0
         associations_scanned = 0
         upstream_exhausted = False
@@ -312,6 +375,21 @@ class GOAPITool(BaseTool):
                 gene_id = subject.get("id")
                 if not gene_id:
                     continue
+                obj = association.get("object", {}) or {}
+                row = {
+                    "go_id": obj.get("id"),
+                    "go_label": obj.get("label"),
+                    "category": _categories(obj),
+                    **_evidence(association),
+                    "provided_by": association.get("provided_by", []),
+                    "references": _references(association),
+                }
+                if _is_negated(association):
+                    negated_scanned += 1
+                    row["negated"] = True
+                    negated_by_gene.setdefault(gene_id, []).append(row)
+                    continue
+
                 if gene_id not in genes_by_id:
                     taxon_info = subject.get("taxon", {}) or {}
                     genes_by_id[gene_id] = {
@@ -324,19 +402,8 @@ class GOAPITool(BaseTool):
                     }
                     gene_order.append(gene_id)
 
-                obj = association.get("object", {}) or {}
                 genes_by_id[gene_id]["associations_returned"] += 1
-                genes_by_id[gene_id]["associations"].append(
-                    {
-                        "go_id": obj.get("id"),
-                        "go_label": obj.get("label"),
-                        "category": obj.get("category", []),
-                        "evidence_type": association.get("evidence_type"),
-                        "evidence_label": association.get("evidence_label"),
-                        "provided_by": association.get("provided_by", []),
-                        "references": association.get("reference") or [],
-                    }
-                )
+                genes_by_id[gene_id]["associations"].append(row)
 
             association_start += len(raw_associations)
             associations_scanned += len(raw_associations)
@@ -346,6 +413,13 @@ class GOAPITool(BaseTool):
 
         page_ids = gene_order[offset : offset + rows]
         genes = [genes_by_id[gene_id] for gene_id in page_ids]
+        for gene in genes:
+            negated = negated_by_gene.get(gene["gene_id"])
+            if negated:
+                gene["negated_associations"] = negated
+        genes_excluded_as_negated_only = sum(
+            1 for gene_id in negated_by_gene if gene_id not in genes_by_id
+        )
         extra_unique_seen = len(gene_order) > offset + rows
         has_more = extra_unique_seen or not upstream_exhausted
         has_more_known = extra_unique_seen or upstream_exhausted
@@ -385,7 +459,17 @@ class GOAPITool(BaseTool):
             "max_associations_scanned": scan_budget,
             "scan_limit_reached": scan_limit_reached,
             "warning": warning,
+            # NOT annotations are excluded from the gene list: a gene curated
+            # as not having the function is not a gene with the function.
+            "negated_associations_scanned": negated_scanned,
+            "genes_excluded_as_negated_only": genes_excluded_as_negated_only,
         }
+        if negated_scanned:
+            pagination["negated_note"] = (
+                f"{negated_scanned} scanned annotations are NOT annotations. "
+                "They never put a gene in this list; where a listed gene also "
+                "has one it is under negated_associations."
+            )
         return {
             "status": "success",
             "data": genes,

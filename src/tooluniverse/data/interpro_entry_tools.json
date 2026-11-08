@@ -82,9 +82,175 @@
                   },
                   "source_database": {
                     "type": "string"
+                  },
+                  "integrated_interpro": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "InterPro accession this member-database signature is integrated into, null when it stands alone"
+                  },
+                  "member_databases": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "Member-database signatures behind this InterPro entry, keyed by database then accession"
+                  },
+                  "go_terms": {
+                    "type": "array",
+                    "description": "GO terms the entry is annotated to",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "identifier": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "GO id"
+                        },
+                        "name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Term name"
+                        },
+                        "category": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "GO domain, from the term's category name"
+                        }
+                      }
+                    }
+                  },
+                  "match_locations": {
+                    "type": "array",
+                    "description": "Where on this protein the entry matches - the part of a domain hit that says which residues it covers",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "start": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "First residue of the match"
+                        },
+                        "end": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "Last residue of the match"
+                        },
+                        "fragments": {
+                          "type": "array",
+                          "description": "Discontinuous pieces of the match",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "start": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ],
+                                "description": "First residue of the fragment"
+                              },
+                              "end": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ],
+                                "description": "Last residue of the fragment"
+                              },
+                              "status": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "description": "InterPro's continuity code for the fragment, e.g. S for a single continuous piece"
+                              }
+                            }
+                          }
+                        },
+                        "model": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Signature model the match came from"
+                        },
+                        "score": {
+                          "type": [
+                            "number",
+                            "integer",
+                            "null"
+                          ],
+                          "description": "Match score or e-value as InterPro reports it"
+                        },
+                        "representative": {
+                          "type": [
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "Whether InterPro treats this as the representative match"
+                        }
+                      }
+                    }
+                  },
+                  "match_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Number of match locations on this protein"
+                  },
+                  "protein_length": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Length of the queried protein in residues"
+                  },
+                  "protein_source_database": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Database the protein record came from, reviewed or unreviewed"
+                  },
+                  "in_alphafold": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether AlphaFold DB holds a model for the protein"
                   }
                 }
               }
+            },
+            "page_size": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Entries requested per page"
+            },
+            "truncated": {
+              "type": "boolean",
+              "description": "True when entries is not the whole set"
+            },
+            "result_set_complete": {
+              "type": "boolean",
+              "description": "True only when every entry was returned"
+            },
+            "pagination_stalled": {
+              "type": "boolean",
+              "description": "True when the cursor stopped advancing"
             }
           },
           "required": [

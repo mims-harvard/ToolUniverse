@@ -399,6 +399,13 @@
                   },
                   "expert_db": {
                     "type": "boolean"
+                  },
+                  "pub_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "RNAcentral's own publication record id: the only field that tells two source records for one PMID apart"
                   }
                 }
               }

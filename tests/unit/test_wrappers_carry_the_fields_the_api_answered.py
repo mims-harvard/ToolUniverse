@@ -72,6 +72,39 @@ the substance of what the tool's own description promises. Measured live on
                               container and nothing located the image in it.
     Synapse_list_children     no benefactor_id, the entity whose access rules
                               govern the child.
+    GOAPI_get_genes_by_       `evidence_type`, `evidence_label` and `reference`
+      function                are not keys of a GO association. The API sends
+                              `evidence`, `evidence_types` and `publications`,
+                              so every annotation either GO tool ever served
+                              carried a null evidence code and no references.
+                              And NOT annotations went through the ordinary
+                              branch: of the first 400 associations of
+                              GO:0006915, one is `negated: true` with
+                              `qualifier: ["not"]` -- MGI:1341836 Trpv2, by
+                              direct assay -- returned as a gene with the
+                              apoptotic process.
+    MAGICapp_list_guidelines  matched on five fields and returned three of
+                              them: a query naming an organisation came back
+                              with no institution and no description. With
+                              them went lastEdit (2026-11-07 against a
+                              publishDate of 2015-02-01 on the first public
+                              row), publishLastSearchDate, and
+                              isLatestPublished -- false on both top stroke
+                              hits, while the tool tells the caller to pass
+                              that publishedId on.
+    PubChemBioAssay_search_   aid, name, source, method, targets, has_score:
+      by_gene                 nothing of how big the screen was. AID 902 holds
+                              125,394 compounds, 1,890 of them active. Protocol
+                              and Comment reached no tool at all, and the
+                              sibling summary cut Description to three
+                              paragraphs in silence.
+    DANDI_search_datasets     counts from the published version, while
+                              get_dataset and list_assets read the draft, with
+                              nothing naming either. 000036 published
+                              2023-05-15 against a draft modified 2026-02-17.
+    miRBase_get_mirna_        no pub_id, the one key that tells apart the
+      publications            duplicate-PMID records the tool's own metadata
+                              warns about.
 
 NOT DEFECTS, recorded so the next sweep does not re-litigate them. The 77
 `FDA_get_drug_names_by_*` tools declare `return_fields: ["openfda.brand_name",
@@ -81,7 +114,13 @@ and `qualifierDefinition` are paragraphs of ontology prose. Planteome's
 `*_closure*` fields restate the term's own hierarchy. GEO's `translationstack`
 and `idlist` are esearch internals, and the query expansion is already
 disclosed as `query_disclosure`. MaveDB's `recordType`, `id` and
-`creationDate` are database bookkeeping.
+`creationDate` are database bookkeeping. Ensembl's constrained elements carry
+`feature_type: "constrained"` on all 20 rows -- the request parameter echoed
+back, and the tool's own name. GO's `subject.iri`, `object.iri` and
+`taxon.iri` are each the returned curie in URL form, and an association's `id`
+is a hex blob of the fields around it. DANDI's `embargo_status` is "OPEN" on
+every record an unauthenticated search can reach: `?embargoed=true` answers
+401, and this tool sends no token.
 """
 
 import json
@@ -1207,6 +1246,82 @@ UPSTREAM_KEYS = [
         's.get("groups")',
         "which Ensembl data sets exist for a species",
     ),
+    (
+        "mirna_tool.py",
+        'pub.get("pub_id")',
+        "the source record id that tells two RNAcentral records for one PMID apart, "
+        "which the tool's own warning asks the caller to expect",
+    ),
+    (
+        "dandi_tool.py",
+        '"version_is_published"',
+        "which version the name, asset count and size describe, when the sibling "
+        "tools read a different one",
+    ),
+    (
+        "magicapp_tool.py",
+        '"institutionShortName"',
+        "the organisation that published the guideline, one of the five fields "
+        "the query is matched against",
+    ),
+    (
+        "magicapp_tool.py",
+        '"publishLastSearchDate"',
+        "when the evidence was last searched, the currency of a living guideline "
+        "whose publishDate can be a decade older",
+    ),
+    (
+        "pubchem_bioassay_tool.py",
+        'summary.get("Protocol")',
+        "the assay protocol, which reached neither the search nor the summary tool",
+    ),
+    (
+        "pubchem_bioassay_tool.py",
+        '_counts(summary, "CID")',
+        "how many compounds the screen tested and how many were active, which is "
+        "what tells a screen worth opening from an empty one",
+    ),
+    (
+        "go_api_tool.py",
+        'association.get("evidence_types")',
+        "the evidence code's label, under the key the API actually sends",
+    ),
+    (
+        "go_api_tool.py",
+        'association.get("publications")',
+        "a GO annotation's references, under the key the API actually sends",
+    ),
+    (
+        "go_api_tool.py",
+        "def _is_negated",
+        "NOT annotations, which were returned as genes having the function",
+    ),
+    (
+        "interpro_entry_tool.py",
+        '"match_locations"',
+        "where on the protein the domain matches, for a tool that answers which "
+        "domains a protein has",
+    ),
+    (
+        "harmonizome_tool.py",
+        'g.get("synonyms")',
+        "the gene's other symbols, in a tool that resolves by exact symbol",
+    ),
+    (
+        "dbsnp_tool.py",
+        '"studies_unparsed"',
+        "that a study's frequency string did not parse, rather than dropping it",
+    ),
+    (
+        "alliance_genome_tool.py",
+        'r.get("geneToGeneParalogy")',
+        "the branch a paralogy row arrives in, which was read as an all-null ortholog",
+    ),
+    (
+        "alliance_genome_tool.py",
+        "para.get(\"rank\")",
+        "how close a paralog is, in a list ordered by it",
+    ),
 ]
 
 
@@ -1487,6 +1602,29 @@ DECLARED = [
     ("GenomeNexus_get_cancer_hotspots", "variant_summary"),
     ("GenomeNexus_get_cancer_hotspots", "colocated_variant_ids"),
     ("Ensembl_get_species_info", "groups"),
+    ("miRBase_get_mirna_publications", "pub_id"),
+    ("DANDI_search_datasets", "version_is_published"),
+    ("DANDI_search_datasets", "draft_asset_count"),
+    ("MAGICapp_list_guidelines", "institutionName"),
+    ("MAGICapp_list_guidelines", "publishLastSearchDate"),
+    ("MAGICapp_list_guidelines", "isLatestPublished"),
+    ("MAGICapp_list_guidelines", "description"),
+    ("PubChemBioAssay_search_by_gene", "compound_counts"),
+    ("PubChemBioAssay_search_by_gene", "source_id"),
+    ("PubChemBioAssay_get_assay_summary", "protocol"),
+    ("PubChemBioAssay_get_assay_summary", "comment"),
+    ("GOAPI_get_gene_functions", "evidence_codes"),
+    ("GOAPI_get_gene_functions", "negated"),
+    ("GOAPI_get_genes_by_function", "negated_associations"),
+    ("InterPro_get_entries_for_protein", "match_locations"),
+    ("InterPro_get_entries_for_protein", "go_terms"),
+    ("Harmonizome_search_genes", "synonyms"),
+    ("Harmonizome_search", "synonyms"),
+    ("dbsnp_get_frequencies", "studies_unparsed"),
+    ("dbsnp_get_frequencies", "all_studies_parsed"),
+    ("FlyBase_get_gene_orthologs", "is_paralogy"),
+    ("ZFIN_get_gene_orthologs", "relationship"),
+    ("Alliance_get_gene_orthologs", "similarity_percent"),
 ]
 
 
@@ -2472,3 +2610,97 @@ def test_a_cancer_hotspot_answer_says_which_hotspot():
     assert '"colocated_variant_ids"' in source
     assert '"most_severe_consequence": data.get("most_severe_consequence")' in source
 
+
+
+def test_a_guideline_matched_on_a_field_comes_back_with_it():
+    """MAGICapp has no search endpoint, so this tool filters the catalogue here.
+
+    It scores a query against five fields -- name, byName, owner,
+    institutionName and description -- and the row it returned kept neither
+    institutionName nor description. The tool's own description invites a
+    query naming an organisation, so a caller could match on WHO or the
+    European Stroke Organisation and get back rows that never said which
+    body published them, and could not see the text the match was scored on.
+
+    The invariant, rather than a list: every searched field is a returned
+    field. A later round adding a sixth to SEARCH_FIELDS cannot reopen this.
+    """
+    source = _source("magicapp_tool.py")
+    import re
+
+    def tuple_of(name):
+        block = re.search(rf"^{name} = \((.*?)\)$", source, re.S | re.M)
+        assert block, f"{name} is not a plain tuple literal any more"
+        return set(re.findall(r'"([^"]+)"', block.group(1)))
+
+    searched, returned = tuple_of("SEARCH_FIELDS"), tuple_of("ROW_FIELDS")
+    # description is capped and set by compact(), not carried in ROW_FIELDS.
+    returned |= {"description"}
+    assert searched <= returned, (
+        f"guidelines are matched on {sorted(searched - returned)} and the row "
+        "does not carry it"
+    )
+    # publishDate alone misreads a living guideline: 2015-02-01 against a
+    # lastEdit of 2026-11-07 on the first row of the public catalogue.
+    assert '"lastEdit"' in source
+    assert '"isLatestPublished"' in source
+
+
+def test_a_dandiset_row_says_which_version_its_counts_describe():
+    """The search read the published version; the sibling tools read the draft.
+
+    `most_recent_published_version or draft_version` chose the published
+    snapshot, so name, asset_count, size_bytes and status described it --
+    while DANDI_get_dataset and DANDI_list_assets both request
+    `/versions/draft/`. 000036's published version is from 2023-05-15 and its
+    draft was modified 2026-02-17, so the two can disagree with nothing in
+    the answer to say they might.
+
+    `embargo_status` was flagged with it and is NOT a defect: the API answers
+    401 to `?embargoed=true`, so an embargoed dandiset cannot be listed without
+    a token and this tool sends none. 300 dandisets sampled, 300 OPEN. A
+    constant is not substance, and a field added with a story it cannot support
+    is the shape this sweep exists to catch.
+    """
+    source = _source("dandi_tool.py")
+    assert '"version_is_published"' in source
+    assert '"draft_asset_count"' in source
+    # The note the search returns says so in words, not only in the schema.
+    assert "compare draft_asset_count" in source
+
+
+def test_an_assay_row_says_how_big_the_screen_was():
+    """Name and method cannot tell a 125,000-compound screen from an empty one.
+
+    The search row kept aid, name, source, method, targets and has_score.
+    PubChem's summary record also carries SIDCount*/CIDCount* -- AID 902 is
+    125,394 compounds of which 1,890 were active -- the depositor's own
+    SourceID, the tested-target count, the description, and the date the data
+    last changed. For a tool whose description offers help "finding screening
+    data", the size and the hit rate of the screen are the substance.
+
+    Protocol and Comment reached no tool at all: the sibling summary handler
+    did not read them either, and cut Description to its first three
+    paragraphs without saying so.
+    """
+    source = _source("pubchem_bioassay_tool.py")
+    assert 'summary.get("Protocol")' in source
+    assert 'summary.get("Comment")' in source
+    assert "desc[:3]" not in source, "the description is still cut in silence"
+    assert source.count('_counts(summary, "CID")') == 2
+    assert "def _last_data_change" in source
+
+
+def test_a_publication_record_keeps_the_id_that_tells_it_apart():
+    """The tool warns about duplicate PMIDs and dropped the only key for them.
+
+    RNAcentral can expose several source records for one PMID with different
+    citation metadata, which the metadata of this tool has said in so many
+    words since the row-axis sweep -- `total_publications` is a record count,
+    "not a guaranteed unique PMID count". `pub_id` is RNAcentral's own record
+    id and the only field that distinguishes those records, so the warning
+    named a problem the caller had no field to act on.
+    """
+    source = _source("mirna_tool.py")
+    assert 'pub.get("pub_id")' in source
+    assert "pub_id is the source record id" in source

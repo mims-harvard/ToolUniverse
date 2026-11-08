@@ -337,6 +337,45 @@
             "total_studies": {
               "type": "integer",
               "description": "Number of studies with frequency data"
+            },
+            "studies_reported": {
+              "type": "integer",
+              "description": "Frequency studies dbSNP listed for this rsID"
+            },
+            "studies_parsed": {
+              "type": "integer",
+              "description": "Of those, how many this tool could parse into a frequency"
+            },
+            "studies_unparsed": {
+              "type": "integer",
+              "description": "How many it could not; their raw strings are under 'unparsed'"
+            },
+            "all_studies_parsed": {
+              "type": "boolean",
+              "description": "False when a study's frequency string did not parse, so 'frequencies' is not every study dbSNP reported"
+            },
+            "unparsed": {
+              "type": "array",
+              "description": "The study entries that did not parse, reported rather than dropped",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "study": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Study name as dbSNP gave it"
+                  },
+                  "raw": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The frequency string that could not be parsed"
+                  }
+                }
+              }
             }
           }
         },

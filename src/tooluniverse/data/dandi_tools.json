@@ -28,10 +28,17 @@
             "type": "object",
             "properties": {
               "dandiset_id": {"type": ["string", "null"]},
-              "name": {"type": ["string", "null"]},
-              "asset_count": {"type": ["integer", "null"]},
-              "size_bytes": {"type": ["integer", "null"]},
-              "status": {"type": ["string", "null"]},
+              "name": {"type": ["string", "null"], "description": "Name of the version named in 'version'"},
+              "asset_count": {"type": ["integer", "null"], "description": "Asset count of the version named in 'version'"},
+              "size_bytes": {"type": ["integer", "null"], "description": "Size of the version named in 'version'"},
+              "status": {"type": ["string", "null"], "description": "Validation status of that version (Valid, Invalid), not whether its assets can be downloaded"},
+              "version": {"type": ["string", "null"], "description": "Version the name, asset_count, size_bytes and status describe: the most recent published one when there is one, else 'draft'"},
+              "version_is_published": {"type": "boolean", "description": "False when those fields come from the draft version"},
+              "draft_asset_count": {"type": ["integer", "null"], "description": "Asset count of the draft version, which DANDI_get_dataset and DANDI_list_assets read"},
+              "draft_size_bytes": {"type": ["integer", "null"], "description": "Size of the draft version in bytes"},
+              "draft_modified": {"type": ["string", "null"], "description": "When the draft version was last modified"},
+              "created": {"type": ["string", "null"], "description": "When the dandiset was created"},
+              "modified": {"type": ["string", "null"], "description": "When the dandiset was last modified"},
               "contact_person": {"type": ["string", "null"]},
               "star_count": {"type": ["integer", "null"]}
             }

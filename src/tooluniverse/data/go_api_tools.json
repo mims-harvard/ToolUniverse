@@ -178,14 +178,14 @@
                   "string",
                   "null"
                 ],
-                "description": "Evidence code (IDA, IMP, ISS, IEA, etc.)"
+                "description": "ECO evidence code of the annotation, from the API's 'evidence' field"
               },
               "evidence_label": {
                 "type": [
                   "string",
                   "null"
                 ],
-                "description": "Full evidence description"
+                "description": "What that evidence code means"
               },
               "provided_by": {
                 "type": "array",
@@ -199,7 +199,32 @@
                 "items": {
                   "type": "string"
                 },
-                "description": "Literature references (PMID, UniProtKB)"
+                "description": "Literature references (PMID, UniProtKB), from the API's 'publications' field"
+              },
+              "evidence_codes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Every ECO code the annotation carries"
+              },
+              "evidence_labels": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Those codes' labels"
+              },
+              "categories": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "GO domains the term belongs to, nulls dropped"
+              },
+              "negated": {
+                "type": "boolean",
+                "description": "True for a NOT annotation: the gene is curated as not having this term"
               }
             }
           }
@@ -305,20 +330,6 @@
                 ],
                 "description": "Species name"
               },
-              "evidence_type": {
-                "type": [
-                  "string",
-                  "null"
-                ],
-                "description": "Evidence code"
-              },
-              "references": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "description": "Literature references"
-              },
               "associations_returned": {
                 "type": "integer",
                 "description": "Number of association rows preserved for this unique gene in the scanned upstream window"
@@ -329,10 +340,150 @@
               },
               "associations": {
                 "type": "array",
+                "description": "Positive association rows encountered for this gene",
                 "items": {
-                  "type": "object"
-                },
-                "description": "GO term, evidence, provider, and reference details for association rows encountered for this gene"
+                  "type": "object",
+                  "properties": {
+                    "go_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "GO term the gene is annotated to"
+                    },
+                    "go_label": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "That term's name"
+                    },
+                    "category": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "GO domains of the term, nulls dropped"
+                    },
+                    "evidence_type": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "ECO evidence code of the annotation, from the API's 'evidence' field"
+                    },
+                    "evidence_label": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "What that evidence code means"
+                    },
+                    "evidence_codes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Every ECO code the annotation carries"
+                    },
+                    "evidence_labels": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Those codes' labels"
+                    },
+                    "provided_by": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Annotation providers"
+                    },
+                    "references": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Literature references (PMID, UniProtKB), from the API's 'publications' field"
+                    }
+                  }
+                }
+              },
+              "negated_associations": {
+                "type": "array",
+                "description": "NOT annotations seen for this gene: it is curated as not having those terms. They never put a gene in this list, so a gene annotated only negatively is absent from it.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "go_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "GO term the gene is annotated to"
+                    },
+                    "go_label": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "That term's name"
+                    },
+                    "category": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "GO domains of the term, nulls dropped"
+                    },
+                    "evidence_type": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "ECO evidence code of the annotation, from the API's 'evidence' field"
+                    },
+                    "evidence_label": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "What that evidence code means"
+                    },
+                    "evidence_codes": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Every ECO code the annotation carries"
+                    },
+                    "evidence_labels": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Those codes' labels"
+                    },
+                    "provided_by": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Annotation providers"
+                    },
+                    "references": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Literature references (PMID, UniProtKB), from the API's 'publications' field"
+                    },
+                    "negated": {
+                      "type": "boolean"
+                    }
+                  }
+                }
               }
             }
           }

@@ -237,6 +237,142 @@
                       "boolean",
                       "null"
                     ]
+                  },
+                  "source_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The depositor's own assay identifier"
+                  },
+                  "number_of_tids": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Number of tested targets in the assay"
+                  },
+                  "substance_counts": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "How many tested substances the assay holds, by outcome",
+                    "properties": {
+                      "all": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "active": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "inactive": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "inconclusive": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "unspecified": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "probe": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "compound_counts": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "How many tested compounds the assay holds, by outcome",
+                    "properties": {
+                      "all": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "active": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "inactive": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "inconclusive": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "unspecified": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      },
+                      "probe": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "last_data_change": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Date the assay's data last changed, YYYY-MM-DD"
+                  },
+                  "version": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Assay version"
+                  },
+                  "revision": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Assay revision"
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The assay's description, capped at metadata.description_characters"
+                  },
+                  "description_truncated": {
+                    "type": "boolean",
+                    "description": "True when description was cut at that cap"
                   }
                 }
               }
@@ -316,7 +452,8 @@
               "type": [
                 "string",
                 "null"
-              ]
+              ],
+              "description": "The depositor's own assay identifier"
             },
             "method": {
               "type": [
@@ -334,7 +471,8 @@
               "type": [
                 "integer",
                 "null"
-              ]
+              ],
+              "description": "Number of tested targets in the assay"
             },
             "targets": {
               "type": "array",
@@ -383,10 +521,136 @@
               }
             },
             "description": {
-              "type": "array",
-              "items": {
-                "type": "string"
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The assay's whole description, every paragraph joined by newlines"
+            },
+            "substance_counts": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "How many tested substances the assay holds, by outcome",
+              "properties": {
+                "all": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "active": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "inactive": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "inconclusive": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "unspecified": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "probe": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                }
               }
+            },
+            "compound_counts": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "How many tested compounds the assay holds, by outcome",
+              "properties": {
+                "all": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "active": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "inactive": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "inconclusive": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "unspecified": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                },
+                "probe": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "last_data_change": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Date the assay's data last changed, YYYY-MM-DD"
+            },
+            "version": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Assay version"
+            },
+            "revision": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Assay revision"
+            },
+            "protocol": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The assay protocol, every paragraph joined by newlines"
+            },
+            "comment": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The depositor's comments and caveats, every paragraph joined by newlines"
             }
           },
           "not": {

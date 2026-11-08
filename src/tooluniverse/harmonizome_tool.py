@@ -292,6 +292,14 @@ class HarmonizomeTool(BaseTool):
                                 "symbol": g.get("symbol"),
                                 "name": g.get("name"),
                                 "ncbi_entrez_gene_id": g.get("ncbiEntrezGeneId"),
+                                # The gene's other symbols, which the record
+                                # carries and a symbol search needs most: the
+                                # tool resolves by EXACT symbol, so a caller
+                                # holding a renamed or aliased symbol gets
+                                # nothing and is never told what the gene is
+                                # also called.
+                                "synonyms": g.get("synonyms") or [],
+                                "description": g.get("description"),
                             }
                         )
                 elif gene_resp.status_code != 404:
@@ -389,6 +397,8 @@ class HarmonizomeTool(BaseTool):
                         "symbol": g.get("symbol"),
                         "name": g.get("name"),
                         "ncbi_entrez_gene_id": g.get("ncbiEntrezGeneId"),
+                        "synonyms": g.get("synonyms") or [],
+                        "description": g.get("description"),
                     }
                 )
 
