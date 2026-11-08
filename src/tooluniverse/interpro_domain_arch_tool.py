@@ -171,6 +171,8 @@ class InterProDomainArchTool(BaseTool):
         next_cursor = self._next_cursor(data)
         domains = []
         protein_length = None
+        protein_source_database = None
+        protein_organism = None
 
         for r in results:
             metadata = r.get("metadata", {})
@@ -185,6 +187,16 @@ class InterProDomainArchTool(BaseTool):
             for p in proteins:
                 if protein_length is None:
                     protein_length = p.get("protein_length")
+                # Reviewed (Swiss-Prot) against unreviewed (TrEMBL), and the
+                # organism, for the protein the architecture is OF. Both
+                # sibling endpoints of this family already report the first.
+                # `proteins[].accession` and `metadata.source_database` are
+                # NOT added: they are the queried accession echoed back and
+                # the constant "pfam" from the request path.
+                if protein_source_database is None:
+                    protein_source_database = p.get("source_database")
+                if protein_organism is None:
+                    protein_organism = p.get("organism")
                 for loc in p.get("entry_protein_locations", []):
                     for frag in loc.get("fragments", []):
                         domains.append(
@@ -207,6 +219,8 @@ class InterProDomainArchTool(BaseTool):
             "data": {
                 "accession": accession,
                 "protein_length": protein_length,
+                "protein_source_database": protein_source_database,
+                "protein_organism": protein_organism,
                 "total_entries": data.get("count", len(results)),
                 "returned_entries": len(results),
                 "has_more": next_cursor is not None,

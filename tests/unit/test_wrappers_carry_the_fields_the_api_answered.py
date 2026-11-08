@@ -110,6 +110,19 @@ the substance of what the tool's own description promises. Measured live on
                               RESEARCH_CODE and one each of ATC, BNF, FDA and
                               MERCK_INDEX, and the 15 shown are alphabetically
                               first, so all brands.
+    GeneBe_classify_variant   a ClinVar conflict with no way to weigh it. The
+                              row returned clinvar_classification
+                              "Conflicting classifications of pathogenicity"
+                              for BRAF V600E and dropped
+                              clinvar_review_status ("criteria provided,
+                              conflicting classifications") and
+                              clinvar_submissions_summary ("P:3 LP:1 US:5
+                              O:1" -- five of ten uncertain). `consequences`
+                              went entirely: 43 transcripts, with MANE Select
+                              marking NM_004333.6, reported as one
+                              `transcript` string. The batch handler in the
+                              same module returns the raw record whole, so
+                              none of it cost a request.
     InterPro_get_structures_  the THIRD endpoint of this family to drop its
       for_domain              `entries` block, after entries_for_protein in
                               round 26 and proteins_by_domain in round 29. The
@@ -302,6 +315,16 @@ those rows are the output of `ClinicalTrials_get_stats_size`, the tool that
 owns that endpoint. The audit records responses per tool run, so a wrapper
 that calls a sibling endpoint is flagged for every field of it -- check which
 request a flagged path came from before reading it as a drop.
+`MARRVEL_get_omim_phenotypes` disclaims its own omission in so many words:
+"Allelic-variant narratives are not returned by this phenotype-focused tool,
+and metadata states that limitation explicitly." An earlier round put that
+sentence there and the metadata does say it, so the 27 allelic-variant
+records behind `allelic_variant_count` are a disclosed selection rather than
+a drop. InterPro's domain-architecture endpoint keeps `proteins[].accession`
+and `metadata.source_database` out for different reasons: the first is the
+queried accession echoed back and the second is the constant "pfam" from the
+request path.
+
 A POINTER CAN BE TESTED, and these three were. `FDAGSRS_search_substances`
 returns ten synonyms with the total and a truncation flag, and the citations
 its names' reference uuids point at are returned in full by
@@ -1823,6 +1846,24 @@ UPSTREAM_KEYS = [
         "the organism, disease, tissue, method and licence a network search "
         "is picked on",
     ),
+    (
+        "genebe_tool.py",
+        '"clinvar_submissions_summary"',
+        "the submissions behind a ClinVar conflict: BRAF V600E is "
+        "P:3 LP:1 US:5 O:1, and the row reported the conflict alone",
+    ),
+    (
+        "genebe_tool.py",
+        "def _consequences",
+        "which of 43 annotated transcripts the classification is on, and "
+        "which of them is MANE Select",
+    ),
+    (
+        "interpro_domain_arch_tool.py",
+        'p.get("source_database")',
+        "whether the protein whose architecture this is reviewed or "
+        "unreviewed, which both sibling endpoints already report",
+    ),
 ]
 
 
@@ -2200,6 +2241,11 @@ DECLARED = [
     ("InterPro_get_structures_for_domain", "chains"),
     ("NDEx_search_networks", "properties"),
     ("NDEx_search_networks", "cx2_file_size"),
+    ("GeneBe_classify_variant", "clinvar_review_status"),
+    ("GeneBe_classify_variant", "clinvar_submissions_summary"),
+    ("GeneBe_classify_variant", "mane_select"),
+    ("GeneBe_classify_variant", "consequence_count"),
+    ("InterPro_get_protein_domain_architecture", "protein_source_database"),
 ]
 
 
@@ -3819,3 +3865,31 @@ def test_a_network_search_says_what_the_networks_are_of():
     # truncated string. One reader now.
     assert source.count("_network_properties(") == 3
     assert 'str(p.get("value", ""))[:300]' not in source
+
+
+def test_a_clinvar_conflict_comes_with_its_submissions():
+    """"Conflicting classifications of pathogenicity" and nothing to weigh it.
+
+    GeneBe returns BRAF V600E as ACMG Pathogenic with
+    `clinvar_classification: "Conflicting classifications of pathogenicity"`.
+    The record also carries `clinvar_review_status: "criteria provided,
+    conflicting classifications"` and `clinvar_submissions_summary: "P:3 LP:1
+    US:5 O:1"` -- five of the ten submissions call it uncertain -- and the
+    row reported the conflict with neither, which is a conflict a caller
+    cannot act on.
+
+    `consequences` went entirely. The variant is annotated on 43 transcripts
+    and the row reported one `transcript` string, with nothing saying which
+    is MANE Select (NM_004333.6 / ENST00000646891.2) or what the biotype of
+    each is. They are returned MANE-first, capped, with the count disclosed.
+
+    The batch handler in this same module returns the raw variant record
+    whole, so none of this cost a request: the projection was a choice.
+    """
+    source = _source("genebe_tool.py")
+    assert '"clinvar_review_status"' in source
+    assert '"clinvar_submissions_summary"' in source
+    assert "def _consequences" in source
+    assert '"mane_select"' in source
+    assert "CONSEQUENCES_PER_VARIANT" in source
+    assert '"consequences_truncated"' in source

@@ -109,6 +109,21 @@
                   }
                 }
               }
+            },
+            "protein_source_database": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "reviewed (Swiss-Prot) or unreviewed (TrEMBL), for the protein the architecture is of"
+            },
+            "protein_organism": {
+              "type": [
+                "string",
+                "integer",
+                "null"
+              ],
+              "description": "Taxon id of that protein"
             }
           },
           "required": [
