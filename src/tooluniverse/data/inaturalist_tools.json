@@ -82,7 +82,7 @@
                   "string",
                   "null"
                 ],
-                "description": "IUCN conservation status if available"
+                "description": "The headline status code alone; read conservation_status_detail for the authority"
               },
               "wikipedia_url": {
                 "type": [
@@ -90,6 +90,140 @@
                   "null"
                 ],
                 "description": "Link to Wikipedia article"
+              },
+              "conservation_status_detail": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The status code or category as the authority words it"
+                  },
+                  "authority": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Who issued it, e.g. NatureServe or IUCN Red List - 'G4' is a NatureServe rank, not an IUCN category"
+                  },
+                  "iucn_code": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "iNaturalist's numeric IUCN equivalence code"
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Any note on the status"
+                  },
+                  "url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The authority's page for the status"
+                  },
+                  "place_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "iNaturalist place id, null for a global status"
+                  },
+                  "place_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Place the status applies to, null when global"
+                  }
+                },
+                "description": "The headline status with the authority that issued it and the place it applies to"
+              },
+              "conservation_statuses": {
+                "type": "array",
+                "description": "The regional statuses beside the headline one, capped at metadata.statuses_per_taxon. Danaus plexippus has 29",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The status code or category as the authority words it"
+                    },
+                    "authority": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Who issued it, e.g. NatureServe or IUCN Red List - 'G4' is a NatureServe rank, not an IUCN category"
+                    },
+                    "iucn_code": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "iNaturalist's numeric IUCN equivalence code"
+                    },
+                    "description": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Any note on the status"
+                    },
+                    "url": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The authority's page for the status"
+                    },
+                    "place_id": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "iNaturalist place id, null for a global status"
+                    },
+                    "place_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Place the status applies to, null when global"
+                    }
+                  }
+                }
+              },
+              "conservation_status_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many statuses the response carried"
+              },
+              "extinct": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Whether iNaturalist records the taxon as extinct"
+              },
+              "iconic_taxon_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "iNaturalist's broad group, e.g. Insecta"
               }
             }
           }
@@ -178,7 +312,7 @@
                     "string",
                     "null"
                   ],
-                  "description": "IUCN status"
+                  "description": "The headline status code alone, e.g. 'G4'. Read conservation_status_detail for the authority that issued it"
                 },
                 "wikipedia_url": {
                   "type": [
@@ -207,14 +341,233 @@
                     }
                   },
                   "description": "Taxonomic lineage from kingdom to species"
+                },
+                "conservation_status_detail": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The status code or category as the authority words it"
+                    },
+                    "authority": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Who issued it, e.g. NatureServe or IUCN Red List - 'G4' is a NatureServe rank, not an IUCN category"
+                    },
+                    "iucn_code": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "iNaturalist's numeric IUCN equivalence code"
+                    },
+                    "description": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Any note on the status"
+                    },
+                    "url": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The authority's page for the status"
+                    },
+                    "place_id": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "iNaturalist place id, null for a global status"
+                    },
+                    "place_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Place the status applies to, null when global"
+                    }
+                  },
+                  "description": "The headline status with the authority that issued it and the place it applies to"
+                },
+                "conservation_statuses": {
+                  "type": "array",
+                  "description": "The regional statuses beside the headline one, capped at metadata.statuses_per_taxon. Danaus plexippus has 29",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The status code or category as the authority words it"
+                      },
+                      "authority": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Who issued it, e.g. NatureServe or IUCN Red List - 'G4' is a NatureServe rank, not an IUCN category"
+                      },
+                      "iucn_code": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "iNaturalist's numeric IUCN equivalence code"
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Any note on the status"
+                      },
+                      "url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The authority's page for the status"
+                      },
+                      "place_id": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "iNaturalist place id, null for a global status"
+                      },
+                      "place_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Place the status applies to, null when global"
+                      }
+                    }
+                  }
+                },
+                "conservation_status_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many statuses the response carried"
+                },
+                "extinct": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "Whether iNaturalist records the taxon as extinct"
+                },
+                "iconic_taxon_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "iNaturalist's broad group, e.g. Insecta"
+                },
+                "place_listings": {
+                  "type": "array",
+                  "description": "Where the taxon is listed and whether it is native or introduced there, capped at metadata.place_listings_per_taxon",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "place_id": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "iNaturalist place id"
+                      },
+                      "place_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Place name"
+                      },
+                      "establishment_means": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "native, introduced, endemic, and so on"
+                      },
+                      "list_title": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The check list the entry came from"
+                      }
+                    }
+                  }
+                },
+                "place_listings_returned": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Listings in place_listings"
+                },
+                "place_listings_in_response": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Listings iNaturalist returned, which it caps at 100"
+                },
+                "place_listings_total": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Listings iNaturalist holds for the taxon, which can be far more"
+                },
+                "wikipedia_summary": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Wikipedia's summary, capped at WIKIPEDIA_SUMMARY_CHARACTERS"
+                },
+                "wikipedia_summary_truncated": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "True when that cap applied"
                 }
               }
             },
             "metadata": {
               "type": "object",
+              "description": "Source, and the caps this tool applies",
               "properties": {
                 "source": {
                   "type": "string"
+                },
+                "statuses_per_taxon": {
+                  "type": "integer",
+                  "description": "How many conservation statuses are returned"
+                },
+                "place_listings_per_taxon": {
+                  "type": "integer",
+                  "description": "How many place listings are returned"
+                },
+                "listings_note": {
+                  "type": "string",
+                  "description": "How the two listing caps compose: iNaturalist returns at most 100 of however many it holds"
                 }
               }
             }

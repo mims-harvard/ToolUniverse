@@ -1,7 +1,7 @@
 [
   {
     "name": "DepMap_get_cell_lines",
-    "description": "Get list of cancer cell lines from DepMap/Sanger with metadata. Filter by tissue or cancer type. Returns cell line IDs, tissue, and cancer type for target validation studies.",
+    "description": "Get a page of cancer cell line and organoid models from DepMap/Sanger with their metadata. Each row carries the model id and names, its type and growth properties, its tumour mutational burden and ploidy, and data_available: which assays exist for it, including crispr_ko, so a target-validation screen can see whether the line has knockout data at all. Tissue and cancer type are NOT on this endpoint and no tissue or cancer_type filter can be applied upstream; pass a model_id to DepMap_get_cell_line for those.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -49,7 +49,171 @@
           "type": "object",
           "properties": {
             "cell_lines": {
-              "type": "array"
+              "type": "array",
+              "description": "Cell line (and organoid) models",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "model_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Cell Model Passports model id, e.g. SIDM01774"
+                  },
+                  "model_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The model's first recorded name"
+                  },
+                  "model_names": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Every name recorded for the model"
+                  },
+                  "model_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Cell Line, Organoid, and so on"
+                  },
+                  "growth_properties": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Adherent, Suspension, Semi-Adherent"
+                  },
+                  "model_treatment": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Treatment the model was derived under, where recorded"
+                  },
+                  "mutations_per_mb": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Tumour mutational burden, mutations per megabase"
+                  },
+                  "ploidy_wes": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Ploidy from whole-exome sequencing"
+                  },
+                  "ploidy_wgs": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Ploidy from whole-genome sequencing"
+                  },
+                  "ploidy": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Ploidy, where recorded without a platform"
+                  },
+                  "pubmed_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "PubMed id of the model's source publication"
+                  },
+                  "doi": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "DOI of that publication"
+                  },
+                  "comment": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Curator comment on the model"
+                  },
+                  "commercially_available": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether the model can be bought"
+                  },
+                  "data_available": {
+                    "type": "object",
+                    "description": "Which assays exist for this model - the question a target-validation screen starts from. crispr_ko false means no knockout data.",
+                    "properties": {
+                      "crispr_ko": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "expression": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "mutations": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "rnaseq": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "cnv": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "methylation": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "proteomics": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "fusions": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      },
+                      "drugs": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
             },
             "count": {
               "type": "integer"
@@ -61,6 +225,15 @@
         },
         "error": {
           "type": "string"
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Present when a tissue or cancer_type filter was given, to say that the upstream cannot apply it",
+          "properties": {
+            "note": {
+              "type": "string"
+            }
+          }
         }
       }
     },

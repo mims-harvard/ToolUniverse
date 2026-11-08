@@ -110,6 +110,31 @@ the substance of what the tool's own description promises. Measured live on
                               RESEARCH_CODE and one each of ATC, BNF, FDA and
                               MERCK_INDEX, and the 15 shown are alphabetically
                               first, so all brands.
+    PDBe_KB_get_ligand_       1,136 residue codes dropped: the rows were
+      sites / _interface_     `{start, end}` positions in tools that promise
+      residues                "binding site residues" and "interface
+                              residues". P04637's first NAD-binding residue is
+                              LYS 382 in UniProt numbering, and both the
+                              residue and the frame were gone, along with
+                              interactingPDBEntries -- the structures where
+                              the contact is actually seen, a subset of the
+                              allPDBEntries the row did return -- and the
+                              ligand's SMILES, atom count and significance.
+    DepMap_get_cell_lines     2 of a /models item's 24 attributes. Nine of the
+                              rest are `*_available` flags: PK-59 is
+                              crispr_ko_available false and SNU-1033 true, and
+                              a knockout screen could not tell them apart.
+                              mutations_per_mb 24.79 and ploidy_wes 3.51 went
+                              too, while the description promised a tissue and
+                              a cancer type this endpoint does not carry.
+    iNaturalist_get_taxon /   a conservation status reduced to "G4" -- a
+      _search_taxa            NatureServe rank the schema called IUCN -- with
+                              the authority, the place and the other 28
+                              statuses of the same response dropped, among
+                              them "Special Concern" under the Canadian
+                              Species at Risk Act. And no establishment_means,
+                              so nothing said the monarch is introduced in
+                              Australia and native elsewhere.
     NDEx_get_network          a network returned as a bare topology: 82 nodes
                               carry 378 nodeAttributes and 118 edges 2,222
                               edgeAttributes -- Saintscore, BFDR,
@@ -180,7 +205,16 @@ request a flagged path came from before reading it as a drop.
 `OSL_get_efo_id_by_disease_name` names its own omission: its description
 says it returns `{efo_id, name}` and points at the richer sibling for the
 IRI and synonyms. NDEx's cartesianLayout coordinates and cyVisualProperties
-are how to draw the graph, not what is in it.
+are how to draw the graph, not what is in it. SGD's interaction `id` is an
+internal annotation row id (7574210) in a row that already carries the
+interaction and experiment types, the partners, the source and the
+reference. Reactome's interactor `id` is internal and `accURL` is
+`purl.uniprot.org/uniprot/{acc}` built from the `acc` beside it.
+
+DEFERRED, with the reason. Reactome's `evidencesURL` is the route to the 122
+evidences behind an interactor's count, and it is a ~3 kB IntAct query URL
+per interactor; a page of them would be most of the response. It belongs in
+a per-interactor lookup rather than in the list, and no such tool exists yet.
 """
 
 import json
@@ -1470,6 +1504,45 @@ UPSTREAM_KEYS = [
         "one row builder for the one /search endpoint both handlers call, "
         "instead of six fields in one and fifteen in the other",
     ),
+    (
+        "pdbe_kb_tool.py",
+        'residue.get("startCode")',
+        "which amino acid the binding-site residue is, in a tool that promises "
+        "binding site residues",
+    ),
+    (
+        "pdbe_kb_tool.py",
+        "def _residue_row",
+        "one residue builder for the ligand and interface faces of one "
+        "endpoint family",
+    ),
+    (
+        "pdbe_kb_tool.py",
+        'additional.get("scaffoldId")',
+        "what the bound ligand actually is, as SMILES",
+    ),
+    (
+        "depmap_tool.py",
+        '"data_available"',
+        "whether a cell line has CRISPR knockout data at all, for a tool whose "
+        "description offers it for target validation",
+    ),
+    (
+        "depmap_tool.py",
+        'attributes.get("mutations_per_mb")',
+        "the line's tumour mutational burden",
+    ),
+    (
+        "inaturalist_tool.py",
+        "def _conservation_status",
+        "the authority behind a conservation status: 'G4' is a NatureServe "
+        "rank, not an IUCN category",
+    ),
+    (
+        "inaturalist_tool.py",
+        'listing.get("establishment_means")',
+        "whether the taxon is native or introduced where it is listed",
+    ),
 ]
 
 
@@ -1800,6 +1873,17 @@ DECLARED = [
     ("Mondo_search_disease", "score"),
     ("Mondo_search_disease", "match_type"),
     ("Mondo_search_disease", "synonyms"),
+    ("PDBe_KB_get_ligand_sites", "start_code"),
+    ("PDBe_KB_get_ligand_sites", "index_type"),
+    ("PDBe_KB_get_ligand_sites", "interacting_pdb_entries"),
+    ("PDBe_KB_get_ligand_sites", "scaffold_smiles"),
+    ("PDBe_KB_get_interface_residues", "start_code"),
+    ("DepMap_get_cell_lines", "data_available"),
+    ("DepMap_get_cell_lines", "mutations_per_mb"),
+    ("iNaturalist_get_taxon", "conservation_status_detail"),
+    ("iNaturalist_get_taxon", "place_listings"),
+    ("iNaturalist_get_taxon", "place_listings_total"),
+    ("iNaturalist_search_taxa", "conservation_status_detail"),
 ]
 
 
@@ -3055,3 +3139,83 @@ def test_both_monarch_searches_build_the_same_row():
     )
     assert '"xref": item.get("xref", [])' not in source
     assert 'row["xref"] = row["xrefs"]' in source
+
+
+def test_a_binding_site_residue_says_which_residue_it_is():
+    """1,136 residue codes, and the rows were positions.
+
+    PDBe-KB's residue record carries `startCode`/`endCode` -- the amino acid,
+    LYS for P04637's first NAD-binding residue -- and `indexType`, which says
+    the index is in UniProt and not PDB numbering. Both handlers returned
+    `{start: 382, end: 382, pdb_entries: [...]}`: a number, in tools whose
+    descriptions promise "ligand binding site residues" and "interface
+    residues".
+
+    `interactingPDBEntries` went too. The paged `pdb_entries` field is
+    `allPDBEntries`, every structure covering the residue; the interacting
+    list is the subset where the contact is actually seen, with the chains,
+    and is the narrower claim a caller wants.
+
+    The ligand itself was thin: no scaffold SMILES, no atom count, and no
+    `significance`, which is what the ligand list is ordered by.
+
+    The two handlers are the ligand and protein-protein faces of one endpoint
+    family and had duplicated the residue loop, so the row is now one helper.
+    """
+    source = _source("pdbe_kb_tool.py")
+    assert "def _residue_row" in source
+    assert source.count('residue.get("startCode")') == 1, (
+        "the residue row is duplicated again"
+    )
+    assert 'residue.get("indexType")' in source
+    assert 'residue.get("interactingPDBEntries")' in source
+    assert 'additional.get("significance")' in source
+
+
+def test_a_cell_line_row_says_whether_it_has_knockout_data():
+    """Two fields of twenty-four, for a tool offered for target validation.
+
+    A Cell Model Passports /models item carries 24 attributes and the row was
+    {model_id, model_name}. Nine of the dropped ones are `*_available` flags:
+    PK-59 is crispr_ko_available false and SNU-1033 true, and a caller
+    planning a knockout screen could not tell them apart. The measured
+    characteristics went too -- mutations_per_mb 24.79 is the tumour
+    mutational burden, ploidy_wes 3.51 the ploidy, model_type separates a
+    cell line from an organoid.
+
+    The description promised two fields this endpoint does not have. Tissue
+    and cancer type live on related sample and patient resources, one request
+    per model, which is what DepMap_get_cell_line is for -- so the
+    description now says that instead of claiming to return them.
+    """
+    source = _source("depmap_tool.py")
+    assert '"data_available"' in source
+    assert 'attributes.get("mutations_per_mb")' in source
+    assert 'attributes.get("ploidy_wes")' in source
+    description = _config("DepMap_get_cell_lines")["description"]
+    assert "data_available" in description
+    assert "NOT on this endpoint" in description
+
+
+def test_a_conservation_status_names_the_authority_that_issued_it():
+    """"G4" is a NatureServe rank, and the row said only "G4".
+
+    Both iNaturalist handlers reduced the status object to `cs["status"]`.
+    For Danaus plexippus that is "G4" -- a NatureServe global rank, not an
+    IUCN category, and the schema called it IUCN. The authority, the place
+    and the source URL were dropped, and so were the other 28 statuses the
+    same response carries, among them "Special Concern" under the Canadian
+    Species at Risk Act.
+
+    `listed_taxa` went entirely: the monarch is `establishment_means:
+    "introduced"` in Australia and Guam and native elsewhere, which is a fact
+    about the species. iNaturalist returns at most 100 of the 1,588 listings
+    it holds, so the response's own cut and this tool's are both reported.
+    """
+    source = _source("inaturalist_tool.py")
+    assert "def _conservation_status" in source
+    assert 'status.get("authority")' in source
+    assert "def _place_listings" in source
+    assert 'listing.get("establishment_means")' in source
+    assert "PLACE_LISTINGS_PER_TAXON" in source
+    assert '"place_listings_total": r.get("listed_taxa_count")' in source

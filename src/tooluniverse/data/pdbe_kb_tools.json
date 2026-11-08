@@ -231,6 +231,57 @@
                             "integer",
                             "null"
                           ]
+                        },
+                        "start_code": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Three-letter code of the first residue of the range - the residue itself, which `start` alone does not give"
+                        },
+                        "end_code": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Three-letter code of the last residue of the range"
+                        },
+                        "index_type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Numbering frame the indices are in, e.g. UNIPROT; without it 382 could be a PDB position"
+                        },
+                        "interacting_pdb_entries": {
+                          "type": "array",
+                          "description": "The PDB entries where this residue actually contacts the partner, with chain ids - a subset of pdb_entries, which is every entry covering the residue",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "pdbId": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "description": "PDB identifier"
+                              },
+                              "entityId": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ],
+                                "description": "Entity id within the structure"
+                              },
+                              "chainIds": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "description": "Chains, comma separated"
+                              }
+                            }
+                          }
                         }
                       }
                     },
@@ -278,6 +329,62 @@
                       "null"
                     ],
                     "description": "DrugBank ID if applicable"
+                  },
+                  "cofactor_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "PDBe-KB cofactor class id, when the ligand is one"
+                  },
+                  "scaffold_smiles": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "SMILES of the ligand scaffold"
+                  },
+                  "atom_count": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Atoms in the ligand"
+                  },
+                  "significance": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "PDBe-KB's significance score for the site, which the ligand list is ordered by"
+                  },
+                  "ligand_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "PDBe-KB's type for the entry"
+                  },
+                  "reaction_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Rhea reaction id, when the ligand is a substrate"
+                  },
+                  "target_uniprot_accessions": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "UniProt accessions the ligand is recorded as targeting"
+                  },
+                  "ligand_pdb_entries": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "PDB entries holding this ligand for this protein"
                   }
                 }
               },
@@ -468,6 +575,57 @@
                             "integer",
                             "null"
                           ]
+                        },
+                        "start_code": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Three-letter code of the first residue of the range - the residue itself, which `start` alone does not give"
+                        },
+                        "end_code": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Three-letter code of the last residue of the range"
+                        },
+                        "index_type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Numbering frame the indices are in, e.g. UNIPROT; without it 382 could be a PDB position"
+                        },
+                        "interacting_pdb_entries": {
+                          "type": "array",
+                          "description": "The PDB entries where this residue actually contacts the partner, with chain ids - a subset of pdb_entries, which is every entry covering the residue",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "pdbId": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "description": "PDB identifier"
+                              },
+                              "entityId": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ],
+                                "description": "Entity id within the structure"
+                              },
+                              "chainIds": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "description": "Chains, comma separated"
+                              }
+                            }
+                          }
                         }
                       }
                     },

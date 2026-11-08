@@ -19,6 +19,79 @@ from .tool_registry import register_tool
 INAT_BASE_URL = "https://api.inaturalist.org/v1"
 
 
+# iNaturalist returns up to 100 place listings per taxon out of a count that
+# can be far larger (1,588 for the monarch butterfly), and up to 29 regional
+# conservation statuses. Both are capped here with the cap and the upstream
+# count reported, rather than reduced to their first element.
+STATUSES_PER_TAXON = 25
+PLACE_LISTINGS_PER_TAXON = 25
+WIKIPEDIA_SUMMARY_CHARACTERS = 600
+
+
+def _conservation_status(status: dict) -> dict:
+    """One conservation status, with the authority that issued it.
+
+    The row used to be `cs.get("status")`: for Danaus plexippus that is the
+    bare string "G4", which is a NatureServe rank and not an IUCN category,
+    and nothing said which. A status without its authority and its place is
+    not a status.
+    """
+    if not isinstance(status, dict):
+        return {}
+    place = status.get("place") or {}
+    return {
+        "status": status.get("status"),
+        "authority": status.get("authority"),
+        "iucn_code": status.get("iucn"),
+        "description": status.get("description"),
+        "url": status.get("url"),
+        # null for a global status; a place id and name for a regional one.
+        "place_id": place.get("id") if isinstance(place, dict) else None,
+        "place_name": place.get("display_name") or place.get("name")
+        if isinstance(place, dict)
+        else None,
+    }
+
+
+def _conservation_statuses(record: dict) -> list:
+    """The regional statuses beside the headline one. The monarch has 29,
+    from the Canadian Species at Risk Act to NatureServe state ranks, and
+    the row reported one."""
+    statuses = record.get("conservation_statuses") or []
+    rows = [_conservation_status(x) for x in statuses if isinstance(x, dict)]
+    return [r for r in rows if r.get("status")][:STATUSES_PER_TAXON]
+
+
+def _place_listings(record: dict) -> list:
+    """Where the taxon is listed and whether it is native or introduced.
+
+    `establishment_means` is "introduced" for the monarch in Australia and
+    Guam and "native" elsewhere, which for a taxonomy tool is a fact about
+    the species, not presentation.
+    """
+    out = []
+    for listing in record.get("listed_taxa") or []:
+        if not isinstance(listing, dict):
+            continue
+        place = listing.get("place") or {}
+        listed_in = listing.get("list") or {}
+        out.append(
+            {
+                "place_id": place.get("id") if isinstance(place, dict) else None,
+                "place_name": place.get("display_name") or place.get("name")
+                if isinstance(place, dict)
+                else None,
+                "establishment_means": listing.get("establishment_means"),
+                "list_title": listed_in.get("title")
+                if isinstance(listed_in, dict)
+                else None,
+            }
+        )
+        if len(out) >= PLACE_LISTINGS_PER_TAXON:
+            break
+    return out
+
+
 @register_tool("INaturalistTool")
 class INaturalistTool(BaseTool):
     """
@@ -170,6 +243,15 @@ class INaturalistTool(BaseTool):
                     "observations_count": r.get("observations_count", 0),
                     "is_active": r.get("is_active", True),
                     "conservation_status": cs.get("status") if cs else None,
+                    # The same status with the authority that issued it, and
+                    # the regional ones beside it.
+                    "conservation_status_detail": _conservation_status(cs),
+                    "conservation_statuses": _conservation_statuses(r),
+                    "conservation_status_count": len(
+                        r.get("conservation_statuses") or []
+                    ),
+                    "extinct": r.get("extinct"),
+                    "iconic_taxon_name": r.get("iconic_taxon_name"),
                     "wikipedia_url": r.get("wikipedia_url"),
                 }
             )
@@ -206,6 +288,11 @@ class INaturalistTool(BaseTool):
 
         r = results[0]
         cs = r.get("conservation_status")
+        summary = (r.get("wikipedia_summary") or "").strip()
+        summary_truncated = len(summary) > WIKIPEDIA_SUMMARY_CHARACTERS
+        if summary_truncated:
+            summary = summary[:WIKIPEDIA_SUMMARY_CHARACTERS].rstrip() + "..."
+        summary = summary or None
 
         # Build ancestry
         ancestors = r.get("ancestors", [])
@@ -228,11 +315,30 @@ class INaturalistTool(BaseTool):
                 "observations_count": r.get("observations_count", 0),
                 "is_active": r.get("is_active", True),
                 "conservation_status": cs.get("status") if cs else None,
+                "conservation_status_detail": _conservation_status(cs),
+                "conservation_statuses": _conservation_statuses(r),
+                "conservation_status_count": len(
+                    r.get("conservation_statuses") or []
+                ),
+                "extinct": r.get("extinct"),
+                "iconic_taxon_name": r.get("iconic_taxon_name"),
+                "place_listings": _place_listings(r),
+                "place_listings_returned": len(_place_listings(r)),
+                "place_listings_in_response": len(r.get("listed_taxa") or []),
+                "place_listings_total": r.get("listed_taxa_count"),
+                "wikipedia_summary": summary,
+                "wikipedia_summary_truncated": summary_truncated,
                 "wikipedia_url": r.get("wikipedia_url"),
                 "ancestry": ancestry,
             },
             "metadata": {
                 "source": "iNaturalist",
+                "statuses_per_taxon": STATUSES_PER_TAXON,
+                "place_listings_per_taxon": PLACE_LISTINGS_PER_TAXON,
+                "listings_note": "iNaturalist returns at most 100 place "
+                "listings per taxon however many it holds "
+                "(place_listings_total); place_listings is the first "
+                "place_listings_per_taxon of those returned.",
             },
         }
 
