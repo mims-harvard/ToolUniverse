@@ -219,7 +219,43 @@
                     "type": [
                       "string",
                       "null"
-                    ]
+                    ],
+                    "description": "When the source itself last changed, from UniChem's `srcLastUpdated`. This was read from `lastUpdated`, a key UniChem does not send, so it was null for all 25 sources."
+                  },
+                  "last_checked": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When UniChem last verified the source was reachable -- a different fact from when the source last changed."
+                  },
+                  "base_id_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Prefix that turns a compound id from this source into its record page, e.g. https://www.surechembl.org/chemical/ ."
+                  },
+                  "source_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The source's own home page."
+                  },
+                  "update_comments": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "UniChem's note on the last update."
+                  },
+                  "is_private": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True for a source UniChem does not expose publicly."
                   }
                 }
               }

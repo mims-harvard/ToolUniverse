@@ -2143,6 +2143,30 @@ UPSTREAM_KEYS = [
         'exp.get("kingdom")',
         "which kingdom an experiment is from, on all 4562 of them",
     ),
+    (
+        "europepmc_annotations_tool.py",
+        "def _annotation_row",
+        "the section, provider and frequency of an annotation, which say "
+        "whether the term was in the paper's argument or in a supplementary "
+        "spreadsheet",
+    ),
+    (
+        "unichem_tool.py",
+        's.get("srcLastUpdated")',
+        "when a UniChem source last changed, read until now from a key the "
+        "API does not send",
+    ),
+    (
+        "unichem_tool.py",
+        's.get("baseIdUrl")',
+        "the URL prefix that turns a compound id into its record page",
+    ),
+    (
+        "lincs_tool.py",
+        "def _signature_file",
+        "the URL, name and checksum of the signature file, for a search that "
+        "described signatures a caller could not fetch",
+    ),
 ]
 
 
@@ -2171,6 +2195,12 @@ def test_the_wrapper_reads_the_field_the_api_answered(module, key, why):
 
 # (tool, output field the schema must declare)
 DECLARED = [
+    ("EuroPMCAnnot_get_annotations_by_type", "provider"),
+    ("EuroPMCAnnot_get_article_annotations", "frequency"),
+    ("UniChem_list_sources", "base_id_url"),
+    ("UniChem_list_sources", "last_checked"),
+    ("LINCS_search_signatures", "data_file"),
+    ("LINCS_search_signatures", "cmap_id"),
     ("ClinicalTrials_search_by_intervention", "has_results"),
     ("ClinicalTrials_search_studies", "results_summary"),
     ("ClinicalTrials_search_by_sponsor", "results_section_tools"),
@@ -4939,3 +4969,96 @@ def test_an_entry_with_three_gene_names_reports_three():
     listing = _config("GxA_list_experiments")["return_schema"]
     exps = (listing.get("oneOf") or [listing])[0]["properties"]["experiments"]
     assert "4562" in exps["items"]["properties"]["kingdom"]["description"]
+
+
+def test_an_annotation_says_where_in_the_paper_it_was_found():
+    """"polysaccharides" -- in the argument, or in a supplementary .doc?
+
+    Europe PMC answers `section`, `provider`, `frequency`, `fileName` and a
+    resolvable `id` for every annotation, and those change what the
+    annotation means. On MED:24295277 the chemical "polysaccharides" was
+    found 4 times by Biostudies in `1476-069X-12-103-S1.doc` -- a
+    supplementary Word document, not the article's text. A caller asking
+    which chemicals a paper is about cannot weigh that without being told.
+
+    Two handlers read this block and each dropped a different part: the
+    per-article one kept section and provider and lost the id, and the batch
+    one returned `exact`, `type` and `tags` alone. There is now one reader
+    and both call it.
+    """
+    source = _source("europepmc_annotations_tool.py")
+    assert "def _annotation_row" in source
+    assert 'ann.get("frequency")' in source
+    assert 'ann.get("fileName")' in source
+    # One reader, called by the per-article handler and the batch handler.
+    assert source.count("_annotation_row(ann) for ann in page") == 2
+    for tool in (
+        "EuroPMCAnnot_get_article_annotations",
+        "EuroPMCAnnot_get_annotations_by_type",
+    ):
+        schema = json.dumps(_config(tool)["return_schema"])
+        assert "Supplementary material" in schema, tool
+
+
+def test_a_source_list_says_when_each_source_changed():
+    """25 sources, 25 nulls, from one wrong key.
+
+    `UniChem_list_sources` built `last_updated` from
+    `s.get("lastUpdated", None)`. UniChem sends `srcLastUpdated`; there is no
+    `lastUpdated` on the record. So the field was null for all 25 sources --
+    not "this source has no date" but "nobody checked". It now reads
+    2026-11-07 00:49:26 for SureChEMBL, with `last_checked` beside it, which
+    is the different fact of when UniChem last found the source reachable.
+
+    The two URLs went with it. `base_id_url` plus a compound id is the
+    record's page (https://www.surechembl.org/chemical/ + id) and
+    `source_url` is the source's home page. A tool whose whole job is to
+    list the sources returned neither, so nothing it listed could be linked
+    to.
+
+    The compound-search handler in the same module reads `shortName`,
+    `longName` and `url` from its own payload and returned nulls in testing;
+    that endpoint is answering HTTP 500 upstream, so it is left alone rather
+    than changed on a guess.
+    """
+    source = _source("unichem_tool.py")
+    assert 's.get("srcLastUpdated")' in source
+    assert 's.get("lastUpdated"' not in source
+    assert 's.get("baseIdUrl")' in source
+    assert 's.get("srcUrl")' in source
+    rows = _config("UniChem_list_sources")["return_schema"]
+    props = (rows.get("oneOf") or [rows])[0]["properties"]["sources"]["items"][
+        "properties"
+    ]
+    assert "does not send" in props["last_updated"]["description"]
+    assert "surechembl" in props["base_id_url"]["description"]
+
+
+def test_a_signature_search_can_reach_the_signature():
+    """It described files and gave no way to get one.
+
+    `LINCS_search_signatures` returned a signature's annotations -- drug,
+    cell line, dose, time point, tissue -- and dropped every field that
+    leads to the data. SigCom LINCS answers a resolvable `persistent_id` for
+    each signature
+    (https://lincs-dcic.s3.amazonaws.com/LINCS-sigs-2021/cd/cp/L1000_LINCS_DCIC_CPC006_TYKNU_6H_F09_dexamethasone_10uM.tsv),
+    the file name, its size and both checksums. It also answers `cmap_id`
+    (CPC006_TYKNU_6H:BRD-A35108200-001-04-7:10), which is how a signature
+    joins to the rest of the LINCS ecosystem.
+
+    So the tool answered "which signatures exist for dexamethasone" and left
+    the differential expression -- the thing a signature IS -- unreachable
+    from its own reply. The file now comes with its checksum, because a
+    caller fetching 345,287 bytes from S3 should be able to tell whether it
+    arrived intact.
+    """
+    source = _source("lincs_tool.py")
+    assert "def _signature_file" in source
+    assert 'meta.get("persistent_id")' in source
+    assert 'meta.get("sha256")' in source
+    assert 'meta.get("cmap_id")' in source
+    assert "_signature_file(meta)" in source
+    schema = _config("LINCS_search_signatures")["return_schema"]
+    rows = (schema.get("oneOf") or [schema])[0]["items"]["properties"]
+    assert "sha256" in rows["data_file"]["properties"]
+    assert "CPC006_TYKNU_6H" in rows["cmap_id"]["description"]
