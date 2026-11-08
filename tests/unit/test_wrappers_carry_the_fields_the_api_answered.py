@@ -110,6 +110,14 @@ the substance of what the tool's own description promises. Measured live on
                               RESEARCH_CODE and one each of ATC, BNF, FDA and
                               MERCK_INDEX, and the 15 shown are alphabetically
                               first, so all brands.
+    DbGaP_get_study /         a study's condition as ten free-text strings
+      _search_studies         and no code. phs000681's 34 condition entries
+                              are ONE MeSH coding -- D003924, "Diabetes
+                              Mellitus, Type 2" -- plus 32 synonym rows whose
+                              own `code` is a sentence, and the handler's
+                              dedupe comment already said so. It kept the
+                              texts and dropped the identifier, and the UMLS
+                              CUI C0011860 beside it.
     UniProtTaxonomy_search    the synonyms round 26 added to
                               UniProtTaxonomy_get_taxon, missing from the
                               search beside it. Taxon 9606 carries 17, and a
@@ -1999,6 +2007,12 @@ UPSTREAM_KEYS = [
         "OTHER_REGIONS_PER_ASSEMBLY",
         "the 169 scaffolds of GRCh38, which no tool in the family returned",
     ),
+    (
+        "dbgap_tool.py",
+        "def _concept_codes",
+        "the MeSH and UMLS codes for a study's condition, where ten free-text "
+        "synonyms were returned and no identifier",
+    ),
 ]
 
 
@@ -2398,6 +2412,9 @@ DECLARED = [
     ("UniProtTaxonomy_search", "parent_taxon_id"),
     ("Ensembl_get_assembly_info", "other_regions"),
     ("Ensembl_get_assembly_info", "coord_system"),
+    ("DbGaP_get_study", "condition_codes"),
+    ("DbGaP_get_study", "keyword_codes"),
+    ("DbGaP_search_studies", "condition_codes"),
 ]
 
 
@@ -4276,3 +4293,25 @@ def test_an_assembly_can_reach_its_scaffolds():
     assert '"coord_system": region.get("coord_system")' in source
     assert '"total_other_regions"' in source
     assert '"other_regions_truncated"' in source
+
+
+def test_a_study_condition_keeps_its_mesh_code():
+    """Ten synonyms of one condition, and not the code they are synonyms of.
+
+    dbGaP's FHIR CodeableConcepts expand every MeSH term into its entry
+    terms, so phs000681's `condition` is 34 entries: one real coding --
+    D003924, "Diabetes Mellitus, Type 2", under the MeSH OID -- and 32
+    synonym rows whose own `code` is a sentence ("D003924 entry term:
+    Adult-Onset Diabetes Mellitus"). `_unique_texts` was written for exactly
+    that and says so in its docstring.
+
+    What it left behind was the identifier. The row returned ten near-identical
+    strings and no code, so a study's condition could not be joined to MeSH --
+    nor to UMLS, whose CUI C0011860 is the second real coding in the same
+    list. Entry-term pseudo-codings are excluded by system, which is what
+    keeps the output to the two that are identifiers.
+    """
+    source = _source("dbgap_tool.py")
+    assert "def _concept_codes" in source
+    assert "_ENTRY_TERM_SYSTEM_MARKER" in source
+    assert source.count("_concept_codes(") == 4, "one handler still omits it"
