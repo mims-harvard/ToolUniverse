@@ -110,6 +110,22 @@ the substance of what the tool's own description promises. Measured live on
                               RESEARCH_CODE and one each of ATC, BNF, FDA and
                               MERCK_INDEX, and the 15 shown are alphabetically
                               first, so all brands.
+    InterPro_get_structures_  the THIRD endpoint of this family to drop its
+      for_domain              `entries` block, after entries_for_protein in
+                              round 26 and proteins_by_domain in round 29. The
+                              row said which structures contain PF00870 and
+                              nothing about the containment: not the chain
+                              (A and C for 1gzh), not the residues in either
+                              frame (100-288 in UniProt, 6-194 in the
+                              structure with auth 100-288 beside it), not the
+                              6.8e-60 e-value.
+    NDEx_search_networks      the sibling of round 29's fix. The search row
+                              dropped `properties`, where the fields a caller
+                              picks a network BY live: organism Homo sapiens,
+                              disease cancer, tissue breast carcinoma, methods
+                              coexpression analysis -- and on the second hit a
+                              non-commercial licence and a citation. The
+                              300-character description cut was undisclosed.
     NCIThesaurus_get_concept  seventeen synonyms with nothing marking which
                               is the concept's name. The row read `termType`,
                               which is the term's role in its SOURCE
@@ -286,6 +302,16 @@ those rows are the output of `ClinicalTrials_get_stats_size`, the tool that
 owns that endpoint. The audit records responses per tool run, so a wrapper
 that calls a sibling endpoint is flagged for every field of it -- check which
 request a flagged path came from before reading it as a drop.
+A POINTER CAN BE TESTED, and these three were. `FDAGSRS_search_substances`
+returns ten synonyms with the total and a truncation flag, and the citations
+its names' reference uuids point at are returned in full by
+`FDAGSRS_get_substance` for the same UNII -- verified, because round 33 is
+what made that true. `MassIVE_search_datasets` omits contacts and
+publications, and `MassIVE_get_dataset`'s description promises both and
+delivers them for the same accession. Both pointers hold, which is exactly
+what did NOT happen for PGSCatalog_search_traits' child scores: same test,
+opposite answer, and the test is one request.
+
 `OSL_get_efo_id_by_disease_name` names its own omission: its description
 says it returns `{efo_id, name}` and points at the richer sibling for the
 IRI and synonyms. NDEx's cartesianLayout coordinates and cyVisualProperties
@@ -1785,6 +1811,18 @@ UPSTREAM_KEYS = [
         "what data exists for a population - alignments, variants, the "
         "sequencing behind them and the reuse policy",
     ),
+    (
+        "interpro_domain_arch_tool.py",
+        'fragment.get("auth_start")',
+        "the PDB author numbering of a domain inside a structure, which is "
+        "the numbering a paper uses",
+    ),
+    (
+        "ndex_tool.py",
+        "def _network_properties",
+        "the organism, disease, tissue, method and licence a network search "
+        "is picked on",
+    ),
 ]
 
 
@@ -2155,6 +2193,11 @@ DECLARED = [
     ("NCIThesaurus_get_concept", "annotation_property"),
     ("IGSR_search_populations", "data_collections"),
     ("IGSR_search_populations", "data_reuse_policy"),
+    ("InterPro_get_structures_for_domain", "structure_locations"),
+    ("InterPro_get_structures_for_domain", "auth_start"),
+    ("InterPro_get_structures_for_domain", "chains"),
+    ("NDEx_search_networks", "properties"),
+    ("NDEx_search_networks", "cx2_file_size"),
 ]
 
 
@@ -3717,3 +3760,50 @@ def test_a_population_says_what_data_exists_for_it():
     assert '"data_collections": _data_collections(src)' in source
     assert 'collection.get("dataReusePolicy")' in source
     assert '"overlapping_populations"' in source
+
+
+def test_the_third_interpro_endpoint_also_says_where():
+    """Two endpoints of this family were fixed before this one was looked at.
+
+    `entries_for_protein` gained its match locations in round 26 and
+    `proteins_by_domain` in round 29, each from the same
+    `entry_protein_locations` block. `structures_for_domain` lives in a
+    different module and was not looked at either time: it answered which PDB
+    structures contain PF00870 and nothing about the containment -- not the
+    chains (A and C for 1gzh), not the residues, not the 6.8e-60 e-value.
+
+    This endpoint has a frame the other two do not.
+    `entry_structure_locations` is in the structure's own numbering with
+    `auth_start`/`auth_end` beside it: 6-194 and auth 100-288 for the same
+    domain whose UniProt range is 100-288. Both frames are returned, because
+    a caller holding a PDB residue number and a caller holding a UniProt one
+    need different ones.
+    """
+    source = _source("interpro_domain_arch_tool.py")
+    assert "def _domain_locations" in source
+    assert 'fragment.get("auth_start")' in source
+    assert '"entry_protein_locations"' in source
+    assert '"entry_structure_locations"' in source
+    assert '"chains"' in source
+
+
+def test_a_network_search_says_what_the_networks_are_of():
+    """Round 29 fixed the single-network attributes and missed the search.
+
+    `NDEx_search_networks` returned the uuid, name, owner, counts and a
+    300-character description, and dropped `properties` -- where NDEx keeps
+    what a caller actually chooses a network by. The first BRCA hit carries
+    organism "Homo sapiens", disease "cancer", tissue "breast carcinoma" and
+    methods "coexpression analysis"; the second carries an ARACNe
+    non-commercial licence and its citation, so a caller could have used a
+    restricted network without seeing the restriction.
+
+    Values are coerced by the `dataType` NDEx declares, the same treatment
+    the node and edge attributes got in round 29, and the description cut is
+    now disclosed rather than silent.
+    """
+    source = _source("ndex_tool.py")
+    assert "def _network_properties" in source
+    assert 'row.get("predicateString")' in source
+    assert '"description_truncated"' in source
+    assert "DESCRIPTION_CHARACTERS" in source

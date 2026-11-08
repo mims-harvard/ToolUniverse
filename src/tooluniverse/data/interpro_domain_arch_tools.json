@@ -215,6 +215,194 @@
                   },
                   "resolution": {
                     "type": "number"
+                  },
+                  "chains": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Structure chains the domain was found in"
+                  },
+                  "entry_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "domain, family, homologous_superfamily or site"
+                  },
+                  "entry_source_database": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Database the entry comes from, e.g. pfam"
+                  },
+                  "entry_integrated_interpro": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "InterPro accession the entry is integrated into"
+                  },
+                  "protein_length": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Length of the matched protein in residues"
+                  },
+                  "protein_locations": {
+                    "type": "array",
+                    "description": "Where the domain sits in UniProt numbering",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "fragments": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "start": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ],
+                                "description": "First residue in this frame"
+                              },
+                              "end": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ],
+                                "description": "Last residue in this frame"
+                              },
+                              "auth_start": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ],
+                                "description": "PDB author numbering of the start, where InterPro gives it"
+                              },
+                              "auth_end": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ],
+                                "description": "PDB author numbering of the end"
+                              },
+                              "status": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "description": "InterPro's continuity code, e.g. CONTINUOUS"
+                              }
+                            }
+                          }
+                        },
+                        "model": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Signature model behind the match"
+                        },
+                        "score": {
+                          "type": [
+                            "number",
+                            "null"
+                          ],
+                          "description": "Match e-value; 6.8e-60 for PF00870 in 1gzh"
+                        },
+                        "representative": {
+                          "type": [
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "Whether InterPro treats this as representative"
+                        }
+                      }
+                    }
+                  },
+                  "structure_locations": {
+                    "type": "array",
+                    "description": "Where it sits in the structure's own numbering, with the PDB author numbering beside it: 6-194 and auth 100-288 for PF00870 in 1gzh",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "fragments": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "start": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ],
+                                "description": "First residue in this frame"
+                              },
+                              "end": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ],
+                                "description": "Last residue in this frame"
+                              },
+                              "auth_start": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ],
+                                "description": "PDB author numbering of the start, where InterPro gives it"
+                              },
+                              "auth_end": {
+                                "type": [
+                                  "integer",
+                                  "null"
+                                ],
+                                "description": "PDB author numbering of the end"
+                              },
+                              "status": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ],
+                                "description": "InterPro's continuity code, e.g. CONTINUOUS"
+                              }
+                            }
+                          }
+                        },
+                        "model": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Signature model behind the match"
+                        },
+                        "score": {
+                          "type": [
+                            "number",
+                            "null"
+                          ],
+                          "description": "Match e-value; 6.8e-60 for PF00870 in 1gzh"
+                        },
+                        "representative": {
+                          "type": [
+                            "boolean",
+                            "null"
+                          ],
+                          "description": "Whether InterPro treats this as representative"
+                        }
+                      }
+                    }
+                  },
+                  "entries_matched": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Every entry accession reported for the hit"
                   }
                 }
               }

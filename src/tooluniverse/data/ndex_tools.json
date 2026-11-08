@@ -107,6 +107,76 @@
                   "null"
                 ],
                 "description": "Network version"
+              },
+              "properties": {
+                "type": "object",
+                "description": "NDEx's network-level properties keyed by name, typed as NDEx declares them. This is where the fields a caller picks a network BY live: organism, disease, tissue, methods, networkType, and sometimes rights and reference",
+                "additionalProperties": {}
+              },
+              "description_truncated": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when description was cut at DESCRIPTION_CHARACTERS"
+              },
+              "created": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "When the network was created"
+              },
+              "modified": {
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "When it was last modified"
+              },
+              "is_certified": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Whether NDEx has certified the network"
+              },
+              "is_valid": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Whether NDEx's validation passed"
+              },
+              "has_layout": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Whether a layout is stored with it"
+              },
+              "cx_file_size": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Download size in bytes, CX"
+              },
+              "cx2_file_size": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Download size in bytes, CX2"
+              },
+              "warnings": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Validation warnings NDEx recorded"
               }
             }
           }

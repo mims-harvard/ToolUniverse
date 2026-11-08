@@ -23,6 +23,30 @@ NDEX_BASE_URL = "https://public.ndexbio.org/v2"
 _CX_NUMERIC = {"integer", "long", "short", "double", "float"}
 
 
+DESCRIPTION_CHARACTERS = 300
+
+
+def _network_properties(network: dict) -> dict:
+    """NDEx's network-level properties, keyed by name.
+
+    The search row returned the uuid, name, owner and counts and dropped
+    this block, where the fields a caller picks a network BY actually live:
+    `organism: Homo sapiens`, `disease: cancer`, `tissue: breast carcinoma`,
+    `methods: coexpression analysis`, `networkType: unsigned`. The values are
+    coerced by the `dataType` NDEx declares, the same treatment round
+    twenty-nine gave the node and edge attributes of a single network.
+    """
+    out = {}
+    for row in network.get("properties") or []:
+        if not isinstance(row, dict):
+            continue
+        name = row.get("predicateString")
+        if not name:
+            continue
+        out[name] = _cx_scalar(row.get("value"), (row.get("dataType") or "string"))
+    return out
+
+
 def _cx_value(attribute: dict):
     """One CX attribute value, coerced to the type CX declares for it."""
     value = attribute.get("v")
@@ -156,11 +180,26 @@ class NDExTool(BaseTool):
 
         networks = []
         for n in data.get("networks", []):
+            description = n.get("description") or ""
             networks.append(
                 {
                     "uuid": n.get("externalId"),
                     "name": n.get("name"),
-                    "description": (n.get("description") or "")[:300],
+                    "description": description[:DESCRIPTION_CHARACTERS],
+                    "description_truncated": len(description)
+                    > DESCRIPTION_CHARACTERS,
+                    # What the network is OF: organism, disease, tissue,
+                    # method. The search row had none of it.
+                    "properties": _network_properties(n),
+                    "created": n.get("creationTime"),
+                    "modified": n.get("modificationTime"),
+                    "is_certified": n.get("isCertified"),
+                    "is_valid": n.get("isValid"),
+                    "has_layout": n.get("hasLayout"),
+                    # How big the download is, in the two CX versions.
+                    "cx_file_size": n.get("cxFileSize"),
+                    "cx2_file_size": n.get("cx2FileSize"),
+                    "warnings": [w for w in (n.get("warnings") or []) if w],
                     "owner": n.get("owner"),
                     "node_count": n.get("nodeCount"),
                     "edge_count": n.get("edgeCount"),
