@@ -2087,6 +2087,23 @@ UPSTREAM_KEYS = [
         "a count by the one tool whose description promises factor "
         "information",
     ),
+    (
+        "disease_ontology_tool.py",
+        '_validated_list(\n                            parent_data, "xrefs"',
+        "the vocabulary mappings on a parent term, from a record the handler "
+        "had already fetched to read its name",
+    ),
+    (
+        "gmrepo_tool.py",
+        "def _dblinks",
+        "a species' links to other resources, which GMrepo answers as a JSON "
+        "string",
+    ),
+    (
+        "gmrepo_tool.py",
+        'sp.get("ismarker")',
+        "whether GMrepo treats the species as a phenotype marker",
+    ),
 ]
 
 
@@ -2115,6 +2132,10 @@ def test_the_wrapper_reads_the_field_the_api_answered(module, key, why):
 
 # (tool, output field the schema must declare)
 DECLARED = [
+    ("DiseaseOntology_get_parents", "cross_references"),
+    ("DiseaseOntology_get_parents", "synonyms"),
+    ("GMrepo_search_species", "is_marker"),
+    ("GMrepo_search_species", "database_links"),
     ("DisProt_get_entry", "statements"),
     ("DisProt_get_entry", "interaction_partners"),
     ("DisProt_get_entry", "evidence_code_id"),
@@ -4645,3 +4666,93 @@ def test_the_tool_that_promises_factors_reports_the_factors():
     props = (schema.get("oneOf") or [schema])[0]["properties"]
     assert "FACTOR" in json.dumps(props["conditions"])
     assert "count" in props["conditions"]["description"]
+
+
+def test_the_ndc_tool_answers_for_a_prescription_drug_too():
+    """"a drug's active ingredient ... and National Drug Code (NDC) number".
+
+    `FDA_get_manufacturer_name_NDC_number_by_drug_name` returned
+    `active_ingredient` and `openfda.product_ndc`. Measured on the live API,
+    `active_ingredient` is an OTC-only SPL section: populated on 99 of 100
+    HUMAN OTC DRUG labels and on 0 of 100 HUMAN PRESCRIPTION DRUG labels.
+    So for every prescription drug the tool answered its own headline
+    promise with null, while the same record carried
+    `openfda.substance_name` and `openfda.unii` -- populated on 99 of those
+    100 labels.
+
+    "The NDC number" also has two levels and only one was returned. The
+    product NDC (70771-1859) identifies the product; the package NDC
+    (70771-1859-6) is what is printed on the carton and what pharmacy and
+    claims data key on. Prescription labels carry a median of 3 package NDCs
+    and 1 product NDC, and package_ndc is populated on 100 of 100.
+
+    Live: metformin now answers SITAGLIPTIN + METFORMIN HYDROCHLORIDE with
+    UNIIs 786Z46389E and QFP0P1DV7Z and four package NDCs; aspirin's OTC
+    label still answers with its `active_ingredient` prose. The two paths
+    cover each other.
+    """
+    config = _config("FDA_get_manufacturer_name_NDC_number_by_drug_name")
+    fields = config["fields"]["return_fields"]
+    for field in (
+        "openfda.substance_name",
+        "openfda.unii",
+        "openfda.package_ndc",
+    ):
+        assert field in fields, field
+    # The OTC-only section is kept, not replaced.
+    assert "active_ingredient" in fields
+
+
+def test_a_parent_term_keeps_the_codes_its_record_carried():
+    """One request per parent, already paid for.
+
+    `DiseaseOntology_get_parents` fetches each parent's whole term record to
+    read its name and definition, then returned the name, the definition and
+    the grandparents. The rest of that record went in the bin -- including
+    `xrefs`, which for DOID:9351 (diabetes mellitus, the parent of type 2
+    diabetes) are ICD10CM:E08-E13, ICD9CM:250, MESH:D003920, NCI:C2985 and
+    SNOMEDCT_US_2025_09_01:267467004.
+
+    Those codes are how a caller carries a DO hierarchy into its own
+    vocabulary, and the sibling `DiseaseOntology_get_term` can fetch them
+    only by repeating a request this handler has already made. Synonyms come
+    back for the same reason: a parent a caller's data calls something else
+    is a parent it cannot match.
+    """
+    source = _source("disease_ontology_tool.py")
+    assert '"cross_references": self._validated_list(' in source
+    assert '"grandparents": grandparents' in source
+    # The term handler and the parents handler now both report xrefs.
+    assert source.count('_validated_list(data, "xrefs")') == 1
+    schema = _config("DiseaseOntology_get_parents")["return_schema"]
+    rows = (schema.get("oneOf") or [schema])[0]["properties"]["parents"][
+        "items"
+    ]["properties"]
+    assert "ICD10CM" in rows["cross_references"]["description"]
+
+
+def test_a_marker_species_says_that_it_is_one():
+    """GMrepo's point is which microbes track a phenotype.
+
+    `GMrepo_search_species` returned the taxon id, the name, the sample
+    counts and the phenotype count, and dropped `ismarker` -- the flag that
+    says GMrepo treats the species as a phenotype marker. All six
+    Bacteroides hits for the live query are markers and the answer did not
+    say so.
+
+    `dblinks` went with it, and it needed handling rather than copying:
+    GMrepo answers it as a JSON *string*, "[]" when empty, otherwise records
+    like {"dbtype": "MVP", "anno": "assoc w/ 2 phage clusters", "url":
+    ...}. 25 of 50 microbes sampled carry at least one. Passed through raw
+    the string is unusable, so it is parsed, and a string that will not
+    parse is reported under `raw` instead of dropped.
+    """
+    source = _source("gmrepo_tool.py")
+    assert "def _dblinks" in source
+    assert 'sp.get("ismarker")' in source
+    assert '"raw": value' in source
+    assert "_dblinks(sp)" in source
+    schema = _config("GMrepo_search_species")["return_schema"]
+    rows = (schema.get("oneOf") or [schema])[0]["items"]["properties"]
+    assert "phenotype marker" in rows["is_marker"]["description"]
+    assert "dbtype" in rows["database_links"]["items"]["properties"]

@@ -1024,9 +1024,12 @@
       },
       "return_fields": [
         "active_ingredient",
+        "openfda.substance_name",
+        "openfda.unii",
         "openfda.application_number",
         "openfda.manufacturer_name",
         "openfda.product_ndc",
+        "openfda.package_ndc",
         "openfda.route"
       ]
     },
