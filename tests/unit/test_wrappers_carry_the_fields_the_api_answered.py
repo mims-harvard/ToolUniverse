@@ -110,6 +110,19 @@ the substance of what the tool's own description promises. Measured live on
                               RESEARCH_CODE and one each of ATC, BNF, FDA and
                               MERCK_INDEX, and the 15 shown are alphabetically
                               first, so all brands.
+    UniProtTaxonomy_search    the synonyms round 26 added to
+                              UniProtTaxonomy_get_taxon, missing from the
+                              search beside it. Taxon 9606 carries 17, and a
+                              query for "human" matches the Denisovan taxon
+                              through its own -- which the row could not show.
+                              `active` and the parent went too.
+    Ensembl_get_assembly_     GRCh38's 194 top-level regions are 25
+      info                    chromosomes and 169 scaffolds. The counts said
+                              194 and 25, so the cut was disclosed, and no
+                              tool in the family returned the other 169, so a
+                              caller needing KI270728.1's length had no route
+                              to it. `coord_system`, which the chromosome
+                              filter reads, was not reported either.
     ZFIN_get_gene_expression  an expression annotation as two strings.
                               "anal fin" at "Larval:Days 14-20" cannot be
                               joined to an anatomy ontology; the same record
@@ -1975,6 +1988,17 @@ UPSTREAM_KEYS = [
         "the pointers to the mass-spectrometry evidence the tool's own "
         "description promises",
     ),
+    (
+        "uniprot_taxonomy_tool.py",
+        'item.get("otherNames")',
+        "the synonyms a taxonomy search matched on, which the per-taxon "
+        "lookup beside it already returned",
+    ),
+    (
+        "ensembl_info_tool.py",
+        "OTHER_REGIONS_PER_ASSEMBLY",
+        "the 169 scaffolds of GRCh38, which no tool in the family returned",
+    ),
 ]
 
 
@@ -2370,6 +2394,10 @@ DECLARED = [
     ("ZFIN_get_gene_expression", "assay_curie"),
     ("proteins_api_get_proteomics", "proteomics_cross_references"),
     ("proteins_api_get_proteomics", "proteomics_databases"),
+    ("UniProtTaxonomy_search", "other_names"),
+    ("UniProtTaxonomy_search", "parent_taxon_id"),
+    ("Ensembl_get_assembly_info", "other_regions"),
+    ("Ensembl_get_assembly_info", "coord_system"),
 ]
 
 
@@ -4201,3 +4229,50 @@ def test_a_proteomics_tool_points_at_the_spectrometry_evidence():
     assert "def _proteomics_cross_references" in source
     assert '"proteomics_cross_references": cross_references' in source
     assert '"PeptideAtlas"' in source
+
+
+def test_a_taxonomy_search_shows_the_name_it_matched():
+    """Round 26 gave the per-taxon lookup its synonyms and not the search.
+
+    The note round twenty-six left said UniProtTaxonomy's description calls
+    itself "essential for cross-referencing species", and that taxon 9606
+    answers "human" plus sixteen variants that reached no caller. That fix
+    landed on `_get_taxon`; `_search`, ninety lines down the same module,
+    kept seven fields and none of them was `otherNames`.
+
+    It matters most for the hits a caller did not expect: the query "human"
+    returns Homo sapiens subsp. 'Denisova', which matched through its own
+    other names -- "Denisovan", "Homo sp. Altai" -- and the row showed a
+    scientific name with no indication of why it was there. `active` and the
+    parent taxon went with them.
+    """
+    source = _source("uniprot_taxonomy_tool.py")
+    # Three reads: the per-taxon lookup's one, and the search's list
+    # comprehension plus its count. Counting rather than testing for the
+    # substring, because the lookup has carried it since round 26.
+    assert source.count("otherNames") == 3, "the search handler lost its read"
+    assert "OTHER_NAMES_PER_SEARCH_ROW" in source
+    assert '"parent_taxon_id"' in source
+    assert '"active": item.get("active")' in source
+
+
+def test_an_assembly_can_reach_its_scaffolds():
+    """25 chromosomes returned of 194 top-level regions, and 169 unreachable.
+
+    `Ensembl_get_assembly_info` filters `top_level_region` to the
+    chromosomes, and it already reported `total_regions: 194` against
+    `total_chromosomes: 25` -- so the cut was disclosed, which is why this is
+    not the row-axis defect it looks like. The problem is that no tool in the
+    family returned the other 169: a caller needing the length of
+    KI270728.1, GRCh38's longest scaffold at 1,872,759 bases, had the count
+    and no route.
+
+    `coord_system` is now on every region too. The filter reads it, and a
+    region admitted through the karyotype branch rather than the
+    coord_system one was indistinguishable from a chromosome.
+    """
+    source = _source("ensembl_info_tool.py")
+    assert "OTHER_REGIONS_PER_ASSEMBLY" in source
+    assert '"coord_system": region.get("coord_system")' in source
+    assert '"total_other_regions"' in source
+    assert '"other_regions_truncated"' in source

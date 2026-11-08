@@ -97,6 +97,8 @@ class UniProtTaxonomyTool(BaseTool):
         else:
             return {"status": "error", "error": f"Unknown endpoint: {self.endpoint}"}
 
+    OTHER_NAMES_PER_SEARCH_ROW = 15
+
     def _get_taxon(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get taxonomy details by NCBI taxon ID."""
         taxon_id = arguments.get("taxon_id")
@@ -254,6 +256,28 @@ class UniProtTaxonomyTool(BaseTool):
                     "common_name": item.get("commonName"),
                     "mnemonic": item.get("mnemonic"),
                     "rank": item.get("rank"),
+                    # The synonyms and misspellings round twenty-six added to
+                    # _get_taxon for the same reason, left out of the search
+                    # beside it: a query for "human" can match on
+                    # "Homo sapien", and the row could not show why it
+                    # matched. Taxon 9606 carries 17 of them.
+                    "other_names": [
+                        name
+                        for name in (item.get("otherNames") or [])
+                        if name
+                    ][: self.OTHER_NAMES_PER_SEARCH_ROW],
+                    "other_name_count": len(item.get("otherNames") or []),
+                    # Whether the taxon is current, and what it sits under.
+                    "active": item.get("active"),
+                    "hidden": item.get("hidden"),
+                    "parent_taxon_id": (item.get("parent") or {}).get("taxonId")
+                    if isinstance(item.get("parent"), dict)
+                    else None,
+                    "parent_scientific_name": (item.get("parent") or {}).get(
+                        "scientificName"
+                    )
+                    if isinstance(item.get("parent"), dict)
+                    else None,
                     "reviewed_protein_count": stats.get("reviewedProteinCount", 0),
                     "unreviewed_protein_count": stats.get("unreviewedProteinCount", 0),
                 }

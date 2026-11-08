@@ -111,10 +111,68 @@
                   "length": {
                     "type": "integer",
                     "description": "Chromosome length in bp"
+                  },
+                  "coord_system": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Ensembl's coordinate system for the region. The chromosome filter reads this, and a region admitted through the karyotype branch instead can carry something else"
                   }
                 }
               },
               "description": "Complete chromosome list with lengths"
+            },
+            "other_regions": {
+              "type": "array",
+              "description": "Scaffolds and other non-chromosomal top-level regions, longest first. GRCh38's 194 regions are 25 chromosomes and 169 scaffolds, and no tool in this family returned the 169",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Region name, e.g. KI270728.1"
+                  },
+                  "length": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Length in bases"
+                  },
+                  "coord_system": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "e.g. scaffold"
+                  }
+                }
+              }
+            },
+            "other_regions_returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many are in other_regions"
+            },
+            "total_other_regions": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many the assembly has"
+            },
+            "other_regions_truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when OTHER_REGIONS_PER_ASSEMBLY applied"
             }
           },
           "not": {

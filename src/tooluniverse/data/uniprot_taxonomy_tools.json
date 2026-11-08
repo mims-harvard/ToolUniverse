@@ -224,6 +224,48 @@
                   "integer",
                   "number"
                 ]
+              },
+              "other_names": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Synonyms and misspellings UniProt records for the taxon, capped at OTHER_NAMES_PER_SEARCH_ROW. A query for 'human' can match on 'Homo sapien' or, for the Denisovan taxon, on 'Denisovan', and the row could not show why it matched"
+              },
+              "other_name_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many the taxon has, before the cap"
+              },
+              "active": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Whether the taxon is current in UniProt"
+              },
+              "hidden": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Whether UniProt hides it from its own browse"
+              },
+              "parent_taxon_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Taxon id of the parent"
+              },
+              "parent_scientific_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "That parent's scientific name"
               }
             }
           }
