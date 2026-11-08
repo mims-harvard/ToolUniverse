@@ -110,6 +110,16 @@ the substance of what the tool's own description promises. Measured live on
                               RESEARCH_CODE and one each of ATC, BNF, FDA and
                               MERCK_INDEX, and the 15 shown are alphabetically
                               first, so all brands.
+    NIHDSLD_get_label         a tool that promises "one dietary supplement's
+                              full label" returned the ingredient table and
+                              none of the label's 23 statements, four of which
+                              are precautions -- "Precautions re: Pregnant or
+                              Nursing or Prescription Medications", "KEEP OUT
+                              OF THE REACH OF CHILDREN". The 9 other
+                              ingredients went too, though the description
+                              promises "every ingredient", as did the footnote
+                              that says what the percent daily values it does
+                              return are a percentage of.
     MGI_get_phenotypes /      a phenotype returned as free text with no term
       ZFIN_get_gene_          and no id, in a tool whose description says it
       phenotypes              returns "Mammalian Phenotype (MP) ontology
@@ -290,6 +300,18 @@ external id is. ZFIN and WormBase compose free-text phenotype statements
 rather than annotating single ontology terms, so their `phenotype_terms` is
 empty by upstream design -- measured: 0 terms across 18 WormBase rows and 2
 ZFIN rows, against 125 of 125 for MGI.
+
+`FDA_OrangeBook_get_te_code` summarises the submission history to the
+original approval date and a count, and `_submission_summary`'s own
+docstring says why: "The full history is
+FDA_OrangeBook_get_approval_history's job, so this summarises rather than
+copies." That sibling returns each submission's documents with their type,
+url and date -- the fields flagged here. Reactome's `orthologousEvent[].dbId`
+is internal and `stIdVersion` is the `stId` the row already returns plus a
+version suffix. RCSB's `pdbx_audit_revision_item` is the wwPDB audit trail,
+which mmCIF item changed in which revision. iDigBio's
+`attribution[].contacts[]` are collectors' personal names and email
+addresses.
 
 An AGGREGATION is the sharpest form of the transformation rule.
 `FAERS_analyze_temporal_trends` was flagged for `results[].time` on 2,010
@@ -1691,6 +1713,18 @@ UPSTREAM_KEYS = [
         "the relation, the data provider and the annotated genotype, none of "
         "which reached the caller",
     ),
+    (
+        "nih_dsld_tool.py",
+        "def _other_ingredients",
+        "the inactive ingredients, which are half of the 'every ingredient' "
+        "the description promises",
+    ),
+    (
+        "nih_dsld_tool.py",
+        'payload.get("percentDvFootnote")',
+        "what the percent daily values the tool already returns are a "
+        "percentage of",
+    ),
 ]
 
 
@@ -2048,6 +2082,10 @@ DECLARED = [
     ("MGI_get_phenotypes", "annotation_subjects"),
     ("ZFIN_get_gene_phenotypes", "phenotype_terms"),
     ("ZFIN_get_gene_phenotypes", "annotation_relations"),
+    ("NIHDSLD_get_label", "statements"),
+    ("NIHDSLD_get_label", "other_ingredients"),
+    ("NIHDSLD_get_label", "percent_dv_footnote"),
+    ("NIHDSLD_get_label", "net_contents"),
 ]
 
 
@@ -3490,3 +3528,29 @@ def test_a_phenotype_annotation_carries_the_ontology_term():
     assert '"relation": (r.get("relation") or {}).get("name")' in source
     assert '("dataProvider", "abbreviation")' in source
     assert '("phenotypeAnnotationSubject", "primaryExternalId")' in source
+
+
+def test_a_supplement_label_carries_its_precautions():
+    """"Full label" returned the ingredient table and none of the warnings.
+
+    NIHDSLD_get_label promises "one dietary supplement's full label". The
+    audited product's label carries 23 statements, each with the type that
+    says what kind it is, and four are precautions: "Precautions re: Pregnant
+    or Nursing or Prescription Medications", "KEEP OUT OF THE REACH OF
+    CHILDREN", "Take only as directed. Do not exceed suggested dosage." and
+    "Do not use if inner seal is broken or missing." None of them reached the
+    caller. Without `type`, a precaution would read like a marketing line,
+    which is why both are returned.
+
+    The description also promises "every ingredient", and the 9 other
+    (inactive) ingredients -- glucose syrup, sucrose, gelatin -- were absent,
+    as was `percentDvFootnote`, which says what the percent daily values the
+    tool does return are a percentage of. `off_market: true` was reported
+    with no date, though the label's events say 2018-01-19.
+    """
+    source = _source("nih_dsld_tool.py")
+    assert "def _statements" in source
+    assert "def _other_ingredients" in source
+    assert 'payload.get("percentDvFootnote")' in source
+    assert "STATEMENTS_PER_LABEL" in source
+    assert '"events"' in source
