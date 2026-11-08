@@ -447,6 +447,78 @@
                       "null"
                     ],
                     "description": "Aggregate germline classification, e.g. 'Pathogenic'."
+                  },
+                  "genes": {
+                    "type": "array",
+                    "description": "The genes the variant covers, capped at GENES_PER_OVERLAP_ROW. A 668 kb pathogenic deletion hits five of them and a 30 kb one hits SHH; the span alone said neither",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "symbol": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Gene symbol"
+                        },
+                        "gene_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "NCBI Gene id, the field a caller joins on"
+                        },
+                        "strand": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "+ or -"
+                        },
+                        "source": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "'submitted' when the submitter asserted the gene, 'calculated' when ClinVar derived it from the coordinates - a different claim"
+                        }
+                      }
+                    }
+                  },
+                  "gene_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many genes the record lists, before the cap. ClinVar 147398 lists 696"
+                  },
+                  "genes_truncated": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "True when the cap applied"
+                  },
+                  "review_status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How well-reviewed the classification is, e.g. 'criteria provided, single submitter'"
+                  },
+                  "accession": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ClinVar accession, e.g. VCV001807779 - how the record is cited and fetched"
+                  },
+                  "accession_version": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "That accession with its version"
                   }
                 }
               }
@@ -454,6 +526,62 @@
             "note": {
               "type": "string",
               "description": "How the widened-window search works and what the counts mean."
+            },
+            "returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Overlapping variants in this page"
+            },
+            "result_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Offset into the overlapping set"
+            },
+            "result_has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether more overlapping variants remain"
+            },
+            "candidate_total": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Candidates Entrez reports for the term"
+            },
+            "candidate_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Offset into the candidate set"
+            },
+            "candidate_returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Candidates fetched in this call"
+            },
+            "candidate_has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether more candidates remain to inspect"
+            },
+            "matched_in_candidate_page": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many of this candidate page overlapped the region"
             }
           },
           "required": [

@@ -1342,6 +1342,21 @@ def clinvar_variants_overlapping(
                                 "classification": (
                                     rec.get("germline_classification") or {}
                                 ).get("description"),
+                                "review_status": (
+                                    rec.get("germline_classification") or {}
+                                ).get("review_status"),
+                                # WHICH GENES the variant covers. A 30 kb
+                                # pathogenic deletion reported as a span and a
+                                # title told a caller nothing about what it
+                                # removes; record 147398 lists 696 genes.
+                                "genes": _gene_rows(rec),
+                                "gene_count": len(rec.get("genes") or []),
+                                "genes_truncated": len(rec.get("genes") or [])
+                                > len(_gene_rows(rec)),
+                                # The ClinVar accession, which is how the
+                                # record is cited and fetched.
+                                "accession": rec.get("accession"),
+                                "accession_version": rec.get("accession_version"),
                             }
                         )
                     break
@@ -1373,6 +1388,36 @@ def clinvar_variants_overlapping(
         "variants": result_page,
         "note": _OVERLAP_NOTE,
     }
+
+
+# Genes per overlapping variant. A copy-number loss spanning 30,531 bases
+# overlaps hundreds of them -- ClinVar record 147398 lists 696 -- and WHICH
+# genes a deletion hits is the clinical question the span only hints at.
+GENES_PER_OVERLAP_ROW = 50
+
+
+def _gene_rows(record: dict, limit: int = GENES_PER_OVERLAP_ROW) -> list:
+    """A variant's genes, with the ids and provenance beside the symbols.
+
+    `geneid` is the NCBI Gene id a caller joins on, and `source` says whether
+    the gene assignment came from the submitter or was calculated from the
+    coordinates -- a different claim, and neither reached the caller.
+    """
+    rows = []
+    for gene in record.get("genes") or []:
+        if not isinstance(gene, dict) or not gene.get("symbol"):
+            continue
+        rows.append(
+            {
+                "symbol": gene.get("symbol"),
+                "gene_id": gene.get("geneid"),
+                "strand": gene.get("strand"),
+                "source": gene.get("source"),
+            }
+        )
+        if len(rows) >= limit:
+            break
+    return rows
 
 
 @register_tool("ClinVarSearchByRegion")

@@ -110,6 +110,14 @@ the substance of what the tool's own description promises. Measured live on
                               RESEARCH_CODE and one each of ATC, BNF, FDA and
                               MERCK_INDEX, and the 15 shown are alphabetically
                               first, so all brands.
+    ClinVar_search_by_region  a pathogenic copy-number loss reported as a
+                              span. The 30,531-base one over chr7:155593770
+                              removes SHH and the 668,505-base one removes
+                              five genes including EN2 -- `genes` was dropped
+                              entirely, and ClinVar record 147398 lists 696 of
+                              them. The VCV accession and the review status
+                              went too, so the record could not be cited and
+                              its classification could not be weighed.
     DbGaP_get_study /         a study's condition as ten free-text strings
       _search_studies         and no code. phs000681's 34 condition entries
                               are ONE MeSH coding -- D003924, "Diabetes
@@ -2013,6 +2021,12 @@ UPSTREAM_KEYS = [
         "the MeSH and UMLS codes for a study's condition, where ten free-text "
         "synonyms were returned and no identifier",
     ),
+    (
+        "clinvar_tool.py",
+        'gene.get("geneid")',
+        "which genes a pathogenic deletion covers, for a region search that "
+        "reported only its span",
+    ),
 ]
 
 
@@ -2415,6 +2429,9 @@ DECLARED = [
     ("DbGaP_get_study", "condition_codes"),
     ("DbGaP_get_study", "keyword_codes"),
     ("DbGaP_search_studies", "condition_codes"),
+    ("ClinVar_search_by_region", "gene_count"),
+    ("ClinVar_search_by_region", "accession"),
+    ("ClinVar_search_by_region", "review_status"),
 ]
 
 
@@ -4315,3 +4332,28 @@ def test_a_study_condition_keeps_its_mesh_code():
     assert "def _concept_codes" in source
     assert "_ENTRY_TERM_SYSTEM_MARKER" in source
     assert source.count("_concept_codes(") == 4, "one handler still omits it"
+
+
+def test_a_region_hit_says_which_genes_the_deletion_removes():
+    """A pathogenic 30 kb loss, reported as a span and a title.
+
+    `ClinVar_search_by_region` finds variants overlapping a region, including
+    large CNVs, and returned variation_id, title, coordinates, span and
+    classification. The esummary record it already had also carries `genes`:
+    the 30,531-base loss over chr7:155593770 removes SHH, and the
+    668,505-base one removes five genes including EN2 and INSIG1. ClinVar
+    147398 lists 696. Which genes a deletion removes is the question a span
+    only hints at.
+
+    Each gene now carries its NCBI Gene id -- the field a caller joins on --
+    and `source`, which says whether the submitter asserted the gene or
+    ClinVar calculated it from the coordinates. The accession (VCV001807779)
+    and the review status came back with them, so the record can be cited and
+    its classification weighed.
+    """
+    source = _source("clinvar_tool.py")
+    assert "def _gene_rows" in source
+    assert 'gene.get("geneid")' in source
+    assert 'gene.get("source")' in source
+    assert "GENES_PER_OVERLAP_ROW" in source
+    assert '"accession": rec.get("accession")' in source
