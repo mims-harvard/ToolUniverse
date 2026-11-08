@@ -110,6 +110,20 @@ the substance of what the tool's own description promises. Measured live on
                               RESEARCH_CODE and one each of ATC, BNF, FDA and
                               MERCK_INDEX, and the 15 shown are alphabetically
                               first, so all brands.
+    ThreeDBeacons_get_        a list of 375 structures with no model_format,
+      structures              so the download URL the description promises came
+                              without the format needed to parse it (MMCIF on
+                              373, PDB on 2); no sequence_identity, so a model
+                              covering p53 at 50% read like one at 100%; and
+                              none of the 1,220 entity records that say which
+                              chains and which bound ligands each structure
+                              holds.
+    get_joint_associated_     the differential was intersected over disease
+      diseases_by_HPO_ID_     LABELS while `subject`, the MONDO curie, sat
+      list                    unread on all 5,331 associations of HP:0001250.
+                              One disease whose label differs between two legs
+                              dropped out; two diseases sharing a label
+                              vouched for each other.
     PDBe_KB_get_ligand_       1,136 residue codes dropped: the rows were
       sites / _interface_     `{start, end}` positions in tools that promise
       residues                "binding site residues" and "interface
@@ -210,8 +224,22 @@ internal annotation row id (7574210) in a row that already carries the
 interaction and experiment types, the partners, the source and the
 reference. Reactome's interactor `id` is internal and `accURL` is
 `purl.uniprot.org/uniprot/{acc}` built from the `acc` beside it.
+`OncoTree_list_tissues` returns the unique set of tissue NAMES, which is what
+its description says twice and what `OncoTree_search` takes as
+`field: "tissue"`; the per-tumour-type codes, colors and parents belong to
+`OncoTree_search`, which returns every upstream field. USGS streamflow's
+`features[].type` is the GeoJSON constant "Feature" and `geometry.type` is
+"Point". PlantReactome's `refEntities[].dbId` is an internal Reactome id.
 
-DEFERRED, with the reason. Reactome's `evidencesURL` is the route to the 122
+DEFERRED, with the reason. `get_joint_associated_diseases_by_HPO_ID_list`
+returns disease names and not their MONDO curies, so its answer cannot be
+passed to another tool without re-resolving by name. Adding the ids means
+changing the return shape, which its `return_schema` declares as a string
+array and which two skills document in three checked-in copies: a contract
+change rather than a dropped field. The intersection is keyed by the curie
+now, which was the correctness half of the same omission.
+
+Reactome's `evidencesURL` is the route to the 122
 evidences behind an interactor's count, and it is a ~3 kB IntAct query URL
 per interactor; a page of them would be most of the response. It belongs in
 a per-interactor lookup rather than in the list, and no such tool exists yet.
@@ -1543,6 +1571,23 @@ UPSTREAM_KEYS = [
         'listing.get("establishment_means")',
         "whether the taxon is native or introduced where it is listed",
     ),
+    (
+        "three_d_beacons_tool.py",
+        'sm.get("model_format")',
+        "the format of the file at the download URL the tool promises",
+    ),
+    (
+        "three_d_beacons_tool.py",
+        "def _entities",
+        "which chains and bound ligands a structure holds, for a list of 375 "
+        "of them",
+    ),
+    (
+        "restful_tool.py",
+        'disease.get("subject")',
+        "the MONDO curie the differential should be intersected on, rather "
+        "than the disease's label",
+    ),
 ]
 
 
@@ -1884,6 +1929,10 @@ DECLARED = [
     ("iNaturalist_get_taxon", "place_listings"),
     ("iNaturalist_get_taxon", "place_listings_total"),
     ("iNaturalist_search_taxa", "conservation_status_detail"),
+    ("ThreeDBeacons_get_structures", "model_format"),
+    ("ThreeDBeacons_get_structures", "entities"),
+    ("ThreeDBeacons_get_structures", "entity_counts_by_type"),
+    ("ThreeDBeacons_get_structures", "sequence_identity"),
 ]
 
 
@@ -3219,3 +3268,28 @@ def test_a_conservation_status_names_the_authority_that_issued_it():
     assert 'listing.get("establishment_means")' in source
     assert "PLACE_LISTINGS_PER_TAXON" in source
     assert '"place_listings_total": r.get("listed_taxa_count")' in source
+
+
+def test_a_structure_list_says_what_format_and_what_is_in_it():
+    """375 structures, a download URL each, and no format to parse them with.
+
+    The row promised "model identifier, provider, category, coverage,
+    resolution or confidence, and download URL" and delivered that -- but
+    `model_format` says whether the file at that URL is MMCIF or PDB, and 2
+    of P04637's 375 models are PDB while 373 are MMCIF. A caller cannot pick
+    a parser from the URL.
+
+    `sequence_identity` went too: 9c5s covers p53 at 50 percent and 5mhc at
+    100, and both read identically. And the 1,220 entity records across those
+    structures -- 640 NON-POLYMER, 579 POLYMER, 1 BRANCHED -- say which
+    chains are protein and what ligands are bound, so "which of these has a
+    ligand" was unanswerable. The per-structure counts by type are reported
+    beside the capped list so that question can be answered without reading
+    every entity.
+    """
+    source = _source("three_d_beacons_tool.py")
+    assert 'sm.get("model_format")' in source
+    assert 'sm.get("sequence_identity")' in source
+    assert "def _entities" in source
+    assert "ENTITIES_PER_STRUCTURE" in source
+    assert '"entity_counts_by_type": entity_counts' in source

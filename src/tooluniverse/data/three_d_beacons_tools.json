@@ -200,6 +200,81 @@
                                     "model_url": {
                                         "type": ["string", "null"],
                                         "description": "URL to download the model"
+                                    },
+                                    "model_format": {
+                                        "type": ["string", "null"],
+                                        "description": "Format of the file at model_url - MMCIF or PDB - which the caller needs to parse it. 373 of P04637's 375 models are MMCIF and 2 are PDB"
+                                    },
+                                    "model_page_url": {
+                                        "type": ["string", "null"],
+                                        "description": "Provider's human-readable page for the model"
+                                    },
+                                    "sequence_identity": {
+                                        "type": ["number", "null"],
+                                        "description": "Percent identity to the queried sequence; a structure can cover the protein at 50%"
+                                    },
+                                    "created": {
+                                        "type": ["string", "null"],
+                                        "description": "When the model was created"
+                                    },
+                                    "uniprot_start": {
+                                        "type": ["integer", "null"],
+                                        "description": "First residue of the queried protein covered"
+                                    },
+                                    "uniprot_end": {
+                                        "type": ["integer", "null"],
+                                        "description": "Last residue covered"
+                                    },
+                                    "confidence_avg_local_score": {
+                                        "type": ["number", "null"],
+                                        "description": "Mean per-residue confidence, for a predicted model"
+                                    },
+                                    "entity_count": {
+                                        "type": ["integer", "null"],
+                                        "description": "Entities the structure has, before the cap"
+                                    },
+                                    "entity_counts_by_type": {
+                                        "type": "object",
+                                        "description": "How many entities of each type, so a caller can find the models with a ligand bound without reading them all",
+                                        "additionalProperties": {"type": "integer"}
+                                    },
+                                    "entities_truncated": {
+                                        "type": ["boolean", "null"],
+                                        "description": "True when ENTITIES_PER_STRUCTURE applied"
+                                    },
+                                    "entities": {
+                                        "type": "array",
+                                        "description": "Chains and bound components of the structure, capped at ENTITIES_PER_STRUCTURE",
+                                        "items": {
+                                            "type": "object",
+                                            "properties": {
+                                                "entity_type": {
+                                                    "type": ["string", "null"],
+                                                    "description": "POLYMER, NON-POLYMER (a ligand or ion) or BRANCHED (a glycan)"
+                                                },
+                                                "entity_poly_type": {
+                                                    "type": ["string", "null"],
+                                                    "description": "For a polymer, e.g. POLYPEPTIDE(L)"
+                                                },
+                                                "identifier": {
+                                                    "type": ["string", "null"],
+                                                    "description": "Accession or chemical id of the entity"
+                                                },
+                                                "identifier_category": {
+                                                    "type": ["string", "null"],
+                                                    "description": "Namespace of that identifier, e.g. UNIPROT or CHEMBL"
+                                                },
+                                                "description": {
+                                                    "type": ["string", "null"],
+                                                    "description": "Name of the entity"
+                                                },
+                                                "chain_ids": {
+                                                    "type": "array",
+                                                    "items": {"type": "string"},
+                                                    "description": "Chains this entity occupies"
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }

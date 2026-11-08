@@ -349,6 +349,9 @@ class MonarchDiseasesForMultiplePhenoTool(MonarchTool):
             if (key != "HPO_ID_list") and (key in arguments):
                 query_schema_runtime[key] = arguments[key]
         all_diseases = []
+        # Across every leg, not per leg: an intersected key is in all of them,
+        # but relying on that to find its label would be correct by accident.
+        label_by_key = {}
         uninformative_ids = []
         truncated_ids = []
         running = None
@@ -370,7 +373,15 @@ class MonarchDiseasesForMultiplePhenoTool(MonarchTool):
             # secondary cataplexy. Page through instead, and say so when the
             # budget still runs out rather than returning a short list that
             # looks definitive.
+            # Keyed by the disease's MONDO curie where Monarch sends one, and
+            # by its label where it does not. The intersection used to be over
+            # labels, which is wrong twice: two MONDO diseases that share a
+            # label merge into one, and one disease whose label differs
+            # between two legs drops out of a differential it belongs in.
+            # `subject` is on every one of the 5,331 associations of
+            # HP:0001250 and was never read.
             each_output_names = []
+            each_output_keys = []
             offset, total = 0, None
             for _ in range(_MONARCH_MAX_PAGES):
                 each_query_schema_runtime["limit"] = _MONARCH_MAX_LIMIT
@@ -382,11 +393,16 @@ class MonarchDiseasesForMultiplePhenoTool(MonarchTool):
                 if not isinstance(page, dict):
                     break
                 items = page.get("items") or []
-                each_output_names.extend(
-                    disease["subject_label"]
-                    for disease in items
-                    if isinstance(disease, dict) and disease.get("subject_label")
-                )
+                for disease in items:
+                    if not isinstance(disease, dict):
+                        continue
+                    label = disease.get("subject_label")
+                    if not label:
+                        continue
+                    key = disease.get("subject") or label
+                    each_output_names.append(label)
+                    each_output_keys.append(key)
+                    label_by_key.setdefault(key, label)
                 total = page.get("total", total)
                 offset += _MONARCH_MAX_LIMIT
                 if len(items) < _MONARCH_MAX_LIMIT or (
@@ -404,13 +420,13 @@ class MonarchDiseasesForMultiplePhenoTool(MonarchTool):
             # still-useful differential. Track zero-hit IDs separately and
             # exclude them from the intersection instead of letting them
             # veto every other (valid) phenotype in the panel.
-            if each_output_names:
-                all_diseases.append(each_output_names)
+            if each_output_keys:
+                all_diseases.append(each_output_keys)
                 # Once the running intersection is empty no later phenotype can
                 # refill it, and each extra leg costs up to _MONARCH_MAX_PAGES
                 # upstream requests. Stop paging phenotypes we cannot use.
-                names = set(each_output_names)
-                running = names if running is None else running & names
+                keys = set(each_output_keys)
+                running = keys if running is None else running & keys
                 if not running:
                     break
             else:
@@ -429,11 +445,11 @@ class MonarchDiseasesForMultiplePhenoTool(MonarchTool):
         other_sets = [set(element) for element in all_diseases[1:]]
         seen = set()
         intersection = []
-        for name in all_diseases[0]:
-            if name in seen or not all(name in other for other in other_sets):
+        for key in all_diseases[0]:
+            if key in seen or not all(key in other for other in other_sets):
                 continue
-            seen.add(name)
-            intersection.append(name)
+            seen.add(key)
+            intersection.append(label_by_key.get(key, key))
         matched_total = len(intersection)
         limit = query_schema_runtime.get("limit")
         end = result_offset + limit if isinstance(limit, int) else None
