@@ -110,6 +110,13 @@ the substance of what the tool's own description promises. Measured live on
                               RESEARCH_CODE and one each of ATC, BNF, FDA and
                               MERCK_INDEX, and the 15 shown are alphabetically
                               first, so all brands.
+    NCIThesaurus_get_concept  `definitions[0]` as THE definition. C3224 has
+      (definitions)           four -- NCI-GLOSS, CDISC, NICHD and NCI -- and
+                              the first is the patient-facing glossary one,
+                              returned with no source while the thesaurus's
+                              own NCI definition sat fourth. Found by
+                              grepping the module for `[0]` after the
+                              SmartAPI finding, not by a shard.
     SmartAPI_search_apis      `base_url: servers[0]["url"]` handed back a
                               DEVELOPMENT url as the API's base url for any
                               entry that lists development first, which the
@@ -1925,6 +1932,12 @@ UPSTREAM_KEYS = [
         "def _base_url",
         "the production server, where servers[0] was a development url",
     ),
+    (
+        "nci_thesaurus_tool.py",
+        'row.get("source")',
+        "which body wrote a concept's definition, where four bodies wrote one "
+        "and the row returned the first with no source",
+    ),
 ]
 
 
@@ -2312,6 +2325,9 @@ DECLARED = [
     ("SmartAPI_search_apis", "base_url_maturity"),
     ("SmartAPI_search_apis", "servers"),
     ("SmartAPI_search_apis", "maturity"),
+    ("NCIThesaurus_get_concept", "definition_source"),
+    ("NCIThesaurus_get_concept", "definition_count"),
+    ("GeneBe_classify_variant", "acmg_gene_count"),
 ]
 
 
@@ -4069,3 +4085,25 @@ def test_an_api_registry_hands_over_the_production_server():
     assert "def _servers" in source
     assert '"contact": _contact(info)' in source
     assert 'servers[0].get("url") if servers else None' not in source
+
+
+def test_a_concept_definition_says_who_wrote_it():
+    """Four definitions for Melanoma, and `definitions[0]` is the glossary one.
+
+    C3224 carries definitions from NCI-GLOSS, CDISC, NICHD and NCI, in that
+    order. The row returned the first -- the patient-facing glossary text --
+    as the concept's definition, with no source, while the thesaurus's own
+    NCI definition sat fourth. Which body wrote a definition is part of what
+    the definition is.
+
+    The NCI-sourced one is preferred now, its source is reported, and all
+    four are returned beside it. This was found by grepping the module for
+    `[0]` after the SmartAPI base_url finding, not by a shard: the same
+    module's synonyms had been fixed one round earlier and this sat two
+    screens above them.
+    """
+    source = _source("nci_thesaurus_tool.py")
+    assert 'row.get("source")' in source
+    assert '"definition_source"' in source
+    assert '(row.get("source") or "") == "NCI"' in source
+    assert 'definitions[0].get("definition")' not in source

@@ -147,7 +147,7 @@
                 "string",
                 "null"
               ],
-              "description": "Full text definition"
+              "description": "The NCI-sourced definition where the concept has one, else the first. C3224 has four, and definitions[0] is the patient-facing NCI-GLOSS one"
             },
             "synonyms": {
               "type": "array",
@@ -224,6 +224,57 @@
                 }
               },
               "description": "Additional properties (semantic type, etc.)"
+            },
+            "definition_source": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Which body wrote the definition above: NCI, NCI-GLOSS, CDISC, NICHD and so on"
+            },
+            "definitions": {
+              "type": "array",
+              "description": "Every definition the concept carries, with its source - which body wrote a definition is part of what the definition is",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "definition": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The text"
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Authoring body"
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "NCIt definition type"
+                  },
+                  "code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "NCIt property code"
+                  }
+                }
+              }
+            },
+            "definition_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many definitions the concept carries"
             }
           },
           "not": {

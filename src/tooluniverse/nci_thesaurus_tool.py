@@ -190,7 +190,31 @@ class NCIThesaurusTool(BaseTool):
 
         # Extract definition
         definitions = data.get("definitions", [])
-        definition = definitions[0].get("definition") if definitions else None
+        # Four definitions for C3224, from NCI-GLOSS, CDISC, NICHD and NCI,
+        # and `definitions[0]` is the patient-facing glossary one. NCI is the
+        # thesaurus's own source, so it is preferred and the source is
+        # reported; all four are returned beside it, because which body
+        # wrote a definition is part of what the definition is.
+        definition_rows = [
+            {
+                "definition": row.get("definition"),
+                "source": row.get("source"),
+                "type": row.get("type"),
+                "code": row.get("code"),
+            }
+            for row in definitions
+            if isinstance(row, dict) and row.get("definition")
+        ]
+        preferred_definition = next(
+            (row for row in definition_rows if (row.get("source") or "") == "NCI"),
+            definition_rows[0] if definition_rows else None,
+        )
+        definition = (
+            preferred_definition.get("definition") if preferred_definition else None
+        )
+        definition_source = (
+            preferred_definition.get("source") if preferred_definition else None
+        )
 
         # Extract synonyms
         synonyms_raw = data.get("synonyms", [])
@@ -236,6 +260,9 @@ class NCIThesaurusTool(BaseTool):
                 "code": data.get("code", ""),
                 "name": data.get("name", ""),
                 "definition": definition,
+                "definition_source": definition_source,
+                "definitions": definition_rows,
+                "definition_count": len(definition_rows),
                 "synonyms": synonyms,
                 "properties": properties,
             },

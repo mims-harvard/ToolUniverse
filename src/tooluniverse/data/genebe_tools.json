@@ -506,6 +506,20 @@
                 "null"
               ],
               "description": "AlphaMissense prediction, beside its score"
+            },
+            "acmg_gene_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many per-gene ACMG blocks the variant has. The hgvs_c, hgvs_p and effects above come from the first; a variant in an overlapping-gene region can have several"
+            },
+            "acmg_gene_symbol": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The gene that block belongs to"
             }
           },
           "required": [

@@ -258,7 +258,13 @@ class GeneBeTool(BaseTool):
         data["consequences"] = consequences
         data["consequence_count"] = len(v.get("consequences") or [])
         data["consequences_truncated"] = data["consequence_count"] > len(consequences)
-        by_gene = (v.get("acmg_by_gene") or [{}])[0]
+        # A variant in an overlapping-gene region gets one ACMG block per
+        # gene. Both variants measured return exactly one, so taking the
+        # first is right today and the count says when it stops being.
+        by_gene_rows = [g for g in (v.get("acmg_by_gene") or []) if isinstance(g, dict)]
+        by_gene = by_gene_rows[0] if by_gene_rows else {}
+        data["acmg_gene_count"] = len(by_gene_rows)
+        data["acmg_gene_symbol"] = by_gene.get("gene_symbol")
         for key in _GENE_LEVEL_FIELDS:
             val = by_gene.get(key)
             if val not in (None, "", []):
