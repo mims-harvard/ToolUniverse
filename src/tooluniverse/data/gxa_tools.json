@@ -383,7 +383,90 @@
               "type": "array"
             },
             "config": {
-              "type": "object"
+              "type": "object",
+              "properties": {
+                "disclaimer": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Atlas disclaimer for the experiment, e.g. 'experimental' for a pilot dataset."
+                },
+                "resources": {
+                  "type": "array",
+                  "description": "Downloadable files the Atlas offers for the experiment, each with its type and URL.",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            },
+            "conditions": {
+              "type": "array",
+              "description": "The experiment's assay groups: one per condition, with the factor each varies. This tool's description promises factor information and reported the conditions as a count (total_conditions 29 for E-MTAB-2836) with column_groupings empty, so none of it reached the caller. property_type separates the varied FACTOR from the SAMPLE annotation held fixed.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "assay_group_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The assay group's id, e.g. g1."
+                  },
+                  "factor_value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The condition, e.g. 'adipose tissue'."
+                  },
+                  "ontology_term_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Ontology term for the condition, e.g. UBERON_0001013."
+                  },
+                  "replicates": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Number of replicate assays in the group."
+                  },
+                  "properties": {
+                    "type": "array",
+                    "description": "The sample characteristics of the group, each with whether it is the varied factor.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "property_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Characteristic, e.g. 'organism part', 'developmental stage', 'sex'."
+                        },
+                        "value": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Its value for this group."
+                        },
+                        "property_type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "FACTOR for the characteristic this experiment varies, SAMPLE for one held fixed."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
             }
           },
           "not": {

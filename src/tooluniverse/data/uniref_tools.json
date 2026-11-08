@@ -152,6 +152,97 @@
                 "null"
               ],
               "description": "Sequence length"
+            },
+            "members": {
+              "type": "array",
+              "description": "The cluster's members. A UniRef cluster is its membership: UniRef90_P05067 reports member_count 254 and only the representative member was returned, so the 253 sequences the cluster groups had no path to any caller. At most MEMBERS_PER_CLUSTER are returned; members_truncated says when that applied.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "member_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The member's id, e.g. A4_PANTR."
+                  },
+                  "member_id_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What kind of id, e.g. 'UniProtKB ID'."
+                  },
+                  "accessions": {
+                    "type": "array",
+                    "description": "UniProtKB accessions for the member -- what joins it to every other protein resource.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "organism_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Source organism."
+                  },
+                  "organism_tax_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "NCBI taxon id of the organism."
+                  },
+                  "protein_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Protein name as UniRef records it."
+                  },
+                  "sequence_length": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Length of the member's sequence."
+                  },
+                  "uniref50_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The same sequence's UniRef50 cluster."
+                  },
+                  "uniref100_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its UniRef100 cluster."
+                  },
+                  "uniparc_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Its UniParc identifier."
+                  }
+                }
+              }
+            },
+            "members_returned": {
+              "type": "integer",
+              "description": "How many member records are in members."
+            },
+            "members_in_response": {
+              "type": "integer",
+              "description": "How many members the UniRef reply carried (253 for UniRef90_P05067, whose member_count is 254: the count includes the representative, which is reported separately)."
+            },
+            "members_truncated": {
+              "type": "boolean",
+              "description": "True when the reply carried more members than MEMBERS_PER_CLUSTER."
             }
           },
           "not": {

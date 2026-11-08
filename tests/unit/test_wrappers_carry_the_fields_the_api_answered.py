@@ -2058,6 +2058,35 @@ UPSTREAM_KEYS = [
         "the lineage that separates two taxa sharing a common name, for a "
         "search that returned the name and the rank alone",
     ),
+    (
+        "disprot_tool.py",
+        "def _statements",
+        "the sentence from the paper a disorder annotation rests on, where "
+        "the term name and the evidence code were returned without it",
+    ),
+    (
+        "disprot_tool.py",
+        "def _partners",
+        "what a region annotated `protein binding` binds",
+    ),
+    (
+        "disprot_tool.py",
+        'region.get("reference_id")',
+        "the PubMed id of the paper behind each annotation",
+    ),
+    (
+        "uniref_tool.py",
+        "def _member",
+        "the 253 members of a 254-member cluster, where only the "
+        "representative was returned",
+    ),
+    (
+        "gxa_tool.py",
+        "def _column",
+        "an experiment's conditions and the factor each varies, reported as "
+        "a count by the one tool whose description promises factor "
+        "information",
+    ),
 ]
 
 
@@ -2086,6 +2115,14 @@ def test_the_wrapper_reads_the_field_the_api_answered(module, key, why):
 
 # (tool, output field the schema must declare)
 DECLARED = [
+    ("DisProt_get_entry", "statements"),
+    ("DisProt_get_entry", "interaction_partners"),
+    ("DisProt_get_entry", "evidence_code_id"),
+    ("DisProt_get_entry", "reference_source"),
+    ("UniRef_get_cluster", "members"),
+    ("UniRef_get_cluster", "members_truncated"),
+    ("GxA_get_experiment_info", "conditions"),
+    ("GxA_get_experiment_info", "property_type"),
     ("SGD_get_phenotypes", "note"),
     ("SGD_get_phenotypes", "experiment_note"),
     ("cellosaurus_get_cell_line_info", "publications"),
@@ -4505,3 +4542,106 @@ def test_a_photo_url_says_whether_the_photo_may_be_used():
     taxa = _config("iNaturalist_search_taxa")["return_schema"]
     rows = (taxa.get("oneOf") or [taxa])[0]["items"]["properties"]
     assert "Monarch Flycatchers" in rows["ancestor_ids"]["description"]
+
+
+def test_a_disorder_annotation_carries_the_sentence_it_rests_on():
+    """26 of p53's regions bind something. Which something?
+
+    `DisProt_get_entry` promises "detailed disorder region annotations" and
+    that "every region retains all returned cross-references". It returned
+    the term name, the evidence code's sentence-long name, the span and the
+    PDB/BMRB cross-references -- and dropped, for all 63 of P04637's
+    regions, the part a curator writes:
+
+    * `statement`, the sentence from the paper the annotation rests on. One
+      binding region's reads "This short helix interacts with the surface of
+      Tfb1 formed by beta strands b5, b6, and b7 and the loop connecting b5
+      to b6." The term name for that region is `protein binding`.
+    * `interaction_partner` for 28 of the 63 -- including 26 annotated
+      `protein binding`, where the partner IS the annotation. That same
+      region binds UniProt P32776, a cross-reference the description claimed
+      to retain.
+    * `reference_id` and `reference_source`: a PubMed id for every region
+      (16793543 for that one), so the annotation can be followed to its
+      paper.
+    * `ec_id`, the ECO identifier, where only `ec_name` was returned -- an
+      identifier reduced to its own description.
+    * `curator_name`, `curator_orcid` and the annotation date.
+
+    One field went the other way: `method` was read from `method_name`,
+    which DisProt does not send on this endpoint -- 0 of 63 regions
+    populate it. A key that is always null is not a disclosure, so it is
+    gone.
+    """
+    source = _source("disprot_tool.py")
+    assert "def _statements" in source
+    assert "def _partners" in source
+    assert "STATEMENT_CHARACTERS" in source
+    assert 'region.get("ec_id")' in source
+    assert 'region.get("reference_id")' in source
+    assert 'region.get("curator_orcid")' in source
+    # The key the API never answers is not read any more.
+    assert 'region.get("method_name")' not in source
+    schema = _config("DisProt_get_entry")["return_schema"]
+    rows = (schema.get("oneOf") or [schema])[0]["properties"]["regions"][
+        "items"
+    ]["properties"]
+    assert "method" not in rows
+    assert "protein binding" in rows["interaction_partners"]["description"]
+    assert "ECO:0006165" in rows["evidence_code_id"]["description"]
+
+
+def test_a_cluster_is_its_membership():
+    """member_count: 254. Members returned: 1.
+
+    `UniRef_get_cluster` fetched UniRef90_P05067, whose reply carries 253
+    member records -- each with its UniProtKB accessions, organism, protein
+    name, and its UniRef50, UniRef100 and UniParc ids -- and returned the
+    representative member alone. The count was there, the membership was
+    not, and no sibling tool takes a cluster id: `UniRef_search_clusters`
+    searches by text. So the 253 sequences the cluster groups had no path to
+    any caller, from a reply the wrapper had already paid for.
+
+    Members now come back capped at MEMBERS_PER_CLUSTER with
+    `members_truncated` saying when the cap applied, and
+    `members_in_response` beside `member_count` because the two differ by
+    one: the count includes the representative, which is reported
+    separately.
+    """
+    source = _source("uniref_tool.py")
+    assert "def _member" in source
+    assert "MEMBERS_PER_CLUSTER" in source
+    assert 'member.get("accessions")' in source
+    assert 'member.get("uniparcId")' in source
+    assert '"members_truncated"' in source
+    schema = _config("UniRef_get_cluster")["return_schema"]
+    props = (schema.get("oneOf") or [schema])[0]["properties"]
+    assert "254" in props["members"]["description"]
+    assert "accessions" in props["members"]["items"]["properties"]
+
+
+def test_the_tool_that_promises_factors_reports_the_factors():
+    """"Returns experiment metadata and factor information" -- 29 of them,
+    as the number 29.
+
+    `GxA_get_experiment_info` returned `total_conditions`, a count, and
+    `column_groupings`, which the Atlas sends empty for E-MTAB-2836. Its
+    `columnHeaders` block holds the 29 assay groups with their factor
+    values, ontology terms, replicate counts and sample properties -- and
+    `contrastPropertyType` on each property, which is what separates the
+    characteristic the experiment varies (`organism part`, FACTOR) from the
+    ones held fixed (`developmental stage`, `organism`, `sex`, SAMPLE).
+
+    The sibling expression handler in the same module already read all of
+    it. This is drift between two handlers over one block, so there is now
+    one reader, `_column`, and both call it.
+    """
+    source = _source("gxa_tool.py")
+    assert "def _column" in source
+    assert 'prop.get("contrastPropertyType")' in source
+    # One reader: the expression handler and the info handler both use it.
+    assert source.count("_column(col)") == 2
+    schema = _config("GxA_get_experiment_info")["return_schema"]
+    props = (schema.get("oneOf") or [schema])[0]["properties"]
+    assert "FACTOR" in json.dumps(props["conditions"])
+    assert "count" in props["conditions"]["description"]

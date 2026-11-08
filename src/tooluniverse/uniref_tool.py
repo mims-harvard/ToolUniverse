@@ -19,6 +19,31 @@ from .uniprot_pagination import pagination_metadata
 UNIREF_BASE_URL = "https://rest.uniprot.org/uniref"
 
 
+MEMBERS_PER_CLUSTER = 200
+
+
+def _member(member: dict) -> dict:
+    """One member of a UniRef cluster, with the ids that reach it.
+
+    `accessions` is what joins a member to UniProtKB; `uniref50Id`,
+    `uniref100Id` and `uniparcId` are the same sequence at the other
+    thresholds. UniRef sends all of them per member and the cluster is its
+    membership.
+    """
+    return {
+        "member_id": member.get("memberId"),
+        "member_id_type": member.get("memberIdType"),
+        "accessions": member.get("accessions") or [],
+        "organism_name": member.get("organismName"),
+        "organism_tax_id": member.get("organismTaxId"),
+        "protein_name": member.get("proteinName"),
+        "sequence_length": member.get("sequenceLength"),
+        "uniref50_id": member.get("uniref50Id"),
+        "uniref100_id": member.get("uniref100Id"),
+        "uniparc_id": member.get("uniparcId"),
+    }
+
+
 @register_tool("UniRefTool")
 class UniRefTool(BaseTool):
     """
@@ -103,6 +128,13 @@ class UniRefTool(BaseTool):
         # Common taxon
         common_taxon = data.get("commonTaxon") or {}
 
+        raw_members = data.get("members") or []
+        members = [
+            _member(m)
+            for m in raw_members[:MEMBERS_PER_CLUSTER]
+            if isinstance(m, dict)
+        ]
+
         return {
             "status": "success",
             "data": {
@@ -117,6 +149,14 @@ class UniRefTool(BaseTool):
                     "taxon_id": common_taxon.get("taxonId"),
                 },
                 "representative_member": representative,
+                # The cluster's other members. member_count said 254 for
+                # UniRef90_P05067 and only the representative was returned,
+                # so the 253 sequences the cluster groups -- the thing a
+                # cluster is -- had no path to the caller.
+                "members": members,
+                "members_returned": len(members),
+                "members_in_response": len(raw_members),
+                "members_truncated": len(raw_members) > len(members),
                 "sequence": sequence,
                 "sequence_length": sequence_length
                 or representative.get("sequence_length"),
