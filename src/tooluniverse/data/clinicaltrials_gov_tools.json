@@ -1116,6 +1116,31 @@
               "items": {
                 "type": "object",
                 "properties": {
+                  "has_results": {
+                    "type": "boolean",
+                    "description": "Whether the trial has posted results. The search reply carries `hasResults` and the whole resultsSection for the trials that have one, and the row was built from protocolSection alone, so \"which of these trials reported anything\" could not be answered from a reply that contained the answer."
+                  },
+                  "results_summary": {
+                    "type": "object",
+                    "description": "How much the posted results hold -- outcome measures, serious and other adverse event terms, arm groups, participant flow groups, baseline measures. Empty when the trial has posted none. The row carries the counts rather than hundreds of result rows.",
+                    "properties": {
+                      "outcome_measure_results": {"type": "integer"},
+                      "serious_adverse_events": {"type": "integer"},
+                      "other_adverse_events": {"type": "integer"},
+                      "adverse_event_groups": {"type": "integer"},
+                      "adverse_event_frequency_threshold": {"type": ["string", "null"]},
+                      "participant_flow_groups": {"type": "integer"},
+                      "baseline_measures": {"type": "integer"}
+                    }
+                  },
+                  "results_section_tools": {
+                    "type": "object",
+                    "description": "Which tool returns each part of the posted results. Empty when the trial has posted none.",
+                    "properties": {
+                      "outcome_results": {"type": ["string", "null"]},
+                      "adverse_events": {"type": ["string", "null"]}
+                    }
+                  },
                   "nct_id": {
                     "type": [
                       "string",
@@ -1141,6 +1166,8 @@
                     ]
                   },
                   "phases": {
+                    "items": {"type": "string"},
+                    "description": "Trial phases, e.g. PHASE2.",
                     "type": "array"
                   },
                   "enrollment": {
@@ -1150,9 +1177,13 @@
                     ]
                   },
                   "conditions": {
+                    "items": {"type": "string"},
+                    "description": "Conditions studied.",
                     "type": "array"
                   },
                   "interventions": {
+                    "items": {"type": "string"},
+                    "description": "Intervention names.",
                     "type": "array"
                   },
                   "intervention_count": {
@@ -1188,6 +1219,7 @@
                     }
                   },
                   "locations": {
+                    "items": {"type": "object", "properties": {"facility": {"type": ["string", "null"]}, "city": {"type": ["string", "null"]}, "state": {"type": ["string", "null"]}, "zip": {"type": ["string", "null"]}, "country": {"type": ["string", "null"]}, "status": {"type": ["string", "null"], "description": "Recruitment status at this site."}, "latitude": {"type": ["number", "null"]}, "longitude": {"type": ["number", "null"]}}},
                     "type": "array"
                   },
                   "location_count": {
@@ -1209,6 +1241,7 @@
                   "primary_outcome_count": {"type": "integer"},
                   "secondary_outcome_count": {"type": "integer"},
                   "arms": {
+                    "items": {"type": "object", "properties": {"label": {"type": ["string", "null"]}, "type": {"type": ["string", "null"], "description": "EXPERIMENTAL, PLACEBO_COMPARATOR, ..."}, "description": {"type": ["string", "null"]}, "intervention_names": {"type": "array", "items": {"type": "string"}}}},
                     "type": "array",
                     "description": "The trial's arms with what each was given, capped at 5, so a two-arm comparison can be read off the search result.",
                     "items": {
@@ -1222,6 +1255,7 @@
                   },
                   "arm_count": {"type": "integer"},
                   "references": {
+                    "items": {"type": "object", "properties": {"pmid": {"type": ["string", "null"]}, "type": {"type": ["string", "null"], "description": "BACKGROUND, RESULT or DERIVED."}, "citation": {"type": ["string", "null"]}}},
                     "type": "array",
                     "description": "The publications behind this record"
                   },
@@ -1288,7 +1322,7 @@
               ]
             },
             "executed_query": {
-              "type": "object",
+              "type": "object", "additionalProperties": {"type": "string"}, "description": "The parameters actually sent to ClinicalTrials.gov, keyed by API field: a value is rewritten into Essie syntax before it is sent (an intervention becomes \"(AREA[InterventionName]metformin OR AREA[InterventionOtherName]metformin)\"), and this is what was executed. query_rewrites explains each change.",
               "description": "The query parameters actually sent to ClinicalTrials.gov, after phrase-quoting and AREA[] field restriction. Compare against what you passed: they differ whenever `query_rewrites` is non-empty."
             },
             "query_rewrites": {
@@ -1752,7 +1786,214 @@
           "type": "object",
           "properties": {
             "studies": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "nct_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ClinicalTrials.gov registry identifier."
+                  },
+                  "brief_title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The trial's brief title."
+                  },
+                  "has_results": {
+                    "type": "boolean",
+                    "description": "Whether the trial has posted results. The search reply carries `hasResults` and the whole resultsSection for the trials that have one, and the row was built from protocolSection alone, so 'which of these trials reported anything' could not be answered from a reply that contained the answer."
+                  },
+                  "results_summary": {
+                    "type": "object",
+                    "description": "How much the posted results hold. Empty when the trial has posted none. The search row carries the counts rather than hundreds of result rows; results_section_tools names the tool for each part.",
+                    "properties": {
+                      "outcome_measure_results": {
+                        "type": "integer",
+                        "description": "Outcome measures with posted results."
+                      },
+                      "serious_adverse_events": {
+                        "type": "integer",
+                        "description": "Serious adverse event terms reported."
+                      },
+                      "other_adverse_events": {
+                        "type": "integer",
+                        "description": "Other adverse event terms reported."
+                      },
+                      "adverse_event_groups": {
+                        "type": "integer",
+                        "description": "Arm groups the event counts are split by."
+                      },
+                      "adverse_event_frequency_threshold": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The frequency threshold above which other events were reported, as the registrant stated it."
+                      },
+                      "participant_flow_groups": {
+                        "type": "integer",
+                        "description": "Groups in the participant flow."
+                      },
+                      "baseline_measures": {
+                        "type": "integer",
+                        "description": "Baseline characteristic measures."
+                      }
+                    }
+                  },
+                  "results_section_tools": {
+                    "type": "object",
+                    "description": "Which tool returns each part of the posted results. Empty when the trial has posted none.",
+                    "properties": {
+                      "outcome_results": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Tool name for the outcome measure results."
+                      },
+                      "adverse_events": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Tool name for the adverse event tables."
+                      }
+                    }
+                  },
+                  "countries": {
+                    "type": "array",
+                    "description": "Countries with a listed site.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "locations": {
+                    "items": {"type": "object", "properties": {"facility": {"type": ["string", "null"]}, "city": {"type": ["string", "null"]}, "state": {"type": ["string", "null"]}, "zip": {"type": ["string", "null"]}, "country": {"type": ["string", "null"]}, "status": {"type": ["string", "null"], "description": "Recruitment status at this site."}, "latitude": {"type": ["number", "null"]}, "longitude": {"type": ["number", "null"]}}},
+                    "type": "array",
+                    "description": "A page of the trial's sites, with coordinates so 'near me' needs no geocoding."
+                  },
+                  "location_count": {
+                    "type": "integer",
+                    "description": "Sites the trial lists in total."
+                  },
+                  "locations_truncated": {
+                    "type": "boolean",
+                    "description": "True when locations holds fewer than all of them."
+                  },
+                  "status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Overall recruitment status, e.g. COMPLETED, RECRUITING."
+                  },
+                  "study_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "INTERVENTIONAL, OBSERVATIONAL or EXPANDED_ACCESS."
+                  },
+                  "phases": {
+                    "type": "array",
+                    "description": "Trial phases, e.g. PHASE2.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "enrollment": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Enrolled or anticipated participants."
+                  },
+                  "conditions": {
+                    "type": "array",
+                    "description": "Conditions studied.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "interventions": {
+                    "type": "array",
+                    "description": "The first few intervention names.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "intervention_count": {
+                    "type": "integer",
+                    "description": "Interventions the trial registers in total."
+                  },
+                  "interventions_truncated": {
+                    "type": "boolean",
+                    "description": "True when interventions is a partial list."
+                  },
+                  "intervention_other_names": {
+                    "type": "array",
+                    "description": "Synonyms the registrant recorded.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "primary_outcome_measures": {
+                    "type": "array",
+                    "description": "Names of the primary outcome measures.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "primary_outcome_count": {
+                    "type": "integer",
+                    "description": "Primary outcome measures in total."
+                  },
+                  "secondary_outcome_count": {
+                    "type": "integer",
+                    "description": "Secondary outcome measures in total."
+                  },
+                  "arms": {
+                    "items": {"type": "object", "properties": {"label": {"type": ["string", "null"]}, "type": {"type": ["string", "null"], "description": "EXPERIMENTAL, PLACEBO_COMPARATOR, ..."}, "description": {"type": ["string", "null"]}, "intervention_names": {"type": "array", "items": {"type": "string"}}}},
+                    "type": "array",
+                    "description": "Arm groups with their type and interventions."
+                  },
+                  "arm_count": {
+                    "type": "integer",
+                    "description": "Arm groups in total."
+                  },
+                  "references": {
+                    "items": {"type": "object", "properties": {"pmid": {"type": ["string", "null"]}, "type": {"type": ["string", "null"], "description": "BACKGROUND, RESULT or DERIVED."}, "citation": {"type": ["string", "null"]}}},
+                    "type": "array",
+                    "description": "Publications the registrant linked."
+                  },
+                  "sponsor": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Lead sponsor."
+                  },
+                  "start_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Study start date as registered."
+                  },
+                  "completion_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Study completion date as registered."
+                  }
+                }
+              }
             },
             "total_count": {
               "type": [
@@ -1772,7 +2013,7 @@
               ]
             },
             "executed_query": {
-              "type": "object",
+              "type": "object", "additionalProperties": {"type": "string"}, "description": "The parameters actually sent to ClinicalTrials.gov, keyed by API field: a value is rewritten into Essie syntax before it is sent (an intervention becomes \"(AREA[InterventionName]metformin OR AREA[InterventionOtherName]metformin)\"), and this is what was executed. query_rewrites explains each change.",
               "description": "The query parameters actually sent to ClinicalTrials.gov, after phrase-quoting and AREA[] field restriction. Compare against what you passed: they differ whenever `query_rewrites` is non-empty."
             },
             "query_rewrites": {
@@ -1923,7 +2164,214 @@
           "type": "object",
           "properties": {
             "studies": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "nct_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ClinicalTrials.gov registry identifier."
+                  },
+                  "brief_title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The trial's brief title."
+                  },
+                  "has_results": {
+                    "type": "boolean",
+                    "description": "Whether the trial has posted results. The search reply carries `hasResults` and the whole resultsSection for the trials that have one, and the row was built from protocolSection alone, so 'which of these trials reported anything' could not be answered from a reply that contained the answer."
+                  },
+                  "results_summary": {
+                    "type": "object",
+                    "description": "How much the posted results hold. Empty when the trial has posted none. The search row carries the counts rather than hundreds of result rows; results_section_tools names the tool for each part.",
+                    "properties": {
+                      "outcome_measure_results": {
+                        "type": "integer",
+                        "description": "Outcome measures with posted results."
+                      },
+                      "serious_adverse_events": {
+                        "type": "integer",
+                        "description": "Serious adverse event terms reported."
+                      },
+                      "other_adverse_events": {
+                        "type": "integer",
+                        "description": "Other adverse event terms reported."
+                      },
+                      "adverse_event_groups": {
+                        "type": "integer",
+                        "description": "Arm groups the event counts are split by."
+                      },
+                      "adverse_event_frequency_threshold": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The frequency threshold above which other events were reported, as the registrant stated it."
+                      },
+                      "participant_flow_groups": {
+                        "type": "integer",
+                        "description": "Groups in the participant flow."
+                      },
+                      "baseline_measures": {
+                        "type": "integer",
+                        "description": "Baseline characteristic measures."
+                      }
+                    }
+                  },
+                  "results_section_tools": {
+                    "type": "object",
+                    "description": "Which tool returns each part of the posted results. Empty when the trial has posted none.",
+                    "properties": {
+                      "outcome_results": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Tool name for the outcome measure results."
+                      },
+                      "adverse_events": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Tool name for the adverse event tables."
+                      }
+                    }
+                  },
+                  "countries": {
+                    "type": "array",
+                    "description": "Countries with a listed site.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "locations": {
+                    "items": {"type": "object", "properties": {"facility": {"type": ["string", "null"]}, "city": {"type": ["string", "null"]}, "state": {"type": ["string", "null"]}, "zip": {"type": ["string", "null"]}, "country": {"type": ["string", "null"]}, "status": {"type": ["string", "null"], "description": "Recruitment status at this site."}, "latitude": {"type": ["number", "null"]}, "longitude": {"type": ["number", "null"]}}},
+                    "type": "array",
+                    "description": "A page of the trial's sites, with coordinates so 'near me' needs no geocoding."
+                  },
+                  "location_count": {
+                    "type": "integer",
+                    "description": "Sites the trial lists in total."
+                  },
+                  "locations_truncated": {
+                    "type": "boolean",
+                    "description": "True when locations holds fewer than all of them."
+                  },
+                  "status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Overall recruitment status, e.g. COMPLETED, RECRUITING."
+                  },
+                  "study_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "INTERVENTIONAL, OBSERVATIONAL or EXPANDED_ACCESS."
+                  },
+                  "phases": {
+                    "type": "array",
+                    "description": "Trial phases, e.g. PHASE2.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "enrollment": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Enrolled or anticipated participants."
+                  },
+                  "conditions": {
+                    "type": "array",
+                    "description": "Conditions studied.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "interventions": {
+                    "type": "array",
+                    "description": "The first few intervention names.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "intervention_count": {
+                    "type": "integer",
+                    "description": "Interventions the trial registers in total."
+                  },
+                  "interventions_truncated": {
+                    "type": "boolean",
+                    "description": "True when interventions is a partial list."
+                  },
+                  "intervention_other_names": {
+                    "type": "array",
+                    "description": "Synonyms the registrant recorded.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "primary_outcome_measures": {
+                    "type": "array",
+                    "description": "Names of the primary outcome measures.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "primary_outcome_count": {
+                    "type": "integer",
+                    "description": "Primary outcome measures in total."
+                  },
+                  "secondary_outcome_count": {
+                    "type": "integer",
+                    "description": "Secondary outcome measures in total."
+                  },
+                  "arms": {
+                    "items": {"type": "object", "properties": {"label": {"type": ["string", "null"]}, "type": {"type": ["string", "null"], "description": "EXPERIMENTAL, PLACEBO_COMPARATOR, ..."}, "description": {"type": ["string", "null"]}, "intervention_names": {"type": "array", "items": {"type": "string"}}}},
+                    "type": "array",
+                    "description": "Arm groups with their type and interventions."
+                  },
+                  "arm_count": {
+                    "type": "integer",
+                    "description": "Arm groups in total."
+                  },
+                  "references": {
+                    "items": {"type": "object", "properties": {"pmid": {"type": ["string", "null"]}, "type": {"type": ["string", "null"], "description": "BACKGROUND, RESULT or DERIVED."}, "citation": {"type": ["string", "null"]}}},
+                    "type": "array",
+                    "description": "Publications the registrant linked."
+                  },
+                  "sponsor": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Lead sponsor."
+                  },
+                  "start_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Study start date as registered."
+                  },
+                  "completion_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Study completion date as registered."
+                  }
+                }
+              }
             },
             "total_count": {
               "type": [
@@ -1943,7 +2391,7 @@
               ]
             },
             "executed_query": {
-              "type": "object",
+              "type": "object", "additionalProperties": {"type": "string"}, "description": "The parameters actually sent to ClinicalTrials.gov, keyed by API field: a value is rewritten into Essie syntax before it is sent (an intervention becomes \"(AREA[InterventionName]metformin OR AREA[InterventionOtherName]metformin)\"), and this is what was executed. query_rewrites explains each change.",
               "description": "The query parameters actually sent to ClinicalTrials.gov, after phrase-quoting and AREA[] field restriction. Compare against what you passed: they differ whenever `query_rewrites` is non-empty."
             },
             "query_rewrites": {

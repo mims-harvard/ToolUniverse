@@ -260,12 +260,14 @@
                             "protein_end": {"type": ["integer", "null"]},
                             "genome_start": {"type": ["integer", "null"]},
                             "genome_end": {"type": ["integer", "null"]},
-                            "evidence_count": {"type": "integer"}
+                            "evidence": {"type": "array", "description": "The evidence behind the annotation. This endpoint answers `evidence` and /proteins/api/features answers `evidences`; reading only the plural made evidence_count 0 for all 264 features of 17:7676154, of which 154 carry evidence. A count of zero reads as \"no evidence\", not as \"not looked at\", so the records are returned and not only a number.", "items": {"type": "object", "properties": {"code": {"type": ["string", "null"], "description": "ECO evidence code, e.g. ECO:0000269."}, "source_database": {"type": ["string", "null"], "description": "Database of the asserting record, e.g. PubMed."}, "source_id": {"type": ["string", "null"], "description": "Its identifier in that database."}}}},
+                            "evidence_count": {"type": "integer", "description": "How many evidence records the annotation carries."}
                           }
                         }
                       },
                       "feature_count": {"type": "integer"},
-                      "feature_type_counts": {"type": "object"},
+                      "nucleotide_id": {"type": ["string", "null"], "description": "Accession of the genomic sequence the coordinates are on, e.g. CM000679.2. The sibling handler reported it for the same field and this one did not."},
+                      "feature_type_counts": {"type": "object", "description": "How many features of each type the location carries, so a page of them can be read against the whole.", "additionalProperties": {"type": "integer"}},
                       "feature_offset": {"type": "integer"},
                       "features_returned": {"type": "integer"},
                       "features_truncated": {"type": "boolean"},

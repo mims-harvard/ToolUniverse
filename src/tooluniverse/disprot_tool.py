@@ -28,6 +28,24 @@ _UNIPROT_ACC = re.compile(
 STATEMENT_CHARACTERS = 1200
 
 
+def _gene_names(genes) -> list:
+    """Every gene name on the entry, not only the first.
+
+    Both handlers took `genes[0]` with no count. P0DN86 is CGB3, CGB5 and
+    CGB8 -- three names for one DisProt entry -- and a caller searching for
+    CGB8 was answered with CGB3. `gene` keeps its old meaning as the first
+    name so existing callers are unaffected.
+    """
+    names = []
+    for gene in genes or []:
+        if not isinstance(gene, dict):
+            continue
+        value = (gene.get("name") or {}).get("value")
+        if value and value not in names:
+            names.append(value)
+    return names
+
+
 def _statements(block: dict) -> list:
     """The curator's quoted evidence for an annotation.
 
@@ -207,13 +225,16 @@ class DisProtTool(BaseTool):
                     continue
                 seen.add(key)
                 genes = entry.get("genes", [])
-                gene_name = genes[0].get("name", {}).get("value", "") if genes else ""
+                gene_names = _gene_names(genes)
+                gene_name = gene_names[0] if gene_names else ""
                 entries.append(
                     {
                         "disprot_id": entry.get("disprot_id"),
                         "acc": entry.get("acc"),
                         "name": entry.get("name"),
                         "gene": gene_name,
+                        "gene_names": gene_names,
+                        "gene_count": len(gene_names),
                         "organism": entry.get("organism"),
                         "length": entry.get("length"),
                         "disorder_content": entry.get("disorder_content"),
@@ -348,7 +369,8 @@ class DisProtTool(BaseTool):
             )
 
         genes = data.get("genes", [])
-        gene_name = genes[0].get("name", {}).get("value", "") if genes else ""
+        gene_names = _gene_names(genes)
+        gene_name = gene_names[0] if gene_names else ""
 
         returned_regions = regions[region_offset : region_offset + region_limit]
         has_more_regions = bool(returned_regions) and (
@@ -361,6 +383,8 @@ class DisProtTool(BaseTool):
                 "acc": data.get("acc"),
                 "name": data.get("name"),
                 "gene": gene_name,
+                "gene_names": gene_names,
+                "gene_count": len(gene_names),
                 "organism": data.get("organism"),
                 "length": data.get("length"),
                 "disorder_content": data.get("disorder_content"),

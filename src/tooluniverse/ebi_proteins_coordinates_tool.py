@@ -38,6 +38,31 @@ def _position(node: Any) -> Any:
     return None
 
 
+def _evidence(feature: Dict[str, Any]) -> list:
+    """The evidence behind one annotation, under either of the two names.
+
+    This endpoint answers `evidence`; `/proteins/api/features` answers
+    `evidences`. Reading only the plural made `evidence_count` 0 for all 264
+    features of 17:7676154, of which 154 carry evidence -- ECO:0000269 with
+    the PubMed ids that assert it. A count of zero reads as "no evidence",
+    not as "not looked at", which is why this is reported as the records
+    rather than a number.
+    """
+    rows = []
+    for item in feature.get("evidence") or feature.get("evidences") or []:
+        if not isinstance(item, dict):
+            continue
+        reference = item.get("dbReference") or item.get("source") or {}
+        rows.append(
+            {
+                "code": item.get("code"),
+                "source_database": reference.get("type"),
+                "source_id": reference.get("id"),
+            }
+        )
+    return rows
+
+
 def _feature_row(feature: Dict[str, Any]) -> Dict[str, Any]:
     """One annotation with both coordinate systems it was mapped between."""
     location = feature.get("location") or {}
@@ -59,7 +84,9 @@ def _feature_row(feature: Dict[str, Any]) -> Dict[str, Any]:
         "protein_end": end.get("position"),
         "genome_start": (genome.get("begin") or {}).get("position"),
         "genome_end": (genome.get("end") or {}).get("position"),
-        "evidence_count": len(feature.get("evidences") or []),
+        # The ECO codes and the publications that assert the annotation.
+        "evidence": _evidence(feature),
+        "evidence_count": len(_evidence(feature)),
     }
 
 
@@ -332,6 +359,7 @@ class EBIProteinsCoordinatesTool(BaseTool):
                         "gene_end": loc.get("geneEnd"),
                         "reverse_strand": loc.get("reverseStrand"),
                         "assembly_name": loc.get("assemblyName"),
+                        "nucleotide_id": loc.get("nucleotideId"),
                         # The annotations at the position asked about, which is
                         # what a genome-to-protein lookup is for. 264 of them
                         # came back for 17:7676154 and none was reported.

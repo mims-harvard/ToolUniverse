@@ -22,6 +22,23 @@ UNIREF_BASE_URL = "https://rest.uniprot.org/uniref"
 MEMBERS_PER_CLUSTER = 200
 
 
+def _go_terms(cluster: dict) -> list:
+    """The GO annotations UniRef assigns to the cluster.
+
+    Both endpoints answer `goTerms` and neither handler read it: a cluster's
+    GO terms are the functional summary of the group, and no UniRef tool
+    returned them anywhere. UniRef90_A5H1J3 carries GO:0003677 (GO Molecular
+    Function); clusters with no annotation answer null, which is a real
+    answer and not an omission.
+    """
+    rows = []
+    for term in cluster.get("goTerms") or []:
+        if not isinstance(term, dict):
+            continue
+        rows.append({"go_id": term.get("goId"), "aspect": term.get("aspect")})
+    return rows
+
+
 def _member(member: dict) -> dict:
     """One member of a UniRef cluster, with the ids that reach it.
 
@@ -148,6 +165,7 @@ class UniRefTool(BaseTool):
                     "scientific_name": common_taxon.get("scientificName"),
                     "taxon_id": common_taxon.get("taxonId"),
                 },
+                "go_terms": _go_terms(data),
                 "representative_member": representative,
                 # The cluster's other members. member_count said 254 for
                 # UniRef90_P05067 and only the representative was returned,
@@ -246,6 +264,16 @@ class UniRefTool(BaseTool):
                     "representative_protein": rep.get("proteinName"),
                     "representative_sequence_length": rep.get("sequenceLength"),
                     "common_taxon": common_taxon.get("scientificName"),
+                    # The name alone cannot be joined; the reply carries the
+                    # taxon id beside it (Amniota is 32524).
+                    "common_taxon_id": common_taxon.get("taxonId"),
+                    # Available on this endpoint and on the lookup, read by
+                    # neither until now.
+                    "go_terms": _go_terms(cluster),
+                    # member_count is the cluster's size; the members
+                    # themselves come from UniRef_get_cluster, which returns
+                    # them, so they are not duplicated into every search row.
+                    "members_from": "UniRef_get_cluster",
                 }
             )
 

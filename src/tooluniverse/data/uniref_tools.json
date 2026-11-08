@@ -243,6 +243,29 @@
             "members_truncated": {
               "type": "boolean",
               "description": "True when the reply carried more members than MEMBERS_PER_CLUSTER."
+            },
+            "go_terms": {
+              "type": "array",
+              "description": "GO annotations UniRef assigns to the cluster. Answered by this endpoint and previously unread; an unannotated cluster answers an empty list.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "go_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GO identifier, e.g. GO:0003677."
+                  },
+                  "aspect": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GO aspect, e.g. 'GO Molecular Function'."
+                  }
+                }
+              }
             }
           },
           "not": {
@@ -391,6 +414,43 @@
                   "null"
                 ],
                 "description": "Common taxon scientific name"
+              },
+              "common_taxon_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "NCBI taxon id of the common taxon, beside its name: Amniota is 32524 and the name alone cannot be joined."
+              },
+              "go_terms": {
+                "type": "array",
+                "description": "GO annotations UniRef assigns to the cluster -- the functional summary of the group. Both endpoints answer them and neither handler read them, so no UniRef tool returned them anywhere. A cluster with no annotation answers an empty list.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "go_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "GO identifier, e.g. GO:0003677."
+                    },
+                    "aspect": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "GO aspect, e.g. 'GO Molecular Function'."
+                    }
+                  }
+                }
+              },
+              "members_from": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Names the tool that returns this cluster's members (UniRef_get_cluster). member_count is the cluster's size; the member records are not duplicated into every search row."
               }
             }
           }

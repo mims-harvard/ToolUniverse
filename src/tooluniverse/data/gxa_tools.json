@@ -75,9 +75,63 @@
                   },
                   "number_of_assays": {
                     "type": "integer"
+                  },
+                  "kingdom": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "animals, plants, fungi or protists, populated on all 4562 experiments. A cross-kingdom atlas that answered only the species name made 'are there plant experiments' a question about 1026 rows the caller could not see."
+                  },
+                  "technology_type": {
+                    "type": "array",
+                    "description": "Sequencing or array technologies used.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "experimental_factors": {
+                    "type": "array",
+                    "description": "The factors the experiment varies.",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "last_update": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the Atlas last updated the experiment."
+                  },
+                  "load_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the Atlas loaded it."
                   }
                 }
               }
+            },
+            "has_more": {
+              "type": "boolean",
+              "description": "True when more experiments match than were returned."
+            },
+            "limit": {
+              "type": "integer",
+              "description": "The page size applied."
+            },
+            "offset": {
+              "type": "integer",
+              "description": "The offset applied."
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Offset for the next page, null when there is none."
             }
           },
           "not": {

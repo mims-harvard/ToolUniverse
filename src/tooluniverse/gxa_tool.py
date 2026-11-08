@@ -158,6 +158,11 @@ class GxATool(BaseTool):
                     "accession": exp.get("experimentAccession"),
                     "description": exp.get("experimentDescription"),
                     "species": exp.get("species"),
+                    # animals / plants / fungi / protists, on all 4562
+                    # experiments. A cross-kingdom atlas that answers only
+                    # the species name makes "are there plant experiments"
+                    # a question about 1026 rows the caller cannot see.
+                    "kingdom": exp.get("kingdom"),
                     "experiment_type": exp.get("rawExperimentType"),
                     "technology_type": exp.get("technologyType"),
                     "number_of_assays": exp.get("numberOfAssays"),

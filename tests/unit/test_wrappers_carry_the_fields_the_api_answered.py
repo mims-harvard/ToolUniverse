@@ -2104,6 +2104,45 @@ UPSTREAM_KEYS = [
         'sp.get("ismarker")',
         "whether GMrepo treats the species as a phenotype marker",
     ),
+    (
+        "ctg_tool.py",
+        "**_results_summary(s),",
+        "whether a trial in a search result has posted results, from a reply "
+        "that carried the whole results section",
+    ),
+    (
+        "ebi_proteins_coordinates_tool.py",
+        'feature.get("evidence") or feature.get("evidences")',
+        "the ECO codes and publications behind an annotation, where the "
+        "wrapper read only the plural key this endpoint never sends",
+    ),
+    (
+        "ebi_proteins_coordinates_tool.py",
+        '"nucleotide_id": loc.get("nucleotideId")',
+        "the genomic sequence the coordinates are on, reported by the "
+        "sibling handler and not by this one",
+    ),
+    (
+        "uniref_tool.py",
+        "def _go_terms",
+        "a UniRef cluster's GO annotations, which no UniRef tool returned "
+        "from either endpoint",
+    ),
+    (
+        "uniref_tool.py",
+        'common_taxon.get("taxonId")',
+        "the taxon id beside the common taxon's name in the search row",
+    ),
+    (
+        "disprot_tool.py",
+        "def _gene_names",
+        "every gene name on an entry, where both handlers took genes[0]",
+    ),
+    (
+        "gxa_tool.py",
+        'exp.get("kingdom")',
+        "which kingdom an experiment is from, on all 4562 of them",
+    ),
 ]
 
 
@@ -2132,6 +2171,16 @@ def test_the_wrapper_reads_the_field_the_api_answered(module, key, why):
 
 # (tool, output field the schema must declare)
 DECLARED = [
+    ("ClinicalTrials_search_by_intervention", "has_results"),
+    ("ClinicalTrials_search_studies", "results_summary"),
+    ("ClinicalTrials_search_by_sponsor", "results_section_tools"),
+    ("EBIProteins_get_proteins_by_genomic_loc", "nucleotide_id"),
+    ("UniRef_search_clusters", "go_terms"),
+    ("UniRef_search_clusters", "common_taxon_id"),
+    ("UniRef_get_cluster", "go_terms"),
+    ("DisProt_search", "gene_names"),
+    ("DisProt_get_entry", "gene_count"),
+    ("GxA_list_experiments", "kingdom"),
     ("DiseaseOntology_get_parents", "cross_references"),
     ("DiseaseOntology_get_parents", "synonyms"),
     ("GMrepo_search_species", "is_marker"),
@@ -4756,3 +4805,137 @@ def test_a_marker_species_says_that_it_is_one():
     rows = (schema.get("oneOf") or [schema])[0]["items"]["properties"]
     assert "phenotype marker" in rows["is_marker"]["description"]
     assert "dbtype" in rows["database_links"]["items"]["properties"]
+
+
+def test_a_trial_search_says_which_trials_reported_results():
+    """Two of five metformin trials had posted results. The rows said
+    nothing.
+
+    `ClinicalTrials_search_studies`, `_by_intervention` and `_by_sponsor`
+    share one row builder, and it read `protocolSection` only -- what each
+    trial set out to do. The same search reply carries `hasResults` and, for
+    the trials that have one, the whole `resultsSection`: on page one of a
+    metformin search NCT02179788 comes back with 13 other adverse events and
+    NCT00899470 with 17 outcome measure results and 17 adverse events. Every
+    row reported `has_results: None`.
+
+    The module already had `_results_summary` for this -- written for the
+    per-study handler, which says in its own comment that what belongs in a
+    row is "the fact that they exist, how much is in each, and which tool
+    returns it". The search path never called it. One reader now serves both
+    paths, so the counts and the tool names travel with every row and the
+    hundreds of result rows stay in the tools that return them.
+    """
+    source = _source("ctg_tool.py")
+    assert "def _results_summary" in source
+    # One reader, called by the per-study handler and by the search row.
+    assert source.count("_results_summary(") == 3
+    assert "**_results_summary(s)," in source
+    schema = _config("ClinicalTrials_search_by_intervention")["return_schema"]
+    rows = (schema.get("oneOf") or [schema])[0]["properties"]["studies"][
+        "items"
+    ]["properties"]
+    assert "hasResults" in rows["has_results"]["description"]
+    assert "serious_adverse_events" in rows["results_summary"]["properties"]
+
+
+def test_an_evidence_count_of_zero_was_a_misread_key():
+    """154 of 264 features carry evidence; the count said 0 for all of them.
+
+    `EBIProteins_get_proteins_by_genomic_loc` reported `evidence_count` from
+    `feature.get("evidences")`. That endpoint answers `evidence`, singular --
+    `/proteins/api/features` is the one that answers the plural, and
+    measured live the two do not overlap: 154 of 264 features at 17:7676154
+    carry `evidence` and none carries `evidences`, while 239 of P04637's
+    1520 `/features` annotations carry `evidences` and none carries
+    `evidence`.
+
+    So the count was structurally zero. That is worse than a missing field:
+    zero evidence reads as an unsupported annotation rather than as a
+    question nobody asked. TP53's VAR_005856 has four ECO:0000269 records
+    naming PubMed 1999338, 16131611 and 14702039, and those are returned now
+    rather than counted.
+
+    `nucleotide_id` came back with it -- CM000679.2 for chromosome 17, the
+    sequence the coordinates are on. The sibling handler in this same module
+    had always reported it.
+    """
+    source = _source("ebi_proteins_coordinates_tool.py")
+    assert 'feature.get("evidence") or feature.get("evidences")' in source
+    assert '"evidence": _evidence(feature)' in source
+    assert source.count('"nucleotide_id": loc.get("nucleotideId")') == 1
+    schema = _config("EBIProteins_get_proteins_by_genomic_loc")["return_schema"]
+    proteins = (schema.get("oneOf") or [schema])[0]["properties"]["proteins"]
+    props = proteins["items"]["properties"]
+    assert "CM000679.2" in props["nucleotide_id"]["description"]
+    evidence = props["features"]["items"]["properties"]["evidence"]
+    assert "ECO:0000269" in json.dumps(evidence)
+
+
+def test_round_forty_sevens_uniref_fix_reaches_the_search_too():
+    """The fix went to the lookup and the search kept its old row.
+
+    Round forty-seven gave `UniRef_get_cluster` the 253 members it was
+    dropping. `UniRef_search_clusters`, in the same module, was not looked
+    at, and the next shard of the audit found it: the search reply carries
+    `members`, `goTerms` and `commonTaxon.taxonId`, and the row returned
+    four `representative_*` fields and the common taxon's bare name.
+
+    Two of those are now fixed here and one is deliberately not:
+
+    * `go_terms` -- a cluster's GO annotations are the functional summary of
+      the group. Both endpoints answer them and NEITHER handler read them,
+      so no UniRef tool returned them anywhere; UniRef90_A5H1J3 is
+      GO:0003677. The lookup gets them too, which round forty-seven missed.
+    * `common_taxon_id` -- Amniota is 32524, and a name cannot be joined.
+    * the members themselves stay out of the search row. `member_count` is
+      there and `UniRef_get_cluster` now returns the records, so the row
+      names that tool under `members_from` instead of repeating 200 member
+      records per hit.
+    """
+    source = _source("uniref_tool.py")
+    assert "def _go_terms" in source
+    # Both handlers read them: the lookup and the search.
+    assert source.count("_go_terms(") == 3
+    assert 'common_taxon.get("taxonId")' in source
+    assert '"members_from": "UniRef_get_cluster"' in source
+    search = _config("UniRef_search_clusters")["return_schema"]
+    rows = (search.get("oneOf") or [search])[0]["items"]["properties"]
+    assert "32524" in rows["common_taxon_id"]["description"]
+    assert "go_id" in rows["go_terms"]["items"]["properties"]
+
+
+def test_an_entry_with_three_gene_names_reports_three():
+    """P0DN86 is CGB3, CGB5 and CGB8. Both handlers said CGB3.
+
+    `DisProt_search` and `DisProt_get_entry` each built their gene field as
+    `genes[0].get("name", {}).get("value", "")` -- the first of however many,
+    with no count and no list. A caller searching DisProt for CGB8 was
+    answered with an entry labelled CGB3 and no way to see that CGB8 was one
+    of its names.
+
+    `gene` keeps its old meaning as the first name, so nothing that read it
+    changes; `gene_names` and `gene_count` are new. This was found by
+    grepping the module for `[0]` after round forty-seven had edited it --
+    the same sweep that should have caught it the first time.
+
+    GxA's experiment list had a single-field version of the same gap:
+    `kingdom` is populated on all 4562 experiments (3481 animals, 1026
+    plants, 54 fungi, 1 protist) and only the species name was returned, so
+    "are there plant experiments" was a question about rows the caller could
+    not see.
+    """
+    source = _source("disprot_tool.py")
+    assert "def _gene_names" in source
+    # Neither handler indexes the list any more.
+    assert 'genes[0].get("name"' not in source
+    # The two call sites, not the def line, which contains the same text.
+    assert source.count("gene_names = _gene_names(genes)") == 2
+    schema = _config("DisProt_search")["return_schema"]
+    rows = (schema.get("oneOf") or [schema])[0]["items"]["properties"]
+    assert "CGB8" in rows["gene_names"]["description"]
+    gxa = _source("gxa_tool.py")
+    assert 'exp.get("kingdom")' in gxa
+    listing = _config("GxA_list_experiments")["return_schema"]
+    exps = (listing.get("oneOf") or [listing])[0]["properties"]["experiments"]
+    assert "4562" in exps["items"]["properties"]["kingdom"]["description"]

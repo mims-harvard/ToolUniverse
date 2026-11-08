@@ -667,6 +667,16 @@ class ClinicalTrialsTool(RESTfulTool):
             studies.append(
                 {
                     "nct_id": proto.get("identificationModule", {}).get("nctId"),
+                    # Whether this trial has posted results, and how much.
+                    # The search response carries `hasResults` and the whole
+                    # `resultsSection` for the trials that have one --
+                    # NCT02179788 comes back with 13 adverse events on the
+                    # first page of a metformin search -- and the row was
+                    # built from `protocolSection` alone, so "which of these
+                    # trials reported anything" could not be answered from a
+                    # reply that contained the answer. The detail belongs in
+                    # the per-section tools this names, not in a search row.
+                    **_results_summary(s),
                     "brief_title": proto.get("identificationModule", {}).get(
                         "briefTitle"
                     ),
