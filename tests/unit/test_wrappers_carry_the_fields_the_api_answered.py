@@ -2287,6 +2287,26 @@ UPSTREAM_KEYS = [
         '"last_seen": xref.get("last_seen")',
         "when the mapping was last confirmed; a stale cross-reference is not the same as a current one",
     ),
+    (
+        "classyfire_tool.py",
+        'node.get("chemont_id")',
+        "the ChemOnt identifier that makes a classification citable; the wrapper kept only the term's name",
+    ),
+    (
+        "classyfire_tool.py",
+        'rec.get("alternative_parents")',
+        "ClassyFire's other valid classifications - aspirin is also a phenol ester and a benzoic acid",
+    ),
+    (
+        "classyfire_tool.py",
+        'rec.get("external_descriptors")',
+        "the curated source-database annotations, carrying CHEBI:15365 for aspirin: the join back out of ChemOnt",
+    ),
+    (
+        "classyfire_tool.py",
+        'rec.get("classification_version")',
+        "which ChemOnt release produced the classification, without which it cannot be reproduced",
+    ),
 ]
 
 
@@ -2315,6 +2335,10 @@ def test_the_wrapper_reads_the_field_the_api_answered(module, key, why):
 
 # (tool, output field the schema must declare)
 DECLARED = [
+    ("ClassyFire_classify_by_inchikey", "taxonomy"),
+    ("ClassyFire_classify_by_inchikey", "alternative_parents"),
+    ("ClassyFire_classify_by_inchikey", "external_descriptors"),
+    ("ClassyFire_classify_by_inchikey", "classification_version"),
     ("miRBase_get_mirna_xrefs", "diseases"),
     ("miRBase_get_mirna_xrefs", "disease_count"),
     ("miRBase_get_mirna_xrefs", "citations_url"),
@@ -5462,3 +5486,35 @@ def test_a_citations_field_is_not_a_count():
     assert '"citation_count"' not in source
     schema = json.dumps(_config("miRBase_get_mirna_xrefs").get("return_schema"))
     assert '"citations_url"' in schema and '"citation_count"' not in schema
+
+
+def test_a_classification_carries_the_identifiers_that_make_it_citable():
+    """`_name()` collapsed every ChemOnt node to its name string.
+
+    ClassyFire ships each node as {name, description, chemont_id, url}, so
+    the tool said aspirin's class was "Benzene and substituted derivatives"
+    and discarded CHEMONTID:0002279 -- a citable ontology term turned into
+    prose that nothing downstream can join on, and that two tools cannot
+    agree they mean the same of.
+
+    The plain name fields are deliberately unchanged, so existing callers
+    keep working; the ids arrive alongside them. Aspirin's five levels run
+    CHEMONTID:0000000 to CHEMONTID:0004577, and it has ten alternative
+    parents -- phenol esters, benzoic acids, phenoxy compounds -- of which
+    the caller previously saw none.
+    """
+    source = _source("classyfire_tool.py")
+    assert 'node.get("chemont_id")' in source
+    assert "def _name(" in source, (
+        "the name-only helper must stay: the string fields it feeds are "
+        "what existing callers read"
+    )
+    assert 'rec.get("alternative_parents")' in source
+    assert 'rec.get("predicted_chebi_terms")' in source, (
+        "ChemOnt is not a vocabulary most callers hold; the predicted ChEBI "
+        "terms are how the classification reaches one they do"
+    )
+    schema = json.dumps(_config("ClassyFire_classify_by_inchikey").get("return_schema"))
+    assert '"alternative_parent_count"' in schema, (
+        "the 50-parent cap must be disclosed"
+    )

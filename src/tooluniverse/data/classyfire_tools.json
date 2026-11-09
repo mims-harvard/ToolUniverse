@@ -60,13 +60,222 @@
                   ]
                 },
                 "substituents": {
-                  "type": "array"
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "description": "A substituent ClassyFire identified on the structure"
+                  },
+                  "description": "Substituents ClassyFire identified on the structure"
                 },
                 "description": {
                   "type": [
                     "string",
                     "null"
                   ]
+                },
+                "intermediate_nodes": {
+                  "type": "array",
+                  "description": "Names of the taxonomy levels between subclass and direct_parent",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "taxonomy": {
+                  "type": "array",
+                  "description": "The same classification as the kingdom/superclass/class/subclass/direct_parent fields above, with each level's ChemOnt id and URL. The plain name fields are kept unchanged for existing callers",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The ChemOnt term's name"
+                      },
+                      "chemont_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "ChemOnt identifier, e.g. CHEMONTID:0002279 - what makes the term citable and joinable"
+                      },
+                      "url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The ChemOnt page for the term"
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "ChemOnt's definition of the term"
+                      },
+                      "level": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Which level this is: kingdom, superclass, class, subclass or direct_parent"
+                      }
+                    }
+                  }
+                },
+                "intermediate_node_details": {
+                  "type": "array",
+                  "description": "The intermediate nodes with their ChemOnt ids and URLs",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The ChemOnt term's name"
+                      },
+                      "chemont_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "ChemOnt identifier, e.g. CHEMONTID:0002279 - what makes the term citable and joinable"
+                      },
+                      "url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The ChemOnt page for the term"
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "ChemOnt's definition of the term"
+                      }
+                    }
+                  }
+                },
+                "alternative_parents": {
+                  "type": "array",
+                  "description": "ClassyFire's other valid classifications for the same structure. Aspirin is a phenol ester and a benzoic acid as well as a substituted benzene. At most 50 are returned",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The ChemOnt term's name"
+                      },
+                      "chemont_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "ChemOnt identifier, e.g. CHEMONTID:0002279 - what makes the term citable and joinable"
+                      },
+                      "url": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The ChemOnt page for the term"
+                      },
+                      "description": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "ChemOnt's definition of the term"
+                      }
+                    }
+                  }
+                },
+                "alternative_parent_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many alternative parents ClassyFire assigned, before truncation"
+                },
+                "predicted_chebi_terms": {
+                  "type": "array",
+                  "description": "ChEBI terms predicted for the structure, each as 'name (CHEBI:id)'. At most 50 are returned",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "predicted_chebi_term_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many ChEBI terms were predicted, before truncation"
+                },
+                "predicted_lipidmaps_terms": {
+                  "type": "array",
+                  "description": "LIPID MAPS terms predicted for the structure",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "external_descriptors": {
+                  "type": "array",
+                  "description": "Curated annotations the source databases already hold for this structure - for aspirin, CHEBI:15365 with 'salicylates', 'acetate ester', 'benzoic acids'. This is the join back out of ChemOnt",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "source": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Source database, e.g. CHEBI"
+                      },
+                      "source_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "That database's identifier for the structure"
+                      },
+                      "annotations": {
+                        "type": "array",
+                        "description": "The annotations it carries",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "ancestors": {
+                  "type": "array",
+                  "description": "Every ancestor term's name",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "smiles": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The structure ClassyFire classified, as SMILES"
+                },
+                "classification_version": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Which ChemOnt release produced this classification, e.g. 2.1"
                 }
               },
               "required": [
