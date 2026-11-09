@@ -2335,6 +2335,9 @@ def test_the_wrapper_reads_the_field_the_api_answered(module, key, why):
 
 # (tool, output field the schema must declare)
 DECLARED = [
+    ("SpliceAI_get_max_delta", "max_delta_effect"),
+    ("SpliceAI_get_max_delta", "delta_by_effect"),
+    ("SpliceAI_predict_splice", "max_delta_offset"),
     ("ClassyFire_classify_by_inchikey", "taxonomy"),
     ("ClassyFire_classify_by_inchikey", "alternative_parents"),
     ("ClassyFire_classify_by_inchikey", "external_descriptors"),
@@ -5518,3 +5521,73 @@ def test_a_classification_carries_the_identifiers_that_make_it_citable():
     assert '"alternative_parent_count"' in schema, (
         "the 50-parent cap must be disclosed"
     )
+
+
+def test_spliceai_reports_a_string_delta_score_as_the_number_it_is():
+    """Every variant was reported benign, because the scores are strings.
+
+    SpliceAI sends its deltas as `"DS_AL": "0.827"`. The maximum was
+    computed with
+
+        if val is not None and isinstance(val, (int, float)):
+
+    which is False for every string, so the maximum never moved off its 0.0
+    seed. Both SpliceAI tools answered `max_delta_score: 0.0,
+    interpretation: "benign"` for chr8-140300616-T-G -- this tool's own
+    test example -- whose DS_AL is 0.827, which the tool's own thresholds
+    call high_pathogenicity. A variant triage tool that calls everything
+    benign is worse than one that returns nothing.
+
+    This is checked against the upstream shape rather than the network: the
+    strings below are exactly what the API sends.
+    """
+    from tooluniverse.spliceai_tool import SpliceAITool
+
+    tool = SpliceAITool({"fields": {"operation": "get_max_delta"}})
+    upstream_shape = [
+        {
+            "DS_AG": "0.045", "DS_AL": "0.827",
+            "DS_DG": "0.000", "DS_DL": "0.618",
+            "DP_AG": -32, "DP_AL": -2, "DP_DG": 66, "DP_DL": -147,
+            "g_name": "TRAPPC9", "t_id": "ENST00000438773.4",
+        }
+    ]
+    summary = tool._max_delta(upstream_shape)
+    assert summary["max_delta_score"] == 0.827, (
+        "a string delta must be parsed, not skipped as a non-number"
+    )
+    assert tool._interpret_score(summary["max_delta_score"]) == (
+        "high_pathogenicity"
+    )
+    assert summary["max_delta_effect"] == "acceptor_loss", (
+        "0.827 by acceptor loss is a different consequence from 0.827 by "
+        "donor gain, and the score alone does not say which"
+    )
+    assert summary["max_delta_offset"] == -2
+    assert summary["delta_by_effect"]["donor_loss"] == 0.618
+
+
+def test_spliceai_does_not_report_an_absent_prediction_as_benign():
+    """No parseable score is `unknown`, not 0.0.
+
+    The old seed of 0.0 meant "nothing came back" and "SpliceAI scored this
+    at zero" produced the same answer, and that answer was benign. A
+    genuinely all-zero response still reads benign, which is correct; an
+    empty or unparseable one now reads unknown.
+    """
+    from tooluniverse.spliceai_tool import SpliceAITool
+
+    tool = SpliceAITool({"fields": {"operation": "get_max_delta"}})
+    for nothing in ([], [{"DS_AG": "n/a"}], [{}], ["not a dict"]):
+        summary = tool._max_delta(nothing)
+        assert summary["max_delta_score"] is None, nothing
+        assert tool._interpret_score(summary["max_delta_score"]) == "unknown"
+
+    real_zero = tool._max_delta(
+        [{"DS_AG": "0.000", "DS_AL": "0.000", "DS_DG": "0.000", "DS_DL": "0.000"}]
+    )
+    assert real_zero["max_delta_score"] == 0.0
+    assert tool._interpret_score(real_zero["max_delta_score"]) == "benign"
+    # isinstance(True, int) is True in Python, so a bool must not pass for a
+    # score: it would be reported as 1.0, the top of the scale.
+    assert tool._as_float(True) is None
