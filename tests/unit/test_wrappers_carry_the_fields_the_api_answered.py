@@ -2335,6 +2335,12 @@ def test_the_wrapper_reads_the_field_the_api_answered(module, key, why):
 
 # (tool, output field the schema must declare)
 DECLARED = [
+    ("Nominatim_geocode", "licence"),
+    ("Nominatim_geocode", "osm_id"),
+    ("Nominatim_reverse_geocode", "osm_type"),
+    ("umls_get_concept_details", "semanticTypes"),
+    ("umls_get_concept_details", "suppressible"),
+    ("umls_get_concept_details", "definitions"),
     ("SpliceAI_get_max_delta", "max_delta_effect"),
     ("SpliceAI_get_max_delta", "delta_by_effect"),
     ("SpliceAI_predict_splice", "max_delta_offset"),
@@ -5639,3 +5645,44 @@ def test_a_stability_call_needs_a_number_behind_it():
         "the schema promised only stabilizing or destabilizing; there is a "
         "third value now"
     )
+
+
+def test_a_schema_does_not_declare_a_field_the_api_never_sends():
+    """umls_get_concept_details declared `definition`; UMLS sends `definitions`.
+
+    The singular form is not a key the API has, so the schema promised a
+    field that could never be populated while omitting the fourteen result
+    keys the API does send -- among them semanticTypes, which is how a
+    caller tells a disease concept from a drug one, and suppressible, which
+    says whether UMLS still stands behind the concept at all. Same shape as
+    UniChem's `lastUpdated` against the `srcLastUpdated` it actually sends,
+    reached from the schema side instead of the wrapper side.
+    """
+    schema = json.dumps(_config("umls_get_concept_details").get("return_schema"))
+    assert '"definitions"' in schema
+    assert '"definition"' not in schema.replace('"definitions"', ""), (
+        "the singular field is not a key UMLS sends"
+    )
+    for real in ('"semanticTypes"', '"suppressible"', '"atomCount"'):
+        assert real in schema, f"UMLS returns {real} and the schema omitted it"
+
+
+def test_a_geocode_result_declares_its_licence_and_its_osm_key():
+    """Nominatim's payload carries the attribution ODbL requires.
+
+    The result says 'Data (c) OpenStreetMap contributors, ODbL 1.0' and the
+    schema did not mention it, so an agent deciding what the tool returns
+    had no way to know an attribution obligation came with the answer. The
+    same row carries osm_type and osm_id, which identify the object in
+    OpenStreetMap; place_id, which the schema did declare, is a
+    Nominatim-internal number that changes between imports.
+    """
+    for tool in ("Nominatim_geocode", "Nominatim_reverse_geocode"):
+        schema = json.dumps(_config(tool).get("return_schema"))
+        assert '"licence"' in schema, f"{tool} returns the licence undeclared"
+        assert '"osm_type"' in schema and '"osm_id"' in schema, (
+            f"{tool} returns the OSM key undeclared"
+        )
+        assert "ODbL" in schema, (
+            "the declaration should name the licence, not just the field"
+        )

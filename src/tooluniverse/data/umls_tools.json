@@ -134,10 +134,145 @@
             "name": {
               "type": "string"
             },
-            "definition": {
-              "type": "string"
+            "definitions": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL listing the concept's definitions; UMLS sends a link, not the text. The schema previously declared a singular `definition` field that the API never sends"
+            },
+            "atoms": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL listing the concept's atoms (its names in each source vocabulary)"
+            },
+            "relations": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL listing the concept's relations to other concepts"
+            },
+            "semanticTypes": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "The UMLS semantic types the concept belongs to - 'Disease or Syndrome', 'Pharmacologic Substance' and so on. This is how a caller tells a disease concept from a drug concept",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Semantic type name"
+                  },
+                  "uri": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "URI of the semantic type, ending in its TUI, e.g. .../TUI/T047"
+                  }
+                }
+              }
+            },
+            "suppressible": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether UMLS suppresses this concept; a suppressed concept should not be used as a current term"
+            },
+            "status": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The concept's status in this UMLS release"
+            },
+            "classType": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The kind of record, e.g. Concept"
+            },
+            "dateAdded": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the concept entered UMLS"
+            },
+            "majorRevisionDate": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When it was last substantially revised"
+            },
+            "atomCount": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many atoms the concept has"
+            },
+            "relationCount": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many relations it has"
+            },
+            "attributeCount": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many attributes it has"
+            },
+            "cvMemberCount": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many content-view memberships it has"
+            },
+            "defaultPreferredAtom": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "URL of the atom UMLS treats as the concept's preferred name"
             }
           }
+        },
+        "pageCount": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Total pages available"
+        },
+        "pageNumber": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Page returned"
+        },
+        "pageSize": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Page size used"
         }
       }
     },
