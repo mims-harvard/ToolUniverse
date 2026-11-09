@@ -2335,6 +2335,9 @@ def test_the_wrapper_reads_the_field_the_api_answered(module, key, why):
 
 # (tool, output field the schema must declare)
 DECLARED = [
+    ("Figshare_get_article", "is_embargoed"),
+    ("Figshare_get_article", "is_metadata_record"),
+    ("Figshare_get_article", "resource_doi"),
     ("openalex_search_works", "is_retracted"),
     ("openalex_search_works", "authorships"),
     ("openalex_search_works", "best_oa_location"),
@@ -5741,4 +5744,40 @@ def test_a_search_tool_declares_what_the_upstream_says_about_the_request():
     assert '"notice"' in schema and '"cost_usd"' in schema
     assert "0.10" in schema or "budget" in schema, (
         "the notice declaration should say what the notice is about"
+    )
+
+
+def test_a_dataset_record_says_whether_the_data_can_be_had():
+    """Figshare_get_article declared 13 of the 50 keys it returns.
+
+    The undeclared ones included every field that says whether the dataset
+    is actually available: is_embargoed with its date and reason,
+    is_confidential, download_disabled, and is_metadata_record -- which is
+    true when there is no data behind the record at all, however complete
+    the description looks. A tool that returns a Figshare article without
+    those is describing a dataset the caller may not be able to have, and
+    saying nothing about it.
+
+    files[] was declared as a bare array, so its item shape was undeclared
+    too, and that item carries download_url with both computed_md5 and
+    supplied_md5. That is the same triad as the LINCS round -- can I fetch
+    the bytes, can I verify them, can I join this to my own data -- except
+    here the wrapper was already returning all three and the schema hid
+    them. Figshare returns two MD5s on purpose: the depositor's and its own,
+    and a mismatch is a provenance problem, so both travel.
+
+    resource_doi and resource_title are the join from a dataset to the paper
+    it belongs to; for the test article, 10.3389/fmicb.2021.669230.
+    """
+    schema = json.dumps(_config("Figshare_get_article").get("return_schema"))
+    for availability in ('"is_embargoed"', '"embargo_date"',
+                         '"download_disabled"', '"is_metadata_record"',
+                         '"is_confidential"'):
+        assert availability in schema, f"{availability} undeclared"
+    for fetchable in ('"download_url"', '"computed_md5"', '"supplied_md5"'):
+        assert fetchable in schema, f"files[] item is missing {fetchable}"
+    assert '"resource_doi"' in schema and '"orcid_id"' in schema
+    assert "metadata only" in schema, (
+        "is_metadata_record needs to say what it means: there is no data "
+        "behind the record"
     )
