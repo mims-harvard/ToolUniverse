@@ -2335,6 +2335,11 @@ def test_the_wrapper_reads_the_field_the_api_answered(module, key, why):
 
 # (tool, output field the schema must declare)
 DECLARED = [
+    ("FPbase_search_by_spectrum", "seq"),
+    ("FPbase_search_by_spectrum", "uniprot"),
+    ("FPbase_search_by_spectrum", "pka"),
+    ("SYNERGxDB_search_combos", "idCellosaurus"),
+    ("SYNERGxDB_search_combos", "inchikeyDrugA"),
     ("EBIProteins_get_domains_sites", "has_more"),
     ("EBIProteins_get_domains_sites", "truncated"),
     ("EBIProteins_get_domains_sites", "raw_evidences"),
@@ -5894,3 +5899,57 @@ def test_a_paged_feature_list_declares_that_it_is_paged():
         "the evidence declaration should show what an ECO code looks like"
     )
     assert '"feature_type_counts"' in schema
+
+
+def test_a_drug_combination_carries_the_identifiers_for_both_drugs():
+    """SYNERGxDB_search_combos had a return_schema with no properties at all.
+
+    The audit reported its whole level as `.*`. What the rows actually
+    carry is every identifier a caller needs to act on the result: for each
+    of the two drugs a DrugBank accession, a PubChem CID, an InChIKey, a
+    SMILES and an ATC code, and for the cell line a Cellosaurus accession.
+
+    The cell line is the one that matters most. The row named it MOLT-4 and
+    carried CVCL_0013, and a name alone does not pin a line down across
+    studies -- the whole point of Cellosaurus is that it does. Same for the
+    drugs: a name is ambiguous and an InChIKey is not.
+
+    Five synergy scores come back - comboscore, bliss, hsa, loewe, zip -
+    and a caller comparing results across datasets needs to know which
+    model each number is from.
+    """
+    schema = json.dumps(_config("SYNERGxDB_search_combos").get("return_schema"))
+    for ident in ('"idCellosaurus"', '"idDrugBankA"', '"idPubChemDrugB"',
+                  '"inchikeyDrugA"', '"smilesDrugB"', '"atCodeDrugA"'):
+        assert ident in schema, f"SYNERGxDB returns {ident} undeclared"
+    for model in ('"bliss"', '"hsa"', '"loewe"', '"zip"', '"comboscore"'):
+        assert model in schema, f"{model} undeclared"
+    assert "Cellosaurus" in schema and "InChIKey" in schema
+
+
+def test_a_fluorescent_protein_search_declares_the_sequence_and_the_photophysics():
+    """The tool's description calls itself essential for selecting a protein.
+
+    It declared name, slug, uuid, switch_type, agg and the per-state
+    spectra, and left out `seq` -- the amino-acid sequence, which is the
+    thing a caller who has selected a protein would actually clone. It also
+    left out doi, uniprot, genbank, pdb and ipg_id, so a hit could not be
+    followed to the paper that described it or to any other database.
+
+    Three per-state properties were undeclared and each changes whether a
+    protein suits an experiment: pKa, because a chromophore whose pKa sits
+    near the pH of the compartment being imaged dims as that pH shifts;
+    maturation, because a slow-maturing protein under-reports early
+    expression; and lifetime, which is the quantity FLIM measures. The
+    spectra that were declared say where the protein emits, not whether it
+    will behave.
+    """
+    schema = json.dumps(_config("FPbase_search_by_spectrum").get("return_schema"))
+    assert '"seq"' in schema, "the sequence is the point of selecting a protein"
+    for ident in ('"doi"', '"uniprot"', '"genbank"', '"pdb"', '"ipg_id"'):
+        assert ident in schema, f"{ident} undeclared"
+    for photophysics in ('"pka"', '"maturation"', '"lifetime"'):
+        assert photophysics in schema, f"{photophysics} undeclared"
+    assert "FLIM" in schema, (
+        "the lifetime declaration should say what measures it"
+    )

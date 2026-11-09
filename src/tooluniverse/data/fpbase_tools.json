@@ -309,7 +309,105 @@
                         "number",
                         "null"
                       ]
+                    },
+                    "slug": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Stable slug for the state, e.g. 'aausfp2_default'"
+                    },
+                    "name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "State name, e.g. 'default', or the on/off state of a switchable protein"
+                    },
+                    "pka": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "pKa of the chromophore. A protein with a pKa near the pH of the compartment being imaged will dim as that pH shifts"
+                    },
+                    "maturation": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "Maturation half-time in minutes; a slow-maturing protein under-reports early expression"
+                    },
+                    "lifetime": {
+                      "type": [
+                        "number",
+                        "null"
+                      ],
+                      "description": "Fluorescence lifetime in nanoseconds, which is what FLIM measures"
                     }
+                  }
+                }
+              },
+              "seq": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The protein's amino-acid sequence. A tool for 'selecting appropriate fluorescent proteins' that does not declare the sequence stops one step short of the thing the caller would clone"
+              },
+              "doi": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "DOI of the paper the protein was described in"
+              },
+              "uniprot": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "UniProt accession, where one exists"
+              },
+              "genbank": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "GenBank accession, where one exists"
+              },
+              "pdb": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "PDB entries for the protein",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "ipg_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "NCBI Identical Protein Group id, where one exists"
+              },
+              "transitions": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Photo-transitions between states, for photoactivatable and photoswitchable proteins",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "null"
+                    ]
                   }
                 }
               }
