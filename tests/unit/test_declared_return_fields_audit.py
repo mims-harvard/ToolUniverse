@@ -210,3 +210,66 @@ def test_evaluating_branches_independently_still_reports_a_real_gap():
     # is the finding.
     boolean = {"oneOf": [{"type": "object", "additionalProperties": True}, err]}
     assert undeclared({"a": 1}, boolean) == [f".{LEVEL}"]
+
+
+def test_the_error_branch_cannot_win_by_complaining_least():
+    """Fewest-findings picked the branch that matched worst.
+
+    Evaluating oneOf branches independently fixed one bug and introduced
+    another: whichever branch produced the shorter list won, and for a rich
+    nested response that is the error branch, because it declares almost
+    nothing and so reports one finding per top-level key while the success
+    branch reports every nested gap beneath them.
+
+    Measured on Figshare_get_article's real response: the success branch
+    yields 92 findings while covering 13 of 50 keys; the error branch yields
+    43 while covering none. The error branch won, the report shrank, and
+    every gap under authors, files and categories disappeared from it -- the
+    exact masking the per-branch change was supposed to be safe from.
+
+    A branch is chosen by how well it matches the value, not by how little
+    it complains.
+    """
+    success = {
+        "type": "object",
+        "properties": {
+            "id": {},
+            "authors": {
+                "type": "array",
+                "items": {"type": "object", "properties": {"id": {}}},
+            },
+        },
+    }
+    error = {"type": "object", "properties": {"error": {"type": "string"}}}
+    schema = {"oneOf": [success, error]}
+
+    # Two top-level keys, both declared by the success branch, and seven
+    # undeclared keys nested one level down. The success branch therefore
+    # reports seven findings and the error branch only two (.id, .authors),
+    # so fewest-findings picks the error branch and the seven vanish.
+    value = {
+        "id": 1,
+        "authors": [
+            {
+                "id": 7,
+                "first_name": "A",
+                "last_name": "B",
+                "orcid_id": "0000",
+                "url_name": "a-b",
+                "is_active": True,
+                "full_name": "A B",
+                "institution_id": 3,
+            }
+        ],
+    }
+    found = undeclared(value, schema)
+    for nested in (".authors[].first_name", ".authors[].last_name",
+                   ".authors[].orcid_id", ".authors[].institution_id"):
+        assert nested in found, f"{nested} missing from {found}"
+    assert ".id" not in found and ".authors" not in found, (
+        "the success branch declares both top-level keys; reporting them "
+        "means the error branch was chosen"
+    )
+
+    # And an error-shaped value still matches the error branch cleanly.
+    assert undeclared({"error": "not found"}, schema) == []

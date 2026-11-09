@@ -113,12 +113,29 @@ def undeclared(value, schema, path="", found=None):
     # its level as `.*`, so a permissive branch cannot hide a gap, only
     # describe it more coarsely.
     if len(object_bs) > 1:
-        best = None
-        for b in object_bs:
-            attempt = undeclared(value, b, path, [])
-            if best is None or len(attempt) < len(best):
-                best = attempt
-        found.extend(best or [])
+        # Pick the branch the value MATCHES, not the one that complains least.
+        # Fewest-findings was wrong: for Figshare_get_article's real response
+        # the success branch yields 92 findings while covering 13 of 50 keys,
+        # and the error branch yields 43 while covering none -- so the error
+        # branch won and every nested gap under authors, files and categories
+        # vanished from the report. Coverage of the value's own keys is the
+        # signal; an open level declared with additionalProperties covers all
+        # of them. Ties break toward the earlier branch, which is the success
+        # branch by this repo's convention.
+        def coverage(b):
+            props = b.get("properties") or {}
+            if not props and isinstance(b.get("additionalProperties"), dict):
+                return len(value)
+            return sum(1 for key in value if key in props)
+
+        best_branch = max(object_bs, key=coverage)
+        best_score = coverage(best_branch)
+        tied = [b for b in object_bs if coverage(b) == best_score]
+        if len(tied) > 1:
+            best_branch = min(
+                tied, key=lambda b: len(undeclared(value, b, path, []))
+            )
+        found.extend(undeclared(value, best_branch, path, []))
         return found
     declared = {}
     free = None
