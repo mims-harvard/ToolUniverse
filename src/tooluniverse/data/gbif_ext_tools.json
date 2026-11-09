@@ -363,8 +363,88 @@
                 "description": "Whether this name is a synonym"
               },
               "higherClassificationMap": {
-                "type": "object",
-                "description": "Map of taxon keys to names in classification hierarchy"
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The full classification above this taxon, keyed by backbone taxon key with the name as the value",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Taxon name for that key"
+                }
+              },
+              "nubKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Key of the matching taxon in GBIF's backbone taxonomy - the stable identifier the rest of GBIF is keyed on. `key` is the key of this name record, which for a synonym is not the same thing"
+              },
+              "nameKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Key of the scientific name record itself"
+              },
+              "parent": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Name of the parent taxon"
+              },
+              "parentKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Key of the parent taxon"
+              },
+              "kingdomKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Backbone key of the kingdom. The names came back without the keys, so the classification could be read but not followed"
+              },
+              "phylumKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Backbone key of the phylum. The names came back without the keys, so the classification could be read but not followed"
+              },
+              "classKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Backbone key of the class. The names came back without the keys, so the classification could be read but not followed"
+              },
+              "orderKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Backbone key of the order. The names came back without the keys, so the classification could be read but not followed"
+              },
+              "familyKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Backbone key of the family. The names came back without the keys, so the classification could be read but not followed"
+              },
+              "genusKey": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Backbone key of the genus. The names came back without the keys, so the classification could be read but not followed"
               }
             }
           }
@@ -393,21 +473,53 @@
           "type": "string",
           "description": "Scientific name to match, e.g. 'Puma concolor', 'Quercus robur', 'Homo sapiens'."
         },
-        "kingdom": {"type": ["string", "null"], "description": "Optional kingdom to disambiguate homonyms, e.g. 'Animalia', 'Plantae'."},
-        "rank": {"type": ["string", "null"], "description": "Optional rank hint, e.g. 'SPECIES', 'GENUS'."},
-        "strict": {"type": ["boolean", "null"], "description": "If true, only return exact matches (no fuzzy matching)."},
-        "verbose": {"type": ["boolean", "null"], "description": "If true, include alternative matches in the response."}
+        "kingdom": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional kingdom to disambiguate homonyms, e.g. 'Animalia', 'Plantae'."
+        },
+        "rank": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional rank hint, e.g. 'SPECIES', 'GENUS'."
+        },
+        "strict": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "If true, only return exact matches (no fuzzy matching)."
+        },
+        "verbose": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "If true, include alternative matches in the response."
+        }
       },
-      "required": ["name"]
+      "required": [
+        "name"
+      ]
     },
     "fields": {
       "endpoint": "https://api.gbif.org/v1/species/match"
     },
     "type": "BaseRESTTool",
     "test_examples": [
-      {"name": "Puma concolor"},
-      {"name": "Quercus robur"},
-      {"name": "Gadus morhua"}
+      {
+        "name": "Puma concolor"
+      },
+      {
+        "name": "Quercus robur"
+      },
+      {
+        "name": "Gadus morhua"
+      }
     ],
     "return_schema": {
       "oneOf": [
@@ -574,28 +686,56 @@
           "description": "GBIF taxon key, e.g. 2435099 (Puma concolor). Obtain from GBIF_match_name or GBIF_search_species."
         },
         "facet": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Field to break occurrence counts down by, e.g. 'country', 'year', 'basisOfRecord', or 'institutionCode'. Default 'country'.",
           "default": "country"
         },
         "facetLimit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Number of top facet values to return (default 10).",
           "default": 10
         },
-        "country": {"type": ["string", "null"], "description": "Optional ISO 3166-1 alpha-2 country code filter, e.g. 'US'."}
+        "country": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional ISO 3166-1 alpha-2 country code filter, e.g. 'US'."
+        }
       },
-      "required": ["taxonKey"]
+      "required": [
+        "taxonKey"
+      ]
     },
     "fields": {
       "endpoint": "https://api.gbif.org/v1/occurrence/search",
-      "params": {"limit": 0}
+      "params": {
+        "limit": 0
+      }
     },
     "type": "BaseRESTTool",
     "test_examples": [
-      {"taxonKey": 2435099, "facet": "country", "facetLimit": 5},
-      {"taxonKey": 2435099, "facet": "year", "facetLimit": 5},
-      {"taxonKey": 2878688, "facet": "country", "facetLimit": 3}
+      {
+        "taxonKey": 2435099,
+        "facet": "country",
+        "facetLimit": 5
+      },
+      {
+        "taxonKey": 2435099,
+        "facet": "year",
+        "facetLimit": 5
+      },
+      {
+        "taxonKey": 2878688,
+        "facet": "country",
+        "facetLimit": 3
+      }
     ],
     "return_schema": {
       "oneOf": [

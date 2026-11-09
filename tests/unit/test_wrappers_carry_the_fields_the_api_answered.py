@@ -2335,6 +2335,9 @@ def test_the_wrapper_reads_the_field_the_api_answered(module, key, why):
 
 # (tool, output field the schema must declare)
 DECLARED = [
+    ("Reactome_get_interactor", "isInferred"),
+    ("Reactome_get_interactor", "reviewStatus"),
+    ("GBIF_suggest_species", "nubKey"),
     ("Figshare_get_article", "is_embargoed"),
     ("Figshare_get_article", "is_metadata_record"),
     ("Figshare_get_article", "resource_doi"),
@@ -5780,4 +5783,60 @@ def test_a_dataset_record_says_whether_the_data_can_be_had():
     assert "metadata only" in schema, (
         "is_metadata_record needs to say what it means: there is no data "
         "behind the record"
+    )
+
+
+def test_a_pathway_record_says_whether_it_was_curated_or_inferred():
+    """Reactome_get_interactor declared 25 keys and omitted fifteen.
+
+    Two of them decide how much the record is worth. `isInferred` says
+    whether the event was curated for this species or computationally
+    projected from another, and `reviewStatus` is Reactome's own confidence
+    in the curation - R-HSA-73817 comes back as "five stars". A pathway
+    returned without either reads as settled fact regardless of which it is.
+
+    Also undeclared: `summation`, which is the curated prose describing the
+    event; `literatureReference`, the papers the curation rests on;
+    `goBiologicalProcess`, the GO term it maps to; `species` and
+    `compartment`; and `orthologousEvent`, the same event in other species.
+    """
+    schema = json.dumps(_config("Reactome_get_interactor").get("return_schema"))
+    for field in ('"isInferred"', '"reviewStatus"', '"summation"',
+                  '"literatureReference"', '"goBiologicalProcess"',
+                  '"orthologousEvent"'):
+        assert field in schema, f"Reactome returns {field} undeclared"
+    assert "five stars" in schema, (
+        "reviewStatus is a rating; the declaration should show what one "
+        "looks like"
+    )
+
+
+def test_a_taxon_suggestion_carries_the_keys_that_resolve_it():
+    """GBIF returned the classification as names with none of the keys.
+
+    kingdom, phylum, class, order, family and genus were declared;
+    kingdomKey, phylumKey, classKey, orderKey, familyKey and genusKey were
+    not, so the classification could be read and not followed. Nor was
+    nubKey, which is the backbone taxon the name matched - and that is the
+    one that matters, because `key` is the key of this name record and for a
+    synonym the two differ.
+
+    higherClassificationMap is keyed by backbone taxon key out of the data,
+    so it is declared with additionalProperties and a value shape rather
+    than a list of keys that only exist for this one query.
+    """
+    schema = json.dumps(_config("GBIF_suggest_species").get("return_schema"))
+    assert '"nubKey"' in schema
+    for rank in ("kingdomKey", "phylumKey", "classKey", "orderKey",
+                 "familyKey", "genusKey"):
+        assert f'"{rank}"' in schema, f"{rank} undeclared"
+    # The field name was already declared as a bare object: the audit said
+    # `[].higherClassificationMap.*`, meaning the level was named and its
+    # contents were not. Asserting the name would pass against the unfixed
+    # schema, so this asserts the value shape.
+    assert "Taxon name for that key" in schema, (
+        "higherClassificationMap was declared without a value shape"
+    )
+    assert "synonym" in schema, (
+        "the nubKey declaration should say why it is not the same as key"
     )
