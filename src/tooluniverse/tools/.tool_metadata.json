@@ -1052,7 +1052,7 @@
   "InterPro_get_protein_domain_architecture": "ce1fddbe53de6cce5962e6b123ad7d81",
   "InterPro_get_protein_domains": "830033788bf15edd3198c93a6f5bc7d2",
   "InterPro_get_proteins_by_domain": "0e4c1c710f9d8931832eb6aed1dc9f6b",
-  "InterPro_get_residue_annotations": "0d3e65b9c52be8b51ff538ce08db8fb2",
+  "InterPro_get_residue_annotations": "fce263af0c374ec2ecc86c3f9b7ad226",
   "InterPro_get_structures_for_domain": "051d13a6f9c4c04688be9434142755fa",
   "InterPro_get_structures_for_entry": "263e70306a71af2509859e393c2ab046",
   "InterPro_list_member_databases": "d422f05ae362b93818fc2c2c4dc18b57",

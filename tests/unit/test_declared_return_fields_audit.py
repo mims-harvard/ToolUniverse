@@ -144,3 +144,69 @@ def test_the_catalogue_is_the_catalogue():
     cfgs = AUDIT.catalogue()
     assert len(cfgs) > 2000
     assert "GOAPI_get_gene_functions" in cfgs
+
+
+def test_a_oneOf_branch_may_declare_an_open_level_with_additionalProperties():
+    """Merging the branches made the recommended form impossible to use.
+
+    This script's own doctrine is that `additionalProperties` with a value
+    shape is the honest way to declare a level keyed out of the data. But the
+    walker merged the `properties` of every branch into one set, so a success
+    branch that declares its open level with additionalProperties and no
+    properties, beside this repo's conventional error branch declaring
+    `error`, merged to declared={"error"}: non-empty, so the
+    additionalProperties was never consulted and every data key was reported
+    undeclared.
+
+    InterPro_get_residue_annotations is exactly that shape -- 75 signature
+    accessions as keys -- and it could not be declared at all until the
+    branches were evaluated independently, which is what oneOf means.
+    """
+    schema = {
+        "oneOf": [
+            {
+                "type": "object",
+                "additionalProperties": {
+                    "type": "object",
+                    "properties": {"accession": {"type": "string"}},
+                },
+            },
+            {"type": "object", "properties": {"error": {"type": "string"}}},
+        ]
+    }
+    value = {"PIRSR000605-51": {"accession": "PIRSR000605-51"}}
+    assert undeclared(value, schema) == []
+
+
+def test_evaluating_branches_independently_still_reports_a_real_gap():
+    """The permissive reading must not swallow a finding.
+
+    Each branch is walked alone and the fewest findings win, so the risk is
+    that a loose branch hides a gap in the strict one. It does not: a key no
+    branch declares is still reported, and so is a gap nested under a
+    declared property.
+    """
+    err = {"type": "object", "properties": {"error": {"type": "string"}}}
+    flat = {
+        "oneOf": [{"type": "object", "properties": {"a": {}, "b": {}}}, err]
+    }
+    assert undeclared({"a": 1, "b": 2, "c": 3}, flat) == [".c"]
+
+    nested = {
+        "oneOf": [
+            {
+                "type": "object",
+                "properties": {
+                    "a": {"type": "object", "properties": {"x": {}}}
+                },
+            },
+            err,
+        ]
+    }
+    assert undeclared({"a": {"x": 1, "y": 2}}, nested) == [".a.y"]
+
+    # additionalProperties: true says the level is open without saying what is
+    # in it, so it declares nothing a reader can act on and the level itself
+    # is the finding.
+    boolean = {"oneOf": [{"type": "object", "additionalProperties": True}, err]}
+    assert undeclared({"a": 1}, boolean) == [f".{LEVEL}"]

@@ -98,11 +98,31 @@ def undeclared(value, schema, path="", found=None):
         return found
     if not isinstance(value, dict):
         return found
+    object_bs = [b for b in bs if b.get("type") != "array"]
+    # `oneOf` means the value validates against ONE branch, so a merge of the
+    # branches is not the same schema. Merging defeated `additionalProperties`
+    # outright: a success branch that declares its open level with
+    # additionalProperties and no properties, beside an error branch that
+    # declares `error`, merged to declared={"error"} -- non-empty, so the
+    # additionalProperties was never consulted and every data key was
+    # reported undeclared. That made the one form this script's own docstring
+    # recommends for an open level impossible to use in a oneOf schema.
+    #
+    # Evaluating the branches independently and keeping the fewest findings
+    # matches what oneOf means. A branch that declares nothing still reports
+    # its level as `.*`, so a permissive branch cannot hide a gap, only
+    # describe it more coarsely.
+    if len(object_bs) > 1:
+        best = None
+        for b in object_bs:
+            attempt = undeclared(value, b, path, [])
+            if best is None or len(attempt) < len(best):
+                best = attempt
+        found.extend(best or [])
+        return found
     declared = {}
     free = None
-    for b in bs:
-        if b.get("type") == "array":
-            continue
+    for b in object_bs:
         declared.update(b.get("properties") or {})
         if isinstance(b.get("additionalProperties"), dict):
             free = b["additionalProperties"]
