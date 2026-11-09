@@ -2272,6 +2272,21 @@ UPSTREAM_KEYS = [
         'r.get("donor__id")',
         "which brain each neuron came from; without it two cells from one donor look like two donors",
     ),
+    (
+        "mirna_tool.py",
+        'acc.get("malacards_diseases")',
+        "the diseases a MalaCards cross-reference names - 364 for hsa-miR-21-5p, of which the caller saw none",
+    ),
+    (
+        "mirna_tool.py",
+        '"citations_url": acc.get("citations")',
+        "RNAcentral's citations key holds a URL, not a count, so the field has to be named for what it is",
+    ),
+    (
+        "mirna_tool.py",
+        '"last_seen": xref.get("last_seen")',
+        "when the mapping was last confirmed; a stale cross-reference is not the same as a current one",
+    ),
 ]
 
 
@@ -2300,6 +2315,9 @@ def test_the_wrapper_reads_the_field_the_api_answered(module, key, why):
 
 # (tool, output field the schema must declare)
 DECLARED = [
+    ("miRBase_get_mirna_xrefs", "diseases"),
+    ("miRBase_get_mirna_xrefs", "disease_count"),
+    ("miRBase_get_mirna_xrefs", "citations_url"),
     ("Alliance_get_disease", "cross_references"),
     ("Alliance_get_disease", "source_links"),
     ("Alliance_get_disease", "ancestor_ids"),
@@ -5399,3 +5417,48 @@ def test_a_neuron_specimen_carries_the_physiology_the_tool_advertises():
         "the soma coordinate is per cell for mouse and coarser for human; "
         "the schema must say so rather than imply a cell-level position"
     )
+
+
+def test_a_cross_reference_tool_says_what_the_cross_reference_says():
+    """RNAcentral returns MalaCards as one row among the cross-references.
+
+    That row's payload is the list of diseases the microRNA is associated
+    with: 364 of them for hsa-miR-21-5p, each with a resolvable card URL.
+    The wrapper reported that a MalaCards cross-reference existed and
+    dropped what it said, which for a tool whose entire subject is
+    cross-references is the answer rather than a detail of it.
+
+    Three keys were measured and deliberately left out, because 0 of 80
+    rows across four microRNAs populate any of them:
+    refseq_mirna_mature_products, refseq_mirna_precursor and hgnc_id. What
+    looked at first like sibling drift against the mirbase_* keys was not
+    drift at all -- those measured 0/80 on the same sample.
+    """
+    source = _source("mirna_tool.py")
+    assert 'acc.get("malacards_diseases")' in source
+    assert "DISEASES_PER_XREF" in source, "the per-row cap must be a named constant"
+    assert '"diseases_truncated"' in source, "the cap must be disclosed"
+    for never_filled in (
+        'xref.get("refseq_mirna_mature_products")',
+        'xref.get("refseq_mirna_precursor")',
+        'acc.get("hgnc_id")',
+    ):
+        assert never_filled not in source, (
+            f"{never_filled} is empty on all 80 rows sampled; reading it "
+            "would declare a field that can only ever be null"
+        )
+
+
+def test_a_citations_field_is_not_a_count():
+    """RNAcentral's `citations` key holds a URL.
+
+    I named the field citation_count first; the live response disagreed, so
+    it is citations_url. A schema that promises a number and returns
+    "https://rnacentral.org/api/v1/accession/.../citations?format=json" is
+    a worse failure than the omission it replaced.
+    """
+    source = _source("mirna_tool.py")
+    assert '"citations_url": acc.get("citations")' in source
+    assert '"citation_count"' not in source
+    schema = json.dumps(_config("miRBase_get_mirna_xrefs").get("return_schema"))
+    assert '"citations_url"' in schema and '"citation_count"' not in schema
