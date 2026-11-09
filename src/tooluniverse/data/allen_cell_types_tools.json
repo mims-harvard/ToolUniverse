@@ -108,6 +108,140 @@
                             },
                             "has_reconstruction": {
                                 "type": "boolean"
+                            },
+                            "donor_id": {
+                                "type": ["integer", "null"],
+                                "description": "Which brain the neuron came from; two specimens sharing it are from one donor"
+                            },
+                            "donor_name": {
+                                "type": ["string", "null"],
+                                "description": "The donor's label, e.g. H15.06.016"
+                            },
+                            "donor_race": {
+                                "type": ["string", "null"],
+                                "description": "Donor's reported race, for human specimens"
+                            },
+                            "years_of_seizure_history": {
+                                "type": ["number", "integer", "null"],
+                                "description": "Years of seizure history, for human epilepsy resections"
+                            },
+                            "cortical_layer": {
+                                "type": ["string", "null"],
+                                "description": "Layer within the structure; layer 3 and layer 5 pyramidal neurons are different cell types"
+                            },
+                            "structure_acronym": {
+                                "type": ["string", "null"],
+                                "description": "Structure abbreviation, e.g. IFG"
+                            },
+                            "structure_id": {
+                                "type": ["integer", "null"],
+                                "description": "Allen structure id"
+                            },
+                            "hemisphere": {
+                                "type": ["string", "null"],
+                                "description": "Which hemisphere the specimen came from"
+                            },
+                            "soma_location": {
+                                "type": ["object", "null"],
+                                "properties": {
+                                    "x": {
+                                        "type": [
+                                            "number",
+                                            "null"
+                                        ],
+                                        "description": "x"
+                                    },
+                                    "y": {
+                                        "type": [
+                                            "number",
+                                            "null"
+                                        ],
+                                        "description": "y"
+                                    },
+                                    "z": {
+                                        "type": [
+                                            "number",
+                                            "null"
+                                        ],
+                                        "description": "z"
+                                    },
+                                    "normalized": {
+                                        "type": [
+                                            "number",
+                                            "string",
+                                            "null"
+                                        ],
+                                        "description": "Normalized position where given"
+                                    }
+                                },
+                                "description": "Position in the common coordinate framework. Per cell for mouse; coarser for human, where it identifies the tissue block rather than the individual cell"
+                            },
+                            "resting_potential_mv": {
+                                "type": ["number", "null"],
+                                "description": "Resting membrane potential in mV"
+                            },
+                            "rheobase_pa": {
+                                "type": ["number", "null"],
+                                "description": "Minimum long-square current evoking a spike, in pA"
+                            },
+                            "adaptation_index": {
+                                "type": ["number", "null"],
+                                "description": "Spike-frequency adaptation index"
+                            },
+                            "f_i_curve_slope": {
+                                "type": ["number", "null"],
+                                "description": "Slope of the firing-rate versus current curve"
+                            },
+                            "avg_interspike_interval_ms": {
+                                "type": ["number", "null"],
+                                "description": "Mean interspike interval in ms"
+                            },
+                            "fast_trough_mv": {
+                                "type": ["number", "null"],
+                                "description": "Fast trough voltage in mV"
+                            },
+                            "ramp_peak_time_s": {
+                                "type": ["number", "null"],
+                                "description": "Time to peak on the ramp stimulus, in s"
+                            },
+                            "dendrite_type": {
+                                "type": ["string", "null"],
+                                "description": "spiny or aspiny - the standard morphological proxy for excitatory versus inhibitory"
+                            },
+                            "apical_dendrite": {
+                                "type": ["string", "null"],
+                                "description": "Whether the apical dendrite is intact or truncated, which bounds what the reconstruction supports"
+                            },
+                            "reconstruction_type": {
+                                "type": ["string", "null"],
+                                "description": "Kind of morphological reconstruction, where one exists"
+                            },
+                            "model_counts": {
+                                "type": ["object", "null"],
+                                "properties": {
+                                    "glif": {
+                                        "type": [
+                                            "integer",
+                                            "null"
+                                        ],
+                                        "description": "GLIF models"
+                                    },
+                                    "biophysical_perisomatic": {
+                                        "type": [
+                                            "integer",
+                                            "null"
+                                        ],
+                                        "description": "Perisomatic biophysical models"
+                                    },
+                                    "biophysical_all_active": {
+                                        "type": [
+                                            "integer",
+                                            "null"
+                                        ],
+                                        "description": "All-active biophysical models"
+                                    }
+                                },
+                                "description": "How many models the Allen Institute fit to this cell"
                             }
                         },
                         "required": [

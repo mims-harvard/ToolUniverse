@@ -2232,6 +2232,46 @@ UPSTREAM_KEYS = [
         'site.get("label")',
         "the region legend without which PDBTM's per-residue site ids mean nothing",
     ),
+    (
+        "alliance_genome_tool.py",
+        'data.get("crossReferenceLinkUrls")',
+        "the mappings to MESH, UMLS, ICD9/10 and SNOMED, which are how a disease term joins anything else",
+    ),
+    (
+        "alliance_genome_tool.py",
+        'data.get("sourceReferenceLinkUrls")',
+        "where RGD, MGI, ZFIN, FlyBase, WormBase and SGD record their annotations for the disease",
+    ),
+    (
+        "alliance_genome_tool.py",
+        'data.get("parentClosureIDs")',
+        "the term's ancestors; the wrapper returned a disease ontology term with no position in the ontology",
+    ),
+    (
+        "allen_cell_types_tool.py",
+        'r.get("structure__layer")',
+        "the cortical layer, without which a pyramidal neuron's cell type is not determined",
+    ),
+    (
+        "allen_cell_types_tool.py",
+        'r.get("ef__vrest")',
+        "resting membrane potential, in a tool whose description promises electrophysiology",
+    ),
+    (
+        "allen_cell_types_tool.py",
+        'r.get("ef__threshold_i_long_square")',
+        "rheobase: the minimum current that makes the cell fire",
+    ),
+    (
+        "allen_cell_types_tool.py",
+        'r.get("tag__dendrite_type")',
+        "spiny or aspiny, the standard morphological proxy for excitatory versus inhibitory",
+    ),
+    (
+        "allen_cell_types_tool.py",
+        'r.get("donor__id")',
+        "which brain each neuron came from; without it two cells from one donor look like two donors",
+    ),
 ]
 
 
@@ -2260,6 +2300,14 @@ def test_the_wrapper_reads_the_field_the_api_answered(module, key, why):
 
 # (tool, output field the schema must declare)
 DECLARED = [
+    ("Alliance_get_disease", "cross_references"),
+    ("Alliance_get_disease", "source_links"),
+    ("Alliance_get_disease", "ancestor_ids"),
+    ("AllenCellTypes_search_specimens", "cortical_layer"),
+    ("AllenCellTypes_search_specimens", "resting_potential_mv"),
+    ("AllenCellTypes_search_specimens", "rheobase_pa"),
+    ("AllenCellTypes_search_specimens", "dendrite_type"),
+    ("AllenCellTypes_search_specimens", "donor_id"),
     ("Harmonizome_get_dataset", "source_resource"),
     ("PGSCatalog_get_score", "license"),
     ("PGSCatalog_get_score", "samples_variants"),
@@ -5302,4 +5350,52 @@ def test_a_topology_tool_says_where_the_segments_are():
     schema = json.dumps(_config("PDBTM_get_topology").get("return_schema"))
     assert '"topology_segments_truncated"' in schema, (
         "the 200-segment cap must be disclosed"
+    )
+
+
+def test_a_disease_term_carries_its_mappings_and_its_place_in_the_ontology():
+    """Everything missing sat at the top level of the response, beside doTerm.
+
+    The handler read doTerm and category and stopped, so DOID:162 came back
+    as a name, a definition and some synonyms -- with no mapping to
+    MESH:D009369, UMLS_CUI:C0006826, ICD9CM:199, ICD10CM:C80.1 or SNOMEDCT,
+    no link to where RGD, MGI, ZFIN, FlyBase, WormBase and SGD keep their
+    annotations for it, and no parents or children. All three were in the
+    payload it had already parsed.
+
+    SNOMEDCT arrives with a curie and no url while the others carry both,
+    so the url is optional in a cross-reference and the curie is not.
+    """
+    source = _source("alliance_genome_tool.py")
+    assert 'data.get("crossReferenceLinkUrls")' in source
+    assert 'data.get("parents")' in source and 'data.get("children")' in source
+    assert 'row.get("referencedCurie")' in source, (
+        "the curie is the required half of a cross-reference"
+    )
+
+
+def test_a_neuron_specimen_carries_the_physiology_the_tool_advertises():
+    """The description promises electrophysiology, donor and structure data.
+
+    It returned four electrophysiology features and dropped seven, among
+    them resting membrane potential and rheobase -- the two most basic
+    intrinsic properties a neuron has. It returned the structure and not
+    the layer inside it, though layer 3 and layer 5 pyramidal cells are
+    different cell types. And it returned the donor's species, sex and age
+    but not the donor's identity, so three specimens from one brain
+    (H15.06.016) were indistinguishable from three brains.
+
+    tag__dendrite_type is the one that changes an answer: of three
+    specimens from that donor, two are spiny and one aspiny, which is the
+    standard proxy for excitatory versus inhibitory.
+    """
+    source = _source("allen_cell_types_tool.py")
+    for key in ('r.get("ef__vrest")', 'r.get("ef__threshold_i_long_square")',
+                'r.get("structure__layer")', 'r.get("tag__dendrite_type")',
+                'r.get("donor__id")'):
+        assert key in source, f"the specimen row should carry {key}"
+    schema = json.dumps(_config("AllenCellTypes_search_specimens").get("return_schema"))
+    assert "tissue block" in schema, (
+        "the soma coordinate is per cell for mouse and coarser for human; "
+        "the schema must say so rather than imply a cell-level position"
     )

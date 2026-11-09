@@ -368,6 +368,47 @@ def _annotation_facet(annotations: list, path: tuple) -> list:
     return out
 
 
+RELATED_TERMS_PER_DISEASE = 100
+
+
+def _xrefs(rows):
+    """Cross-references to other vocabularies, with the URL where there is one.
+
+    SNOMEDCT comes without a url while MESH, UMLS and ICD9CM carry one, so
+    the url is optional and the curie is not.
+    """
+    out = []
+    for row in rows or []:
+        if not isinstance(row, dict) or not row.get("referencedCurie"):
+            continue
+        curie = row["referencedCurie"]
+        out.append(
+            {
+                "curie": curie,
+                "prefix": curie.split(":")[0] if ":" in curie else None,
+                "url": row.get("url"),
+            }
+        )
+    return out
+
+
+def _related_terms(rows):
+    """A parent or child term: enough to decide whether to follow it."""
+    out = []
+    for row in (rows or [])[:RELATED_TERMS_PER_DISEASE]:
+        if not isinstance(row, dict):
+            continue
+        out.append(
+            {
+                "disease_id": row.get("curie"),
+                "name": row.get("name"),
+                "definition": row.get("definition"),
+                "descendant_count": row.get("descendantCount"),
+            }
+        )
+    return out
+
+
 @register_tool("AllianceGenomeTool")
 class AllianceGenomeTool(BaseTool):
     """
@@ -1063,6 +1104,32 @@ class AllianceGenomeTool(BaseTool):
                 "definition": do_term.get("definition"),
                 "synonyms": synonym_names,
                 "category": data.get("category"),
+                # Everything below sits at the top level of the response, not
+                # inside doTerm, which is why reading doTerm alone returned a
+                # disease ontology term with no mappings and no hierarchy.
+                #
+                # The cross-references are how a disease term joins anything
+                # else: DOID:162 is MESH:D009369, UMLS_CUI:C0006826,
+                # ICD9CM:199 and SNOMEDCT 269513004, each with a resolvable
+                # URL where the API has one.
+                "cross_references": _xrefs(data.get("crossReferenceLinkUrls")),
+                # Where each model-organism database records its annotations
+                # for this disease -- RGD, MGI, ZFIN, FlyBase. In a tool whose
+                # subject is the Alliance of Genome Resources, this is the
+                # point of the record.
+                "source_links": [
+                    {"source": r.get("source"), "url": r.get("url")}
+                    for r in (data.get("sourceReferenceLinkUrls") or [])
+                    if isinstance(r, dict)
+                ],
+                "parents": _related_terms(data.get("parents")),
+                "children": _related_terms(data.get("children")),
+                "ancestor_ids": data.get("parentClosureIDs") or [],
+                "descendant_count": do_term.get("descendantCount"),
+                # Which curated slims the term belongs to, e.g. DO_cancer_slim.
+                "subsets": do_term.get("subsets") or [],
+                "definition_urls": do_term.get("definitionUrls") or [],
+                "url": data.get("diseaseURL"),
             },
             "metadata": {
                 "query_disease_id": disease_id,

@@ -824,6 +824,170 @@
                 "string",
                 "null"
               ]
+            },
+            "cross_references": {
+              "type": "array",
+              "description": "Mappings to other vocabularies - MESH, UMLS_CUI, ICD9CM, ICD10CM, SNOMEDCT - with a resolvable URL where the API gives one",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "curie": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The cross-referenced identifier, e.g. MESH:D009369"
+                  },
+                  "prefix": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Vocabulary prefix, e.g. MESH"
+                  },
+                  "url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Resolvable URL; absent for some vocabularies such as SNOMEDCT"
+                  }
+                }
+              }
+            },
+            "source_links": {
+              "type": "array",
+              "description": "Where each model-organism database records its annotations for this disease (RGD, MGI, ZFIN, FB, WB, SGD)",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Database abbreviation"
+                  },
+                  "url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "That database's page for this disease"
+                  }
+                }
+              }
+            },
+            "parents": {
+              "type": "array",
+              "description": "Immediate parent terms in the Disease Ontology",
+              "items": {
+                "type": "object",
+                "description": "A related disease term",
+                "properties": {
+                  "disease_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "DOID curie"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Term name"
+                  },
+                  "definition": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Term definition"
+                  },
+                  "descendant_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Terms below it"
+                  }
+                }
+              }
+            },
+            "children": {
+              "type": "array",
+              "description": "Immediate child terms; at most 100 are returned",
+              "items": {
+                "type": "object",
+                "description": "A related disease term",
+                "properties": {
+                  "disease_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "DOID curie"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Term name"
+                  },
+                  "definition": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Term definition"
+                  },
+                  "descendant_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Terms below it"
+                  }
+                }
+              }
+            },
+            "ancestor_ids": {
+              "type": "array",
+              "description": "All ancestor DOIDs including the term itself",
+              "items": {
+                "type": "string"
+              }
+            },
+            "descendant_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Terms below this one"
+            },
+            "subsets": {
+              "type": "array",
+              "description": "Curated slims the term belongs to, e.g. DO_cancer_slim",
+              "items": {
+                "type": "string"
+              }
+            },
+            "definition_urls": {
+              "type": "array",
+              "description": "Sources the definition was taken from",
+              "items": {
+                "type": "string"
+              }
+            },
+            "url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The Disease Ontology page for this term"
             }
           },
           "not": {

@@ -150,7 +150,36 @@ class AllenCellTypesSpecimensTool(BaseTool):
             "sex": clean(r.get("donor__sex")),
             "age": clean(r.get("donor__age")),
             "disease_state": clean(r.get("donor__disease_state")),
+            # Which brain each neuron came from. The tool promised donor
+            # metadata and returned only the donor's attributes, so two
+            # specimens from one donor could not be told from two donors.
+            "donor_id": r.get("donor__id"),
+            "donor_name": clean(r.get("donor__name")),
+            "donor_race": clean(r.get("donor__race")),
+            "years_of_seizure_history": r.get("donor__years_of_seizure_history"),
             "brain_structure": clean(r.get("structure__name")),
+            # Layer 3 and layer 5 pyramidal neurons are different cell
+            # types. A cell-types specimen search returned the structure
+            # and not the layer within it.
+            "cortical_layer": clean(r.get("structure__layer")),
+            "structure_acronym": clean(r.get("structure__acronym")),
+            "structure_id": r.get("structure__id"),
+            "hemisphere": clean(r.get("specimen__hemisphere")),
+            # Soma position in the common coordinate framework. Measured
+            # per cell for mouse (60 distinct positions in 60 sampled
+            # specimens); for human it is coarser, 12 distinct positions
+            # across 60 specimens from 9 donors, so treat it as the block
+            # the cell came from rather than the cell's own coordinate.
+            "soma_location": (
+                {
+                    "x": r.get("csl__x"),
+                    "y": r.get("csl__y"),
+                    "z": r.get("csl__z"),
+                    "normalized": r.get("csl__normalized"),
+                }
+                if r.get("csl__x") is not None
+                else None
+            ),
             "transgenic_line": clean(r.get("line_name")) or None,
             "avg_firing_rate": r.get("ef__avg_firing_rate"),
             "input_resistance": r.get("ef__ri"),
@@ -158,5 +187,27 @@ class AllenCellTypesSpecimensTool(BaseTool):
             "upstroke_downstroke_ratio": r.get(
                 "ef__upstroke_downstroke_ratio_long_square"
             ),
+            # The description promises electrophysiology. Resting membrane
+            # potential and rheobase are the two most basic intrinsic
+            # properties a neuron has, and neither reached the caller.
+            "resting_potential_mv": r.get("ef__vrest"),
+            "rheobase_pa": r.get("ef__threshold_i_long_square"),
+            "adaptation_index": r.get("ef__adaptation"),
+            "f_i_curve_slope": r.get("ef__f_i_curve_slope"),
+            "avg_interspike_interval_ms": r.get("ef__avg_isi"),
+            "fast_trough_mv": r.get("ef__fast_trough_v_long_square"),
+            "ramp_peak_time_s": r.get("ef__peak_t_ramp"),
+            # Spiny or aspiny is the standard morphological proxy for
+            # excitatory versus inhibitory, and whether the apical dendrite
+            # is intact says whether the reconstruction can be trusted.
+            "dendrite_type": clean(r.get("tag__dendrite_type")),
+            "apical_dendrite": clean(r.get("tag__apical")),
+            "reconstruction_type": clean(r.get("nr__reconstruction_type")) or None,
             "has_reconstruction": r.get("nr__reconstruction_type") not in (None, ""),
+            # How many models the Allen Institute fit to this cell.
+            "model_counts": {
+                "glif": r.get("m__glif"),
+                "biophysical_perisomatic": r.get("m__biophys_perisomatic"),
+                "biophysical_all_active": r.get("m__biophys_all_active"),
+            },
         }
