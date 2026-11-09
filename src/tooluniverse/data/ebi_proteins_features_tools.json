@@ -96,11 +96,38 @@
                     "description": "Feature description (interaction partner, binding specificity, etc.)"
                   },
                   "evidences": {
-                    "type": "array",
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Evidence for the feature, each an ECO code with its source",
                     "items": {
-                      "type": "object"
-                    },
-                    "description": "Literature evidence"
+                      "type": "object",
+                      "description": "One piece of evidence for the feature",
+                      "properties": {
+                        "code": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Evidence Code Ontology term, e.g. ECO:0000269 for experimental evidence"
+                        },
+                        "source": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Where the evidence comes from, e.g. PubMed"
+                        },
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Identifier in that source"
+                        }
+                      }
+                    }
                   },
                   "category": {
                     "type": [
@@ -189,6 +216,26 @@
                         ]
                       }
                     }
+                  },
+                  "raw_evidences": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "The same evidence as UniProt sends it, with the source object intact",
+                    "items": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": [
+                          "string",
+                          "number",
+                          "boolean",
+                          "array",
+                          "object",
+                          "null"
+                        ]
+                      }
+                    }
                   }
                 }
               },
@@ -199,8 +246,18 @@
               "description": "Total feature count"
             },
             "feature_type_counts": {
-              "type": "object",
-              "description": "Count of each feature type (DNA_BIND, BINDING, REGION, MOTIF, SITE)"
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "How many features of each type the entry has, keyed by UniProt feature type such as DNA_BIND, REGION or MOTIF",
+              "additionalProperties": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Count for that feature type"
+              }
             },
             "taxid": {
               "type": [
@@ -215,6 +272,41 @@
                 "null"
               ],
               "description": "CRC64 of the sequence the positions are against"
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether more features remain beyond this page"
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size applied"
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Offset of this page"
+            },
+            "returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Features on this page"
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the feature list was cut. Declared because a caller reading the schema otherwise has no way to know the result is paged at all"
             }
           },
           "not": {

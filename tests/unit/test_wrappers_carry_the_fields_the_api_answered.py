@@ -2335,6 +2335,9 @@ def test_the_wrapper_reads_the_field_the_api_answered(module, key, why):
 
 # (tool, output field the schema must declare)
 DECLARED = [
+    ("EBIProteins_get_domains_sites", "has_more"),
+    ("EBIProteins_get_domains_sites", "truncated"),
+    ("EBIProteins_get_domains_sites", "raw_evidences"),
     ("Reactome_get_interactor", "isInferred"),
     ("Reactome_get_interactor", "reviewStatus"),
     ("GBIF_suggest_species", "nubKey"),
@@ -5840,3 +5843,54 @@ def test_a_taxon_suggestion_carries_the_keys_that_resolve_it():
     assert "synonym" in schema, (
         "the nubKey declaration should say why it is not the same as key"
     )
+
+
+def test_a_gene_lookup_declares_where_the_gene_is():
+    """NCBIDatasets_get_gene_by_symbol returned the coordinates undeclared.
+
+    genomic_locations carries the assembly, chromosome accession, start,
+    end and strand -- GRCh38.p14, NC_000017, minus for BRCA1 -- and the
+    schema declared the array and not what is in it. map_locations carries
+    the cytogenetic band, nomenclature_authority the HGNC id, and
+    gene_ontology the GO annotations with their evidence codes.
+
+    The evidence code is the part worth declaring by name: an IDA
+    annotation was shown experimentally and an IEA was inferred
+    electronically, and a caller treating the two alike is treating a guess
+    as a measurement. The qualifier matters for the same reason -- a NOT
+    qualifier inverts the annotation.
+    """
+    schema = json.dumps(_config("NCBIDatasets_get_gene_by_symbol").get("return_schema"))
+    for field in ('"assembly"', '"orientation"', '"map_value"',
+                  '"identifier"', '"evidence_code"', '"qualifier"'):
+        assert field in schema, f"NCBI Datasets returns {field} undeclared"
+    assert "electronically" in schema or "IEA" in schema, (
+        "the evidence_code declaration should say what the codes separate"
+    )
+
+
+def test_a_paged_feature_list_declares_that_it_is_paged():
+    """EBIProteins_get_domains_sites declared neither the paging nor the evidence.
+
+    has_more, limit, offset, returned and truncated were all returned and
+    none declared, so an agent reading the schema had no way to know the
+    feature list is paged -- it would take 31 of 31 as the whole answer and
+    be right by luck, and take 100 of 400 as the whole answer and be wrong.
+
+    features[].evidences was undeclared too. Each is an ECO code with its
+    source: ECO:0000269 from PubMed 16793544 is an experimental observation,
+    and a domain annotation without it cannot be weighed. raw_evidences
+    keeps UniProt's own nested form beside the flattened one.
+
+    feature_type_counts is keyed by UniProt feature type out of the data -
+    DNA_BIND, REGION, MOTIF - so it is declared with additionalProperties
+    and a value shape.
+    """
+    schema = json.dumps(_config("EBIProteins_get_domains_sites").get("return_schema"))
+    for paging in ('"has_more"', '"limit"', '"offset"', '"returned"',
+                   '"truncated"'):
+        assert paging in schema, f"{paging} undeclared"
+    assert '"evidences"' in schema and "ECO:0000269" in schema, (
+        "the evidence declaration should show what an ECO code looks like"
+    )
+    assert '"feature_type_counts"' in schema
