@@ -66,7 +66,7 @@
         },
         "effect": {
           "type": "string",
-          "description": "Predicted effect: 'stabilizing' or 'destabilizing'"
+          "description": "Predicted effect: 'stabilizing' (ddG > 0), 'destabilizing' (ddG <= 0), or 'unknown' when DynaMut2 returned no parseable prediction - previously an absent prediction was reported as 'destabilizing'"
         },
         "job_id": {
           "type": "string",
@@ -155,7 +155,7 @@
         },
         "effect": {
           "type": "string",
-          "description": "Predicted effect: 'stabilizing' or 'destabilizing'"
+          "description": "Predicted effect: 'stabilizing' (ddG > 0), 'destabilizing' (ddG <= 0), or 'unknown' when DynaMut2 returned no parseable prediction - previously an absent prediction was reported as 'destabilizing'"
         },
         "job_id": {
           "type": "string",

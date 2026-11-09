@@ -5591,3 +5591,51 @@ def test_spliceai_does_not_report_an_absent_prediction_as_benign():
     # isinstance(True, int) is True in Python, so a bool must not pass for a
     # score: it would be reported as 1.0, the top of the scale.
     assert tool._as_float(True) is None
+
+
+def test_a_stability_call_needs_a_number_behind_it():
+    """"destabilizing" was the else branch of a two-way if.
+
+        "stabilizing" if isinstance(ddg, (int, float)) and ddg > 0
+        else "destabilizing"
+
+    Both DynaMut2 handlers used that, so a prediction DynaMut2 did not
+    return, or returned unparseably, came back as a confident
+    "destabilizing". The float() coercion above those call sites handles the
+    ordinary string case, which makes this narrower than the SpliceAI
+    defect it resembles -- but a directional stability call with no number
+    behind it is still an answer the data does not support.
+
+    How often DynaMut2 leaves `prediction` unparseable is not measured: it
+    submits jobs by ticket and polls for them, so a population estimate
+    would take hours of queueing. The fix is correct at any frequency.
+
+    A ddG of exactly 0 still reads destabilizing, as it always has; only
+    the no-number case changed.
+    """
+    from tooluniverse.dynamut2_tool import _effect
+
+    assert _effect(1.5) == "stabilizing"
+    assert _effect(-1.5) == "destabilizing"
+    assert _effect(0.0) == "destabilizing"
+    assert _effect("1.5") == "stabilizing", (
+        "the helper coerces rather than trusting its callers to have done it"
+    )
+    for no_number in (None, "", "n/a", [1.0], {}):
+        assert _effect(no_number) == "unknown", no_number
+    # isinstance(True, int) is True and True > 0, so a bool would read as a
+    # stabilizing prediction.
+    assert _effect(True) == "unknown"
+
+    source = _source("dynamut2_tool.py")
+    # Anchored on the assignment, not on "_effect(ddg)": that substring is
+    # also in `def _effect(ddg) -> str:`, so the bare form counts 3 and the
+    # guard fails against the fixed tree. Same trap as _gene_names(genes).
+    assert source.count("effect = _effect(ddg)") == 2, (
+        "both handlers must go through the one reader"
+    )
+    schema = json.dumps(_config("DynaMut2_predict_stability").get("return_schema"))
+    assert "unknown" in schema, (
+        "the schema promised only stabilizing or destabilizing; there is a "
+        "third value now"
+    )
