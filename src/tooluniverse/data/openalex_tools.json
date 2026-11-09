@@ -73,12 +73,22 @@
         "fulltext_terms": {
           "type": "array",
           "description": "Optional list of terms that must occur in OpenAlex full-text index (adds fulltext.search:<term> filters and implicitly enables require_has_fulltext).",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         }
       },
       "anyOf": [
-        {"required": ["search_keywords"]},
-        {"required": ["query"]}
+        {
+          "required": [
+            "search_keywords"
+          ]
+        },
+        {
+          "required": [
+            "query"
+          ]
+        }
       ]
     },
     "return_schema": {
@@ -254,7 +264,9 @@
         "fulltext_terms": {
           "type": "array",
           "description": "Optional list of terms to match in OpenAlex full-text index. Adds one or more fulltext.search:<term> filters and implicitly enables require_has_fulltext.",
-          "items": { "type": "string" }
+          "items": {
+            "type": "string"
+          }
         },
         "per_page": {
           "type": "integer",
@@ -289,33 +301,1362 @@
         }
       },
       "anyOf": [
-        {"required": ["search"]},
-        {"required": ["query"]}
+        {
+          "required": [
+            "search"
+          ]
+        },
+        {
+          "required": [
+            "query"
+          ]
+        }
       ]
     },
     "fields": {
       "path": "/works",
       "path_params": [],
-      "param_map": {"per_page": "per-page"},
+      "param_map": {
+        "per_page": "per-page"
+      },
       "default_params": {},
       "pagination": "openalex_cursor_or_page"
     },
     "return_schema": {
-      "type": ["object", "null"],
+      "type": [
+        "object",
+        "null"
+      ],
       "description": "OpenAlex /works search response data.",
       "additionalProperties": true,
       "properties": {
-        "meta": {"type": "object", "additionalProperties": true},
+        "meta": {
+          "type": "object",
+          "description": "Result count, paging, and OpenAlex's own notice about the request",
+          "additionalProperties": true,
+          "properties": {
+            "count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Total works matching the query"
+            },
+            "page": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page returned"
+            },
+            "per_page": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size"
+            },
+            "groups_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Number of groups, when grouping"
+            },
+            "db_response_time_ms": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Upstream query time"
+            },
+            "notice": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "OpenAlex's own message about the request. Without an API key it says the caller shares one free $0.10/day budget with everyone on the same network IP, and how to get a key - which is why a tool returning it matters operationally"
+            },
+            "cost_usd": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "What this request cost against that budget"
+            },
+            "x_query": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "How OpenAlex parsed the query",
+              "properties": {
+                "oql": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The query in OpenAlex Query Language"
+                },
+                "x_new_oql": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The normalised OQL"
+                },
+                "oqo": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "The parsed query object, including the filters actually applied",
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ]
+                  }
+                },
+                "url": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The upstream URL the query became"
+                },
+                "order": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Sort order applied"
+                },
+                "order_default": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "Whether that order was the default"
+                }
+              }
+            }
+          }
+        },
         "results": {
           "type": "array",
           "items": {
             "type": "object",
             "additionalProperties": true,
             "properties": {
-              "id": {"type": "string"},
-              "title": {"type": ["string", "null"]},
-              "doi": {"type": ["string", "null"]},
-              "publication_year": {"type": ["integer", "null"]}
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "doi": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "publication_year": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "is_retracted": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Whether the work has been retracted. A literature result that does not say this can be cited in good faith after it has been withdrawn"
+              },
+              "is_paratext": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True for front matter, covers and editorial apparatus rather than a paper"
+              },
+              "has_fulltext": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Whether OpenAlex has indexed the full text, as against the abstract only"
+              },
+              "open_access": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Open access status and where to read it",
+                "properties": {
+                  "is_oa": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether a free version exists"
+                  },
+                  "oa_status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "gold, green, hybrid, bronze or closed"
+                  },
+                  "oa_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Where the free version is"
+                  },
+                  "any_repository_has_fulltext": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether any repository holds the full text"
+                  }
+                },
+                "additionalProperties": true
+              },
+              "best_oa_location": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "One place the work can be read, with its source and licence",
+                "properties": {
+                  "is_oa": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether this location is open access"
+                  },
+                  "landing_page_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Page for the work at this location"
+                  },
+                  "pdf_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Direct PDF link, when one is known"
+                  },
+                  "license": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Licence at this location, e.g. cc-by"
+                  },
+                  "version": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "publishedVersion, acceptedVersion or submittedVersion"
+                  },
+                  "source": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "The journal or repository hosting this location",
+                    "properties": {
+                      "id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "OpenAlex source id"
+                      },
+                      "display_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Journal or repository name"
+                      },
+                      "type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "journal, repository, conference, book-series or ebook-platform"
+                      },
+                      "issn_l": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Linking ISSN"
+                      },
+                      "issn": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "description": "All ISSNs",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "is_oa": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "Whether the source itself is fully open access"
+                      },
+                      "is_in_doaj": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "Whether DOAJ lists the source"
+                      },
+                      "is_core": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "Whether OpenAlex treats it as a core source"
+                      },
+                      "host_organization": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "OpenAlex id of the publisher or institution"
+                      },
+                      "host_organization_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Publisher or institution name"
+                      },
+                      "host_organization_lineage": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "description": "Publisher hierarchy, ids",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "host_organization_lineage_names": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "description": "Publisher hierarchy, names",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "listed_in": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "description": "Indexes listing the source",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  },
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OpenAlex id for the location record"
+                  },
+                  "doi": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "DOI at this location, when it differs from the work's"
+                  },
+                  "is_accepted": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether this is at least the accepted version"
+                  },
+                  "is_published": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether this is the published version"
+                  },
+                  "raw_source_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Source name as the metadata gave it"
+                  },
+                  "raw_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Location type as the metadata gave it"
+                  }
+                }
+              },
+              "primary_location": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "One place the work can be read, with its source and licence",
+                "properties": {
+                  "is_oa": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether this location is open access"
+                  },
+                  "landing_page_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Page for the work at this location"
+                  },
+                  "pdf_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Direct PDF link, when one is known"
+                  },
+                  "license": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Licence at this location, e.g. cc-by"
+                  },
+                  "version": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "publishedVersion, acceptedVersion or submittedVersion"
+                  },
+                  "source": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "The journal or repository hosting this location",
+                    "properties": {
+                      "id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "OpenAlex source id"
+                      },
+                      "display_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Journal or repository name"
+                      },
+                      "type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "journal, repository, conference, book-series or ebook-platform"
+                      },
+                      "issn_l": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Linking ISSN"
+                      },
+                      "issn": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "description": "All ISSNs",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "is_oa": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "Whether the source itself is fully open access"
+                      },
+                      "is_in_doaj": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "Whether DOAJ lists the source"
+                      },
+                      "is_core": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "Whether OpenAlex treats it as a core source"
+                      },
+                      "host_organization": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "OpenAlex id of the publisher or institution"
+                      },
+                      "host_organization_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Publisher or institution name"
+                      },
+                      "host_organization_lineage": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "description": "Publisher hierarchy, ids",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "host_organization_lineage_names": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "description": "Publisher hierarchy, names",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "listed_in": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "description": "Indexes listing the source",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  },
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OpenAlex id for the location record"
+                  },
+                  "doi": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "DOI at this location, when it differs from the work's"
+                  },
+                  "is_accepted": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether this is at least the accepted version"
+                  },
+                  "is_published": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether this is the published version"
+                  },
+                  "raw_source_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Source name as the metadata gave it"
+                  },
+                  "raw_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Location type as the metadata gave it"
+                  }
+                }
+              },
+              "locations": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Every known location for the work",
+                "items": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "One place the work can be read, with its source and licence",
+                  "properties": {
+                    "is_oa": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "Whether this location is open access"
+                    },
+                    "landing_page_url": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Page for the work at this location"
+                    },
+                    "pdf_url": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Direct PDF link, when one is known"
+                    },
+                    "license": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Licence at this location, e.g. cc-by"
+                    },
+                    "version": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "publishedVersion, acceptedVersion or submittedVersion"
+                    },
+                    "source": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "description": "The journal or repository",
+                      "additionalProperties": true
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              },
+              "locations_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many locations are known"
+              },
+              "authorships": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Authors in order, each with affiliation, country and ORCID where known",
+                "items": {
+                  "type": "object",
+                  "description": "One author's contribution, with affiliation",
+                  "properties": {
+                    "author_position": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "first, middle or last"
+                    },
+                    "is_corresponding": {
+                      "type": [
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "Whether this author is a corresponding author"
+                    },
+                    "raw_author_name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The name as printed on the paper"
+                    },
+                    "raw_affiliation_strings": {
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "description": "Affiliations as printed",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "author": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "description": "The disambiguated author",
+                      "properties": {
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "OpenAlex author id"
+                        },
+                        "display_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Author name"
+                        },
+                        "orcid": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "ORCID, when known"
+                        }
+                      },
+                      "additionalProperties": true
+                    },
+                    "institutions": {
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "description": "Institutions for this author on this work",
+                      "items": {
+                        "type": "object",
+                        "additionalProperties": true
+                      }
+                    },
+                    "countries": {
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "description": "Country codes for this author's institutions",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              },
+              "corresponding_author_ids": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "OpenAlex ids of the corresponding authors",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "corresponding_institution_ids": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "OpenAlex ids of the corresponding institutions",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "institutions": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Institutions across all authorships",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "institutions_distinct_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Distinct institutions"
+              },
+              "countries_distinct_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Distinct countries"
+              },
+              "ids": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The work's identifiers in other systems: this is how an OpenAlex hit becomes a PubMed or PMC lookup",
+                "properties": {
+                  "openalex": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OpenAlex id"
+                  },
+                  "doi": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "DOI"
+                  },
+                  "pmid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "PubMed URL carrying the PMID"
+                  },
+                  "pmcid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "PubMed Central URL carrying the PMCID"
+                  },
+                  "mag": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Microsoft Academic Graph id"
+                  }
+                },
+                "additionalProperties": true
+              },
+              "mesh": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "MeSH terms, each with its descriptor, qualifier and whether it is a major topic",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "concepts": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "OpenAlex concepts with scores (the older concept scheme)",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "topics": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "OpenAlex topics with scores",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "primary_topic": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The single best-matching topic, with the subfield, field and domain above it",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OpenAlex topic id"
+                  },
+                  "display_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Topic name"
+                  },
+                  "score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Match score"
+                  },
+                  "subfield": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "Subfield",
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "field": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "Field",
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "domain": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "Domain",
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              },
+              "keywords": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Extracted keywords with scores",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "sustainable_development_goals": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "UN SDGs the work relates to, with scores",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "study_designs": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Study designs OpenAlex detected, where it does",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "cited_by_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Times cited"
+              },
+              "counts_by_year": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Citations per year",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "referenced_works": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "OpenAlex ids of the works this one cites",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "referenced_works_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many works it cites"
+              },
+              "related_works": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "OpenAlex ids of works OpenAlex considers related",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "fwci": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Field-weighted citation impact: 1.0 is the field and year average"
+              },
+              "citation_normalized_percentile": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Where the work sits in its field and year by citations",
+                "properties": {
+                  "value": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Percentile as a fraction"
+                  },
+                  "is_in_top_1_percent": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Top 1% for its field and year"
+                  },
+                  "is_in_top_10_percent": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Top 10% for its field and year"
+                  }
+                }
+              },
+              "cited_by_percentile_year": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Citation percentile band within the publication year",
+                "properties": {
+                  "min": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Lower bound"
+                  },
+                  "max": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Upper bound"
+                  }
+                }
+              },
+              "relevance_score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Match score for the search query, when searching"
+              },
+              "funders": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Funders OpenAlex recorded for the work",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "awards": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Grant awards, with funder and award id where known",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": true
+                }
+              },
+              "display_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Title as OpenAlex displays it"
+              },
+              "biblio": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Volume, issue and page range, which a citation needs and the DOI does not give",
+                "properties": {
+                  "volume": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Volume"
+                  },
+                  "issue": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Issue"
+                  },
+                  "first_page": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "First page"
+                  },
+                  "last_page": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Last page"
+                  }
+                },
+                "additionalProperties": true
+              },
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Work type, e.g. article, review, preprint, book-chapter"
+              },
+              "language": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Two-letter language code"
+              },
+              "publication_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Full publication date, where publication_year gives only the year"
+              },
+              "created_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When OpenAlex created the record"
+              },
+              "updated_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When OpenAlex last updated it"
+              },
+              "indexed_in": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Which indexes hold the work, e.g. crossref, pubmed",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "abstract_inverted_index": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The abstract as an inverted index: each word maps to its positions. OpenAlex does not ship abstracts as plain text, so a caller wanting the abstract has to rebuild it from this",
+                "additionalProperties": {
+                  "type": "array",
+                  "description": "Positions of that word",
+                  "items": {
+                    "type": "integer"
+                  }
+                }
+              },
+              "apc_list": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "List article processing charge, where known",
+                "additionalProperties": true
+              },
+              "apc_paid": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "APC actually paid, where known",
+                "additionalProperties": true
+              },
+              "has_content": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Which content OpenAlex holds for the work",
+                "properties": {
+                  "pdf": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether a PDF is held"
+                  },
+                  "grobid_xml": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether parsed XML is held"
+                  }
+                },
+                "additionalProperties": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ]
+                }
+              },
+              "content_urls": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "URLs for content OpenAlex holds, keyed by content kind",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "is_traditional": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Whether the work is a traditional journal publication"
+              },
+              "is_xpac": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "OpenAlex internal classification flag"
+              },
+              "volume": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Volume, where OpenAlex sets it outside biblio"
+              }
             }
           }
         }
@@ -348,25 +1689,51 @@
           "description": "Optional contact email for OpenAlex polite pool."
         }
       },
-      "required": ["openalex_id"]
+      "required": [
+        "openalex_id"
+      ]
     },
     "fields": {
       "path": "/works/{openalex_id}",
-      "path_params": ["openalex_id"]
+      "path_params": [
+        "openalex_id"
+      ]
     },
     "return_schema": {
-      "type": ["object", "null"],
+      "type": [
+        "object",
+        "null"
+      ],
       "description": "OpenAlex work (paper) data.",
       "additionalProperties": true,
       "properties": {
-        "id": {"type": "string"},
-        "title": {"type": ["string", "null"]},
-        "doi": {"type": ["string", "null"]},
-        "publication_year": {"type": ["integer", "null"]}
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "doi": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "publication_year": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
       }
     },
     "test_examples": [
-      {"openalex_id": "W2626778328"}
+      {
+        "openalex_id": "W2626778328"
+      }
     ]
   },
   {
@@ -388,19 +1755,28 @@
           "description": "Optional contact email for OpenAlex polite pool."
         }
       },
-      "required": ["doi"]
+      "required": [
+        "doi"
+      ]
     },
     "fields": {
       "path": "/works/https://doi.org/{doi}",
-      "path_params": ["doi"]
+      "path_params": [
+        "doi"
+      ]
     },
     "return_schema": {
-      "type": ["object", "null"],
+      "type": [
+        "object",
+        "null"
+      ],
       "description": "OpenAlex work data from DOI lookup.",
       "additionalProperties": true
     },
     "test_examples": [
-      {"doi": "10.1145/3065386"}
+      {
+        "doi": "10.1145/3065386"
+      }
     ]
   },
   {
@@ -439,21 +1815,31 @@
           "description": "Optional contact email for OpenAlex polite pool."
         }
       },
-      "required": ["search"]
+      "required": [
+        "search"
+      ]
     },
     "fields": {
       "path": "/authors",
       "path_params": [],
-      "param_map": {"per_page": "per-page"},
+      "param_map": {
+        "per_page": "per-page"
+      },
       "pagination": "openalex_cursor_or_page"
     },
     "return_schema": {
-      "type": ["object", "null"],
+      "type": [
+        "object",
+        "null"
+      ],
       "description": "OpenAlex authors search response data.",
       "additionalProperties": true
     },
     "test_examples": [
-      {"search": "Yann LeCun", "per_page": 3}
+      {
+        "search": "Yann LeCun",
+        "per_page": 3
+      }
     ]
   },
   {
@@ -475,19 +1861,28 @@
           "description": "Optional contact email for OpenAlex polite pool."
         }
       },
-      "required": ["author_id"]
+      "required": [
+        "author_id"
+      ]
     },
     "fields": {
       "path": "/authors/{author_id}",
-      "path_params": ["author_id"]
+      "path_params": [
+        "author_id"
+      ]
     },
     "return_schema": {
-      "type": ["object", "null"],
+      "type": [
+        "object",
+        "null"
+      ],
       "description": "OpenAlex author data.",
       "additionalProperties": true
     },
     "test_examples": [
-      {"author_id": "A5001226970"}
+      {
+        "author_id": "A5001226970"
+      }
     ]
   },
   {
@@ -526,21 +1921,31 @@
           "description": "Optional contact email for OpenAlex polite pool."
         }
       },
-      "required": ["search"]
+      "required": [
+        "search"
+      ]
     },
     "fields": {
       "path": "/institutions",
       "path_params": [],
-      "param_map": {"per_page": "per-page"},
+      "param_map": {
+        "per_page": "per-page"
+      },
       "pagination": "openalex_cursor_or_page"
     },
     "return_schema": {
-      "type": ["object", "null"],
+      "type": [
+        "object",
+        "null"
+      ],
       "description": "OpenAlex institutions search response data.",
       "additionalProperties": true
     },
     "test_examples": [
-      {"search": "Harvard University", "per_page": 3}
+      {
+        "search": "Harvard University",
+        "per_page": 3
+      }
     ]
   },
   {
@@ -562,19 +1967,28 @@
           "description": "Optional contact email for OpenAlex polite pool."
         }
       },
-      "required": ["institution_id"]
+      "required": [
+        "institution_id"
+      ]
     },
     "fields": {
       "path": "/institutions/{institution_id}",
-      "path_params": ["institution_id"]
+      "path_params": [
+        "institution_id"
+      ]
     },
     "return_schema": {
-      "type": ["object", "null"],
+      "type": [
+        "object",
+        "null"
+      ],
       "description": "OpenAlex institution data.",
       "additionalProperties": true
     },
     "test_examples": [
-      {"institution_id": "I136199984"}
+      {
+        "institution_id": "I136199984"
+      }
     ]
   },
   {
@@ -613,7 +2027,9 @@
           "description": "Optional contact email for OpenAlex polite pool."
         }
       },
-      "required": ["search"]
+      "required": [
+        "search"
+      ]
     },
     "fields": {
       "path": "/sources",
@@ -624,13 +2040,22 @@
       "pagination": "openalex_cursor_or_page"
     },
     "return_schema": {
-      "type": ["object", "null"],
+      "type": [
+        "object",
+        "null"
+      ],
       "description": "OpenAlex sources search response. results[].summary_stats contains h_index, i10_index, and 2yr_mean_citedness.",
       "additionalProperties": true
     },
     "test_examples": [
-      {"search": "nature", "per_page": 3},
-      {"search": "lancet", "per_page": 3}
+      {
+        "search": "nature",
+        "per_page": 3
+      },
+      {
+        "search": "lancet",
+        "per_page": 3
+      }
     ]
   },
   {
@@ -652,20 +2077,31 @@
           "description": "Optional contact email for OpenAlex polite pool."
         }
       },
-      "required": ["source_id"]
+      "required": [
+        "source_id"
+      ]
     },
     "fields": {
       "path": "/sources/{source_id}",
-      "path_params": ["source_id"]
+      "path_params": [
+        "source_id"
+      ]
     },
     "return_schema": {
-      "type": ["object", "null"],
+      "type": [
+        "object",
+        "null"
+      ],
       "description": "OpenAlex source record. summary_stats contains h_index, i10_index, and 2yr_mean_citedness.",
       "additionalProperties": true
     },
     "test_examples": [
-      {"source_id": "S137773608"},
-      {"source_id": "S49861241"}
+      {
+        "source_id": "S137773608"
+      },
+      {
+        "source_id": "S49861241"
+      }
     ]
   }
 ]

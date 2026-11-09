@@ -2335,6 +2335,10 @@ def test_the_wrapper_reads_the_field_the_api_answered(module, key, why):
 
 # (tool, output field the schema must declare)
 DECLARED = [
+    ("openalex_search_works", "is_retracted"),
+    ("openalex_search_works", "authorships"),
+    ("openalex_search_works", "best_oa_location"),
+    ("openalex_search_works", "referenced_works"),
     ("Nominatim_geocode", "licence"),
     ("Nominatim_geocode", "osm_id"),
     ("Nominatim_reverse_geocode", "osm_type"),
@@ -5686,3 +5690,55 @@ def test_a_geocode_result_declares_its_licence_and_its_osm_key():
         assert "ODbL" in schema, (
             "the declaration should name the licence, not just the field"
         )
+
+
+def test_a_literature_search_declares_whether_a_work_was_retracted():
+    """openalex_search_works declared four of the fifty-three keys it returns.
+
+    `id`, `title`, `doi`, `publication_year` were declared;
+    `is_retracted` was not. A literature result whose schema does not
+    mention retraction can be read, cited and built on in good faith after
+    the paper has been withdrawn -- and an agent choosing tools from the
+    schema would not know the tool can answer the question at all.
+
+    The same record carried `authorships` with each author's affiliation
+    and ORCID, `ids` with the PMID and PMCID that turn an OpenAlex hit into
+    a PubMed lookup, `best_oa_location` with a readable copy, `mesh`,
+    `biblio` (the volume, issue and pages a citation needs and the DOI does
+    not give), and `referenced_works`. The wrapper returns the upstream
+    payload whole, so none of this was ever dropped: it was returned and
+    undeclared, which the audit treats as the second half of the same
+    defect.
+
+    `additionalProperties: true` was already on the results item and did
+    not help: a boolean says the level is open without saying what is in
+    it, so it declares nothing a reader can act on.
+    """
+    schema = json.dumps(_config("openalex_search_works").get("return_schema"))
+    for field in ('"is_retracted"', '"is_paratext"', '"authorships"', '"ids"',
+                  '"best_oa_location"', '"mesh"', '"biblio"',
+                  '"referenced_works"', '"fwci"'):
+        assert field in schema, f"openalex_search_works returns {field} undeclared"
+    assert "ORCID" in schema, (
+        "the authorship declaration should say the author carries an ORCID"
+    )
+    assert "inverted index" in schema, (
+        "OpenAlex ships no plain-text abstract; a caller has to rebuild it "
+        "from abstract_inverted_index, and the schema should say so"
+    )
+
+
+def test_a_search_tool_declares_what_the_upstream_says_about_the_request():
+    """OpenAlex answers every keyless request with a budget warning.
+
+    `meta.notice` says the caller is sharing one free $0.10 per day across
+    everyone on the same network IP, and how to get a key; `meta.cost_usd`
+    says what the request drew against it. That is the difference between
+    a tool that mysteriously starts failing under load and one whose answer
+    said why, and neither field was declared.
+    """
+    schema = json.dumps(_config("openalex_search_works").get("return_schema"))
+    assert '"notice"' in schema and '"cost_usd"' in schema
+    assert "0.10" in schema or "budget" in schema, (
+        "the notice declaration should say what the notice is about"
+    )
