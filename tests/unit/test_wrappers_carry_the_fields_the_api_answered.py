@@ -2192,6 +2192,46 @@ UPSTREAM_KEYS = [
         "covered_recipient_profile_id",
         "CMS's stable recipient key, which joins a recipient's payments across program years",
     ),
+    (
+        "harmonizome_tool.py",
+        'gs.get("href")',
+        "the only path that fetches a gene set's genes; a dataset naming 5218 of them had no way to retrieve one",
+    ),
+    (
+        "harmonizome_tool.py",
+        'data.get("resource")',
+        "which database the harmonized data came from, e.g. the Comparative Toxicogenomics Database",
+    ),
+    (
+        "pgs_catalog_tool.py",
+        'body.get("license")',
+        "the terms under which the scoring file the tool links to may be reused",
+    ),
+    (
+        "pgs_catalog_tool.py",
+        '"ftp_harmonized_scoring_files"',
+        "the GRCh37/GRCh38 files, as against the author's original build, which is what applying a score needs",
+    ),
+    (
+        "pgs_catalog_tool.py",
+        'body.get("samples_variants")',
+        "the GWAS the score's variants were discovered in, with its ancestry; distinct from samples_training",
+    ),
+    (
+        "pgs_catalog_tool.py",
+        'body.get("matches_publication")',
+        "whether the Catalog's own curation matches the paper it cites",
+    ),
+    (
+        "pdbtm_tool.py",
+        'payload.get("model_coordinates_url")',
+        "the membrane-positioned coordinates the classification was computed from",
+    ),
+    (
+        "pdbtm_tool.py",
+        'site.get("label")',
+        "the region legend without which PDBTM's per-residue site ids mean nothing",
+    ),
 ]
 
 
@@ -2220,6 +2260,14 @@ def test_the_wrapper_reads_the_field_the_api_answered(module, key, why):
 
 # (tool, output field the schema must declare)
 DECLARED = [
+    ("Harmonizome_get_dataset", "source_resource"),
+    ("PGSCatalog_get_score", "license"),
+    ("PGSCatalog_get_score", "samples_variants"),
+    ("PGSCatalog_get_score", "harmonized_scoring_files"),
+    ("PGSCatalog_get_score", "matches_publication"),
+    ("PDBTM_get_topology", "topology_segments"),
+    ("PDBTM_get_topology", "model_coordinates_url"),
+    ("PDBTM_get_topology", "residues_by_region"),
     ("OPM_search_structures", "opm_id"),
     ("OPM_search_structures", "verification"),
     ("OPM_search_structures", "subunits_positioned"),
@@ -5177,4 +5225,81 @@ def test_a_payment_carries_the_key_that_joins_it_across_years():
     assert 'row.get("change_type")' in source, (
         "whether CMS changed or merely republished the record is how a "
         "caller knows a figure moved between publications"
+    )
+
+
+def test_a_dataset_of_gene_sets_can_reach_a_gene_set():
+    """CTD Gene-Disease Associations holds 5218 gene sets in Harmonizome.
+
+    The wrapper named a page of them and returned no pointer, and nothing
+    in the catalogue takes a gene-set name -- there is no
+    Harmonizome_get_gene_set. So every one of those 5218 names was a dead
+    end. The href the API ships beside each name resolves to the genes with
+    their threshold and standardized values, which is the thing a gene set
+    is.
+
+    The name is still trimmed at the slash on purpose: Harmonizome
+    qualifies each name with its dataset, and the dataset is the one asked
+    for. The href carries the unabbreviated form.
+    """
+    source = _source("harmonizome_tool.py")
+    assert 'gs.get("href")' in source
+    assert "HARMONIZOME_SITE" in source, (
+        "the href is a bare path; a resolvable URL should travel with it"
+    )
+    assert 'resource.get("name")' in source, (
+        "a Harmonizome dataset is a processed view of another database, and "
+        "the tool reported the processing without the origin"
+    )
+
+
+def test_a_polygenic_score_says_what_it_was_trained_and_discovered_in():
+    """samples_training and samples_variants are different populations.
+
+    samples_training is where the weights were fitted; samples_variants is
+    the GWAS the variants were discovered in. A score's transferability
+    depends on both, the module docstring promises both, and only the first
+    reached any handler. PGS000018 carries seven discovery samples, from
+    East Asian (11,323) to Hispanic or Latin American (4,095), each with
+    its GWAS Catalog accession.
+    """
+    source = _source("pgs_catalog_tool.py")
+    assert 'body.get("samples_variants")' in source
+    assert 'v.get("source_GWAS_catalog")' in source, (
+        "the discovery GWAS accession is what joins the score to GWAS Catalog"
+    )
+    assert 'body.get("license")' in source, (
+        "the tool returns a scoring-file URL; the licence governing its "
+        "reuse travelled in the same record and was dropped"
+    )
+    assert 'body.get("method_params")' in source, (
+        "method_name without method_params is a method with no thresholds"
+    )
+
+
+def test_a_topology_tool_says_where_the_segments_are():
+    """num_tm_segments answered "16" to the question of which residues cross.
+
+    PDBTM assigns every residue to one of eight regions and ships the legend
+    that names them; the wrapper returned the count and neither. The
+    per-residue data collapses into labelled ranges, and on 2por every chain
+    yields exactly 16 transmembrane runs against a reported num_tm of 16 --
+    and on 1prc, 5, 5 and 1 for the L, M and H subunits. That agreement is
+    the check that the collapse is faithful rather than merely plausible.
+    """
+    source = _source("pdbtm_tool.py")
+    assert "_topology_segments(chain, site_labels)" in source
+    assert 'res.get("aa_type")' in source, (
+        "a residue range should say which residues it covers"
+    )
+    assert 'site.get("site_id")' in source and 'site.get("label")' in source, (
+        "the region legend turns a site id into 'Transmembrane Beta strand'"
+    )
+    assert 'payload.get("model_coordinates_url")' in source, (
+        "a structure database that returns no way to fetch the structure "
+        "is a dead end"
+    )
+    schema = json.dumps(_config("PDBTM_get_topology").get("return_schema"))
+    assert '"topology_segments_truncated"' in schema, (
+        "the 200-segment cap must be disclosed"
     )

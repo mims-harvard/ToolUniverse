@@ -188,7 +188,26 @@
               "type": "string"
             },
             "trait_efo": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "EFO/MONDO id"
+                  },
+                  "label": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Trait label"
+                  }
+                }
+              }
             },
             "variants_number": {
               "type": "integer"
@@ -200,13 +219,206 @@
               "type": "string"
             },
             "publication": {
-              "type": "object"
+              "type": "object",
+              "properties": {
+                "first_author": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "First author"
+                },
+                "journal": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Journal"
+                },
+                "year": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Publication year"
+                },
+                "pmid": {
+                  "type": [
+                    "integer",
+                    "string",
+                    "null"
+                  ],
+                  "description": "PubMed id"
+                },
+                "doi": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "DOI"
+                }
+              }
             },
             "ancestry_distribution": {
-              "type": "object"
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The Catalog's ancestry breakdown keyed by stage ('gwas' for discovery, 'dev' for development, 'eval' for evaluation)",
+              "additionalProperties": {
+                "type": "object",
+                "description": "One stage",
+                "properties": {
+                  "dist": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "Percentage per ancestry code, e.g. {'EUR': 64.9, 'AFR': 8.1}",
+                    "additionalProperties": {
+                      "type": "number"
+                    }
+                  },
+                  "count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Samples at this stage"
+                  },
+                  "multi": {
+                    "type": "array",
+                    "description": "Multi-ancestry group codes",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
             },
             "scoring_file": {
               "type": "string"
+            },
+            "license": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Terms under which the scoring file may be reused"
+            },
+            "harmonized_scoring_files": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Scoring files harmonized per genome build, keyed by build ('GRCh37', 'GRCh38'); what applying the score to one's own genotypes needs, where the plain scoring_file is in the author's original build",
+              "additionalProperties": {
+                "type": "object",
+                "description": "Files for one build",
+                "properties": {
+                  "positions": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "URL of the position-harmonized scoring file"
+                  }
+                }
+              }
+            },
+            "matches_publication": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the Catalog's curation matches the paper it cites"
+            },
+            "method_params": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The method's actual parameters, e.g. 'p=1.23^-3, r^2=0.21'; method_name alone does not identify the score"
+            },
+            "date_release": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the Catalog released this score"
+            },
+            "trait_additional": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Further trait information published by the authors"
+            },
+            "samples_training": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "The samples the score's weights were fitted in, as the Catalog publishes them"
+            },
+            "samples_variants": {
+              "type": "array",
+              "description": "The GWAS the score's variants were discovered in. Distinct from samples_training: transferability depends on both",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "sample_number": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Number of samples"
+                  },
+                  "ancestry_broad": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Broad ancestry category"
+                  },
+                  "ancestry_free": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Ancestry as the authors described it"
+                  },
+                  "source_PMID": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ],
+                    "description": "PubMed id of the discovery GWAS"
+                  },
+                  "source_GWAS_catalog": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "GWAS Catalog accession, e.g. GCST003116"
+                  },
+                  "cohorts": {
+                    "type": "array",
+                    "description": "Short names of the contributing cohorts",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "weight_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Whether the weights are log(OR), log(HR), beta or similar"
             }
           },
           "required": [

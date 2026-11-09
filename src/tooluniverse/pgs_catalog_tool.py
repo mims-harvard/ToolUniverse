@@ -288,6 +288,42 @@ class PGSCatalogTool(BaseTool):
         ]
         summary["ancestry_distribution"] = body.get("ancestry_distribution")
         summary["samples_training"] = body.get("samples_training")
+        # samples_training is where the weights were fitted; samples_variants
+        # is the GWAS the variants were discovered in, with its ancestry, its
+        # size and its GWAS Catalog accession. A score's transferability
+        # depends on both, and this one reached no handler. PGS000018 has
+        # seven, from East Asian 11,323 to Hispanic/Latin American 4,095.
+        summary["samples_variants"] = [
+            {
+                "sample_number": v.get("sample_number"),
+                "ancestry_broad": v.get("ancestry_broad"),
+                "ancestry_free": v.get("ancestry_free"),
+                "source_PMID": v.get("source_PMID"),
+                "source_GWAS_catalog": v.get("source_GWAS_catalog"),
+                "cohorts": [
+                    c.get("name_short")
+                    for c in (v.get("cohorts") or [])
+                    if c.get("name_short")
+                ],
+            }
+            for v in (body.get("samples_variants") or [])
+        ]
+        # The terms under which the scoring file above may be reused. The
+        # tool returned a download URL and not the licence governing it.
+        summary["license"] = body.get("license")
+        # ftp_scoring_file is in the author's original build; these are
+        # harmonized to GRCh37 and GRCh38, which is what a caller applying
+        # the score to their own genotypes actually needs.
+        summary["harmonized_scoring_files"] = body.get(
+            "ftp_harmonized_scoring_files"
+        )
+        # Whether the Catalog's own curation matches the paper it cites.
+        summary["matches_publication"] = body.get("matches_publication")
+        # method_name without method_params is "we used C+T" with no
+        # thresholds: PGS000746 is p=1.23^-3, r^2=0.21.
+        summary["method_params"] = body.get("method_params")
+        summary["date_release"] = body.get("date_release")
+        summary["trait_additional"] = body.get("trait_additional")
         return {
             "status": "success",
             "data": summary,

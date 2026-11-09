@@ -36,11 +36,47 @@
                   "chain_label": {"type": ["string", "null"]},
                   "tm_type": {"type": ["string", "null"]},
                   "num_tm_segments": {"type": ["integer", "null"]},
-                  "is_membrane_embedded": {"type": "boolean"}
+                  "is_membrane_embedded": {"type": "boolean"},
+                  "topology_segments": {
+                    "type": "array",
+                    "description": "The chain's topology as labelled residue ranges. num_tm_segments counts the transmembrane runs; these say where they are, and on 2por and 1prc the run count reproduces num_tm exactly",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "region": {"type": ["string", "null"], "description": "Region name from the entry's legend, e.g. 'Transmembrane Beta strand', 'Side1', 'Membrane Inside'"},
+                        "confidence": {"type": ["string", "null"], "description": "PDBTM's confidence classification for the assignment, e.g. 'curated'"},
+                        "start_residue": {"type": ["string", "null"], "description": "First PDB residue label in the run"},
+                        "end_residue": {"type": ["string", "null"], "description": "Last PDB residue label in the run"},
+                        "residue_count": {"type": ["integer", "null"], "description": "Residues in the run"},
+                        "amino_acids": {"type": "array", "description": "Three-letter residue types in the run", "items": {"type": "string"}}
+                      }
+                    }
+                  },
+                  "topology_segments_total": {"type": ["integer", "null"], "description": "Segments before truncation"},
+                  "topology_segments_truncated": {"type": "boolean", "description": "True when the chain has more than 200 segments"},
+                  "residue_count": {"type": ["integer", "null"], "description": "Residues assigned a region on this chain"},
+                  "residues_by_region": {"type": ["object", "null"], "description": "Residue count per region name for this chain", "additionalProperties": {"type": "integer"}}
                 }
               }
             },
-            "membrane_radius_angstrom": {"type": ["number", "null"]}
+            "membrane_radius_angstrom": {"type": ["number", "null"]},
+            "regions": {
+              "type": "array",
+              "description": "The region legend the per-residue assignment refers to; without it a site id means nothing",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "site_id": {"type": ["integer", "null"], "description": "Region id"},
+                  "label": {"type": ["string", "null"], "description": "Region name"}
+                }
+              }
+            },
+            "model_coordinates_url": {"type": ["string", "null"], "description": "The membrane-positioned coordinates (.trpdb) - the structure the classification was computed from"},
+            "entry_url": {"type": ["string", "null"], "description": "The PDBTM page for this entry"},
+            "includes_het_groups": {"type": ["boolean", "null"], "description": "Whether hetero groups are in the model"},
+            "evidence_codes": {"type": "array", "description": "How the assignment was made, as ECO terms", "items": {"type": "object", "properties": {"eco_term": {"type": ["string", "null"], "description": "Evidence Code Ontology term"}, "eco_code": {"type": ["string", "null"], "description": "ECO identifier, e.g. ECO_0000246"}}}},
+            "pdbtm_version": {"type": ["string", "null"], "description": "PDBTM database version"},
+            "software_version": {"type": ["string", "null"], "description": "Version of the software that computed the assignment"}
           }
         },
         {
