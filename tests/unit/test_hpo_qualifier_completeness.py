@@ -45,9 +45,17 @@ def test_search_keeps_all_synonyms_and_count():
 
 
 def test_term_keeps_every_translation_and_reports_qualifier_counts():
+    languages = ["TR", "DE", "FR", "ES", "NL", "IT", "JA", "CS", "ZH"]
     translations = [
-        {"language": language, "name": f"translated-{language}"}
-        for language in ["TR", "DE", "FR", "ES", "NL", "IT", "JA", "CS", "ZH"]
+        {
+            "language": language,
+            "name": f"translated-{language}",
+            # HPO marks each label OFFICIAL or CANDIDATE, and a CANDIDATE is
+            # a proposal rather than a name the ontology stands behind.
+            "status": "OFFICIAL" if language == "JA" else "CANDIDATE",
+            "definition": f"definition-{language}" if language == "DE" else None,
+        }
+        for language in languages
     ]
     payload = {
         "id": "HP:0001263",
@@ -60,7 +68,12 @@ def test_term_keeps_every_translation_and_reports_qualifier_counts():
         result = _tool("get_term").run({"term_id": "HP:0001263"})
 
     data = result["data"]
-    assert data["translations"] == translations
+    assert data["translations"] == translations, (
+        "every translation must survive, in order, with its status and its "
+        "translated definition"
+    )
     assert data["translation_count"] == 9
+    assert data["translations_truncated"] is False
+    assert [t["status"] for t in data["translations"]].count("OFFICIAL") == 1
     assert data["synonym_count"] == 23
     assert data["xref_count"] == 4

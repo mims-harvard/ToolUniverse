@@ -91,6 +91,36 @@ def _merge_disclosure(requested_id: str, resolved_id: Any) -> Dict[str, Any]:
     }
 
 
+TRANSLATIONS_PER_TERM = 25
+
+
+def _translations(payload) -> list:
+    """The term's labels in other languages, with how official each is.
+
+    HPO publishes nine translations for HP:0002069 and marks each OFFICIAL
+    or CANDIDATE. The status is the point: a CANDIDATE label is a proposal,
+    not a name the ontology stands behind, and a clinician matching a
+    Japanese or Spanish record needs to know which it is. The term handler
+    returned `language` and `name` and dropped the status and the
+    translated definition; the hierarchy handler returned no translations at
+    all, although `translations` is one of the four keys its endpoint sends.
+    """
+    rows = []
+    for item in (payload.get("translations") or [])[:TRANSLATIONS_PER_TERM]:
+        if not isinstance(item, dict) or not item.get("name"):
+            continue
+        rows.append(
+            {
+                "language": item.get("language"),
+                "name": item.get("name"),
+                "definition": item.get("definition") or None,
+                # OFFICIAL or CANDIDATE.
+                "status": item.get("status"),
+            }
+        )
+    return rows
+
+
 @register_tool("HPOTool")
 class HPOTool(BaseTool):
     """
@@ -385,18 +415,11 @@ class HPOTool(BaseTool):
             "xref_count": len(data.get("xrefs", []) or []),
         }
 
-        # Extract translations if available
-        translations = data.get("translations", [])
-        if translations:
-            result["translations"] = [
-                {"language": t.get("language"), "name": t.get("name")}
-                for t in translations
-                if t and t.get("name")
-            ]
-            result["translation_count"] = len(result["translations"])
-        else:
-            result["translations"] = []
-            result["translation_count"] = 0
+        result["translations"] = _translations(data)
+        result["translation_count"] = len(data.get("translations") or [])
+        result["translations_truncated"] = len(
+            data.get("translations") or []
+        ) > len(result["translations"])
 
         metadata = {
             "source": "HPO (JAX Ontology)",
@@ -531,6 +554,10 @@ class HPOTool(BaseTool):
                         # find out which branch is worth expanding.
                         "descendant_count": term.get("descendantCount"),
                         "definition": term.get("definition"),
+                        # One of the four keys this endpoint answers, and
+                        # the row carried none of it.
+                        "translations": _translations(term),
+                        "translation_count": len(term.get("translations") or []),
                     }
                 )
 

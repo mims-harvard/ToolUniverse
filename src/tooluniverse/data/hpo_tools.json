@@ -91,13 +91,48 @@
             },
             "translations": {
               "type": "array",
+              "description": "Translations in other languages, each with how official it is",
               "items": {
-                "type": "object"
-              },
-              "description": "Translations in other languages"
+                "type": "object",
+                "description": "One translated label",
+                "properties": {
+                  "language": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Language code, e.g. JA, ES, DE"
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The term's name in that language"
+                  },
+                  "definition": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The term's definition in that language, when HPO has one"
+                  },
+                  "status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "OFFICIAL for a label HPO stands behind, CANDIDATE for a proposal"
+                  }
+                }
+              }
             },
             "translation_count": {
               "type": "integer"
+            },
+            "translations_truncated": {
+              "type": "boolean",
+              "description": "True when HPO holds more translations than the 25 returned"
             }
           },
           "not": {
@@ -306,6 +341,51 @@
                   "string",
                   "null"
                 ]
+              },
+              "translations": {
+                "type": "array",
+                "description": "Translations in other languages, each with how official it is",
+                "items": {
+                  "type": "object",
+                  "description": "One translated label",
+                  "properties": {
+                    "language": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Language code, e.g. JA, ES, DE"
+                    },
+                    "name": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The term's name in that language"
+                    },
+                    "definition": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The term's definition in that language, when HPO has one"
+                    },
+                    "status": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "OFFICIAL for a label HPO stands behind, CANDIDATE for a proposal"
+                    }
+                  }
+                }
+              },
+              "translation_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many translations HPO holds for this term"
               }
             }
           }

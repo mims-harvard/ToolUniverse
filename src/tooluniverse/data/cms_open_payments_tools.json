@@ -45,6 +45,8 @@
               "record_id": {"type": ["string", "null"]},
               "recipient_name": {"type": ["string", "null"]},
               "recipient_npi": {"type": ["string", "null"]},
+              "recipient_profile_id": {"type": ["string", "null"], "description": "CMS's stable key for the recipient, joining their payments across program years; present where an NPI is not, as for teaching hospitals, and the id the Open Payments site uses in its own URLs"},
+              "change_type": {"type": ["string", "null"], "description": "Whether CMS added, changed or republished this record UNCHANGED in the publication being read"},
               "recipient_type": {"type": ["string", "null"]},
               "recipient_specialty": {"type": ["string", "null"]},
               "recipient_state": {"type": ["string", "null"]},

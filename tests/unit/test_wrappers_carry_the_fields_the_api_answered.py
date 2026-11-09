@@ -2167,6 +2167,31 @@ UPSTREAM_KEYS = [
         "the URL, name and checksum of the signature file, for a search that "
         "described signatures a caller could not fetch",
     ),
+    (
+        "hpo_tool.py",
+        'item.get("status")',
+        "OFFICIAL or CANDIDATE: whether HPO stands behind a translated label or is only proposing it",
+    ),
+    (
+        "membrane_topology_tool.py",
+        'o.get("verification")',
+        "OPM's own statement of whether the computed membrane placement was checked against experiment",
+    ),
+    (
+        "membrane_topology_tool.py",
+        'o.get("structure_subunits_count")',
+        "how many subunits were positioned in the bilayer; 339 of 395 records sampled carry it",
+    ),
+    (
+        "membrane_topology_tool.py",
+        '"opm_id": o.get("id")',
+        "OPM's primary key, the only safe way back to the full record",
+    ),
+    (
+        "cms_open_payments_tool.py",
+        "covered_recipient_profile_id",
+        "CMS's stable recipient key, which joins a recipient's payments across program years",
+    ),
 ]
 
 
@@ -2195,6 +2220,13 @@ def test_the_wrapper_reads_the_field_the_api_answered(module, key, why):
 
 # (tool, output field the schema must declare)
 DECLARED = [
+    ("OPM_search_structures", "opm_id"),
+    ("OPM_search_structures", "verification"),
+    ("OPM_search_structures", "subunits_positioned"),
+    ("HPO_get_term", "translations_truncated"),
+    ("HPO_get_term_hierarchy", "translation_count"),
+    ("CMSOpenPayments_search_payments", "recipient_profile_id"),
+    ("CMSOpenPayments_search_payments", "change_type"),
     ("EuroPMCAnnot_get_annotations_by_type", "provider"),
     ("EuroPMCAnnot_get_article_annotations", "frequency"),
     ("UniChem_list_sources", "base_id_url"),
@@ -5062,3 +5094,87 @@ def test_a_signature_search_can_reach_the_signature():
     rows = (schema.get("oneOf") or [schema])[0]["items"]["properties"]
     assert "sha256" in rows["data_file"]["properties"]
     assert "CPC006_TYKNU_6H" in rows["cmap_id"]["description"]
+
+
+def test_a_translated_label_says_whether_hpo_stands_behind_it():
+    """HP:0002069 is OFFICIAL in Japanese and CANDIDATE in Spanish and German.
+
+    A CANDIDATE translation is a proposal, not a name the ontology has
+    adopted, so a clinician matching a non-English record needs to know
+    which it is -- and the status is a quarter of a four-key record. The
+    term handler returned `language` and `name` only; the hierarchy handler
+    returned no translations at all, although `translations` is one of the
+    four keys its endpoint answers. One reader now serves both, so neither
+    can drift from the other.
+    """
+    source = _source("hpo_tool.py")
+    assert source.count("_translations(data)") == 1, (
+        "HPO_get_term should build its translations through the shared reader"
+    )
+    assert source.count("_translations(term)") == 1, (
+        "HPO_get_term_hierarchy returned no translations at all; its rows "
+        "should use the same reader as HPO_get_term"
+    )
+    assert 'item.get("definition")' in source, (
+        "HPO publishes a translated definition beside the translated name"
+    )
+
+
+def test_a_membrane_placement_says_whether_it_was_checked_against_experiment():
+    """OPM reports thickness, tilt and transfer energy -- all computed.
+
+    `verification` is where OPM says whether those numbers were confirmed:
+    for 1m0l, "Results are consistent with solid state NMR studies of
+    bacteriorhodopsin (Kamihira et al. 2005)". Sparse -- 16 of 395 records
+    sampled across five queries -- but it is the only statement the database
+    makes about the standing of the geometry the tool exists to report, so
+    its absence is not the same as its being empty.
+
+    `tau` is deliberately not read: 0 of those same 395 records populate it.
+    """
+    source = _source("membrane_topology_tool.py")
+    assert 'o.get("verification")' in source
+    assert 'o.get("tau")' not in source, (
+        "tau is empty on every OPM record sampled; reading a key the API "
+        "never fills declares a field that can only ever be null"
+    )
+
+
+def test_a_structure_search_can_reach_the_opm_record():
+    """The detail endpoint answers 200 for a PDB id -- with the wrong protein.
+
+    /primary_structures/1uaz returns id 1, pdbid 1qjp, an unrelated outer
+    membrane porin, because the path segment is coerced to an integer. A
+    caller holding only the PDB id the search returned would have taken that
+    record as the answer. The numeric id is the only safe way in, and the
+    search dropped it along with the family and species ids that reach the
+    classification and taxonomy behind each row.
+    """
+    source = _source("membrane_topology_tool.py")
+    for key in ('"opm_id": o.get("id")', '"family_id": o.get("family_id")',
+                '"species_id": o.get("species_id")'):
+        assert key in source, f"OPM search should return {key}"
+    assert "opm.phar.umich.edu/proteins/" in source, (
+        "the row should carry the OPM page it describes"
+    )
+    schema = json.dumps(_config("OPM_search_structures").get("return_schema"))
+    assert '"url"' in schema, "the OPM page URL must be declared"
+
+
+def test_a_payment_carries_the_key_that_joins_it_across_years():
+    """A recipient name is ambiguous and a teaching hospital has no NPI.
+
+    CMS publishes `covered_recipient_profile_id` for exactly this: it is the
+    id the Open Payments site uses in its own URLs and the only stable way
+    to follow one recipient across program years. The wrapper returned the
+    name and the NPI and dropped it.
+
+    The recipient's street address is in the same record and is deliberately
+    not returned: it is published, but it is not what the question needs.
+    """
+    source = _source("cms_open_payments_tool.py")
+    assert 'row.get("covered_recipient_profile_id")' in source
+    assert 'row.get("change_type")' in source, (
+        "whether CMS changed or merely republished the record is how a "
+        "caller knows a figure moved between publications"
+    )
