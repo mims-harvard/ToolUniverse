@@ -49,12 +49,17 @@
     "tool_url": "/association",
     "test_examples": [
       {
-        "HPO_ID_list": ["HP:0001250"],
+        "HPO_ID_list": [
+          "HP:0001250"
+        ],
         "limit": 5,
         "offset": 1
       },
       {
-        "HPO_ID_list": ["HP:9999999", "HP:0001249"],
+        "HPO_ID_list": [
+          "HP:9999999",
+          "HP:0001249"
+        ],
         "limit": 5
       }
     ],
@@ -87,7 +92,10 @@
               "description": "Present only when a phenotype contributed no associations or its associations were truncated. Absent when the only reason for the object form is that the intersection exceeded 'limit'."
             }
           },
-          "required": ["diseases", "total_matched"]
+          "required": [
+            "diseases",
+            "total_matched"
+          ]
         },
         {
           "type": "object",
@@ -196,6 +204,44 @@
       "properties": {
         "limit": {
           "type": "integer"
+        },
+        "items": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "The matching HPO terms",
+          "items": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "One term with its id and label",
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "array",
+                "object",
+                "null"
+              ]
+            }
+          }
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Offset of this page"
+        },
+        "total": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Total terms matching, which is not the number returned"
         }
       }
     }
@@ -221,30 +267,79 @@
           "default": 0
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "query_schema": {
       "query": null,
-      "category": ["biolink:Gene"],
+      "category": [
+        "biolink:Gene"
+      ],
       "limit": 10,
       "offset": 0
     },
-    "label": ["Monarch", "Gene", "Search", "Cross-Species"],
+    "label": [
+      "Monarch",
+      "Gene",
+      "Search",
+      "Cross-Species"
+    ],
     "type": "Monarch",
     "tool_url": "/search",
     "test_examples": [
-      {"query": "TP53", "limit": 5},
-      {"query": "WDR7", "limit": 5}
+      {
+        "query": "TP53",
+        "limit": 5
+      },
+      {
+        "query": "WDR7",
+        "limit": 5
+      }
     ],
     "return_schema": {
       "type": "object",
       "properties": {
         "items": {
-          "type": "array",
-          "description": "List of matching gene entities with IDs, names, and categories"
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "The matching entities",
+          "items": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "One entity with its id, category, name and taxon",
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "array",
+                "object",
+                "null"
+              ]
+            }
+          }
         },
         "total": {
           "type": "integer"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Page size applied"
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Offset of this page"
         }
       }
     }
@@ -270,19 +365,31 @@
           "default": 0
         }
       },
-      "required": ["subject"]
+      "required": [
+        "subject"
+      ]
     },
     "query_schema": {
       "subject": null,
-      "category": ["biolink:GeneToPhenotypicFeatureAssociation"],
+      "category": [
+        "biolink:GeneToPhenotypicFeatureAssociation"
+      ],
       "limit": 100,
       "offset": 0
     },
-    "label": ["Monarch", "Gene", "Phenotype", "Cross-Species"],
+    "label": [
+      "Monarch",
+      "Gene",
+      "Phenotype",
+      "Cross-Species"
+    ],
     "type": "Monarch",
     "tool_url": "/association",
     "test_examples": [
-      {"subject": "HGNC:11998", "limit": 20}
+      {
+        "subject": "HGNC:11998",
+        "limit": 20
+      }
     ],
     "return_schema": {
       "type": "object",
@@ -318,19 +425,31 @@
           "default": 0
         }
       },
-      "required": ["subject"]
+      "required": [
+        "subject"
+      ]
     },
     "query_schema": {
       "subject": null,
-      "category": ["biolink:CausalGeneToDiseaseAssociation"],
+      "category": [
+        "biolink:CausalGeneToDiseaseAssociation"
+      ],
       "limit": 100,
       "offset": 0
     },
-    "label": ["Monarch", "Gene", "Disease", "Cross-Species"],
+    "label": [
+      "Monarch",
+      "Gene",
+      "Disease",
+      "Cross-Species"
+    ],
     "type": "Monarch",
     "tool_url": "/association",
     "test_examples": [
-      {"subject": "HGNC:11998", "limit": 20}
+      {
+        "subject": "HGNC:11998",
+        "limit": 20
+      }
     ],
     "return_schema": {
       "type": "object",

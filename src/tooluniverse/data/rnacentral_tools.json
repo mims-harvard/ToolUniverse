@@ -15,7 +15,7 @@
           "default": 10,
           "minimum": 1,
           "maximum": 100,
-          "description": "Number of records per page (1\u2013100)."
+          "description": "Number of records per page (1–100)."
         },
         "page": {
           "type": "integer",
@@ -125,10 +125,65 @@
           "type": "string"
         },
         "data": {
-          "type": "object"
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The RNAcentral record",
+          "additionalProperties": {
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "array",
+              "object",
+              "null"
+            ],
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "array",
+                "object",
+                "null"
+              ],
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ]
+              }
+            }
+          }
         },
         "url": {
           "type": "string"
+        },
+        "accession": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The accession that was requested"
+        },
+        "endpoint": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The RNAcentral endpoint the wrapper called"
+        },
+        "success": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Whether the wrapper's own call succeeded"
         }
       }
     },

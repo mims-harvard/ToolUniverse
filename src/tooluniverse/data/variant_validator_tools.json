@@ -467,7 +467,7 @@
       "oneOf": [
         {
           "type": "object",
-          "description": "VariantFormatter result. The top-level key is the submitted genomic variant; under it a nested key (the normalized g.HGVS) holds 'hgvs_t_and_p' (per-transcript projections keyed by RefSeq transcript accession), 'p_vcf', and 'selected_build'. A 'metadata' key carries VariantFormatter/VariantValidator versions.",
+          "description": "Keyed by the variant string submitted, e.g. 'NC_000017.11:g.50198002C>A', with `metadata` beside it. The fields inside a variant's record are declared below; the variant keys are data, so the audit reports them and that is expected - removing these properties would satisfy the audit by declaring less",
           "properties": {
             "metadata": {
               "type": [
@@ -492,18 +492,49 @@
                     "string",
                     "null"
                   ]
+                },
+                "variantvalidator_hgvs_version": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Version of the HGVS library used"
+                },
+                "vvta_version": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Version of the VVTA transcript database"
+                },
+                "vvseqrepo_db": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Version of the SeqRepo sequence database"
                 }
-              }
+              },
+              "description": "Versions of everything the mapping depended on. A transcript mapping is only reproducible against the same HGVS library, transcript database and sequence store, so these are what make a result citable"
             }
           },
           "additionalProperties": {
-            "type": "object",
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "array",
+              "object",
+              "null"
+            ],
             "description": "Per-variant block. Inner key is the normalized g.HGVS.",
             "additionalProperties": {
               "type": [
-                "object",
-                "array",
                 "string",
+                "number",
+                "boolean",
+                "array",
+                "object",
                 "null"
               ],
               "properties": {
@@ -612,8 +643,63 @@
                     }
                   }
                 }
+              },
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ],
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ],
+                      "additionalProperties": {
+                        "type": [
+                          "string",
+                          "number",
+                          "boolean",
+                          "array",
+                          "object",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
               }
             }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
           }
         },
         {

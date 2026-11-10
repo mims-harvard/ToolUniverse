@@ -2335,6 +2335,27 @@ def test_the_wrapper_reads_the_field_the_api_answered(module, key, why):
 
 # (tool, output field the schema must declare)
 DECLARED = [
+    ('ENAPortal_search_runs_fastq', 'fastq_md5'),
+    ('ENAPortal_search_runs_fastq', 'fastq_bytes'),
+    ('UCSC_get_track', 'max_items_limit_reached'),
+    ('UCSC_get_track', 'truncation_note'),
+    ('NCA_fit_one_compartment', 'AUC_unit'),
+    ('metabolights_get_study_files', 'obfuscationCode'),
+    ('BioRxiv_list_recent_preprints', 'jatsxml'),
+    ('BioRxiv_list_recent_preprints', 'server'),
+    ('PGSCatalog_get_scores_by_trait', 'genome_build'),
+    ('VariantValidator_format_genomic_to_transcripts', 'vvta_version'),
+    ('UniProt_get_entry_by_accession', 'featureId'),
+    ('SwissLipids_get_lipid', 'entity_type'),
+    ('Monarch_search_gene', 'offset'),
+    ('HumanMine_search', 'wasSuccessful'),
+    ('MouseMine_search_genes', 'wasSuccessful'),
+    ('EBIProteins_get_hpp_peptides', 'next_offset'),
+    ('OpenNIH_fetch', 'url'),
+    ('ORCID_get_peer_reviews', 'subgroup_index'),
+    ('geo_search_datasets', 'translationstack'),
+    ('RNAcentral_get_by_accession', 'endpoint'),
+    ('EPMC_get_citations', 'citedOrder'),
     ('DisGeNET_search_disease', 'gene_count'),
     ('HuggingFace_get_model', 'safetensors'),
     ('HuggingFace_get_model', 'usedStorage'),
@@ -6253,3 +6274,72 @@ def test_the_third_batch_declares_what_changes_an_answer():
         schema = json.dumps(_config(tool).get("return_schema"))
         for field in fields:
             assert field in schema, f"{tool} returns {field} undeclared"
+
+
+def test_a_fastq_search_can_verify_what_it_downloads():
+    """ENA returns one checksum per file, semicolon-joined in one string.
+
+    fastq_md5 for a paired-end run is
+    "c388fbdf3eebadc46da768036595e582;760e442232c5..." and fastq_bytes is
+    "3385578996;3391463775" in the same order. Neither was declared, so a
+    caller had the FTP paths and no way to check the bytes - and one that
+    guessed would take the whole string as a single checksum and fail on
+    every paired run.
+
+    This is the fourth tool this effort has found with the same shape: the
+    data's location declared and the means of verifying it not. LINCS,
+    Figshare and MassBank were the others.
+    """
+    schema = json.dumps(_config("ENAPortal_search_runs_fastq").get("return_schema"))
+    assert '"fastq_md5"' in schema and '"fastq_bytes"' in schema
+    assert "semicolon" in schema, (
+        "the declaration has to say the values are semicolon-separated per "
+        "file, or a caller will treat one string as one checksum"
+    )
+
+
+def test_a_capped_result_says_the_cap_was_hit():
+    """UCSC reports maxItemsLimit and offers no continuation cursor.
+
+    truncated says the list was cut; max_items_limit_reached says the cut
+    was the wrapper's own cap rather than the end of the data; and
+    truncation_note says UCSC provides no cursor, so the only way to see the
+    rest is a smaller region or a higher limit. None of the three was
+    declared, and without them a capped region and a complete one are the
+    same answer.
+    """
+    schema = json.dumps(_config("UCSC_get_track").get("return_schema"))
+    for field in ('"truncated"', '"max_items_limit_reached"', '"truncation_note"'):
+        assert field in schema, f"UCSC returns {field} undeclared"
+    assert "continuation cursor" in schema or "no cursor" in schema
+
+
+def test_two_data_keyed_levels_are_left_open_on_purpose():
+    """geo_get_sample_info and VariantValidator key a level by data.
+
+    GEO keys its records by UID and VariantValidator by the variant string
+    submitted. The declared-fields audit reports those keys and will keep
+    reporting them, because the walker ignores additionalProperties once a
+    level has properties - so the only way to silence it is to delete the
+    properties that describe the records.
+
+    I did exactly that at one point, and the loss check caught it: four
+    declared fields gone from GEO and nineteen from VariantValidator,
+    including mane_select, refseq_select and t_hgvs. Satisfying the audit by
+    declaring less is the wrong trade, so both levels keep their properties,
+    carry a description saying the keys are data, and the audit's two
+    remaining complaints are expected.
+    """
+    for tool, kept in (("geo_get_sample_info", ('"uid"', '"title"', '"n_samples"')),
+                       ("VariantValidator_format_genomic_to_transcripts",
+                        ('"mane_select"', '"refseq_select"', '"t_hgvs"', '"hgvs_t_and_p"'))):
+        schema = json.dumps(_config(tool).get("return_schema"))
+        for field in kept:
+            assert field in schema, (
+                f"{tool} must keep {field}: it was lost once already when I "
+                "removed properties to satisfy the audit"
+            )
+        assert "keys are data" in schema, (
+            f"{tool} should say why its level is open, so the next reader "
+            "does not take the audit's complaint for a gap"
+        )

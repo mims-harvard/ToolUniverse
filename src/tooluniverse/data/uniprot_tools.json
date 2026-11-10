@@ -208,6 +208,33 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "details": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "The comment's structured detail, whose shape depends on the comment type",
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ],
+                      "additionalProperties": {
+                        "type": [
+                          "string",
+                          "number",
+                          "boolean",
+                          "array",
+                          "object",
+                          "null"
+                        ]
+                      }
+                    }
                   }
                 }
               }
@@ -255,6 +282,64 @@
                         }
                       }
                     }
+                  },
+                  "featureId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "UniProt's identifier for the feature, e.g. a VAR_ or CARBOHYD id"
+                  },
+                  "evidences": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Evidence for the feature, each an ECO code with its source",
+                    "items": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "description": "One evidence record",
+                      "additionalProperties": {
+                        "type": [
+                          "string",
+                          "number",
+                          "boolean",
+                          "array",
+                          "object",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "alternativeSequence": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "For a variant feature, the sequence it changes to",
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ],
+                      "additionalProperties": {
+                        "type": [
+                          "string",
+                          "number",
+                          "boolean",
+                          "array",
+                          "object",
+                          "null"
+                        ]
+                      }
+                    }
                   }
                 }
               }
@@ -264,6 +349,47 @@
                 "integer",
                 "number"
               ]
+            },
+            "additional_publications": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Publications beyond the ones UniProt lists as primary",
+              "items": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ]
+              }
+            },
+            "references": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "The entry's literature references, each with its citation and the scope it supports",
+              "items": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "One reference",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ]
+                }
+              }
             }
           },
           "required": [

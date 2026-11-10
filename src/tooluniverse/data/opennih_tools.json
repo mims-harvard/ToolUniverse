@@ -507,6 +507,99 @@
             "required": [
               "error"
             ]
+          },
+          "properties": {
+            "meta": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "How the figure was computed, including the note that a NULL award_amount means 'not reported' rather than zero - which decides whether a missing award lowers a total or is excluded from it",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "provenance": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Where the data came from: NIH ExPORTER/RePORTER via OpenNIH, entity-resolved, with the corpus and coverage",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "data": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The trend series itself",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ]
+                  }
+                }
+              }
+            }
           }
         },
         {
@@ -650,6 +743,89 @@
             "required": [
               "error"
             ]
+          },
+          "properties": {
+            "meta": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "How the figure was computed, including the note that a NULL award_amount means 'not reported' rather than zero - which decides whether a missing award lowers a total or is excluded from it",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "provenance": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Where the data came from: NIH ExPORTER/RePORTER via OpenNIH, entity-resolved, with the corpus and coverage",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "distribution": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Award counts and totals per NIH activity code, keyed by code",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ]
+                }
+              }
+            }
           }
         },
         {
@@ -1199,6 +1375,64 @@
             "required": [
               "error"
             ]
+          },
+          "properties": {
+            "id": {
+              "type": [
+                "string",
+                "integer",
+                "null"
+              ],
+              "description": "Identifier of the fetched record"
+            },
+            "title": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Title of the record"
+            },
+            "text": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The record's text"
+            },
+            "metadata": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Metadata for the record",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ]
+                }
+              }
+            },
+            "url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Canonical OpenNIH URL for the record"
+            }
           }
         },
         {

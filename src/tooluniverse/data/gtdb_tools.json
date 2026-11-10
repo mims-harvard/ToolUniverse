@@ -521,20 +521,112 @@
           "description": "Comprehensive genome metadata",
           "properties": {
             "genome": {
-              "type": "object",
-              "description": "Basic genome info (accession, name)"
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The genome's own record: accession, name and taxonomy",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ]
+                }
+              }
             },
             "metadata_nucleotide": {
-              "type": "object",
-              "description": "Nucleotide-level statistics: contig_count, n50_contigs, genome_size, gc_percentage, ambiguous_bases, etc."
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Assembly statistics: contig count, N50, GC content and the rest",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ]
+                }
+              }
             },
             "metadata_gene": {
-              "type": "object",
-              "description": "Gene-level metrics: checkm_completeness, checkm_contamination, checkm2_completeness, ssu_count, protein_count, coding_density, etc."
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Gene-level statistics including CheckM completeness and contamination - the two numbers that say whether a genome is usable",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ]
+                }
+              }
             },
             "metadata_ncbi": {
-              "type": "object",
-              "description": "NCBI metadata: assembly_level, assembly_name, bioproject, biosample, country, date, isolation_source, etc."
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "NCBI assembly metadata for the genome, including its GenBank and RefSeq accessions",
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ]
+                }
+              }
             },
             "gtdb_taxonomy": {
               "type": "object",

@@ -62,7 +62,9 @@
           "default": 0
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/metabolights/ws/studies",
@@ -98,7 +100,9 @@
           "description": "MetaboLights study ID (e.g., 'MTBLS1')"
         }
       },
-      "required": ["study_id"]
+      "required": [
+        "study_id"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/metabolights/ws/studies/{study_id}",
@@ -134,7 +138,9 @@
           "description": "MetaboLights study ID"
         }
       },
-      "required": ["study_id"]
+      "required": [
+        "study_id"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/metabolights/ws/studies/{study_id}/assays",
@@ -165,7 +171,9 @@
           "description": "MetaboLights study ID"
         }
       },
-      "required": ["study_id"]
+      "required": [
+        "study_id"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/metabolights/ws/studies/{study_id}/samples",
@@ -196,7 +204,9 @@
           "description": "MetaboLights study ID"
         }
       },
-      "required": ["study_id"]
+      "required": [
+        "study_id"
+      ]
     },
     "fields": {
       "endpoint": "https://www.ebi.ac.uk/metabolights/ws/studies/{study_id}/files",
@@ -207,8 +217,28 @@
       "description": "File listings organized by category",
       "properties": {
         "study": {
-          "type": "array",
-          "description": "Study files"
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "The study's files",
+          "items": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "One file with its name, type and size",
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "array",
+                "object",
+                "null"
+              ]
+            }
+          }
         },
         "latest": {
           "type": "array",
@@ -217,6 +247,20 @@
         "private": {
           "type": "array",
           "description": "Private files"
+        },
+        "uploadPath": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Where files are uploaded for this study"
+        },
+        "obfuscationCode": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "MetaboLights' per-study access token, which appears in private-study URLs. Treat it as a credential rather than an identifier"
         }
       }
     },

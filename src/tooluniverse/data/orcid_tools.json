@@ -885,7 +885,28 @@
                 "type": [
                   "object",
                   "null"
-                ]
+                ],
+                "description": "When the review was completed, as ORCID's year/month/day parts",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ]
+                  }
+                }
               },
               "review_url": {
                 "type": [
@@ -894,9 +915,15 @@
                 ]
               },
               "external_ids": {
-                "type": "array",
+                "type": [
+                  "array",
+                  "null"
+                ],
                 "items": {
-                  "type": "object",
+                  "type": [
+                    "object",
+                    "null"
+                  ],
                   "properties": {
                     "type": {
                       "type": [
@@ -923,9 +950,20 @@
                         "null"
                       ]
                     }
+                  },
+                  "description": "One identifier with its type, value and relationship",
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ]
                   }
                 },
-                "description": "The review's own external ids. Only the GROUP's were read, and these are what identify the individual review."
+                "description": "External identifiers for this funding record"
               },
               "subgroup_external_ids": {
                 "type": "array",
@@ -987,6 +1025,65 @@
                   "string",
                   "null"
                 ]
+              },
+              "group_index": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Index of the funding group this record sits in"
+              },
+              "group_external_ids": {
+                "type": [
+                  "array",
+                  "object",
+                  "null"
+                ],
+                "description": "External identifiers shared by the whole funding group, e.g. a grant number, under ORCID's external-id envelope",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ],
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              },
+              "subgroup_index": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Index of this review within its subgroup"
+              },
+              "summary_index": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Index of this review within its subgroup"
               }
             }
           }

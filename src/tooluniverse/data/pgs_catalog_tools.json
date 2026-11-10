@@ -147,10 +147,119 @@
                 "type": "string"
               },
               "publication": {
-                "type": "object"
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "The publication reporting the score",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "PGS Catalog publication id, e.g. PGP000001"
+                  },
+                  "title": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Paper title"
+                  },
+                  "date_publication": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Full publication date"
+                  },
+                  "firstauthor": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "First author"
+                  },
+                  "journal": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Journal"
+                  },
+                  "PMID": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ],
+                    "description": "PubMed id"
+                  },
+                  "doi": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "DOI"
+                  },
+                  "first_author": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "First author"
+                  },
+                  "pmid": {
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ],
+                    "description": "PubMed id"
+                  },
+                  "year": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Publication year"
+                  }
+                },
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ]
+                }
               },
               "scoring_file": {
                 "type": "string"
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The score's name"
+              },
+              "genome_build": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Genome build the score's variants are on. A score applied on the wrong build is silently wrong"
+              },
+              "weight_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Whether the weights are log(OR), log(HR), beta or similar"
               }
             }
           }

@@ -457,19 +457,74 @@
                 },
                 "ligand_count": {
                   "type": "integer"
+                },
+                "provider": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Who built the model, e.g. SWISSMODEL or PDB"
+                },
+                "complex_partners": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "Other chains in the modelled complex",
+                  "items": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ]
+                  }
                 }
               }
             },
             "methods_distribution": {
-              "type": "object"
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "How many models came from each method, keyed by method",
+              "additionalProperties": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Model count for that method"
+              }
             },
             "providers_distribution": {
-              "type": "object",
-              "description": "How many models come from each provider (PDB against SWISSMODEL)"
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "How many models came from each provider, keyed by provider - PDB against SWISSMODEL, which is the difference between an experimental structure and a model",
+              "additionalProperties": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Model count for that provider"
+              }
             },
             "oligo_state_distribution": {
-              "type": "object",
-              "description": "How many models of each oligomeric state"
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "How many models are in each oligomeric state, keyed by state",
+              "additionalProperties": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Model count for that state"
+              }
             },
             "models_with_ligands": {
               "type": "integer",

@@ -336,6 +336,49 @@
                   }
                 }
               }
+            },
+            "wasSuccessful": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the InterMine server reported success. A query that failed upstream is not an empty result"
+            },
+            "statusCode": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "HTTP status the server returned"
+            },
+            "executionTime": {
+              "type": [
+                "string",
+                "number",
+                "null"
+              ],
+              "description": "When the server executed the query"
+            },
+            "facets": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Facet counts, keyed by facet name then by facet value, with the count as the value. An empty inner object means the facet matched nothing",
+              "additionalProperties": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Counts for one facet, keyed by value",
+                "additionalProperties": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many results carry that value"
+                }
+              }
             }
           },
           "not": {
@@ -460,6 +503,49 @@
                       }
                     }
                   }
+                }
+              }
+            },
+            "wasSuccessful": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the InterMine server reported success. A query that failed upstream is not an empty result"
+            },
+            "statusCode": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "HTTP status the server returned"
+            },
+            "executionTime": {
+              "type": [
+                "string",
+                "number",
+                "null"
+              ],
+              "description": "When the server executed the query"
+            },
+            "facets": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Facet counts, keyed by facet name then by facet value, with the count as the value. An empty inner object means the facet matched nothing",
+              "additionalProperties": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Counts for one facet, keyed by value",
+                "additionalProperties": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "How many results carry that value"
                 }
               }
             }

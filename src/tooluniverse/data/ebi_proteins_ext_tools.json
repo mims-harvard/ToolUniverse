@@ -1955,6 +1955,48 @@
                 "integer",
                 "number"
               ]
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether more rows remain beyond this page"
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size applied"
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Offset of this page"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Offset to pass for the next page, or null at the end"
+            },
+            "returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Rows on this page"
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the list was cut"
             }
           },
           "required": [

@@ -520,69 +520,168 @@
                 "type": "string"
               },
               "linkedFeatures": {
-                "type": "array",
+                "type": [
+                  "array",
+                  "null"
+                ],
                 "items": {
                   "type": "object",
                   "properties": {
                     "crossReferences": {
-                      "type": "array"
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "description": "Cross-references for the feature, each naming a database, identifier and qualifier",
+                      "items": {
+                        "type": [
+                          "string",
+                          "number",
+                          "boolean",
+                          "array",
+                          "object",
+                          "null"
+                        ],
+                        "additionalProperties": {
+                          "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "array",
+                            "object",
+                            "null"
+                          ]
+                        }
+                      }
                     },
                     "featureAc": {
-                      "type": "string"
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "IntAct accession for the feature"
                     },
                     "featureRole": {
                       "type": [
                         "string",
                         "null"
-                      ]
+                      ],
+                      "description": "The feature's role in the interaction"
                     },
                     "featureRoleDefinition": {
                       "type": [
                         "string",
                         "null"
-                      ]
+                      ],
+                      "description": "Definition of that role"
                     },
                     "featureRoleMI": {
                       "type": [
                         "string",
                         "null"
-                      ]
+                      ],
+                      "description": "PSI-MI term for the role"
                     },
                     "featureRoleUrl": {
                       "type": [
                         "string",
                         "null"
-                      ]
+                      ],
+                      "description": "URL for the role term"
                     },
                     "featureType": {
-                      "type": "string"
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "What kind of feature it is"
                     },
                     "featureTypeDefinition": {
-                      "type": "string"
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Definition of that type"
                     },
                     "featureTypeMI": {
                       "type": [
                         "string",
                         "null"
-                      ]
+                      ],
+                      "description": "PSI-MI term for the type"
                     },
                     "featureTypeUrl": {
                       "type": [
                         "string",
                         "null"
-                      ]
+                      ],
+                      "description": "URL for the type term"
                     },
                     "linkedFeatures": {
-                      "type": "array"
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "description": "Features on other participants this one binds to. IntAct nests these recursively, so the deeper levels are declared open",
+                      "items": {
+                        "type": [
+                          "string",
+                          "number",
+                          "boolean",
+                          "array",
+                          "object",
+                          "null"
+                        ],
+                        "additionalProperties": {
+                          "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "array",
+                            "object",
+                            "null"
+                          ]
+                        }
+                      }
                     },
                     "name": {
-                      "type": "string"
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Feature name"
                     },
                     "participantId": {
-                      "type": "string"
+                      "type": [
+                        "string",
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Which participant the feature belongs to"
                     },
                     "ranges": {
-                      "type": "array"
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "description": "Residue ranges the feature covers, as strings like '113-201' - the binding interface itself",
+                      "items": {
+                        "type": [
+                          "string",
+                          "object",
+                          "null"
+                        ],
+                        "additionalProperties": {
+                          "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "array",
+                            "object",
+                            "null"
+                          ]
+                        }
+                      }
                     }
                   },
                   "required": [
@@ -600,76 +699,200 @@
                     "name",
                     "participantId",
                     "ranges"
-                  ]
-                }
+                  ],
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ]
+                  }
+                },
+                "description": "Features on this participant linked to features on another - the binding interfaces of the complex"
               },
               "name": {
                 "type": "string"
               },
               "otherFeatures": {
-                "type": "array",
+                "type": [
+                  "array",
+                  "null"
+                ],
                 "items": {
                   "type": "object",
                   "properties": {
                     "crossReferences": {
-                      "type": "array"
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "description": "Cross-references for the feature, each naming a database, identifier and qualifier",
+                      "items": {
+                        "type": [
+                          "string",
+                          "number",
+                          "boolean",
+                          "array",
+                          "object",
+                          "null"
+                        ],
+                        "additionalProperties": {
+                          "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "array",
+                            "object",
+                            "null"
+                          ]
+                        }
+                      }
                     },
                     "featureAc": {
-                      "type": "string"
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "IntAct accession for the feature"
                     },
                     "featureRole": {
                       "type": [
                         "string",
                         "null"
-                      ]
+                      ],
+                      "description": "The feature's role in the interaction"
                     },
                     "featureRoleDefinition": {
                       "type": [
                         "string",
                         "null"
-                      ]
+                      ],
+                      "description": "Definition of that role"
                     },
                     "featureRoleMI": {
                       "type": [
                         "string",
                         "null"
-                      ]
+                      ],
+                      "description": "PSI-MI term for the role"
                     },
                     "featureRoleUrl": {
                       "type": [
                         "string",
                         "null"
-                      ]
+                      ],
+                      "description": "URL for the role term"
                     },
                     "featureType": {
-                      "type": "string"
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "What kind of feature it is"
                     },
                     "featureTypeDefinition": {
-                      "type": "string"
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Definition of that type"
                     },
                     "featureTypeMI": {
-                      "type": "string"
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "PSI-MI term for the type"
                     },
                     "featureTypeUrl": {
                       "type": [
                         "string",
                         "null"
-                      ]
+                      ],
+                      "description": "URL for the type term"
                     },
                     "linkedFeatures": {
-                      "type": "array"
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "description": "Features on other participants this one binds to. IntAct nests these recursively, so the deeper levels are declared open",
+                      "items": {
+                        "type": [
+                          "string",
+                          "number",
+                          "boolean",
+                          "array",
+                          "object",
+                          "null"
+                        ],
+                        "additionalProperties": {
+                          "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "array",
+                            "object",
+                            "null"
+                          ]
+                        }
+                      }
                     },
                     "name": {
-                      "type": "string"
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Feature name"
                     },
                     "participantId": {
-                      "type": "string"
+                      "type": [
+                        "string",
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Which participant the feature belongs to"
                     },
                     "ranges": {
-                      "type": "array"
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "description": "Residue ranges the feature covers, as strings like '113-201' - the binding interface itself",
+                      "items": {
+                        "type": [
+                          "string",
+                          "object",
+                          "null"
+                        ],
+                        "additionalProperties": {
+                          "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "array",
+                            "object",
+                            "null"
+                          ]
+                        }
+                      }
                     }
+                  },
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ]
                   }
-                }
+                },
+                "description": "The participant's other annotated features"
               },
               "stochiometry": {
                 "type": [
@@ -827,6 +1050,398 @@
             "type": "string"
           },
           "description": "Release dates for the complex data"
+        }
+      },
+      "items": {
+        "properties": {
+          "participants": {
+            "items": {
+              "properties": {
+                "linkedFeatures": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "Features on this participant linked to features on another - the binding interfaces of the complex",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ],
+                      "additionalProperties": {
+                        "type": [
+                          "string",
+                          "number",
+                          "boolean",
+                          "array",
+                          "object",
+                          "null"
+                        ]
+                      }
+                    },
+                    "properties": {
+                      "featureAc": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "IntAct accession for the feature"
+                      },
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Feature name"
+                      },
+                      "featureType": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "What kind of feature it is"
+                      },
+                      "featureTypeMI": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "PSI-MI term for the feature type"
+                      },
+                      "featureTypeDefinition": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Definition of that type"
+                      },
+                      "featureTypeUrl": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "URL for the type term"
+                      },
+                      "featureRole": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The feature's role in the interaction"
+                      },
+                      "featureRoleMI": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "PSI-MI term for the role"
+                      },
+                      "featureRoleDefinition": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Definition of that role"
+                      },
+                      "featureRoleUrl": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "URL for the role term"
+                      },
+                      "participantId": {
+                        "type": [
+                          "string",
+                          "integer",
+                          "null"
+                        ],
+                        "description": "Which participant the feature belongs to"
+                      },
+                      "ranges": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "description": "Residue ranges the feature covers - the actual binding interface",
+                        "items": {
+                          "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "array",
+                            "object",
+                            "null"
+                          ],
+                          "additionalProperties": {
+                            "type": [
+                              "string",
+                              "number",
+                              "boolean",
+                              "array",
+                              "object",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "crossReferences": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "description": "Cross-references for the feature",
+                        "items": {
+                          "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "array",
+                            "object",
+                            "null"
+                          ],
+                          "additionalProperties": {
+                            "type": [
+                              "string",
+                              "number",
+                              "boolean",
+                              "array",
+                              "object",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "linkedFeatures": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "description": "Features on other participants this one binds to. IntAct nests these recursively, so the deeper levels are declared open",
+                        "items": {
+                          "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "array",
+                            "object",
+                            "null"
+                          ],
+                          "additionalProperties": {
+                            "type": [
+                              "string",
+                              "number",
+                              "boolean",
+                              "array",
+                              "object",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "otherFeatures": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "The participant's other annotated features",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ],
+                      "additionalProperties": {
+                        "type": [
+                          "string",
+                          "number",
+                          "boolean",
+                          "array",
+                          "object",
+                          "null"
+                        ]
+                      }
+                    },
+                    "properties": {
+                      "featureAc": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "IntAct accession for the feature"
+                      },
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Feature name"
+                      },
+                      "featureType": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "What kind of feature it is"
+                      },
+                      "featureTypeMI": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "PSI-MI term for the feature type"
+                      },
+                      "featureTypeDefinition": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Definition of that type"
+                      },
+                      "featureTypeUrl": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "URL for the type term"
+                      },
+                      "featureRole": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The feature's role in the interaction"
+                      },
+                      "featureRoleMI": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "PSI-MI term for the role"
+                      },
+                      "featureRoleDefinition": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Definition of that role"
+                      },
+                      "featureRoleUrl": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "URL for the role term"
+                      },
+                      "participantId": {
+                        "type": [
+                          "string",
+                          "integer",
+                          "null"
+                        ],
+                        "description": "Which participant the feature belongs to"
+                      },
+                      "ranges": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "description": "Residue ranges the feature covers - the actual binding interface",
+                        "items": {
+                          "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "array",
+                            "object",
+                            "null"
+                          ],
+                          "additionalProperties": {
+                            "type": [
+                              "string",
+                              "number",
+                              "boolean",
+                              "array",
+                              "object",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "crossReferences": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "description": "Cross-references for the feature",
+                        "items": {
+                          "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "array",
+                            "object",
+                            "null"
+                          ],
+                          "additionalProperties": {
+                            "type": [
+                              "string",
+                              "number",
+                              "boolean",
+                              "array",
+                              "object",
+                              "null"
+                            ]
+                          }
+                        }
+                      },
+                      "linkedFeatures": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "description": "Features on other participants this one binds to. IntAct nests these recursively, so the deeper levels are declared open",
+                        "items": {
+                          "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "array",
+                            "object",
+                            "null"
+                          ],
+                          "additionalProperties": {
+                            "type": [
+                              "string",
+                              "number",
+                              "boolean",
+                              "array",
+                              "object",
+                              "null"
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },

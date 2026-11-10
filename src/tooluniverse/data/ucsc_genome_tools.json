@@ -520,10 +520,56 @@
               "type": "integer"
             },
             "items": {
-              "type": "array",
+              "type": [
+                "array",
+                "null"
+              ],
               "items": {
-                "type": "object"
-              }
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "One feature",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ]
+                }
+              },
+              "description": "The track's features for the requested region"
+            },
+            "items_returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Features on this page"
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the feature list was cut"
+            },
+            "max_items_limit_reached": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the cut was the wrapper's own cap rather than the end of the data. A region that hit the cap has more features than were returned, and the two cases are not the same answer"
+            },
+            "truncation_note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What the truncation means in UCSC's terms: it reports maxItemsLimit and offers no continuation cursor, so the only way to see the rest is a smaller region or a higher limit. Without this a caller cannot tell a complete answer from a capped one"
             }
           },
           "not": {

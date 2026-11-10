@@ -1077,25 +1077,402 @@
               "type": "string"
             },
             "annotation_summary": {
-              "type": "object"
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "variantType": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Variant class, e.g. SNP or INS"
+                },
+                "canonicalTranscriptId": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The transcript GenomeNexus treats as canonical"
+                },
+                "transcriptConsequences": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "properties": {
+                      "transcriptId": {
+                        "type": "string"
+                      },
+                      "hugoGeneSymbol": {
+                        "type": "string"
+                      },
+                      "hgvspShort": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "codonChange": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "consequenceTerms": {
+                        "type": "string"
+                      },
+                      "entrezGeneId": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      }
+                    },
+                    "description": "One transcript consequence",
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  },
+                  "description": "Consequences on each transcript"
+                },
+                "assemblyName": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Genome assembly the annotation is against"
+                },
+                "strandSign": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Strand of the transcript the consequence is called on"
+                },
+                "genomicLocation": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Chromosome, start, end and alleles",
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ]
+                  }
+                },
+                "transcriptConsequenceSummaries": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "Summarised consequence per transcript",
+                  "items": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "One summary",
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "transcriptConsequenceSummary": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "Summarised consequence on the canonical transcript",
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ],
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ],
+                      "additionalProperties": {
+                        "type": [
+                          "string",
+                          "number",
+                          "boolean",
+                          "array",
+                          "object",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                },
+                "variant": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The variant the summary is for, echoed back"
+                }
+              },
+              "description": "GenomeNexus's summarised annotation for the variant"
             },
             "transcript_consequences": {
               "type": "array",
               "items": {
-                "type": "object"
-              }
+                "type": "object",
+                "properties": {
+                  "gene_symbol": {
+                    "type": "string"
+                  },
+                  "transcript_id": {
+                    "type": "string"
+                  },
+                  "consequence_terms": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "hgvsp": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "hgvsc": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "amino_acids": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "polyphen_prediction": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "polyphen_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "sift_prediction": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "sift_score": {
+                    "type": [
+                      "number",
+                      "null"
+                    ]
+                  },
+                  "alphaMissense": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "properties": {
+                      "score": {
+                        "type": "number"
+                      },
+                      "pathogenicity": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "biotype": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Transcript biotype, e.g. protein_coding or nonsense_mediated_decay. A consequence on an NMD transcript is not the same claim as one on a coding transcript."
+                  },
+                  "protein_start": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "First residue of the protein the change affects"
+                  },
+                  "protein_end": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Last residue of the protein the change affects"
+                  },
+                  "gene_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Ensembl gene ID"
+                  },
+                  "protein_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Ensembl protein ID"
+                  },
+                  "hgnc_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "HGNC gene ID"
+                  },
+                  "refseq_transcript_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "RefSeq transcripts matching this Ensembl transcript"
+                  },
+                  "variant_allele": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Alternate allele as VEP reports it for this transcript"
+                  },
+                  "canonical": {
+                    "type": [
+                      "string",
+                      "integer",
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Set when this is Ensembl's canonical transcript; VEP sends the string \"1\""
+                  },
+                  "exon": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Exon the change falls in, as 'n/total'"
+                  },
+                  "codons": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                }
+              },
+              "description": "Per-transcript consequences as Ensembl VEP reports them, with the SIFT, PolyPhen and AlphaMissense predictions for each"
             },
             "hotspots": {
               "type": [
                 "object",
                 "null"
-              ]
+              ],
+              "properties": {
+                "annotation": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "Hotspot annotations, nested one list per transcript",
+                  "items": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "description": "One hotspot record",
+                      "additionalProperties": {
+                        "type": [
+                          "string",
+                          "number",
+                          "boolean",
+                          "array",
+                          "object",
+                          "null"
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              "description": "Whether the position is a known cancer mutation hotspot, and in which dataset"
             },
             "colocated_variants": {
-              "type": "array",
+              "type": [
+                "array",
+                "null"
+              ],
               "items": {
-                "type": "object"
-              }
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "dbSnpId": {
+                    "type": "string"
+                  }
+                },
+                "description": "One colocated variant",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ]
+                }
+              },
+              "description": "Known variants at the same position, e.g. dbSNP entries"
             },
             "mutation_assessor": {
               "type": [
@@ -1146,6 +1523,542 @@
                     "integer",
                     "null"
                   ]
+                }
+              }
+            }
+          },
+          "items": {
+            "properties": {
+              "annotation_summary": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "variantType": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Variant class, e.g. SNP or INS"
+                  },
+                  "canonicalTranscriptId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The transcript GenomeNexus treats as canonical"
+                  },
+                  "transcriptConsequences": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "transcriptId": {
+                          "type": "string"
+                        },
+                        "hugoGeneSymbol": {
+                          "type": "string"
+                        },
+                        "hgvspShort": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "codonChange": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "consequenceTerms": {
+                          "type": "string"
+                        },
+                        "entrezGeneId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "description": "One transcript consequence",
+                      "additionalProperties": {
+                        "type": [
+                          "string",
+                          "number",
+                          "boolean",
+                          "array",
+                          "object",
+                          "null"
+                        ]
+                      }
+                    },
+                    "description": "Consequences on each transcript"
+                  },
+                  "assemblyName": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Genome assembly the annotation is against"
+                  },
+                  "strandSign": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Strand of the transcript the consequence is called on"
+                  },
+                  "genomicLocation": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "Chromosome, start, end and alleles",
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  },
+                  "transcriptConsequenceSummaries": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Summarised consequence per transcript",
+                    "items": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "description": "One summary",
+                      "additionalProperties": {
+                        "type": [
+                          "string",
+                          "number",
+                          "boolean",
+                          "array",
+                          "object",
+                          "null"
+                        ]
+                      }
+                    }
+                  },
+                  "transcriptConsequenceSummary": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "Summarised consequence on the canonical transcript",
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ],
+                      "additionalProperties": {
+                        "type": [
+                          "string",
+                          "number",
+                          "boolean",
+                          "array",
+                          "object",
+                          "null"
+                        ],
+                        "additionalProperties": {
+                          "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "array",
+                            "object",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "variant": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The variant the summary is for, echoed back"
+                  }
+                },
+                "description": "GenomeNexus's summarised annotation for the variant",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ],
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              },
+              "transcript_consequences": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "gene_symbol": {
+                      "type": "string"
+                    },
+                    "transcript_id": {
+                      "type": "string"
+                    },
+                    "consequence_terms": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "hgvsp": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "hgvsc": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "amino_acids": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "polyphen_prediction": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "polyphen_score": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "sift_prediction": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "sift_score": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "alphaMissense": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "score": {
+                          "type": "number"
+                        },
+                        "pathogenicity": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "biotype": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Transcript biotype, e.g. protein_coding or nonsense_mediated_decay. A consequence on an NMD transcript is not the same claim as one on a coding transcript."
+                    },
+                    "protein_start": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "First residue of the protein the change affects"
+                    },
+                    "protein_end": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Last residue of the protein the change affects"
+                    },
+                    "gene_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Ensembl gene ID"
+                    },
+                    "protein_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Ensembl protein ID"
+                    },
+                    "hgnc_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "HGNC gene ID"
+                    },
+                    "refseq_transcript_ids": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "RefSeq transcripts matching this Ensembl transcript"
+                    },
+                    "variant_allele": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Alternate allele as VEP reports it for this transcript"
+                    },
+                    "canonical": {
+                      "type": [
+                        "string",
+                        "integer",
+                        "boolean",
+                        "null"
+                      ],
+                      "description": "Set when this is Ensembl's canonical transcript; VEP sends the string \"1\""
+                    },
+                    "exon": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Exon the change falls in, as 'n/total'"
+                    },
+                    "codons": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ]
+                  }
+                },
+                "description": "Per-transcript consequences as Ensembl VEP reports them, with the SIFT, PolyPhen and AlphaMissense predictions for each"
+              },
+              "hotspots": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "properties": {
+                  "annotation": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "description": "Hotspot annotations, nested one list per transcript",
+                    "items": {
+                      "type": [
+                        "array",
+                        "null"
+                      ],
+                      "items": {
+                        "type": [
+                          "object",
+                          "null"
+                        ],
+                        "description": "One hotspot record",
+                        "additionalProperties": {
+                          "type": [
+                            "string",
+                            "number",
+                            "boolean",
+                            "array",
+                            "object",
+                            "null"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                },
+                "description": "Whether the position is a known cancer mutation hotspot, and in which dataset",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ],
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              },
+              "colocated_variants": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": [
+                    "object",
+                    "null",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "dbSnpId": {
+                      "type": "string"
+                    }
+                  },
+                  "description": "One colocated variant",
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ]
+                  }
+                },
+                "description": "Known variants at the same position, e.g. dbSNP entries"
+              },
+              "mutation_assessor": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Mutation Assessor's functional-impact prediction for the variant",
+                "properties": {
+                  "uniprotId": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "UniProt entry the prediction is on"
+                  },
+                  "hgvspShort": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Protein-level change in short HGVS form"
+                  },
+                  "functionalImpactScore": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Numeric impact score"
+                  },
+                  "functionalImpactPrediction": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The prediction in words, e.g. low or high"
+                  },
+                  "msa": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Multiple sequence alignment depth code"
+                  },
+                  "mav": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Mutation Assessor variability measure"
+                  },
+                  "sv": {
+                    "type": [
+                      "integer",
+                      "number",
+                      "null"
+                    ],
+                    "description": "Mutation Assessor sequence-variability measure"
+                  }
                 }
               }
             }
