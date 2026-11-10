@@ -7484,3 +7484,110 @@ def test_a_dataset_search_says_when_where_and_on_what():
                   '"publication_dois"'):
         assert field in schema, f"ProteomeXchange_search_datasets returns {field} undeclared"
     assert "how the files are fetched" in schema or "how to fetch" in schema
+
+
+def test_faers_codes_are_spelled_out():
+    """FAERS encodes almost everything as a bare digit.
+
+    patientsex "2", reporttype "1", actiondrug "5", patientonsetageunit
+    "801", receiptdateformat "102" - a declaration that only names those
+    fields leaves them unusable, so each code's meaning is written out.
+
+    Three of them decide whether a FAERS answer is right at all.
+    `duplicate` and `safetyreportversion`: counting duplicate reports and
+    superseded versions as separate events inflates every tally, and neither
+    was declared. `primarysource.qualification` separates a physician's
+    report from a consumer's. And `actiondrug` with
+    `drugrecurreadministration` are the dechallenge and rechallenge - the
+    strongest causality signals a spontaneous report carries.
+    """
+    schema = json.dumps(_config("OpenFDA_search_drug_events").get("return_schema"))
+    for field in ('"patientsex"', '"duplicate"', '"safetyreportversion"',
+                  '"actiondrug"', '"drugrecurreadministration"',
+                  '"patientonsetageunit"', '"reactionmeddraversionpt"'):
+        assert field in schema, f"OpenFDA_search_drug_events returns {field} undeclared"
+    assert "'1' male, '2' female" in schema, "a bare digit needs its key"
+    assert "inflates every FAERS tally" in schema
+    assert "dechallenge" in schema.lower() or "withdrawn" in schema
+
+
+def test_a_recall_says_why_and_which_lots():
+    """The enforcement endpoints share one row and declared none of it.
+
+    reason_for_recall is the substance of a recall record;
+    root_cause_description separates a design flaw from a manufacturing
+    lapse; code_info is the only field that says whether a particular lot is
+    affected; and `termination_date` is ABSENT while a recall is open, so
+    its absence is the live/closed distinction rather than missing data.
+
+    One declaration covers the drug, device and food endpoints, because
+    openFDA gives them the same row.
+    """
+    for tool in ("OpenFDA_search_drug_enforcement", "OpenFDA_search_device_enforcement",
+                 "OpenFDA_search_food_enforcement"):
+        schema = json.dumps(_config(tool).get("return_schema"))
+        for field in ('"code_info"', '"termination_date"', '"voluntary_mandated"',
+                      '"initial_firm_notification"', '"event_id"'):
+            assert field in schema, f"{tool} returns {field} undeclared"
+        assert "still open" in schema, (
+            f"{tool} must say that an absent termination_date means the "
+            "recall is live"
+        )
+    recalls = json.dumps(_config("OpenFDA_search_device_recalls").get("return_schema"))
+    for field in ('"reason_for_recall"', '"root_cause_description"', '"action"'):
+        assert field in recalls, f"OpenFDA_search_device_recalls returns {field} undeclared"
+
+
+def test_every_openfda_response_declares_its_own_disclaimer_and_date():
+    """meta carries the disclaimer, the licence and last_updated, undeclared.
+
+    `last_updated` is the one that changes an answer: an enforcement or
+    shortage result is only as current as the date openFDA last refreshed
+    the index, and that date was unreachable. meta.results.limit/skip/total
+    are the paging state, and total is what says whether the page is the
+    whole answer.
+    """
+    for tool in ("OpenFDA_search_drug_events", "OpenFDA_search_drug_ndc",
+                 "OpenFDA_search_food_enforcement", "OpenFDA_search_drug_enforcement"):
+        cfg = _config(tool)["return_schema"]
+        branch = cfg["oneOf"][0] if "oneOf" in cfg else cfg
+        meta = (branch.get("properties") or {}).get("meta") or {}
+        props = meta.get("properties") or {}
+        for field in ("last_updated", "disclaimer", "license", "terms", "results"):
+            assert field in props, f"{tool} returns meta.{field} undeclared"
+        results = props["results"].get("properties") or {}
+        for field in ("limit", "skip", "total"):
+            assert field in results, (
+                f"{tool} declares meta.results and not its contents - the "
+                "level without the level's fields, again"
+            )
+
+
+def test_an_address_split_across_forty_five_keys_says_so():
+    """openFDA's device adverse-event row has 78 fields and 45 are address parts.
+
+    manufacturer_contact_area_code, manufacturer_contact_exchange,
+    manufacturer_contact_plocal, distributor_zip_code_ext and forty-one
+    more: one postal address and telephone number split across four
+    contact blocks. They are real fields and they are declared, but giving
+    each a pretended significance would be worse than saying what they are,
+    so they share one accurate sentence.
+
+    The 33 that carry the event have their own, and product_problems -
+    ["Under-Sensing"] - is the one the report exists for.
+    """
+    cfg = _config("OpenFDA_search_device_adverse_events")["return_schema"]
+    branch = cfg["oneOf"][0] if "oneOf" in cfg else cfg
+    row = ((branch["properties"]["results"].get("items") or {}).get("properties")) or {}
+    for field in ("product_problems", "mdr_report_key", "mfr_report_type",
+                  "date_of_event", "summary_report_flag", "reprocessed_and_reused_flag"):
+        assert field in row, f"OpenFDA_search_device_adverse_events returns {field} undeclared"
+    shared = [k for k, v in row.items()
+              if "splits across many keys" in json.dumps(v)]
+    assert len(shared) >= 40, (
+        f"the address components should carry the shared note; {len(shared)} do"
+    )
+    assert "undercounts" in json.dumps(row["summary_report_flag"]), (
+        "a summary report counted as one event undercounts, and the "
+        "declaration has to say so"
+    )

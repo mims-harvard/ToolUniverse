@@ -80,6 +80,34 @@
                       "type": "integer"
                     }
                   }
+                },
+                "disclaimer": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "openFDA's standing disclaimer: the data is not for making decisions about medical care. It is returned on every response and belongs in the answer rather than being silently dropped."
+                },
+                "last_updated": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "When openFDA last refreshed this endpoint's index, e.g. '2026-10-28'. An enforcement or shortage answer is only as current as this date, and it was unreachable."
+                },
+                "license": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Licence URL for the data, https://open.fda.gov/license/."
+                },
+                "terms": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Terms of use URL, https://open.fda.gov/terms/."
                 }
               }
             },
@@ -132,6 +160,136 @@
                       "pharm_class_epc": {
                         "type": "array",
                         "description": "Established pharmacologic class"
+                      },
+                      "application_number": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "FDA application numbers for the product, e.g. ['M013']."
+                      },
+                      "is_original_packager": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "boolean"
+                        },
+                        "description": "Whether the labeller is the original packager. A repackager's label can lag the originator's."
+                      },
+                      "nui": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "NUI identifiers of the pharmacologic classes below."
+                      },
+                      "package_ndc": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "Package-level NDC codes - the level a recall or shortage applies to."
+                      },
+                      "pharm_class_cs": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "FDA's chemical-structure class."
+                      },
+                      "pharm_class_moa": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "FDA's mechanism-of-action class, e.g. ['Cyclooxygenase Inhibitors [MoA]']."
+                      },
+                      "pharm_class_pe": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "FDA's physiologic-effect class, e.g. ['Decreased Prostaglandin Production [PE]']."
+                      },
+                      "product_ndc": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "Product-level NDC codes."
+                      },
+                      "rxcui": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "RxNorm concept ids for the product, e.g. ['308416']. The join to RxNorm."
+                      },
+                      "spl_id": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "SPL document id, matching `id`."
+                      },
+                      "spl_set_id": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "SPL set id, matching `set_id`."
+                      },
+                      "unii": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "UNII codes of the substances."
+                      },
+                      "upc": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "Retail UPC barcodes."
                       }
                     }
                   },
@@ -197,6 +355,204 @@
                     "items": {
                       "type": "string"
                     }
+                  },
+                  "active_ingredient": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Active ingredients with their strengths, as the label states them."
+                  },
+                  "active_ingredient_table": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The active-ingredient section as HTML table markup, when the label formats it as a table."
+                  },
+                  "ask_doctor": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The Ask A Doctor warnings."
+                  },
+                  "ask_doctor_or_pharmacist": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The Ask A Doctor Or Pharmacist warnings, which cover interactions."
+                  },
+                  "do_not_use": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The label's Do Not Use contraindications."
+                  },
+                  "effective_time": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When this label version took effect, YYYYMMDD. A 2015 label and a 2026 one are returned alike without it."
+                  },
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The SPL document id for this label version."
+                  },
+                  "inactive_ingredient": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Inactive ingredients. The field an excipient-allergy question needs."
+                  },
+                  "keep_out_of_reach_of_children": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The required children's-safety statement, with the overdose instruction."
+                  },
+                  "other_safety_information": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Safety text outside the standard sections."
+                  },
+                  "package_label_principal_display_panel": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The text on the package's principal display panel - what the box actually says."
+                  },
+                  "pregnancy_or_breast_feeding": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The pregnancy and breastfeeding statement."
+                  },
+                  "purpose": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The OTC label's Purpose section, e.g. ['Purpose Pain reliever']."
+                  },
+                  "purpose_table": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The purpose section as HTML table markup, when the label formats it as a table."
+                  },
+                  "questions": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The manufacturer's contact line for questions."
+                  },
+                  "set_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The SPL set id: stable across versions of the same label, while `id` changes."
+                  },
+                  "spl_product_data_elements": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Product and ingredient identity string from the SPL record. Use it to confirm which product a row is when the openFDA name block is unresolved."
+                  },
+                  "spl_unclassified_section": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Label content SPL did not classify into a named section."
+                  },
+                  "stop_use": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "When to stop using the product and seek help."
+                  },
+                  "storage_and_handling": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Storage conditions, e.g. 'store between 15-30C'."
+                  },
+                  "version": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Version number of the label, e.g. '3'."
                   }
                 }
               }
@@ -317,8 +673,50 @@
                     "total": {
                       "type": "integer",
                       "description": "Total matching reports"
+                    },
+                    "limit": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Page size openFDA applied."
+                    },
+                    "skip": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Records skipped before this page."
                     }
                   }
+                },
+                "disclaimer": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "openFDA's standing disclaimer: the data is not for making decisions about medical care. It is returned on every response and belongs in the answer rather than being silently dropped."
+                },
+                "last_updated": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "When openFDA last refreshed this endpoint's index, e.g. '2026-10-28'. An enforcement or shortage answer is only as current as this date, and it was unreachable."
+                },
+                "license": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Licence URL for the data, https://open.fda.gov/license/."
+                },
+                "terms": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Terms of use URL, https://open.fda.gov/terms/."
                 }
               }
             },
@@ -359,6 +757,89 @@
                             "drugcharacterization": {
                               "type": "string",
                               "description": "1=suspect, 2=concomitant, 3=interacting"
+                            },
+                            "actiondrug": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "description": "What was done with the drug: '1' withdrawn, '2' dose reduced, '3' dose increased, '4' dose not changed, '5' unknown, '6' not applicable. Dechallenge is one of the strongest causality signals and this is where it is recorded."
+                            },
+                            "activesubstance": {
+                              "description": "The active substance as reported, with its name."
+                            },
+                            "drugadministrationroute": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "description": "Route code for how the drug was given."
+                            },
+                            "drugauthorizationnumb": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "description": "The drug's marketing authorisation number, e.g. '050007'."
+                            },
+                            "drugdosageform": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "description": "Dosage form as the reporter wrote it."
+                            },
+                            "drugdosagetext": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "description": "Dose as free text, e.g. 'UNK' when unknown."
+                            },
+                            "drugindication": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "description": "What the drug was given for, as a MedDRA term. Distinguishes an adverse reaction from the condition being treated."
+                            },
+                            "drugrecurreadministration": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "description": "Whether the reaction returned on re-exposure: '1' yes, '2' no, '3' unknown. Rechallenge is the other causality signal."
+                            },
+                            "drugstartdate": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "description": "When the drug was started, as the format in drugstartdateformat."
+                            },
+                            "drugstartdateformat": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "description": "Format code for drugstartdate."
+                            },
+                            "drugstructuredosagenumb": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "description": "Dose as a number, when the reporter gave a structured one."
+                            },
+                            "drugstructuredosageunit": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "description": "Unit code for that number."
+                            },
+                            "openfda": {
+                              "description": "openFDA's resolved identifiers for the reported drug - application_number, brand_name, generic_name, rxcui, unii and the pharmacologic classes. Empty when openFDA could not resolve the reported name, which is common in FAERS."
                             }
                           }
                         }
@@ -375,11 +856,149 @@
                             "reactionoutcome": {
                               "type": "string",
                               "description": "1=recovered, 2=recovering, 3=not recovered, 4=fatal, 5=unknown, 6=unknown"
+                            },
+                            "reactionmeddraversionpt": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "description": "MedDRA version the reaction term was coded against, e.g. '17.0'. Terms change between versions, so comparing counts across versions needs this."
                             }
                           }
                         }
+                      },
+                      "patientagegroup": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Age group code: '1' neonate, '2' infant, '3' child, '4' adolescent, '5' adult, '6' elderly."
+                      },
+                      "patientonsetage": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Patient's age at onset, as a number whose UNIT is in patientonsetageunit - the two must be read together."
+                      },
+                      "patientonsetageunit": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Unit for patientonsetage: '800' decade, '801' year, '802' month, '803' week, '804' day, '805' hour."
+                      },
+                      "patientsex": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Patient sex code: '1' male, '2' female. A bare digit, so it is unusable without this."
                       }
                     }
+                  },
+                  "companynumb": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The reporting company's own case number, e.g. 'US-PFIZER INC-2014063856'. What links a case across the versions a company files."
+                  },
+                  "duplicate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "'1' when FDA has flagged the report as a duplicate of another. Counting duplicates as separate events inflates every FAERS tally."
+                  },
+                  "fulfillexpeditecriteria": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "'1' when the case met FDA's expedited-reporting criteria - that is, serious and unexpected. '2' when it did not."
+                  },
+                  "occurcountry": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Country the event occurred in, which can differ from where it was reported."
+                  },
+                  "primarysource": {
+                    "description": "The original reporter: their country and `qualification` (1 physician, 2 pharmacist, 3 other health professional, 4 lawyer, 5 consumer). A consumer report and a physician report are not equal evidence."
+                  },
+                  "primarysourcecountry": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Country the report came from, as a two-letter code."
+                  },
+                  "receiptdate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When FDA received the most recent version, YYYYMMDD. With receivedate this shows how long a case has been revised."
+                  },
+                  "receiptdateformat": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Format code for receiptdate; '102' is YYYYMMDD."
+                  },
+                  "receivedate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When FDA first received the case, YYYYMMDD."
+                  },
+                  "receivedateformat": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Format code for receivedate; '102' is YYYYMMDD. Present because FAERS does not guarantee one format."
+                  },
+                  "receiver": {
+                    "description": "Who received it, with type and organisation."
+                  },
+                  "reportduplicate": {
+                    "description": "Which report this duplicates, with the source and that source's case number."
+                  },
+                  "reporttype": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "FAERS report type code: '1' spontaneous, '2' report from study, '3' other, '4' not available to sender."
+                  },
+                  "safetyreportversion": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Version of this safety report, e.g. '2'. Later versions supersede earlier ones, and counting both double-counts the case."
+                  },
+                  "sender": {
+                    "description": "Who sent the report to FDA, with type and organisation."
+                  },
+                  "transmissiondate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the record was transmitted, YYYYMMDD."
+                  },
+                  "transmissiondateformat": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Format code for transmissiondate; '102' is YYYYMMDD."
                   }
                 }
               }
@@ -479,8 +1098,50 @@
                     "total": {
                       "type": "integer",
                       "description": "Total matching NDC products"
+                    },
+                    "limit": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Page size openFDA applied."
+                    },
+                    "skip": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Records skipped before this page."
                     }
                   }
+                },
+                "disclaimer": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "openFDA's standing disclaimer: the data is not for making decisions about medical care. It is returned on every response and belongs in the answer rather than being silently dropped."
+                },
+                "last_updated": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "When openFDA last refreshed this endpoint's index, e.g. '2026-10-28'. An enforcement or shortage answer is only as current as this date, and it was unreachable."
+                },
+                "license": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Licence URL for the data, https://open.fda.gov/license/."
+                },
+                "terms": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Terms of use URL, https://open.fda.gov/terms/."
                 }
               }
             },
@@ -536,6 +1197,79 @@
                   },
                   "finished": {
                     "type": "boolean"
+                  },
+                  "application_number": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "FDA application the product was approved under, e.g. 'NDA020702'."
+                  },
+                  "brand_name_base": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Brand name without the dosage-form and strength suffix, e.g. 'Lipitor'. What to match on when the full brand name varies by presentation."
+                  },
+                  "listing_expiration_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the listing expires, YYYYMMDD. A listing past this date is stale."
+                  },
+                  "marketing_category": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How the product reaches the market, e.g. 'NDA', 'ANDA', 'OTC monograph'. An ANDA is a generic and an NDA is not, which the product name does not say."
+                  },
+                  "marketing_start_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When marketing began, YYYYMMDD."
+                  },
+                  "openfda": {
+                    "description": "openFDA's resolved identifiers: manufacturer_name, rxcui, spl_set_id, unii and the rest. The join to RxNorm and to the label endpoints."
+                  },
+                  "packaging": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Each package presentation, with its package_ndc, description and marketing dates. A shortage or a recall applies to a package, so this is the level those join on."
+                  },
+                  "pharm_class": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "FDA's pharmacologic classes for the product, e.g. ['HMG-CoA Reductase Inhibitor [EPC]']."
+                  },
+                  "product_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "openFDA's own id for the product listing, e.g. '58151-155_dd011a82-...'. The NDC plus the SPL document id."
+                  },
+                  "product_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "e.g. 'HUMAN PRESCRIPTION DRUG', 'HUMAN OTC DRUG'. Prescription status, which the name does not carry."
+                  },
+                  "spl_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Id of the SPL document this listing came from. Joins the NDC directory to the label endpoints."
                   }
                 }
               }
@@ -642,8 +1376,50 @@
                     "total": {
                       "type": "integer",
                       "description": "Total matching recalls"
+                    },
+                    "limit": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Page size openFDA applied."
+                    },
+                    "skip": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Records skipped before this page."
                     }
                   }
+                },
+                "disclaimer": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "openFDA's standing disclaimer: the data is not for making decisions about medical care. It is returned on every response and belongs in the answer rather than being silently dropped."
+                },
+                "last_updated": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "When openFDA last refreshed this endpoint's index, e.g. '2026-10-28'. An enforcement or shortage answer is only as current as this date, and it was unreachable."
+                },
+                "license": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Licence URL for the data, https://open.fda.gov/license/."
+                },
+                "terms": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Terms of use URL, https://open.fda.gov/terms/."
                 }
               }
             },
@@ -691,6 +1467,104 @@
                   "product_type": {
                     "type": "string",
                     "description": "Product type (Drugs, Devices, Food)"
+                  },
+                  "address_1": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Recalling firm's street address."
+                  },
+                  "address_2": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Second address line; empty when unused."
+                  },
+                  "center_classification_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the FDA centre assigned the recall class, YYYYMMDD. The classification is the severity, and this is when it was decided."
+                  },
+                  "city": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Recalling firm's city."
+                  },
+                  "code_info": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Lot, batch or best-by codes covered by the recall, e.g. 'GTIN: 20884521128009 LOT Numbers: 2200400154'. The only field that says whether a particular unit is affected."
+                  },
+                  "country": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Recalling firm's country, e.g. 'United States'."
+                  },
+                  "event_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "FDA's recall event number, e.g. '92660'. One event covers many product records, and this is what groups them."
+                  },
+                  "initial_firm_notification": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How the firm first told its customers, e.g. 'Letter', 'E-Mail', 'Press Release'. A press release reaches the public; a letter reaches distributors."
+                  },
+                  "more_code_info": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Overflow of code_info when the list is long. Empty string when there is none - check both."
+                  },
+                  "postal_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Recalling firm's postal code."
+                  },
+                  "product_quantity": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How much product was affected, e.g. '685 units'. 'Unknown' or empty when the firm did not report it, which is itself worth seeing."
+                  },
+                  "report_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When FDA published the enforcement report, YYYYMMDD."
+                  },
+                  "state": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Recalling firm's state."
+                  },
+                  "termination_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When FDA closed the recall, YYYYMMDD. ABSENT while the recall is still open, so its absence is the live/closed distinction and not missing data."
                   }
                 }
               }
@@ -821,6 +1695,118 @@
                   },
                   "recall_initiation_date": {
                     "type": "string"
+                  },
+                  "address_1": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Recalling firm's street address."
+                  },
+                  "address_2": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Second address line; empty when unused."
+                  },
+                  "center_classification_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the FDA centre assigned the recall class, YYYYMMDD. The classification is the severity, and this is when it was decided."
+                  },
+                  "city": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Recalling firm's city."
+                  },
+                  "code_info": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Lot, batch or best-by codes covered by the recall, e.g. 'GTIN: 20884521128009 LOT Numbers: 2200400154'. The only field that says whether a particular unit is affected."
+                  },
+                  "country": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Recalling firm's country, e.g. 'United States'."
+                  },
+                  "event_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "FDA's recall event number, e.g. '92660'. One event covers many product records, and this is what groups them."
+                  },
+                  "initial_firm_notification": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How the firm first told its customers, e.g. 'Letter', 'E-Mail', 'Press Release'. A press release reaches the public; a letter reaches distributors."
+                  },
+                  "more_code_info": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Overflow of code_info when the list is long. Empty string when there is none - check both."
+                  },
+                  "postal_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Recalling firm's postal code."
+                  },
+                  "product_quantity": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How much product was affected, e.g. '685 units'. 'Unknown' or empty when the firm did not report it, which is itself worth seeing."
+                  },
+                  "product_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which FDA programme the product falls under, e.g. 'Devices', 'Food', 'Drugs'."
+                  },
+                  "report_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When FDA published the enforcement report, YYYYMMDD."
+                  },
+                  "state": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Recalling firm's state."
+                  },
+                  "termination_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When FDA closed the recall, YYYYMMDD. ABSENT while the recall is still open, so its absence is the live/closed distinction and not missing data."
+                  },
+                  "voluntary_mandated": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Whether the firm recalled on its own or FDA required it, e.g. 'Voluntary: Firm initiated'. A mandated recall is a different fact from a voluntary one."
                   }
                 }
               }
@@ -1164,8 +2150,50 @@
                     "total": {
                       "type": "integer",
                       "description": "Total matching food recalls"
+                    },
+                    "limit": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Page size openFDA applied."
+                    },
+                    "skip": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Records skipped before this page."
                     }
                   }
+                },
+                "disclaimer": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "openFDA's standing disclaimer: the data is not for making decisions about medical care. It is returned on every response and belongs in the answer rather than being silently dropped."
+                },
+                "last_updated": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "When openFDA last refreshed this endpoint's index, e.g. '2026-10-28'. An enforcement or shortage answer is only as current as this date, and it was unreachable."
+                },
+                "license": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Licence URL for the data, https://open.fda.gov/license/."
+                },
+                "terms": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Terms of use URL, https://open.fda.gov/terms/."
                 }
               }
             },
@@ -1199,6 +2227,118 @@
                   },
                   "recall_initiation_date": {
                     "type": "string"
+                  },
+                  "address_1": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Recalling firm's street address."
+                  },
+                  "address_2": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Second address line; empty when unused."
+                  },
+                  "center_classification_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the FDA centre assigned the recall class, YYYYMMDD. The classification is the severity, and this is when it was decided."
+                  },
+                  "city": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Recalling firm's city."
+                  },
+                  "code_info": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Lot, batch or best-by codes covered by the recall, e.g. 'GTIN: 20884521128009 LOT Numbers: 2200400154'. The only field that says whether a particular unit is affected."
+                  },
+                  "country": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Recalling firm's country, e.g. 'United States'."
+                  },
+                  "event_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "FDA's recall event number, e.g. '92660'. One event covers many product records, and this is what groups them."
+                  },
+                  "initial_firm_notification": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How the firm first told its customers, e.g. 'Letter', 'E-Mail', 'Press Release'. A press release reaches the public; a letter reaches distributors."
+                  },
+                  "more_code_info": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Overflow of code_info when the list is long. Empty string when there is none - check both."
+                  },
+                  "postal_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Recalling firm's postal code."
+                  },
+                  "product_quantity": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How much product was affected, e.g. '685 units'. 'Unknown' or empty when the firm did not report it, which is itself worth seeing."
+                  },
+                  "product_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which FDA programme the product falls under, e.g. 'Devices', 'Food', 'Drugs'."
+                  },
+                  "report_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When FDA published the enforcement report, YYYYMMDD."
+                  },
+                  "state": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Recalling firm's state."
+                  },
+                  "termination_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When FDA closed the recall, YYYYMMDD. ABSENT while the recall is still open, so its absence is the live/closed distinction and not missing data."
+                  },
+                  "voluntary_mandated": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Whether the firm recalled on its own or FDA required it, e.g. 'Voluntary: Firm initiated'. A mandated recall is a different fact from a voluntary one."
                   }
                 }
               }
@@ -1338,6 +2478,44 @@
                   "update_date": {
                     "type": "string",
                     "description": "Last update date"
+                  },
+                  "availability": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The product's current availability, e.g. 'Available'. The answer a shortage question is asking for."
+                  },
+                  "contact_info": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Phone number for the manufacturer's supply contact."
+                  },
+                  "openfda": {
+                    "description": "openFDA's resolved identifiers for the product: application_number, brand_name, generic_name, manufacturer_name and the rest. How a shortage joins to the label and NDC endpoints."
+                  },
+                  "package_ndc": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Package-level NDC of the affected presentation, e.g. '63323-488-17'. A shortage applies to a package, not to a drug in general."
+                  },
+                  "related_info": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "FDA's note on what to do, e.g. 'Check wholesalers for inventory'."
+                  },
+                  "update_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What kind of update this record is, e.g. 'Reverified', 'Revised'. A reverified entry is a confirmation, not a new shortage."
                   }
                 }
               }
@@ -1465,6 +2643,564 @@
                   "mdr_text": {
                     "type": "array",
                     "description": "Narrative event description text"
+                  },
+                  "adverse_event_flag": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "'Y' when the report describes an adverse event rather than only a malfunction."
+                  },
+                  "date_added": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When openFDA added the record, YYYYMMDD."
+                  },
+                  "date_changed": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When openFDA last changed it, YYYYMMDD."
+                  },
+                  "date_manufacturer_received": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the manufacturer learned of it, YYYYMMDD. With date_of_event this gives the reporting delay."
+                  },
+                  "date_of_event": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the event occurred, YYYYMMDD. Distinct from the dates below, and the one that matters for a timeline."
+                  },
+                  "date_report": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the report was written, YYYYMMDD."
+                  },
+                  "distributor_address_1": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "distributor_address_2": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "distributor_city": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "distributor_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "distributor_state": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "distributor_zip_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "distributor_zip_code_ext": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "event_key": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Key grouping the reports of one event. Empty on reports FDA has not linked."
+                  },
+                  "event_location": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Where the event happened, as openFDA's code - 'H' hospital, 'I' home, 'O' other."
+                  },
+                  "exemption_number": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Exemption number, for reports filed under an exemption."
+                  },
+                  "health_professional": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Whether a health professional was involved, as openFDA's flag."
+                  },
+                  "initial_report_to_fda": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Whether this is the initial report to FDA."
+                  },
+                  "manufacturer_address_1": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_address_2": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_city": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_contact_address_1": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_contact_address_2": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_contact_area_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_contact_city": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_contact_country": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_contact_exchange": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_contact_extension": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_contact_f_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_contact_l_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_contact_pcity": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_contact_pcountry": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_contact_phone_number": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_contact_plocal": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_contact_postal_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_contact_state": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_contact_t_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_contact_zip_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_contact_zip_ext": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_country": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_g1_address_1": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_g1_address_2": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_g1_city": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_g1_country": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_g1_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_g1_postal_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_g1_state": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_g1_zip_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_g1_zip_code_ext": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_link_flag": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "'Y' when the report is linked to a manufacturer record."
+                  },
+                  "manufacturer_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_postal_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_state": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_zip_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "manufacturer_zip_code_ext": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "mdr_report_key": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "FDA's key for the MDR report, e.g. '10000007'. The report's identity."
+                  },
+                  "mfr_report_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The manufacturer's reporting obligation, e.g. 'Thirty-Day', 'Five-Day'. Five-Day means FDA judged it urgent."
+                  },
+                  "noe_summarized": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How many events the record summarises, when summary_report_flag is set."
+                  },
+                  "number_devices_in_event": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How many devices were involved. Empty when not reported."
+                  },
+                  "number_patients_in_event": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How many patients were involved. Empty when not reported."
+                  },
+                  "pma_pmn_number": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The PMA or 510(k) number the device was cleared under, e.g. 'P930039'. The join to the approval record."
+                  },
+                  "previous_use_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Whether the device had been used before, as openFDA's code."
+                  },
+                  "product_problems": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "What went wrong with the device, e.g. ['Under-Sensing']. The substance of an adverse-event report and it was undeclared."
+                  },
+                  "remedial_action": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "What was done about it, e.g. ['Recall'], ['Notification']."
+                  },
+                  "removal_correction_number": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "FDA number of the removal or correction action, when one was taken."
+                  },
+                  "report_source_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Who the report came from, e.g. 'Manufacturer report', 'Voluntary report'. A manufacturer report and a voluntary one are not equal evidence."
+                  },
+                  "report_to_fda": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Whether the event was reported to FDA. '*' means openFDA has no value, not 'no'."
+                  },
+                  "report_to_manufacturer": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Whether the event was reported to the manufacturer."
+                  },
+                  "reporter_country_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "reporter_occupation_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The reporter's occupation, e.g. 'PHYSICIAN'."
+                  },
+                  "reporter_state_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "One component of a postal address or telephone number openFDA splits across many keys (manufacturer, manufacturer contact, manufacturer G1 and distributor each have their own set). Populated on some reports and empty on most. Declared because the field exists, not because it carries the event."
+                  },
+                  "reprocessed_and_reused_flag": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "'Y' when a single-use device was reprocessed and reused - which is itself a contributing factor."
+                  },
+                  "single_use_flag": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Whether the device is labelled single-use."
+                  },
+                  "source_type": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Source categories, e.g. ['HEALTH PROFESSIONAL']."
+                  },
+                  "summary_report_flag": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "'Y' when the record summarises many events rather than describing one. A summary report counted as one event undercounts badly."
+                  },
+                  "suppl_dates_fda_received": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Dates FDA received supplemental reports."
+                  },
+                  "suppl_dates_mfr_received": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Dates the manufacturer received supplemental information."
+                  },
+                  "type_of_report": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Report stage, e.g. ['Initial submission'], ['Follow-up']. A follow-up revises an earlier report rather than adding an event."
                   }
                 }
               }
@@ -1600,6 +3336,107 @@
                   "event_date_posted": {
                     "type": "string",
                     "description": "Date recall posted"
+                  },
+                  "action": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What the firm actually did, e.g. the recall notice it issued and when."
+                  },
+                  "additional_info_contact": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Phone number for recall questions."
+                  },
+                  "address_1": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Recalling firm's street address."
+                  },
+                  "city": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Recalling firm's city."
+                  },
+                  "code_info": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Lot or serial numbers covered by the recall. The only field that says whether a particular unit is affected."
+                  },
+                  "distribution_pattern": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Where the product went, e.g. 'Worldwide Distribution -- USA, Canada, Hong Kong...'. Whether a recall reaches a given market depends on this."
+                  },
+                  "event_date_terminated": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When FDA closed the recall event, YYYY-MM-DD. An open recall and a closed one are different facts."
+                  },
+                  "firm_fei_number": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "FDA establishment identifier of the recalling firm."
+                  },
+                  "openfda": {
+                    "description": "openFDA's resolved identifiers for the device: k_number, registration_number, fei_number, device_name, medical_specialty_description and regulation_number. The join to the 510(k), classification and adverse-event endpoints."
+                  },
+                  "postal_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Recalling firm's postal code."
+                  },
+                  "product_quantity": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How much product was affected, e.g. '2246 units'."
+                  },
+                  "reason_for_recall": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Why the device was recalled, in FDA's words - e.g. 'Failure-- product can kink or ovalize, which may result in difficulty...'. The substance of a recall record and it was undeclared."
+                  },
+                  "res_event_number": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "FDA's recall event number, e.g. '53426'. Joins the records of one event together."
+                  },
+                  "root_cause_description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "FDA's root-cause category, e.g. 'Device Design'. What separates a manufacturing lapse from a design flaw."
+                  },
+                  "state": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Recalling firm's state."
                   }
                 }
               }
@@ -1861,6 +3698,64 @@
                   "outcome": {
                     "type": "array",
                     "description": "Outcome of the event"
+                  },
+                  "duration": {
+                    "description": "How long the signs lasted, as a value and a unit."
+                  },
+                  "foreign_or_domestic": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Whether the report came from inside the US, e.g. 'Domestic'."
+                  },
+                  "health_assessment_prior_to_exposure": {
+                    "description": "The animal's condition before the drug, with who assessed it. The baseline the event has to be read against."
+                  },
+                  "onset_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When signs began, YYYYMMDD, e.g. '20121207'."
+                  },
+                  "primary_reporter": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Who reported it, e.g. 'Other Health Care Professional'. A veterinarian's report and an owner's report are not equal evidence."
+                  },
+                  "receiver": {
+                    "description": "The organisation that received the report, with its address."
+                  },
+                  "report_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "FDA's identifier for the report, e.g. 'N141068'."
+                  },
+                  "serious_ae": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Whether the event was serious, as the string 'true' or 'false'. Not a boolean - openFDA sends it as text."
+                  },
+                  "treated_for_ae": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Whether the animal was treated for the event, as 'true' or 'false'."
+                  },
+                  "type_of_information": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What kind of report this is, e.g. 'Safety Issue', 'Lack of Effectiveness'."
                   }
                 }
               }
