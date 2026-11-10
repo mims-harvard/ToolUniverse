@@ -8,7 +8,7 @@
       "properties": {
         "disease_trait": {
           "type": "string",
-          "description": "Disease or trait name for text-based search (e.g., 'diabetes', 'coronary artery disease', 'breast cancer'). NOTE: GWAS associations are indexed by trait/disease, not by gene or drug name \u2014 passing a gene symbol or drug name here will fail. Use efo_id for precise filtering."
+          "description": "Disease or trait name for text-based search (e.g., 'diabetes', 'coronary artery disease', 'breast cancer'). NOTE: GWAS associations are indexed by trait/disease, not by gene or drug name — passing a gene symbol or drug name here will fail. Use efo_id for precise filtering."
         },
         "query": {
           "type": "string",
@@ -976,26 +976,42 @@
             "type": "object",
             "properties": {
               "association_id": {
-                "type": "integer"
+                "type": [
+                  "integer",
+                  "string",
+                  "null"
+                ],
+                "description": "GWAS Catalog's id for this association"
               },
               "risk_frequency": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "number",
+                  "null"
+                ],
+                "description": "Risk-allele frequency as recorded"
               },
               "pvalue_description": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "What the p-value applies to, e.g. a subgroup"
               },
               "range": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Reported effect range"
               },
               "locations": {
-                "type": "array",
-                "items": {
-                  "type": [
-                    "object",
-                    "string"
-                  ]
-                },
-                "description": "Array of location objects or location strings"
+                "type": [
+                  "array",
+                  "string",
+                  "null"
+                ],
+                "description": "Genomic locations of the variant"
               },
               "rs_id": {
                 "type": "string",
@@ -1022,10 +1038,12 @@
                 "description": "Most severe functional consequence"
               },
               "mapped_genes": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
+                "type": [
+                  "array",
+                  "string",
+                  "null"
+                ],
+                "description": "Genes the variant was mapped to"
               },
               "maf": {
                 "type": "number",
@@ -1036,8 +1054,201 @@
                 "description": "Minor allele"
               },
               "_links": {
-                "type": "object",
-                "description": "API links"
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "HAL links for navigating the API",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ],
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              },
+              "accession_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "GWAS Catalog study accession, e.g. GCST000001 - the key that joins the association back to its study"
+              },
+              "beta": {
+                "type": [
+                  "string",
+                  "number",
+                  "null"
+                ],
+                "description": "Effect size as the Catalog records it; sent as a string"
+              },
+              "ci_lower": {
+                "type": [
+                  "string",
+                  "number",
+                  "null"
+                ],
+                "description": "Lower confidence bound"
+              },
+              "ci_upper": {
+                "type": [
+                  "string",
+                  "number",
+                  "null"
+                ],
+                "description": "Upper confidence bound"
+              },
+              "p_value": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Association p-value"
+              },
+              "pvalue_mantissa": {
+                "type": [
+                  "integer",
+                  "number",
+                  "null"
+                ],
+                "description": "Mantissa of the p-value, which with the exponent preserves precision a float would lose"
+              },
+              "pvalue_exponent": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Exponent of the p-value"
+              },
+              "multi_snp_haplotype": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the association is to a haplotype rather than one variant"
+              },
+              "snp_interaction": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the association is an interaction between variants"
+              },
+              "efo_traits": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "EFO trait terms for the association",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ]
+                  }
+                }
+              },
+              "bg_efo_traits": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Background EFO traits, where the study used one",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ]
+                  }
+                }
+              },
+              "reported_trait": {
+                "type": [
+                  "array",
+                  "string",
+                  "null"
+                ],
+                "description": "The trait as the paper worded it, which may differ from the EFO mapping"
+              },
+              "first_author": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "First author of the study"
+              },
+              "pubmed_id": {
+                "type": [
+                  "string",
+                  "integer",
+                  "null"
+                ],
+                "description": "PubMed id of the study"
+              },
+              "or_value": {
+                "type": [
+                  "string",
+                  "number",
+                  "null"
+                ],
+                "description": "Odds ratio as the Catalog records it"
+              },
+              "or_per_copy_num": {
+                "type": [
+                  "string",
+                  "number",
+                  "null"
+                ],
+                "description": "Odds ratio per risk-allele copy"
+              },
+              "snp_allele": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The allele the association is reported for"
+              },
+              "snp_effect_allele": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The effect allele, where the Catalog distinguishes it"
               }
             }
           }

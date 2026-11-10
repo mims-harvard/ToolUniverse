@@ -2335,6 +2335,18 @@ def test_the_wrapper_reads_the_field_the_api_answered(module, key, why):
 
 # (tool, output field the schema must declare)
 DECLARED = [
+    ("GBIF_search_occurrences", "issues"),
+    ("GBIF_search_occurrences", "basisOfRecord"),
+    ("GBIF_search_species", "nomenclaturalStatus"),
+    ("IPD_get_hla_allele", "allele_history"),
+    ("IPD_get_hla_allele", "sequence_status"),
+    ("GenomeNexus_annotate_variant", "strandSign"),
+    ("gwas_get_variants_for_trait", "accession_id"),
+    ("IMPC_get_phenotypes_by_gene", "phenotype_calls_returned"),
+    ("IMPC_get_phenotypes_by_gene", "result_set_complete"),
+    ("EPMC_get_references", "citedOrder"),
+    ("EMDB_get_structure", "map"),
+    ("umls_search_concepts", "partialSearch"),
     ("PDB_REDO_get_structure_quality", "rama-angles"),
     ("PDB_REDO_get_structure_quality", "RFREE"),
     ("FPbase_search_by_spectrum", "seq"),
@@ -5987,3 +5999,87 @@ def test_pdb_redo_declares_what_the_re_refinement_changed():
         "the open level must say why it is open, so the next reader does "
         "not take it for an oversight"
     )
+
+
+def test_an_occurrence_record_declares_whether_it_should_be_trusted():
+    """GBIF_search_occurrences declared 9 of the 78 fields in a record.
+
+    `issues` was among the missing, and it is GBIF's own data-quality flag
+    list - COORDINATE_ROUNDED, GEODETIC_DATUM_ASSUMED_WGS84 and so on. An
+    occurrence carrying issues is not interchangeable with one that does
+    not, and the schema said nothing about them. Nor about `license`, which
+    binds a caller who redistributes the record, or `basisOfRecord`, which
+    separates a preserved specimen from somebody's sighting.
+
+    The coordinates themselves were undeclared, as were the IUCN category,
+    the sequence links, the whole taxonomic backbone with its keys, and the
+    paging fields that say 78 records matched where 1 came back.
+    """
+    schema = json.dumps(_config("GBIF_search_occurrences").get("return_schema"))
+    for field in ('"issues"', '"license"', '"basisOfRecord"',
+                  '"decimalLatitude"', '"iucnRedListCategory"',
+                  '"endOfRecords"', '"isSequenced"'):
+        assert field in schema, f"GBIF occurrence returns {field} undeclared"
+    assert "COORDINATE_ROUNDED" in schema, (
+        "the issues declaration should show what a flag looks like"
+    )
+    assert "sighting" in schema, (
+        "basisOfRecord's declaration should say what it separates"
+    )
+
+
+def test_the_batch_tools_declare_what_each_record_is_for():
+    """Ten tools in one round; these are the fields that change an answer.
+
+    IPD_get_hla_allele: allele_history, because an HLA allele renamed
+    between releases is the same allele and a caller matching on name alone
+    misses it; and sequence_status, because a partial sequence cannot be
+    compared with a full one as if it were complete.
+
+    SGD_get_sequence: `residues`. A tool called get_sequence declared the
+    strain, the contig and the length, and not the sequence.
+
+    gwas_get_variants_for_trait: accession_id, the study the association
+    belongs to, plus the p-value mantissa and exponent that preserve
+    precision a float loses.
+
+    GenomeNexus_annotate_variant: mutation_assessor, a functional-impact
+    prediction that was being returned with nothing in the schema to say it
+    was there.
+
+    EMDB_get_structure: `map`, the reconstructed density map, which is the
+    primary product of a cryo-EM entry.
+
+    EPMC_get_references: citedOrder, the position in the citing paper's
+    reference list, which is what makes a reference list ordered rather
+    than a set.
+    """
+    checks = {
+        "IPD_get_hla_allele": ('"allele_history"', '"sequence_status"', '"G_group"'),
+
+        "gwas_get_variants_for_trait": ('"accession_id"', '"pvalue_mantissa"', '"or_value"'),
+        "GenomeNexus_annotate_variant": ('"mutation_assessor"', '"hotspots"'),
+        "EMDB_get_structure": ('"map"', '"sample"', '"structure_determination_list"'),
+        "EPMC_get_references": ('"citedOrder"', '"citationType"'),
+        "IMPC_get_phenotypes_by_gene": ('"total_phenotype_calls"', '"truncated"'),
+        "umls_search_concepts": ('"partialSearch"', '"recCount"'),
+        "GBIF_search_species": ('"nomenclaturalStatus"', '"nubKey"', '"numOccurrences"'),
+    }
+    # SGD_get_sequence is checked by path, not by name: every one of its
+    # field names was already declared somewhere in its own schema, and the
+    # gap was that coding_dna, genomic_dna and protein did not declare them
+    # as their own properties. A substring row would have passed.
+    sgd = (_config("SGD_get_sequence").get("return_schema") or {})
+    branch = (sgd.get("oneOf") or [sgd])[0]
+    for block in ("coding_dna", "genomic_dna", "protein"):
+        props = ((branch.get("properties") or {}).get(block) or {}).get("properties") or {}
+        assert "residues" in props, (
+            f"{block} must declare `residues` as its own property: the "
+            "sequence is what a get_sequence tool is for"
+        )
+        assert "is_reference_strain" in props, f"{block} must declare the strain flag"
+
+    for tool, fields in checks.items():
+        schema = json.dumps(_config(tool).get("return_schema"))
+        for field in fields:
+            assert field in schema, f"{tool} returns {field} undeclared"

@@ -59,8 +59,43 @@
                   }
                 }
               }
+            },
+            "classType": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The kind of record UMLS returned, e.g. searchResults"
+            },
+            "recCount": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records the search matched"
             }
           }
+        },
+        "pageNumber": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Page returned"
+        },
+        "pageSize": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Page size applied"
+        },
+        "partialSearch": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Whether UMLS treated the query as a partial match"
         }
       }
     },

@@ -231,8 +231,9 @@
             "total_phenotype_calls": {
               "type": [
                 "integer",
-                "number"
-              ]
+                "null"
+              ],
+              "description": "Total calls IMPC holds for the gene"
             },
             "unique_phenotypes": {
               "type": [
@@ -394,6 +395,69 @@
                   }
                 }
               }
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether more phenotype calls remain beyond this page"
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size applied"
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Offset of this page"
+            },
+            "next_offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Offset for the next page, or null at the end"
+            },
+            "phenotype_calls_returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Phenotype calls on this page"
+            },
+            "total_results_is_exact": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the total is exact or a lower bound"
+            },
+            "result_set_complete": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the page is the whole result set"
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the list was cut"
+            },
+            "unique_phenotypes_scope": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What the unique-phenotype list covers - this page or the whole result set, which changes how the count may be used"
             }
           },
           "required": [

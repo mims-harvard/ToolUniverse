@@ -2,7 +2,7 @@
   {
     "type": "EMDBRESTTool",
     "name": "EMDB_get_structure",
-    "description": "Get 3D electron microscopy (EM) structure data from the Electron Microscopy Data Bank (EMDB). Returns cryo-EM structure metadata including resolution (in \u00c5ngstr\u00f6ms), imaging method, organism, molecule details, voxel dimensions, map download URLs, and cross-references to PDB entries. Use this for structural biology research, comparing protein conformations, drug design, and downloading electron density maps for visualization or model fitting.",
+    "description": "Get 3D electron microscopy (EM) structure data from the Electron Microscopy Data Bank (EMDB). Returns cryo-EM structure metadata including resolution (in Ångströms), imaging method, organism, molecule details, voxel dimensions, map download URLs, and cross-references to PDB entries. Use this for structural biology research, comparing protein conformations, drug design, and downloading electron density maps for visualization or model fitting.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -110,6 +110,232 @@
               "type": "integer"
             }
           }
+        },
+        "map": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The reconstructed density map: dimensions, cell, contour levels, data type and file",
+          "additionalProperties": {
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "array",
+              "object",
+              "null"
+            ],
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "array",
+                "object",
+                "null"
+              ],
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "sample": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "What was imaged - the macromolecules and assemblies in the specimen",
+          "additionalProperties": {
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "array",
+              "object",
+              "null"
+            ],
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "array",
+                "object",
+                "null"
+              ],
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "structure_determination_list": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "How the structure was determined: the microscopy, the specimen preparation and the reconstruction method",
+          "additionalProperties": {
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "array",
+              "object",
+              "null"
+            ]
+          }
+        },
+        "interpretation": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "What was fitted into the map - modelling and segmentation",
+          "additionalProperties": {
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "array",
+              "object",
+              "null"
+            ],
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "array",
+                "object",
+                "null"
+              ],
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "crossreferences": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Citations and links to related entries, including the primary publication. EMDB nests the citation list several levels deep, so the lower levels are declared open rather than enumerated",
+          "additionalProperties": {
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "array",
+              "object",
+              "null"
+            ],
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "array",
+                "object",
+                "null"
+              ],
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "admin": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Deposition record: authors, title, keywords, key dates, status and processing site",
+          "additionalProperties": {
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "array",
+              "object",
+              "null"
+            ],
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "array",
+                "object",
+                "null"
+              ],
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "version": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "EMDB schema version of the entry"
+        },
+        "_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "EMDB's internal document id"
         }
       }
     },

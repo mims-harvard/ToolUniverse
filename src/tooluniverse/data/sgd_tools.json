@@ -1057,89 +1057,245 @@
               "type": "string"
             },
             "genomic_dna": {
-              "type": "object",
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The genomic DNA sequence with its strain and contig",
               "properties": {
-                "start": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "end": {
-                  "type": [
-                    "integer",
-                    "null"
-                  ]
-                },
-                "strand": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "length": {
-                  "type": "integer"
-                },
-                "residues": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
-                "strain": {
-                  "type": [
-                    "string",
-                    "null"
-                  ]
-                },
                 "contig": {
                   "type": [
                     "string",
                     "null"
-                  ]
+                  ],
+                  "description": "Contig the sequence came from"
                 },
                 "contig_systematic_name": {
                   "type": [
                     "string",
                     "null"
-                  ]
+                  ],
+                  "description": "Systematic name of that contig"
+                },
+                "strain": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Strain the sequence is from"
                 },
                 "is_reference_strain": {
-                  "type": "boolean"
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "Whether that strain is the S288C reference. A sequence from another strain is not interchangeable with the reference"
                 },
-                "strains_available": {
+                "residues": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The sequence itself. A tool called get_sequence that does not declare this declares everything about the sequence except the sequence"
+                },
+                "length": {
                   "type": [
                     "integer",
                     "null"
-                  ]
+                  ],
+                  "description": "Length in residues or bases"
+                },
+                "strains_available": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "Other strains this sequence can be fetched for",
+                  "items": {
+                    "type": [
+                      "string",
+                      "object"
+                    ],
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  }
+                },
+                "start": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Start coordinate on the contig"
+                },
+                "end": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "End coordinate on the contig"
+                },
+                "strand": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Strand the feature is on"
                 }
               }
             },
             "coding_dna": {
-              "type": "object",
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The coding DNA sequence with the strain and contig it came from",
               "properties": {
-                "length": {
-                  "type": "integer"
+                "contig": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Contig the sequence came from"
+                },
+                "contig_systematic_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Systematic name of that contig"
+                },
+                "strain": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Strain the sequence is from"
+                },
+                "is_reference_strain": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "Whether that strain is the S288C reference. A sequence from another strain is not interchangeable with the reference"
                 },
                 "residues": {
                   "type": [
                     "string",
                     "null"
-                  ]
+                  ],
+                  "description": "The sequence itself. A tool called get_sequence that does not declare this declares everything about the sequence except the sequence"
+                },
+                "length": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Length in residues or bases"
+                },
+                "strains_available": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "Other strains this sequence can be fetched for",
+                  "items": {
+                    "type": [
+                      "string",
+                      "object"
+                    ],
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  }
                 }
               }
             },
             "protein": {
-              "type": "object",
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "The protein sequence with its strain and contig",
               "properties": {
-                "length": {
-                  "type": "integer"
+                "contig": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Contig the sequence came from"
+                },
+                "contig_systematic_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Systematic name of that contig"
+                },
+                "strain": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Strain the sequence is from"
+                },
+                "is_reference_strain": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "Whether that strain is the S288C reference. A sequence from another strain is not interchangeable with the reference"
                 },
                 "residues": {
                   "type": [
                     "string",
                     "null"
-                  ]
+                  ],
+                  "description": "The sequence itself. A tool called get_sequence that does not declare this declares everything about the sequence except the sequence"
+                },
+                "length": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Length in residues or bases"
+                },
+                "strains_available": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "description": "Other strains this sequence can be fetched for",
+                  "items": {
+                    "type": [
+                      "string",
+                      "object"
+                    ],
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  }
                 }
               }
             }
