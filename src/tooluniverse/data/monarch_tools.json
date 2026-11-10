@@ -516,6 +516,20 @@
         },
         "total": {
           "type": "integer"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Page size applied to this call."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Records skipped before this page."
         }
       }
     }
@@ -576,6 +590,20 @@
         },
         "total": {
           "type": "integer"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Page size applied to this call."
+        },
+        "offset": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Records skipped before this page."
         }
       }
     }

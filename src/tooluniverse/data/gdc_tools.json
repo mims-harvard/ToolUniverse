@@ -47,11 +47,31 @@
             },
             "pagination": {
               "type": "object"
+            },
+            "data": {
+              "description": "The GDC payload: `hits` and `pagination`. pagination carries the total, which is what says whether the page is the whole answer."
             }
           }
         },
         "url": {
           "type": "string"
+        },
+        "endpoint": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Which GDC endpoint was queried, e.g. 'cases'."
+        },
+        "query": {
+          "description": "The filters and size actually sent to the GDC, so a result can be reproduced."
+        },
+        "success": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Whether the GDC call succeeded. False with an empty hit list is an error, not an absence of cases."
         }
       }
     },
@@ -123,11 +143,31 @@
             },
             "pagination": {
               "type": "object"
+            },
+            "data": {
+              "description": "The GDC payload: `hits` and `pagination`."
             }
           }
         },
         "url": {
           "type": "string"
+        },
+        "endpoint": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Which GDC endpoint was queried."
+        },
+        "query": {
+          "description": "The filters and size actually sent."
+        },
+        "success": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Whether the GDC call succeeded."
         }
       }
     },

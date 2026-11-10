@@ -93,7 +93,7 @@
   {
     "name": "DynaMut2_get_job",
     "type": "DynaMut2Tool",
-    "description": "Retrieve results for a previously submitted DynaMut2 stability prediction job. If the job is still running, returns the current status. If complete, returns the full prediction result including ddG value and effect classification. Use this to check on long-running predictions or to retrieve results you submitted earlier. Note: DynaMut2 jobs are ephemeral and expire, so this tool has no static test example \u2014 submit a job with DynaMut2_predict_stability first to get a live job_id.",
+    "description": "Retrieve results for a previously submitted DynaMut2 stability prediction job. If the job is still running, returns the current status. If complete, returns the full prediction result including ddG value and effect classification. Use this to check on long-running predictions or to retrieve results you submitted earlier. Note: DynaMut2 jobs are ephemeral and expire, so this tool has no static test example — submit a job with DynaMut2_predict_stability first to get a live job_id.",
     "parameter": {
       "type": "object",
       "properties": {

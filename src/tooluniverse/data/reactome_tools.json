@@ -2573,6 +2573,20 @@
           "className": {
             "type": "string",
             "description": "Class name"
+          },
+          "category": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Reactome's category for the event."
+          },
+          "isChimeric": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "True when the entity is built from components of different species - an inferred construct rather than an observed one."
           }
         },
         "description": "Reaction objects involving the UniProt protein"

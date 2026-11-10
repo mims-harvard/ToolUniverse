@@ -7699,3 +7699,91 @@ def test_the_rest_of_the_long_tail_is_declared():
             assert field in schema, f"{tool} returns {field} undeclared"
     assert "classification error" in json.dumps(_config("get_phenotype_by_HPO_ID")["return_schema"])
     assert "backbone" in json.dumps(_config("GBIF_get_species")["return_schema"])
+
+
+def test_the_fields_that_say_an_answer_is_a_page():
+    """has_more, truncated and their relatives recur and were declared on almost none.
+
+    They are the fields that say whether what came back is the whole answer,
+    which is the same question this effort's row-count axis asks. One shared
+    table covers them wherever they occur, and three carry meaning a name
+    does not:
+
+    `pagination_supported` false means the upstream offers no way to
+    continue at all, so a capped result is the end of what the tool can
+    return rather than the first page of more. `total_results_is_exact`
+    false means the total is an estimate and must not be used as a
+    denominator. And `limit_scope` 'per_rank' means the limit was applied
+    per group, so the result holds more rows than the limit suggests.
+    """
+    for tool, fields in (
+        ("IMPC_get_gene_phenotype_hits", ("has_more", "truncated", "result_set_complete",
+                                          "total_results_is_exact")),
+        ("GTDB_search_taxon", ("pagination_supported", "limit_scope", "complete_known")),
+        ("EBIProteins_get_structural_features", ("has_more", "returned", "truncated")),
+    ):
+        schema = json.dumps(_config(tool).get("return_schema"))
+        for field in fields:
+            assert f'"{field}"' in schema, f"{tool} returns {field} undeclared"
+    gtdb = json.dumps(_config("GTDB_search_taxon").get("return_schema"))
+    assert "no way to continue" in gtdb or "cannot be continued" in gtdb
+    impc = json.dumps(_config("IMPC_get_gene_phenotype_hits").get("return_schema"))
+    assert "denominator" in impc
+
+
+def test_a_cursor_is_the_only_way_to_page_uniprot():
+    """UniProt pages by cursor and `next_cursor` was undeclared.
+
+    Not an offset: without this field a UniProt result set cannot be
+    continued at all, so a caller with 500 matches and a page of 25 has no
+    way to reach the rest and nothing in the schema to tell them why.
+    """
+    schema = json.dumps(_config("UniProt_search").get("return_schema"))
+    assert '"next_cursor"' in schema
+    assert "cursor, not offset" in schema or "not by offset" in schema or "pages by cursor" in schema
+
+
+def test_a_count_of_source_records_is_not_a_count_of_sources():
+    """UniChem returned 1017 source records from 20 databases.
+
+    source_record_count 1017, unique_source_count 20 and
+    duplicate_source_records 997 were all undeclared, so the only number a
+    caller could reach was the list - and 1017 reads as 1017 databases
+    unless the other two are there to say otherwise.
+    """
+    schema = json.dumps(_config("UniChem_search_compound").get("return_schema"))
+    for field in ('"source_record_count"', '"unique_source_count"',
+                  '"duplicate_source_records"', '"query_type"'):
+        assert field in schema, f"UniChem_search_compound returns {field} undeclared"
+    assert "reads as 1017 databases" in schema
+
+
+def test_the_rest_of_batch_eighty_four():
+    """Nineteen more tools, with the field that changes an answer in each.
+
+    RGD's `evidence` ISO means the annotation was transferred from another
+    species rather than observed in this one. MyGene's `type_of_gene`
+    separates a pseudogene from a coding gene. EBI Proteins' `sequence` and
+    `sequence_checksum` are what let a variation's coordinates be checked
+    against the protein they were numbered on. GDC's `success` distinguishes
+    an error from an empty result. And Thera-SAbDab's `status` NFD means the
+    antibody was discontinued.
+    """
+    for tool, fields in (
+        ("RGD_get_annotations", ('"evidence"', '"term_acc"', '"aspect"')),
+        ("MyGene_get_gene_annotation", ('"type_of_gene"', '"generif"')),
+        ("EBIProteins_get_variation_by_hgvs", ('"sequence_checksum"', '"organism_name"')),
+        ("GDC_search_cases", ('"success"', '"query"')),
+        ("TheraSAbDab_get_therapeutic_sequences", ('"status"', '"conditions_discontinued"')),
+        ("PharmGKB_get_dosing_guidelines", ('"level"', '"literature"')),
+        ("NCA_compute_parameters", ('"Vd_unit"', '"clearance_CL_unit"')),
+        ("PDB_REDO_get_version_info", ('"software"',)),
+        ("Alliance_get_gene_phenotypes", ('"phenotype_terms"', '"data_providers"')),
+        ("RGD_get_orthologs", ('"species"', '"symbol"')),
+    ):
+        schema = json.dumps(_config(tool).get("return_schema"))
+        for field in fields:
+            assert field in schema, f"{tool} returns {field} undeclared"
+    assert "transferred from another species" in json.dumps(
+        _config("RGD_get_annotations").get("return_schema"))
+    assert "unusable" in json.dumps(_config("NCA_compute_parameters").get("return_schema"))

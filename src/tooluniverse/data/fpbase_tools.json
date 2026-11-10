@@ -145,6 +145,13 @@
                         "null"
                       ],
                       "description": "Relative brightness (ext_coeff × qy / 1000)"
+                    },
+                    "slug": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "FPbase's url slug for the state, e.g. 'egfp_default'. How the state is addressed on FPbase."
                     }
                   }
                 }
@@ -155,6 +162,20 @@
                   "null"
                 ],
                 "description": "Primary reference DOI"
+              },
+              "genbank": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "GenBank accession for the protein, e.g. 'AAB02572'."
+              },
+              "ipg_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "NCBI Identical Protein Group id, which collapses the same sequence across accessions."
               }
             }
           }

@@ -217,6 +217,23 @@
               "items": {
                 "type": "string"
               }
+            },
+            "translation": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object"
+              },
+              "description": "Ensembl protein/transcript pairs, each {protein, rna}. Which protein each transcript makes."
+            },
+            "type_of_gene": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Ensembl's gene biotype, e.g. 'protein_coding'. A pseudogene and a coding gene are not interchangeable and only this says which."
             }
           }
         },
@@ -245,6 +262,23 @@
         "pathway": {
           "type": "object",
           "description": "Pathway annotations from KEGG, Reactome, WikiPathways"
+        },
+        "_version": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "MyGene's internal document version."
+        },
+        "generif": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          },
+          "description": "GeneRIF statements, each a pubmed id and a one-line finding. 370 on TP53 - the curated sentence-level literature on what the gene does."
         }
       }
     }

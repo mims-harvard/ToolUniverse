@@ -63,6 +63,44 @@
             "count": {
               "type": "integer",
               "description": "Number of matches"
+            },
+            "complete_known": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the completeness of the result is known rather than assumed."
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size applied to this call."
+            },
+            "limit_scope": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What the limit applies to, e.g. 'per_rank'. A limit applied per group returns more rows than the number suggests."
+            },
+            "pagination_supported": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "False when the upstream offers no way to page, so a capped result cannot be continued at all - the cap is the end of what this tool can return."
+            },
+            "possible_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when more records may exist but the upstream does not say."
+            },
+            "rank_counts": {
+              "description": "How many matches at each rank, keyed by the rank's letter. With limit_scope 'per_rank' this is what says how the limit was spent."
             }
           },
           "not": {
@@ -454,6 +492,41 @@
             "count": {
               "type": "integer",
               "description": "Number of results on this page"
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when more records match than this response carries. The field that says the answer is a page and not the whole set."
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the result was cut by a cap rather than reaching the end of the data."
+            },
+            "items_per_page": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size GTDB applied."
+            },
+            "next_page": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page number to request next, or null at the end."
+            },
+            "total_pages": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many pages the result spans, e.g. 10535. With items_per_page this is the only statement of the result's real size."
             }
           },
           "not": {

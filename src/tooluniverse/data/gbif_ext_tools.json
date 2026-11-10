@@ -853,6 +853,13 @@
                   }
                 }
               }
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Records skipped before this page."
             }
           },
           "required": [

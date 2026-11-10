@@ -138,6 +138,41 @@
                   }
                 }
               }
+            },
+            "duplicate_source_records": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Records beyond the first per source, e.g. 997. source_record_count minus this is roughly the useful count, and without it 1017 reads as 1017 databases."
+            },
+            "query": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The identifier that was searched, echoed back."
+            },
+            "query_type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "How it was interpreted, e.g. 'inchikey', 'uci'. UniChem accepts several and the interpretation changes the answer."
+            },
+            "source_record_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Total source records matched, e.g. 1017."
+            },
+            "unique_source_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many distinct databases those came from, e.g. 20. This is the number that answers 'how widely is this compound known'."
             }
           },
           "not": {

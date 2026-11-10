@@ -67,40 +67,118 @@
         {
           "type": "object",
           "properties": {
-            "article_id": {"type": "string"},
-            "pmcid": {"type": ["string", "null"]},
-            "source": {"type": ["string", "null"]},
+            "article_id": {
+              "type": "string"
+            },
+            "pmcid": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
             "annotation_count": {
               "type": "integer",
               "description": "Annotations returned in this page (limit, default 200)."
             },
-            "total_annotations": {"type": "integer", "description": "Annotations this article has in total."},
-            "returned": {"type": "integer", "description": "Annotations in this page."},
-            "limit": {"type": "integer", "description": "Page size applied."},
-            "offset": {"type": "integer", "description": "Offset applied."},
-            "has_more": {"type": "boolean", "description": "True when the article has more annotations than this page."},
-            "truncated": {"type": "boolean", "description": "True when the page is a cut of a longer list."},
+            "total_annotations": {
+              "type": "integer",
+              "description": "Annotations this article has in total."
+            },
+            "returned": {
+              "type": "integer",
+              "description": "Annotations in this page."
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Page size applied."
+            },
+            "offset": {
+              "type": "integer",
+              "description": "Offset applied."
+            },
+            "has_more": {
+              "type": "boolean",
+              "description": "True when the article has more annotations than this page."
+            },
+            "truncated": {
+              "type": "boolean",
+              "description": "True when the page is a cut of a longer list."
+            },
             "annotations": {
               "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
-                  "exact": {"type": "string"},
-                  "prefix": {"type": ["string", "null"]},
-                  "postfix": {"type": ["string", "null"]},
-                  "type": {"type": "string"},
-                  "section": {"type": ["string", "null"], "description": "Which part of the article the term was found in, as an IAO term: Title, Abstract, Methods, Results, Table, Figure or \"Supplementary material\". An annotation from a supplementary file is not an annotation from the article's argument."},
-                  "provider": {"type": ["string", "null"], "description": "Who produced the annotation, e.g. Europe PMC, Biostudies, OpenTargets."},
-                  "frequency": {"type": ["integer", "null"], "description": "How many times the term occurs in that section."},
-                  "file_name": {"type": ["string", "null"], "description": "The supplementary file the term came from, set only for an annotation found in one, e.g. 1476-069X-12-103-S1.doc."},
-                  "id": {"type": ["string", "null"], "description": "Resolves to the annotated passage in the article."},
+                  "exact": {
+                    "type": "string"
+                  },
+                  "prefix": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "postfix": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "section": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which part of the article the term was found in, as an IAO term: Title, Abstract, Methods, Results, Table, Figure or \"Supplementary material\". An annotation from a supplementary file is not an annotation from the article's argument."
+                  },
+                  "provider": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Who produced the annotation, e.g. Europe PMC, Biostudies, OpenTargets."
+                  },
+                  "frequency": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many times the term occurs in that section."
+                  },
+                  "file_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The supplementary file the term came from, set only for an annotation found in one, e.g. 1476-069X-12-103-S1.doc."
+                  },
+                  "id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Resolves to the annotated passage in the article."
+                  },
                   "tags": {
                     "type": "array",
                     "items": {
                       "type": "object",
                       "properties": {
-                        "name": {"type": "string"},
-                        "uri": {"type": "string"}
+                        "name": {
+                          "type": "string"
+                        },
+                        "uri": {
+                          "type": "string"
+                        }
                       }
                     }
                   }
@@ -108,14 +186,21 @@
               }
             }
           },
-          "required": ["article_id", "annotations"]
+          "required": [
+            "article_id",
+            "annotations"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -195,38 +280,163 @@
         {
           "type": "object",
           "properties": {
-            "article_count": {"type": "integer"},
-            "annotation_type": {"type": "string"},
-            "total_annotations": {"type": "integer"},
-            "not_found": {"type": "array", "items": {"type": "string"}, "description": "Requested identifiers Europe PMC returned no article for."},
+            "article_count": {
+              "type": "integer"
+            },
+            "annotation_type": {
+              "type": "string"
+            },
+            "total_annotations": {
+              "type": "integer"
+            },
+            "not_found": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Requested identifiers Europe PMC returned no article for."
+            },
             "articles": {
               "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
-                  "article_id": {"type": "string"},
-                  "pmcid": {"type": ["string", "null"]},
-                  "annotation_count": {"type": "integer", "description": "Annotations returned for this article, after the page_size cap."},
-                  "total_annotations": {"type": "integer", "description": "Annotations this article has in total, before the cap."},
-                  "annotations": {"type": "array", "items": {"type": "object", "properties": {"exact": {"type": "string", "description": "The annotated text as it appears."}, "prefix": {"type": ["string", "null"]}, "postfix": {"type": ["string", "null"]}, "type": {"type": "string", "description": "Annotation type, e.g. Chemicals."}, "section": {"type": ["string", "null"], "description": "Which part of the article the term was found in, as an IAO term; \"Supplementary material\" means it was not in the article's argument."}, "provider": {"type": ["string", "null"], "description": "Who produced the annotation, e.g. Europe PMC, Biostudies."}, "frequency": {"type": ["integer", "null"], "description": "How many times the term occurs in that section."}, "file_name": {"type": ["string", "null"], "description": "The supplementary file the term came from, where it came from one."}, "id": {"type": ["string", "null"], "description": "Resolves to the annotated passage."}, "tags": {"type": "array", "items": {"type": "object", "properties": {"name": {"type": "string"}, "uri": {"type": "string"}}}}}}},
-                  "returned": {"type": "integer", "description": "Annotations returned for this article."},
-                  "limit": {"type": "integer", "description": "Per-article page size applied."},
-                  "offset": {"type": "integer", "description": "Per-article offset applied."},
-                  "has_more": {"type": "boolean", "description": "True when this article has more annotations than were returned."},
-                  "truncated": {"type": "boolean", "description": "True when the per-article list was cut."}
+                  "article_id": {
+                    "type": "string"
+                  },
+                  "pmcid": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "annotation_count": {
+                    "type": "integer",
+                    "description": "Annotations returned for this article, after the page_size cap."
+                  },
+                  "total_annotations": {
+                    "type": "integer",
+                    "description": "Annotations this article has in total, before the cap."
+                  },
+                  "annotations": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "exact": {
+                          "type": "string",
+                          "description": "The annotated text as it appears."
+                        },
+                        "prefix": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "postfix": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "type": {
+                          "type": "string",
+                          "description": "Annotation type, e.g. Chemicals."
+                        },
+                        "section": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Which part of the article the term was found in, as an IAO term; \"Supplementary material\" means it was not in the article's argument."
+                        },
+                        "provider": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Who produced the annotation, e.g. Europe PMC, Biostudies."
+                        },
+                        "frequency": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "description": "How many times the term occurs in that section."
+                        },
+                        "file_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The supplementary file the term came from, where it came from one."
+                        },
+                        "id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Resolves to the annotated passage."
+                        },
+                        "tags": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string"
+                              },
+                              "uri": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "returned": {
+                    "type": "integer",
+                    "description": "Annotations returned for this article."
+                  },
+                  "limit": {
+                    "type": "integer",
+                    "description": "Per-article page size applied."
+                  },
+                  "offset": {
+                    "type": "integer",
+                    "description": "Per-article offset applied."
+                  },
+                  "has_more": {
+                    "type": "boolean",
+                    "description": "True when this article has more annotations than were returned."
+                  },
+                  "truncated": {
+                    "type": "boolean",
+                    "description": "True when the per-article list was cut."
+                  }
                 }
               }
             },
-            "articles_requested": {"type": "integer", "description": "How many article ids the call asked about."}
+            "articles_requested": {
+              "type": "integer",
+              "description": "How many article ids the call asked about."
+            }
           },
-          "required": ["articles"]
+          "required": [
+            "articles"
+          ]
         },
         {
           "type": "object",
           "properties": {
-            "error": {"type": "string"}
+            "error": {
+              "type": "string"
+            }
           },
-          "required": ["error"]
+          "required": [
+            "error"
+          ]
         }
       ]
     }
@@ -276,27 +486,92 @@
         {
           "type": "object",
           "properties": {
-            "article_id": {"type": "string"},
+            "article_id": {
+              "type": "string"
+            },
             "chemical_count": {
               "type": "integer",
               "description": "Chemicals returned in this page (limit, default 200)."
             },
-            "total_chemicals": {"type": "integer", "description": "Chemicals this article mentions in total."},
+            "total_chemicals": {
+              "type": "integer",
+              "description": "Chemicals this article mentions in total."
+            },
             "chemicals": {
               "type": "array",
               "items": {
                 "type": "object",
                 "properties": {
-                  "name": {"type": "string"},
-                  "chebi_uri": {"type": ["string", "null"]},
-                  "chebi_name": {"type": ["string", "null"]},
-                  "context": {"type": ["string", "null"]},
-                  "section": {"type": ["string", "null"]}
+                  "name": {
+                    "type": "string"
+                  },
+                  "chebi_uri": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "chebi_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "context": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "section": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
                 }
               }
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when more records match than this response carries. The field that says the answer is a page and not the whole set."
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size applied to this call."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Records skipped before this page."
+            },
+            "returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records are in this response."
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the result was cut by a cap rather than reaching the end of the data."
             }
           },
-          "required": ["article_id", "chemicals"]
+          "required": [
+            "article_id",
+            "chemicals"
+          ]
         },
         {
           "type": "object",

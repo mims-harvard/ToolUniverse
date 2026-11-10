@@ -501,6 +501,12 @@
                     "string",
                     "null"
                   ]
+                },
+                "data": {
+                  "description": "PDB-REDO's version block: the PDB id and the revision dates of the coordinates and reflections it re-refined from."
+                },
+                "software": {
+                  "description": "Version of every program in the PDB-REDO pipeline, keyed by program. A re-refinement is only reproducible against these."
                 }
               }
             },

@@ -78,6 +78,20 @@
                 "integer",
                 "null"
               ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Attribution for the data, 'Thera-SAbDab (Oxford OPIG)'."
+            },
+            "total_therapeutics": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many therapeutics matched, which the returned list alone does not say."
             }
           }
         },
@@ -358,6 +372,20 @@
                 "integer",
                 "null"
               ]
+            },
+            "source": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Attribution for the data, 'Thera-SAbDab (Oxford OPIG)'."
+            },
+            "total_therapeutics": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many therapeutics matched."
             }
           }
         },
@@ -507,6 +535,48 @@
                     "string",
                     "null"
                   ]
+                },
+                "clinical_trial": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Highest clinical stage reached, e.g. 'Approved'."
+                },
+                "conditions_discontinued": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Indications the programme was discontinued in, semicolon-separated, e.g. 'Arterial occlusive disorders;Myocardial infarction'. Why it stopped, where that is known."
+                },
+                "notes": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "TheraSAbDab's note on the entry, including where the sequence came from and whether biosimilars exist."
+                },
+                "status": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Development status code, e.g. 'NFD' no further development. A discontinued antibody and an active one are different answers."
+                },
+                "year_proposed": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Year the INN was proposed."
+                },
+                "year_recommended": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Year the INN was recommended. Together these date the antibody."
                 }
               }
             },

@@ -389,8 +389,43 @@
                   }
                 }
               }
+            },
+            "classType": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The UTS class of the payload, e.g. 'searchResults'."
+            },
+            "recCount": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records the UTS returned. ZERO with a non-empty result list means the UTS found nothing and echoed the query, which is the shape a no-match answer takes here."
             }
           }
+        },
+        "pageNumber": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Which page of results this is."
+        },
+        "pageSize": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Page size the UTS applied."
+        },
+        "partialSearch": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The UTS search URL this result came from, with the vocabularies and options that were actually sent. The record of what was searched, which the arguments alone do not show."
         }
       }
     },
@@ -463,8 +498,43 @@
                   }
                 }
               }
+            },
+            "classType": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The UTS class of the payload, e.g. 'searchResults'."
+            },
+            "recCount": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records the UTS returned. ZERO with a non-empty result list means the UTS found nothing and echoed the query, which is the shape a no-match answer takes here."
             }
           }
+        },
+        "pageNumber": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Which page of results this is."
+        },
+        "pageSize": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Page size the UTS applied."
+        },
+        "partialSearch": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The UTS search URL this result came from, with the vocabularies and options that were actually sent. The record of what was searched, which the arguments alone do not show."
         }
       }
     },
@@ -536,8 +606,43 @@
                   }
                 }
               }
+            },
+            "classType": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The UTS class of the payload, e.g. 'searchResults'."
+            },
+            "recCount": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records the UTS returned. ZERO with a non-empty result list means the UTS found nothing and echoed the query, which is the shape a no-match answer takes here."
             }
           }
+        },
+        "pageNumber": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Which page of results this is."
+        },
+        "pageSize": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Page size the UTS applied."
+        },
+        "partialSearch": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The UTS search URL this result came from, with the vocabularies and options that were actually sent. The record of what was searched, which the arguments alone do not show."
         }
       }
     },

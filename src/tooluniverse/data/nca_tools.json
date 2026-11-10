@@ -202,6 +202,41 @@
             },
             "units": {
               "type": "object"
+            },
+            "AUC0-24": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Area under the curve from 0 to 24 hours, e.g. 1411.29."
+            },
+            "AUC0_last": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Area under the curve to the last measured point. Equal to AUC0-24 only when the last sample is at 24 h, so the two are reported separately."
+            },
+            "MRT_iv": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Mean residence time for intravenous administration, e.g. 6.69."
+            },
+            "Vd_unit": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Unit of the volume of distribution, e.g. 'L'. A Vd without its unit is unusable."
+            },
+            "clearance_CL_unit": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Unit of clearance, e.g. 'L/h'."
             }
           }
         },

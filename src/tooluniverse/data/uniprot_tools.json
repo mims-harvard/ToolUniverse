@@ -1173,6 +1173,27 @@
             "normalization_note": {
               "type": "string",
               "description": "Present only when the submitted query was rewritten. Currently emitted when an 'organism_id:<taxid>' clause was rewritten to 'taxonomy_id:<taxid>', widening the scope to include descendant strains."
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when more records match than this response carries. The field that says the answer is a page and not the whole set."
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the result was cut by a cap rather than reaching the end of the data."
+            },
+            "next_cursor": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Cursor to pass for the next page. UniProt pages by cursor, not offset, so without this a result set cannot be continued at all."
             }
           },
           "required": [
@@ -2131,9 +2152,33 @@
                         }
                       }
                     }
+                  },
+                  "goTerms": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "GO terms for the cluster, each with its id and name."
                   }
                 }
               }
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when more records match than this response carries. The field that says the answer is a page and not the whole set."
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the result was cut by a cap rather than reaching the end of the data."
             }
           },
           "required": [
@@ -2517,6 +2562,20 @@
                   }
                 }
               }
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when more records match than this response carries. The field that says the answer is a page and not the whole set."
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the result was cut by a cap rather than reaching the end of the data."
             }
           },
           "required": [

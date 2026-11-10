@@ -740,7 +740,10 @@
                   "type": "string"
                 },
                 "go_terms": {
-                  "type": ["array", "null"],
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "description": "GO terms assigned to the entry, or null when the entry has none. Measured over 64 entries.",
                   "items": {
                     "type": "object",
@@ -981,7 +984,10 @@
                   "description": "Null for every integrated InterPro entry (measured on 258). Clan/set membership is a member-database property; see InterPro_get_member_signature."
                 },
                 "overlaps_with": {
-                  "type": ["array", "null"],
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "description": "Entries whose matches overlap this one, or null when there are none. Measured over 64 entries.",
                   "items": {
                     "type": "object",
@@ -1205,7 +1211,10 @@
                   "type": "boolean"
                 },
                 "representative_structure": {
-                  "type": ["object", "null"],
+                  "type": [
+                    "object",
+                    "null"
+                  ],
                   "description": "A representative PDB structure, or null when InterPro has not picked one. Measured over 64 entries.",
                   "properties": {
                     "accession": {

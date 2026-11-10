@@ -545,6 +545,63 @@
                   "integer",
                   "null"
                 ]
+              },
+              "annotation_relations": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "All relations on the annotation."
+              },
+              "annotation_subjects": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "The subjects annotated, as curies, e.g. ['HGNC:6081']."
+              },
+              "annotation_types": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Annotation types, e.g. ['GenePhenotypeAnnotation']."
+              },
+              "data_providers": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "Which member database supplied it, e.g. ['RGD']. An Alliance annotation is always some member's annotation."
+              },
+              "phenotype_terms": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "object"
+                },
+                "description": "The phenotype terms, each with a curie and name, e.g. HP:0030794. The annotation's content."
+              },
+              "relation": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "How the gene relates to the phenotype, e.g. 'has_phenotype'."
               }
             }
           }

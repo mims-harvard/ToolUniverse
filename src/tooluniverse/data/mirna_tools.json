@@ -577,7 +577,10 @@
                     "type": "boolean"
                   },
                   "expert_db_url": {
-                    "type": ["string", "null"]
+                    "type": [
+                      "string",
+                      "null"
+                    ]
                   },
                   "mirbase_mature_products": {
                     "type": [
@@ -615,7 +618,10 @@
                     "description": "Diseases the MalaCards cross-reference names for this microRNA. RNAcentral returns MalaCards as one row among the cross-references and its payload is this list - 364 entries for hsa-miR-21-5p. At most 150 are returned per row"
                   },
                   "disease_count": {
-                    "type": ["integer", "null"],
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
                     "description": "How many diseases the cross-reference names, before truncation"
                   },
                   "diseases_truncated": {
@@ -623,23 +629,39 @@
                     "description": "True when more than 150 diseases were named"
                   },
                   "url": {
-                    "type": ["string", "null"],
+                    "type": [
+                      "string",
+                      "null"
+                    ],
                     "description": "RNAcentral's own resolvable link for this accession; expert_db_url points out to the source database, this one points back at the record being described"
                   },
                   "ncbi_gene_id": {
-                    "type": ["integer", "string", "null"],
+                    "type": [
+                      "integer",
+                      "string",
+                      "null"
+                    ],
                     "description": "NCBI Gene id where the source database supplies one; sparse, 10 of 80 rows sampled"
                   },
                   "citations_url": {
-                    "type": ["string", "null"],
+                    "type": [
+                      "string",
+                      "null"
+                    ],
                     "description": "URL listing the publications behind this cross-reference. RNAcentral's key is called `citations` but holds a URL, not a count"
                   },
                   "first_seen": {
-                    "type": ["string", "null"],
+                    "type": [
+                      "string",
+                      "null"
+                    ],
                     "description": "When RNAcentral first recorded this mapping"
                   },
                   "last_seen": {
-                    "type": ["string", "null"],
+                    "type": [
+                      "string",
+                      "null"
+                    ],
                     "description": "When RNAcentral last confirmed it; a mapping that stopped being confirmed is not the same as a current one"
                   }
                 }

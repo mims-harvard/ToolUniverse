@@ -103,6 +103,13 @@
             },
             "result_set_complete": {
               "type": "boolean"
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size applied to this call."
             }
           },
           "required": [
@@ -898,6 +905,13 @@
             },
             "result_set_complete": {
               "type": "boolean"
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size applied to this call."
             }
           },
           "required": [

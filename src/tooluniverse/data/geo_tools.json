@@ -278,8 +278,21 @@
             "samples": {
               "type": "string",
               "description": "Number of samples"
+            },
+            "uids": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "string"
+              },
+              "description": "The UIDs this response carries, e.g. ['200002606']. The keys of the `result` object, which is keyed by UID."
             }
           }
+        },
+        "header": {
+          "description": "NCBI's envelope header: the esummary type and version."
         }
       }
     },

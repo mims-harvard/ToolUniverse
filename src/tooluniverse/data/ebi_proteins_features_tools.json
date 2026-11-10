@@ -519,6 +519,16 @@
                         ]
                       }
                     }
+                  },
+                  "raw_evidences": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Evidence for the processing feature, each with an ECO code and its source."
                   }
                 }
               },
@@ -545,6 +555,41 @@
                 "null"
               ],
               "description": "CRC64 of the sequence the positions are against"
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when more records match than this response carries. The field that says the answer is a page and not the whole set."
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size applied to this call."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Records skipped before this page."
+            },
+            "returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records are in this response."
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the result was cut by a cap rather than reaching the end of the data."
             }
           },
           "not": {
@@ -750,6 +795,26 @@
                         ]
                       }
                     }
+                  },
+                  "evidences": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Evidence for the feature, each with an ECO code and source, e.g. ECO:0007829 from PDB. A feature with experimental evidence and one predicted by similarity are not the same claim."
+                  },
+                  "raw_evidences": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "The same evidence before normalisation, with the source's own name and id."
                   }
                 }
               },
@@ -776,6 +841,41 @@
                 "null"
               ],
               "description": "CRC64 of the sequence the positions are against"
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when more records match than this response carries. The field that says the answer is a page and not the whole set."
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size applied to this call."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Records skipped before this page."
+            },
+            "returned": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many records are in this response."
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the result was cut by a cap rather than reaching the end of the data."
             }
           },
           "not": {

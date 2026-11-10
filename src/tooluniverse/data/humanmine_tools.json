@@ -310,6 +310,9 @@
                 "organism.shortName": {
                   "type": "object",
                   "description": "Gene counts per organism"
+                },
+                "Category": {
+                  "description": "Counts per result category, keyed by category name."
                 }
               }
             },
@@ -351,9 +354,37 @@
                         "description": "Ensembl gene ID"
                       }
                     }
+                  },
+                  "relevance": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "InterMine's relevance score for the row."
                   }
                 }
               }
+            },
+            "executionTime": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When InterMine ran the query, as it formats it."
+            },
+            "statusCode": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "InterMine's HTTP-style status for the query."
+            },
+            "wasSuccessful": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether InterMine considered the query successful. False with an empty result set is an error, not an absence of matches."
             }
           }
         },
@@ -462,9 +493,40 @@
                         "description": "Pathway ID (e.g., R-HSA-109581 for Reactome)"
                       }
                     }
+                  },
+                  "relevance": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "InterMine's relevance score for the row."
                   }
                 }
               }
+            },
+            "executionTime": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When InterMine ran it."
+            },
+            "facets": {
+              "description": "Facet counts for the result set."
+            },
+            "statusCode": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "InterMine's status for the query."
+            },
+            "wasSuccessful": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether InterMine considered the query successful."
             }
           }
         },

@@ -680,6 +680,43 @@
         },
         "relatedGenes": {
           "type": "array"
+        },
+        "level": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The guideline's evidence level, e.g. 'A'. Level A means CPIC considers the gene-drug pair actionable; it is the field that decides whether to act."
+        },
+        "link": {
+          "description": "The guideline's source record, with its resource and url."
+        },
+        "literature": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          },
+          "description": "The papers behind the guideline, each with its id and title."
+        },
+        "pediatric": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when the guideline is paediatric-specific."
+        },
+        "relatedAnnotations": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          },
+          "description": "Other PharmGKB annotations for the same pair."
         }
       },
       "additionalProperties": true

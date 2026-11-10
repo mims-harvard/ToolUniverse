@@ -931,6 +931,48 @@
                   }
                 }
               }
+            },
+            "has_more": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when more records match than this response carries. The field that says the answer is a page and not the whole set."
+            },
+            "limit": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size applied to this call."
+            },
+            "offset": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Records skipped before this page."
+            },
+            "result_set_complete": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when this response holds every matching record, so no further call is needed."
+            },
+            "total_results_is_exact": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the total is a count and not an estimate. An estimated total must not be used as a denominator."
+            },
+            "truncated": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the result was cut by a cap rather than reaching the end of the data."
             }
           },
           "required": [
