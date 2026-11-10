@@ -7389,3 +7389,98 @@ def test_the_long_tail_of_the_sibling_sweep_is_declared():
         schema = json.dumps(_config(tool).get("return_schema"))
         for field in fields:
             assert field in schema, f"{tool} returns {field} undeclared"
+
+
+def test_a_field_asked_for_with_the_wrong_header_was_always_null():
+    """`newick` has been null on every call this tool ever made.
+
+    The Newick tree was requested with a `Content-Type: text/x-nh` request
+    header. Content-Type describes a request BODY; Accept is the header that
+    asks for a response format. So Ensembl went on answering JSON, the
+    wrapper looked for Newick text and found none, and the field was null
+    every time - a declared field that could never be filled.
+
+    Asked with Accept, and with Ensembl's `content-type` query parameter as
+    well, it returns the tree:
+    (((((((((((ENSSSCP00000014538:0.030995,ENSSSCP00000065119:0.045301)...
+
+    The flattening was the other half. Every node in Ensembl's JSON carries a
+    branch_length and a taxonomy block, and `_collect_members` kept the gene
+    id and the scientific name. A gene tree without branch lengths is a list
+    of names. The Newick leaves are PROTEIN accessions, not gene ids, so
+    protein_ids is what lets the tree and the member list be read together -
+    without it the two halves of this answer cannot be joined.
+    """
+    source = _source("ensembl_compara_tool.py")
+    assert '"Accept": "text/x-nh"' in source, (
+        "the response format has to be asked for with Accept; Content-Type "
+        "describes a request body"
+    )
+    assert 'node.get("branch_length")' in source
+    assert "protein_ids" in source, (
+        "the Newick leaves are protein accessions and the member list has "
+        "gene ids; one of them has to carry the other"
+    )
+    schema = json.dumps(_config("EnsemblCompara_get_gene_tree").get("return_schema"))
+    for field in ('"branch_length"', '"protein_ids"', '"common_name"', '"taxon_id"'):
+        assert field in schema, f"EnsemblCompara_get_gene_tree returns {field} undeclared"
+    assert "instead of `Accept`" in schema, (
+        "the declaration should record why this was null, so nobody takes "
+        "the old behaviour for the upstream's"
+    )
+
+
+def test_a_list_of_drug_names_says_what_kind_each_one_is():
+    """RxNorm labelled every concept and the wrapper flattened them to strings.
+
+    `names` came back as 32 strings in which "aspirin" the ingredient and
+    "Pamprin Max Formula" the brand are indistinguishable, and neither
+    carries the rxcui that would let it be looked up. RxNorm had sent
+    {rxcui, name, tty, language, suppress} for each: tty is the term type -
+    IN, BN, SCD, SBD - and `suppress` says whether the concept is still
+    current.
+
+    `names` keeps its shape and its 32 entries. `concepts` has 31, because
+    the concept's own main name comes from RxNorm's properties endpoint
+    rather than its related-concepts endpoint and so has no term type to
+    report. The declaration says that, so the difference is not read as a
+    dropped row.
+    """
+    source = _source("rxnorm_tool.py")
+    for key in ("tty", "suppress", "language"):
+        assert f'prop.get("{key}")' in source, f"RxNorm answers with {key} and dropped it"
+    schema = json.dumps(_config("RxNorm_get_drug_names").get("return_schema"))
+    for field in ('"concepts"', '"tty"', '"suppress"'):
+        assert field in schema, f"RxNorm_get_drug_names returns {field} undeclared"
+    assert "one entry more" in schema, (
+        "names and concepts differ in length by one on purpose and the "
+        "declaration has to say why"
+    )
+
+
+def test_a_dataset_search_says_when_where_and_on_what():
+    """ProteomeXchange searched four fields it did not return.
+
+    The row matched on Keywords, Publication and Repos locally and then
+    returned accession, title, species and contact: good enough to filter
+    on, not good enough to show. ProteomeCentral answers with ten fields per
+    dataset, so a search result said nothing about when the dataset was
+    announced, which repository holds it - and therefore how to fetch it -
+    what instrument produced it, or which paper it belongs to.
+
+    `Dataset Identifier` was on the audit's list too and is a false positive:
+    the wrapper returns it as `accession`. A renamed field is not a dropped
+    one, and checking that first is what kept this round honest.
+    """
+    source = _source("proteomexchange_tool.py")
+    for key in ("Announce Date", "Repos", "Instrument", "Keywords"):
+        assert f'ds.get("{key}")' in source, f"ProteomeCentral sends {key!r} and it was dropped"
+    assert "publication_dois" in source, (
+        "Publication arrives as HTML anchors; the DOIs inside them are what "
+        "makes the dataset citable"
+    )
+    schema = json.dumps(_config("ProteomeXchange_search_datasets").get("return_schema"))
+    for field in ('"announce_date"', '"repository"', '"instrument"', '"keywords"',
+                  '"publication_dois"'):
+        assert field in schema, f"ProteomeXchange_search_datasets returns {field} undeclared"
+    assert "how the files are fetched" in schema or "how to fetch" in schema

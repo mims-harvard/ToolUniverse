@@ -271,7 +271,7 @@
                 "string",
                 "null"
               ],
-              "description": "Tree in Newick format (if available)"
+              "description": "The whole tree in Newick form, with branch lengths. Ensembl serves it only as a separate plain-text response, so it is a second request; it was previously asked for with a `Content-Type` request header instead of `Accept`, which describes a request body rather than the format wanted back, so this was null on every call. Its LEAVES are protein accessions (ENSSSCP...), not the gene ids in 'members' - match them through members[].protein_ids. Null only if the second request fails."
             },
             "rooted": {
               "type": [
@@ -284,7 +284,44 @@
             "members": {
               "type": "array",
               "items": {
-                "type": "object"
+                "type": "object",
+                "properties": {
+                  "branch_length": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Length of the branch leading to this leaf, e.g. 0.030995. A gene tree without branch lengths is a list of names; every node in Ensembl's response carries one and the flattening dropped them all."
+                  },
+                  "common_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Common name of the species, e.g. 'Pig'."
+                  },
+                  "taxon_id": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "NCBI taxonomy id of the species, e.g. 9823. What joins the leaf to any other species-keyed dataset."
+                  },
+                  "protein_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Protein accessions for the leaf, e.g. ['ENSSSCP00000014538']. These are the labels used in 'newick', so they are what lets the flat member list and the tree be read together."
+                  },
+                  "location": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Genomic location of the gene, e.g. '2:68622806-68623744'."
+                  }
+                }
               },
               "description": "Paged gene tree members (gene_id, species)"
             },
