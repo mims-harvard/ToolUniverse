@@ -2335,6 +2335,8 @@ def test_the_wrapper_reads_the_field_the_api_answered(module, key, why):
 
 # (tool, output field the schema must declare)
 DECLARED = [
+    ("PDB_REDO_get_structure_quality", "rama-angles"),
+    ("PDB_REDO_get_structure_quality", "RFREE"),
     ("FPbase_search_by_spectrum", "seq"),
     ("FPbase_search_by_spectrum", "uniprot"),
     ("FPbase_search_by_spectrum", "pka"),
@@ -5952,4 +5954,36 @@ def test_a_fluorescent_protein_search_declares_the_sequence_and_the_photophysics
         assert photophysics in schema, f"{photophysics} undeclared"
     assert "FLIM" in schema, (
         "the lifetime declaration should say what measures it"
+    )
+
+
+def test_pdb_redo_declares_what_the_re_refinement_changed():
+    """rama-angles is the only place the tool shows its own work.
+
+    PDB-REDO re-refines a deposited structure, and this key reports, per
+    residue, the backbone torsions before and after - `orig` against `redo`,
+    with the Ramachandran classification each way. It was entirely
+    undeclared, so a caller reading the schema would not know the tool can
+    answer what re-refinement did to a given residue.
+
+    Twelve metrics whose meaning is unambiguous are declared by name as
+    well: RFREE, RESOLUTION, DATARESL, COMPLETED, the Wilson and mean
+    B-factors, and the six unit-cell parameters.
+
+    The other 130 are deliberately left as an open level, and the audit
+    still reports them. PDB-REDO returns 184 to 208 metrics depending on the
+    entry, under its own short names, and its API needs credentials so no
+    public data dictionary was reachable. Declaring them would have meant
+    writing 130 descriptions that were guesses, which is worse for a reader
+    than an honestly open level. This test exists to record that as a
+    decision rather than an oversight.
+    """
+    schema = json.dumps(_config("PDB_REDO_get_structure_quality").get("return_schema"))
+    assert '"rama-angles"' in schema and '"orig"' in schema and '"redo"' in schema
+    assert '"compound_id"' in schema, "the residue's type should be declared"
+    for metric in ('"RFREE"', '"RESOLUTION"', '"COMPLETED"', '"BWILS"', '"AAXIS"'):
+        assert metric in schema, f"{metric} undeclared"
+    assert "no public data dictionary" in schema, (
+        "the open level must say why it is open, so the next reader does "
+        "not take it for an oversight"
     )
