@@ -15,7 +15,7 @@
           "default": 10,
           "minimum": 1,
           "maximum": 100,
-          "description": "Number of results (1\u2013100)."
+          "description": "Number of results (1–100)."
         },
         "offset": {
           "type": "integer",
@@ -91,7 +91,7 @@
           "default": 10,
           "minimum": 1,
           "maximum": 100,
-          "description": "Number of results (1\u2013100)."
+          "description": "Number of results (1–100)."
         },
         "offset": {
           "type": "integer",
@@ -167,7 +167,7 @@
           "default": 20,
           "minimum": 1,
           "maximum": 100,
-          "description": "Number of results (1\u2013100)"
+          "description": "Number of results (1–100)"
         }
       }
     },
@@ -226,7 +226,7 @@
           "default": 20,
           "minimum": 1,
           "maximum": 100,
-          "description": "Number of results (1\u2013100)"
+          "description": "Number of results (1–100)"
         }
       },
       "required": [
@@ -417,7 +417,7 @@
         },
         "gene": {
           "type": "string",
-          "description": "Gene symbol alias \u2014 alternative to gene_symbol"
+          "description": "Gene symbol alias — alternative to gene_symbol"
         }
       },
       "required": [
@@ -603,12 +603,18 @@
         "vital_status": {
           "type": "string",
           "description": "Vital status filter: 'Alive' or 'Dead'",
-          "enum": ["Alive", "Dead"]
+          "enum": [
+            "Alive",
+            "Dead"
+          ]
         },
         "gender": {
           "type": "string",
           "description": "Gender filter: 'female' or 'male'",
-          "enum": ["female", "male"]
+          "enum": [
+            "female",
+            "male"
+          ]
         },
         "size": {
           "type": "integer",
@@ -629,28 +635,187 @@
       "type": "object",
       "properties": {
         "cases": {
-          "type": "array",
+          "type": [
+            "array",
+            "null"
+          ],
           "items": {
             "type": "object",
             "properties": {
-              "case_id": {"type": "string"},
-              "submitter_id": {"type": "string"},
-              "project_id": {"type": "string"},
-              "vital_status": {"type": ["string", "null"]},
-              "gender": {"type": ["string", "null"]},
-              "age_at_index": {"type": ["integer", "null"]},
-              "days_to_death": {"type": ["integer", "null"]},
-              "diagnoses": {"type": "array"},
-              "treatments": {"type": "array"}
+              "case_id": {
+                "type": "string"
+              },
+              "submitter_id": {
+                "type": "string"
+              },
+              "project_id": {
+                "type": "string"
+              },
+              "vital_status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "gender": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "age_at_index": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "days_to_death": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "diagnoses": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Diagnoses recorded for the case, each with stage, morphology and outcome where available",
+                "items": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "One diagnosis",
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ]
+                  }
+                }
+              },
+              "treatments": {
+                "type": "array"
+              },
+              "primary_site": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Anatomical site of the primary tumour"
+              },
+              "disease_type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Disease type as GDC classifies it"
+              },
+              "project_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Name of the GDC project the case belongs to"
+              },
+              "race": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Race as recorded"
+              },
+              "ethnicity": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Ethnicity as recorded"
+              },
+              "days_to_birth": {
+                "type": [
+                  "integer",
+                  "number",
+                  "null"
+                ],
+                "description": "Days from birth to the reference date; negative, and the usual way GDC encodes age without giving a date of birth"
+              }
+            },
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "array",
+                "object",
+                "null"
+              ]
             }
-          }
+          },
+          "description": "The cases matching the query"
         },
         "pagination": {
-          "type": "object",
+          "type": [
+            "object",
+            "null"
+          ],
           "properties": {
-            "total": {"type": "integer"},
-            "count": {"type": "integer"}
-          }
+            "total": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Total cases matching"
+            },
+            "count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Cases on this page"
+            },
+            "page": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page returned"
+            },
+            "pages": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Total pages available"
+            },
+            "size": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size"
+            },
+            "from": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Offset of this page"
+            },
+            "sort": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Sort applied"
+            }
+          },
+          "description": "Paging state for the case list"
         }
       }
     },
@@ -717,7 +882,9 @@
           "description": "Zero-based donor offset for retrieving later pages"
         }
       },
-      "required": ["project_id"]
+      "required": [
+        "project_id"
+      ]
     },
     "return_schema": {
       "oneOf": [

@@ -2335,6 +2335,18 @@ def test_the_wrapper_reads_the_field_the_api_answered(module, key, why):
 
 # (tool, output field the schema must declare)
 DECLARED = [
+    ('Reactome_get_pathway', 'reviewStatus'),
+    ('Reactome_get_pathway', 'summation'),
+    ('Reactome_get_participant_reference_entities', 'isSequenceChanged'),
+    ('Reactome_get_participant_reference_entities', 'checksum'),
+    ('MassBank_search_by_formula', 'license'),
+    ('MassBank_search_by_formula', 'copyright'),
+    ('AllenBrain_get_expression_datasets', 'homologene_id'),
+    ('Figshare_search_articles', 'resource_doi'),
+    ('GDC_get_clinical_data', 'days_to_birth'),
+    ('GDC_get_clinical_data', 'primary_site'),
+    ('PGSCatalog_get_performance_metrics', 'performance_comments'),
+    ('RGD_resolve_symbol_or_region', 'so_acc_id'),
     ("GBIF_search_occurrences", "issues"),
     ("GBIF_search_occurrences", "basisOfRecord"),
     ("GBIF_search_species", "nomenclaturalStatus"),
@@ -6079,6 +6091,84 @@ def test_the_batch_tools_declare_what_each_record_is_for():
         )
         assert "is_reference_strain" in props, f"{block} must declare the strain flag"
 
+    for tool, fields in checks.items():
+        schema = json.dumps(_config(tool).get("return_schema"))
+        for field in fields:
+            assert field in schema, f"{tool} returns {field} undeclared"
+
+
+def test_an_expression_experiment_says_whether_it_failed_qc():
+    """AllenBrain_get_expression_datasets returns `failed` and failed_facet.
+
+    `failed` was declared; `failed_facet`, which says which QC facet failed,
+    was not, and neither was qc_date. An experiment that failed quality
+    control is not weaker evidence, it is not evidence, and a caller reading
+    the schema could see the flag without being able to see what failed or
+    when it was checked.
+
+    The genes block was declared as a bare array. Its items carry
+    homologene_id, which is what lets a mouse experiment be compared with a
+    human gene, and entrez_id, which is what joins it to anything outside
+    Allen.
+    """
+    schema = json.dumps(_config("AllenBrain_get_expression_datasets").get("return_schema"))
+    for field in ('"failed_facet"', '"qc_date"', '"homologene_id"', '"entrez_id"'):
+        assert field in schema, f"AllenBrain returns {field} undeclared"
+    assert "not evidence" in schema or "failed QC" in schema, (
+        "the QC flag's declaration should say what a failure means"
+    )
+
+
+def test_a_spectrum_carries_its_licence_and_its_peaks():
+    """MassBank_search_by_formula declared neither the licence nor the peaks.
+
+    `license` and `copyright` are on every record and bind anyone who
+    redistributes a spectrum. `peak` is the spectrum - m/z, intensity and
+    relative intensity per peak - and `mass_spectrometry` is how it was
+    acquired, which is what makes two spectra comparable or not.
+    """
+    schema = json.dumps(_config("MassBank_search_by_formula").get("return_schema"))
+    for field in ('"license"', '"copyright"', '"peak"', '"mass_spectrometry"',
+                  '"acquisition"', '"compound"'):
+        assert field in schema, f"MassBank returns {field} undeclared"
+
+
+def test_the_second_batch_declares_what_changes_an_answer():
+    """Ten more tools; these are the fields that decide how a result is read.
+
+    Reactome_get_pathway: reviewStatus and isInferred, the same pair as
+    Reactome_get_interactor - whether a pathway was curated for this species
+    or projected into it, and how confident Reactome is - plus summation,
+    the curated prose, and the GO term it maps to.
+
+    Reactome_get_participant_reference_entities: checksum and
+    isSequenceChanged. An annotation made against a sequence that has since
+    changed may no longer hold, and the record says so.
+
+    GDC_get_clinical_data: primary_site, disease_type and days_to_birth,
+    which is how GDC encodes age without giving a date of birth, plus the
+    paging that says how many cases matched.
+
+    Figshare_search_articles: resource_doi, the published work each item
+    belongs to.
+
+    RGD_resolve_symbol_or_region had a schema with no properties at all -
+    the audit reported the whole level as `.*`.
+
+    NCBIDatasets_get_gene reuses the sub-shapes written for
+    get_gene_by_symbol rather than a second description of the same thing,
+    so the pair cannot drift.
+    """
+    checks = {
+        "Reactome_get_pathway": ('"reviewStatus"', '"summation"', '"isInferred"', '"goBiologicalProcess"'),
+        "Reactome_get_participant_reference_entities": ('"checksum"', '"isSequenceChanged"', '"sequenceLength"'),
+        "GDC_get_clinical_data": ('"primary_site"', '"disease_type"', '"days_to_birth"', '"pages"'),
+        "Figshare_search_articles": ('"resource_doi"', '"timeline"', '"url_public_html"'),
+        "RGD_resolve_symbol_or_region": ('"rgd_id"', '"so_acc_id"', '"symbol"'),
+        "NCBIDatasets_get_gene": ('"evidence_code"', '"map_value"', '"identifier"'),
+        "PGSCatalog_get_performance_metrics": ('"performance_comments"', '"classification_accuracy"'),
+        "ORCID_get_profile": ('"activities_summary"', '"external_identifiers"'),
+    }
     for tool, fields in checks.items():
         schema = json.dumps(_config(tool).get("return_schema"))
         for field in fields:

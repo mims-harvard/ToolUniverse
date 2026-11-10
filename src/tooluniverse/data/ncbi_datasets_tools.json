@@ -126,17 +126,24 @@
               }
             },
             "gene_ontology": {
-              "type": "object",
-              "description": "GO annotations on the record, dropped whole before: TP53 carries 122 biological processes, each with the GO id, the evidence code, the qualifier (acts_upstream_of_or_within is not involved_in) and the PMIDs it was asserted from.",
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "GO annotations for the gene, split by aspect",
               "properties": {
                 "assigned_by": {
                   "type": [
                     "string",
                     "null"
-                  ]
+                  ],
+                  "description": "Which group assigned the annotations, e.g. GOA"
                 },
                 "biological_processes": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
                     "type": "object",
                     "properties": {
@@ -144,54 +151,189 @@
                         "type": [
                           "string",
                           "null"
-                        ]
+                        ],
+                        "description": "GO accession, e.g. GO:0006281"
                       },
                       "name": {
                         "type": [
                           "string",
                           "null"
-                        ]
+                        ],
+                        "description": "Term name"
                       },
                       "evidence_code": {
                         "type": [
                           "string",
                           "null"
-                        ]
+                        ],
+                        "description": "GO evidence code, e.g. IDA or IEA: the difference between an experimentally supported annotation and an electronically inferred one"
                       },
                       "qualifier": {
                         "type": [
                           "string",
                           "null"
-                        ]
+                        ],
+                        "description": "Qualifier such as NOT or contributes_to, which can invert the annotation's meaning"
                       },
                       "pmids": {
-                        "type": "array",
+                        "type": [
+                          "array",
+                          "null"
+                        ],
                         "items": {
-                          "type": "string"
+                          "type": [
+                            "string",
+                            "integer"
+                          ]
+                        },
+                        "description": "PubMed ids supporting the annotation"
+                      }
+                    },
+                    "description": "One GO annotation"
+                  },
+                  "description": "Biological process annotations"
+                },
+                "molecular_functions": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "object",
+                    "description": "One GO annotation",
+                    "properties": {
+                      "go_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "GO accession, e.g. GO:0006281"
+                      },
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Term name"
+                      },
+                      "evidence_code": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "GO evidence code, e.g. IDA or IEA: the difference between an experimentally supported annotation and an electronically inferred one"
+                      },
+                      "qualifier": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Qualifier such as NOT or contributes_to, which can invert the annotation's meaning"
+                      },
+                      "pmids": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "description": "PubMed ids supporting the annotation",
+                        "items": {
+                          "type": [
+                            "string",
+                            "integer"
+                          ]
                         }
                       }
                     }
-                  }
-                },
-                "molecular_functions": {
-                  "type": "array",
-                  "items": {
-                    "type": "object"
-                  }
+                  },
+                  "description": "Molecular function annotations"
                 },
                 "cellular_components": {
-                  "type": "array",
+                  "type": [
+                    "array",
+                    "null"
+                  ],
                   "items": {
-                    "type": "object"
-                  }
+                    "type": "object",
+                    "description": "One GO annotation",
+                    "properties": {
+                      "go_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "GO accession, e.g. GO:0006281"
+                      },
+                      "name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Term name"
+                      },
+                      "evidence_code": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "GO evidence code, e.g. IDA or IEA: the difference between an experimentally supported annotation and an electronically inferred one"
+                      },
+                      "qualifier": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Qualifier such as NOT or contributes_to, which can invert the annotation's meaning"
+                      },
+                      "pmids": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "description": "PubMed ids supporting the annotation",
+                        "items": {
+                          "type": [
+                            "string",
+                            "integer"
+                          ]
+                        }
+                      }
+                    }
+                  },
+                  "description": "Cellular component annotations"
                 }
               }
             },
             "summary": {
-              "type": "array",
-              "description": "RefSeq's own paragraph on what the gene does; `description` is \"tumor protein p53\"",
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Descriptive summaries, each with its source",
               "items": {
-                "type": "object"
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The summary text"
+                  },
+                  "source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Who wrote it, e.g. RefSeq"
+                  },
+                  "source_url": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Where it came from"
+                  }
+                }
               }
             },
             "transcript_count": {
@@ -214,24 +356,107 @@
               ]
             },
             "annotation_releases": {
-              "type": "array",
-              "description": "Which annotation release the coordinates come from, with its accession and release date -- what makes a coordinate reproducible",
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Which annotation releases the gene appears in",
               "items": {
-                "type": "object"
+                "type": "object",
+                "properties": {
+                  "annotation_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Release name"
+                  },
+                  "annotation_release_date": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Release date"
+                  },
+                  "assembly_accession": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Assembly accession"
+                  },
+                  "assembly_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Assembly name"
+                  }
+                }
               }
             },
             "reference_standards": {
-              "type": "array",
-              "description": "The RefSeqGene record, the stable coordinate system clinical variant nomenclature is written against",
+              "type": [
+                "array",
+                "null"
+              ],
+              "description": "Curated reference sequence ranges for the gene",
               "items": {
-                "type": "object"
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Kind of reference standard"
+                  },
+                  "gene_range": {
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "The RefSeqGene range, with its accession and coordinates",
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  }
+                }
               }
             },
             "gene_groups": {
-              "type": "array",
+              "type": [
+                "array",
+                "null"
+              ],
               "items": {
-                "type": "object"
-              }
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": [
+                      "string",
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Group id"
+                  },
+                  "method": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "How the grouping was derived"
+                  }
+                }
+              },
+              "description": "Gene group memberships, each with the method that assigned it"
             },
             "alternate_names": {
               "type": "array",
@@ -240,16 +465,53 @@
               }
             },
             "map_locations": {
-              "type": "array",
+              "type": [
+                "array",
+                "null"
+              ],
               "items": {
-                "type": "object"
-              }
+                "type": "object",
+                "properties": {
+                  "map_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Kind of map, e.g. Cytogenetic"
+                  },
+                  "map_value": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Position on that map, e.g. 17q21.31"
+                  }
+                }
+              },
+              "description": "Map positions, e.g. the cytogenetic band"
             },
             "nomenclature_authority": {
               "type": [
                 "object",
                 "null"
-              ]
+              ],
+              "description": "The naming authority for the symbol and its identifier there",
+              "properties": {
+                "authority": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Authority, e.g. HGNC"
+                },
+                "identifier": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Identifier at that authority, e.g. HGNC:1100"
+                }
+              }
             },
             "genomic_locations": {
               "type": "array",

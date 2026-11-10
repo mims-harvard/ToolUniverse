@@ -721,6 +721,66 @@
             "required": [
               "error"
             ]
+          },
+          "properties": {
+            "rgd_id": {
+              "type": [
+                "integer",
+                "string",
+                "null"
+              ],
+              "description": "RGD identifier for the object"
+            },
+            "symbol": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Gene symbol"
+            },
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Gene name"
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Description of the object"
+            },
+            "type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What kind of object it is, e.g. gene"
+            },
+            "so_acc_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Sequence Ontology accession for that type"
+            },
+            "species_type_key": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "RGD's species key"
+            },
+            "key": {
+              "type": [
+                "integer",
+                "string",
+                "null"
+              ],
+              "description": "RGD's internal key for the record"
+            }
           }
         },
         {

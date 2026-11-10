@@ -153,8 +153,11 @@
           "description": "Whether pathway is associated with disease"
         },
         "isInferred": {
-          "type": "boolean",
-          "description": "Whether pathway is inferred"
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Whether the pathway was computationally inferred from another species rather than curated for this one"
         },
         "maxDepth": {
           "type": "integer",
@@ -176,22 +179,186 @@
           "description": "Species name"
         },
         "compartment": {
-          "type": "array",
+          "type": [
+            "array",
+            "null"
+          ],
           "items": {
-            "type": "object"
+            "type": "object",
+            "description": "A Reactome object reference",
+            "properties": {
+              "dbId": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Reactome internal id"
+              },
+              "displayName": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable name"
+              },
+              "stId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Stable identifier where the object has one"
+              },
+              "schemaClass": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Reactome class of the referenced object"
+              }
+            },
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "array",
+                "object",
+                "null"
+              ]
+            }
           },
-          "description": "Cellular compartments"
+          "description": "Cellular compartments the pathway takes place in"
         },
         "figure": {
-          "type": "array",
+          "type": [
+            "array",
+            "null"
+          ],
           "items": {
-            "type": "object"
+            "type": "object",
+            "description": "A Reactome object reference",
+            "properties": {
+              "dbId": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Reactome internal id"
+              },
+              "displayName": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable name"
+              },
+              "stId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Stable identifier where the object has one"
+              },
+              "schemaClass": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Reactome class of the referenced object"
+              }
+            },
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "array",
+                "object",
+                "null"
+              ]
+            }
           },
-          "description": "Pathway figures"
+          "description": "Figures illustrating the pathway"
         },
         "goBiologicalProcess": {
-          "type": "object",
-          "description": "GO biological process annotation"
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "The GO biological process the pathway maps to",
+          "properties": {
+            "dbId": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Reactome internal id"
+            },
+            "displayName": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Human-readable name"
+            },
+            "stId": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Stable identifier where the object has one"
+            },
+            "schemaClass": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Reactome class of the referenced object"
+            },
+            "accession": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GO accession"
+            },
+            "databaseName": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Ontology the accession is from"
+            },
+            "definition": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Term definition"
+            },
+            "url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Resolvable URL"
+            },
+            "name": {
+              "type": [
+                "array",
+                "string",
+                "null"
+              ],
+              "description": "Term name or names"
+            },
+            "className": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Reactome class name of the GO term object"
+            }
+          }
         },
         "literatureReference": {
           "type": "array",
@@ -236,7 +403,10 @@
           "description": "Literature references"
         },
         "orthologousEvent": {
-          "type": "array",
+          "type": [
+            "array",
+            "null"
+          ],
           "items": {
             "type": "object",
             "properties": {
@@ -244,10 +414,18 @@
                 "type": "string"
               },
               "dbId": {
-                "type": "integer"
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Reactome internal id"
               },
               "displayName": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable name"
               },
               "hasDiagram": {
                 "type": "boolean"
@@ -256,7 +434,55 @@
                 "type": "boolean"
               },
               "inferredFrom": {
-                "type": "array"
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "The event it was inferred from",
+                "items": {
+                  "type": "object",
+                  "description": "A Reactome object reference",
+                  "properties": {
+                    "dbId": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Reactome internal id"
+                    },
+                    "displayName": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Human-readable name"
+                    },
+                    "stId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Stable identifier where the object has one"
+                    },
+                    "schemaClass": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Reactome class of the referenced object"
+                    }
+                  },
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ]
+                  }
+                }
               },
               "isInDisease": {
                 "type": "boolean"
@@ -268,19 +494,32 @@
                 "type": "integer"
               },
               "name": {
-                "type": "array"
+                "type": [
+                  "array",
+                  "string",
+                  "null"
+                ],
+                "description": "Event name or names"
               },
               "releaseDate": {
                 "type": "string"
               },
               "schemaClass": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Reactome class of the referenced object"
               },
               "speciesName": {
                 "type": "string"
               },
               "stId": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Stable identifier where the object has one"
               },
               "stIdVersion": {
                 "type": "string"
@@ -302,12 +541,26 @@
               "speciesName",
               "stId",
               "stIdVersion"
-            ]
+            ],
+            "description": "A Reactome object reference",
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "array",
+                "object",
+                "null"
+              ]
+            }
           },
-          "description": "Orthologous events in other species"
+          "description": "The same pathway in other species, where Reactome inferred it"
         },
         "hasEvent": {
-          "type": "array",
+          "type": [
+            "array",
+            "null"
+          ],
           "items": {
             "type": "object",
             "properties": {
@@ -315,19 +568,75 @@
                 "type": "string"
               },
               "dbId": {
-                "type": "integer"
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Reactome internal id"
               },
               "definition": {
                 "type": "string"
               },
               "displayName": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable name"
               },
               "doi": {
                 "type": "string"
               },
               "eventOf": {
-                "type": "array"
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "Pathways this event belongs to",
+                "items": {
+                  "type": "object",
+                  "description": "A Reactome object reference",
+                  "properties": {
+                    "dbId": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Reactome internal id"
+                    },
+                    "displayName": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Human-readable name"
+                    },
+                    "stId": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Stable identifier where the object has one"
+                    },
+                    "schemaClass": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Reactome class of the referenced object"
+                    }
+                  },
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ]
+                  }
+                }
               },
               "hasDiagram": {
                 "type": "boolean"
@@ -348,26 +657,57 @@
                 "type": "integer"
               },
               "name": {
-                "type": "array"
+                "type": [
+                  "array",
+                  "string",
+                  "null"
+                ],
+                "description": "Event name or names"
               },
               "releaseDate": {
                 "type": "string"
               },
               "schemaClass": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Reactome class of the referenced object"
               },
               "speciesName": {
                 "type": "string"
               },
               "stId": {
-                "type": "string"
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Stable identifier where the object has one"
               },
               "stIdVersion": {
                 "type": "string"
+              },
+              "category": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Event category"
               }
+            },
+            "description": "A Reactome object reference",
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "array",
+                "object",
+                "null"
+              ]
             }
           },
-          "description": "Events (reactions/subpathways) in this pathway"
+          "description": "Sub-events of the pathway"
         },
         "schemaClass": {
           "type": "string",
@@ -376,6 +716,181 @@
         "className": {
           "type": "string",
           "description": "Class name"
+        },
+        "reviewStatus": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "description": "Reactome's own confidence in the curation, e.g. displayName 'five stars'",
+          "properties": {
+            "dbId": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Reactome id of the status"
+            },
+            "displayName": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The rating"
+            },
+            "definition": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What the rating means"
+            },
+            "name": {
+              "type": [
+                "array",
+                "string",
+                "null"
+              ],
+              "description": "The rating as a name list"
+            },
+            "className": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Reactome class of the status object"
+            },
+            "schemaClass": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Reactome schema class"
+            }
+          }
+        },
+        "summation": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Reactome's curated prose describing the pathway",
+          "items": {
+            "type": "object",
+            "description": "A Reactome object reference",
+            "properties": {
+              "dbId": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Reactome internal id"
+              },
+              "displayName": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable name"
+              },
+              "stId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Stable identifier where the object has one"
+              },
+              "schemaClass": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Reactome class of the referenced object"
+              }
+            },
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "array",
+                "object",
+                "null"
+              ]
+            }
+          }
+        },
+        "species": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "Species the pathway is annotated for",
+          "items": {
+            "type": "object",
+            "description": "A Reactome object reference",
+            "properties": {
+              "dbId": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Reactome internal id"
+              },
+              "displayName": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Human-readable name"
+              },
+              "stId": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Stable identifier where the object has one"
+              },
+              "schemaClass": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Reactome class of the referenced object"
+              }
+            },
+            "additionalProperties": {
+              "type": [
+                "string",
+                "number",
+                "boolean",
+                "array",
+                "object",
+                "null"
+              ]
+            }
+          }
+        },
+        "hasDiagram": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Whether a pathway diagram exists"
+        },
+        "hasEHLD": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Whether an enhanced high-level diagram exists"
+        },
+        "lastUpdatedDate": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "When the pathway was last revised"
         }
       }
     }
@@ -2011,11 +2526,15 @@
             "description": "Entity names"
           },
           "otherIdentifier": {
-            "type": "array",
+            "type": [
+              "array",
+              "string",
+              "null"
+            ],
             "items": {
               "type": "string"
             },
-            "description": "Other identifiers"
+            "description": "Further identifiers the source database carries"
           },
           "schemaClass": {
             "type": "string",
@@ -2024,6 +2543,96 @@
           "className": {
             "type": "string",
             "description": "Class name"
+          },
+          "geneName": {
+            "type": [
+              "array",
+              "string",
+              "null"
+            ],
+            "description": "Gene names for the entity"
+          },
+          "description": {
+            "type": [
+              "array",
+              "string",
+              "null"
+            ],
+            "description": "Description of the entity"
+          },
+          "sequenceLength": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Length of the reference sequence"
+          },
+          "checksum": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Checksum of that sequence; the way to tell whether the sequence behind an identifier has changed"
+          },
+          "isSequenceChanged": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "Whether the sequence changed since Reactome annotated it. An annotation made against a sequence that has since changed may no longer hold"
+          },
+          "chain": {
+            "type": [
+              "array",
+              "string",
+              "null"
+            ],
+            "description": "Chain information for the reference sequence"
+          },
+          "moleculeType": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "What kind of molecule the entity is"
+          },
+          "formula": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Chemical formula, for small molecules"
+          },
+          "secondaryIdentifier": {
+            "type": [
+              "array",
+              "string",
+              "null"
+            ],
+            "description": "Other identifiers for the entity"
+          },
+          "keyword": {
+            "type": [
+              "array",
+              "string",
+              "null"
+            ],
+            "description": "Keywords from the source database"
+          },
+          "comment": {
+            "type": [
+              "array",
+              "string",
+              "null"
+            ],
+            "description": "Curator comments"
+          },
+          "url": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Resolvable URL for the entity in its source database"
           }
         },
         "description": "Reference entity objects (UniProt, ChEBI, etc.)"

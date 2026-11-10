@@ -373,7 +373,8 @@
             "type": [
               "boolean",
               "null"
-            ]
+            ],
+            "description": "Whether the experiment failed QC. A failed dataset is not usable evidence and this was undeclared"
           },
           "delegate": {
             "type": [
@@ -403,10 +404,14 @@
             "type": [
               "string",
               "null"
-            ]
+            ],
+            "description": "When QC was performed"
           },
           "genes": {
-            "type": "array",
+            "type": [
+              "array",
+              "null"
+            ],
             "items": {
               "type": "object",
               "properties": {
@@ -414,22 +419,129 @@
                   "type": [
                     "string",
                     "null"
-                  ]
+                  ],
+                  "description": "Gene acronym"
                 },
                 "name": {
                   "type": [
                     "string",
                     "null"
-                  ]
+                  ],
+                  "description": "Gene name"
                 },
                 "entrez_id": {
                   "type": [
                     "integer",
                     "null"
-                  ]
+                  ],
+                  "description": "NCBI Entrez gene id"
+                },
+                "id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Allen gene id"
+                },
+                "original_symbol": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Symbol as originally submitted"
+                },
+                "original_name": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Name as originally submitted"
+                },
+                "alias_tags": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Alternative symbols"
+                },
+                "homologene_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "HomoloGene group id, for cross-species comparison"
+                },
+                "chromosome_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Allen chromosome id"
+                },
+                "organism_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Allen organism id"
+                },
+                "genomic_reference_update_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Which genome build update the record reflects"
+                },
+                "version_status": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Status of this gene record version"
+                },
+                "sphinx_id": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Allen search-index id"
                 }
+              },
+              "additionalProperties": {
+                "type": [
+                  "string",
+                  "number",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ]
               }
-            }
+            },
+            "description": "The genes the experiment measured"
+          },
+          "failed_facet": {
+            "type": [
+              "string",
+              "integer",
+              "null"
+            ],
+            "description": "Which QC facet failed"
+          },
+          "weight": {
+            "type": [
+              "number",
+              "integer",
+              "null"
+            ],
+            "description": "Allen's internal ranking weight for the dataset"
+          },
+          "sphinx_id": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Allen search-index id"
           }
         }
       }

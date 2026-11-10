@@ -117,6 +117,103 @@
                     }
                   }
                 }
+              },
+              "resource_doi": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "DOI of the published work the item belongs to"
+              },
+              "resource_title": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Title of that published work"
+              },
+              "defined_type": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Figshare's numeric item type, named by defined_type_name"
+              },
+              "group_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Figshare group or institution the item sits under"
+              },
+              "handle": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Handle identifier, where assigned"
+              },
+              "created_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When the record was created"
+              },
+              "modified_date": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "When it last changed"
+              },
+              "timeline": {
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "Dates in the item's life - posted, firstOnline and so on",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                }
+              },
+              "thumb": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Thumbnail image URL"
+              },
+              "url_public_html": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The page a person should be sent to"
+              },
+              "url_public_api": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Public API URL"
+              },
+              "url_private_html": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Private page URL, usable only by the owner"
+              },
+              "url_private_api": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Private API URL, usable only by the owner"
               }
             }
           }
