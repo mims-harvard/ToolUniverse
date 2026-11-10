@@ -7254,3 +7254,138 @@ def test_the_sibling_sweep_reached_the_siblings():
                 f"{tool} is a sibling of a tool already fixed and still does "
                 f"not declare {field}"
             )
+
+
+def test_a_saxs_entry_carries_its_size_measurements():
+    """SASBDB declared the entry and not one number from the experiment.
+
+    A SAXS entry's answer IS its numbers: guinier_rg 3.18 nm with its error,
+    pddf_dmax 8.95 nm with its error, porod_volume 206.43 nm^3,
+    experimental_mw 148 kDa. Twenty-five paths, every one of them a result.
+
+    Three of them matter for reasons a field name does not carry.
+    guinier_point_first and guinier_point_last give the fit RANGE, which is
+    how a Guinier analysis is judged valid. pddf_rg beside guinier_rg is two
+    independent estimates of the same quantity, so a disagreement is a
+    warning. And intensity_unit is what puts the curve on an absolute scale
+    at all.
+    """
+    schema = json.dumps(_config("SASBDB_get_entry").get("return_schema"))
+    for field in ('"guinier_rg"', '"guinier_rg_error"', '"guinier_point_last"',
+                  '"pddf_dmax"', '"porod_volume"', '"experimental_mw"',
+                  '"intensity_unit"', '"pddf_software"'):
+        assert field in schema, f"SASBDB_get_entry returns {field} undeclared"
+    assert "fit range" in schema or "fit RANGE" in schema
+    assert "disagreement" in schema
+
+
+def test_a_negative_result_is_not_a_positive_one():
+    """PharmGKB's variant annotation carries isAssociated and it was undeclared.
+
+    An annotation with isAssociated false is a study that looked and found
+    nothing. Without the field it reads exactly like one that found
+    something, and so does `polarity`, which says whether the association
+    runs in the direction the sentence states or the opposite.
+
+    `description` is the only field that says what was actually found -
+    "Combined *2/*2, *2/*3 and *3*3 were compared to..." - and
+    `studyParameters` carries the cohort sizes and p-values behind it.
+    """
+    schema = json.dumps(_config("PharmGKB_get_variant_annotations").get("return_schema"))
+    for field in ('"isAssociated"', '"polarity"', '"description"',
+                  '"studyParameters"', '"score"', '"scoreDetails"'):
+        assert field in schema, f"PharmGKB_get_variant_annotations returns {field} undeclared"
+    assert "NEGATIVE result" in schema, (
+        "isAssociated false has to be flagged as a negative result, or it "
+        "reads as a positive one"
+    )
+
+
+def test_a_drug_label_annotation_says_which_agency_and_whether_to_test():
+    """`source` and `testing` were both undeclared.
+
+    The same drug carries different pharmacogenomic language from the FDA,
+    the EMA and Swissmedic, so an annotation without its source cannot be
+    acted on. `testing` is the actionable part - required, recommended,
+    actionable or informative - and it was not in the schema either.
+
+    This one also needed the nested oneOf fixed: the schema's first branch is
+    itself a oneOf, and twelve declarations had landed in the outer branch
+    beside the inner one, where the walker does not read them. The CoL
+    mistake again, a level deeper.
+    """
+    rs = _config("PharmGKB_get_drug_label_annotations")["return_schema"]
+    branch = rs["oneOf"][0]
+    inner = branch.get("oneOf")
+    assert inner, "the shape this guard is about: a oneOf inside a oneOf"
+    assert "properties" not in branch, (
+        "a properties block beside the inner oneOf belongs to no branch"
+    )
+    schema = json.dumps(rs)
+    for field in ('"source"', '"testing"', '"summaryMarkdown"', '"relatedGenes"',
+                  '"pediatric"'):
+        assert field in schema, f"PharmGKB_get_drug_label_annotations returns {field} undeclared"
+    assert "Swissmedic" in schema
+
+
+def test_a_pseudoreaction_is_not_chemistry():
+    """BiGG's `pseudoreaction` flag separates modelling devices from reactions.
+
+    Exchange, sink and biomass reactions are how a model talks to its
+    boundary; treating one as chemistry is a mistake the flag prevents, and
+    it was undeclared. `results` is the other one: the same reaction has
+    different bounds and a different gene-reaction rule in each model, and
+    that per-model block was not in the schema. `formulae` and `charges` on a
+    metabolite come as parallel lists, and the charge decides the protonation
+    state the model assumes.
+    """
+    for tool, fields in (("BiGG_get_reaction", ('"pseudoreaction"', '"results"',
+                                                '"other_models_with_reaction"',
+                                                '"old_identifiers"')),
+                         ("BiGG_get_metabolite", ('"formulae"', '"charges"'))):
+        schema = json.dumps(_config(tool).get("return_schema"))
+        for field in fields:
+            assert field in schema, f"{tool} returns {field} undeclared"
+    assert "modelling devices" in json.dumps(_config("BiGG_get_reaction").get("return_schema"))
+
+
+def test_a_sequence_says_which_coordinate_convention_it_used():
+    """UCSC returns the region in both conventions and declared neither.
+
+    `start_0based` is UCSC's own half-open coordinate and `region_1based` is
+    the inclusive form. They differ by one, mixing them is the commonest
+    coordinate error there is, and the tool had already done the work of
+    giving both. `requested_length` is how a clipped sequence is detected.
+    """
+    schema = json.dumps(_config("UCSC_get_sequence").get("return_schema"))
+    for field in ('"start_0based"', '"region_1based"', '"requested_length"'):
+        assert field in schema, f"UCSC_get_sequence returns {field} undeclared"
+    assert "differ by one" in schema
+
+
+def test_the_long_tail_of_the_sibling_sweep_is_declared():
+    """The 221 paths the reuse could not cover, measured and written.
+
+    Reuse closes a gap only where the donor had the same field. These are
+    the ones it did not have, and each needed its own measurement: the
+    anchors here are the fields whose absence changes an answer.
+    """
+    for tool, fields in (
+        ("Reactome_get_complex", ('"inferredTo"', '"isChimeric"', '"inDisease"')),
+        ("Reactome_query_by_ids", ('"hasEvent"', '"goBiologicalProcess"', '"hasDiagram"')),
+        ("cBioPortal_get_molecular_profiles", ('"studyId"', '"patientLevel"')),
+        ("PDBePISA_get_assemblies", ('"n_dissociable"', '"symmetry_number"')),
+        ("GlyGen_get_glycan", ('"composition"', '"classification"', '"byonic"')),
+        ("GlyGen_get_site", ('"start_aa"', '"all_sites_count"')),
+        ("PharmGKB_search_genes", ('"cpicGene"', '"pharmVarGene"')),
+        ("PharmGKB_get_pathway", ('"pharmacokinetic"', '"pharmacodynamic"', '"gpmlLink"')),
+        ("ClinVar_get_variant_details", ('"rate_limit_info"',)),
+        ("DepMap_get_gene_dependencies", ('"matched_gene"', '"note"')),
+        ("PRIDE_get_project_files", ('"fileSizeBytes"', '"publicFileLocations"', '"value"')),
+        ("PRIDE_search_proteomics", ('"doi"', '"highlights"', '"projectFileNames"')),
+        ("CoL_get_taxon", ('"combinationAuthorship"', '"nomStatus"', '"referenceIds"')),
+        ("BioTools_search_by_operation", ('"credit"', '"maturity"', '"documentation"')),
+    ):
+        schema = json.dumps(_config(tool).get("return_schema"))
+        for field in fields:
+            assert field in schema, f"{tool} returns {field} undeclared"

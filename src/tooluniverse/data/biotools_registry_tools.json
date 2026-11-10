@@ -165,6 +165,55 @@
                   },
                   "validated": {
                     "description": "bio.tools' validation flag: 1 when the entry passed curation."
+                  },
+                  "biotoolsCURIE": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The entry's CURIE, e.g. 'biotools:scikit-bio'. The citable form of biotoolsID."
+                  },
+                  "collectionID": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Curated collections the entry belongs to, e.g. ['Animal and Crop Genomics', 'EUCAIM']. How bio.tools groups related tools."
+                  },
+                  "credit": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Who to credit, each with a name, email, url and role. A tool entry with no credit cannot be attributed."
+                  },
+                  "documentation": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Documentation links, each with a url and a type such as 'General' or 'API documentation'."
+                  },
+                  "link": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Other links for the entry, each with a url and type - repository, issue tracker, mailing list."
+                  },
+                  "maturity": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "bio.tools' maturity rating, e.g. 'Mature', 'Emerging', 'Legacy'. 'Legacy' is a warning the search result otherwise does not carry."
+                  },
+                  "version": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Versions bio.tools records for the tool."
                   }
                 }
               }
@@ -735,6 +784,90 @@
                   },
                   "validated": {
                     "description": "bio.tools' validation flag: 1 when the entry passed curation."
+                  },
+                  "biotoolsCURIE": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The entry's CURIE, e.g. 'biotools:scikit-bio'. The citable form of biotoolsID."
+                  },
+                  "collectionID": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Curated collections the entry belongs to, e.g. ['Animal and Crop Genomics', 'EUCAIM']. How bio.tools groups related tools."
+                  },
+                  "credit": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Who to credit, each with a name, email, url and role. A tool entry with no credit cannot be attributed."
+                  },
+                  "documentation": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Documentation links, each with a url and a type such as 'General' or 'API documentation'."
+                  },
+                  "elixirNode": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "ELIXIR nodes that maintain the entry, e.g. ['Spain']. Empty for entries no node claims."
+                  },
+                  "function": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "What the tool does, as EDAM operations with their input and output data types. The field bio.tools' own operation search matches on."
+                  },
+                  "language": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Programming languages the tool is written in."
+                  },
+                  "license": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Licence, when bio.tools records one."
+                  },
+                  "link": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Other links for the entry, each with a url and type - repository, issue tracker, mailing list."
+                  },
+                  "maturity": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "bio.tools' maturity rating, e.g. 'Mature', 'Emerging', 'Legacy'. 'Legacy' is a warning the search result otherwise does not carry."
+                  },
+                  "operatingSystem": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Operating systems the tool runs on."
+                  },
+                  "version": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Versions bio.tools records for the tool."
                   }
                 }
               }
@@ -923,6 +1056,118 @@
                   },
                   "validated": {
                     "description": "bio.tools' validation flag: 1 when the entry passed curation."
+                  },
+                  "biotoolsCURIE": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The entry's CURIE, e.g. 'biotools:scikit-bio'. The citable form of biotoolsID."
+                  },
+                  "collectionID": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Curated collections the entry belongs to, e.g. ['Animal and Crop Genomics', 'EUCAIM']. How bio.tools groups related tools."
+                  },
+                  "confidence_flag": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "bio.tools' confidence in the entry's automatic curation, when it has one. Null for hand-curated entries."
+                  },
+                  "credit": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Who to credit, each with a name, email, url and role. A tool entry with no credit cannot be attributed."
+                  },
+                  "documentation": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Documentation links, each with a url and a type such as 'General' or 'API documentation'."
+                  },
+                  "download": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Download links, each with a url and a type - source, binary, container image."
+                  },
+                  "elixirNode": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "ELIXIR nodes that maintain the entry, e.g. ['Spain']. Empty for entries no node claims."
+                  },
+                  "elixirPlatform": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "ELIXIR platforms the entry belongs to. Empty for most."
+                  },
+                  "language": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Programming languages the tool is written in."
+                  },
+                  "license": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Licence, when bio.tools records one."
+                  },
+                  "link": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Other links for the entry, each with a url and type - repository, issue tracker, mailing list."
+                  },
+                  "maturity": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "bio.tools' maturity rating, e.g. 'Mature', 'Emerging', 'Legacy'. 'Legacy' is a warning the search result otherwise does not carry."
+                  },
+                  "operatingSystem": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Operating systems the tool runs on."
+                  },
+                  "otherID": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Other identifiers for the tool, each with a value and type."
+                  },
+                  "topic": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "EDAM topics for the tool, each with a term and uri."
+                  },
+                  "version": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Versions bio.tools records for the tool."
                   }
                 }
               }
@@ -1111,6 +1356,97 @@
                   },
                   "validated": {
                     "description": "bio.tools' validation flag: 1 when the entry passed curation."
+                  },
+                  "biotoolsCURIE": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The entry's CURIE, e.g. 'biotools:scikit-bio'. The citable form of biotoolsID."
+                  },
+                  "collectionID": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Curated collections the entry belongs to, e.g. ['Animal and Crop Genomics', 'EUCAIM']. How bio.tools groups related tools."
+                  },
+                  "credit": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Who to credit, each with a name, email, url and role. A tool entry with no credit cannot be attributed."
+                  },
+                  "documentation": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Documentation links, each with a url and a type such as 'General' or 'API documentation'."
+                  },
+                  "elixirNode": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "ELIXIR nodes that maintain the entry, e.g. ['Spain']. Empty for entries no node claims."
+                  },
+                  "elixirPlatform": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "ELIXIR platforms the entry belongs to. Empty for most."
+                  },
+                  "function": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "What the tool does, as EDAM operations with their input and output data types. The field bio.tools' own operation search matches on."
+                  },
+                  "language": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Programming languages the tool is written in."
+                  },
+                  "license": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Licence, when bio.tools records one."
+                  },
+                  "link": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Other links for the entry, each with a url and type - repository, issue tracker, mailing list."
+                  },
+                  "maturity": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "bio.tools' maturity rating, e.g. 'Mature', 'Emerging', 'Legacy'. 'Legacy' is a warning the search result otherwise does not carry."
+                  },
+                  "operatingSystem": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Operating systems the tool runs on."
+                  },
+                  "topic": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "EDAM topics for the tool, each with a term and uri."
                   }
                 }
               }

@@ -471,6 +471,16 @@
             },
             "genes": {
               "type": "array"
+            },
+            "matched_gene": {
+              "description": "The gene record this query resolved to, with its symbol, ids and whether the match was exact. The query 'TP53' can resolve to more than one gene and this says which one was used."
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What the dependency scores mean: negative is essential, zero is no effect. The sign convention, without which the numbers can be read backwards."
             }
           }
         },

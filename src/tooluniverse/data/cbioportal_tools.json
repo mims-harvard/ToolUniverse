@@ -559,6 +559,37 @@
           },
           "showProfileInAnalysisTab": {
             "type": "boolean"
+          },
+          "genericAssayType": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "For generic-assay profiles, which assay type, when cBioPortal sets one."
+          },
+          "patientLevel": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "True when the profile's values are per patient rather than per sample. Changes how the data must be joined."
+          },
+          "pivotThreshold": {
+            "description": "Threshold cBioPortal pivots the values on, for profiles that have one."
+          },
+          "sortOrder": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "How the profile's values should be ordered, when set."
+          },
+          "studyId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Which study the profile belongs to, e.g. 'brca_tcga'. A profile id alone does not say."
           }
         }
       }

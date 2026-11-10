@@ -1025,6 +1025,27 @@
               "type": "object"
             },
             "description": "Species the reaction is annotated in, each with its dbId and name."
+          },
+          "doi": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "DOI of the pathway, for pathways Reactome has published one for."
+          },
+          "lastUpdatedDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "When the pathway was last revised, e.g. '2022-12-07'."
+          },
+          "releaseStatus": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Reactome's release state for the pathway, when set."
           }
         },
         "description": "Top-level pathway objects"
@@ -1285,6 +1306,27 @@
             "type": "object"
           },
           "description": "Species the reaction is annotated in, each with its dbId and name."
+        },
+        "inDisease": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Whether the complex is annotated as disease-associated. A disease variant of a complex is not the normal one."
+        },
+        "inferredTo": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Species the complex was computationally inferred into, each with its stId. Inference is not observation, and this is the only field that says which this is."
+        },
+        "isChimeric": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when the complex is built from components of different species - an inferred construct, not an observed one."
         }
       }
     }
@@ -1957,6 +1999,13 @@
           "schemaClass": {
             "type": "string",
             "description": "Schema class (e.g., 'Reaction')"
+          },
+          "abbreviation": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Reactome's short code for the species, e.g. 'HPV'. What its other endpoints expect."
           }
         }
       }
@@ -2248,6 +2297,44 @@
               "type": "object"
             },
             "description": "Reactome's prose summary of the reaction, with its own dbId. The only field that explains what the reaction does."
+          },
+          "figure": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Figures Reactome attaches to the event."
+          },
+          "goBiologicalProcess": {
+            "description": "The GO biological process the event is equated with, with its accession. The bridge from Reactome to GO."
+          },
+          "hasDiagram": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "Whether Reactome has drawn a diagram for the event. Determines whether it can be shown rather than only listed."
+          },
+          "hasEHLD": {
+            "type": [
+              "boolean",
+              "null"
+            ],
+            "description": "Whether an Enhanced High Level Diagram exists - Reactome's illustrated overview rather than the schematic."
+          },
+          "hasEvent": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "The events contained in this one, each with its stId. The pathway's structure."
+          },
+          "lastUpdatedDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "When Reactome last changed the record, e.g. '2022-12-07'."
           }
         },
         "description": "Detailed information about pathways, reactions, or other entities"

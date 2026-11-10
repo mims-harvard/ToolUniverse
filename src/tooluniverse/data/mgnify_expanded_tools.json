@@ -526,6 +526,13 @@
                 "integer",
                 "null"
               ]
+            },
+            "last_update": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When MGnify last changed the study, ISO 8601."
             }
           },
           "not": {

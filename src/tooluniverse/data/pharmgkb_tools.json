@@ -248,6 +248,27 @@
                   "null"
                 ],
                 "description": "PharmGKB's Very Important Pharmacogene tier, e.g. 'Tier 1'. The tier is how much curated pharmacogenomic evidence stands behind the gene."
+              },
+              "cpicGene": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when CPIC has published a prescribing guideline for the gene - the strongest signal that it is clinically actionable."
+              },
+              "pharmVarGene": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when PharmVar curates the gene's star alleles."
+              },
+              "strand": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Strand the gene is on, e.g. 'minus'."
               }
             },
             "additionalProperties": true
@@ -763,6 +784,74 @@
                 },
                 "literature": {
                   "type": "array"
+                },
+                "highlightedLabelLink": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Filename of the annotated label PDF, e.g. 'Bosutinib_2025_01_15_FDA.pdf'."
+                },
+                "history": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "PharmGKB's change history for the annotation."
+                },
+                "otherPrescribingGuidance": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "True when the label's guidance is not genotype-based."
+                },
+                "pediatric": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "True when the label carries paediatric-specific pharmacogenomic guidance."
+                },
+                "pediatricMarkdown": {
+                  "description": "The paediatric-specific text, when there is one."
+                },
+                "pgxRelated": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "Whether PharmGKB considers the label pharmacogenomics-related at all."
+                },
+                "relatedChemicals": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "The drugs the label covers, each with its PharmGKB id and name."
+                },
+                "relatedGenes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "The genes the label mentions, each with its PharmGKB id and symbol."
+                },
+                "source": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Which agency issued the label, e.g. 'FDA', 'EMA', 'Swissmedic'. The same drug has different pharmacogenomic language in different jurisdictions."
+                },
+                "summaryMarkdown": {
+                  "description": "PharmGKB's summary of the label's pharmacogenomic content, as an object with an HTML body."
+                },
+                "testing": {
+                  "description": "Whether genetic testing is required, recommended, actionable or informative, as a PharmGKB controlled term. This is the actionable content of a drug-label annotation."
+                },
+                "textMarkdown": {
+                  "description": "The fuller annotation text, as an object with an HTML body."
                 }
               },
               "additionalProperties": true
@@ -790,11 +879,6 @@
             "required": [
               "error"
             ]
-          },
-          "properties": {
-            "history": {
-              "description": "PharmGKB's change history for the record."
-            }
           }
         },
         {
@@ -865,6 +949,72 @@
             },
             "history": {
               "description": "PharmGKB's change history for the record."
+            },
+            "formatVersion": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Version of PharmGKB's pathway format."
+            },
+            "gpmlLink": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GPML file, which is the diagram as data rather than a picture - the form that can be computed on."
+            },
+            "illustratorLink": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Editable Illustrator file of the diagram."
+            },
+            "imageLink": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "PNG of the pathway diagram."
+            },
+            "pdfLink": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "PDF of the diagram."
+            },
+            "pediatric": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the pathway is paediatric-specific."
+            },
+            "pharmacodynamic": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when it describes what the drug does to the body. The two are different questions and the pathway's id does not say which it answers."
+            },
+            "pharmacokinetic": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the pathway describes what the body does to the drug."
+            },
+            "summary": {
+              "description": "PharmGKB's prose summary of the pathway, as an object with an HTML body. The only field that explains what the pathway does."
+            },
+            "thumbnailLink": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Small PNG of the same diagram."
             }
           },
           "additionalProperties": true,
@@ -971,6 +1121,80 @@
               },
               "literature": {
                 "type": "object"
+              },
+              "connWords1": {
+                "description": "Connecting phrase PharmGKB uses to render the annotation as a sentence."
+              },
+              "description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The annotation in the curator's words, e.g. 'Genotyped for rs1799853 and rs1057910. Combined *2/*2, *2/*3 ...'. The only field that says what was actually found."
+              },
+              "drugsConnWord": {
+                "description": "Connecting phrase for the drug part of that sentence."
+              },
+              "formatVersion": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Version of PharmGKB's annotation format."
+              },
+              "isAssociated": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Whether the study found an association at all. A variant annotation with isAssociated false is a NEGATIVE result, and without this field it reads like a positive one."
+              },
+              "isPlural": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Whether the rendered sentence should be plural."
+              },
+              "location": {
+                "description": "The variant or haplotype, with its genes, genomic position and diplotypes."
+              },
+              "polarity": {
+                "description": "Whether the association is in the direction stated or the opposite, as a controlled term. Reverses the meaning of the sentence it belongs to."
+              },
+              "populationPhenotypes": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                },
+                "description": "Phenotypes recorded for that population."
+              },
+              "populationTerm": {
+                "description": "The population studied, as a PharmGKB controlled term."
+              },
+              "score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "PharmGKB's evidence score for the annotation, e.g. 2.75."
+              },
+              "scoreDetails": {
+                "description": "The per-step scores behind 'score', as an object. Lets the score be checked rather than taken."
+              },
+              "studyParameters": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                },
+                "description": "The study's design parameters: cohort sizes, p-values, allele frequencies and the statistical test used."
+              },
+              "useForCaScoring": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Whether this annotation counts toward the clinical-annotation score."
               }
             },
             "additionalProperties": true

@@ -478,6 +478,27 @@
                   }
                 }
               }
+            },
+            "byonic": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The Byonic-format composition string with its mass, e.g. 'HexNAc(4)Hex(5)dHex(1)NeuAc(2) % 2368.84091476'. The form mass-spectrometry software expects."
+            },
+            "classification": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "Glycan type and subtype, e.g. N-linked / Biantennary. The classification a glycomics question turns on."
+            },
+            "composition": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "The glycan's monosaccharide composition, each residue with its name, short code and count."
             }
           },
           "not": {
@@ -973,6 +994,30 @@
                 "null"
               ],
               "description": "How many papers GlyGen records for the glycan. The row reported counts of proteins, enzymes and species and not this one."
+            },
+            "function": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The protein's function as GlyGen records it, with its citation."
+            },
+            "mass": {
+              "description": "The protein's mass, as an object with chemical_mass."
+            },
+            "sequence_length": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Length of the protein, e.g. 728. The denominator for every site position."
+            },
+            "snv_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Single-nucleotide variants GlyGen records on the protein, e.g. 105."
             }
           },
           "not": {
@@ -1368,6 +1413,34 @@
             },
             "publications_truncated": {
               "type": "boolean"
+            },
+            "all_sites_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many sites the protein has in total, e.g. 4. Puts the one returned in context."
+            },
+            "categories": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "What kind of site this is, e.g. ['glycosylation_flag']."
+            },
+            "species": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "Species the site is recorded in, each with its taxid and the evidence behind it."
+            },
+            "start_aa": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The amino acid at the site, e.g. 'T'. A glycosylation site without its residue cannot be checked against a sequence."
             }
           },
           "not": {

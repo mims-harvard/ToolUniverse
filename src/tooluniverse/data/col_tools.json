@@ -281,8 +281,148 @@
                     "null"
                   ],
                   "description": "Catalogue of Life id for the usage."
+                },
+                "created": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "When CoL created the record, ISO 8601."
+                },
+                "createdBy": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "CoL user id that created it."
+                },
+                "datasetKey": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Which source dataset in CoL this record came from. The provenance of the name."
+                },
+                "link": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The source database's own page for this name, e.g. an ITIS SingleRpt URL. CoL aggregates, so this is where the record came from."
+                },
+                "modified": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "When CoL last changed the record, ISO 8601."
+                },
+                "modifiedBy": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "CoL user id that last changed it."
+                },
+                "origin": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "How the name entered CoL, e.g. 'SOURCE'."
+                },
+                "sectorKey": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "CoL sector the record belongs to."
+                },
+                "verbatimSourceKey": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Key of the verbatim source record, for tracing back to the original text."
+                },
+                "genus": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Genus part of the name."
+                },
+                "specificEpithet": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Species epithet."
+                },
+                "infraspecificEpithet": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Subspecies or variety epithet, where there is one."
+                },
+                "combinationAuthorship": {
+                  "description": "Authorship of the current combination, as authors and a year. Differs from basionymAuthorship when a species has been moved between genera, and the difference is what the parentheses in a name mean."
+                },
+                "basionymAuthorship": {
+                  "description": "Authorship of the original description."
+                },
+                "nomStatus": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Nomenclatural status of the name itself, e.g. 'established'. Distinct from the taxon's accepted/synonym status."
+                },
+                "parsed": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "Whether CoL could parse the name into its parts. False means the fields above are unreliable."
+                },
+                "namesIndexId": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Id in CoL's names index, which is how the same name is matched across datasets."
+                },
+                "namesIndexType": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "How the name matched the index, e.g. 'EXACT'."
+                },
+                "remarks": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "CoL's notes on the name."
+                },
+                "type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Name type, e.g. 'SCIENTIFIC'."
+                },
+                "labelHtml": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The name with CoL's HTML markup."
                 }
-              }
+              },
+              "description": "The name record: the scientific name taken apart. A taxon's identity is its name PLUS its authorship and nomenclatural status, so the parsed parts are here rather than only the joined label."
             },
             "extinct": {
               "type": "boolean"
@@ -306,6 +446,83 @@
                 "null"
               ],
               "description": "The same label with CoL's HTML markup."
+            },
+            "created": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When CoL created the record, ISO 8601."
+            },
+            "createdBy": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "CoL user id that created it."
+            },
+            "datasetKey": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Which source dataset in CoL this record came from. The provenance of the name."
+            },
+            "link": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The source database's own page for this name, e.g. an ITIS SingleRpt URL. CoL aggregates, so this is where the record came from."
+            },
+            "modified": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When CoL last changed the record, ISO 8601."
+            },
+            "modifiedBy": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "CoL user id that last changed it."
+            },
+            "scrutinizer": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Who vetted the record."
+            },
+            "scrutinizerDate": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When it was vetted. An unvetted record is not wrong, but it is not vetted."
+            },
+            "sectorKey": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "CoL sector the record belongs to."
+            },
+            "verbatimSourceKey": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Key of the verbatim source record, for tracing back to the original text."
+            },
+            "referenceIds": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "CoL ids of the references behind the record. They are pointers: resolve them against CoL's reference endpoint to get the citations."
             }
           },
           "not": {
@@ -431,6 +648,20 @@
                       "null"
                     ],
                     "description": "The same label with CoL's HTML markup."
+                  },
+                  "count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Number of children below this child, where CoL reports it. Zero at the leaves."
+                  },
+                  "datasetKey": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Which source dataset the child record came from."
                   }
                 }
               }

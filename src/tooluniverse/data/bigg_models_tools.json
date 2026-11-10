@@ -362,6 +362,41 @@
                 "null"
               ],
               "description": "BiGG's id for the model, e.g. 'iJO1366'."
+            },
+            "count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many models contain the reaction."
+            },
+            "old_identifiers": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Identifiers this reaction used to have, e.g. ['GAPD']. Needed to match against older models and papers."
+            },
+            "other_models_with_reaction": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "Other BiGG models containing the reaction, each with its bigg_id - 103 of them for GAPD. How to tell a universal reaction from a model-specific one."
+            },
+            "pseudoreaction": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True for exchange, sink and biomass reactions, which are modelling devices and not chemistry. Treating one as a real reaction is a mistake this flag prevents."
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "Per model, this reaction's bounds, subsystem and gene-reaction rule. The same reaction is constrained differently in different models, and only this field says how."
             }
           }
         },
@@ -439,6 +474,23 @@
             },
             "compartments_in_models": {
               "type": "array"
+            },
+            "charges": {
+              "description": "Formal charges recorded, one per formula. The charge decides the protonation state the model assumes."
+            },
+            "formulae": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Chemical formulae recorded for the metabolite, e.g. ['C3H5O6P']. More than one when models disagree."
+            },
+            "old_identifiers": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Identifiers the metabolite used to have, e.g. ['g3p']."
             }
           }
         },

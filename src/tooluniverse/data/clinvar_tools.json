@@ -348,6 +348,16 @@
         "url": {
           "type": "string",
           "description": "API URL used"
+        },
+        "content_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Content type NCBI returned. Present because a non-JSON content type is how a rate-limit or maintenance page shows up."
+        },
+        "rate_limit_info": {
+          "description": "NCBI's rate-limit headers - limit and remaining. What tells a caller a batch is about to start failing."
         }
       }
     },
@@ -436,6 +446,13 @@
                     "type": "string"
                   },
                   "description": "Trait/condition names associated with the classification"
+                },
+                "trait_details": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  },
+                  "description": "The conditions with their cross-references, each a trait_name plus the MedGen/OMIM ids that resolve it."
                 }
               }
             },
@@ -488,6 +505,16 @@
         "url": {
           "type": "string",
           "description": "API URL used"
+        },
+        "content_type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Content type NCBI returned."
+        },
+        "rate_limit_info": {
+          "description": "NCBI's rate-limit headers - limit and remaining."
         }
       }
     },

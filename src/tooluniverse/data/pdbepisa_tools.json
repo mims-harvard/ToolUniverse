@@ -328,6 +328,30 @@
                     },
                     "composition": {
                       "type": "string"
+                    },
+                    "R350": {
+                      "description": "PISA's R350 stability index for the assembly."
+                    },
+                    "n_dissociable": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "How many interfaces PISA judges dissociable, e.g. 4. The assembly's stability rests on this."
+                    },
+                    "n_unit_cells": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Unit cells the assembly spans, e.g. 2. More than one means it is built across the crystal lattice."
+                    },
+                    "symmetry_number": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ],
+                      "description": "Order of the assembly's point-group symmetry, e.g. 2."
                     }
                   }
                 }

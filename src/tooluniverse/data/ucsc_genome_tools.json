@@ -418,6 +418,27 @@
             },
             "dna": {
               "type": "string"
+            },
+            "region_1based": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The same region in 1-based inclusive notation, e.g. 'chr14:89000000-89000100'. The two conventions differ by one and mixing them is the commonest coordinate error; both are stated so neither has to be guessed."
+            },
+            "requested_length": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Length of the requested region, e.g. 101. Compare with the returned sequence to see whether it was clipped."
+            },
+            "start_0based": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Start as UCSC's own 0-based half-open coordinate, e.g. 88999999."
             }
           },
           "not": {

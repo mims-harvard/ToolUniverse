@@ -131,6 +131,12 @@
               "string",
               "null"
             ]
+          },
+          "genomic_reference_update_id": {
+            "description": "Which genome-annotation update the record is anchored to, e.g. 491928275. Two records with different values are not directly comparable."
+          },
+          "reference_genome_id": {
+            "description": "Allen's reference genome for the gene, when set."
           }
         }
       }
