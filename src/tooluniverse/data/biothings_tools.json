@@ -419,6 +419,61 @@
                 "properties": {
                   "rsid": {
                     "type": "string"
+                  },
+                  "_license": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Licence URL for the dbSNP data."
+                  },
+                  "alt": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Alternate allele."
+                  },
+                  "chrom": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Chromosome, as dbSNP records it."
+                  },
+                  "dbsnp_build": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "dbSNP build the record comes from, e.g. 156. rsIDs are merged and retired between builds, so this dates the record."
+                  },
+                  "hg19": {
+                    "description": "The variant's hg19/GRCh37 coordinates, as start and end. The top-level coordinates are hg38, so this is what a GRCh37 pipeline needs - and conflating the two is a silent error."
+                  },
+                  "ref": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Reference allele."
+                  },
+                  "vartype": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Variant type, e.g. 'snv', 'del', 'ins'."
+                  },
+                  "alleles": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "dbSNP's allele records for the variant, each with the allele and its frequency observations. The variant's own ref/alt are the single pair; this is every allele dbSNP has seen at the position."
                   }
                 }
               },
@@ -437,11 +492,219 @@
                   "phred": {
                     "type": "number",
                     "description": "CADD Phred score"
+                  },
+                  "1000g": {
+                    "description": "1000 Genomes allele frequencies as CADD recorded them, overall and per super-population (afr, amr, eur)."
+                  },
+                  "_license": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Licence URL for the CADD data."
+                  },
+                  "alt": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Alternate allele."
+                  },
+                  "anc": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Inferred ancestral allele, e.g. 'G'. Differs from `ref` where the reference carries the derived allele."
+                  },
+                  "annotype": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What the position is, e.g. 'Intergenic', 'CodingTranscript'. The context every other CADD field has to be read in."
+                  },
+                  "bstatistic": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Background-selection statistic, e.g. 802. Low values mean strong linked selection."
+                  },
+                  "chmm": {
+                    "description": "ChromHMM state coverage at the position, keyed by state (enh, het, quies, tssa and the rest). The regulatory context."
+                  },
+                  "chrom": {
+                    "description": "Chromosome, as CADD records it."
+                  },
+                  "consdetail": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Consequence detail, e.g. 'intergenic'."
+                  },
+                  "consequence": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "CADD's consequence term for the variant, e.g. 'DOWNSTREAM', 'NON_SYNONYMOUS'."
+                  },
+                  "consscore": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "CADD's numeric consequence severity rank."
+                  },
+                  "cpg": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "CpG content of the surrounding window."
+                  },
+                  "dna": {
+                    "description": "DNA shape features at the position: helt, mgw, prot, roll."
+                  },
+                  "encode": {
+                    "description": "ENCODE signal at the position: h3k27ac, h3k4me1, h3k4me3 and nucleosome occupancy."
+                  },
+                  "fitcons": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "fitCons functional-constraint score, e.g. 0.065712: the fraction of sites in this class under selection."
+                  },
+                  "gc": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "GC content of the surrounding window, e.g. 0.29."
+                  },
+                  "gerp": {
+                    "description": "GERP constraint scores: `n` the neutral rate and `s` the observed substitution deficit."
+                  },
+                  "isderived": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "'TRUE' when the alternate allele is the derived one."
+                  },
+                  "isknownvariant": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "'TRUE' when the variant was already in the training data - a CADD score on a known variant is not an independent prediction."
+                  },
+                  "istv": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "'TRUE' for a transversion, 'FALSE' for a transition."
+                  },
+                  "length": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Length of the change; 0 for a substitution."
+                  },
+                  "mapability": {
+                    "description": "Mappability at 20bp and 35bp read lengths. Low mappability means the call itself is less trustworthy, which is a caveat on everything else."
+                  },
+                  "min_dist_tse": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Distance to the nearest transcription end site."
+                  },
+                  "min_dist_tss": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Distance to the nearest transcription start site, e.g. 24354."
+                  },
+                  "motif": {
+                    "description": "Transcription-factor motif evidence: distance to the motif and how much it overlaps."
+                  },
+                  "mutindex": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Mutability index for the position."
+                  },
+                  "phast_cons": {
+                    "description": "PhastCons conservation probabilities, per clade: mammalian, primate, vertebrate."
+                  },
+                  "phylop": {
+                    "description": "PhyloP conservation scores, per clade: mammalian, primate, vertebrate. Positive means conserved. One of the main inputs to the CADD score, and a caller checking whether a position is constrained needs it directly."
+                  },
+                  "pos": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Position on that chromosome."
+                  },
+                  "rawscore": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "CADD's raw deleteriousness score, e.g. -0.106892. Unscaled: compare it only within one CADD version. The PHRED-scaled form is the one usually quoted, and neither was declared."
+                  },
+                  "ref": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Reference allele."
+                  },
+                  "segway": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Segway genome-segmentation label for the position, e.g. 'F0'."
+                  },
+                  "type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Variant type, e.g. 'SNV'."
                   }
                 }
+              },
+              "_score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "This hit's relevance score; hits come back in descending order of it."
+              },
+              "gnomad_genome": {
+                "description": "gnomAD genome frequencies for the variant: overall allele frequency, allele count and number, and the per-population breakdown. An allele that is rare overall and common in one population is the case this block exists to show."
               }
             }
           }
+        },
+        "max_score": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Highest relevance score among the hits, from MyVariant's Elasticsearch backend."
         }
       }
     }
@@ -501,6 +764,51 @@
             },
             "alleles": {
               "type": "array"
+            },
+            "_license": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Licence URL for the dbSNP data."
+            },
+            "alt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Alternate allele."
+            },
+            "chrom": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Chromosome, as dbSNP records it."
+            },
+            "dbsnp_build": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "dbSNP build the record comes from, e.g. 156. rsIDs are merged and retired between builds, so this dates the record."
+            },
+            "hg19": {
+              "description": "The variant's hg19/GRCh37 coordinates, as start and end. The top-level coordinates are hg38, so this is what a GRCh37 pipeline needs - and conflating the two is a silent error."
+            },
+            "ref": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Reference allele."
+            },
+            "vartype": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Variant type, e.g. 'snv', 'del', 'ins'."
             }
           }
         },
@@ -517,12 +825,203 @@
             },
             "consequence": {
               "type": "string"
+            },
+            "1000g": {
+              "description": "1000 Genomes allele frequencies as CADD recorded them, overall and per super-population (afr, amr, eur)."
+            },
+            "_license": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Licence URL for the CADD data."
+            },
+            "alt": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Alternate allele."
+            },
+            "anc": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Inferred ancestral allele, e.g. 'G'. Differs from `ref` where the reference carries the derived allele."
+            },
+            "annotype": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "What the position is, e.g. 'Intergenic', 'CodingTranscript'. The context every other CADD field has to be read in."
+            },
+            "bstatistic": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Background-selection statistic, e.g. 802. Low values mean strong linked selection."
+            },
+            "chmm": {
+              "description": "ChromHMM state coverage at the position, keyed by state (enh, het, quies, tssa and the rest). The regulatory context."
+            },
+            "chrom": {
+              "description": "Chromosome, as CADD records it."
+            },
+            "consdetail": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Consequence detail, e.g. 'intergenic'."
+            },
+            "consscore": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "CADD's numeric consequence severity rank."
+            },
+            "cpg": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "CpG content of the surrounding window."
+            },
+            "dna": {
+              "description": "DNA shape features at the position: helt, mgw, prot, roll."
+            },
+            "encode": {
+              "description": "ENCODE signal at the position: h3k27ac, h3k4me1, h3k4me3 and nucleosome occupancy."
+            },
+            "fitcons": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "fitCons functional-constraint score, e.g. 0.065712: the fraction of sites in this class under selection."
+            },
+            "gc": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "GC content of the surrounding window, e.g. 0.29."
+            },
+            "gerp": {
+              "description": "GERP constraint scores: `n` the neutral rate and `s` the observed substitution deficit."
+            },
+            "isderived": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "'TRUE' when the alternate allele is the derived one."
+            },
+            "isknownvariant": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "'TRUE' when the variant was already in the training data - a CADD score on a known variant is not an independent prediction."
+            },
+            "istv": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "'TRUE' for a transversion, 'FALSE' for a transition."
+            },
+            "length": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Length of the change; 0 for a substitution."
+            },
+            "mapability": {
+              "description": "Mappability at 20bp and 35bp read lengths. Low mappability means the call itself is less trustworthy, which is a caveat on everything else."
+            },
+            "min_dist_tse": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Distance to the nearest transcription end site."
+            },
+            "min_dist_tss": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Distance to the nearest transcription start site, e.g. 24354."
+            },
+            "motif": {
+              "description": "Transcription-factor motif evidence: distance to the motif and how much it overlaps."
+            },
+            "mutindex": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Mutability index for the position."
+            },
+            "phast_cons": {
+              "description": "PhastCons conservation probabilities, per clade: mammalian, primate, vertebrate."
+            },
+            "phylop": {
+              "description": "PhyloP conservation scores, per clade: mammalian, primate, vertebrate. Positive means conserved. One of the main inputs to the CADD score, and a caller checking whether a position is constrained needs it directly."
+            },
+            "pos": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Position on that chromosome."
+            },
+            "rawscore": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "CADD's raw deleteriousness score, e.g. -0.106892. Unscaled: compare it only within one CADD version. The PHRED-scaled form is the one usually quoted, and neither was declared."
+            },
+            "ref": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Reference allele."
+            },
+            "segway": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Segway genome-segmentation label for the position, e.g. 'F0'."
+            },
+            "type": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Variant type, e.g. 'SNV'."
             }
           }
         },
         "gnomad_genome": {
           "type": "object",
           "description": "gnomAD genome allele frequencies"
+        },
+        "_version": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "MyVariant's internal document version for the record."
         }
       }
     }

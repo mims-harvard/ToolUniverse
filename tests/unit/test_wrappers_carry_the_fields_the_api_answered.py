@@ -7591,3 +7591,37 @@ def test_an_address_split_across_forty_five_keys_says_so():
         "a summary report counted as one event undercounts, and the "
         "declaration has to say so"
     )
+
+
+def test_a_cadd_block_declares_more_than_four_of_its_thirty_six_fields():
+    """MyVariant named `cadd` and described four fields of it.
+
+    A response carries 36. The raw CADD score was one of the missing ones,
+    and so was every conservation measure the score is built from - phylop
+    and phast_cons per clade, gerp, fitcons, the background-selection
+    statistic. A caller asking "is this position constrained?" had the
+    answer in the payload and nothing in the schema to say so.
+
+    Three of them are caveats rather than measurements. `isknownvariant`
+    TRUE means the variant was in CADD's training data, so the score is not
+    an independent prediction. `mapability` at 20bp and 35bp says how much
+    the underlying call can be trusted at all. And `annotype` -
+    'Intergenic' here - is the context every other CADD number has to be
+    read in.
+
+    dbsnp had the same shape, and `hg19` is the one that matters: the
+    top-level coordinates are hg38, so a GRCh37 pipeline needs this block
+    and conflating the two is a silent error.
+    """
+    for tool in ("MyVariant_get_variant_annotation", "MyVariant_query_variants"):
+        schema = json.dumps(_config(tool).get("return_schema"))
+        for field in ('"rawscore"', '"phylop"', '"phast_cons"', '"gerp"',
+                      '"fitcons"', '"isknownvariant"', '"mapability"',
+                      '"annotype"', '"dbsnp_build"', '"hg19"'):
+            assert field in schema, f"{tool} returns {field} undeclared"
+        assert "not an independent prediction" in schema, (
+            "a CADD score on a training variant needs that caveat"
+        )
+        assert "silent error" in schema, (
+            "the hg38/hg19 split has to be stated, not implied"
+        )
