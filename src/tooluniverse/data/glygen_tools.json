@@ -587,6 +587,27 @@
               },
               "hit_score": {
                 "type": "number"
+              },
+              "publication_count": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "How many papers GlyGen records for the glycan. The row reported counts of proteins, enzymes and species and not this one."
+              },
+              "pubmed_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "PubMed ids of those papers. GlyGen sends them as one semicolon-joined string ('37485378; 30251656; ...'), which a caller taking it whole would read as a single 36-id identifier, so it is split here."
+              },
+              "image_url": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "GlyGen's rendering of the glycan structure, e.g. https://api.glygen.org/glycan/image/G62765YT."
               }
             }
           }

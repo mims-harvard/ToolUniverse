@@ -224,6 +224,21 @@ class CellosaurusSearchTool(BaseTool):
                 if "cell-line-list" in cellosaurus_data:
                     cell_lines = cellosaurus_data["cell-line-list"]
                     total_count = len(cell_lines)
+                    # The response has TWO top-level keys and this returned
+                    # one of them. Each cell line keeps its `reference-list`,
+                    # whose entries are bare pointers like
+                    # {"resource-internal-ref": "CelloPub=CLPUB00047"} -- and
+                    # the table they point into is the `publication-list` that
+                    # was being discarded. For HeLa that is 83 references, all
+                    # 83 resolvable, handed back as 83 opaque strings, many of
+                    # them Cellosaurus-internal ids that resolve to nothing
+                    # public. Nothing was missing from the row; the row could
+                    # not be used. The detail tool already had the resolver.
+                    for cell_line in cell_lines:
+                        if isinstance(cell_line, dict):
+                            cell_line["publications"] = _cell_line_publications(
+                                cellosaurus_data, cell_line
+                            )
 
             return {
                 "success": True,

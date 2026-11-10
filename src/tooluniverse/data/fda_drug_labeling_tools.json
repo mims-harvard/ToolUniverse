@@ -136,6 +136,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -358,6 +365,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -585,6 +599,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -775,6 +796,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -1001,6 +1029,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -1190,6 +1225,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -1417,6 +1459,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -1683,6 +1732,13 @@
                   "type": "string"
                 },
                 "description": "UNII codes of the product's substances. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -1917,6 +1973,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -2116,6 +2179,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -2375,6 +2445,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -2608,6 +2685,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -2796,6 +2880,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -3062,6 +3153,13 @@
                   "type": "string"
                 },
                 "description": "NUI identifiers of the pharmacologic classes above, e.g. ['N0000000160', 'M0001335']. Join on these instead of string-matching a class label. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -3289,6 +3387,13 @@
                   "type": "string"
                 },
                 "description": "NUI identifiers of the pharmacologic classes above, e.g. ['N0000000160', 'M0001335']. Join on these instead of string-matching a class label. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -3502,6 +3607,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -3694,6 +3806,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -3922,6 +4041,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -4115,6 +4241,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -4343,6 +4476,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -4530,6 +4670,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -4758,6 +4905,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -4978,6 +5132,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -5209,6 +5370,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -5399,6 +5567,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -5639,6 +5814,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -5905,6 +6087,13 @@
                   "type": "string"
                 },
                 "description": "NUI identifiers of the pharmacologic classes above, e.g. ['N0000000160', 'M0001335']. Join on these instead of string-matching a class label. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -6145,6 +6334,13 @@
                   "type": "string"
                 },
                 "description": "NUI identifiers of the pharmacologic classes above, e.g. ['N0000000160', 'M0001335']. Join on these instead of string-matching a class label. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -6383,6 +6579,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -6583,6 +6786,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -6821,6 +7031,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -7041,6 +7258,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -7283,6 +7507,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -7476,6 +7707,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -7687,6 +7925,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -7877,6 +8122,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -8105,6 +8357,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -8291,6 +8550,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -8499,6 +8765,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -8715,6 +8988,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -8905,6 +9185,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -9116,6 +9403,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -9306,6 +9600,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -9534,6 +9835,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -9721,6 +10029,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -9949,6 +10264,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -10189,6 +10511,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -10358,7 +10687,8 @@
             "type": "object",
             "properties": {
               "effective_time": {
-                "type": "string"
+                "type": "string",
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               },
               "indications_and_usage": {
                 "type": [
@@ -10577,7 +10907,8 @@
                 }
               },
               "effective_time": {
-                "type": "string"
+                "type": "string",
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               },
               "spl_product_data_elements": {
                 "type": [
@@ -10803,6 +11134,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -10990,6 +11328,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -11256,6 +11601,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -11462,6 +11814,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -11691,6 +12050,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -11923,6 +12289,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -12113,6 +12486,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -12324,6 +12704,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -12565,6 +12952,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -12771,6 +13165,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -12957,6 +13358,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -13157,6 +13565,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -13342,6 +13757,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -13552,6 +13974,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -13741,6 +14170,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -13961,6 +14397,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -14151,6 +14594,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -14391,6 +14841,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -14583,6 +15040,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -14793,6 +15257,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -15030,6 +15501,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -15216,6 +15694,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -15421,6 +15906,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -15608,6 +16100,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -15836,6 +16335,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -16026,6 +16532,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -16237,6 +16750,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -16427,6 +16947,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -16664,6 +17191,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -16853,6 +17387,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -17104,6 +17645,13 @@
                   "type": "string"
                 },
                 "description": "NUI identifiers of the pharmacologic classes above, e.g. ['N0000000160', 'M0001335']. Join on these instead of string-matching a class label. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -17372,6 +17920,13 @@
                   "type": "string"
                 },
                 "description": "NUI identifiers of the pharmacologic classes above, e.g. ['N0000000160', 'M0001335']. Join on these instead of string-matching a class label. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -17572,6 +18127,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -17771,6 +18333,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -17997,6 +18566,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -18186,6 +18762,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -18413,6 +18996,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -18600,6 +19190,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -18827,6 +19424,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -19016,6 +19620,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -19222,6 +19833,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -19439,6 +20057,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -19670,6 +20295,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -19859,6 +20491,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -20065,6 +20704,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -20252,6 +20898,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -20458,6 +21111,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -20643,6 +21303,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -20870,6 +21537,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -21060,6 +21734,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -21305,6 +21986,13 @@
                   "type": "string"
                 },
                 "description": "NUI identifiers of the pharmacologic classes above, e.g. ['N0000000160', 'M0001335']. Join on these instead of string-matching a class label. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -21532,6 +22220,13 @@
                   "type": "string"
                 },
                 "description": "NUI identifiers of the pharmacologic classes above, e.g. ['N0000000160', 'M0001335']. Join on these instead of string-matching a class label. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -21738,6 +22433,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -21926,6 +22628,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -22208,6 +22917,13 @@
                   "type": "string"
                 },
                 "description": "NUI identifiers of the pharmacologic classes above, e.g. ['N0000000160', 'M0001335']. Join on these instead of string-matching a class label. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -22448,6 +23164,13 @@
                   "type": "string"
                 },
                 "description": "NUI identifiers of the pharmacologic classes above, e.g. ['N0000000160', 'M0001335']. Join on these instead of string-matching a class label. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -22659,6 +23382,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -22898,6 +23628,13 @@
                   "type": "string"
                 },
                 "description": "The 'precautions' section as the HTML table markup SPL carries it, when the label formats that section as a table. Measured over 500 labels: no section ever had a table without its prose, and every distinct word of a sampled table also appeared in 'precautions' - so this is the same content, not extra content. Read it when the row and column structure carries the meaning (which drug, which effect, which clinical comment), which the prose flattens into one string. Null when the label has no precautions table."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -23130,6 +23867,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -23320,6 +24064,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -23530,6 +24281,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -23731,6 +24489,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -23942,6 +24707,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -24159,6 +24931,13 @@
                   "type": "string"
                 },
                 "description": "The 'recent_major_changes' section as the HTML table markup SPL carries it, when the label formats that section as a table. Measured over 500 labels: no section ever had a table without its prose, and every distinct word of a sampled table also appeared in 'recent_major_changes' - so this is the same content, not extra content. Read it when the row and column structure carries the meaning (which drug, which effect, which clinical comment), which the prose flattens into one string. Null when the label has no recent_major_changes table."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -24368,6 +25147,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -24556,6 +25342,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -24782,6 +25575,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -24989,6 +25789,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -25174,6 +25981,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -25413,6 +26227,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -25604,6 +26425,13 @@
                   "type": "string"
                 },
                 "description": "Product/ingredient identity string from the SPL record (e.g. 'Ethyol amifostine AMIFOSTINE AMIFOSTINE'). Populated on records whose 'openfda' block is empty and therefore whose openfda.brand_name / openfda.generic_name come back null; use it to confirm which product a row describes when those two fields are unavailable."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -25830,6 +26658,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -26017,6 +26852,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -26219,6 +27061,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -26425,6 +27274,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -26620,6 +27476,13 @@
                   "type": "string"
                 },
                 "description": "The 'spl_indexing_data_elements' section as the HTML table markup SPL carries it, when the label formats that section as a table. Measured over 500 labels: no section ever had a table without its prose, and every distinct word of a sampled table also appeared in 'spl_indexing_data_elements' - so this is the same content, not extra content. Read it when the row and column structure carries the meaning (which drug, which effect, which clinical comment), which the prose flattens into one string. Null when the label has no spl_indexing_data_elements table."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -26859,6 +27722,13 @@
                   "type": "string"
                 },
                 "description": "The 'spl_medguide' section as the HTML table markup SPL carries it, when the label formats that section as a table. Measured over 500 labels: no section ever had a table without its prose, and every distinct word of a sampled table also appeared in 'spl_medguide' - so this is the same content, not extra content. Read it when the row and column structure carries the meaning (which drug, which effect, which clinical comment), which the prose flattens into one string. Null when the label has no spl_medguide table."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -27060,6 +27930,13 @@
                   "type": "string"
                 },
                 "description": "The 'spl_medguide' section as the HTML table markup SPL carries it, when the label formats that section as a table. Measured over 500 labels: no section ever had a table without its prose, and every distinct word of a sampled table also appeared in 'spl_medguide' - so this is the same content, not extra content. Read it when the row and column structure carries the meaning (which drug, which effect, which clinical comment), which the prose flattens into one string. Null when the label has no spl_medguide table."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -27278,6 +28155,13 @@
                   "type": "string"
                 },
                 "description": "The 'spl_patient_package_insert' section as the HTML table markup SPL carries it, when the label formats that section as a table. Measured over 500 labels: no section ever had a table without its prose, and every distinct word of a sampled table also appeared in 'spl_patient_package_insert' - so this is the same content, not extra content. Read it when the row and column structure carries the meaning (which drug, which effect, which clinical comment), which the prose flattens into one string. Null when the label has no spl_patient_package_insert table."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -27465,6 +28349,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -27682,6 +28573,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -27862,6 +28760,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -28073,6 +28978,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -28282,6 +29194,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -28471,6 +29390,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -28680,6 +29606,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -28869,6 +29802,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -29096,6 +30036,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -29280,6 +30227,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -29507,6 +30461,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -29694,6 +30655,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -29924,6 +30892,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -30114,6 +31089,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -30352,6 +31334,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -30584,6 +31573,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -30774,6 +31770,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -31016,6 +32019,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -31281,6 +32291,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -31523,6 +32540,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -31712,6 +32736,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -31910,6 +32941,13 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -32120,6 +33158,13 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }
@@ -32340,6 +33385,13 @@
                   "type": "string"
                 },
                 "description": "The 'purpose' section as the HTML table markup SPL carries it, when the label formats that section as a table. Measured over 500 labels: no section ever had a table without its prose, and every distinct word of a sampled table also appeared in 'purpose' - so this is the same content, not extra content. Read it when the row and column structure carries the meaning (which drug, which effect, which clinical comment), which the prose flattens into one string. Null when the label has no purpose table."
+              },
+              "effective_time": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The date this label version took effect, as YYYYMMDD, e.g. '20260429'. Every openFDA label carries it and labels are revised: a search can return a 2019 label beside a 2026 one and, without this, the two read identically. Read it before treating a warnings, dosage or interaction section as current."
               }
             }
           }

@@ -1807,6 +1807,15 @@ def search_openfda(
     # that check possible. It is added as an identity field so it can never
     # change which records are kept.
     identity_fields = []
+    # WHEN the label was written. Every openFDA label carries it -- 500 of 500
+    # in a sample, spread over 2017 to 2026 -- and 150 of the 152 tools in
+    # this family dropped it; the two that keep it exist for nothing else. So
+    # a warnings or dosage answer came back with no way to tell a label
+    # revised last month from one last touched in 2017, and the two read
+    # identically. Unconditional, because the date is a property of every
+    # label and not of what the tool asked for, and an identity field because
+    # it must not join the `_exists_` guard.
+    identity_fields.append("effective_time")
     if (
         any(
             x in {"openfda.brand_name", "openfda.generic_name"} for x in required_fields

@@ -44,6 +44,13 @@ _EVIDENCE_DIGEST_FIELDS = {
     "geneAssociatedWithLongevityEffects": (
         "longevityEffect",
         "dataType",
+        # What KIND of study found it, and in what kind of variant. Measured
+        # over 183 association records across ten genes: studyType is filled
+        # on 98% of them and polymorphismType on 97%, and a longevity
+        # association from a GWAS is not the same claim as one from a
+        # candidate-gene study.
+        "studyType",
+        "polymorphismType",
         "ethnicity",
         "sex",
     ),
@@ -58,6 +65,26 @@ _EVIDENCE_DIGEST_FIELDS = {
     "additionalEvidences": (),
 }
 DOIS_PER_EVIDENCE_TYPE = 25
+# How many individual longevity-association records come back per gene. The
+# statistical fields only mean anything attached to their own record, so they
+# cannot go in the distinct-value digest; they need the records.
+ASSOCIATIONS_PER_GENE = 25
+_ASSOCIATION_RECORD_FIELDS = (
+    "longevityEffect",
+    "polymorphismId",
+    "polymorphismType",
+    "studyType",
+    "significance",
+    "pValue",
+    "associatedAllele",
+    "nonAssociatedAllele",
+    "nOfExperiment",
+    "nOfControls",
+    "ethnicity",
+    "sex",
+    "doi",
+    "pmid",
+)
 VALUES_PER_EVIDENCE_FIELD = 25
 
 
@@ -91,6 +118,29 @@ def _evidence_digest(researches: Any) -> Dict[str, Any]:
                 if len(values) > VALUES_PER_EVIDENCE_FIELD:
                     entry[f"{field}_truncated"] = True
                     entry[f"{field}_distinct_count"] = len(values)
+        # The association records themselves, for the one evidence type whose
+        # claim is statistical. A digest collects DISTINCT values per field,
+        # which is right for categories and useless for a p-value: a list of
+        # distinct p-values is detached from the associations they belong to.
+        # Measured over 183 records: significance 98%, polymorphismId 98%,
+        # nOfExperiment 98%, nOfControls 96%, pValue 95% -- so a caller got
+        # the effect and could not tell whether to believe it, which cohort
+        # it came from, or which variant to look up. Capped, with the cap
+        # disclosed.
+        if key == "geneAssociatedWithLongevityEffects":
+            associations = []
+            for row in rows[:ASSOCIATIONS_PER_GENE]:
+                association = {
+                    field: row.get(field)
+                    for field in _ASSOCIATION_RECORD_FIELDS
+                    if row.get(field) not in (None, "")
+                }
+                if association:
+                    associations.append(association)
+            if associations:
+                entry["associations"] = associations
+                entry["associations_returned"] = len(associations)
+                entry["associations_truncated"] = len(rows) > ASSOCIATIONS_PER_GENE
         dois = _distinct(rows, "doi")
         if dois:
             entry["dois"] = dois[:DOIS_PER_EVIDENCE_TYPE]

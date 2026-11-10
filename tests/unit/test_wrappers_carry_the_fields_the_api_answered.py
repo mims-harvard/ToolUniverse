@@ -6741,3 +6741,128 @@ def test_a_gene_search_says_whether_the_symbol_is_current():
     assert "no longer the current symbol" in json.dumps(genes), (
         "the declaration has to say what a non-current hgnc_status means"
     )
+
+
+def test_every_fda_label_says_when_it_was_written():
+    """A 2019 label and a 2026 one came back indistinguishable.
+
+    Every openFDA label carries `effective_time` - 500 of 500 in a sample,
+    spread over 2017 to 2026 - and 150 of the 152 tools in the family dropped
+    it. The two that keep it exist for nothing else. So a warnings, dosage or
+    interaction answer arrived with no way to tell a label revised last month
+    from one last touched years ago, and one ibuprofen interactions query
+    returns a 20191028 label beside three from 2025 and 2026.
+
+    Unconditional, because the date is a property of every label rather than
+    of what the tool asked for, and an identity field because it must not
+    join the `_exists_` guard: measured against the parent, eight tools
+    across the family return the same rows in the same order.
+    """
+    source = _source("openfda_tool.py")
+    assert 'identity_fields.append("effective_time")' in source, (
+        "the label's date has to be an identity field, not a return_field: "
+        "return_fields feeds `exists`, which would restrict the answer set"
+    )
+    missing = []
+    for cfg in _fda_label_family():
+        results = ((cfg.get("return_schema") or {}).get("properties") or {}).get("results") or {}
+        props = ((results.get("items") or {}).get("properties")) or {}
+        schema = props.get("effective_time")
+        if not schema or not schema.get("description"):
+            missing.append(cfg["name"])
+    assert not missing, f"{len(missing)} tools do not declare effective_time: {missing[:5]}"
+    sample = _config("FDA_get_warnings_by_drug_name")["return_schema"]["properties"]["results"]["items"]["properties"]["effective_time"]
+    assert "YYYYMMDD" in sample["description"], (
+        "the format has to be stated: '20260429' is not a date any parser "
+        "guesses right"
+    )
+
+
+def test_a_cell_line_can_reach_the_paper_that_established_it():
+    """Cellosaurus answers with the records and the table they point into.
+
+    `/search/cell-line` returns two top-level keys, `cell-line-list` and
+    `publication-list`. The search returned the first verbatim - no field
+    selection at all, so every field-level check called it clean - and
+    discarded the second. Each cell line keeps its `reference-list`, whose
+    entries are bare pointers:
+
+        {"resource-internal-ref": "CelloPub=CLPUB00047"}
+
+    HeLa carries 83 of them and all 83 resolve against the discarded table.
+    The caller got 83 opaque strings, many of them Cellosaurus-internal ids
+    that resolve to nothing public - including CLPUB00047, which is Gey,
+    Coffman and Kubicek 1952, the paper that established HeLa.
+
+    So nothing was missing from the row and the row could not be used. The
+    detail tool already had the resolver; the search did not call it.
+    """
+    source = _source("cellosaurus_tool.py")
+    assert source.count("_cell_line_publications(") >= 3, (
+        "the resolver existed and only the detail tool called it; the search "
+        "has to call it too"
+    )
+    schema = json.dumps(_config("cellosaurus_search_cell_lines").get("return_schema"))
+    assert '"publications"' in schema, "the search returns publications undeclared"
+    assert '"cross_references"' in schema and '"authors"' in schema
+    assert "bare pointers" in schema or "reference-list" in schema, (
+        "the declaration should say what the field is for, or a reader will "
+        "not know reference-list is unusable without it"
+    )
+
+
+def test_a_longevity_association_carries_its_statistics():
+    """"longevity" with no p-value reads the same as a GWAS hit.
+
+    The evidence digest reports DISTINCT values per field, which is right for
+    categories and useless for a p-value: a list of distinct p-values is
+    detached from the associations they belong to. Measured over 183
+    association records across ten genes, significance is filled on 98%,
+    polymorphismId on 98%, nOfExperiment on 98%, nOfControls on 96% and
+    pValue on 95% - and none of them was returned.
+
+    APOE's first association is "Non-significant", p=0.065, 74 cases against
+    320 controls. Before this it was reported as longevityEffect "longevity"
+    and nothing else, indistinguishable from a significant result.
+
+    studyType and polymorphismType do belong in the digest, because a set of
+    study kinds is a meaningful summary where a set of p-values is not.
+    """
+    source = _source("open_genes_tool.py")
+    assert "_ASSOCIATION_RECORD_FIELDS" in source and "ASSOCIATIONS_PER_GENE" in source
+    for field in ("polymorphismId", "pValue", "significance", "nOfControls"):
+        assert f'"{field}"' in source, f"OpenGenes answers with {field}"
+    schema = json.dumps(_config("OpenGenes_get_gene").get("return_schema"))
+    for field in ('"associations"', '"associations_truncated"', '"pValue"',
+                  '"polymorphismId"', '"studyType"'):
+        assert field in schema, f"{field} is returned and undeclared"
+    assert "0.065" in schema or "detached from the associations" in schema, (
+        "the declaration has to say why the records are there and the digest "
+        "is not enough"
+    )
+
+
+def test_a_glycan_search_carries_its_literature():
+    """Three counts were reported and the fourth, with its ids, was not.
+
+    The search row gave number_proteins, number_enzymes and number_species
+    while the response also carried publication_count (36 for the first hit)
+    and `publication` - the PMIDs themselves, joined with "; " into one
+    string. A caller taking that string whole would read 36 ids as one.
+    image_url, GlyGen's rendering of the structure, was dropped too.
+
+    This is the second tool in this effort whose upstream packs a list into
+    one delimited string; ENA's fastq_md5 was the first, and the fix is the
+    same: split it, and say in the declaration that the upstream joins it.
+    """
+    source = _source("glygen_tool.py")
+    assert '"pubmed_ids"' in source and 'split(";")' in source, (
+        "GlyGen joins the PMIDs with '; '; returning the string whole makes "
+        "36 ids look like one"
+    )
+    schema = json.dumps(_config("GlyGen_search_glycans").get("return_schema"))
+    for field in ('"pubmed_ids"', '"publication_count"', '"image_url"'):
+        assert field in schema, f"{field} is returned and undeclared"
+    assert "semicolon" in schema, (
+        "the declaration has to say the upstream sends one joined string"
+    )

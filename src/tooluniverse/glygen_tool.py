@@ -386,6 +386,20 @@ class GlyGenTool(BaseTool):
                     "number_proteins": item.get("number_proteins"),
                     "number_enzymes": item.get("number_enzymes"),
                     "number_species": item.get("number_species"),
+                    # The literature behind the glycan. The row reported
+                    # three counts -- proteins, enzymes, species -- and not
+                    # this one, while the response carried both the count and
+                    # the PMIDs themselves. GlyGen joins them with "; " into
+                    # one string, so a caller that took it whole would have
+                    # a single 36-id "identifier".
+                    "publication_count": item.get("publication_count"),
+                    "pubmed_ids": [
+                        pmid.strip()
+                        for pmid in str(item.get("publication") or "").split(";")
+                        if pmid.strip()
+                    ],
+                    # GlyGen renders every glycan; the link was in the row.
+                    "image_url": item.get("image_url"),
                     "hit_score": item.get("hit_score"),
                     "byonic": item.get("byonic"),
                 }

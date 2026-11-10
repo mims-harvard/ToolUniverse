@@ -37,7 +37,10 @@
       ]
     },
     "return_schema": {
-      "type": ["object", "null"],
+      "type": [
+        "object",
+        "null"
+      ],
       "properties": {
         "success": {
           "type": "boolean",
@@ -48,7 +51,122 @@
           "properties": {
             "cell_lines": {
               "type": "array",
-              "description": "List of matching cell lines"
+              "description": "Matching cell lines. Each row is Cellosaurus's own record, passed through as it comes, so its keys are Cellosaurus's and are not declared by name -- except 'publications', which this wrapper adds.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "publications": {
+                    "type": "array",
+                    "description": "The row's references, resolved. Cellosaurus answers with two top-level keys, cell-line-list and publication-list, and the row's own 'reference-list' holds only bare pointers into the second -- {\"resource-internal-ref\": \"CelloPub=CLPUB00047\"}. HeLa carries 83 of them, all 83 resolvable, and many are Cellosaurus-internal ids that resolve to nothing public. A reference the response does not inline is still listed, as its bare internal_id with a null title, so an unresolved citation is visible rather than dropped.",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "internal_id": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Cellosaurus's pointer for the reference, e.g. 'CelloPub=CLPUB00047' or 'PubMed=9892199'."
+                        },
+                        "type": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Publication type, e.g. 'article'."
+                        },
+                        "title": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Title. Null when the response did not inline this publication."
+                        },
+                        "journal_name": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Journal name."
+                        },
+                        "date": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Year of publication."
+                        },
+                        "volume": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Journal volume."
+                        },
+                        "first_page": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "First page."
+                        },
+                        "last_page": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Last page."
+                        },
+                        "authors": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "Author names, in order."
+                        },
+                        "author_count": {
+                          "type": "integer",
+                          "description": "Length of 'authors'."
+                        },
+                        "cross_references": {
+                          "type": "array",
+                          "description": "Identifiers for the publication -- PubMed, DOI, CelloPub -- each with a resolvable url where one exists.",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "database": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "accession": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "category": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "url": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "additionalProperties": true
+              }
             },
             "total": {
               "type": "integer",
@@ -107,7 +225,10 @@
       ]
     },
     "return_schema": {
-      "type": ["object", "null"],
+      "type": [
+        "object",
+        "null"
+      ],
       "properties": {
         "success": {
           "type": "boolean",
