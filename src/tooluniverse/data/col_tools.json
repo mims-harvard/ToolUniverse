@@ -274,6 +274,13 @@
                 "code": {
                   "type": "string",
                   "description": "Nomenclatural code: zoological, botanical, etc."
+                },
+                "id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Catalogue of Life id for the usage."
                 }
               }
             },
@@ -285,6 +292,20 @@
             },
             "parentId": {
               "type": "string"
+            },
+            "label": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Name and authorship joined, as CoL displays it."
+            },
+            "labelHtml": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The same label with CoL's HTML markup."
             }
           },
           "not": {
@@ -403,9 +424,30 @@
                   },
                   "childCount": {
                     "type": "integer"
+                  },
+                  "labelHtml": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The same label with CoL's HTML markup."
                   }
                 }
               }
+            },
+            "empty": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the page holds no rows. Checking 'result' is equivalent; CoL sends both."
+            },
+            "last": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when this is the final page, so paging can stop without another call."
             }
           },
           "not": {

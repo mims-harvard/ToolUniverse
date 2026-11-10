@@ -974,8 +974,122 @@
           }
         },
         "RNA tissue specific nTPM": {
-          "type": ["object", "null"],
+          "type": [
+            "object",
+            "null"
+          ],
           "description": "Tissue-specific nTPM values keyed by tissue, e.g. {'placenta': '61.8'}. Measured on ENSG00000146648 (EGFR). Null for genes with no tissue-specific enrichment."
+        },
+        "Gene description": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "HPA's one-line description of the gene product, e.g. 'Tumor protein p53'."
+        },
+        "Chromosome": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Chromosome the gene is on, e.g. '17'."
+        },
+        "Position": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Start-end coordinates on that chromosome, e.g. '7661779-7687538'."
+        },
+        "Protein class": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "HPA's classes for the protein, e.g. ['Cancer-related genes', 'Plasma proteins', 'Potential drug targets']. 'Potential drug targets' and the disease classes are the ones a target question turns on."
+        },
+        "Disease involvement": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Diseases and disease roles HPA records, e.g. ['Cancer-related genes', 'Disease variant', 'Li-Fraumeni syndrome', 'Tumor suppressor']."
+        },
+        "Molecular function": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Molecular functions, e.g. ['Activator', 'DNA-binding', 'Repressor']."
+        },
+        "Subcellular location": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "All subcellular locations HPA observed, e.g. ['Nucleoplasm', 'Vesicles', 'Cytosol']."
+        },
+        "Subcellular main location": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "The main location among them, e.g. ['Nucleoplasm']. Narrower than 'Subcellular location' and the one to quote."
+        },
+        "Secretome location": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Where HPA places the protein in the secretome, when it does. Null for proteins HPA does not classify as secreted."
+        },
+        "Evidence": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "HPA's evidence level for the protein's existence, e.g. 'Evidence at protein level'. The caveat on everything else in the record."
+        },
+        "Antibody": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "HPA antibody identifiers used to stain this protein, e.g. ['CAB002973', 'HPA051244']. The staining-based fields rest on these, so they are what makes an expression claim checkable."
+        },
+        "Antibody RRID": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "description": "RRID for each antibody above, keyed by antibody id. Null for antibodies with no RRID registered."
         }
       }
     }

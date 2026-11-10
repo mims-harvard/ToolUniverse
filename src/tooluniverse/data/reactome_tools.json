@@ -1018,6 +1018,13 @@
           "className": {
             "type": "string",
             "description": "Class name"
+          },
+          "species": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Species the reaction is annotated in, each with its dbId and name."
           }
         },
         "description": "Top-level pathway objects"
@@ -1264,6 +1271,20 @@
         "className": {
           "type": "string",
           "description": "Class name"
+        },
+        "maxDepth": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Depth of the event hierarchy below this reaction."
+        },
+        "species": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Species the reaction is annotated in, each with its dbId and name."
         }
       }
     }
@@ -1928,6 +1949,14 @@
           },
           "taxId": {
             "type": "string"
+          },
+          "className": {
+            "type": "string",
+            "description": "Class name"
+          },
+          "schemaClass": {
+            "type": "string",
+            "description": "Schema class (e.g., 'Reaction')"
           }
         }
       }
@@ -2148,6 +2177,10 @@
                 },
                 "stIdVersion": {
                   "type": "string"
+                },
+                "category": {
+                  "type": "string",
+                  "description": "Reaction category"
                 }
               }
             },
@@ -2187,6 +2220,34 @@
           "className": {
             "type": "string",
             "description": "Class name"
+          },
+          "category": {
+            "type": "string",
+            "description": "Reaction category"
+          },
+          "negativePrecedingEvent": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Events that must NOT have happened for this reaction to proceed, e.g. a futile cycle. Dropping these inverts part of the pathway logic."
+          },
+          "reviewStatus": {
+            "description": "How far the reaction has been through Reactome's review, as a term with a definition. What separates a curated reaction from a newly added one."
+          },
+          "species": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Species the reaction is annotated in, each with its dbId and name."
+          },
+          "summation": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Reactome's prose summary of the reaction, with its own dbId. The only field that explains what the reaction does."
           }
         },
         "description": "Detailed information about pathways, reactions, or other entities"

@@ -966,6 +966,13 @@
                   }
                 }
               }
+            },
+            "publication_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many papers GlyGen records for the glycan. The row reported counts of proteins, enzymes and species and not this one."
             }
           },
           "not": {

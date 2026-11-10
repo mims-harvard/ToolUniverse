@@ -291,6 +291,12 @@
               "integer",
               "null"
             ]
+          },
+          "sphinx_id": {
+            "description": "Allen's internal search-index id."
+          },
+          "structure_name_facet": {
+            "description": "Allen's internal facet id for the name."
           }
         }
       }
@@ -675,6 +681,12 @@
             "integer",
             "null"
           ]
+        },
+        "sphinx_id": {
+          "description": "Allen's internal search-index id."
+        },
+        "structure_name_facet": {
+          "description": "Allen's internal facet id for the name."
         }
       }
     }

@@ -6,19 +6,31 @@
       "type": "object",
       "properties": {
         "query": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Search query to filter phenotypes by code, name, or category (e.g., 'diabetes', 'breast cancer', 'asthma'). Case-insensitive."
         },
         "category": {
-          "type": ["string", "null"],
+          "type": [
+            "string",
+            "null"
+          ],
           "description": "Filter by disease category (e.g., 'Diabetes', 'circulatory', 'Neoplasms'). Case-insensitive substring match."
         },
         "min_cases": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Minimum number of cases required. Use to filter for well-powered phenotypes (e.g., 1000)."
         },
         "limit": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Maximum number of results to return (default 50)."
         },
         "offset": {
@@ -49,24 +61,71 @@
       "items": {
         "type": "object",
         "properties": {
-          "phenocode": {"type": "string"},
-          "phenostring": {"type": "string"},
-          "category": {"type": "string"},
-          "num_cases": {"type": "integer"},
-          "num_controls": {"type": "integer"},
-          "num_gw_significant": {"type": "integer"},
-          "category_index": {"type": ["integer", "null"], "description": "FinnGen's ordering of the phenotype within its category"},
-          "assoc_files": {"type": "array", "items": {"type": "string"}, "description": "Summary-statistics files behind the phenotype"},
-          "num_cases_prev": {"type": ["integer", "null"], "description": "Cases in the previous release, where the endpoint reports it"},
-          "num_controls_prev": {"type": ["integer", "null"], "description": "Controls in the previous release, where reported"},
+          "phenocode": {
+            "type": "string"
+          },
+          "phenostring": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "num_cases": {
+            "type": "integer"
+          },
+          "num_controls": {
+            "type": "integer"
+          },
+          "num_gw_significant": {
+            "type": "integer"
+          },
+          "category_index": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "FinnGen's ordering of the phenotype within its category"
+          },
+          "assoc_files": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Summary-statistics files behind the phenotype"
+          },
+          "num_cases_prev": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Cases in the previous release, where the endpoint reports it"
+          },
+          "num_controls_prev": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Controls in the previous release, where reported"
+          },
           "gc_lambda": {
-            "type": ["object", "null"],
+            "type": [
+              "object",
+              "null"
+            ],
             "description": "Genomic-control inflation factor by quantile. How a caller tells a usable GWAS from an inflated or, for a rare phenotype, deflated one: AB1_TUBERCULOSIS_MILIARY reads 0.38 at the 0.5 quantile",
             "properties": {
-              "0.001": {"type": "number"},
-              "0.01": {"type": "number"},
-              "0.1": {"type": "number"},
-              "0.5": {"type": "number"}
+              "0.001": {
+                "type": "number"
+              },
+              "0.01": {
+                "type": "number"
+              },
+              "0.1": {
+                "type": "number"
+              },
+              "0.5": {
+                "type": "number"
+              }
             }
           }
         }
@@ -84,7 +143,9 @@
           "description": "FinnGen phenotype code (e.g., 'T2D', 'I9_CHD', 'C3_BREAST', 'J10_ASTHMA'). Get valid codes from FinnGen_list_phenotypes."
         }
       },
-      "required": ["phenocode"]
+      "required": [
+        "phenocode"
+      ]
     },
     "fields": {
       "endpoint_type": "get_phenotype"
@@ -101,23 +162,69 @@
     "return_schema": {
       "type": "object",
       "properties": {
-        "phenocode": {"type": "string"},
-        "phenostring": {"type": "string"},
-        "category": {"type": "string"},
-        "num_cases": {"type": "integer"},
-        "num_controls": {"type": "integer"},
-        "num_gw_significant": {"type": "integer"},
-        "num_cases_prev": {"type": ["integer", "null"]},
-        "num_controls_prev": {"type": ["integer", "null"], "description": "Controls in the previous release, where reported"},
-        "category_index": {"type": ["integer", "null"], "description": "FinnGen's ordering of the phenotype within its category"},
-        "assoc_files": {"type": "array", "items": {"type": "string"}, "description": "Summary-statistics files behind the phenotype"},
+        "phenocode": {
+          "type": "string"
+        },
+        "phenostring": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string"
+        },
+        "num_cases": {
+          "type": "integer"
+        },
+        "num_controls": {
+          "type": "integer"
+        },
+        "num_gw_significant": {
+          "type": "integer"
+        },
+        "num_cases_prev": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "num_controls_prev": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Controls in the previous release, where reported"
+        },
+        "category_index": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "FinnGen's ordering of the phenotype within its category"
+        },
+        "assoc_files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Summary-statistics files behind the phenotype"
+        },
         "gc_lambda": {
-          "type": ["object", "null"],
+          "type": [
+            "object",
+            "null"
+          ],
           "properties": {
-            "0.001": {"type": "number"},
-            "0.01": {"type": "number"},
-            "0.1": {"type": "number"},
-            "0.5": {"type": "number"}
+            "0.001": {
+              "type": "number"
+            },
+            "0.01": {
+              "type": "number"
+            },
+            "0.1": {
+              "type": "number"
+            },
+            "0.5": {
+              "type": "number"
+            }
           }
         }
       }
@@ -134,7 +241,9 @@
           "description": "Genomic variant in chr:pos:ref:alt format (GRCh38). Examples: '19:44908684:T:C' (APOE rs429358), '10:112998590:C:T' (TCF7L2 rs7903146). Also accepts chr-pos-ref-alt format."
         }
       },
-      "required": ["variant"]
+      "required": [
+        "variant"
+      ]
     },
     "fields": {
       "endpoint_type": "get_variant_finemapping"
@@ -153,11 +262,108 @@
       "items": {
         "type": "object",
         "properties": {
-          "phenocode": {"type": "string"},
-          "chromosome": {"type": "integer"},
-          "start": {"type": "integer"},
-          "end": {"type": "integer"},
-          "type": {"type": "string"}
+          "phenocode": {
+            "type": "string",
+            "description": "FinnGen's endpoint code, e.g. 'M13_ARTHROPATHIES'. A code, not a name: read association.phenostring for what it means."
+          },
+          "chromosome": {
+            "type": "integer"
+          },
+          "start": {
+            "type": "integer"
+          },
+          "end": {
+            "type": "integer"
+          },
+          "type": {
+            "type": "string"
+          },
+          "path": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Path of the region's credible-set file on FinnGen's side, e.g. '/mnt/nfs/pheweb/r12/release/finemap/cred/M13_ARTHROPATHIES.chr19.43406745-46406745.cred1'. Identifies which credible set produced the interval."
+          },
+          "association": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "What the variant actually shows for this region's phenotype, joined on phenocode from the association rows in the same response. Null when FinnGen fine-mapped the phenotype but reported no phenome-wide row for it - which is 'not looked up', not 'no association'; metadata.regions_without_association counts those.",
+            "properties": {
+              "phenostring": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The phenotype in words, e.g. 'Arthropathies'. Without it the result is a FinnGen endpoint code and nothing else."
+              },
+              "category": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "FinnGen's ICD chapter for the endpoint, e.g. 'XIII Diseases of the musculoskeletal system and connective tissue (M13_)'."
+              },
+              "beta": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Effect size on FinnGen's scale; the sign says which allele raises risk, e.g. -0.031."
+              },
+              "mlogp": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "-log10 of the association p-value, e.g. 7.39 for p of about 4e-8. This is the number that says whether the association is real, and it was unreachable."
+              },
+              "maf": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Minor allele frequency in the whole cohort."
+              },
+              "maf_case": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Minor allele frequency in cases."
+              },
+              "maf_control": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Minor allele frequency in controls. Compare with maf_case: the difference is the association that beta summarises."
+              },
+              "n_case": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Cases in the analysis, e.g. 185233."
+              },
+              "n_control": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Controls in the analysis, e.g. 315115."
+              },
+              "n_sample": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Total samples. A large mlogp on a few hundred cases is not the same evidence as the same value on half a million."
+              }
+            }
+          }
         }
       }
     }
@@ -177,7 +383,10 @@
           "description": "Genomic region in chr:start-end format (GRCh38). Example: '9:22000000-22200000' for the CDKN2A/B locus on chromosome 9."
         }
       },
-      "required": ["phenocode", "region"]
+      "required": [
+        "phenocode",
+        "region"
+      ]
     },
     "fields": {
       "endpoint_type": "get_region_associations"
@@ -199,18 +408,50 @@
         "phenotype": {
           "type": "object",
           "properties": {
-            "phenocode": {"type": "string"},
-            "phenostring": {"type": ["string", "null"]},
-            "num_cases": {"type": ["integer", "null"]},
-            "num_controls": {"type": ["integer", "null"]}
+            "phenocode": {
+              "type": "string"
+            },
+            "phenostring": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "num_cases": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "num_controls": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
           }
         },
         "region": {
           "type": "object",
           "properties": {
-            "chromosome": {"type": ["integer", "null"]},
-            "start": {"type": ["integer", "null"]},
-            "end": {"type": ["integer", "null"]}
+            "chromosome": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "start": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "end": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            }
           }
         },
         "credible_sets": {
@@ -218,24 +459,90 @@
           "items": {
             "type": "object",
             "properties": {
-              "region_id": {"type": ["string", "null"]},
-              "chromosome": {"type": ["integer", "null"]},
-              "start": {"type": ["integer", "null"]},
-              "end": {"type": ["integer", "null"]},
+              "region_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "chromosome": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "start": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "end": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
               "lead_variants": {
                 "type": "array",
                 "items": {
                   "type": "object",
                   "properties": {
-                    "variant_id": {"type": ["string", "null"]},
-                    "rsid": {"type": ["string", "null"]},
-                    "chromosome": {"type": ["string", "integer", "null"]},
-                    "position": {"type": ["integer", "null"]},
-                    "ref": {"type": ["string", "null"]},
-                    "alt": {"type": ["string", "null"]},
-                    "maf": {"type": ["number", "null"]},
-                    "posterior_probability": {"type": ["number", "null"]},
-                    "credible_set": {"type": ["integer", "null"]}
+                    "variant_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "rsid": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "chromosome": {
+                      "type": [
+                        "string",
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "position": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    },
+                    "ref": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "alt": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "maf": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "posterior_probability": {
+                      "type": [
+                        "number",
+                        "null"
+                      ]
+                    },
+                    "credible_set": {
+                      "type": [
+                        "integer",
+                        "null"
+                      ]
+                    }
                   }
                 }
               }

@@ -264,6 +264,13 @@
               },
               "organism": {
                 "type": "string"
+              },
+              "model_bigg_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "BiGG's id for the model, e.g. 'iJO1366'."
               }
             }
           }
@@ -341,6 +348,20 @@
             },
             "models_containing_reaction": {
               "type": "array"
+            },
+            "escher_maps": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "Escher pathway maps available for the model, each with a map_name such as 'iJO1366.Nucleotide metabolism'. These are what make the model viewable rather than only solvable."
+            },
+            "model_bigg_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "BiGG's id for the model, e.g. 'iJO1366'."
             }
           }
         },

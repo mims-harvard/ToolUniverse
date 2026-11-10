@@ -2645,7 +2645,19 @@ class HPAGetGeneJSONTool(HPAJsonApiTool):
         if "error" in data:
             return data
 
-        # Convert to response similar to original JSON format for compatibility
+        # The six keys below are the shape this tool has always returned and
+        # they are unchanged, so nothing reading them breaks. What follows
+        # them was being fetched and thrown away: `_make_api_request` pulls
+        # HPA's whole record -- the comment above it says "comprehensive
+        # information" -- and the compatibility shim kept six keys of it.
+        #
+        # For TP53 that discarded Disease involvement ["Cancer-related
+        # genes", "Disease variant", "Li-Fraumeni syndrome", "Tumor
+        # suppressor"], a Protein class listing "Potential drug targets",
+        # the subcellular localisation, the chromosome and position, and the
+        # antibodies HPA validated the staining with. A tool for "basic gene
+        # information" that cannot say where the protein is or what disease
+        # it is involved in is narrower than basic.
         return {
             "Ensembl": ensembl_id,
             "Gene": data.get("Gene", ""),
@@ -2653,6 +2665,18 @@ class HPAGetGeneJSONTool(HPAJsonApiTool):
             "Uniprot": data.get("Uniprot", ""),
             "Biological process": data.get("Biological process", ""),
             "RNA tissue specific nTPM": data.get("RNA tissue specific nTPM", ""),
+            "Gene description": data.get("Gene description"),
+            "Chromosome": data.get("Chromosome"),
+            "Position": data.get("Position"),
+            "Protein class": data.get("Protein class"),
+            "Disease involvement": data.get("Disease involvement"),
+            "Molecular function": data.get("Molecular function"),
+            "Subcellular location": data.get("Subcellular location"),
+            "Subcellular main location": data.get("Subcellular main location"),
+            "Secretome location": data.get("Secretome location"),
+            "Evidence": data.get("Evidence"),
+            "Antibody": data.get("Antibody"),
+            "Antibody RRID": data.get("Antibody RRID"),
         }
 
 

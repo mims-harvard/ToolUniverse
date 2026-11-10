@@ -7128,3 +7128,129 @@ def test_a_lineage_entry_says_which_nomenclatural_code_governs_it():
         assert field in branch, f"{field} has to be in the success branch"
     schema = json.dumps(rs)
     assert '"code"' in schema and "ZOOLOGICAL" in schema
+
+
+def test_a_finemapping_result_carries_the_association():
+    """FinnGen answers with the regions and the statistics side by side.
+
+    `/api/variant/<v>` returns three top-level keys: `regions`, 455 interval
+    definitions carrying a phenocode and nothing else; `results`, 2470
+    association rows carrying beta, mlogp, maf, n_case, n_control and
+    `phenostring`, the phenotype in words; and `variant`. The wrapper
+    returned the first.
+
+    So a tool whose description promises "which disease associations a
+    variant contributes to" answered with `M13_ARTHROPATHIES` and no effect
+    size, no p-value and no phenotype name. Joined on phenocode, that row is
+    now Arthropathies, beta -0.031, mlogp 7.39 - p of about 4e-8 - on 185,233
+    cases against 315,115 controls. All 455 regions matched a row.
+
+    metadata counts the regions that did not, because a null association is
+    "FinnGen reported no phenome-wide row" and not "no association", and the
+    two must not read alike.
+    """
+    source = _source("finngen_tool.py")
+    assert 'data.get("results")' in source, (
+        "the association rows are a sibling of `regions` in the same "
+        "response and were being discarded"
+    )
+    assert "by_pheno" in source and "association_of" in source
+    assert "regions_without_association" in source, (
+        "a region with no association row has to be distinguishable from one "
+        "with no association"
+    )
+    schema = json.dumps(_config("FinnGen_get_variant_finemapping").get("return_schema"))
+    for field in ('"phenostring"', '"mlogp"', '"beta"', '"n_case"', '"n_control"', '"path"'):
+        assert field in schema, f"FinnGen_get_variant_finemapping returns {field} undeclared"
+    assert "not looked up" in schema
+
+
+def test_basic_gene_information_includes_the_disease():
+    """HPA fetched the whole record and a compatibility shim kept six keys.
+
+    `_make_api_request` pulls HPA's full gene record - its own comment says
+    "comprehensive information" - and the return statement selected six keys
+    to match the shape this tool used to have. For TP53 that discarded
+    Disease involvement (Li-Fraumeni syndrome, Tumor suppressor), a Protein
+    class listing "Potential drug targets", the subcellular localisation, the
+    chromosome and position, and the antibodies the staining rests on.
+
+    The six original keys are untouched and in the same order, so nothing
+    reading them breaks; twelve are added beside them. A tool for "basic gene
+    information" that cannot say where the protein is or what disease it is
+    involved in was narrower than basic.
+    """
+    source = _source("hpa_tool.py")
+    for key in ("Disease involvement", "Protein class", "Subcellular location",
+                "Antibody", "Gene description"):
+        assert f'data.get("{key}")' in source, f"HPA answers with {key!r} and dropped it"
+    assert '"Gene": data.get("Gene", "")' in source, (
+        "the six original keys have to stay exactly as they were"
+    )
+    schema = json.dumps(_config("HPA_get_gene_basic_info_by_ensembl_id").get("return_schema"))
+    for field in ('"Disease involvement"', '"Protein class"', '"Subcellular main location"',
+                  '"Antibody RRID"', '"Evidence"'):
+        assert field in schema, f"HPA returns {field} undeclared"
+
+
+def test_both_stereochemistry_checks_declare_the_same_evidence():
+    """The alpha tool was fixed and the beta one carried the same gaps.
+
+    Seventeen paths, the same seventeen: counts_by_chain, center_details, the
+    thresholds, the coverage counts and `scope`. They are one tool twice.
+
+    The reused descriptions are rewritten where the meaning differs, and it
+    differs in ways that matter: beta's expected_orientation is 'natural' or
+    'opposite' rather than 'L' or 'D', and only Ile and Thr have a checkable
+    beta centre at all - 14 of 1UBQ's 76 residues - so eligible_beta_residues
+    and beta_check_applicable are what stop "all centres match" being read as
+    a statement about the structure.
+    """
+    cfg = _config("PDB_check_beta_stereochemistry")
+    props = cfg["return_schema"]["oneOf"][0]["properties"]["data"]["properties"]
+    for field in ("counts_by_chain", "center_details", "scope", "matched_centers",
+                  "minimum_normalized_volume", "glycine_nonchiral_residues",
+                  "eligible_beta_residues", "beta_check_applicable"):
+        assert field in props, f"PDB_check_beta_stereochemistry returns {field} undeclared"
+    assert "natural" in json.dumps(props["expected_orientation"]), (
+        "beta's orientations are natural/opposite; copying alpha's L/D "
+        "description would be wrong"
+    )
+    assert "neither Ile nor Thr" in json.dumps(props), (
+        "a high residues_without_eligible_beta_center is normal and the "
+        "declaration has to say so"
+    )
+    alpha = _config("PDB_check_alpha_stereochemistry")["return_schema"]["oneOf"][0]["properties"]["data"]["properties"]
+    assert "L/D" in json.dumps(alpha["expected_orientation"]) or "'L'" in json.dumps(alpha["expected_orientation"])
+
+
+def test_the_sibling_sweep_reached_the_siblings():
+    """One tool per family was fixed and its siblings were left.
+
+    Measured: after four batches I re-read the 608 tools whose config files
+    this effort had touched, and 124 still had declarable gaps - almost all
+    of them siblings of a tool just fixed. BioTools_get_tool was done and its
+    four search tools were not. CoL_search_species was done and CoL_get_taxon
+    was not. The alpha stereochemistry tool was done and the beta one had the
+    same seventeen.
+
+    This is the lesson the skill already carried, measured on my own work.
+    103 declarations were reusable by name across sixteen families; the rest
+    are fields the donor did not have and need their own measurements.
+    """
+    for tool, fields in (
+        ("BioTools_search", ('"publication"', '"lastUpdate"')),
+        ("CoL_get_taxon", ('"rank"', '"status"')),
+        ("PRIDE_search_proteomics", ('"submissionType"',)),
+        ("Reactome_query_by_ids", ('"compartment"', '"summation"')),
+        ("PharmGKB_search_genes", ('"vipTier"',)),
+        ("NIHReporter_get_project", ('"organization_uei"', '"organization_state"')),
+        ("cBioPortal_get_samples", ('"uniquePatientKey"',)),
+        ("AllenBrain_get_structure", ('"safe_name"',)),
+    ):
+        schema = json.dumps(_config(tool).get("return_schema"))
+        for field in fields:
+            assert field in schema, (
+                f"{tool} is a sibling of a tool already fixed and still does "
+                f"not declare {field}"
+            )

@@ -618,6 +618,20 @@
           },
           "studyId": {
             "type": "string"
+          },
+          "uniquePatientKey": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "cBioPortal's opaque per-patient key. Two samples sharing it are from one patient, which is what stops a paired primary and metastasis being counted as two patients."
+          },
+          "uniqueSampleKey": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "cBioPortal's opaque per-sample key, base64 of sample and study."
           }
         }
       }
@@ -673,6 +687,13 @@
           },
           "studyId": {
             "type": "string"
+          },
+          "uniquePatientKey": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "cBioPortal's opaque per-patient key. Two samples sharing it are from one patient, which is what stops a paired primary and metastasis being counted as two patients."
           }
         }
       }
@@ -968,6 +989,20 @@
           },
           "studyId": {
             "type": "string"
+          },
+          "uniquePatientKey": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "cBioPortal's opaque per-patient key. Two samples sharing it are from one patient, which is what stops a paired primary and metastasis being counted as two patients."
+          },
+          "uniqueSampleKey": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "cBioPortal's opaque per-sample key, base64 of sample and study."
           }
         }
       }

@@ -212,6 +212,36 @@ class FinnGenTool(BaseTool):
         resp.raise_for_status()
         data = resp.json()
 
+        # FinnGen answers with THREE top-level keys and this returned one of
+        # them. `regions` is 455 fine-mapping region definitions -- a
+        # phenocode and an interval, and no statistic. `results` is 2470
+        # association rows carrying beta, mlogp, maf, n_case, n_control and
+        # `phenostring`, the readable phenotype name. The tool's description
+        # promises "which disease associations a variant contributes to" and
+        # it returned `M13_ARTHROPATHIES` with no effect size, no p-value and
+        # no phenotype name, while all of it sat in the same response.
+        by_pheno: Dict[str, Dict[str, Any]] = {}
+        for row in data.get("results") or []:
+            if isinstance(row, dict) and row.get("phenocode"):
+                by_pheno.setdefault(str(row["phenocode"]), row)
+
+        def association_of(phenocode):
+            row = by_pheno.get(str(phenocode))
+            if not row:
+                return None
+            return {
+                "phenostring": row.get("phenostring"),
+                "category": row.get("category"),
+                "beta": row.get("beta"),
+                "mlogp": row.get("mlogp"),
+                "maf": row.get("maf"),
+                "maf_case": row.get("maf_case"),
+                "maf_control": row.get("maf_control"),
+                "n_case": row.get("n_case"),
+                "n_control": row.get("n_control"),
+                "n_sample": row.get("n_sample"),
+            }
+
         parsed_regions: List[Dict[str, Any]] = [
             {
                 "phenocode": r.get("phenocode"),
@@ -219,9 +249,16 @@ class FinnGenTool(BaseTool):
                 "start": r.get("start"),
                 "end": r.get("end"),
                 "type": r.get("type"),
+                # The region's own results file, so the credible set behind
+                # the interval can be fetched.
+                "path": r.get("path"),
+                # The association this region's phenotype actually shows for
+                # the variant, joined on phenocode.
+                "association": association_of(r.get("phenocode")),
             }
             for r in data.get("regions", [])
         ]
+        matched = sum(1 for r in parsed_regions if r.get("association"))
 
         return {
             "status": "success",
@@ -230,6 +267,14 @@ class FinnGenTool(BaseTool):
                 "source": "FinnGen r12",
                 "variant": variant,
                 "total_regions": len(parsed_regions),
+                # The response's association rows, and how many regions one
+                # could be joined to. A region with association null is one
+                # FinnGen fine-mapped but did not report a phenome-wide row
+                # for; saying so is the difference between "no association"
+                # and "not looked up".
+                "total_association_rows": len(data.get("results") or []),
+                "regions_with_association": matched,
+                "regions_without_association": len(parsed_regions) - matched,
             },
         }
 

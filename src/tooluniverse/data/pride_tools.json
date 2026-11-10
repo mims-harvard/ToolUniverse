@@ -90,6 +90,34 @@
             "items": {
               "type": "string"
             }
+          },
+          "experimentTypes": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Experiment types as PRIDE controlled-vocabulary terms, each with cvLabel, accession and name."
+          },
+          "references": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Publications for the project, each with a referenceLine and its identifiers."
+          },
+          "sampleAttributes": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "Sample characteristics as key/value pairs of ontology terms - organism, tissue, disease and the rest."
+          },
+          "submissionType": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "'COMPLETE' or 'PARTIAL'. A PARTIAL submission has no search results attached, so what can be done with the project depends on this."
           }
         }
       }

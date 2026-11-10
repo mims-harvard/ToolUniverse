@@ -308,6 +308,36 @@
             "raw_data": {
               "type": "object",
               "description": "Unprocessed NCBI esummary record for this variant"
+            },
+            "condition_xrefs": {
+              "type": "array",
+              "description": "Identifiers resolving those conditions. A condition name is ambiguous on its own - 'Hereditary cancer-predisposing syndrome' is one string over many MedGen concepts. Empty when ClinVar cross-references none.",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "db_source": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which database, e.g. 'MedGen', 'OMIM', 'Orphanet'."
+                  },
+                  "db_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The identifier in that database, e.g. 'C0027672'."
+                  }
+                }
+              }
+            },
+            "conditions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "The conditions the classification is FOR, e.g. ['BRCA1-related disorder']. The row previously gave the significance and named no condition at all."
             }
           }
         },

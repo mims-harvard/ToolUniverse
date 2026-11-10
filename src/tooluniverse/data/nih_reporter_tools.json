@@ -297,6 +297,55 @@
                 "string",
                 "null"
               ]
+            },
+            "organization_city": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "City of the awardee institution."
+            },
+            "organization_country": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Country of the awardee institution."
+            },
+            "organization_duns": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "DUNS number of the awardee institution, the identifier UEI replaced; still present on older awards."
+            },
+            "organization_ipf_code": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "NIH's internal institution profile code for the awardee."
+            },
+            "organization_state": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "State or territory code of the awardee institution; null outside the US."
+            },
+            "organization_uei": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Unique Entity Identifier of the awardee institution - the federal identifier that joins it across datasets. 'organization' is a display name and one institution appears under several spellings, so join on this and not on the name."
+            },
+            "organization_zipcode": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Postal code of the awardee institution."
             }
           }
         },

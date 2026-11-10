@@ -111,6 +111,60 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "accessibility": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Whether the tool is open, e.g. 'Open access'."
+                  },
+                  "additionDate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the entry was added, ISO 8601."
+                  },
+                  "cost": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What it costs, e.g. 'Free of charge'."
+                  },
+                  "editPermission": {
+                    "description": "Who may edit the entry, as a type and a list of authors."
+                  },
+                  "elixir_badge": {
+                    "description": "Whether the tool carries an ELIXIR badge (0 or 1)."
+                  },
+                  "homepage_status": {
+                    "description": "bio.tools' last check of the homepage: 0 means it responded."
+                  },
+                  "lastUpdate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When it was last edited, ISO 8601. An entry last touched years ago may describe a dead tool."
+                  },
+                  "owner": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The bio.tools account that maintains the entry, e.g. 'awhitwham'."
+                  },
+                  "publication": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Papers to cite, each with its doi, pmid and pmcid. A tool record without them cannot be cited."
+                  },
+                  "validated": {
+                    "description": "bio.tools' validation flag: 1 when the entry passed curation."
                   }
                 }
               }
@@ -627,6 +681,60 @@
                   },
                   "topic": {
                     "type": "array"
+                  },
+                  "accessibility": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Whether the tool is open, e.g. 'Open access'."
+                  },
+                  "additionDate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the entry was added, ISO 8601."
+                  },
+                  "cost": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What it costs, e.g. 'Free of charge'."
+                  },
+                  "editPermission": {
+                    "description": "Who may edit the entry, as a type and a list of authors."
+                  },
+                  "elixir_badge": {
+                    "description": "Whether the tool carries an ELIXIR badge (0 or 1)."
+                  },
+                  "homepage_status": {
+                    "description": "bio.tools' last check of the homepage: 0 means it responded."
+                  },
+                  "lastUpdate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When it was last edited, ISO 8601. An entry last touched years ago may describe a dead tool."
+                  },
+                  "owner": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The bio.tools account that maintains the entry, e.g. 'awhitwham'."
+                  },
+                  "publication": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Papers to cite, each with its doi, pmid and pmcid. A tool record without them cannot be cited."
+                  },
+                  "validated": {
+                    "description": "bio.tools' validation flag: 1 when the entry passed curation."
                   }
                 }
               }
@@ -754,6 +862,67 @@
                   },
                   "function": {
                     "type": "array"
+                  },
+                  "accessibility": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Whether the tool is open, e.g. 'Open access'."
+                  },
+                  "additionDate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the entry was added, ISO 8601."
+                  },
+                  "cost": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What it costs, e.g. 'Free of charge'."
+                  },
+                  "editPermission": {
+                    "description": "Who may edit the entry, as a type and a list of authors."
+                  },
+                  "elixir_badge": {
+                    "description": "Whether the tool carries an ELIXIR badge (0 or 1)."
+                  },
+                  "homepage_status": {
+                    "description": "bio.tools' last check of the homepage: 0 means it responded."
+                  },
+                  "lastUpdate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When it was last edited, ISO 8601. An entry last touched years ago may describe a dead tool."
+                  },
+                  "owner": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The bio.tools account that maintains the entry, e.g. 'awhitwham'."
+                  },
+                  "publication": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Papers to cite, each with its doi, pmid and pmcid. A tool record without them cannot be cited."
+                  },
+                  "relation": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Related bio.tools entries, each with a biotoolsID and a relation type such as 'uses' or 'isNewVersionOf'."
+                  },
+                  "validated": {
+                    "description": "bio.tools' validation flag: 1 when the entry passed curation."
                   }
                 }
               }
@@ -888,6 +1057,60 @@
                   },
                   "toolType": {
                     "type": "array"
+                  },
+                  "accessibility": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Whether the tool is open, e.g. 'Open access'."
+                  },
+                  "additionDate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When the entry was added, ISO 8601."
+                  },
+                  "cost": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What it costs, e.g. 'Free of charge'."
+                  },
+                  "editPermission": {
+                    "description": "Who may edit the entry, as a type and a list of authors."
+                  },
+                  "elixir_badge": {
+                    "description": "Whether the tool carries an ELIXIR badge (0 or 1)."
+                  },
+                  "homepage_status": {
+                    "description": "bio.tools' last check of the homepage: 0 means it responded."
+                  },
+                  "lastUpdate": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "When it was last edited, ISO 8601. An entry last touched years ago may describe a dead tool."
+                  },
+                  "owner": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The bio.tools account that maintains the entry, e.g. 'awhitwham'."
+                  },
+                  "publication": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Papers to cite, each with its doi, pmid and pmcid. A tool record without them cannot be cited."
+                  },
+                  "validated": {
+                    "description": "bio.tools' validation flag: 1 when the entry passed curation."
                   }
                 }
               }

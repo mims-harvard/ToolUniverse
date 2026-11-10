@@ -173,6 +173,81 @@
               "chr": {
                 "type": "object",
                 "additionalProperties": true
+              },
+              "alleleFile": {
+                "description": "PharmGKB's allele-definition file for the gene, when one exists."
+              },
+              "alleleFunctionSource": {
+                "description": "Where the allele function assignments come from."
+              },
+              "amp": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Whether the gene is on the AMP (Association for Molecular Pathology) recommended testing list."
+              },
+              "buildVersion": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Which genome build PharmGKB's own record is anchored to."
+              },
+              "cbStart": {
+                "description": "Start of the cytogenetic band."
+              },
+              "cbStop": {
+                "description": "Stop of the cytogenetic band."
+              },
+              "chrStartPosB37": {
+                "description": "Start coordinate on GRCh37/hg19."
+              },
+              "chrStartPosB38": {
+                "description": "Start coordinate on GRCh38/hg38. Pair it with the B37 fields: a caller that does not know which build a coordinate is on cannot use it."
+              },
+              "chrStopPosB37": {
+                "description": "Stop coordinate on GRCh37/hg19."
+              },
+              "chrStopPosB38": {
+                "description": "Stop coordinate on GRCh38/hg38."
+              },
+              "hasNonStandardHaplotypes": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Whether PharmGKB records haplotypes outside the star-allele system."
+              },
+              "hideHaplotypes": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "PharmGKB's own display flag for haplotypes."
+              },
+              "usesStarAlleles": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Whether the gene is named with star alleles (*1, *2), which changes how a variant must be written."
+              },
+              "vipCitation": {
+                "description": "Citation for the VIP summary."
+              },
+              "vipId": {
+                "description": "Id of the VIP annotation."
+              },
+              "vipSummary": {
+                "description": "The VIP summary itself, as an object with an id and an HTML body - the curated prose on why the gene matters pharmacogenomically."
+              },
+              "vipTier": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "PharmGKB's Very Important Pharmacogene tier, e.g. 'Tier 1'. The tier is how much curated pharmacogenomic evidence stands behind the gene."
               }
             },
             "additionalProperties": true
@@ -715,6 +790,11 @@
             "required": [
               "error"
             ]
+          },
+          "properties": {
+            "history": {
+              "description": "PharmGKB's change history for the record."
+            }
           }
         },
         {
@@ -782,6 +862,9 @@
             "description": {
               "type": "object",
               "additionalProperties": true
+            },
+            "history": {
+              "description": "PharmGKB's change history for the record."
             }
           },
           "additionalProperties": true,
