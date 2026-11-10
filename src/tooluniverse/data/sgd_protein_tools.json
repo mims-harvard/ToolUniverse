@@ -304,7 +304,8 @@
                       "type": [
                         "string",
                         "null"
-                      ]
+                      ],
+                      "description": "SGD's own citation string, e.g. 'Berg MD, et al. (2026) Mistranslating tRNA variants ... G3 (Bethesda) 16(2)'. It names only the first author on any paper with more than one -- 1285 of ACT1's 1666 references -- so read 'authors' for the full list."
                     },
                     "pubmed_id": {
                       "type": [
@@ -322,7 +323,33 @@
                       "type": [
                         "string",
                         "null"
-                      ]
+                      ],
+                      "description": "Absolute URL of SGD's own page for this reference, e.g. https://www.yeastgenome.org/reference/S100001825. Null when SGD gives no link."
+                    },
+                    "authors": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "Every author SGD lists for the reference, in order, as 'Surname Initials' (e.g. 'Rodriguez-Mias RA'). Empty when SGD lists none."
+                    },
+                    "author_count": {
+                      "type": "integer",
+                      "description": "Length of 'authors'; 0 when SGD lists no author."
+                    },
+                    "journal": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Journal's MEDLINE abbreviation, e.g. 'G3 (Bethesda)'. Null when SGD lists none."
+                    },
+                    "full_text_links": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "string"
+                      },
+                      "description": "Full-text links SGD carries for the reference, keyed by its own label -- 'DOI full text', 'PMC full text', 'PubMed'. Which labels are present varies by reference, so the keys are the data and are not declared by name. Empty when SGD carries none; 'reference_link' points at SGD's page either way."
                     }
                   }
                 }

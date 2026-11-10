@@ -6343,3 +6343,197 @@ def test_two_data_keyed_levels_are_left_open_on_purpose():
             f"{tool} should say why its level is open, so the next reader "
             "does not take the audit's complaint for a gap"
         )
+
+
+def test_an_sgd_reference_names_every_author_the_payload_carries():
+    """SGD's own citation hides the author list behind "et al.".
+
+    Measured over ACT1's 1666 references: 1285 of them cite one author where
+    the payload carries the whole list, so on 77% of the catalogue a caller
+    asked who wrote a paper could not answer from what the wrapper returned.
+    The upstream row has an `authors` list of {display_name, link} the
+    wrapper never read.
+
+    The same row carries `urls` - the DOI, PMC and PubMed full-text links -
+    and the wrapper returned only `link`, SGD's own reference page, as the
+    site-relative path "/reference/S100001825". So the one link it did give
+    back could not be opened by anything, and the three that could were
+    dropped. Every link the module returns is absolute now, which is why
+    the locus label's `sgd_link` goes through the same helper.
+    """
+    source = _source("sgd_protein_tool.py")
+    assert 'ref.get("authors")' in source, (
+        "SGD answers with the full author list; the citation elides it on 77% "
+        "of references"
+    )
+    assert 'ref.get("urls")' in source, (
+        "the DOI / PMC / PubMed full-text links are in `urls`, and `link` is "
+        "SGD's own page"
+    )
+    assert "_absolute(" in source and "SGD_SITE_URL" in source, (
+        "SGD's links are site-relative, so a returned link has to be made "
+        "absolute or it opens nothing"
+    )
+    assert '_absolute(loc.get("link"))' in source, (
+        "the locus label's sgd_link had the same relative-path defect"
+    )
+    schema = json.dumps(_config("SGD_get_literature").get("return_schema"))
+    for field in ('"authors"', '"author_count"', '"journal"', '"full_text_links"'):
+        assert field in schema, f"SGD_get_literature returns {field} undeclared"
+    assert "et al" in schema or "first author" in schema, (
+        "the citation's declaration has to warn that it names only the first "
+        "author, or a caller will keep reading it as the author list"
+    )
+
+
+def _fda_label_family():
+    """Every tool the openFDA drug-label handler serves, with its config."""
+    payload = json.loads((DATA / "fda_drug_labeling_tools.json").read_text())
+    fam = [t for t in payload if t.get("type") == "FDADrugLabel"]
+    assert len(fam) > 140, f"expected the whole label family, found {len(fam)}"
+    return fam
+
+
+def test_every_fda_label_tool_declares_the_window_it_quietly_applies():
+    """The family returns a prefix of the matches and said so nowhere.
+
+    `FDADrugLabel.run` ends with
+    `_attach_other_section_tools(_default_label_window(result, arguments))`.
+    When the caller passes no `limit` and more labels matched than the window
+    shows, the handler replaces `results` with a prefix and attaches
+    `label_inventory` and `label_window_note` to say what it left out. Not one
+    of the 152 tools declared either field, so an agent reading the schema saw
+    `results` and `result_count` and had no reason to think it was holding a
+    prefix.
+
+    `note` is the same shape: it carries the broadened-match, related-section,
+    ingredient-match and _exists_-guard caveats, and 142 of 152 did not
+    declare it.
+
+    Why the whole family and not only the tools measured emitting them: the
+    gate is in the handler, not the config. The stock test_examples all pass
+    `limit`, and `_default_label_window` returns early when `limit is not
+    None` - so the examples suppress exactly these two fields. `note` showed
+    on 88 of 152 with the stock examples; it was then proven reachable on two
+    of the other 64 by a broadened match ('Aspirin 325 mg tablet') and a
+    related-section fallback ('minocycline'). The 64 were a property of the
+    examples, not of the tools.
+    """
+    for cfg in _fda_label_family():
+        props = (cfg.get("return_schema") or {}).get("properties") or {}
+        for field in ("label_inventory", "label_window_note", "note"):
+            assert field in props, (
+                f"{cfg['name']} can return {field} and does not declare it"
+            )
+        inventory = props["label_inventory"].get("properties") or {}
+        for field in ("labels_matched", "labels_shown",
+                      "routes_of_all_matched_labels"):
+            assert field in inventory, (
+                f"{cfg['name']}'s label_inventory must declare {field}: "
+                "labels_matched against labels_shown is the whole point"
+            )
+        assert "prefix" in json.dumps(props["label_inventory"]), (
+            f"{cfg['name']} should say results is a prefix of the matches"
+        )
+
+
+def test_the_fda_tools_that_hand_off_to_a_sibling_declare_the_hand_off():
+    """other_section_tools names the tool for each section a label also carries.
+
+    The handler arms it on `"drug_name" in self.search_fields` and on nothing
+    else, so that gate - not a single measurement - decides which tools
+    declare it. 78 of the 152 are gated in, and none of them declared it or
+    the note that explains it.
+    """
+    for cfg in _fda_label_family():
+        gated = "drug_name" in ((cfg.get("fields") or {}).get("search_fields") or {})
+        props = (cfg.get("return_schema") or {}).get("properties") or {}
+        for field in ("other_section_tools", "other_sections_note"):
+            if gated:
+                assert field in props, (
+                    f"{cfg['name']} searches drug_name, so the handler can "
+                    f"return {field}, and it is not declared"
+                )
+    gated_count = sum(
+        "drug_name" in ((c.get("fields") or {}).get("search_fields") or {})
+        for c in _fda_label_family()
+    )
+    assert gated_count == 78, (
+        f"the gate moved: {gated_count} tools search drug_name, not 78"
+    )
+
+
+def test_an_fda_label_row_declares_the_identifiers_it_carries():
+    """A row whose openFDA name block is unresolved is identifiable anyway.
+
+    `id` (the label version) and `set_id` (the stable label) are added to the
+    row exactly when the tool asks openFDA for a brand or generic name, so
+    that a row whose openfda block came back empty can still be fetched again.
+    `openfda.route` travels with nearly every label as identity, which is what
+    lets label_inventory report the routes of the labels it left out - and it
+    is the one row field 149 of the 152 tools returned and none declared.
+
+    These three are declared per tool as measured, not family-wide, because
+    they follow each tool's own return_fields rather than a handler gate.
+    """
+    fam = {c["name"]: c for c in _fda_label_family()}
+
+    def row_props(name):
+        results = ((fam[name].get("return_schema") or {}).get("properties") or {}).get("results") or {}
+        return ((results.get("items") or {}).get("properties")) or {}
+
+    # measured live, one call per tool with `limit` and `skip` removed
+    for name in ("FDA_get_drug_names_by_abuse_info",
+                 "FDA_get_brand_name_generic_name",
+                 "FDA_get_drug_name_by_set_id",
+                 "FDA_get_drug_name_by_document_id"):
+        props = row_props(name)
+        for field in ("id", "set_id", "openfda.route"):
+            assert field in props, f"{name} returns {field} in every row, undeclared"
+        assert "version" in json.dumps(props["id"]).lower(), (
+            f"{name} must say `id` is the label VERSION while set_id is stable, "
+            "or the two read as duplicates"
+        )
+
+    with_route = sum("openfda.route" in row_props(n) for n in fam)
+    assert with_route >= 149, (
+        f"only {with_route} of the family declare openfda.route; 149 return it"
+    )
+
+
+def test_an_fda_section_table_says_it_is_the_same_content():
+    """A label that formats a section as a table carries both forms.
+
+    I first declared these fields saying content could exist in the table and
+    nowhere else, which is the shape that would make them urgent - and then
+    measured it and found it false. Over 500 labels, no section ever had a
+    table without its prose; and on sampled drug_interactions tables every
+    distinct five-letter-or-longer word of the table also appeared in the
+    prose (305/305, 47/47, 52/52). The table is the same content with its rows
+    and columns kept.
+
+    That is still worth declaring and still worth returning: the prose
+    flattens a table into one string, so which drug goes with which effect and
+    which clinical comment is recoverable only from the markup. But the
+    declaration has to say it is the same content, or a caller will fetch both
+    expecting the table to add something.
+    """
+    fam = {c["name"]: c for c in _fda_label_family()}
+    found = 0
+    for name, cfg in fam.items():
+        results = ((cfg.get("return_schema") or {}).get("properties") or {}).get("results") or {}
+        props = ((results.get("items") or {}).get("properties")) or {}
+        for field, schema in props.items():
+            if not field.endswith("_table"):
+                continue
+            found += 1
+            text = json.dumps(schema)
+            assert "same content, not extra content" in text, (
+                f"{name}.{field} must say it is the same content as the "
+                "section's prose; I measured that and it is not a guess"
+            )
+            assert "structure carries the meaning" in text, (
+                f"{name}.{field} must say what the table is good for, or "
+                "saying it duplicates the prose makes it look pointless"
+            )
+    assert found >= 25, f"expected the table fields to be declared, found {found}"
