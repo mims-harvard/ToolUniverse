@@ -6956,3 +6956,175 @@ def test_a_stereochemistry_verdict_can_be_checked():
         "binding_verified is always false here and the declaration has to "
         "say why it is present at all"
     )
+
+
+def test_the_number_that_says_whether_an_interface_is_real():
+    """PISA reports the buried area and a p-value, and only the area was declared.
+
+    A large interface is not automatically a biological one. `pvalue` is
+    PISA's probability that an interface this hydrophobic arises by chance -
+    below about 0.5 is what PISA treats as specific - so a big area with a
+    high p-value is a crystal contact. `symop` says the same thing another
+    way: 'x,y,z' is the asymmetric unit, anything else is a symmetry mate.
+    Neither was declared, so the one number that tells a caller whether to
+    believe the interface was unreachable from the schema.
+    """
+    schema = json.dumps(_config("PDBePISA_get_interfaces").get("return_schema"))
+    for field in ('"pvalue"', '"symop"', '"int_solv_en"', '"int_nres"',
+                  '"ss_bonds"', '"cov_bonds"'):
+        assert field in schema, f"PDBePISA_get_interfaces returns {field} undeclared"
+    assert "crystal" in schema, (
+        "the declaration has to say what a high p-value or a non-identity "
+        "symop means, or the number is just a number"
+    )
+
+
+def test_a_mutation_row_says_what_build_and_how_many_reads():
+    """cBioPortal gave positions without a build and counts without a fraction.
+
+    `ncbiBuild` is 'GRCh37' on these rows and was undeclared, so a coordinate
+    arrived with no way to compare it to anything. `tumorAltCount` and
+    `tumorRefCount` - 32 and 59 on the first row - are what give the variant
+    allele fraction, which is how a subclonal call is told from a clonal one,
+    and neither was declared. `uniquePatientKey` is what stops a paired
+    primary and metastasis being counted as two patients.
+    """
+    schema = json.dumps(_config("cBioPortal_get_mutations").get("return_schema"))
+    for field in ('"ncbiBuild"', '"tumorAltCount"', '"tumorRefCount"',
+                  '"uniquePatientKey"', '"refseqMrnaId"', '"variantType"'):
+        assert field in schema, f"cBioPortal_get_mutations returns {field} undeclared"
+    assert "variant allele fraction" in schema
+    assert "two patients" in schema
+
+
+def test_a_kinetic_law_carries_the_reaction_it_measures():
+    """SABIO-RK's law had no reaction, no organism and no units.
+
+    A Km is meaningless without the reaction it was measured on, the organism
+    it came from, the mechanism the fit assumed and the unit the number is
+    in. All four were in the response - 'NAD+ + 1-Pentanol = NADH + Pentanal
+    + H+', 'Saimiri sciureus', 'Michaelis-Menten', ['mM'] - and none was
+    declared.
+    """
+    schema = json.dumps(_config("SABIO_RK_search_reactions").get("return_schema"))
+    for field in ('"reaction_equation"', '"organism"', '"mechanism_type"',
+                  '"parameter_units"', '"tissue"', '"pubmed_id"'):
+        assert field in schema, f"SABIO_RK_search_reactions returns {field} undeclared"
+    assert "unusable" in schema or "not a human Km" in schema
+
+
+def test_a_510k_record_says_what_fda_decided():
+    """The clearance row carried no decision code and no openfda block.
+
+    `decision_code` is 'SESE' - substantially equivalent - and it is the
+    OUTCOME of the submission. `openfda` holds the resolved device name,
+    registration number, FEI number, specialty and regulation number, which
+    is how a 510(k) joins to the device, registration and adverse-event
+    endpoints. Sixteen fields, including the outcome and the join.
+    """
+    schema = json.dumps(_config("OpenFDA_search_device_510k").get("return_schema"))
+    for field in ('"decision_code"', '"clearance_type"', '"date_received"',
+                  '"openfda"', '"third_party_flag"', '"advisory_committee"'):
+        assert field in schema, f"OpenFDA_search_device_510k returns {field} undeclared"
+    assert "substantially equivalent" in schema
+
+
+def test_an_expression_value_can_be_attributed_to_a_named_region():
+    """Allen returned a structure_id and the block that names it was undeclared.
+
+    Each row carries `structure` with safe_name ('lateral wings of the dorsal
+    raphe nucleus'), the full ancestor path, the parent id and Allen's own
+    colour for the region. Without them an expression density is a number
+    against an integer id, and rolling values up to a coarser region needs a
+    second lookup that the response had already answered.
+    """
+    schema = json.dumps(_config("AllenBrain_get_structure_expression_values").get("return_schema"))
+    for field in ('"safe_name"', '"structure_id_path"', '"parent_structure_id"',
+                  '"hemisphere_id"', '"color_hex_triplet"'):
+        assert field in schema, f"AllenBrain returns {field} undeclared"
+    assert "coarser region" in schema
+
+
+def test_a_pangenome_reports_its_core_and_accessory_split():
+    """MGnify's three pangenome sizes and both rRNA coverages were undeclared.
+
+    core 1350 and accessory 1804 out of 3154 families is the pangenome's
+    whole point. rna_16s at 99.74 is what decides whether the MAG can be
+    placed by amplicon data at all, and ipr/eggnog coverage says how much of
+    it has any functional annotation. Twelve fields of assembly and
+    annotation quality, none of them in the schema.
+    """
+    schema = json.dumps(_config("MGnify_get_genome").get("return_schema"))
+    for field in ('"pangenome_core_size"', '"pangenome_accessory_size"',
+                  '"rna_16s"', '"eggnog_coverage"', '"ena_sample_accession"'):
+        assert field in schema, f"MGnify_get_genome returns {field} undeclared"
+    assert "amplicon" in schema
+
+
+def test_a_download_count_says_how_much_of_it_is_robots():
+    """PRIDE reports 543,735 downloads and 330,234 of them as bot traffic.
+
+    totalFileDownloads was undeclared and so were botCount, hubCount and
+    organicCount - so the headline number was unreachable, and had it been
+    reached it would have been read as human interest when the majority is
+    automated. submissionType matters as much: a PARTIAL submission has no
+    search results attached, so what can be done with the project depends on
+    a field the schema did not mention.
+    """
+    schema = json.dumps(_config("PRIDE_get_project").get("return_schema"))
+    for field in ('"totalFileDownloads"', '"botCount"', '"submissionType"',
+                  '"identifiedPTMStrings"', '"sampleAttributes"', '"license"'):
+        assert field in schema, f"PRIDE_get_project returns {field} undeclared"
+    assert "bots are the majority" in schema
+
+
+def test_the_rest_of_batch_seventy_seven_declares_what_it_returns():
+    """Seven more tools, measured and declared; the paths are the proof.
+
+    Grouped because each is the same finding in a different catalogue: a
+    field the response carried and the schema did not mention. The anchors
+    are the ones whose absence changes an answer rather than merely
+    shortening it.
+    """
+    for tool, fields, why in (
+        ("BioTools_get_tool", ('"publication"', '"lastUpdate"', '"license"'),
+         "a tool entry with no citation and no last-edited date"),
+        ("SASBDB_list_instruments", ('"detector"', '"point_source"', '"line_collimation"'),
+         "point and line collimation need different desmearing"),
+        ("MetabolomicsWorkbench_get_gene_protein", ('"summary"', '"species_long"', '"gene_synonyms"'),
+         "the summary is the only field that explains the gene"),
+        ("BiGG_get_model", ('"escher_maps"', '"last_updated"', '"genome_ref_string"'),
+         "which genome the model is built on, and whether it is current"),
+        ("Reactome_get_reaction", ('"compartment"', '"summation"', '"negativePrecedingEvent"'),
+         "a reaction with no compartment cannot be placed in a cell"),
+        ("PharmGKB_get_clinical_annotations", ('"allelePhenotypes"', '"relatedAlleles"', '"scoreDetails"'),
+         "which genotype means what is the annotation's content"),
+        ("PyPIPackageInspector", ('"requires_dist"', '"pushed_at"', '"project_urls"'),
+         "the dependencies and the last commit date"),
+    ):
+        schema = json.dumps(_config(tool).get("return_schema"))
+        for field in fields:
+            assert field in schema, f"{tool} returns {field} undeclared ({why})"
+
+
+def test_a_lineage_entry_says_which_nomenclatural_code_governs_it():
+    """CoL's declarations had landed where nothing reads them.
+
+    The six fields were added as a `properties` block beside `oneOf` rather
+    than inside the success branch. A sibling of `oneOf` is not part of any
+    branch, so the walker never sees it: the audit went on reporting fifty
+    gaps while a re-read that picked the tidier-looking reading said zero.
+    They are in the branch now, with `code` - ZOOLOGICAL or BOTANICAL, which
+    decides how a name must be written and whether two identical names are
+    the same taxon.
+    """
+    rs = _config("CoL_search_species")["return_schema"]
+    assert "properties" not in rs, (
+        "a `properties` block beside `oneOf` belongs to no branch and is "
+        "never read; the declarations have to be inside the success branch"
+    )
+    branch = rs["oneOf"][0]["properties"]
+    for field in ("result", "total", "last", "empty"):
+        assert field in branch, f"{field} has to be in the success branch"
+    schema = json.dumps(rs)
+    assert '"code"' in schema and "ZOOLOGICAL" in schema

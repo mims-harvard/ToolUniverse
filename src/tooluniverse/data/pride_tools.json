@@ -346,6 +346,90 @@
         },
         "doi": {
           "type": "string"
+        },
+        "submissionType": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "'COMPLETE' or 'PARTIAL'. A PARTIAL submission has no search results attached, so what can be done with the project depends on this."
+        },
+        "license": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Terms the data is released under, e.g. 'EBI terms of use'."
+        },
+        "experimentTypes": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Experiment types as PRIDE controlled-vocabulary terms, each with cvLabel, accession and name."
+        },
+        "identifiedPTMStrings": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Post-translational modifications identified in the project, as MOD ontology terms. For a proteomics project this is a large part of what the data is about."
+        },
+        "sampleAttributes": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Sample characteristics as key/value pairs of ontology terms - organism, tissue, disease and the rest."
+        },
+        "projectTags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "PRIDE's tags for the project, e.g. ['Prime-xs project']."
+        },
+        "countries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Countries of the submitting labs."
+        },
+        "references": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Publications for the project, each with a referenceLine and its identifiers."
+        },
+        "totalFileDownloads": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Times the project's files have been downloaded, e.g. 543735."
+        },
+        "botCount": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Downloads PRIDE attributes to automated clients, e.g. 330234. Subtract it from totalFileDownloads before reading that number as human interest - here the bots are the majority."
+        },
+        "hubCount": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Downloads through PRIDE's hub, e.g. 201086."
+        },
+        "organicCount": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Downloads PRIDE classes as organic, e.g. 12415."
         }
       }
     },

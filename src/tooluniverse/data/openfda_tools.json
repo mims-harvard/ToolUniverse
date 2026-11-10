@@ -1,1784 +1,1892 @@
 [
-    {
-        "name": "OpenFDA_search_drug_labels",
-        "description": "Search the FDA drug label (SPL - Structured Product Labeling) database via openFDA. Contains approved prescription and OTC drug labels including indications, warnings, dosage, adverse reactions, contraindications, and pharmacology sections. Use Lucene query syntax: 'openfda.brand_name:aspirin', 'openfda.generic_name:ibuprofen', 'openfda.manufacturer_name:pfizer'. Returns label text sections and openFDA cross-references (brand name, generic name, substance name, product type). Some labels are not linked to openFDA fields (for example TAGRISSO / osimertinib), so an 'openfda.*' query can find nothing even though the label exists: search the name as free text ('TAGRISSO'), or use FDA_search_drug_labels with drug_name, which also checks unlinked labels. Exact totals and skip pagination: continue with metadata.next_skip while metadata.has_more is true; metadata discloses openFDA's 25,100-record reachable window for very broad searches.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "search": {
-                    "type": "string",
-                    "description": "Lucene query to search drug labels (e.g., 'openfda.brand_name:aspirin', 'openfda.generic_name:metformin', 'indications_and_usage:diabetes', 'openfda.pharm_class_epc:\"beta blocker\"')"
-                },
-                "limit": {
-                    "type": [
-                        "integer",
-                        "null"
-                    ],
-                    "minimum": 1,
-                    "maximum": 100,
-                    "default": 1,
-                    "description": "Maximum number of results (default 1, max 100)"
-                },
-                "skip": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 25000,
-                    "default": 0,
-                    "description": "Number of matching records to skip. Continue with metadata.next_skip."
+  {
+    "name": "OpenFDA_search_drug_labels",
+    "description": "Search the FDA drug label (SPL - Structured Product Labeling) database via openFDA. Contains approved prescription and OTC drug labels including indications, warnings, dosage, adverse reactions, contraindications, and pharmacology sections. Use Lucene query syntax: 'openfda.brand_name:aspirin', 'openfda.generic_name:ibuprofen', 'openfda.manufacturer_name:pfizer'. Returns label text sections and openFDA cross-references (brand name, generic name, substance name, product type). Some labels are not linked to openFDA fields (for example TAGRISSO / osimertinib), so an 'openfda.*' query can find nothing even though the label exists: search the name as free text ('TAGRISSO'), or use FDA_search_drug_labels with drug_name, which also checks unlinked labels. Exact totals and skip pagination: continue with metadata.next_skip while metadata.has_more is true; metadata discloses openFDA's 25,100-record reachable window for very broad searches.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "search": {
+          "type": "string",
+          "description": "Lucene query to search drug labels (e.g., 'openfda.brand_name:aspirin', 'openfda.generic_name:metformin', 'indications_and_usage:diabetes', 'openfda.pharm_class_epc:\"beta blocker\"')"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 100,
+          "default": 1,
+          "description": "Maximum number of results (default 1, max 100)"
+        },
+        "skip": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 25000,
+          "default": 0,
+          "description": "Number of matching records to skip. Continue with metadata.next_skip."
+        }
+      },
+      "required": [
+        "search"
+      ],
+      "additionalProperties": false
+    },
+    "fields": {
+      "endpoint": "https://api.fda.gov/drug/label.json",
+      "auth_param": {
+        "env_var": "FDA_API_KEY",
+        "param": "api_key"
+      },
+      "unreachable_alternatives": "If this was a 'no matches' answer to an openfda.* query, the label may still exist without openFDA fields (for example TAGRISSO / osimertinib): retry with the name as free text, for example search='TAGRISSO', or use FDA_search_drug_labels with drug_name.",
+      "pagination": "openfda_skip"
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "search": "openfda.brand_name:aspirin",
+        "limit": 2
+      },
+      {
+        "search": "openfda.generic_name:metformin",
+        "limit": 2
+      },
+      {
+        "search": "openfda.brand_name:lipitor",
+        "limit": 1
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "FDA drug label search results",
+          "properties": {
+            "meta": {
+              "type": "object",
+              "description": "Query metadata",
+              "properties": {
+                "results": {
+                  "type": "object",
+                  "properties": {
+                    "total": {
+                      "type": "integer",
+                      "description": "Total matching labels"
+                    },
+                    "skip": {
+                      "type": "integer"
+                    },
+                    "limit": {
+                      "type": "integer"
+                    }
+                  }
                 }
+              }
             },
+            "results": {
+              "type": "array",
+              "description": "Matching drug labels",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "openfda": {
+                    "type": "object",
+                    "description": "FDA cross-references",
+                    "properties": {
+                      "brand_name": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "generic_name": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "manufacturer_name": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "substance_name": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "product_type": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "route": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "pharm_class_epc": {
+                        "type": "array",
+                        "description": "Established pharmacologic class"
+                      }
+                    }
+                  },
+                  "indications_and_usage": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "warnings": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "dosage_and_administration": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "contraindications": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "adverse_reactions": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "drug_interactions": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "mechanism_of_action": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "not": {
             "required": [
-                "search"
-            ],
-            "additionalProperties": false
-        },
-        "fields": {
-            "endpoint": "https://api.fda.gov/drug/label.json",
-            "auth_param": {
-                "env_var": "FDA_API_KEY",
-                "param": "api_key"
-            },
-            "unreachable_alternatives": "If this was a 'no matches' answer to an openfda.* query, the label may still exist without openFDA fields (for example TAGRISSO / osimertinib): retry with the name as free text, for example search='TAGRISSO', or use FDA_search_drug_labels with drug_name.",
-            "pagination": "openfda_skip"
-        },
-        "type": "BaseRESTTool",
-        "test_examples": [
-            {
-                "search": "openfda.brand_name:aspirin",
-                "limit": 2
-            },
-            {
-                "search": "openfda.generic_name:metformin",
-                "limit": 2
-            },
-            {
-                "search": "openfda.brand_name:lipitor",
-                "limit": 1
-            }
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "description": "FDA drug label search results",
-                    "properties": {
-                        "meta": {
-                            "type": "object",
-                            "description": "Query metadata",
-                            "properties": {
-                                "results": {
-                                    "type": "object",
-                                    "properties": {
-                                        "total": {
-                                            "type": "integer",
-                                            "description": "Total matching labels"
-                                        },
-                                        "skip": {
-                                            "type": "integer"
-                                        },
-                                        "limit": {
-                                            "type": "integer"
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "results": {
-                            "type": "array",
-                            "description": "Matching drug labels",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "openfda": {
-                                        "type": "object",
-                                        "description": "FDA cross-references",
-                                        "properties": {
-                                            "brand_name": {
-                                                "type": "array",
-                                                "items": {
-                                                    "type": "string"
-                                                }
-                                            },
-                                            "generic_name": {
-                                                "type": "array",
-                                                "items": {
-                                                    "type": "string"
-                                                }
-                                            },
-                                            "manufacturer_name": {
-                                                "type": "array",
-                                                "items": {
-                                                    "type": "string"
-                                                }
-                                            },
-                                            "substance_name": {
-                                                "type": "array",
-                                                "items": {
-                                                    "type": "string"
-                                                }
-                                            },
-                                            "product_type": {
-                                                "type": "array",
-                                                "items": {
-                                                    "type": "string"
-                                                }
-                                            },
-                                            "route": {
-                                                "type": "array",
-                                                "items": {
-                                                    "type": "string"
-                                                }
-                                            },
-                                            "pharm_class_epc": {
-                                                "type": "array",
-                                                "description": "Established pharmacologic class"
-                                            }
-                                        }
-                                    },
-                                    "indications_and_usage": {
-                                        "type": [
-                                            "array",
-                                            "null"
-                                        ],
-                                        "items": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "warnings": {
-                                        "type": [
-                                            "array",
-                                            "null"
-                                        ],
-                                        "items": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "dosage_and_administration": {
-                                        "type": [
-                                            "array",
-                                            "null"
-                                        ],
-                                        "items": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "contraindications": {
-                                        "type": [
-                                            "array",
-                                            "null"
-                                        ],
-                                        "items": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "adverse_reactions": {
-                                        "type": [
-                                            "array",
-                                            "null"
-                                        ],
-                                        "items": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "drug_interactions": {
-                                        "type": [
-                                            "array",
-                                            "null"
-                                        ],
-                                        "items": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "mechanism_of_action": {
-                                        "type": [
-                                            "array",
-                                            "null"
-                                        ],
-                                        "items": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "not": {
-                        "required": [
-                            "error"
-                        ]
-                    }
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "error"
-                    ]
-                }
+              "error"
             ]
+          }
         },
-        "optional_api_keys": [
-            "FDA_API_KEY"
-        ]
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
     },
-    {
-        "name": "OpenFDA_search_drug_events",
-        "description": "Search the FDA Adverse Event Reporting System (FAERS) database via openFDA for drug safety reports. Accepts convenience parameters drug_name and reaction (e.g., drug_name='warfarin', reaction='haemorrhage'), a raw Lucene 'search' string for advanced queries, or any combination of them -- whichever you supply are AND-ed together, so passing 'search' alongside drug_name narrows that drug rather than replacing it. Contains 20+ million adverse event reports. IMPORTANT: MedDRA reaction terms use British English spelling (e.g., 'haemorrhage' not 'hemorrhage', 'haematoma' not 'hematoma'). Returns serious adverse events with outcomes (hospitalization, death), suspect drugs, and MedDRA reactions. Record mode exposes exact totals and skip pagination; continue with metadata.next_skip. Count mode does not support skip and reports whether its term list reached the requested limit.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "search": {
-                    "type": "string",
-                    "description": "Lucene query for adverse event reports. Use AND/OR with spaces (not +AND+). A FAERS report names its drug in up to three fields and none is a superset of the others, so a drug clause must OR all three inside parentheses or it undercounts (measured 2026-08-11: tofacitinib has 13,075 reports under patient.drug.medicinalproduct alone against 186,783 across all three). Prefer the 'drug_name' parameter, which builds that clause for you. Examples: '(patient.drug.medicinalproduct:aspirin OR patient.drug.openfda.generic_name:aspirin OR patient.drug.openfda.brand_name:aspirin)', 'patient.reaction.reactionmeddrapt:\"myocardial infarction\"', 'serious:1 AND (patient.drug.medicinalproduct:warfarin OR patient.drug.openfda.generic_name:warfarin OR patient.drug.openfda.brand_name:warfarin)'. Combine drugs by AND-ing one parenthesized group per drug."
-                },
-                "limit": {
-                    "type": [
-                        "integer",
-                        "null"
-                    ],
-                    "minimum": 1,
-                    "maximum": 1000,
-                    "default": 1,
-                    "description": "Record mode: max 100. Count mode: max 1000 terms."
-                },
-                "count": {
-                    "type": [
-                        "string",
-                        "null"
-                    ],
-                    "description": "Field to count by for frequency analysis (e.g., 'patient.reaction.reactionmeddrapt.exact' to get most common reactions)"
-                },
-                "drug_name": {
-                    "type": [
-                        "string",
-                        "null"
-                    ],
-                    "description": "Drug name to search for adverse events (e.g., 'warfarin', 'metformin'). Brand or generic: the name is matched against patient.drug.medicinalproduct, patient.drug.openfda.generic_name and patient.drug.openfda.brand_name, the same three fields every FAERS_* tool searches. Alternative to writing a full Lucene 'search' query, and preferred over it."
-                },
-                "reaction": {
-                    "type": [
-                        "string",
-                        "null"
-                    ],
-                    "description": "MedDRA adverse reaction term (British spelling: 'haemorrhage' not 'hemorrhage', 'haematoma' not 'hematoma'). Used with drug_name to filter by reaction."
-                },
-                "adverse_event": {
-                    "type": [
-                        "string",
-                        "null"
-                    ],
-                    "description": "Alias for reaction. MedDRA adverse reaction term (British spelling)."
-                },
-                "skip": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 25000,
-                    "description": "Record mode only. Number of reports to skip; continue with metadata.next_skip. Must be 0 when count is used."
-                }
-            },
-            "required": [],
-            "additionalProperties": false
+    "optional_api_keys": [
+      "FDA_API_KEY"
+    ]
+  },
+  {
+    "name": "OpenFDA_search_drug_events",
+    "description": "Search the FDA Adverse Event Reporting System (FAERS) database via openFDA for drug safety reports. Accepts convenience parameters drug_name and reaction (e.g., drug_name='warfarin', reaction='haemorrhage'), a raw Lucene 'search' string for advanced queries, or any combination of them -- whichever you supply are AND-ed together, so passing 'search' alongside drug_name narrows that drug rather than replacing it. Contains 20+ million adverse event reports. IMPORTANT: MedDRA reaction terms use British English spelling (e.g., 'haemorrhage' not 'hemorrhage', 'haematoma' not 'hematoma'). Returns serious adverse events with outcomes (hospitalization, death), suspect drugs, and MedDRA reactions. Record mode exposes exact totals and skip pagination; continue with metadata.next_skip. Count mode does not support skip and reports whether its term list reached the requested limit.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "search": {
+          "type": "string",
+          "description": "Lucene query for adverse event reports. Use AND/OR with spaces (not +AND+). A FAERS report names its drug in up to three fields and none is a superset of the others, so a drug clause must OR all three inside parentheses or it undercounts (measured 2026-08-11: tofacitinib has 13,075 reports under patient.drug.medicinalproduct alone against 186,783 across all three). Prefer the 'drug_name' parameter, which builds that clause for you. Examples: '(patient.drug.medicinalproduct:aspirin OR patient.drug.openfda.generic_name:aspirin OR patient.drug.openfda.brand_name:aspirin)', 'patient.reaction.reactionmeddrapt:\"myocardial infarction\"', 'serious:1 AND (patient.drug.medicinalproduct:warfarin OR patient.drug.openfda.generic_name:warfarin OR patient.drug.openfda.brand_name:warfarin)'. Combine drugs by AND-ing one parenthesized group per drug."
         },
-        "fields": {
-            "endpoint": "https://api.fda.gov/drug/event.json",
-            "pagination": "openfda_skip",
-            "auth_param": {
-                "env_var": "FDA_API_KEY",
-                "param": "api_key"
-            }
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 1,
+          "description": "Record mode: max 100. Count mode: max 1000 terms."
         },
-        "type": "OpenFDADrugEventsTool",
-        "test_examples": [
-            {
-                "drug_name": "aspirin",
-                "limit": 2
-            },
-            {
-                "search": "(patient.drug.medicinalproduct:warfarin OR patient.drug.openfda.generic_name:warfarin OR patient.drug.openfda.brand_name:warfarin)",
-                "count": "patient.reaction.reactionmeddrapt.exact"
-            }
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "description": "FDA adverse event reports",
-                    "properties": {
-                        "meta": {
-                            "type": "object",
-                            "properties": {
-                                "results": {
-                                    "type": "object",
-                                    "properties": {
-                                        "total": {
-                                            "type": "integer",
-                                            "description": "Total matching reports"
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "results": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "safetyreportid": {
-                                        "type": "string",
-                                        "description": "Unique report ID"
-                                    },
-                                    "serious": {
-                                        "type": [
-                                            "string",
-                                            "null"
-                                        ],
-                                        "description": "1 = serious, 2 = not serious"
-                                    },
-                                    "seriousnessoutcomes": {
-                                        "type": [
-                                            "string",
-                                            "null"
-                                        ]
-                                    },
-                                    "patient": {
-                                        "type": "object",
-                                        "properties": {
-                                            "drug": {
-                                                "type": "array",
-                                                "items": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "medicinalproduct": {
-                                                            "type": "string",
-                                                            "description": "Drug name"
-                                                        },
-                                                        "drugcharacterization": {
-                                                            "type": "string",
-                                                            "description": "1=suspect, 2=concomitant, 3=interacting"
-                                                        }
-                                                    }
-                                                }
-                                            },
-                                            "reaction": {
-                                                "type": "array",
-                                                "items": {
-                                                    "type": "object",
-                                                    "properties": {
-                                                        "reactionmeddrapt": {
-                                                            "type": "string",
-                                                            "description": "MedDRA preferred term for the adverse reaction"
-                                                        },
-                                                        "reactionoutcome": {
-                                                            "type": "string",
-                                                            "description": "1=recovered, 2=recovering, 3=not recovered, 4=fatal, 5=unknown, 6=unknown"
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "not": {
-                        "required": [
-                            "error"
-                        ]
+        "count": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Field to count by for frequency analysis (e.g., 'patient.reaction.reactionmeddrapt.exact' to get most common reactions)"
+        },
+        "drug_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Drug name to search for adverse events (e.g., 'warfarin', 'metformin'). Brand or generic: the name is matched against patient.drug.medicinalproduct, patient.drug.openfda.generic_name and patient.drug.openfda.brand_name, the same three fields every FAERS_* tool searches. Alternative to writing a full Lucene 'search' query, and preferred over it."
+        },
+        "reaction": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "MedDRA adverse reaction term (British spelling: 'haemorrhage' not 'hemorrhage', 'haematoma' not 'hematoma'). Used with drug_name to filter by reaction."
+        },
+        "adverse_event": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Alias for reaction. MedDRA adverse reaction term (British spelling)."
+        },
+        "skip": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 25000,
+          "description": "Record mode only. Number of reports to skip; continue with metadata.next_skip. Must be 0 when count is used."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "fields": {
+      "endpoint": "https://api.fda.gov/drug/event.json",
+      "pagination": "openfda_skip",
+      "auth_param": {
+        "env_var": "FDA_API_KEY",
+        "param": "api_key"
+      }
+    },
+    "type": "OpenFDADrugEventsTool",
+    "test_examples": [
+      {
+        "drug_name": "aspirin",
+        "limit": 2
+      },
+      {
+        "search": "(patient.drug.medicinalproduct:warfarin OR patient.drug.openfda.generic_name:warfarin OR patient.drug.openfda.brand_name:warfarin)",
+        "count": "patient.reaction.reactionmeddrapt.exact"
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "FDA adverse event reports",
+          "properties": {
+            "meta": {
+              "type": "object",
+              "properties": {
+                "results": {
+                  "type": "object",
+                  "properties": {
+                    "total": {
+                      "type": "integer",
+                      "description": "Total matching reports"
                     }
-                },
-                {
+                  }
+                }
+              }
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "safetyreportid": {
+                    "type": "string",
+                    "description": "Unique report ID"
+                  },
+                  "serious": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "1 = serious, 2 = not serious"
+                  },
+                  "seriousnessoutcomes": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "patient": {
                     "type": "object",
                     "properties": {
-                        "error": {
-                            "type": "string"
+                      "drug": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "medicinalproduct": {
+                              "type": "string",
+                              "description": "Drug name"
+                            },
+                            "drugcharacterization": {
+                              "type": "string",
+                              "description": "1=suspect, 2=concomitant, 3=interacting"
+                            }
+                          }
                         }
-                    },
-                    "required": [
-                        "error"
-                    ]
+                      },
+                      "reaction": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "reactionmeddrapt": {
+                              "type": "string",
+                              "description": "MedDRA preferred term for the adverse reaction"
+                            },
+                            "reactionoutcome": {
+                              "type": "string",
+                              "description": "1=recovered, 2=recovering, 3=not recovered, 4=fatal, 5=unknown, 6=unknown"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
                 }
-            ]
-        },
-        "optional_api_keys": [
-            "FDA_API_KEY"
-        ]
-    },
-    {
-        "name": "OpenFDA_search_drug_ndc",
-        "description": "Search the FDA National Drug Code Directory via openFDA with exact totals and skip pagination. Continue with metadata.next_skip while metadata.has_more is true; very broad searches disclose the upstream 25,100-record reachable window.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "search": {
-                    "type": "string",
-                    "description": "Lucene query for NDC products (e.g., 'brand_name:lipitor', 'generic_name:atorvastatin', 'active_ingredients.name:metformin', 'finished:true AND marketing_status:\"Prescription\"')"
-                },
-                "limit": {
-                    "type": [
-                        "integer",
-                        "null"
-                    ],
-                    "minimum": 1,
-                    "maximum": 100,
-                    "default": 5,
-                    "description": "Maximum number of results (default 5, max 100)"
-                },
-                "skip": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 25000,
-                    "default": 0,
-                    "description": "Number of matching records to skip. Continue with metadata.next_skip."
-                }
-            },
+              }
+            }
+          },
+          "not": {
             "required": [
-                "search"
-            ],
-            "additionalProperties": false
-        },
-        "fields": {
-            "endpoint": "https://api.fda.gov/drug/ndc.json",
-            "pagination": "openfda_skip",
-            "auth_param": {
-                "env_var": "FDA_API_KEY",
-                "param": "api_key"
-            }
-        },
-        "type": "BaseRESTTool",
-        "test_examples": [
-            {
-                "search": "brand_name:lipitor",
-                "limit": 3
-            },
-            {
-                "search": "generic_name:atorvastatin",
-                "limit": 3
-            },
-            {
-                "search": "active_ingredients.name:metformin",
-                "limit": 2
-            }
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "description": "FDA NDC directory search results",
-                    "properties": {
-                        "meta": {
-                            "type": "object",
-                            "properties": {
-                                "results": {
-                                    "type": "object",
-                                    "properties": {
-                                        "total": {
-                                            "type": "integer",
-                                            "description": "Total matching NDC products"
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "results": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "product_ndc": {
-                                        "type": "string",
-                                        "description": "NDC product code (e.g., '0069-0155')"
-                                    },
-                                    "brand_name": {
-                                        "type": "string",
-                                        "description": "Brand name"
-                                    },
-                                    "generic_name": {
-                                        "type": "string",
-                                        "description": "Generic/non-proprietary name"
-                                    },
-                                    "dosage_form": {
-                                        "type": "string",
-                                        "description": "Dosage form (TABLET, CAPSULE, INJECTION, etc.)"
-                                    },
-                                    "route": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "string"
-                                        },
-                                        "description": "Administration routes (ORAL, INTRAVENOUS, etc.)"
-                                    },
-                                    "marketing_status": {
-                                        "type": "string",
-                                        "description": "Prescription, OTC, etc."
-                                    },
-                                    "active_ingredients": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "object",
-                                            "properties": {
-                                                "name": {
-                                                    "type": "string"
-                                                },
-                                                "strength": {
-                                                    "type": "string"
-                                                }
-                                            }
-                                        }
-                                    },
-                                    "labeler_name": {
-                                        "type": "string",
-                                        "description": "Manufacturer/labeler name"
-                                    },
-                                    "finished": {
-                                        "type": "boolean"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "not": {
-                        "required": [
-                            "error"
-                        ]
-                    }
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "error"
-                    ]
-                }
+              "error"
             ]
+          }
         },
-        "optional_api_keys": [
-            "FDA_API_KEY"
-        ]
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
     },
-    {
-        "name": "OpenFDA_search_drug_enforcement",
-        "description": "Search FDA drug recalls via openFDA. Record mode exposes exact totals and skip pagination; continue with metadata.next_skip. Count mode does not support skip and reports whether its term list reached the requested limit.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "search": {
-                    "type": [
-                        "string",
-                        "null"
-                    ],
-                    "description": "Lucene query for drug recalls (e.g., 'classification:\"Class I\"', 'status:Ongoing', 'recalling_firm:pfizer', 'reason_for_recall:contamination'). Leave null to get recent recalls."
-                },
-                "limit": {
-                    "type": [
-                        "integer",
-                        "null"
-                    ],
-                    "minimum": 1,
-                    "maximum": 1000,
-                    "default": 5,
-                    "description": "Record mode: max 100. Count mode: max 1000 terms."
-                },
-                "skip": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 25000,
-                    "description": "Record mode only. Number of recalls to skip; continue with metadata.next_skip. Must be 0 when count is used."
-                },
-                "count": {
-                    "type": [
-                        "string",
-                        "null"
-                    ],
-                    "description": "Field to count by for frequency analysis. Must use the '.exact' keyword sub-field for text columns or openFDA rejects the request (e.g. 'classification.exact', 'recalling_firm.exact', 'voluntary_mandated.exact')."
-                }
-            },
-            "required": [],
-            "additionalProperties": false
+    "optional_api_keys": [
+      "FDA_API_KEY"
+    ]
+  },
+  {
+    "name": "OpenFDA_search_drug_ndc",
+    "description": "Search the FDA National Drug Code Directory via openFDA with exact totals and skip pagination. Continue with metadata.next_skip while metadata.has_more is true; very broad searches disclose the upstream 25,100-record reachable window.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "search": {
+          "type": "string",
+          "description": "Lucene query for NDC products (e.g., 'brand_name:lipitor', 'generic_name:atorvastatin', 'active_ingredients.name:metformin', 'finished:true AND marketing_status:\"Prescription\"')"
         },
-        "fields": {
-            "endpoint": "https://api.fda.gov/drug/enforcement.json",
-            "pagination": "openfda_skip",
-            "auth_param": {
-                "env_var": "FDA_API_KEY",
-                "param": "api_key"
-            }
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 100,
+          "default": 5,
+          "description": "Maximum number of results (default 5, max 100)"
         },
-        "type": "BaseRESTTool",
-        "test_examples": [
-            {
-                "search": "classification:\"Class I\"",
-                "limit": 3
-            },
-            {
-                "search": "status:Ongoing",
-                "limit": 3
-            },
-            {
-                "search": "classification:\"Class III\"",
-                "limit": 2
-            }
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "description": "FDA drug recall/enforcement search results",
-                    "properties": {
-                        "meta": {
-                            "type": "object",
-                            "properties": {
-                                "results": {
-                                    "type": "object",
-                                    "properties": {
-                                        "total": {
-                                            "type": "integer",
-                                            "description": "Total matching recalls"
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "results": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "recall_number": {
-                                        "type": "string",
-                                        "description": "FDA recall number (e.g., 'D-1178-2018')"
-                                    },
-                                    "status": {
-                                        "type": "string",
-                                        "description": "Recall status: Ongoing, Terminated, Completed"
-                                    },
-                                    "classification": {
-                                        "type": "string",
-                                        "description": "Hazard class: Class I (most serious), Class II, Class III"
-                                    },
-                                    "product_description": {
-                                        "type": "string",
-                                        "description": "Description of the recalled product"
-                                    },
-                                    "reason_for_recall": {
-                                        "type": "string",
-                                        "description": "Reason for the recall"
-                                    },
-                                    "recalling_firm": {
-                                        "type": "string",
-                                        "description": "Name of the recalling company"
-                                    },
-                                    "distribution_pattern": {
-                                        "type": "string",
-                                        "description": "Geographic distribution of recalled product"
-                                    },
-                                    "recall_initiation_date": {
-                                        "type": "string",
-                                        "description": "Date recall was initiated (YYYYMMDD)"
-                                    },
-                                    "voluntary_mandated": {
-                                        "type": "string",
-                                        "description": "Voluntary vs. FDA-mandated recall"
-                                    },
-                                    "product_type": {
-                                        "type": "string",
-                                        "description": "Product type (Drugs, Devices, Food)"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "not": {
-                        "required": [
-                            "error"
-                        ]
+        "skip": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 25000,
+          "default": 0,
+          "description": "Number of matching records to skip. Continue with metadata.next_skip."
+        }
+      },
+      "required": [
+        "search"
+      ],
+      "additionalProperties": false
+    },
+    "fields": {
+      "endpoint": "https://api.fda.gov/drug/ndc.json",
+      "pagination": "openfda_skip",
+      "auth_param": {
+        "env_var": "FDA_API_KEY",
+        "param": "api_key"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "search": "brand_name:lipitor",
+        "limit": 3
+      },
+      {
+        "search": "generic_name:atorvastatin",
+        "limit": 3
+      },
+      {
+        "search": "active_ingredients.name:metformin",
+        "limit": 2
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "FDA NDC directory search results",
+          "properties": {
+            "meta": {
+              "type": "object",
+              "properties": {
+                "results": {
+                  "type": "object",
+                  "properties": {
+                    "total": {
+                      "type": "integer",
+                      "description": "Total matching NDC products"
                     }
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "error"
-                    ]
+                  }
                 }
-            ]
-        },
-        "optional_api_keys": [
-            "FDA_API_KEY"
-        ]
-    },
-    {
-        "name": "OpenFDA_search_device_enforcement",
-        "description": "Search FDA medical-device recalls via openFDA. Record mode exposes exact totals and skip pagination; continue with metadata.next_skip. Count mode does not support skip and reports whether its term list reached the requested limit.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "search": {
-                    "type": [
-                        "string",
-                        "null"
-                    ],
-                    "description": "Lucene query for device recalls (e.g., 'classification:\"Class I\"', 'status:Ongoing', 'product_description:pacemaker', 'recalling_firm:medtronic'). Leave null to get recent recalls."
-                },
-                "limit": {
-                    "type": [
-                        "integer",
-                        "null"
-                    ],
-                    "minimum": 1,
-                    "maximum": 1000,
-                    "default": 5,
-                    "description": "Record mode: max 100. Count mode: max 1000 terms."
-                },
-                "skip": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 25000,
-                    "description": "Record mode only. Number of recalls to skip; continue with metadata.next_skip. Must be 0 when count is used."
-                },
-                "count": {
-                    "type": [
-                        "string",
-                        "null"
-                    ],
-                    "description": "Field to count by. Must use the '.exact' keyword sub-field for text columns or openFDA rejects the request (e.g. 'classification.exact', 'status.exact', 'recalling_firm.exact')."
-                }
+              }
             },
-            "required": [],
-            "additionalProperties": false
-        },
-        "fields": {
-            "endpoint": "https://api.fda.gov/device/enforcement.json",
-            "pagination": "openfda_skip",
-            "auth_param": {
-                "env_var": "FDA_API_KEY",
-                "param": "api_key"
-            }
-        },
-        "type": "BaseRESTTool",
-        "test_examples": [
-            {
-                "search": "classification:\"Class I\"",
-                "limit": 3
-            },
-            {
-                "search": "product_description:catheter",
-                "limit": 3
-            },
-            {
-                "search": "status:Terminated",
-                "limit": 2
-            }
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "description": "FDA medical device recall/enforcement search results",
-                    "properties": {
-                        "meta": {
-                            "type": "object"
-                        },
-                        "results": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "recall_number": {
-                                        "type": "string"
-                                    },
-                                    "status": {
-                                        "type": "string",
-                                        "description": "Ongoing, Terminated, Completed"
-                                    },
-                                    "classification": {
-                                        "type": "string",
-                                        "description": "Class I (most serious), Class II, Class III"
-                                    },
-                                    "product_description": {
-                                        "type": "string"
-                                    },
-                                    "reason_for_recall": {
-                                        "type": "string"
-                                    },
-                                    "recalling_firm": {
-                                        "type": "string"
-                                    },
-                                    "distribution_pattern": {
-                                        "type": "string"
-                                    },
-                                    "recall_initiation_date": {
-                                        "type": "string"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "not": {
-                        "required": [
-                            "error"
-                        ]
-                    }
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "error"
-                    ]
-                }
-            ]
-        },
-        "optional_api_keys": [
-            "FDA_API_KEY"
-        ]
-    },
-    {
-        "name": "OpenFDA_search_device_510k",
-        "description": "Search the FDA 510(k) premarket notification database via openFDA with exact totals and skip pagination. Continue with metadata.next_skip while metadata.has_more is true; very broad searches disclose the upstream 25,100-record reachable window.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "search": {
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "product_ndc": {
                     "type": "string",
-                    "description": "Lucene query for 510(k) devices (e.g., 'device_name:stethoscope', 'applicant:siemens', 'decision_date_year:2023', 'advisory_committee_description:radiology')"
-                },
-                "limit": {
-                    "type": [
-                        "integer",
-                        "null"
-                    ],
-                    "minimum": 1,
-                    "maximum": 100,
-                    "default": 5,
-                    "description": "Maximum number of results (default 5, max 100)"
-                },
-                "skip": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 25000,
-                    "default": 0,
-                    "description": "Number of matching records to skip. Continue with metadata.next_skip."
-                }
-            },
-            "required": [
-                "search"
-            ],
-            "additionalProperties": false
-        },
-        "fields": {
-            "endpoint": "https://api.fda.gov/device/510k.json",
-            "pagination": "openfda_skip",
-            "auth_param": {
-                "env_var": "FDA_API_KEY",
-                "param": "api_key"
-            }
-        },
-        "type": "BaseRESTTool",
-        "test_examples": [
-            {
-                "search": "device_name:stethoscope",
-                "limit": 3
-            },
-            {
-                "search": "device_name:\"glucose monitor\"",
-                "limit": 3
-            },
-            {
-                "search": "device_name:catheter",
-                "limit": 2
-            }
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "description": "FDA 510(k) premarket notification records",
-                    "properties": {
-                        "meta": {
-                            "type": "object"
-                        },
-                        "results": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "k_number": {
-                                        "type": "string",
-                                        "description": "510(k) accession number (e.g., 'K234567')"
-                                    },
-                                    "device_name": {
-                                        "type": "string",
-                                        "description": "Device trade name"
-                                    },
-                                    "applicant": {
-                                        "type": "string",
-                                        "description": "Applicant/company name"
-                                    },
-                                    "decision_date": {
-                                        "type": "string",
-                                        "description": "FDA decision date (YYYYMMDD)"
-                                    },
-                                    "decision_description": {
-                                        "type": "string",
-                                        "description": "FDA decision (e.g., 'SUBSTANTIALLY EQUIVALENT (SESE)')"
-                                    },
-                                    "advisory_committee_description": {
-                                        "type": "string",
-                                        "description": "Device panel (e.g., 'Radiology', 'Cardiovascular')"
-                                    },
-                                    "product_code": {
-                                        "type": "string",
-                                        "description": "FDA product code"
-                                    },
-                                    "statement_or_summary": {
-                                        "type": "string",
-                                        "description": "SE statement or summary flag"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "not": {
-                        "required": [
-                            "error"
-                        ]
-                    }
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "error"
-                    ]
-                }
-            ]
-        },
-        "optional_api_keys": [
-            "FDA_API_KEY"
-        ]
-    },
-    {
-        "name": "OpenFDA_search_food_enforcement",
-        "description": "Search FDA food recalls via openFDA. Record mode exposes exact totals and skip pagination; continue with metadata.next_skip. Count mode does not support skip and reports whether its term list reached the requested limit.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "search": {
-                    "type": [
-                        "string",
-                        "null"
-                    ],
-                    "description": "Lucene query for food recalls (e.g., 'classification:\"Class I\"', 'reason_for_recall:salmonella', 'status:Ongoing', 'product_description:peanut'). Leave null to get recent recalls."
-                },
-                "limit": {
-                    "type": [
-                        "integer",
-                        "null"
-                    ],
-                    "minimum": 1,
-                    "maximum": 1000,
-                    "default": 5,
-                    "description": "Record mode: max 100. Count mode: max 1000 terms."
-                },
-                "skip": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "maximum": 25000,
-                    "description": "Record mode only. Number of recalls to skip; continue with metadata.next_skip. Must be 0 when count is used."
-                },
-                "count": {
-                    "type": [
-                        "string",
-                        "null"
-                    ],
-                    "description": "Field to count by. Must use the '.exact' keyword sub-field for text columns or openFDA rejects the request (e.g. 'classification.exact', 'state.exact', 'recalling_firm.exact')."
-                }
-            },
-            "required": [],
-            "additionalProperties": false
-        },
-        "fields": {
-            "endpoint": "https://api.fda.gov/food/enforcement.json",
-            "pagination": "openfda_skip",
-            "auth_param": {
-                "env_var": "FDA_API_KEY",
-                "param": "api_key"
-            }
-        },
-        "type": "BaseRESTTool",
-        "test_examples": [
-            {
-                "search": "reason_for_recall:salmonella",
-                "limit": 3
-            },
-            {
-                "search": "classification:\"Class I\"",
-                "limit": 3
-            },
-            {
-                "search": "reason_for_recall:allergen",
-                "limit": 2
-            }
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "description": "FDA food recall/enforcement search results",
-                    "properties": {
-                        "meta": {
-                            "type": "object",
-                            "properties": {
-                                "results": {
-                                    "type": "object",
-                                    "properties": {
-                                        "total": {
-                                            "type": "integer",
-                                            "description": "Total matching food recalls"
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        "results": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "recall_number": {
-                                        "type": "string"
-                                    },
-                                    "status": {
-                                        "type": "string",
-                                        "description": "Ongoing, Terminated, Completed"
-                                    },
-                                    "classification": {
-                                        "type": "string",
-                                        "description": "Class I (serious), Class II, Class III"
-                                    },
-                                    "product_description": {
-                                        "type": "string"
-                                    },
-                                    "reason_for_recall": {
-                                        "type": "string"
-                                    },
-                                    "recalling_firm": {
-                                        "type": "string"
-                                    },
-                                    "distribution_pattern": {
-                                        "type": "string"
-                                    },
-                                    "recall_initiation_date": {
-                                        "type": "string"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "not": {
-                        "required": [
-                            "error"
-                        ]
-                    }
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "error"
-                    ]
-                }
-            ]
-        },
-        "optional_api_keys": [
-            "FDA_API_KEY"
-        ]
-    },
-    {
-        "name": "OpenFDA_search_drug_shortages",
-        "description": "Search the FDA drug shortages database via openFDA (added 2025). Returns current and resolved U.S. drug shortages with generic name, dosage form, presentation, shortage status (Current/Resolved), reported reason for the shortage, therapeutic category, manufacturer, and availability/related info. Use for supply-chain monitoring, formulary planning, and identifying alternatives for drugs in shortage. NOT a substitute for the official FDA shortage list for clinical decisions.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "search": {
+                    "description": "NDC product code (e.g., '0069-0155')"
+                  },
+                  "brand_name": {
                     "type": "string",
-                    "description": "Lucene query for drug shortages (e.g., 'status:Current', 'generic_name:amoxicillin', 'dosage_form:Injection', 'therapeutic_category:Antibiotic'). Combine with AND/OR."
-                },
-                "limit": {
-                    "type": [
-                        "integer",
-                        "null"
-                    ],
-                    "minimum": 1,
-                    "maximum": 100,
-                    "default": 5,
-                    "description": "Maximum number of results (default 5, max 100)"
-                },
-                "skip": {
-                    "type": [
-                        "integer",
-                        "null"
-                    ],
-                    "minimum": 0,
-                    "maximum": 25000,
-                    "default": 0,
-                    "description": "Number of results to skip; continue with metadata.next_skip (max 25000)"
-                }
-            },
-            "required": [
-                "search"
-            ]
-        },
-        "fields": {
-            "endpoint": "https://api.fda.gov/drug/shortages.json",
-            "pagination": "openfda_skip",
-            "auth_param": {
-                "env_var": "FDA_API_KEY",
-                "param": "api_key"
-            }
-        },
-        "type": "BaseRESTTool",
-        "test_examples": [
-            {
-                "search": "status:Current",
-                "limit": 3
-            },
-            {
-                "search": "dosage_form:Injection",
-                "limit": 2
-            },
-            {
-                "search": "status:Resolved",
-                "limit": 2
-            }
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "description": "openFDA result envelope",
-                    "properties": {
-                        "meta": {
-                            "type": "object"
-                        },
-                        "results": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "generic_name": {
-                                        "type": "string",
-                                        "description": "Generic drug name"
-                                    },
-                                    "status": {
-                                        "type": "string",
-                                        "description": "Shortage status: 'Current' or 'Resolved'"
-                                    },
-                                    "shortage_reason": {
-                                        "type": "string",
-                                        "description": "Reported reason for the shortage"
-                                    },
-                                    "dosage_form": {
-                                        "type": "string",
-                                        "description": "Dosage form (e.g., Injection)"
-                                    },
-                                    "presentation": {
-                                        "type": "string",
-                                        "description": "Product presentation/strength"
-                                    },
-                                    "therapeutic_category": {
-                                        "type": [
-                                            "array",
-                                            "string",
-                                            "null"
-                                        ],
-                                        "description": "Therapeutic category"
-                                    },
-                                    "company_name": {
-                                        "type": "string",
-                                        "description": "Manufacturer name"
-                                    },
-                                    "initial_posting_date": {
-                                        "type": "string",
-                                        "description": "Date first posted"
-                                    },
-                                    "update_date": {
-                                        "type": "string",
-                                        "description": "Last update date"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "not": {
-                        "required": [
-                            "error"
-                        ]
-                    }
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "error"
-                    ]
-                }
-            ]
-        },
-        "optional_api_keys": [
-            "FDA_API_KEY"
-        ]
-    },
-    {
-        "name": "OpenFDA_search_device_adverse_events",
-        "description": "Search the FDA MAUDE medical-device adverse-event database via openFDA. Contains voluntary and mandatory reports of device-associated injuries, malfunctions, and deaths. Returns event type (Death/Injury/Malfunction), device brand/generic name, manufacturer, product problems, patient outcomes, and report dates. Use for device safety signal detection and post-market surveillance. MAUDE reports are unverified and do not establish causation.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "search": {
+                    "description": "Brand name"
+                  },
+                  "generic_name": {
                     "type": "string",
-                    "description": "Lucene query for MAUDE device events (e.g., 'device.generic_name:pacemaker', 'event_type:Death', 'device.brand_name:\"INSULIN PUMP\"', 'date_received:[20230101+TO+20231231]')."
-                },
-                "limit": {
-                    "type": [
-                        "integer",
-                        "null"
-                    ],
-                    "minimum": 1,
-                    "maximum": 100,
-                    "default": 5,
-                    "description": "Maximum number of results (default 5, max 100)"
-                },
-                "skip": {
-                    "type": [
-                        "integer",
-                        "null"
-                    ],
-                    "minimum": 0,
-                    "maximum": 25000,
-                    "default": 0,
-                    "description": "Number of results to skip; continue with metadata.next_skip (max 25000)"
-                }
-            },
-            "required": [
-                "search"
-            ]
-        },
-        "fields": {
-            "endpoint": "https://api.fda.gov/device/event.json",
-            "pagination": "openfda_skip",
-            "auth_param": {
-                "env_var": "FDA_API_KEY",
-                "param": "api_key"
-            }
-        },
-        "type": "BaseRESTTool",
-        "test_examples": [
-            {
-                "search": "device.generic_name:pacemaker",
-                "limit": 2
-            },
-            {
-                "search": "event_type:Death",
-                "limit": 2
-            },
-            {
-                "search": "device.generic_name:\"infusion pump\"",
-                "limit": 2
-            }
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "description": "openFDA result envelope",
-                    "properties": {
-                        "meta": {
-                            "type": "object"
-                        },
-                        "results": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "report_number": {
-                                        "type": "string",
-                                        "description": "MAUDE report number"
-                                    },
-                                    "event_type": {
-                                        "type": "string",
-                                        "description": "Event type: Death, Injury, Malfunction, etc."
-                                    },
-                                    "date_received": {
-                                        "type": "string",
-                                        "description": "Date FDA received the report (YYYYMMDD)"
-                                    },
-                                    "product_problem_flag": {
-                                        "type": "string",
-                                        "description": "Whether a product problem was reported"
-                                    },
-                                    "device": {
-                                        "type": "array",
-                                        "description": "Device records (brand/generic name, manufacturer, product code)"
-                                    },
-                                    "patient": {
-                                        "type": "array",
-                                        "description": "Patient outcome records"
-                                    },
-                                    "mdr_text": {
-                                        "type": "array",
-                                        "description": "Narrative event description text"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "not": {
-                        "required": [
-                            "error"
-                        ]
-                    }
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "error"
-                    ]
-                }
-            ]
-        },
-        "optional_api_keys": [
-            "FDA_API_KEY"
-        ]
-    },
-    {
-        "name": "OpenFDA_search_device_recalls",
-        "description": "Search the FDA medical-device recall database via openFDA. Returns device recalls with product description, recalling firm, recall status, FDA-determined cause, classification, associated 510(k)/PMA numbers, product code, and key dates (initiated/posted/terminated). Use for device safety research and tracking corrective actions. Distinct from device enforcement reports.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "search": {
+                    "description": "Generic/non-proprietary name"
+                  },
+                  "dosage_form": {
                     "type": "string",
-                    "description": "Lucene query for device recalls (e.g., 'product_description:catheter', 'recalling_firm:Medtronic', 'recall_status:Open', 'product_code:DXN')."
-                },
-                "limit": {
-                    "type": [
-                        "integer",
-                        "null"
-                    ],
-                    "minimum": 1,
-                    "maximum": 100,
-                    "default": 5,
-                    "description": "Maximum number of results (default 5, max 100)"
-                },
-                "skip": {
-                    "type": [
-                        "integer",
-                        "null"
-                    ],
-                    "minimum": 0,
-                    "maximum": 25000,
-                    "default": 0,
-                    "description": "Number of results to skip; continue with metadata.next_skip (max 25000)"
-                }
-            },
-            "required": [
-                "search"
-            ]
-        },
-        "fields": {
-            "endpoint": "https://api.fda.gov/device/recall.json",
-            "pagination": "openfda_skip",
-            "auth_param": {
-                "env_var": "FDA_API_KEY",
-                "param": "api_key"
-            }
-        },
-        "type": "BaseRESTTool",
-        "test_examples": [
-            {
-                "search": "product_description:catheter",
-                "limit": 3
-            },
-            {
-                "search": "recalling_firm:Medtronic",
-                "limit": 2
-            },
-            {
-                "search": "recall_status:Terminated",
-                "limit": 2
-            }
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "description": "openFDA result envelope",
-                    "properties": {
-                        "meta": {
-                            "type": "object"
-                        },
-                        "results": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "cfres_id": {
-                                        "type": "string",
-                                        "description": "Recall event ID"
-                                    },
-                                    "product_res_number": {
-                                        "type": "string",
-                                        "description": "Product recall number"
-                                    },
-                                    "recall_status": {
-                                        "type": "string",
-                                        "description": "Recall status (e.g., Open, Terminated)"
-                                    },
-                                    "product_description": {
-                                        "type": "string",
-                                        "description": "Recalled device description"
-                                    },
-                                    "recalling_firm": {
-                                        "type": "string",
-                                        "description": "Firm initiating the recall"
-                                    },
-                                    "product_code": {
-                                        "type": "string",
-                                        "description": "FDA product code"
-                                    },
-                                    "k_numbers": {
-                                        "type": "array",
-                                        "description": "Associated 510(k) numbers"
-                                    },
-                                    "event_date_initiated": {
-                                        "type": "string",
-                                        "description": "Date recall initiated"
-                                    },
-                                    "event_date_posted": {
-                                        "type": "string",
-                                        "description": "Date recall posted"
-                                    }
-                                }
-                            }
-                        }
+                    "description": "Dosage form (TABLET, CAPSULE, INJECTION, etc.)"
+                  },
+                  "route": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
                     },
-                    "not": {
-                        "required": [
-                            "error"
-                        ]
-                    }
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "error"
-                    ]
-                }
-            ]
-        },
-        "optional_api_keys": [
-            "FDA_API_KEY"
-        ]
-    },
-    {
-        "name": "OpenFDA_search_food_adverse_events",
-        "description": "Search the FDA CAERS database (Center for Food Safety and Applied Nutrition Adverse Event Reporting System) via openFDA. Covers adverse events and product complaints for foods, dietary supplements, and cosmetics. Returns reported reactions (MedDRA terms), patient outcomes, product role/industry, and dates. Use for supplement/cosmetic/food safety surveillance. Reports are voluntary, unverified, and do not establish causation.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "search": {
+                    "description": "Administration routes (ORAL, INTRAVENOUS, etc.)"
+                  },
+                  "marketing_status": {
                     "type": "string",
-                    "description": "Lucene query for CAERS food/supplement/cosmetic events (e.g., 'reactions:NAUSEA', 'products.industry_name:Cosmetics', 'outcomes:\"Hospitalization\"', 'products.role:Suspect')."
-                },
-                "limit": {
-                    "type": [
-                        "integer",
-                        "null"
-                    ],
-                    "minimum": 1,
-                    "maximum": 100,
-                    "default": 5,
-                    "description": "Maximum number of results (default 5, max 100)"
-                },
-                "skip": {
-                    "type": [
-                        "integer",
-                        "null"
-                    ],
-                    "minimum": 0,
-                    "maximum": 25000,
-                    "default": 0,
-                    "description": "Number of results to skip; continue with metadata.next_skip (max 25000)"
-                }
-            },
-            "required": [
-                "search"
-            ]
-        },
-        "fields": {
-            "endpoint": "https://api.fda.gov/food/event.json",
-            "pagination": "openfda_skip",
-            "auth_param": {
-                "env_var": "FDA_API_KEY",
-                "param": "api_key"
-            }
-        },
-        "type": "BaseRESTTool",
-        "test_examples": [
-            {
-                "search": "reactions:NAUSEA",
-                "limit": 3
-            },
-            {
-                "search": "products.industry_name:Cosmetics",
-                "limit": 2
-            },
-            {
-                "search": "outcomes:Hospitalization",
-                "limit": 2
-            }
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "description": "openFDA result envelope",
-                    "properties": {
-                        "meta": {
-                            "type": "object"
+                    "description": "Prescription, OTC, etc."
+                  },
+                  "active_ingredients": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
                         },
-                        "results": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "report_number": {
-                                        "type": "string",
-                                        "description": "CAERS report number"
-                                    },
-                                    "date_created": {
-                                        "type": "string",
-                                        "description": "Report creation date"
-                                    },
-                                    "date_started": {
-                                        "type": [
-                                            "string",
-                                            "null"
-                                        ],
-                                        "description": "Reaction onset date"
-                                    },
-                                    "outcomes": {
-                                        "type": "array",
-                                        "description": "Reported patient outcomes"
-                                    },
-                                    "reactions": {
-                                        "type": "array",
-                                        "description": "Reported reactions (MedDRA preferred terms)"
-                                    },
-                                    "consumer": {
-                                        "type": "object",
-                                        "description": "Consumer age/sex"
-                                    },
-                                    "products": {
-                                        "type": "array",
-                                        "description": "Implicated products (name, role, industry)"
-                                    }
-                                }
-                            }
+                        "strength": {
+                          "type": "string"
                         }
-                    },
-                    "not": {
-                        "required": [
-                            "error"
-                        ]
+                      }
                     }
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "error"
-                    ]
-                }
-            ]
-        },
-        "optional_api_keys": [
-            "FDA_API_KEY"
-        ]
-    },
-    {
-        "name": "OpenFDA_search_animalvet_adverse_events",
-        "description": "Search the FDA animal & veterinary adverse-event database via openFDA. Contains reports of adverse drug experiences in animals (and humans exposed) involving veterinary drugs. Returns affected animal species/breed, reactions (VeDDRA terms), drug(s) involved, number of animals affected/treated, outcome/health assessment, and dates. Use for veterinary pharmacovigilance. Reports are voluntary and do not establish causation.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "search": {
+                  },
+                  "labeler_name": {
                     "type": "string",
-                    "description": "Lucene query for animal/veterinary events (e.g., 'animal.species:Dog', 'drug.active_ingredients.name:ivermectin', 'reaction.veddra_term_name:Vomiting')."
-                },
-                "limit": {
-                    "type": [
-                        "integer",
-                        "null"
-                    ],
-                    "minimum": 1,
-                    "maximum": 100,
-                    "default": 5,
-                    "description": "Maximum number of results (default 5, max 100)"
-                },
-                "skip": {
-                    "type": [
-                        "integer",
-                        "null"
-                    ],
-                    "minimum": 0,
-                    "maximum": 25000,
-                    "default": 0,
-                    "description": "Number of results to skip; continue with metadata.next_skip (max 25000)"
+                    "description": "Manufacturer/labeler name"
+                  },
+                  "finished": {
+                    "type": "boolean"
+                  }
                 }
-            },
+              }
+            }
+          },
+          "not": {
             "required": [
-                "search"
+              "error"
             ]
+          }
         },
-        "fields": {
-            "endpoint": "https://api.fda.gov/animalandveterinary/event.json",
-            "pagination": "openfda_skip",
-            "auth_param": {
-                "env_var": "FDA_API_KEY",
-                "param": "api_key"
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
             }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "optional_api_keys": [
+      "FDA_API_KEY"
+    ]
+  },
+  {
+    "name": "OpenFDA_search_drug_enforcement",
+    "description": "Search FDA drug recalls via openFDA. Record mode exposes exact totals and skip pagination; continue with metadata.next_skip. Count mode does not support skip and reports whether its term list reached the requested limit.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "search": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Lucene query for drug recalls (e.g., 'classification:\"Class I\"', 'status:Ongoing', 'recalling_firm:pfizer', 'reason_for_recall:contamination'). Leave null to get recent recalls."
         },
-        "type": "BaseRESTTool",
-        "test_examples": [
-            {
-                "search": "animal.species:Dog",
-                "limit": 3
-            },
-            {
-                "search": "reaction.veddra_term_name:Vomiting",
-                "limit": 2
-            },
-            {
-                "search": "animal.species:Cat",
-                "limit": 2
-            }
-        ],
-        "return_schema": {
-            "oneOf": [
-                {
-                    "type": "object",
-                    "description": "openFDA result envelope",
-                    "properties": {
-                        "meta": {
-                            "type": "object"
-                        },
-                        "results": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "properties": {
-                                    "unique_aer_id_number": {
-                                        "type": "string",
-                                        "description": "Unique adverse event report ID"
-                                    },
-                                    "original_receive_date": {
-                                        "type": "string",
-                                        "description": "Date report received"
-                                    },
-                                    "animal": {
-                                        "type": "object",
-                                        "description": "Affected animal (species, breed, age, weight)"
-                                    },
-                                    "reaction": {
-                                        "type": "array",
-                                        "description": "Reported reactions (VeDDRA terms)"
-                                    },
-                                    "drug": {
-                                        "type": "array",
-                                        "description": "Drug(s) involved (name, active ingredients, route)"
-                                    },
-                                    "number_of_animals_affected": {
-                                        "type": "string",
-                                        "description": "Count of animals affected"
-                                    },
-                                    "number_of_animals_treated": {
-                                        "type": "string",
-                                        "description": "Count of animals treated"
-                                    },
-                                    "outcome": {
-                                        "type": "array",
-                                        "description": "Outcome of the event"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "not": {
-                        "required": [
-                            "error"
-                        ]
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 5,
+          "description": "Record mode: max 100. Count mode: max 1000 terms."
+        },
+        "skip": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 25000,
+          "description": "Record mode only. Number of recalls to skip; continue with metadata.next_skip. Must be 0 when count is used."
+        },
+        "count": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Field to count by for frequency analysis. Must use the '.exact' keyword sub-field for text columns or openFDA rejects the request (e.g. 'classification.exact', 'recalling_firm.exact', 'voluntary_mandated.exact')."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "fields": {
+      "endpoint": "https://api.fda.gov/drug/enforcement.json",
+      "pagination": "openfda_skip",
+      "auth_param": {
+        "env_var": "FDA_API_KEY",
+        "param": "api_key"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "search": "classification:\"Class I\"",
+        "limit": 3
+      },
+      {
+        "search": "status:Ongoing",
+        "limit": 3
+      },
+      {
+        "search": "classification:\"Class III\"",
+        "limit": 2
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "FDA drug recall/enforcement search results",
+          "properties": {
+            "meta": {
+              "type": "object",
+              "properties": {
+                "results": {
+                  "type": "object",
+                  "properties": {
+                    "total": {
+                      "type": "integer",
+                      "description": "Total matching recalls"
                     }
-                },
-                {
-                    "type": "object",
-                    "properties": {
-                        "error": {
-                            "type": "string"
-                        }
-                    },
-                    "required": [
-                        "error"
-                    ]
+                  }
                 }
+              }
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "recall_number": {
+                    "type": "string",
+                    "description": "FDA recall number (e.g., 'D-1178-2018')"
+                  },
+                  "status": {
+                    "type": "string",
+                    "description": "Recall status: Ongoing, Terminated, Completed"
+                  },
+                  "classification": {
+                    "type": "string",
+                    "description": "Hazard class: Class I (most serious), Class II, Class III"
+                  },
+                  "product_description": {
+                    "type": "string",
+                    "description": "Description of the recalled product"
+                  },
+                  "reason_for_recall": {
+                    "type": "string",
+                    "description": "Reason for the recall"
+                  },
+                  "recalling_firm": {
+                    "type": "string",
+                    "description": "Name of the recalling company"
+                  },
+                  "distribution_pattern": {
+                    "type": "string",
+                    "description": "Geographic distribution of recalled product"
+                  },
+                  "recall_initiation_date": {
+                    "type": "string",
+                    "description": "Date recall was initiated (YYYYMMDD)"
+                  },
+                  "voluntary_mandated": {
+                    "type": "string",
+                    "description": "Voluntary vs. FDA-mandated recall"
+                  },
+                  "product_type": {
+                    "type": "string",
+                    "description": "Product type (Drugs, Devices, Food)"
+                  }
+                }
+              }
+            }
+          },
+          "not": {
+            "required": [
+              "error"
             ]
+          }
         },
-        "optional_api_keys": [
-            "FDA_API_KEY"
-        ]
-    }
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "optional_api_keys": [
+      "FDA_API_KEY"
+    ]
+  },
+  {
+    "name": "OpenFDA_search_device_enforcement",
+    "description": "Search FDA medical-device recalls via openFDA. Record mode exposes exact totals and skip pagination; continue with metadata.next_skip. Count mode does not support skip and reports whether its term list reached the requested limit.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "search": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Lucene query for device recalls (e.g., 'classification:\"Class I\"', 'status:Ongoing', 'product_description:pacemaker', 'recalling_firm:medtronic'). Leave null to get recent recalls."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 5,
+          "description": "Record mode: max 100. Count mode: max 1000 terms."
+        },
+        "skip": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 25000,
+          "description": "Record mode only. Number of recalls to skip; continue with metadata.next_skip. Must be 0 when count is used."
+        },
+        "count": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Field to count by. Must use the '.exact' keyword sub-field for text columns or openFDA rejects the request (e.g. 'classification.exact', 'status.exact', 'recalling_firm.exact')."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "fields": {
+      "endpoint": "https://api.fda.gov/device/enforcement.json",
+      "pagination": "openfda_skip",
+      "auth_param": {
+        "env_var": "FDA_API_KEY",
+        "param": "api_key"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "search": "classification:\"Class I\"",
+        "limit": 3
+      },
+      {
+        "search": "product_description:catheter",
+        "limit": 3
+      },
+      {
+        "search": "status:Terminated",
+        "limit": 2
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "FDA medical device recall/enforcement search results",
+          "properties": {
+            "meta": {
+              "type": "object"
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "recall_number": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string",
+                    "description": "Ongoing, Terminated, Completed"
+                  },
+                  "classification": {
+                    "type": "string",
+                    "description": "Class I (most serious), Class II, Class III"
+                  },
+                  "product_description": {
+                    "type": "string"
+                  },
+                  "reason_for_recall": {
+                    "type": "string"
+                  },
+                  "recalling_firm": {
+                    "type": "string"
+                  },
+                  "distribution_pattern": {
+                    "type": "string"
+                  },
+                  "recall_initiation_date": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "optional_api_keys": [
+      "FDA_API_KEY"
+    ]
+  },
+  {
+    "name": "OpenFDA_search_device_510k",
+    "description": "Search the FDA 510(k) premarket notification database via openFDA with exact totals and skip pagination. Continue with metadata.next_skip while metadata.has_more is true; very broad searches disclose the upstream 25,100-record reachable window.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "search": {
+          "type": "string",
+          "description": "Lucene query for 510(k) devices (e.g., 'device_name:stethoscope', 'applicant:siemens', 'decision_date_year:2023', 'advisory_committee_description:radiology')"
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 100,
+          "default": 5,
+          "description": "Maximum number of results (default 5, max 100)"
+        },
+        "skip": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 25000,
+          "default": 0,
+          "description": "Number of matching records to skip. Continue with metadata.next_skip."
+        }
+      },
+      "required": [
+        "search"
+      ],
+      "additionalProperties": false
+    },
+    "fields": {
+      "endpoint": "https://api.fda.gov/device/510k.json",
+      "pagination": "openfda_skip",
+      "auth_param": {
+        "env_var": "FDA_API_KEY",
+        "param": "api_key"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "search": "device_name:stethoscope",
+        "limit": 3
+      },
+      {
+        "search": "device_name:\"glucose monitor\"",
+        "limit": 3
+      },
+      {
+        "search": "device_name:catheter",
+        "limit": 2
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "FDA 510(k) premarket notification records",
+          "properties": {
+            "meta": {
+              "type": "object"
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "k_number": {
+                    "type": "string",
+                    "description": "510(k) accession number (e.g., 'K234567')"
+                  },
+                  "device_name": {
+                    "type": "string",
+                    "description": "Device trade name"
+                  },
+                  "applicant": {
+                    "type": "string",
+                    "description": "Applicant/company name"
+                  },
+                  "decision_date": {
+                    "type": "string",
+                    "description": "FDA decision date (YYYYMMDD)"
+                  },
+                  "decision_description": {
+                    "type": "string",
+                    "description": "FDA decision (e.g., 'SUBSTANTIALLY EQUIVALENT (SESE)')"
+                  },
+                  "advisory_committee_description": {
+                    "type": "string",
+                    "description": "Device panel (e.g., 'Radiology', 'Cardiovascular')"
+                  },
+                  "product_code": {
+                    "type": "string",
+                    "description": "FDA product code"
+                  },
+                  "statement_or_summary": {
+                    "type": "string",
+                    "description": "SE statement or summary flag"
+                  },
+                  "decision_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "FDA's decision code, e.g. 'SESE' - substantially equivalent. This is the outcome of the submission and it was undeclared."
+                  },
+                  "clearance_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Which 510(k) pathway was used, e.g. 'Traditional', 'Special', 'Abbreviated'."
+                  },
+                  "date_received": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Date FDA received the submission, YYYY-MM-DD. With the decision date it gives the review time."
+                  },
+                  "advisory_committee": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Code of the advisory committee that reviewed it, e.g. 'CV' for cardiovascular."
+                  },
+                  "review_advisory_committee": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Committee that actually performed the review, which can differ from the assigned one."
+                  },
+                  "third_party_flag": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "'Y' when a third party reviewed the submission rather than FDA directly."
+                  },
+                  "expedited_review_flag": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Set when the submission had expedited review; empty otherwise."
+                  },
+                  "contact": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Named contact on the submission, e.g. 'ANN D MCGONIGLE'."
+                  },
+                  "address_1": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Applicant's street address."
+                  },
+                  "address_2": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Second address line; empty when unused."
+                  },
+                  "city": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Applicant's city."
+                  },
+                  "state": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Applicant's state or province."
+                  },
+                  "postal_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Applicant's postal code."
+                  },
+                  "zip_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Applicant's ZIP code; the same value as postal_code on US records."
+                  },
+                  "country_code": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Applicant's country, as a two-letter code."
+                  },
+                  "openfda": {
+                    "description": "openFDA's resolved identifiers for the device: registration_number, fei_number, device_name, medical_specialty_description, regulation_number and device class. This is how a 510(k) joins to the device, registration and adverse-event endpoints, and it was the single largest thing missing from the row."
+                  }
+                }
+              }
+            }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "optional_api_keys": [
+      "FDA_API_KEY"
+    ]
+  },
+  {
+    "name": "OpenFDA_search_food_enforcement",
+    "description": "Search FDA food recalls via openFDA. Record mode exposes exact totals and skip pagination; continue with metadata.next_skip. Count mode does not support skip and reports whether its term list reached the requested limit.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "search": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Lucene query for food recalls (e.g., 'classification:\"Class I\"', 'reason_for_recall:salmonella', 'status:Ongoing', 'product_description:peanut'). Leave null to get recent recalls."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 1000,
+          "default": 5,
+          "description": "Record mode: max 100. Count mode: max 1000 terms."
+        },
+        "skip": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 25000,
+          "description": "Record mode only. Number of recalls to skip; continue with metadata.next_skip. Must be 0 when count is used."
+        },
+        "count": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Field to count by. Must use the '.exact' keyword sub-field for text columns or openFDA rejects the request (e.g. 'classification.exact', 'state.exact', 'recalling_firm.exact')."
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    },
+    "fields": {
+      "endpoint": "https://api.fda.gov/food/enforcement.json",
+      "pagination": "openfda_skip",
+      "auth_param": {
+        "env_var": "FDA_API_KEY",
+        "param": "api_key"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "search": "reason_for_recall:salmonella",
+        "limit": 3
+      },
+      {
+        "search": "classification:\"Class I\"",
+        "limit": 3
+      },
+      {
+        "search": "reason_for_recall:allergen",
+        "limit": 2
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "FDA food recall/enforcement search results",
+          "properties": {
+            "meta": {
+              "type": "object",
+              "properties": {
+                "results": {
+                  "type": "object",
+                  "properties": {
+                    "total": {
+                      "type": "integer",
+                      "description": "Total matching food recalls"
+                    }
+                  }
+                }
+              }
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "recall_number": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string",
+                    "description": "Ongoing, Terminated, Completed"
+                  },
+                  "classification": {
+                    "type": "string",
+                    "description": "Class I (serious), Class II, Class III"
+                  },
+                  "product_description": {
+                    "type": "string"
+                  },
+                  "reason_for_recall": {
+                    "type": "string"
+                  },
+                  "recalling_firm": {
+                    "type": "string"
+                  },
+                  "distribution_pattern": {
+                    "type": "string"
+                  },
+                  "recall_initiation_date": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "optional_api_keys": [
+      "FDA_API_KEY"
+    ]
+  },
+  {
+    "name": "OpenFDA_search_drug_shortages",
+    "description": "Search the FDA drug shortages database via openFDA (added 2025). Returns current and resolved U.S. drug shortages with generic name, dosage form, presentation, shortage status (Current/Resolved), reported reason for the shortage, therapeutic category, manufacturer, and availability/related info. Use for supply-chain monitoring, formulary planning, and identifying alternatives for drugs in shortage. NOT a substitute for the official FDA shortage list for clinical decisions.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "search": {
+          "type": "string",
+          "description": "Lucene query for drug shortages (e.g., 'status:Current', 'generic_name:amoxicillin', 'dosage_form:Injection', 'therapeutic_category:Antibiotic'). Combine with AND/OR."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 100,
+          "default": 5,
+          "description": "Maximum number of results (default 5, max 100)"
+        },
+        "skip": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 25000,
+          "default": 0,
+          "description": "Number of results to skip; continue with metadata.next_skip (max 25000)"
+        }
+      },
+      "required": [
+        "search"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.fda.gov/drug/shortages.json",
+      "pagination": "openfda_skip",
+      "auth_param": {
+        "env_var": "FDA_API_KEY",
+        "param": "api_key"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "search": "status:Current",
+        "limit": 3
+      },
+      {
+        "search": "dosage_form:Injection",
+        "limit": 2
+      },
+      {
+        "search": "status:Resolved",
+        "limit": 2
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "openFDA result envelope",
+          "properties": {
+            "meta": {
+              "type": "object"
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "generic_name": {
+                    "type": "string",
+                    "description": "Generic drug name"
+                  },
+                  "status": {
+                    "type": "string",
+                    "description": "Shortage status: 'Current' or 'Resolved'"
+                  },
+                  "shortage_reason": {
+                    "type": "string",
+                    "description": "Reported reason for the shortage"
+                  },
+                  "dosage_form": {
+                    "type": "string",
+                    "description": "Dosage form (e.g., Injection)"
+                  },
+                  "presentation": {
+                    "type": "string",
+                    "description": "Product presentation/strength"
+                  },
+                  "therapeutic_category": {
+                    "type": [
+                      "array",
+                      "string",
+                      "null"
+                    ],
+                    "description": "Therapeutic category"
+                  },
+                  "company_name": {
+                    "type": "string",
+                    "description": "Manufacturer name"
+                  },
+                  "initial_posting_date": {
+                    "type": "string",
+                    "description": "Date first posted"
+                  },
+                  "update_date": {
+                    "type": "string",
+                    "description": "Last update date"
+                  }
+                }
+              }
+            }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "optional_api_keys": [
+      "FDA_API_KEY"
+    ]
+  },
+  {
+    "name": "OpenFDA_search_device_adverse_events",
+    "description": "Search the FDA MAUDE medical-device adverse-event database via openFDA. Contains voluntary and mandatory reports of device-associated injuries, malfunctions, and deaths. Returns event type (Death/Injury/Malfunction), device brand/generic name, manufacturer, product problems, patient outcomes, and report dates. Use for device safety signal detection and post-market surveillance. MAUDE reports are unverified and do not establish causation.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "search": {
+          "type": "string",
+          "description": "Lucene query for MAUDE device events (e.g., 'device.generic_name:pacemaker', 'event_type:Death', 'device.brand_name:\"INSULIN PUMP\"', 'date_received:[20230101+TO+20231231]')."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 100,
+          "default": 5,
+          "description": "Maximum number of results (default 5, max 100)"
+        },
+        "skip": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 25000,
+          "default": 0,
+          "description": "Number of results to skip; continue with metadata.next_skip (max 25000)"
+        }
+      },
+      "required": [
+        "search"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.fda.gov/device/event.json",
+      "pagination": "openfda_skip",
+      "auth_param": {
+        "env_var": "FDA_API_KEY",
+        "param": "api_key"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "search": "device.generic_name:pacemaker",
+        "limit": 2
+      },
+      {
+        "search": "event_type:Death",
+        "limit": 2
+      },
+      {
+        "search": "device.generic_name:\"infusion pump\"",
+        "limit": 2
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "openFDA result envelope",
+          "properties": {
+            "meta": {
+              "type": "object"
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "report_number": {
+                    "type": "string",
+                    "description": "MAUDE report number"
+                  },
+                  "event_type": {
+                    "type": "string",
+                    "description": "Event type: Death, Injury, Malfunction, etc."
+                  },
+                  "date_received": {
+                    "type": "string",
+                    "description": "Date FDA received the report (YYYYMMDD)"
+                  },
+                  "product_problem_flag": {
+                    "type": "string",
+                    "description": "Whether a product problem was reported"
+                  },
+                  "device": {
+                    "type": "array",
+                    "description": "Device records (brand/generic name, manufacturer, product code)"
+                  },
+                  "patient": {
+                    "type": "array",
+                    "description": "Patient outcome records"
+                  },
+                  "mdr_text": {
+                    "type": "array",
+                    "description": "Narrative event description text"
+                  }
+                }
+              }
+            }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "optional_api_keys": [
+      "FDA_API_KEY"
+    ]
+  },
+  {
+    "name": "OpenFDA_search_device_recalls",
+    "description": "Search the FDA medical-device recall database via openFDA. Returns device recalls with product description, recalling firm, recall status, FDA-determined cause, classification, associated 510(k)/PMA numbers, product code, and key dates (initiated/posted/terminated). Use for device safety research and tracking corrective actions. Distinct from device enforcement reports.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "search": {
+          "type": "string",
+          "description": "Lucene query for device recalls (e.g., 'product_description:catheter', 'recalling_firm:Medtronic', 'recall_status:Open', 'product_code:DXN')."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 100,
+          "default": 5,
+          "description": "Maximum number of results (default 5, max 100)"
+        },
+        "skip": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 25000,
+          "default": 0,
+          "description": "Number of results to skip; continue with metadata.next_skip (max 25000)"
+        }
+      },
+      "required": [
+        "search"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.fda.gov/device/recall.json",
+      "pagination": "openfda_skip",
+      "auth_param": {
+        "env_var": "FDA_API_KEY",
+        "param": "api_key"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "search": "product_description:catheter",
+        "limit": 3
+      },
+      {
+        "search": "recalling_firm:Medtronic",
+        "limit": 2
+      },
+      {
+        "search": "recall_status:Terminated",
+        "limit": 2
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "openFDA result envelope",
+          "properties": {
+            "meta": {
+              "type": "object"
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "cfres_id": {
+                    "type": "string",
+                    "description": "Recall event ID"
+                  },
+                  "product_res_number": {
+                    "type": "string",
+                    "description": "Product recall number"
+                  },
+                  "recall_status": {
+                    "type": "string",
+                    "description": "Recall status (e.g., Open, Terminated)"
+                  },
+                  "product_description": {
+                    "type": "string",
+                    "description": "Recalled device description"
+                  },
+                  "recalling_firm": {
+                    "type": "string",
+                    "description": "Firm initiating the recall"
+                  },
+                  "product_code": {
+                    "type": "string",
+                    "description": "FDA product code"
+                  },
+                  "k_numbers": {
+                    "type": "array",
+                    "description": "Associated 510(k) numbers"
+                  },
+                  "event_date_initiated": {
+                    "type": "string",
+                    "description": "Date recall initiated"
+                  },
+                  "event_date_posted": {
+                    "type": "string",
+                    "description": "Date recall posted"
+                  }
+                }
+              }
+            }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "optional_api_keys": [
+      "FDA_API_KEY"
+    ]
+  },
+  {
+    "name": "OpenFDA_search_food_adverse_events",
+    "description": "Search the FDA CAERS database (Center for Food Safety and Applied Nutrition Adverse Event Reporting System) via openFDA. Covers adverse events and product complaints for foods, dietary supplements, and cosmetics. Returns reported reactions (MedDRA terms), patient outcomes, product role/industry, and dates. Use for supplement/cosmetic/food safety surveillance. Reports are voluntary, unverified, and do not establish causation.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "search": {
+          "type": "string",
+          "description": "Lucene query for CAERS food/supplement/cosmetic events (e.g., 'reactions:NAUSEA', 'products.industry_name:Cosmetics', 'outcomes:\"Hospitalization\"', 'products.role:Suspect')."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 100,
+          "default": 5,
+          "description": "Maximum number of results (default 5, max 100)"
+        },
+        "skip": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 25000,
+          "default": 0,
+          "description": "Number of results to skip; continue with metadata.next_skip (max 25000)"
+        }
+      },
+      "required": [
+        "search"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.fda.gov/food/event.json",
+      "pagination": "openfda_skip",
+      "auth_param": {
+        "env_var": "FDA_API_KEY",
+        "param": "api_key"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "search": "reactions:NAUSEA",
+        "limit": 3
+      },
+      {
+        "search": "products.industry_name:Cosmetics",
+        "limit": 2
+      },
+      {
+        "search": "outcomes:Hospitalization",
+        "limit": 2
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "openFDA result envelope",
+          "properties": {
+            "meta": {
+              "type": "object"
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "report_number": {
+                    "type": "string",
+                    "description": "CAERS report number"
+                  },
+                  "date_created": {
+                    "type": "string",
+                    "description": "Report creation date"
+                  },
+                  "date_started": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Reaction onset date"
+                  },
+                  "outcomes": {
+                    "type": "array",
+                    "description": "Reported patient outcomes"
+                  },
+                  "reactions": {
+                    "type": "array",
+                    "description": "Reported reactions (MedDRA preferred terms)"
+                  },
+                  "consumer": {
+                    "type": "object",
+                    "description": "Consumer age/sex"
+                  },
+                  "products": {
+                    "type": "array",
+                    "description": "Implicated products (name, role, industry)"
+                  }
+                }
+              }
+            }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "optional_api_keys": [
+      "FDA_API_KEY"
+    ]
+  },
+  {
+    "name": "OpenFDA_search_animalvet_adverse_events",
+    "description": "Search the FDA animal & veterinary adverse-event database via openFDA. Contains reports of adverse drug experiences in animals (and humans exposed) involving veterinary drugs. Returns affected animal species/breed, reactions (VeDDRA terms), drug(s) involved, number of animals affected/treated, outcome/health assessment, and dates. Use for veterinary pharmacovigilance. Reports are voluntary and do not establish causation.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "search": {
+          "type": "string",
+          "description": "Lucene query for animal/veterinary events (e.g., 'animal.species:Dog', 'drug.active_ingredients.name:ivermectin', 'reaction.veddra_term_name:Vomiting')."
+        },
+        "limit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 100,
+          "default": 5,
+          "description": "Maximum number of results (default 5, max 100)"
+        },
+        "skip": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 25000,
+          "default": 0,
+          "description": "Number of results to skip; continue with metadata.next_skip (max 25000)"
+        }
+      },
+      "required": [
+        "search"
+      ]
+    },
+    "fields": {
+      "endpoint": "https://api.fda.gov/animalandveterinary/event.json",
+      "pagination": "openfda_skip",
+      "auth_param": {
+        "env_var": "FDA_API_KEY",
+        "param": "api_key"
+      }
+    },
+    "type": "BaseRESTTool",
+    "test_examples": [
+      {
+        "search": "animal.species:Dog",
+        "limit": 3
+      },
+      {
+        "search": "reaction.veddra_term_name:Vomiting",
+        "limit": 2
+      },
+      {
+        "search": "animal.species:Cat",
+        "limit": 2
+      }
+    ],
+    "return_schema": {
+      "oneOf": [
+        {
+          "type": "object",
+          "description": "openFDA result envelope",
+          "properties": {
+            "meta": {
+              "type": "object"
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "unique_aer_id_number": {
+                    "type": "string",
+                    "description": "Unique adverse event report ID"
+                  },
+                  "original_receive_date": {
+                    "type": "string",
+                    "description": "Date report received"
+                  },
+                  "animal": {
+                    "type": "object",
+                    "description": "Affected animal (species, breed, age, weight)"
+                  },
+                  "reaction": {
+                    "type": "array",
+                    "description": "Reported reactions (VeDDRA terms)"
+                  },
+                  "drug": {
+                    "type": "array",
+                    "description": "Drug(s) involved (name, active ingredients, route)"
+                  },
+                  "number_of_animals_affected": {
+                    "type": "string",
+                    "description": "Count of animals affected"
+                  },
+                  "number_of_animals_treated": {
+                    "type": "string",
+                    "description": "Count of animals treated"
+                  },
+                  "outcome": {
+                    "type": "array",
+                    "description": "Outcome of the event"
+                  }
+                }
+              }
+            }
+          },
+          "not": {
+            "required": [
+              "error"
+            ]
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "error"
+          ]
+        }
+      ]
+    },
+    "optional_api_keys": [
+      "FDA_API_KEY"
+    ]
+  }
 ]

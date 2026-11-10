@@ -116,6 +116,90 @@
             },
             "reference_id": {
               "type": "string"
+            },
+            "model_bigg_id": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "BiGG's id for the model, e.g. 'iJO1366'."
+            },
+            "genome_name": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Genome the model is built on, e.g. 'NC_000913.3'."
+            },
+            "genome_ref_string": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "That genome as a resolvable reference, e.g. 'ncbi_accession:NC_000913.3'."
+            },
+            "published_filename": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Filename of the model as published, e.g. 'iJO1366.xml'."
+            },
+            "last_updated": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When BiGG last revised the model, e.g. 'Oct 31, 2019'. A model untouched for years may not match current annotation."
+            },
+            "escher_maps": {
+              "type": "array",
+              "items": {
+                "type": "object"
+              },
+              "description": "Escher pathway maps available for the model, each with a map_name such as 'iJO1366.Nucleotide metabolism'. These are what make the model viewable rather than only solvable."
+            },
+            "xml_size": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Uncompressed SBML size, e.g. '10.4 MB'."
+            },
+            "xml_gz_size": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Compressed SBML size, e.g. '531.6 kB'."
+            },
+            "json_size": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Uncompressed JSON size, e.g. '2.8 MB'."
+            },
+            "json_gz_size": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Compressed JSON size, e.g. '431.6 kB'."
+            },
+            "mat_size": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Uncompressed MATLAB size, e.g. '37.0 MB'."
+            },
+            "mat_gz_size": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Compressed MATLAB size. The four size pairs are what tell a caller which format to fetch before fetching it."
             }
           }
         },

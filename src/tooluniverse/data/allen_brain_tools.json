@@ -801,7 +801,7 @@
               "object",
               "null"
             ],
-            "description": "Linked brain structure record (present when include_structure=true)",
+            "description": "The brain structure the values were measured in. The row carried a structure_id and this block, which names it and places it in the ontology, was undeclared - so an expression value could not be attributed to a named region without a second lookup.",
             "properties": {
               "id": {
                 "type": "integer"
@@ -817,6 +817,98 @@
                   "string",
                   "null"
                 ]
+              },
+              "safe_name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The structure's full name, e.g. 'lateral wings of the dorsal raphe nucleus'. The field that makes a row readable."
+              },
+              "structure_id_path": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Path of ancestor ids from the root, e.g. '/15564/15565/16808/.../112892315/'. Lets a value be rolled up to a coarser region without fetching the ontology."
+              },
+              "parent_structure_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Id of the immediate parent structure."
+              },
+              "depth": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Depth in the structure tree."
+              },
+              "st_level": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Allen's structure level, a coarser grouping than depth."
+              },
+              "graph_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Which structure graph this id belongs to; ids are only unique within a graph."
+              },
+              "graph_order": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Position in the graph's canonical ordering, which is the order Allen's own figures use."
+              },
+              "ontology_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Which Allen ontology the structure comes from."
+              },
+              "hemisphere_id": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Hemisphere: 1 left, 2 right, 3 both."
+              },
+              "color_hex_triplet": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Allen's colour for the structure, e.g. 'D332E6', so a plot can match their atlas figures."
+              },
+              "atlas_id": {
+                "description": "Atlas the structure belongs to, when Allen records one; null for many structures."
+              },
+              "failed": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "Allen's QC flag on the structure record."
+              },
+              "failed_facet": {
+                "description": "Allen's internal facet id for failed records."
+              },
+              "sphinx_id": {
+                "description": "Allen's internal search-index id."
+              },
+              "structure_name_facet": {
+                "description": "Allen's internal facet id for the name."
+              },
+              "weight": {
+                "description": "Allen's internal ordering weight."
               }
             }
           }

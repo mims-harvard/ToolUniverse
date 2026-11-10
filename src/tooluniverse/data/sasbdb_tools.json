@@ -11,7 +11,10 @@
           "description": "Search query: UniProt accession (e.g., 'P02769' for BSA) or free-text term. Note: SASBDB has no full-text search API; UniProt accessions are resolved directly."
         },
         "max_results": {
-          "type": ["integer", "null"],
+          "type": [
+            "integer",
+            "null"
+          ],
           "description": "Page size when a free-text query falls back to listing the published-entry catalog. Default 50.",
           "minimum": 1
         },
@@ -22,7 +25,9 @@
           "default": 0
         }
       },
-      "required": ["query"]
+      "required": [
+        "query"
+      ]
     },
     "return_schema": {
       "oneOf": [
@@ -43,8 +48,12 @@
       ]
     },
     "test_examples": [
-      {"query": "P02769"},
-      {"query": "BSA"}
+      {
+        "query": "P02769"
+      },
+      {
+        "query": "BSA"
+      }
     ]
   },
   {
@@ -264,6 +273,60 @@
               "string",
               "null"
             ]
+          },
+          "detector": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "description": "The detector: its type, name and resolution. What the data was recorded on, and absent from the row before.",
+            "properties": {
+              "type": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Detector technology, e.g. 'CCD', 'Pilatus'."
+              },
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Detector model."
+              },
+              "resolution": {
+                "description": "Detector resolution as SASBDB records it."
+              }
+            }
+          },
+          "beam_geometry": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Beam geometry as SASBDB records it, e.g. '0.60'."
+          },
+          "point_source": {
+            "description": "Set on point-collimation instruments; null on the others. Point and line collimation need different desmearing, so which one it is changes how the curve must be treated."
+          },
+          "line_collimation": {
+            "description": "Set on line-collimation instruments; null on the others."
+          },
+          "line_collimation_slitlength": {
+            "description": "Slit length, on line-collimation instruments."
+          },
+          "line_collimation_integrationwidth": {
+            "description": "Integration width, on line-collimation instruments."
+          },
+          "beam_profile_ah": {
+            "description": "Horizontal beam-profile parameter, where the instrument records one."
+          },
+          "beam_profile_al": {
+            "description": "Vertical beam-profile parameter, where the instrument records one."
+          },
+          "sample_path_length": {
+            "description": "Sample path length, where recorded. Null on most entries."
           }
         }
       }

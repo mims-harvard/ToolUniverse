@@ -21,7 +21,9 @@
           "default": true
         }
       },
-      "required": ["package_name"]
+      "required": [
+        "package_name"
+      ]
     },
     "return_schema": {
       "type": "object",
@@ -34,37 +36,289 @@
           "type": "object",
           "description": "Complete PyPI metadata including version, author, license, dependencies, release history",
           "properties": {
-            "name": {"type": ["string", "null"]},
-            "version": {"type": ["string", "null"]},
-            "summary": {"type": ["string", "null"]},
-            "author": {"type": ["string", "null"]},
-            "license": {"type": ["string", "null"]},
-            "requires_python": {"type": ["string", "null"]},
-            "github_url": {"type": ["string", "null"]},
-            "total_releases": {"type": ["integer", "null"]},
-            "days_since_last_release": {"type": ["integer", "null"]},
-            "releases_last_year": {"type": ["integer", "null"]}
+            "name": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "version": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "summary": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "author": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "license": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "requires_python": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "github_url": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "total_releases": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "days_since_last_release": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "releases_last_year": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "author_email": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Author and contact as PyPI records it, e.g. 'Kenneth Reitz <me@kennethreitz.org>'."
+            },
+            "package_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The package's PyPI page, e.g. https://pypi.org/project/requests/."
+            },
+            "release_url": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The inspected release's page, e.g. https://pypi.org/project/requests/2.34.2/."
+            },
+            "project_urls": {
+              "description": "Links the maintainer declared, keyed by label - Documentation, Source, Changelog. How a caller reaches the repository or the docs."
+            },
+            "latest_release_date": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the latest release was published, ISO 8601. The first thing to check before depending on a package."
+            },
+            "requires_dist": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Declared dependencies with their version constraints, e.g. ['charset_normalizer<4,>=2']."
+            },
+            "classifiers": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "PyPI trove classifiers, e.g. ['Development Status :: 5 - Production/Stable']. They carry the maturity and the supported Python versions."
+            },
+            "has_wheel": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether a wheel is published. Without one, installing needs a build toolchain."
+            },
+            "has_source": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether an sdist is published."
+            },
+            "description_length": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Length of the long description in characters. One of the inputs to the quality score, so it is here to make that score checkable."
+            }
           }
         },
         "download_stats": {
           "type": "object",
           "description": "Download statistics from pypistats.org",
           "properties": {
-            "downloads_last_day": {"type": ["integer", "null"]},
-            "downloads_last_week": {"type": ["integer", "null"]},
-            "downloads_last_month": {"type": ["integer", "null"]}
+            "downloads_last_day": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "downloads_last_week": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "downloads_last_month": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "note": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Why the download figures are missing or partial, when they are. Null when they are complete."
+            }
           }
         },
         "github_stats": {
           "type": "object",
           "description": "GitHub repository statistics",
           "properties": {
-            "stars": {"type": ["integer", "null"]},
-            "forks": {"type": ["integer", "null"]},
-            "open_issues": {"type": ["integer", "null"]},
-            "days_since_last_push": {"type": ["integer", "null"]},
-            "archived": {"type": ["boolean", "null"]},
-            "topics": {"type": "array", "items": {"type": "string"}}
+            "stars": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "forks": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "open_issues": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "days_since_last_push": {
+              "type": [
+                "integer",
+                "null"
+              ]
+            },
+            "archived": {
+              "type": [
+                "boolean",
+                "null"
+              ]
+            },
+            "topics": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "description": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The repository's one-line description, e.g. 'A simple, yet elegant, HTTP library.'"
+            },
+            "language": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "GitHub's primary language for the repository."
+            },
+            "license": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Licence GitHub detected, e.g. 'Apache License 2.0'. It can differ from the PyPI metadata's licence, and the difference is worth seeing."
+            },
+            "created_at": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the repository was created, ISO 8601."
+            },
+            "updated_at": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When the repository record last changed, ISO 8601 - metadata as well as code."
+            },
+            "pushed_at": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When code was last pushed, ISO 8601. This is the activity date; updated_at moves for things that are not commits."
+            },
+            "default_branch": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Default branch name, e.g. 'main'."
+            },
+            "watchers": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Watcher count, e.g. 1345."
+            },
+            "has_issues": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the issue tracker is enabled - if not, there is nowhere to report a bug."
+            },
+            "has_wiki": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether the wiki is enabled."
+            },
+            "has_pages": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether GitHub Pages is enabled."
+            },
+            "disabled": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when GitHub has disabled the repository."
+            }
           }
         },
         "quality_scores": {
@@ -106,7 +360,9 @@
           "description": "Error message if inspection failed"
         }
       },
-      "required": ["package_name"]
+      "required": [
+        "package_name"
+      ]
     },
     "test_examples": [
       {
@@ -124,10 +380,19 @@
       }
     ],
     "metadata": {
-      "tags": ["package-inspection", "pypi", "quality-metrics", "package-evaluation"],
+      "tags": [
+        "package-inspection",
+        "pypi",
+        "quality-metrics",
+        "package-evaluation"
+      ],
       "difficulty_level": "intermediate",
       "estimated_execution_time": "3-10 seconds",
-      "api_dependencies": ["PyPI", "pypistats.org", "GitHub API"],
+      "api_dependencies": [
+        "PyPI",
+        "pypistats.org",
+        "GitHub API"
+      ],
       "version": "1.0.0",
       "author": "ToolUniverse Team",
       "use_cases": [

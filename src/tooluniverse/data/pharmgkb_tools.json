@@ -393,6 +393,58 @@
         },
         "types": {
           "type": "array"
+        },
+        "allelePhenotypes": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Per allele, the phenotype PharmGKB records and whether the evidence for it is limited - each with allele, phenotype and limitedEvidence. This is the annotation's actual content: which genotype means what."
+        },
+        "relatedAlleles": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "The star alleles the annotation covers, each as a StarAllele with its PharmGKB id and symbol, e.g. 'CYP2D6*1'."
+        },
+        "relatedChemicalsLogic": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "How the related chemicals combine, 'Or' or 'And'. Whether the annotation applies to any one of the drugs or to the combination."
+        },
+        "location": {
+          "description": "The variant or haplotype the annotation is about, with its genes, genomic position and haplotype detail."
+        },
+        "overrideLevel": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when a curator set the level of evidence by hand rather than letting the score decide."
+        },
+        "scoreDetails": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The scoring that produced levelOfEvidence, as a JSON string PharmGKB embeds - the per-step scores behind the level. It is a string, not an object: parse it before reading it."
+        },
+        "pediatric": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when the annotation is specific to paediatric patients."
+        },
+        "history": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "PharmGKB's change history for the annotation, each entry with a date and description."
         }
       },
       "additionalProperties": true

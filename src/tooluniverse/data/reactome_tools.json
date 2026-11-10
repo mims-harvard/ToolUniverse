@@ -1134,6 +1134,51 @@
         "className": {
           "type": "string",
           "description": "Class name"
+        },
+        "species": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Species the reaction is annotated in, each with its dbId and name."
+        },
+        "compartment": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Cellular compartments the reaction occurs in, each with a GO accession, e.g. cytosol / 0005829. A reaction without its compartment cannot be placed in a cell."
+        },
+        "summation": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Reactome's prose summary of the reaction, with its own dbId. The only field that explains what the reaction does."
+        },
+        "reviewStatus": {
+          "description": "How far the reaction has been through Reactome's review, as a term with a definition. What separates a curated reaction from a newly added one."
+        },
+        "orthologousEvent": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "The same reaction inferred in other species, each with its stId. This is how a human reaction is mapped onto a model organism."
+        },
+        "negativePrecedingEvent": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "Events that must NOT have happened for this reaction to proceed, e.g. a futile cycle. Dropping these inverts part of the pathway logic."
+        },
+        "maxDepth": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Depth of the event hierarchy below this reaction."
         }
       }
     }

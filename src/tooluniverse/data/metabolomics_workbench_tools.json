@@ -466,7 +466,10 @@
     "return_schema": {
       "oneOf": [
         {
-          "type": ["array", "string"],
+          "type": [
+            "array",
+            "string"
+          ],
           "description": "Array of matched-compound records; a raw TSV header-only string when the search returns no matches.",
           "items": {
             "type": "object"
@@ -688,6 +691,62 @@
               },
               "seqlength": {
                 "type": "string"
+              },
+              "gene_synonyms": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Other symbols for the gene, semicolon-separated in one string, e.g. 'ACC; ACAC; ACC1; ACCA; ACACAD;'. Split on ';' - the upstream packs the list rather than sending one."
+              },
+              "alt_names": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Other full names, also semicolon-separated in one string."
+              },
+              "chromosome": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Chromosome, e.g. '17'."
+              },
+              "map_location": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Cytogenetic band, e.g. '17q21'."
+              },
+              "summary": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "NCBI's prose summary of what the gene's product does. The longest field in the record and the only one that explains the gene."
+              },
+              "taxid": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "NCBI taxonomy id, e.g. '9606'."
+              },
+              "species": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Common species name, e.g. 'Human'."
+              },
+              "species_long": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Scientific species name, e.g. 'Homo sapiens'. Match on this, not on 'species'."
               }
             }
           }

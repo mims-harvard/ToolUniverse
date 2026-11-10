@@ -58,78 +58,143 @@
           "description": "Catalogue of Life search results",
           "properties": {
             "total": {
-              "type": "integer",
-              "description": "Total number of matches"
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Total matches, not the number returned."
             },
             "offset": {
-              "type": "integer"
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Index of the first row returned."
             },
             "limit": {
-              "type": "integer"
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Page size that was applied."
             },
             "result": {
               "type": "array",
-              "description": "List of matching taxa",
+              "description": "The matching name usages.",
               "items": {
                 "type": "object",
                 "properties": {
                   "id": {
-                    "type": "string",
-                    "description": "CoL taxon ID"
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Catalogue of Life id for the usage."
+                  },
+                  "group": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "CoL's broad group for the taxon, e.g. 'Mammals'."
+                  },
+                  "sectorDatasetKey": {
+                    "description": "Which source dataset CoL took this usage from."
+                  },
+                  "sectorPublisherKey": {
+                    "description": "Publisher of that source dataset."
+                  },
+                  "vernacularNames": {
+                    "description": "Common names, with their language where CoL records one."
                   },
                   "usage": {
                     "type": "object",
-                    "description": "Taxon usage details",
-                    "properties": {
-                      "id": {
-                        "type": "string"
-                      },
-                      "status": {
-                        "type": "string",
-                        "description": "Taxonomic status: accepted, synonym, etc."
-                      },
-                      "name": {
-                        "type": "object",
-                        "properties": {
-                          "scientificName": {
-                            "type": "string"
-                          },
-                          "rank": {
-                            "type": "string"
-                          },
-                          "authorship": {
-                            "type": "string"
-                          }
-                        }
-                      },
-                      "extinct": {
-                        "type": "boolean"
-                      },
-                      "environments": {
-                        "type": "array"
-                      }
+                    "description": "The name usage itself: the name, its nomenclatural status and its place in the tree, plus CoL's provenance for the record.",
+                    "additionalProperties": {
+                      "description": "One field of CoL's usage record; the set varies by rank and by source dataset."
                     }
                   },
                   "classification": {
                     "type": "array",
-                    "description": "Full classification hierarchy from kingdom to current taxon",
+                    "description": "The full lineage from domain down, in order. Each entry is a rank, not just a name - without 'rank' and 'status' a caller cannot tell a genus from a family or an accepted name from a synonym.",
                     "items": {
                       "type": "object",
                       "properties": {
                         "id": {
-                          "type": "string"
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "CoL id of the ancestor."
                         },
                         "name": {
-                          "type": "string"
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Scientific name, e.g. 'Eukaryota'."
+                        },
+                        "authorship": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Naming authority and year, e.g. '(Chatton, 1925) Whittaker & Margulis, 1978'. Part of the formal name: two taxa can share a name and differ by authorship."
                         },
                         "rank": {
-                          "type": "string"
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Taxonomic rank, e.g. 'domain', 'genus', 'species'."
+                        },
+                        "status": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Nomenclatural status, e.g. 'accepted', 'synonym'."
+                        },
+                        "label": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Name and authorship joined, as CoL displays it."
+                        },
+                        "labelHtml": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "The same label with CoL's HTML markup."
+                        },
+                        "code": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "description": "Which nomenclatural code governs the name at this rank, e.g. 'ZOOLOGICAL', 'BOTANICAL'. The code decides how the name and its authorship must be written and whether two identical names are the same taxon."
                         }
                       }
                     }
                   }
                 }
               }
+            },
+            "empty": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when the page holds no rows. Checking 'result' is equivalent; CoL sends both."
+            },
+            "last": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when this is the final page, so paging can stop without another call."
             }
           },
           "not": {
@@ -149,141 +214,7 @@
             "error"
           ]
         }
-      ],
-      "properties": {
-        "offset": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "description": "Index of the first row returned."
-        },
-        "limit": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "description": "Page size that was applied."
-        },
-        "total": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "description": "Total matches, not the number returned."
-        },
-        "empty": {
-          "type": [
-            "boolean",
-            "null"
-          ],
-          "description": "True when the page holds no rows. Checking 'result' is equivalent; CoL sends both."
-        },
-        "last": {
-          "type": [
-            "boolean",
-            "null"
-          ],
-          "description": "True when this is the final page, so paging can stop without another call."
-        },
-        "result": {
-          "type": "array",
-          "description": "The matching name usages.",
-          "items": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": [
-                  "string",
-                  "null"
-                ],
-                "description": "Catalogue of Life id for the usage."
-              },
-              "group": {
-                "type": [
-                  "string",
-                  "null"
-                ],
-                "description": "CoL's broad group for the taxon, e.g. 'Mammals'."
-              },
-              "sectorDatasetKey": {
-                "description": "Which source dataset CoL took this usage from."
-              },
-              "sectorPublisherKey": {
-                "description": "Publisher of that source dataset."
-              },
-              "vernacularNames": {
-                "description": "Common names, with their language where CoL records one."
-              },
-              "usage": {
-                "type": "object",
-                "description": "The name usage itself: the name, its nomenclatural status and its place in the tree, plus CoL's provenance for the record.",
-                "additionalProperties": {
-                  "description": "One field of CoL's usage record; the set varies by rank and by source dataset."
-                }
-              },
-              "classification": {
-                "type": "array",
-                "description": "The full lineage from domain down, in order. Each entry is a rank, not just a name - without 'rank' and 'status' a caller cannot tell a genus from a family or an accepted name from a synonym.",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": [
-                        "string",
-                        "null"
-                      ],
-                      "description": "CoL id of the ancestor."
-                    },
-                    "name": {
-                      "type": [
-                        "string",
-                        "null"
-                      ],
-                      "description": "Scientific name, e.g. 'Eukaryota'."
-                    },
-                    "authorship": {
-                      "type": [
-                        "string",
-                        "null"
-                      ],
-                      "description": "Naming authority and year, e.g. '(Chatton, 1925) Whittaker & Margulis, 1978'. Part of the formal name: two taxa can share a name and differ by authorship."
-                    },
-                    "rank": {
-                      "type": [
-                        "string",
-                        "null"
-                      ],
-                      "description": "Taxonomic rank, e.g. 'domain', 'genus', 'species'."
-                    },
-                    "status": {
-                      "type": [
-                        "string",
-                        "null"
-                      ],
-                      "description": "Nomenclatural status, e.g. 'accepted', 'synonym'."
-                    },
-                    "label": {
-                      "type": [
-                        "string",
-                        "null"
-                      ],
-                      "description": "Name and authorship joined, as CoL displays it."
-                    },
-                    "labelHtml": {
-                      "type": [
-                        "string",
-                        "null"
-                      ],
-                      "description": "The same label with CoL's HTML markup."
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+      ]
     }
   },
   {
