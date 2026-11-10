@@ -148,6 +148,122 @@
       "properties": {
         "detail": {
           "type": "string"
+        },
+        "association_counts": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          },
+          "description": "Counts per association type, e.g. Disease to Phenotype. What evidence exists and of what kind."
+        },
+        "category": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Biolink category, e.g. 'biolink:PhenotypicFeature'."
+        },
+        "description": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The term's textual definition. The only field that says what the term means."
+        },
+        "exact_synonym": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Synonyms that mean the same thing, e.g. ['Epileptic seizure']."
+        },
+        "file_source": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The source file the node came from, e.g. 'phenio_nodes'."
+        },
+        "has_descendant_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many terms sit below it, e.g. 347. A term with hundreds of descendants is a category, not a finding."
+        },
+        "has_phenotype_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many entities are annotated directly to this term. Zero on a term used only as a parent."
+        },
+        "id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The HPO term id, e.g. 'HP:0001250'."
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The term's label, e.g. 'Seizure'."
+        },
+        "namespace": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Ontology namespace, e.g. 'HP'."
+        },
+        "node_hierarchy": {
+          "description": "The term's immediate super_classes and sub_classes. Where it sits in HPO."
+        },
+        "provided_by": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Which Monarch source supplied the node."
+        },
+        "provided_by_link": {
+          "description": "That source's id and url."
+        },
+        "related_synonym": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Related but not equivalent terms, e.g. ['Epilepsy']. Treating a related synonym as exact is a classification error, so the two lists are kept apart."
+        },
+        "synonym": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "All synonyms together, exact and related. Use exact_synonym and related_synonym when the distinction matters - treating a related synonym as exact is a classification error."
+        },
+        "uri": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The term's full ontology URI, e.g. 'http://purl.obolibrary.org/obo/HP_0001250'. The resolvable form of the id."
         }
       }
     }

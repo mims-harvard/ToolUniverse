@@ -90,6 +90,16 @@
                   "classes": {
                     "type": "array",
                     "description": "Chemical classification"
+                  },
+                  "link": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "External identifiers for the compound, each a database and identifier - InChIKey, ChemOnt, PubChem."
                   }
                 }
               },
@@ -110,8 +120,35 @@
                       "ion_mode": {
                         "type": "string",
                         "description": "POSITIVE or NEGATIVE"
+                      },
+                      "subtags": {
+                        "type": [
+                          "array",
+                          "null"
+                        ],
+                        "items": {
+                          "type": "object"
+                        },
+                        "description": "Acquisition parameters as subtag/value pairs, e.g. IONIZATION APCI."
                       }
                     }
+                  },
+                  "chromatography": {
+                    "type": [
+                      "array",
+                      "null"
+                    ],
+                    "items": {
+                      "type": "object"
+                    },
+                    "description": "Chromatography conditions as subtag/value pairs: column, solvent, flow rate, retention time. What makes a retention time meaningful."
+                  },
+                  "instrument": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The mass spectrometer, e.g. 'QExactive Orbitrap HF-X (Thermo Scientific)'. Spectra are only comparable within an instrument class."
                   }
                 }
               },
@@ -128,8 +165,41 @@
                   },
                   "peak": {
                     "description": "Peak data - either array of m/z values or object with header/values"
+                  },
+                  "annotation": {
+                    "description": "Per-peak annotations, where the submitter provided them. Empty object when none."
                   }
                 }
+              },
+              "authors": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "object"
+                },
+                "description": "Who produced the spectrum, each with a name."
+              },
+              "copyright": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Copyright holder of the spectrum."
+              },
+              "date": {
+                "description": "The record's created, updated and modified dates."
+              },
+              "license": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Licence, e.g. 'CC BY'. Needed before a spectrum can be redistributed."
+              },
+              "mass_spectrometry": {
+                "description": "The focused ion and data-processing blocks: precursor m/z and type, and how the peaks were produced."
               }
             }
           }
@@ -528,6 +598,29 @@
             "peak": {
               "type": "object",
               "description": "Spectral peaks with SPLASH hash"
+            },
+            "authors": {
+              "type": [
+                "array",
+                "null"
+              ],
+              "items": {
+                "type": "object"
+              },
+              "description": "Who produced the spectrum, each with a name."
+            },
+            "date": {
+              "description": "The record's created, updated and modified dates."
+            },
+            "license": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Licence, e.g. 'CC BY'. Needed before a spectrum can be redistributed."
+            },
+            "mass_spectrometry": {
+              "description": "The focused ion and data-processing blocks: precursor m/z and type, and how the peaks were produced."
             }
           },
           "required": [

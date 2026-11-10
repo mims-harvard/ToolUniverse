@@ -1727,6 +1727,255 @@
             "integer",
             "null"
           ]
+        },
+        "abstract_inverted_index": {
+          "description": "The abstract as a word -> positions map rather than text. OpenAlex stores it this way for licensing reasons; reconstruct by sorting the positions."
+        },
+        "authorships": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          },
+          "description": "Each author with their position (first/middle/last), institutions, country and whether they are a corresponding author. The authorship record, which a citation needs."
+        },
+        "awards": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          },
+          "description": "The grants behind the work, each with its id and award number. What links a paper to a funding record."
+        },
+        "best_oa_location": {
+          "description": "The best open-access copy OpenAlex knows of: landing page, PDF url, licence and version. How to actually read the paper."
+        },
+        "biblio": {
+          "description": "Volume, issue, first_page and last_page. The parts of a citation the DOI does not carry."
+        },
+        "cited_by_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Total citations OpenAlex has counted, e.g. 136007."
+        },
+        "concepts": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          },
+          "description": "OpenAlex concepts for the work with their scores - what the paper is about, as the index sees it."
+        },
+        "content_urls": {
+          "description": "URLs for the fetched content OpenAlex holds: pdf and grobid_xml."
+        },
+        "countries_distinct_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many countries the authors span."
+        },
+        "counts_by_year": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          },
+          "description": "Citations per year, each {year, cited_by_count}. A total hides whether a work is still being cited; this does not."
+        },
+        "created_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "When OpenAlex created the record, ISO 8601."
+        },
+        "display_name": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "The work's title."
+        },
+        "funders": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          },
+          "description": "Funding organisations, each with its OpenAlex id and name."
+        },
+        "has_content": {
+          "description": "Whether OpenAlex holds that content, per format."
+        },
+        "institutions_distinct_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many institutions the authors span."
+        },
+        "updated_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "When OpenAlex last updated it."
+        },
+        "has_fulltext": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Whether OpenAlex holds the full text, which is what makes text mining possible."
+        },
+        "ids": {
+          "description": "The work's identifiers in one block: openalex, doi, mag, pmid where known. The join to every other literature source."
+        },
+        "indexed_in": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "Which indexes list the work, e.g. ['arxiv', 'crossref']."
+        },
+        "is_paratext": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True for front matter, errata, tables of contents - things that are indexed as works but are not papers. Counting them as results inflates any literature survey."
+        },
+        "is_retracted": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "True when the work has been retracted. A literature tool that does not say this can hand back a retracted paper as evidence, and nothing in the record would show it."
+        },
+        "is_traditional": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "OpenAlex's flag for a conventionally published work."
+        },
+        "is_xpac": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "An OpenAlex internal flag."
+        },
+        "keywords": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          },
+          "description": "Keywords OpenAlex assigns, each with an id and score."
+        },
+        "language": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Language code of the work, e.g. 'en'."
+        },
+        "locations": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          },
+          "description": "Every copy OpenAlex knows of, including repositories and preprint servers."
+        },
+        "locations_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many locations, e.g. 11."
+        },
+        "open_access": {
+          "description": "Open-access status: is_oa, oa_status (gold/green/hybrid/bronze/closed) and the url. 'oa_status' is what says whether the full text can legally be read."
+        },
+        "primary_location": {
+          "description": "Where the work was published: the source, its landing page, pdf url, licence and version."
+        },
+        "primary_topic": {
+          "description": "The highest-scoring topic, with its score and its place in the subject hierarchy."
+        },
+        "publication_date": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Date of publication, YYYY-MM-DD."
+        },
+        "referenced_works": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "OpenAlex ids of the works this one cites."
+        },
+        "referenced_works_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "How many, e.g. 35."
+        },
+        "related_works": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "OpenAlex ids of works it resembles, by OpenAlex's own similarity."
+        },
+        "topics": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "object"
+          },
+          "description": "OpenAlex topics with their subfield, field and domain. The current classification, which supersedes `concepts`."
+        },
+        "type": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Work type, e.g. 'preprint', 'article', 'review'. A preprint has not been peer reviewed, and the title does not say so."
         }
       }
     },

@@ -213,6 +213,83 @@
                 "null"
               ],
               "description": "Publication reference"
+            },
+            "basionymKey": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Key of the basionym, where the name is a recombination."
+            },
+            "constituentKey": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The constituent dataset within it, for aggregated checklists."
+            },
+            "datasetKey": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The dataset this record came from."
+            },
+            "lastCrawled": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When GBIF last fetched the source record, ISO 8601."
+            },
+            "lastInterpreted": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "When GBIF last re-interpreted it, ISO 8601. The record can be older than this date suggests."
+            },
+            "nameKey": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Key of the parsed name in GBIF's names index."
+            },
+            "nameType": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "How GBIF parsed the name, e.g. 'SCIENTIFIC', 'INFORMAL'. A non-scientific name type means the record should not be treated as a formal taxon."
+            },
+            "nubKey": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Key of the matching name in GBIF's backbone taxonomy, e.g. 2435099. The backbone is what cross-dataset comparison goes through, so this is the id to join on - not the dataset-local key."
+            },
+            "remarks": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Taxonomic remarks from the source. Empty on most records."
+            },
+            "sourceTaxonKey": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Key of the taxon in its source dataset."
+            },
+            "taxonID": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The source's own identifier, e.g. 'gbif:2435099'."
             }
           }
         },

@@ -1509,6 +1509,55 @@
               "_links": {
                 "type": "object",
                 "description": "API links"
+              },
+              "multi_snp_haplotype": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the association is to a haplotype of several SNPs rather than to one variant. The reported variant is then not the unit of the finding."
+              },
+              "or_per_copy_num": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Odds ratio per copy of the effect allele, where the study modelled it per-allele rather than per-genotype."
+              },
+              "or_value": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Odds ratio for the association, when the study reported one. Absent for quantitative traits, which report a beta instead."
+              },
+              "pvalue_description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The Catalog's note on how the p-value was derived, e.g. a subgroup or a conditional analysis. Empty when the p-value is the headline one."
+              },
+              "pvalue_exponent": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Exponent of the p-value, e.g. -1315. See pvalue_mantissa."
+              },
+              "pvalue_mantissa": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Mantissa of the association p-value, e.g. 3. The GWAS Catalog stores p as mantissa x 10^exponent because the values underflow a float: 3e-1315 cannot be represented. Multiply with pvalue_exponent; neither was declared, so the one number a GWAS association exists to report was unreachable."
+              },
+              "snp_interaction": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the association is an interaction between variants, so neither variant alone carries the effect."
               }
             }
           }
@@ -1677,6 +1726,55 @@
               "_links": {
                 "type": "object",
                 "description": "API links"
+              },
+              "multi_snp_haplotype": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the association is to a haplotype of several SNPs rather than to one variant. The reported variant is then not the unit of the finding."
+              },
+              "or_per_copy_num": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Odds ratio per copy of the effect allele, where the study modelled it per-allele rather than per-genotype."
+              },
+              "or_value": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Odds ratio for the association, when the study reported one. Absent for quantitative traits, which report a beta instead."
+              },
+              "pvalue_description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The Catalog's note on how the p-value was derived, e.g. a subgroup or a conditional analysis. Empty when the p-value is the headline one."
+              },
+              "pvalue_exponent": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Exponent of the p-value, e.g. -1315. See pvalue_mantissa."
+              },
+              "pvalue_mantissa": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Mantissa of the association p-value, e.g. 3. The GWAS Catalog stores p as mantissa x 10^exponent because the values underflow a float: 3e-1315 cannot be represented. Multiply with pvalue_exponent; neither was declared, so the one number a GWAS association exists to report was unreachable."
+              },
+              "snp_interaction": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the association is an interaction between variants, so neither variant alone carries the effect."
               }
             }
           }
@@ -2182,6 +2280,55 @@
               "_links": {
                 "type": "object",
                 "description": "API links"
+              },
+              "multi_snp_haplotype": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the association is to a haplotype of several SNPs rather than to one variant. The reported variant is then not the unit of the finding."
+              },
+              "or_per_copy_num": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Odds ratio per copy of the effect allele, where the study modelled it per-allele rather than per-genotype."
+              },
+              "or_value": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Odds ratio for the association, when the study reported one. Absent for quantitative traits, which report a beta instead."
+              },
+              "pvalue_description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The Catalog's note on how the p-value was derived, e.g. a subgroup or a conditional analysis. Empty when the p-value is the headline one."
+              },
+              "pvalue_exponent": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Exponent of the p-value, e.g. -1315. See pvalue_mantissa."
+              },
+              "pvalue_mantissa": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Mantissa of the association p-value, e.g. 3. The GWAS Catalog stores p as mantissa x 10^exponent because the values underflow a float: 3e-1315 cannot be represented. Multiply with pvalue_exponent; neither was declared, so the one number a GWAS association exists to report was unreachable."
+              },
+              "snp_interaction": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the association is an interaction between variants, so neither variant alone carries the effect."
               }
             }
           }

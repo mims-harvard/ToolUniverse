@@ -7625,3 +7625,77 @@ def test_a_cadd_block_declares_more_than_four_of_its_thirty_six_fields():
         assert "silent error" in schema, (
             "the hg38/hg19 split has to be stated, not implied"
         )
+
+
+def test_a_gwas_association_carries_its_p_value():
+    """The p-value is stored as a mantissa and an exponent, and neither was declared.
+
+    The GWAS Catalog splits it because the values underflow a float: the
+    measured association is 3e-1315, which cannot be represented. So the one
+    number a GWAS association exists to report was unreachable from the
+    schema of all three association tools, which share a row.
+
+    `or_value` is the effect size and absent for quantitative traits.
+    `multi_snp_haplotype` and `snp_interaction` are the two cases where the
+    reported variant is NOT the unit of the finding, and reading such a row
+    as a single-variant association is wrong in a way nothing else in the
+    row reveals.
+    """
+    for tool in ("gwas_get_associations_for_trait", "gwas_get_associations_for_snp",
+                 "gwas_get_associations_for_study"):
+        schema = json.dumps(_config(tool).get("return_schema"))
+        for field in ('"pvalue_mantissa"', '"pvalue_exponent"', '"or_value"',
+                      '"multi_snp_haplotype"', '"snp_interaction"'):
+            assert field in schema, f"{tool} returns {field} undeclared"
+        assert "underflow" in schema, (
+            "the declaration has to say why the p-value is split, or a "
+            "caller will look for a single field that does not exist"
+        )
+
+
+def test_a_literature_record_says_whether_it_was_retracted():
+    """openalex_get_work returned 36 undeclared fields and this is the one.
+
+    `is_retracted` was among them: a literature tool that cannot say a paper
+    was retracted will hand one back as evidence with nothing in the record
+    to show it. `is_paratext` is the quieter version - front matter and
+    errata are indexed as works, and counting them inflates any survey. And
+    `type` 'preprint' is what says the work has not been peer reviewed,
+    which the title never does.
+
+    The rest is what makes the record usable: counts_by_year rather than one
+    total, the authorships with positions and institutions, the funders and
+    awards, the open-access status and url, and the referenced works.
+    """
+    schema = json.dumps(_config("openalex_get_work").get("return_schema"))
+    for field in ('"is_retracted"', '"is_paratext"', '"type"', '"open_access"',
+                  '"counts_by_year"', '"authorships"', '"referenced_works"',
+                  '"awards"', '"ids"'):
+        assert field in schema, f"openalex_get_work returns {field} undeclared"
+    assert "retracted paper as evidence" in schema
+    assert "has not been peer reviewed" in schema
+
+
+def test_the_rest_of_the_long_tail_is_declared():
+    """HPO, GBIF and MassBank, with the fields that change an answer.
+
+    HPO: exact_synonym and related_synonym are kept apart because treating
+    'Epilepsy' as an exact synonym of 'Seizure' is a classification error,
+    and has_descendant_count 347 says the term is a category rather than a
+    finding. GBIF: nubKey is the backbone id, which is what cross-dataset
+    comparison joins on - not the dataset-local key the record leads with.
+    MassBank: the instrument and the chromatography conditions, without
+    which a retention time means nothing, and the licence, without which the
+    spectrum cannot be redistributed.
+    """
+    for tool, fields in (
+        ("get_phenotype_by_HPO_ID", ('"exact_synonym"', '"related_synonym"',
+                                     '"has_descendant_count"', '"node_hierarchy"')),
+        ("GBIF_get_species", ('"nubKey"', '"nameType"', '"lastInterpreted"')),
+        ("MassBank_search_by_compound", ('"license"', '"date"', '"authors"')),
+    ):
+        schema = json.dumps(_config(tool).get("return_schema"))
+        for field in fields:
+            assert field in schema, f"{tool} returns {field} undeclared"
+    assert "classification error" in json.dumps(_config("get_phenotype_by_HPO_ID")["return_schema"])
+    assert "backbone" in json.dumps(_config("GBIF_get_species")["return_schema"])
