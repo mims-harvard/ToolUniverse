@@ -56,25 +56,98 @@
               "description": "Total number of matching records"
             },
             "facets": {
-              "type": "object",
-              "description": "Facet counts by category, organism, pathway, and strain",
+              "type": [
+                "object",
+                "null"
+              ],
+              "description": "Facet counts, keyed by facet name (Category, organism.shortName, pathways.name, strain.name) and then by facet value, with the count as the value. An empty inner object means the facet matched nothing",
               "properties": {
                 "Category": {
                   "type": "object",
-                  "description": "Record counts by entity type (ProteinCodingGene, Allele, etc.)"
+                  "description": "Counts for the Category facet, keyed by facet value. An empty object means the facet matched nothing",
+                  "additionalProperties": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many results carry that value"
+                  }
                 },
                 "organism.shortName": {
                   "type": "object",
-                  "description": "Record counts by organism"
+                  "description": "Counts for the organism.shortName facet, keyed by facet value. An empty object means the facet matched nothing",
+                  "additionalProperties": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many results carry that value"
+                  }
                 },
                 "pathways.name": {
                   "type": "object",
-                  "description": "Record counts by Reactome pathway"
+                  "description": "Counts for the pathways.name facet, keyed by facet value. An empty object means the facet matched nothing",
+                  "additionalProperties": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many results carry that value"
+                  }
                 },
                 "strain.name": {
                   "type": "object",
-                  "description": "Record counts by mouse strain"
+                  "description": "Counts for the strain.name facet, keyed by facet value. An empty object means the facet matched nothing",
+                  "additionalProperties": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "How many results carry that value"
+                  }
                 }
+              },
+              "additionalProperties": {
+                "type": [
+                  "object",
+                  "null",
+                  "boolean",
+                  "array",
+                  "object",
+                  "null"
+                ],
+                "additionalProperties": {
+                  "type": [
+                    "integer",
+                    "null",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ],
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  },
+                  "description": "How many results carry that value"
+                },
+                "description": "Counts for one facet, keyed by value"
               }
             },
             "results": {
@@ -96,11 +169,46 @@
                     "description": "Search relevance score"
                   },
                   "fields": {
-                    "type": "object",
-                    "description": "Entity-specific fields. For genes: symbol, organism.commonName, primaryIdentifier, sequenceOntologyTerm.name. For alleles: symbol, name, primaryIdentifier, alleleType, attributeString. For proteins: primaryAccession, organism.name, isFragment."
+                    "type": [
+                      "object",
+                      "null"
+                    ],
+                    "description": "The matched record's fields, keyed by MouseMine field name",
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
                   }
                 }
               }
+            },
+            "wasSuccessful": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether MouseMine itself reported success. A query that failed upstream is not an empty result"
+            },
+            "statusCode": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "HTTP status MouseMine returned"
+            },
+            "executionTime": {
+              "type": [
+                "string",
+                "number",
+                "null"
+              ],
+              "description": "How long MouseMine took"
             }
           },
           "not": {

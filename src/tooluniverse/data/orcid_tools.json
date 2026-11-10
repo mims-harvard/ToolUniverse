@@ -634,13 +634,75 @@
                 "type": [
                   "object",
                   "null"
-                ]
+                ],
+                "description": "Start date, as ORCID's year/month/day parts rather than one string",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ],
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  }
+                }
               },
               "end_date": {
                 "type": [
                   "object",
                   "null"
-                ]
+                ],
+                "description": "End date, in the same parts; absent for ongoing funding",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ],
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  }
+                }
               },
               "url": {
                 "type": [
@@ -649,7 +711,80 @@
                 ]
               },
               "external_ids": {
-                "type": "array"
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "description": "External identifiers for this funding record",
+                "items": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "description": "One identifier with its type, value and relationship",
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ]
+                  }
+                }
+              },
+              "group_index": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Index of the funding group this record sits in"
+              },
+              "summary_index": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Index of this summary within its group"
+              },
+              "group_external_ids": {
+                "type": [
+                  "array",
+                  "object",
+                  "null"
+                ],
+                "description": "External identifiers shared by the whole funding group, e.g. a grant number, under ORCID's external-id envelope",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ],
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  }
+                }
               }
             }
           }

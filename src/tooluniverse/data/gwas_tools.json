@@ -171,8 +171,77 @@
                 "description": "Effect size range"
               },
               "_links": {
-                "type": "object",
-                "description": "API links"
+                "type": [
+                  "object",
+                  "null"
+                ],
+                "description": "HAL links for navigating the API",
+                "additionalProperties": {
+                  "type": [
+                    "string",
+                    "number",
+                    "boolean",
+                    "array",
+                    "object",
+                    "null"
+                  ],
+                  "additionalProperties": {
+                    "type": [
+                      "string",
+                      "number",
+                      "boolean",
+                      "array",
+                      "object",
+                      "null"
+                    ],
+                    "additionalProperties": {
+                      "type": [
+                        "string",
+                        "number",
+                        "boolean",
+                        "array",
+                        "object",
+                        "null"
+                      ]
+                    }
+                  }
+                }
+              },
+              "pvalue_mantissa": {
+                "type": [
+                  "integer",
+                  "number",
+                  "null"
+                ],
+                "description": "Mantissa of the p-value, which with the exponent preserves precision a float would lose"
+              },
+              "pvalue_exponent": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Exponent of the p-value"
+              },
+              "pvalue_description": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "What the p-value applies to, e.g. a subgroup"
+              },
+              "multi_snp_haplotype": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the association is to a haplotype rather than one variant"
+              },
+              "snp_interaction": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the association is an interaction between variants"
               }
             }
           }

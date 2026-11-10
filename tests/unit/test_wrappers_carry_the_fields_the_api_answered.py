@@ -2335,6 +2335,17 @@ def test_the_wrapper_reads_the_field_the_api_answered(module, key, why):
 
 # (tool, output field the schema must declare)
 DECLARED = [
+    ('DisGeNET_search_disease', 'gene_count'),
+    ('HuggingFace_get_model', 'safetensors'),
+    ('HuggingFace_get_model', 'usedStorage'),
+    ('IMPC_search_genes', 'total_results_is_exact'),
+    ('Metabolite_get_diseases', 'unresolved_disease_name_count'),
+    ('MouseMine_search', 'wasSuccessful'),
+    ('ORCID_get_fundings', 'group_index'),
+    ('OpenNIH_funding_growth', 'cagr_pct'),
+    ('OpenNIH_funding_growth', 'yoy_growth_pct'),
+    ('VariantValidator_gene2transcripts', 'refseq_select'),
+    ('gwas_search_associations', 'pvalue_mantissa'),
     ('Reactome_get_pathway', 'reviewStatus'),
     ('Reactome_get_pathway', 'summation'),
     ('Reactome_get_participant_reference_entities', 'isSequenceChanged'),
@@ -6168,6 +6179,75 @@ def test_the_second_batch_declares_what_changes_an_answer():
         "NCBIDatasets_get_gene": ('"evidence_code"', '"map_value"', '"identifier"'),
         "PGSCatalog_get_performance_metrics": ('"performance_comments"', '"classification_accuracy"'),
         "ORCID_get_profile": ('"activities_summary"', '"external_identifiers"'),
+    }
+    for tool, fields in checks.items():
+        schema = json.dumps(_config(tool).get("return_schema"))
+        for field in fields:
+            assert field in schema, f"{tool} returns {field} undeclared"
+
+
+def test_a_funding_series_says_what_a_missing_award_means():
+    """OpenNIH_funding_growth had a return_schema with no properties at all.
+
+    What it returns is a per-year series with year-on-year growth, a
+    compound annual rate across the window, and a meta block whose note
+    says a NULL award_amount means "not reported" rather than zero. That
+    note decides whether a missing award pulls a total down or is excluded
+    from it, and none of it was declared.
+
+    I first declared this tool from guesswork - series, total, growth_rate,
+    period - and the live response carries none of those names. The audit
+    count went UP, 1 to 6, which is how I caught it. The declaration now
+    matches the response, and this test asserts the invented names are
+    absent so the guess cannot come back.
+    """
+    schema = json.dumps(_config("OpenNIH_funding_growth").get("return_schema"))
+    for field in ('"yearly"', '"cagr_pct"', '"yoy_growth_pct"',
+                  '"window_start"', '"provenance"'):
+        assert field in schema, f"OpenNIH returns {field} undeclared"
+    assert "not reported" in schema, (
+        "the meta note is the part that changes a total; the declaration "
+        "should carry it"
+    )
+    for guessed in ('"growth_rate"', '"period"'):
+        assert guessed not in schema, (
+            f"{guessed} was my invention, not a field the tool returns"
+        )
+
+
+def test_the_third_batch_declares_what_changes_an_answer():
+    """Ten more tools.
+
+    VariantValidator_gene2transcripts: refseq_select marks the transcript
+    RefSeq nominates as representative. A caller that must pick one
+    transcript should pick that one, and the flag was undeclared.
+
+    MouseMine_search: wasSuccessful and statusCode. A query that failed
+    upstream is not an empty result, and the schema gave no way to tell
+    them apart. Its facet blocks declared the four facet names and not the
+    counts inside them.
+
+    Metabolite_get_diseases: unresolved_disease_name_count. A row whose
+    disease id has no resolvable name is still an association, and this
+    says how much of the page is in that state.
+
+    HuggingFace_get_model: safetensors, which carries the parameter counts
+    - how to know a model's size without downloading it - and usedStorage.
+
+    IMPC_search_genes, gwas_search_associations and ORCID_get_fundings
+    reuse the paging and association blocks written for their sibling tools
+    in the previous two rounds, so the pairs cannot drift.
+    """
+    checks = {
+        "VariantValidator_gene2transcripts": ('"refseq_select"', '"translation"'),
+        "MouseMine_search": ('"wasSuccessful"', '"statusCode"', '"executionTime"'),
+        "Metabolite_get_diseases": ('"unresolved_disease_name_count"', '"has_more"'),
+        "HuggingFace_get_model": ('"safetensors"', '"usedStorage"', '"cardData"'),
+        "IMPC_search_genes": ('"total_results_is_exact"', '"next_offset"'),
+        "gwas_search_associations": ('"pvalue_mantissa"', '"pvalue_exponent"'),
+        "ORCID_get_fundings": ('"group_index"', '"external_ids"'),
+        "DisGeNET_search_disease": ('"gene_count"', '"disease_classes"'),
+        "TheraSAbDab_get_all_therapeutics": ('"therapeutics"', '"by_format"'),
     }
     for tool, fields in checks.items():
         schema = json.dumps(_config(tool).get("return_schema"))
