@@ -243,6 +243,84 @@
         },
         "pharmVarGene": {
           "type": "boolean"
+        },
+        "chrStartPosB37": {
+          "description": "Start coordinate on GRCh37/hg19."
+        },
+        "chrStopPosB37": {
+          "description": "Stop coordinate on GRCh37/hg19."
+        },
+        "chrStartPosB38": {
+          "description": "Start coordinate on GRCh38/hg38. Pair it with the B37 fields: a caller that does not know which build a coordinate is on cannot use it."
+        },
+        "chrStopPosB38": {
+          "description": "Stop coordinate on GRCh38/hg38."
+        },
+        "buildVersion": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Which genome build PharmGKB's own record is anchored to."
+        },
+        "cbStart": {
+          "description": "Start of the cytogenetic band."
+        },
+        "cbStop": {
+          "description": "Stop of the cytogenetic band."
+        },
+        "vipTier": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "PharmGKB's Very Important Pharmacogene tier, e.g. 'Tier 1'. The tier is how much curated pharmacogenomic evidence stands behind the gene."
+        },
+        "vipId": {
+          "description": "Id of the VIP annotation."
+        },
+        "vipSummary": {
+          "description": "The VIP summary itself, as an object with an id and an HTML body - the curated prose on why the gene matters pharmacogenomically."
+        },
+        "vipCitation": {
+          "description": "Citation for the VIP summary."
+        },
+        "amp": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Whether the gene is on the AMP (Association for Molecular Pathology) recommended testing list."
+        },
+        "alleleFile": {
+          "description": "PharmGKB's allele-definition file for the gene, when one exists."
+        },
+        "alleleFunctionSource": {
+          "description": "Where the allele function assignments come from."
+        },
+        "usesStarAlleles": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Whether the gene is named with star alleles (*1, *2), which changes how a variant must be written."
+        },
+        "hasNonStandardHaplotypes": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "Whether PharmGKB records haplotypes outside the star-allele system."
+        },
+        "hideHaplotypes": {
+          "type": [
+            "boolean",
+            "null"
+          ],
+          "description": "PharmGKB's own display flag for haplotypes."
+        },
+        "history": {
+          "description": "PharmGKB's change history for the record."
         }
       },
       "additionalProperties": true
@@ -250,7 +328,7 @@
   },
   {
     "name": "PharmGKB_get_clinical_annotations",
-    "description": "Get clinical annotations showing gene-drug-phenotype relationships. Returns variant-level clinical significance data. Always provide annotation_id \u2014 gene_id lookup is not supported by the API and returns an error with guidance.",
+    "description": "Get clinical annotations showing gene-drug-phenotype relationships. Returns variant-level clinical significance data. Always provide annotation_id — gene_id lookup is not supported by the API and returns an error with guidance.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -260,7 +338,7 @@
         },
         "gene_id": {
           "type": "string",
-          "description": "PharmGKB Gene Accession ID (e.g., \"PA128\"). NOTE: Gene-based lookup is not supported \u2014 will return an error with instructions to use annotation_id instead."
+          "description": "PharmGKB Gene Accession ID (e.g., \"PA128\"). NOTE: Gene-based lookup is not supported — will return an error with instructions to use annotation_id instead."
         },
         "gene": {
           "type": "string",
@@ -268,7 +346,7 @@
         },
         "gene_symbol": {
           "type": "string",
-          "description": "Alias for gene \u2014 NOT SUPPORTED. See gene parameter."
+          "description": "Alias for gene — NOT SUPPORTED. See gene parameter."
         }
       },
       "required": []
@@ -402,7 +480,7 @@
   },
   {
     "name": "PharmGKB_get_dosing_guidelines",
-    "description": "Get pharmacogenetic dosing guidelines (CPIC/DPWG) from PharmGKB by guideline_id. IMPORTANT: use the 'clinpgxid' field from CPIC_list_guidelines (e.g., 'PA166251454'), NOT the 'pharmgkbid' field \u2014 old-format pharmgkbid values (e.g., 'PA166104996') return HTTP 404. The test example PA166251465 is for the warfarin guideline.",
+    "description": "Get pharmacogenetic dosing guidelines (CPIC/DPWG) from PharmGKB by guideline_id. IMPORTANT: use the 'clinpgxid' field from CPIC_list_guidelines (e.g., 'PA166251454'), NOT the 'pharmgkbid' field — old-format pharmgkbid values (e.g., 'PA166104996') return HTTP 404. The test example PA166251465 is for the warfarin guideline.",
     "parameter": {
       "type": "object",
       "properties": {

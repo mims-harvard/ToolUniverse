@@ -264,13 +264,245 @@
                   "type": "boolean"
                 },
                 "structure_chemistry_verified": {
-                  "const": false
+                  "const": false,
+                  "description": "Always false. The alpha-centre orientation is ONE chemistry check, not a verdict on the structure's chemistry: CIP R/S, Ile and Thr sidechain chirality, bond geometry and energy are all outside it. 'all_coordinate_centers_match_expected' is the field that carries this check's own result."
                 },
                 "binding_verified": {
-                  "const": false
+                  "const": false,
+                  "description": "Always false. It is here so a caller cannot read a stereochemistry pass as a binding check: this tool looks at C-alpha geometry and says nothing about whether a ligand binds. See 'scope'."
                 },
                 "pH_selectivity_verified": {
-                  "const": false
+                  "const": false,
+                  "description": "Always false, for the same reason as binding_verified: nothing here speaks to pH-dependent behaviour."
+                },
+                "coordinate_protein_like_residues": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Protein-like residues present in the coordinates. The denominator for coverage: the check can only speak about residues the file actually contains."
+                },
+                "glycine_nonchiral_residues": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Glycines, which have no C-beta and so no alpha centre to check. Subtracted before judging coverage, or every structure would look incompletely checked."
+                },
+                "matched_centers": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Centres whose orientation matched 'expected_orientation'."
+                },
+                "all_checked_centers_match": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "True when every centre that COULD be checked matched. Weaker than all_coordinate_centers_match_expected, which also requires that nothing was left uncheckable."
+                },
+                "counts_by_chain": {
+                  "type": "object",
+                  "description": "Per chain, how many centres came out in each orientation, e.g. {\"A\": {\"L\": 70}}. A single D centre in one chain is the finding this tool exists for, and the totals alone would bury it.",
+                  "additionalProperties": {
+                    "description": "Orientation counts for one chain, keyed by orientation."
+                  }
+                },
+                "center_details": {
+                  "type": "array",
+                  "description": "Per-centre evidence, so a verdict can be checked rather than taken. Truncated; see center_details_truncated.",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "chain": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Chain id."
+                      },
+                      "segment_index": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "Index of the segment within the chain."
+                      },
+                      "residue_number": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "Residue sequence number."
+                      },
+                      "insertion_code": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "PDB insertion code, empty when none."
+                      },
+                      "residue_names": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "Residue names at this position, more than one when alternates disagree."
+                      },
+                      "canonical_residue_name": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The residue name used for the check."
+                      },
+                      "alternate_location": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Altloc identifier, empty when the atom has none."
+                      },
+                      "center_type": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "Which centre was checked, e.g. 'alpha'."
+                      },
+                      "ordered_atoms": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "description": "The four atoms in the order the determinant was computed from, e.g. ['CA','N','C','CB']. The sign of the determinant depends on this order, so it is stated."
+                      },
+                      "determinant_A3": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "Signed volume of the four atoms, in cubic angstroms. Its sign is the orientation."
+                      },
+                      "normalized_determinant": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "description": "The determinant divided by the bond lengths, so it can be compared against minimum_normalized_volume rather than against a raw volume that varies with geometry."
+                      },
+                      "orientation": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "'L' or 'D', or absent when the centre was degenerate."
+                      },
+                      "matches_expected": {
+                        "type": [
+                          "boolean",
+                          "null"
+                        ],
+                        "description": "Whether this centre matched expected_orientation."
+                      }
+                    }
+                  }
+                },
+                "center_details_truncated": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "True when more centres were checked than center_details lists. The counts are complete either way."
+                },
+                "issues": {
+                  "type": "array",
+                  "items": {
+                    "description": "One problem found while checking."
+                  },
+                  "description": "Problems encountered, e.g. missing atoms or unparseable residues."
+                },
+                "issue_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Total issues, which may exceed the length of 'issues'."
+                },
+                "issues_truncated": {
+                  "type": [
+                    "boolean",
+                    "null"
+                  ],
+                  "description": "True when 'issues' was cut."
+                },
+                "checked_center_type": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Which centre type this run checked."
+                },
+                "input_source": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "Where the structure came from: the PDB id fetched, or the uploaded file."
+                },
+                "input_model_count": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Models in the file. Only one is checked."
+                },
+                "selected_model_index": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "Zero-based index of the model that was checked."
+                },
+                "selected_model_serial": {
+                  "type": [
+                    "integer",
+                    "null"
+                  ],
+                  "description": "That model's serial number as the file records it."
+                },
+                "expected_orientation": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "The orientation the caller asked to verify, 'L' or 'D'. Echoed because every boolean in this result is relative to it."
+                },
+                "degenerate_tolerance_A3": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "Normalized-volume magnitude below which a centre is called degenerate rather than L or D."
+                },
+                "minimum_normalized_volume": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "description": "The threshold a centre's normalized determinant must exceed to be judged at all."
+                },
+                "protein_residue_aliases": {
+                  "description": "Non-standard residue names treated as their standard equivalents for this check."
+                },
+                "scope": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "description": "What this check does and does not cover, in words: C-alpha N/CA/C/CB orientation only, not CIP R/S, not Ile/Thr sidechain chirality, not energy or binding validation, and coordinate-only coverage."
                 }
               }
             }

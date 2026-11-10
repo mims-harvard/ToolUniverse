@@ -607,7 +607,38 @@
                   },
                   "drug_interactions": {
                     "type": "array"
+                  },
+                  "cas": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "CAS registry number."
+                  },
+                  "unii": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "FDA UNII code."
+                  },
+                  "inchi_key": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "InChIKey."
+                  },
+                  "accession_number": {
+                    "description": "Secondary DrugBank accessions."
+                  },
+                  "synonyms": {
+                    "description": "Other names DrugBank records."
                   }
+                },
+                "description": "DrugBank's identifiers for the compound. The free MyChem feed carries identity only; a full record here is 8 keys.",
+                "additionalProperties": {
+                  "description": "Any other key MyChem returns for this source. The caller's `fields` argument decides what the block holds, and the names above are the ones that answer a question rather than a closed list."
                 }
               },
               "chembl": {
@@ -615,7 +646,102 @@
                 "properties": {
                   "molecule_chembl_id": {
                     "type": "string"
+                  },
+                  "pref_name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "ChEMBL's preferred name."
+                  },
+                  "max_phase": {
+                    "description": "Highest clinical phase reached: 4 is approved, 0 or null is preclinical. This is the field that answers 'is it a drug?' and it was undeclared."
+                  },
+                  "first_approval": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Year of first approval, when there is one."
+                  },
+                  "black_box_warning": {
+                    "description": "Whether the drug carries a boxed warning (1/0)."
+                  },
+                  "drug_indications": {
+                    "description": "Indications ChEMBL records, with their MeSH and EFO terms and max phase."
+                  },
+                  "atc_classifications": {
+                    "description": "WHO ATC codes for the drug."
+                  },
+                  "molecule_properties": {
+                    "description": "Computed physicochemical properties: logP, polar surface area, rule-of-five violations and the rest."
+                  },
+                  "molecule_type": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "e.g. 'Small molecule', 'Antibody'."
+                  },
+                  "molecule_synonyms": {
+                    "description": "Synonyms with the source that uses each."
+                  },
+                  "molecule_hierarchy": {
+                    "description": "Parent and active-ingredient ids, for salts and prodrugs."
+                  },
+                  "first_in_class": {
+                    "description": "Whether ChEMBL records it as first in its class."
+                  },
+                  "prodrug": {
+                    "description": "Whether it is a prodrug."
+                  },
+                  "natural_product": {
+                    "description": "Whether it is a natural product."
+                  },
+                  "oral": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether an oral formulation exists."
+                  },
+                  "parenteral": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether a parenteral formulation exists."
+                  },
+                  "topical": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether a topical formulation exists."
+                  },
+                  "orphan": {
+                    "description": "Whether it has orphan-drug designation."
+                  },
+                  "chirality": {
+                    "description": "ChEMBL's chirality code."
+                  },
+                  "availability_type": {
+                    "description": "Prescription status code: -1 unknown, 0 discontinued, 1 prescription only, 2 over the counter."
+                  },
+                  "withdrawn_flag": {
+                    "description": "Whether the drug has been withdrawn."
+                  },
+                  "inchi_key": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "InChIKey as ChEMBL records it."
                   }
+                },
+                "description": "ChEMBL's record for the compound. Which keys appear depends on the `fields` argument; a full record carries 35.",
+                "additionalProperties": {
+                  "description": "Any other key MyChem returns for this source. The caller's `fields` argument decides what the block holds, and the names above are the ones that answer a question rather than a closed list."
                 }
               },
               "pubchem": {
@@ -626,12 +752,269 @@
                 "properties": {
                   "cid": {
                     "type": "integer"
+                  },
+                  "molecular_formula": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Molecular formula."
+                  },
+                  "molecular_weight": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Molecular weight."
+                  },
+                  "exact_mass": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Exact mass."
+                  },
+                  "monoisotopic_weight": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Monoisotopic weight."
+                  },
+                  "smiles": {
+                    "description": "SMILES, canonical and isomeric."
+                  },
+                  "inchi": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "InChI string."
+                  },
+                  "inchikey": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "InChIKey."
+                  },
+                  "iupac": {
+                    "description": "IUPAC names PubChem generates."
+                  },
+                  "xlogp": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Computed octanol/water partition coefficient."
+                  },
+                  "topological_polar_surface_area": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "TPSA, used in permeability rules."
+                  },
+                  "hydrogen_bond_donor_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Hydrogen-bond donors."
+                  },
+                  "hydrogen_bond_acceptor_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Hydrogen-bond acceptors."
+                  },
+                  "rotatable_bond_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Rotatable bonds."
+                  },
+                  "heavy_atom_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Non-hydrogen atoms."
+                  },
+                  "complexity": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "PubChem's structural complexity score."
+                  },
+                  "formal_charge": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Net formal charge."
+                  },
+                  "defined_chiral_atom_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Stereocentres with defined configuration."
+                  },
+                  "undefined_chiral_atom_count": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "Stereocentres left undefined - non-zero means the record does not pin the stereochemistry down."
                   }
                 },
-                "description": "PubChem annotations. MyChem merges source records, so this is an object for one PubChem entry and an array when a compound has several: measured across 12 queries and 120 hits, 53 objects and 11 arrays. chembl (64) and drugbank (50) were objects in every one of those hits, so they are left as declared."
+                "description": "PubChem's computed record for the compound. Which keys appear depends on the `fields` argument; a full record carries 27.",
+                "additionalProperties": {
+                  "description": "Any other key MyChem returns for this source. The caller's `fields` argument decides what the block holds, and the names above are the ones that answer a question rather than a closed list."
+                }
+              },
+              "chebi": {
+                "type": "object",
+                "description": "ChEBI's record for the compound. Which keys appear depends on the `fields` argument and on what ChEBI curated; a full record carries 24.",
+                "properties": {
+                  "formula": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Molecular formula, e.g. 'C9H8O4'."
+                  },
+                  "mass": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Average molecular mass."
+                  },
+                  "monoisotopic_mass": {
+                    "type": [
+                      "number",
+                      "null"
+                    ],
+                    "description": "Monoisotopic mass."
+                  },
+                  "smiles": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "SMILES string."
+                  },
+                  "inchi": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "InChI string."
+                  },
+                  "inchikey": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "InChIKey."
+                  },
+                  "iupac": {
+                    "description": "IUPAC name(s). A string, or a list when ChEBI records several."
+                  },
+                  "synonyms": {
+                    "description": "Other names ChEBI records. A string or a list."
+                  },
+                  "xrefs": {
+                    "description": "Cross-references to other chemical databases, keyed by database."
+                  },
+                  "parents": {
+                    "description": "Immediate parents in the ChEBI ontology."
+                  },
+                  "ancestors": {
+                    "description": "All ancestors in the ChEBI ontology."
+                  },
+                  "relationship": {
+                    "description": "ChEBI's typed relationships, e.g. has_role, is_conjugate_base_of."
+                  },
+                  "star": {
+                    "type": [
+                      "integer",
+                      "null"
+                    ],
+                    "description": "ChEBI's curation level: 3 means manually annotated, lower means not."
+                  },
+                  "secondary_chebi_id": {
+                    "description": "ChEBI ids merged into this one."
+                  }
+                },
+                "additionalProperties": {
+                  "description": "Any other key MyChem returns for this source. The caller's `fields` argument decides what the block holds, and the names above are the ones that answer a question rather than a closed list."
+                }
+              },
+              "drugcentral": {
+                "type": "object",
+                "description": "DrugCentral's record for the compound: approvals, pharmacologic class and measured bioactivity. Returned by default and declared by nothing before this.",
+                "properties": {
+                  "approval": {
+                    "description": "Approval records: agency, date and the approved product."
+                  },
+                  "bioactivity": {
+                    "description": "Measured activities against targets, with the value, units and source."
+                  },
+                  "drug_use": {
+                    "description": "Indications and contraindications DrugCentral records."
+                  },
+                  "drug_dosage": {
+                    "description": "Dosing records with route and strength."
+                  },
+                  "pharmacology_class": {
+                    "description": "Pharmacologic classes, including FDA's EPC/MoA codes."
+                  },
+                  "structures": {
+                    "description": "Structure identifiers: SMILES, InChI, CAS."
+                  },
+                  "fda_adverse_event": {
+                    "description": "FAERS adverse-event signals DrugCentral links to the drug."
+                  },
+                  "xrefs": {
+                    "description": "Cross-references to other drug databases."
+                  },
+                  "id": {
+                    "description": "DrugCentral's own id."
+                  }
+                },
+                "additionalProperties": {
+                  "description": "Any other key MyChem returns for this source. The caller's `fields` argument decides what the block holds, and the names above are the ones that answer a question rather than a closed list."
+                }
+              },
+              "_score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "This hit's relevance score. Hits are returned in descending score order, so it is how far down the ranking a hit sits."
+              },
+              "_ignored": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Fields MyChem's index skipped for this record, usually because a value exceeded the index's length limit. Present only when something was skipped."
               }
             }
           }
+        },
+        "max_score": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "Highest relevance score among the hits, from MyChem's Elasticsearch backend."
         }
       }
     }
@@ -705,7 +1088,38 @@
             },
             "categories": {
               "type": "array"
+            },
+            "cas": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "CAS registry number."
+            },
+            "unii": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "FDA UNII code."
+            },
+            "inchi_key": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "InChIKey."
+            },
+            "accession_number": {
+              "description": "Secondary DrugBank accessions."
+            },
+            "synonyms": {
+              "description": "Other names DrugBank records."
             }
+          },
+          "description": "DrugBank's identifiers for the compound. The free MyChem feed carries identity only; a full record here is 8 keys.",
+          "additionalProperties": {
+            "description": "Any other key MyChem returns for this source. The caller's `fields` argument decides what the block holds, and the names above are the ones that answer a question rather than a closed list."
           }
         },
         "chebi": {
@@ -719,7 +1133,81 @@
             },
             "definition": {
               "type": "string"
+            },
+            "formula": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Molecular formula, e.g. 'C9H8O4'."
+            },
+            "mass": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Average molecular mass."
+            },
+            "monoisotopic_mass": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Monoisotopic mass."
+            },
+            "smiles": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "SMILES string."
+            },
+            "inchi": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "InChI string."
+            },
+            "inchikey": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "InChIKey."
+            },
+            "iupac": {
+              "description": "IUPAC name(s). A string, or a list when ChEBI records several."
+            },
+            "synonyms": {
+              "description": "Other names ChEBI records. A string or a list."
+            },
+            "xrefs": {
+              "description": "Cross-references to other chemical databases, keyed by database."
+            },
+            "parents": {
+              "description": "Immediate parents in the ChEBI ontology."
+            },
+            "ancestors": {
+              "description": "All ancestors in the ChEBI ontology."
+            },
+            "relationship": {
+              "description": "ChEBI's typed relationships, e.g. has_role, is_conjugate_base_of."
+            },
+            "star": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "ChEBI's curation level: 3 means manually annotated, lower means not."
+            },
+            "secondary_chebi_id": {
+              "description": "ChEBI ids merged into this one."
             }
+          },
+          "description": "ChEBI's record for the compound. Which keys appear depends on the `fields` argument and on what ChEBI curated; a full record carries 24.",
+          "additionalProperties": {
+            "description": "Any other key MyChem returns for this source. The caller's `fields` argument decides what the block holds, and the names above are the ones that answer a question rather than a closed list."
           }
         },
         "pubchem": {
@@ -730,7 +1218,122 @@
             },
             "inchikey": {
               "type": "string"
+            },
+            "molecular_formula": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "Molecular formula."
+            },
+            "molecular_weight": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Molecular weight."
+            },
+            "exact_mass": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Exact mass."
+            },
+            "monoisotopic_weight": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Monoisotopic weight."
+            },
+            "smiles": {
+              "description": "SMILES, canonical and isomeric."
+            },
+            "inchi": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "InChI string."
+            },
+            "iupac": {
+              "description": "IUPAC names PubChem generates."
+            },
+            "xlogp": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "Computed octanol/water partition coefficient."
+            },
+            "topological_polar_surface_area": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "TPSA, used in permeability rules."
+            },
+            "hydrogen_bond_donor_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Hydrogen-bond donors."
+            },
+            "hydrogen_bond_acceptor_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Hydrogen-bond acceptors."
+            },
+            "rotatable_bond_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Rotatable bonds."
+            },
+            "heavy_atom_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Non-hydrogen atoms."
+            },
+            "complexity": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "description": "PubChem's structural complexity score."
+            },
+            "formal_charge": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Net formal charge."
+            },
+            "defined_chiral_atom_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Stereocentres with defined configuration."
+            },
+            "undefined_chiral_atom_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Stereocentres left undefined - non-zero means the record does not pin the stereochemistry down."
             }
+          },
+          "description": "PubChem's computed record for the compound. Which keys appear depends on the `fields` argument; a full record carries 27.",
+          "additionalProperties": {
+            "description": "Any other key MyChem returns for this source. The caller's `fields` argument decides what the block holds, and the names above are the ones that answer a question rather than a closed list."
           }
         },
         "chembl": {
@@ -744,8 +1347,132 @@
             },
             "molecule_type": {
               "type": "string"
+            },
+            "max_phase": {
+              "description": "Highest clinical phase reached: 4 is approved, 0 or null is preclinical. This is the field that answers 'is it a drug?' and it was undeclared."
+            },
+            "first_approval": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Year of first approval, when there is one."
+            },
+            "black_box_warning": {
+              "description": "Whether the drug carries a boxed warning (1/0)."
+            },
+            "drug_indications": {
+              "description": "Indications ChEMBL records, with their MeSH and EFO terms and max phase."
+            },
+            "atc_classifications": {
+              "description": "WHO ATC codes for the drug."
+            },
+            "molecule_properties": {
+              "description": "Computed physicochemical properties: logP, polar surface area, rule-of-five violations and the rest."
+            },
+            "molecule_synonyms": {
+              "description": "Synonyms with the source that uses each."
+            },
+            "molecule_hierarchy": {
+              "description": "Parent and active-ingredient ids, for salts and prodrugs."
+            },
+            "first_in_class": {
+              "description": "Whether ChEMBL records it as first in its class."
+            },
+            "prodrug": {
+              "description": "Whether it is a prodrug."
+            },
+            "natural_product": {
+              "description": "Whether it is a natural product."
+            },
+            "oral": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether an oral formulation exists."
+            },
+            "parenteral": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether a parenteral formulation exists."
+            },
+            "topical": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "Whether a topical formulation exists."
+            },
+            "orphan": {
+              "description": "Whether it has orphan-drug designation."
+            },
+            "chirality": {
+              "description": "ChEMBL's chirality code."
+            },
+            "availability_type": {
+              "description": "Prescription status code: -1 unknown, 0 discontinued, 1 prescription only, 2 over the counter."
+            },
+            "withdrawn_flag": {
+              "description": "Whether the drug has been withdrawn."
+            },
+            "inchi_key": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "InChIKey as ChEMBL records it."
             }
+          },
+          "description": "ChEMBL's record for the compound. Which keys appear depends on the `fields` argument; a full record carries 35.",
+          "additionalProperties": {
+            "description": "Any other key MyChem returns for this source. The caller's `fields` argument decides what the block holds, and the names above are the ones that answer a question rather than a closed list."
           }
+        },
+        "drugcentral": {
+          "type": "object",
+          "description": "DrugCentral's record for the compound: approvals, pharmacologic class and measured bioactivity. Returned by default and declared by nothing before this.",
+          "properties": {
+            "approval": {
+              "description": "Approval records: agency, date and the approved product."
+            },
+            "bioactivity": {
+              "description": "Measured activities against targets, with the value, units and source."
+            },
+            "drug_use": {
+              "description": "Indications and contraindications DrugCentral records."
+            },
+            "drug_dosage": {
+              "description": "Dosing records with route and strength."
+            },
+            "pharmacology_class": {
+              "description": "Pharmacologic classes, including FDA's EPC/MoA codes."
+            },
+            "structures": {
+              "description": "Structure identifiers: SMILES, InChI, CAS."
+            },
+            "fda_adverse_event": {
+              "description": "FAERS adverse-event signals DrugCentral links to the drug."
+            },
+            "xrefs": {
+              "description": "Cross-references to other drug databases."
+            },
+            "id": {
+              "description": "DrugCentral's own id."
+            }
+          },
+          "additionalProperties": {
+            "description": "Any other key MyChem returns for this source. The caller's `fields` argument decides what the block holds, and the names above are the ones that answer a question rather than a closed list."
+          }
+        },
+        "_version": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "MyChem's internal document version for the record."
         }
       }
     }

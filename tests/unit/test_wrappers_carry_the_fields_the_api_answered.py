@@ -6866,3 +6866,93 @@ def test_a_glycan_search_carries_its_literature():
     assert "semicolon" in schema, (
         "the declaration has to say the upstream sends one joined string"
     )
+
+
+def test_mychem_declares_what_its_source_blocks_hold():
+    """Three fields of chebi were declared where a response carries 24.
+
+    `_get_chemical` returns MyChem's JSON verbatim, so nothing is dropped -
+    and the schema named `chebi` as {id, name, definition}, `chembl` as four
+    fields, and left drugcentral out entirely. An agent reading the schema to
+    decide whether this tool can answer "is it approved, and does it carry a
+    boxed warning?" saw nothing to suggest chembl.max_phase and
+    chembl.black_box_warning were already in the payload.
+
+    Measured on KTUFNOKKBVMGRW-UHFFFAOYSA-N with the default fields: chebi
+    24 keys, chembl 35, pubchem 27, drugbank 8, drugcentral 11.
+
+    Each block stays open as well as named, because the caller's own `fields`
+    argument decides what MyChem puts in it - so the names are the ones that
+    answer a question, not a closed list, and the declaration says so.
+    """
+    for tool in ("MyChem_get_chemical_annotation", "MyChem_query_chemicals"):
+        schema = json.dumps(_config(tool).get("return_schema"))
+        for field in ('"max_phase"', '"black_box_warning"', '"first_approval"',
+                      '"drug_indications"', '"atc_classifications"',
+                      '"drugcentral"', '"bioactivity"', '"pharmacology_class"',
+                      '"inchikey"', '"topological_polar_surface_area"'):
+            assert field in schema, f"{tool} returns {field} and does not declare it"
+        assert "rather than a closed list" in schema, (
+            f"{tool}'s blocks are open - the caller's `fields` argument "
+            "decides what is in them - and the declaration has to say so"
+        )
+
+
+def test_a_lineage_entry_says_which_rank_it_is():
+    """CoL's classification was a list of names with no rank and no status.
+
+    Its return_schema declared nothing at all - not `result`, not `total`,
+    not the paging flags. Each lineage entry carries rank ('domain', 'genus',
+    'species'), status ('accepted', 'synonym') and authorship, and without
+    them a caller cannot tell a genus from a family, or an accepted name from
+    a synonym, in a list whose whole purpose is the hierarchy.
+    """
+    schema = json.dumps(_config("CoL_search_species").get("return_schema"))
+    for field in ('"classification"', '"rank"', '"status"', '"authorship"',
+                  '"total"', '"last"', '"vernacularNames"'):
+        assert field in schema, f"CoL_search_species returns {field} undeclared"
+    assert "accepted name from a synonym" in schema or "synonym" in schema
+
+
+def test_a_pharmacogene_says_which_build_its_coordinates_are_on():
+    """PharmGKB answers with both GRCh37 and GRCh38 coordinates.
+
+    The schema declared eight of the record's twenty-six fields and none of
+    the four coordinate fields, so the positions were unreachable - and a
+    coordinate whose build is unknown is not usable. vipTier, which is how
+    much curated pharmacogenomic evidence stands behind the gene, and
+    usesStarAlleles, which changes how a variant has to be written, were
+    undeclared too.
+    """
+    schema = json.dumps(_config("PharmGKB_get_gene_details").get("return_schema"))
+    for field in ('"chrStartPosB37"', '"chrStartPosB38"', '"buildVersion"',
+                  '"vipTier"', '"usesStarAlleles"', '"amp"'):
+        assert field in schema, f"PharmGKB_get_gene_details returns {field} undeclared"
+    assert "which build a coordinate is on" in schema, (
+        "the two builds have to be told apart in the declaration"
+    )
+
+
+def test_a_stereochemistry_verdict_can_be_checked():
+    """The tool returns 29 fields of evidence and declared nine.
+
+    `counts_by_chain` is the one that matters most: a single D centre in one
+    chain is the finding this tool exists for, and the totals alone bury it.
+    `center_details` carries the per-centre determinant with the atom order
+    it was computed from - the sign depends on that order - so a verdict can
+    be rechecked rather than taken. And `scope` states in words what the
+    check does not cover, which is what stops a stereochemistry pass being
+    read as a validation.
+    """
+    schema = json.dumps(_config("PDB_check_alpha_stereochemistry").get("return_schema"))
+    for field in ('"counts_by_chain"', '"center_details"', '"determinant_A3"',
+                  '"ordered_atoms"', '"scope"', '"expected_orientation"',
+                  '"minimum_normalized_volume"', '"glycine_nonchiral_residues"'):
+        assert field in schema, f"PDB_check_alpha_stereochemistry returns {field} undeclared"
+    assert "sign of the determinant depends on this order" in schema, (
+        "the atom order is why the determinant's sign means anything"
+    )
+    assert "cannot read a stereochemistry pass as a binding check" in schema, (
+        "binding_verified is always false here and the declaration has to "
+        "say why it is present at all"
+    )
