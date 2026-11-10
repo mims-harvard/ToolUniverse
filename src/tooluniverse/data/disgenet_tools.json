@@ -1025,8 +1025,27 @@
                   ]
                 }
               }
+            },
+            "disease_inheritance": {
+              "type": [
+                "string",
+                "array",
+                "null"
+              ],
+              "description": "Inheritance pattern recorded for the disease, where DisGeNET has one"
             }
-          }
+          },
+          "additionalProperties": {
+            "type": [
+              "string",
+              "number",
+              "boolean",
+              "array",
+              "object",
+              "null"
+            ]
+          },
+          "description": "The disease record. Which keys are present depends on the operation and the disease: associations is populated for the variant and gene-association queries and absent for this one"
         },
         "metadata": {
           "type": [

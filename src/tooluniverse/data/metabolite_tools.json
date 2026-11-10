@@ -318,26 +318,12 @@
           ],
           "description": "Offset for the next page, or null at the end"
         },
-        "total_results_is_exact": {
-          "type": [
-            "boolean",
-            "null"
-          ],
-          "description": "Whether the total is exact or a lower bound"
-        },
         "result_set_complete": {
           "type": [
             "boolean",
             "null"
           ],
           "description": "Whether the page is the whole result set"
-        },
-        "truncated": {
-          "type": [
-            "boolean",
-            "null"
-          ],
-          "description": "Whether the list was cut"
         },
         "returned": {
           "type": [
