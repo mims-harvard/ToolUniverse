@@ -6537,3 +6537,207 @@ def test_an_fda_section_table_says_it_is_the_same_content():
                 "saying it duplicates the prose makes it look pointless"
             )
     assert found >= 25, f"expected the table fields to be declared, found {found}"
+
+
+def test_a_mechanism_tool_returns_the_mechanism():
+    """openFDA carries FDA's own class and the pharmacology tools asked for none.
+
+    `FDA_get_mechanism_of_action_by_drug_name` returned the free-text
+    `mechanism_of_action` section a manufacturer wrote, and
+    `FDA_get_drug_names_by_mechanism_of_action` searched that free text and
+    returned brand and generic names alone - while every label carries
+
+        openfda.pharm_class_moa  ["Cyclooxygenase Inhibitors [MoA]"]
+        openfda.pharm_class_epc  ["Nonsteroidal Anti-inflammatory Drug [EPC]"]
+        openfda.pharm_class_cs   ["Anti-Inflammatory Agents, Non-Steroidal [CS]"]
+
+    FDA's own curated answer to the question the tool is named for. Ten tools
+    in the family are about mechanism, pharmacodynamics, pharmacokinetics or
+    clinical pharmacology and not one requested any of them.
+
+    They are IDENTITY fields, not return_fields, and that distinction is the
+    point. `self.exists` defaults to `return_fields`, so adding one there
+    would extend the `_exists_` guard and restrict the answer to labels
+    carrying a pharmacologic class - changing which labels come back, not
+    just what each row says. An identity field is copied after the keep test.
+    Measured: all ten tools returned the same rows, in the same order, before
+    and after.
+    """
+    source = _source("openfda_tool.py")
+    assert "PHARMACOLOGY_SECTIONS" in source
+    for field in ("openfda.pharm_class_moa", "openfda.pharm_class_epc",
+                  "openfda.pharm_class_cs"):
+        assert f'"{field}"' in source, f"{field} is never requested"
+    gate = source.split("PHARMACOLOGY_SECTIONS")[2]
+    assert "identity_fields.extend" in gate, (
+        "the classes must go in as identity fields; adding them to "
+        "return_fields would extend the _exists_ guard and change which "
+        "labels are returned"
+    )
+    payload = json.loads((DATA / "fda_drug_labeling_tools.json").read_text())
+    declared = 0
+    for cfg in payload:
+        results = ((cfg.get("return_schema") or {}).get("properties") or {}).get("results") or {}
+        props = ((results.get("items") or {}).get("properties")) or {}
+        if "openfda.pharm_class_moa" in props:
+            declared += 1
+            assert "curated" in json.dumps(props["openfda.pharm_class_moa"]), (
+                "the declaration should say this is FDA's curated class, not "
+                "the manufacturer's free text"
+            )
+    assert declared == 10, f"expected the ten pharmacology tools, found {declared}"
+
+
+def test_an_entity_search_returns_the_identifier_it_searched_by():
+    """Reactome's entity search gave back its own id and no other.
+
+    The tool's description says it searches "by name or identifier". A query
+    for TP53 returned stable_id R-HSA-69488 and nothing else, while the entry
+    carried referenceIdentifier "P04637" and databaseName "UniProt" - so the
+    result joined to nothing outside Reactome, and the accession a caller
+    searched with could not be recovered from the answer.
+
+    referenceName carries the same HTML search highlighting that `name`
+    already had stripped, so both now go through one helper.
+    """
+    source = _source("reactome_interactors_tool.py")
+    for key in ("referenceIdentifier", "databaseName", "referenceURL"):
+        assert key in source, f"Reactome answers with {key} and it is dropped"
+    assert '_unhighlight(entry.get("referenceName"))' in source, (
+        "referenceName carries the same <span class=\"highlighting\"> markup "
+        "as name, so it has to go through the same strip"
+    )
+    schema = json.dumps(_config("ReactomeInteractors_search_entity").get("return_schema"))
+    for field in ('"reference_identifier"', '"reference_database"', '"reference_url"'):
+        assert field in schema, f"{field} is returned and undeclared"
+
+
+def test_a_grant_says_where_the_money_went():
+    """RePORTER answers with eighteen organization fields; the row kept one.
+
+    org_name alone cannot answer the questions this tool exists for - NIH
+    spending by state, which institutions work on a topic - and it cannot be
+    joined: the same institution appears under several spellings, which is
+    what primary_uei and primary_duns are for.
+    """
+    source = _source("nih_reporter_tool.py")
+    for key in ("org_city", "org_state", "org_country", "primary_uei",
+                "primary_duns", "dept_type"):
+        assert key in source, f"RePORTER answers with {key} and it is dropped"
+    schema = json.dumps(_config("NIHReporter_search_projects").get("return_schema"))
+    assert '"organization_uei"' in schema and '"organization_state"' in schema
+    assert "join on this and not on the name" in schema, (
+        "the declaration has to say why the UEI is there, or a caller will "
+        "keep matching on org_name"
+    )
+
+
+def test_a_bulk_download_can_be_verified():
+    """Mcule gave a 2.4 GB URL and dropped the checksum beside it.
+
+    This is the sixth tool this effort has found with one shape: the data's
+    location declared and the means of verifying it not. LINCS, Figshare,
+    MassBank, ENA and UCSC were the others. Both Mcule operations that list
+    files had it.
+    """
+    source = _source("mcule_tool.py")
+    assert source.count('f.get("sha256_checksum")') == 2, (
+        "both the listing and the detail operation return file rows, and a "
+        "fix to one is not a fix to the other"
+    )
+    for tool in ("Mcule_list_databases", "Mcule_get_database"):
+        schema = json.dumps(_config(tool).get("return_schema"))
+        assert '"sha256_checksum"' in schema, f"{tool} returns it undeclared"
+        assert "2.4 GB" in schema or "truncated" in schema, (
+            f"{tool} should say why the checksum matters"
+        )
+
+
+def test_a_dataset_listing_carries_the_description_it_promises():
+    """EGA's module docstring says it returns title, description, technology.
+
+    The listing returned every one of those but the description, while the
+    two sibling operations in the same file read it. That is why a file-wide
+    grep for the name made this look already handled: the screen has to run
+    against the builder, not the module.
+    """
+    source = _source("ega_tool.py")
+    assert source.count('"description": ') >= 3, (
+        "all three EGA operations should carry the description; the listing "
+        "was the one that did not"
+    )
+    schema = json.dumps(_config("EGA_get_study_datasets").get("return_schema"))
+    assert '"description"' in schema
+
+
+def test_a_search_hit_says_what_it_is():
+    """UCSC kept the track's description and dropped the match's.
+
+    A hit carried "cellular tumor antigen p53 isoform a" and the row returned
+    `track_description` - "MANE Select", a property of the track the hit came
+    from. So the row had a field called description that never said what the
+    hit was, and nothing to suggest a second one existed. `canonical`, which
+    is how you choose among several hits for one gene, was dropped too.
+    """
+    source = _source("ucsc_genome_tool.py")
+    assert 'm.get("description", None)' in source
+    assert 'm.get("canonical", None)' in source
+    schema = json.dumps(_config("UCSC_search").get("return_schema"))
+    assert '"canonical"' in schema
+    assert "track_description" in schema and "what the hit was" in schema, (
+        "the two descriptions have to be told apart in the declaration, or "
+        "the new one reads as a duplicate"
+    )
+
+
+def test_a_clinical_significance_names_its_condition():
+    """ClinVar said "Uncertain significance" and never said for what.
+
+    `_parse_variant_summary` returned title, genes, clinical_significance and
+    review_status. The esummary record carries the conditions under
+    germline_classification.trait_set - "BRCA1-related disorder" - and the
+    row dropped them. The same variant can be pathogenic for one condition
+    and benign for another, so a classification without its condition is a
+    word, not an answer.
+
+    trait_xrefs resolves each condition; `conditions` keeps the names so no
+    caller's shape changes.
+    """
+    source = _source("clinvar_tool.py")
+    assert '"conditions"' in source and "trait_set" in source
+    assert "trait_xrefs" in source, (
+        "a condition name alone is ambiguous; the MedGen/OMIM ids are what "
+        "join it to a disease ontology"
+    )
+    schema = json.dumps(_config("ClinVar_search_variants").get("return_schema"))
+    for field in ('"conditions"', '"condition_xrefs"', '"db_source"', '"db_id"'):
+        assert field in schema, f"ClinVar_search_variants returns {field} undeclared"
+    variants = (_config("ClinVar_search_variants")["return_schema"]["properties"]
+                ["variants"]["items"])
+    assert variants.get("properties"), (
+        'variants.items was {"type": "object"} - one of the three vacuous '
+        "shapes the audit exists to catch - and has to declare its fields"
+    )
+
+
+def test_a_gene_search_says_whether_the_symbol_is_current():
+    """DepMap resolved a withdrawn symbol as silently as a current one.
+
+    The tool's description promises "gene IDs and annotations" and the row
+    returned the ids alone. hgnc_status is the one that can mislead: a
+    withdrawn or merged symbol resolves without a word, and the caller has no
+    way to see that what they searched is no longer the current symbol.
+    `genes` was declared as a bare {"type": "array"} with no items, so none
+    of this was in the schema either way.
+    """
+    source = _source("depmap_tool.py")
+    for key in ("hgnc_status", "location", "method_of_action"):
+        assert f'attrs.get("{key}")' in source, f"DepMap answers with {key}"
+    genes = (_config("DepMap_search_genes")["return_schema"]["properties"]["data"]
+             ["properties"]["genes"])
+    assert genes.get("items", {}).get("properties"), (
+        "genes was a bare array schema; it has to declare the row"
+    )
+    assert "no longer the current symbol" in json.dumps(genes), (
+        "the declaration has to say what a non-current hgnc_status means"
+    )

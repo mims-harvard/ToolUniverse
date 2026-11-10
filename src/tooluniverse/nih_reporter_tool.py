@@ -51,6 +51,23 @@ def _summarize(project: Dict[str, Any]) -> Dict[str, Any]:
         "title": project.get("project_title"),
         "principal_investigator": project.get("contact_pi_name"),
         "organization": org.get("org_name"),
+        # RePORTER answers with eighteen organization fields and the row kept
+        # one. Where the money went is half of what a funding-landscape
+        # question asks -- "NIH spending in Massachusetts", "which
+        # institutions work on this" -- and none of it was reachable. The
+        # UEI and DUNS are what join an institution to any other dataset;
+        # string-matching org_name does not, because the same institution
+        # appears under several spellings.
+        "organization_city": org.get("org_city"),
+        "organization_state": org.get("org_state"),
+        "organization_country": org.get("org_country"),
+        "organization_zipcode": org.get("org_zipcode"),
+        "organization_department_type": org.get("dept_type"),
+        "organization_uei": org.get("primary_uei")
+        or ((org.get("org_ueis") or [None])[0]),
+        "organization_duns": org.get("primary_duns")
+        or ((org.get("org_duns") or [None])[0]),
+        "organization_ipf_code": org.get("org_ipf_code"),
         "funding_institute": agency.get("name"),
         "fiscal_year": project.get("fiscal_year"),
         "award_amount": project.get("award_amount"),

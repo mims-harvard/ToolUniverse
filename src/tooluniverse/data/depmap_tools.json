@@ -551,7 +551,79 @@
               "type": "string"
             },
             "genes": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gene_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "DepMap's own id for the gene."
+                  },
+                  "symbol": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "HGNC symbol."
+                  },
+                  "name": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Full gene name."
+                  },
+                  "hgnc_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "HGNC identifier, e.g. 'HGNC:11998'."
+                  },
+                  "ensembl_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Ensembl gene id, e.g. 'ENSG00000141510'."
+                  },
+                  "exact_match": {
+                    "type": "boolean",
+                    "description": "Whether the symbol equals the query exactly rather than merely starting with it."
+                  },
+                  "hgnc_status": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "HGNC status of the symbol, e.g. 'current'. A withdrawn or merged symbol otherwise resolves silently and the caller cannot see that what they searched is no longer the current symbol."
+                  },
+                  "location": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "Cytogenetic location, e.g. '17p13.1'."
+                  },
+                  "method_of_action": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "DepMap's mechanism annotation for the gene's product, e.g. 'ambiguous'. Populated on a minority of genes."
+                  },
+                  "hgnc_merge_comment": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "HGNC's note when this symbol's record was merged into another. Null when none."
+                  }
+                }
+              }
             },
             "count": {
               "type": "integer"

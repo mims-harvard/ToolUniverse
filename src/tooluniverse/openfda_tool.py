@@ -111,6 +111,25 @@ LABEL_SECTION_TOOLS = {
 # drug's interactions was never told that the same label also carries a boxed
 # warning or a pregnancy section; the name-based label tools now say which of
 # these the returned labels carry, and the tool for each (`other_section_tools`).
+# The label sections that make a tool a pharmacology tool. openFDA carries
+# FDA's own structured pharmacologic class on every label -- pharm_class_moa
+# "Cyclooxygenase Inhibitors [MoA]", pharm_class_epc the established class,
+# pharm_class_cs the chemical one -- and not one of the eight tools named for
+# mechanism or pharmacology asked for any of them.
+# `FDA_get_mechanism_of_action_by_drug_name` returned the free-text section
+# and not the curated one-line answer, and
+# `FDA_get_drug_names_by_mechanism_of_action` searched that free text and
+# returned brand and generic names alone.
+PHARMACOLOGY_SECTIONS = frozenset(
+    {
+        "mechanism_of_action",
+        "pharmacodynamics",
+        "pharmacokinetics",
+        "clinical_pharmacology",
+        "animal_pharmacology_and_or_toxicology",
+    }
+)
+
 LABEL_DECISION_SECTIONS = (
     "boxed_warning",
     "indications_and_usage",
@@ -1802,6 +1821,27 @@ def search_openfda(
         x in {"openfda.brand_name", "openfda.generic_name"} for x in required_fields
     ):
         identity_fields.append("openfda.route")
+    # The structured pharmacologic class, for the tools that are about
+    # mechanism or pharmacology. `nui` is the classes' own identifier, so a
+    # caller can join on it instead of string-matching a label. These go in as
+    # IDENTITY fields and not as return_fields: `exists` defaults to
+    # `return_fields`, so adding one there would extend the `_exists_` guard
+    # and restrict the answer to labels that carry a class -- changing which
+    # labels come back, not just what each row says. An identity field is
+    # copied after the keep test and can never change that set.
+    pharmacology = set(requested_return_fields or [])
+    for key, value in (orig_search_fields or {}).items():
+        pharmacology.update(key if isinstance(key, tuple) else (key,))
+        pharmacology.update(value if isinstance(value, (list, tuple)) else (value,))
+    if pharmacology & PHARMACOLOGY_SECTIONS:
+        identity_fields.extend(
+            [
+                "openfda.pharm_class_moa",
+                "openfda.pharm_class_epc",
+                "openfda.pharm_class_cs",
+                "openfda.nui",
+            ]
+        )
     # PLR-vs-legacy sibling annotation. Only armed when the tool actually asks
     # for one of the interchangeable safety sections, so no other FDADrugLabel
     # tool changes shape.

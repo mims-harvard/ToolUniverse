@@ -108,6 +108,20 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "description": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "What the match IS, e.g. 'cellular tumor antigen p53 isoform a'. Distinct from 'track_description', which describes the TRACK the hit came from ('MANE Select') - the row carried that one and not this, so a caller had a field called description that never said what the hit was."
+                  },
+                  "canonical": {
+                    "type": [
+                      "boolean",
+                      "null"
+                    ],
+                    "description": "Whether this is the canonical transcript for the gene, which is how to pick one of several hits."
                   }
                 }
               }

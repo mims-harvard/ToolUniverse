@@ -1,420 +1,487 @@
 [
-    {
-        "type": "ClinVarSearchVariants",
-        "name": "ClinVar_search_variants",
-        "description": "Search ClinVar variants with explicit offset pagination. Returns the true total plus returned, truncation, and next_offset so large result sets are fully reachable.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "gene": {
-                    "type": "string",
-                    "description": "Gene name or symbol (e.g., 'BRCA1', 'BRCA2') At least one of gene, condition, or variant_id must be provided."
-                },
-                "condition": {
-                    "type": "string",
-                    "description": "Disease or condition name (e.g., 'breast cancer', 'diabetes') At least one of gene, condition, or variant_id must be provided. Matched against ClinVar's disease index, which carries MedGen's own condition names exactly -- a synonym, a locus name or a misspelling ('Lebers congenital amaurosis' for the indexed 'Leber congenital amaurosis') matches nothing there, so the search falls back to an unrestricted free-text match. When that happens the response says so: 'condition_filter_applied': false plus a 'condition_filter_warning', meaning total_count is NOT a disease-filtered count. Use MedGen_search_conditions to get the indexed name."
-                },
-                "variant_id": {
-                    "type": "string",
-                    "description": "ClinVar variant ID (e.g., '12345') At least one of gene, condition, or variant_id must be provided."
-                },
-                "variant_name": {
-                    "type": [
-                        "string",
-                        "array",
-                        "null"
-                    ],
-                    "description": "Protein change or HGVS notation to search for (e.g., 'Glu6Val', 'V600E', 'c.20A>T'), matched against ClinVar's own [Variant name] index -- combine with 'gene' for an exact-match lookup of a specific known variant instead of browsing all of a gene's ClinVar entries. A gene-level browse can silently miss well-known but old/low-ID records once a gene has more entries than max_results (e.g. HBB's canonical sickle-cell record, NM_000518.5(HBB):c.20A>T (p.Glu7Val), isn't within the first 100-425 gene-level rows). Accepts a list to try multiple candidate names in one call (e.g. every allele at a multi-allelic site) -- combined with OR."
-                },
-                "max_results": {
-                    "type": "integer",
-                    "description": "Maximum number of results to return (default: 20). Alias: limit.",
-                    "default": 20,
-                    "minimum": 1,
-                    "maximum": 100
-                },
-                "limit": {
-                    "type": "integer",
-                    "description": "Alias for max_results: maximum number of results to return.",
-                    "minimum": 1,
-                    "maximum": 100
-                },
-                "offset": {
-                    "type": "integer",
-                    "minimum": 0,
-                    "default": 0,
-                    "description": "Zero-based result offset, mapped to NCBI ESearch retstart. Continue with data.next_offset."
-                },
-                "clinical_significance": {
-                    "type": "string",
-                    "description": "Filter by clinical significance. Must be one of the classes ClinVar's index actually recognizes: 'Pathogenic', 'Likely pathogenic', 'Uncertain significance', 'VUS', 'Likely benign', 'Benign', 'Established risk allele', 'Likely risk allele', 'Uncertain risk allele', 'drug response', 'risk factor', 'not provided', 'other'. Case-insensitive; underscores/hyphens are treated as spaces. Combine two classes with '/' to search their union (e.g. 'Pathogenic/Likely pathogenic'). Any other value is rejected with an error rather than silently filtering the results to nothing."
-                },
-                "gene_symbol": {
-                    "type": [
-                        "string",
-                        "null"
-                    ],
-                    "description": "Alias for gene. HGNC gene symbol (e.g., \"DPYD\", \"CYP2C19\")."
-                },
-                "significance": {
-                    "type": [
-                        "string",
-                        "null"
-                    ],
-                    "description": "Alias for clinical_significance (e.g., \"pathogenic\", \"benign\", \"uncertain_significance\"). Same accepted value set and same validation as clinical_significance."
-                },
-                "query": {
-                    "type": [
-                        "string",
-                        "null"
-                    ],
-                    "description": "Alias for condition. Free-text search mapped to condition/disease field."
-                }
-            },
-            "required": []
+  {
+    "type": "ClinVarSearchVariants",
+    "name": "ClinVar_search_variants",
+    "description": "Search ClinVar variants with explicit offset pagination. Returns the true total plus returned, truncation, and next_offset so large result sets are fully reachable.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "gene": {
+          "type": "string",
+          "description": "Gene name or symbol (e.g., 'BRCA1', 'BRCA2') At least one of gene, condition, or variant_id must be provided."
         },
-        "fields": {
-            "endpoint": "/esearch.fcgi",
-            "return_format": "JSON"
+        "condition": {
+          "type": "string",
+          "description": "Disease or condition name (e.g., 'breast cancer', 'diabetes') At least one of gene, condition, or variant_id must be provided. Matched against ClinVar's disease index, which carries MedGen's own condition names exactly -- a synonym, a locus name or a misspelling ('Lebers congenital amaurosis' for the indexed 'Leber congenital amaurosis') matches nothing there, so the search falls back to an unrestricted free-text match. When that happens the response says so: 'condition_filter_applied': false plus a 'condition_filter_warning', meaning total_count is NOT a disease-filtered count. Use MedGen_search_conditions to get the indexed name."
         },
-        "return_schema": {
-            "type": "object",
-            "description": "Parsed, explicitly paginated ClinVar search results",
-            "additionalProperties": true,
-            "properties": {
-                "total_count": {
-                    "type": "integer"
-                },
-                "variant_ids": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "variants": {
-                    "type": "array",
-                    "items": {
-                        "type": "object"
-                    }
-                },
-                "query_translation": {
-                    "type": "string"
-                },
-                "search_params": {
-                    "type": "object"
-                },
-                "returned": {
-                    "type": "integer"
-                },
-                "offset": {
-                    "type": "integer"
-                },
-                "has_more": {
-                    "type": "boolean"
-                },
-                "truncated": {
-                    "type": "boolean"
-                },
-                "next_offset": {
-                    "type": [
-                        "integer",
-                        "null"
-                    ]
-                }
-            },
-            "required": [
-                "total_count",
-                "variant_ids",
-                "variants",
-                "returned",
-                "offset",
-                "has_more",
-                "truncated",
-                "next_offset"
-            ]
+        "variant_id": {
+          "type": "string",
+          "description": "ClinVar variant ID (e.g., '12345') At least one of gene, condition, or variant_id must be provided."
         },
-        "test_examples": [
-            {
-                "gene": "BRCA1",
-                "max_results": 10
-            },
-            {
-                "condition": "breast cancer",
-                "max_results": 5
-            },
-            {
-                "gene": "HBB",
-                "variant_name": "Glu6Val",
-                "max_results": 20
-            }
-        ],
-        "label": [
-            "ClinVar",
-            "Variants",
-            "Search"
-        ],
-        "metadata": {
-            "tags": [
-                "variants",
-                "clinical",
-                "disease"
-            ],
-            "difficulty_level": "easy",
-            "estimated_execution_time": "< 3 seconds"
+        "variant_name": {
+          "type": [
+            "string",
+            "array",
+            "null"
+          ],
+          "description": "Protein change or HGVS notation to search for (e.g., 'Glu6Val', 'V600E', 'c.20A>T'), matched against ClinVar's own [Variant name] index -- combine with 'gene' for an exact-match lookup of a specific known variant instead of browsing all of a gene's ClinVar entries. A gene-level browse can silently miss well-known but old/low-ID records once a gene has more entries than max_results (e.g. HBB's canonical sickle-cell record, NM_000518.5(HBB):c.20A>T (p.Glu7Val), isn't within the first 100-425 gene-level rows). Accepts a list to try multiple candidate names in one call (e.g. every allele at a multi-allelic site) -- combined with OR."
+        },
+        "max_results": {
+          "type": "integer",
+          "description": "Maximum number of results to return (default: 20). Alias: limit.",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 100
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Alias for max_results: maximum number of results to return.",
+          "minimum": 1,
+          "maximum": 100
+        },
+        "offset": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Zero-based result offset, mapped to NCBI ESearch retstart. Continue with data.next_offset."
+        },
+        "clinical_significance": {
+          "type": "string",
+          "description": "Filter by clinical significance. Must be one of the classes ClinVar's index actually recognizes: 'Pathogenic', 'Likely pathogenic', 'Uncertain significance', 'VUS', 'Likely benign', 'Benign', 'Established risk allele', 'Likely risk allele', 'Uncertain risk allele', 'drug response', 'risk factor', 'not provided', 'other'. Case-insensitive; underscores/hyphens are treated as spaces. Combine two classes with '/' to search their union (e.g. 'Pathogenic/Likely pathogenic'). Any other value is rejected with an error rather than silently filtering the results to nothing."
+        },
+        "gene_symbol": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Alias for gene. HGNC gene symbol (e.g., \"DPYD\", \"CYP2C19\")."
+        },
+        "significance": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Alias for clinical_significance (e.g., \"pathogenic\", \"benign\", \"uncertain_significance\"). Same accepted value set and same validation as clinical_significance."
+        },
+        "query": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Alias for condition. Free-text search mapped to condition/disease field."
         }
+      },
+      "required": []
     },
-    {
-        "type": "ClinVarGetVariantDetails",
-        "name": "ClinVar_get_variant_details",
-        "description": "Get variant summary information from ClinVar by variant ID. Returns accession, title, genes, clinical significance, review status, chromosome location, and variation name. For the same variant, this provides a different field view than ClinVar_get_clinical_significance.",
-        "parameter": {
-            "type": "object",
-            "properties": {
-                "variant_id": {
-                    "type": "string",
-                    "description": "ClinVar variant ID (e.g., '12345', '123456')"
-                }
-            },
-            "required": [
-                "variant_id"
-            ]
-        },
-        "fields": {
-            "endpoint": "/esummary.fcgi",
-            "return_format": "JSON"
-        },
-        "return_schema": {
-            "type": "object",
-            "description": "ClinVar variant details",
-            "properties": {
-                "status": {
-                    "type": "string",
-                    "description": "Status of the request"
-                },
-                "data": {
-                    "type": "object",
-                    "description": "Formatted variant details. Replaces the raw esummary envelope; the unprocessed record for this variant is preserved at raw_data.",
-                    "properties": {
-                        "variant_id": {
-                            "type": "string",
-                            "description": "ClinVar Variation ID that was requested"
-                        },
-                        "accession": {
-                            "type": "string",
-                            "description": "ClinVar accession (e.g. VCV000012345)"
-                        },
-                        "obj_type": {
-                            "type": "string",
-                            "description": "Variant object type (e.g. single nucleotide variant, Deletion)"
-                        },
-                        "chromosome": {
-                            "type": "string",
-                            "description": "Chromosome the variant maps to"
-                        },
-                        "location": {
-                            "type": "string",
-                            "description": "Cytogenetic band of the variant's first variation location"
-                        },
-                        "variation_name": {
-                            "type": "string",
-                            "description": "HGVS-style variation name (e.g. NM_000059.4(BRCA2):c.1234A>G)"
-                        },
-                        "title": {
-                            "type": "string",
-                            "description": "ClinVar record title"
-                        },
-                        "genes": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            },
-                            "description": "HGNC symbols of genes overlapping the variant"
-                        },
-                        "clinical_significance": {
-                            "type": "string",
-                            "description": "Germline classification description (e.g. Pathogenic, Likely benign, Uncertain significance)"
-                        },
-                        "review_status": {
-                            "type": "string",
-                            "description": "ClinVar review status for the germline classification"
-                        },
-                        "raw_data": {
-                            "type": "object",
-                            "description": "Unprocessed NCBI esummary record for this variant"
-                        }
-                    }
-                },
-                "variant_id": {
-                    "type": "string",
-                    "description": "Input variant ID"
-                },
-                "url": {
-                    "type": "string",
-                    "description": "API URL used"
-                }
-            }
-        },
-        "test_examples": [
-            {
-                "variant_id": "12345"
-            },
-            {
-                "variant_id": "4813039"
-            }
-        ],
-        "label": [
-            "ClinVar",
-            "Variant",
-            "Details"
-        ],
-        "metadata": {
-            "tags": [
-                "variant",
-                "details",
-                "clinical"
-            ],
-            "difficulty_level": "easy",
-            "estimated_execution_time": "< 3 seconds"
-        }
+    "fields": {
+      "endpoint": "/esearch.fcgi",
+      "return_format": "JSON"
     },
-    {
-        "type": "ClinVarGetClinicalSignificance",
-        "name": "ClinVar_get_clinical_significance",
-        "description": "Get clinical significance information for a variant from ClinVar. Returns pathogenicity classification and clinical interpretations.",
-        "parameter": {
+    "return_schema": {
+      "type": "object",
+      "description": "Parsed, explicitly paginated ClinVar search results",
+      "additionalProperties": true,
+      "properties": {
+        "total_count": {
+          "type": "integer"
+        },
+        "variant_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "variants": {
+          "type": "array",
+          "items": {
             "type": "object",
             "properties": {
-                "variant_id": {
-                    "type": "string",
-                    "description": "ClinVar variant ID (e.g., '12345', '123456')"
-                }
-            },
-            "required": [
-                "variant_id"
-            ]
-        },
-        "fields": {
-            "endpoint": "/esummary.fcgi",
-            "return_format": "JSON"
-        },
-        "return_schema": {
-            "type": "object",
-            "description": "ClinVar clinical significance data",
-            "properties": {
-                "status": {
-                    "type": "string",
-                    "description": "Status of the request"
+              "variant_id": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "ClinVar's VCV/variation id for the record."
+              },
+              "title": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "ClinVar's title for the variant, e.g. 'NM_007294.4(BRCA1):c.1658A>T (p.His553Leu)'."
+              },
+              "genes": {
+                "type": "array",
+                "items": {
+                  "type": "string"
                 },
-                "data": {
-                    "type": "object",
-                    "description": "Formatted clinical significance. Replaces the raw esummary envelope; the unprocessed record for this variant is preserved at raw_data.",
-                    "properties": {
-                        "variant_id": {
-                            "type": "string",
-                            "description": "ClinVar Variation ID that was requested"
-                        },
-                        "germline_classification": {
-                            "type": "object",
-                            "description": "Germline classification for the variant",
-                            "properties": {
-                                "description": {
-                                    "type": "string",
-                                    "description": "Classification text"
-                                },
-                                "review_status": {
-                                    "type": "string",
-                                    "description": "ClinVar review status for this classification"
-                                },
-                                "last_evaluated": {
-                                    "type": "string",
-                                    "description": "Date the classification was last evaluated"
-                                },
-                                "fda_recognized": {
-                                    "type": "string",
-                                    "description": "FDA-recognized database designation, when present"
-                                },
-                                "traits": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "string"
-                                    },
-                                    "description": "Trait/condition names associated with the classification"
-                                }
-                            }
-                        },
-                        "clinical_impact": {
-                            "type": "object",
-                            "description": "Clinical impact classification (somatic variants)",
-                            "properties": {
-                                "description": {
-                                    "type": "string",
-                                    "description": "Classification text"
-                                },
-                                "review_status": {
-                                    "type": "string",
-                                    "description": "ClinVar review status for this classification"
-                                },
-                                "last_evaluated": {
-                                    "type": "string",
-                                    "description": "Date the classification was last evaluated"
-                                }
-                            }
-                        },
-                        "oncogenicity": {
-                            "type": "object",
-                            "description": "Oncogenicity classification",
-                            "properties": {
-                                "description": {
-                                    "type": "string",
-                                    "description": "Classification text"
-                                },
-                                "review_status": {
-                                    "type": "string",
-                                    "description": "ClinVar review status for this classification"
-                                },
-                                "last_evaluated": {
-                                    "type": "string",
-                                    "description": "Date the classification was last evaluated"
-                                }
-                            }
-                        },
-                        "raw_data": {
-                            "type": "object",
-                            "description": "Unprocessed NCBI esummary record for this variant"
-                        }
+                "description": "Gene symbols ClinVar associates with the variant."
+              },
+              "clinical_significance": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "ClinVar's germline classification, e.g. 'Pathogenic', 'Uncertain significance'. Read it together with 'conditions': the same variant can be pathogenic for one condition and benign for another, so the classification alone is not an answer."
+              },
+              "review_status": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "How well supported the classification is, e.g. 'criteria provided, single submitter', 'reviewed by expert panel'."
+              },
+              "conditions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The conditions the classification is FOR, e.g. ['BRCA1-related disorder']. The row previously gave the significance and named no condition at all."
+              },
+              "condition_xrefs": {
+                "type": "array",
+                "description": "Identifiers resolving those conditions. A condition name is ambiguous on its own - 'Hereditary cancer-predisposing syndrome' is one string over many MedGen concepts. Empty when ClinVar cross-references none.",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "db_source": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "Which database, e.g. 'MedGen', 'OMIM', 'Orphanet'."
+                    },
+                    "db_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "description": "The identifier in that database, e.g. 'C0027672'."
                     }
-                },
-                "variant_id": {
-                    "type": "string",
-                    "description": "Input variant ID"
-                },
-                "url": {
-                    "type": "string",
-                    "description": "API URL used"
+                  }
                 }
+              }
             }
+          }
         },
-        "test_examples": [
-            {
-                "variant_id": "12345"
-            },
-            {
-                "variant_id": "4813039"
-            }
-        ],
-        "label": [
-            "ClinVar",
-            "Clinical",
-            "Significance"
-        ],
-        "metadata": {
-            "tags": [
-                "clinical",
-                "pathogenicity",
-                "significance"
-            ],
-            "difficulty_level": "easy",
-            "estimated_execution_time": "< 3 seconds"
+        "query_translation": {
+          "type": "string"
+        },
+        "search_params": {
+          "type": "object"
+        },
+        "returned": {
+          "type": "integer"
+        },
+        "offset": {
+          "type": "integer"
+        },
+        "has_more": {
+          "type": "boolean"
+        },
+        "truncated": {
+          "type": "boolean"
+        },
+        "next_offset": {
+          "type": [
+            "integer",
+            "null"
+          ]
         }
+      },
+      "required": [
+        "total_count",
+        "variant_ids",
+        "variants",
+        "returned",
+        "offset",
+        "has_more",
+        "truncated",
+        "next_offset"
+      ]
+    },
+    "test_examples": [
+      {
+        "gene": "BRCA1",
+        "max_results": 10
+      },
+      {
+        "condition": "breast cancer",
+        "max_results": 5
+      },
+      {
+        "gene": "HBB",
+        "variant_name": "Glu6Val",
+        "max_results": 20
+      }
+    ],
+    "label": [
+      "ClinVar",
+      "Variants",
+      "Search"
+    ],
+    "metadata": {
+      "tags": [
+        "variants",
+        "clinical",
+        "disease"
+      ],
+      "difficulty_level": "easy",
+      "estimated_execution_time": "< 3 seconds"
     }
+  },
+  {
+    "type": "ClinVarGetVariantDetails",
+    "name": "ClinVar_get_variant_details",
+    "description": "Get variant summary information from ClinVar by variant ID. Returns accession, title, genes, clinical significance, review status, chromosome location, and variation name. For the same variant, this provides a different field view than ClinVar_get_clinical_significance.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "variant_id": {
+          "type": "string",
+          "description": "ClinVar variant ID (e.g., '12345', '123456')"
+        }
+      },
+      "required": [
+        "variant_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "/esummary.fcgi",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "ClinVar variant details",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Status of the request"
+        },
+        "data": {
+          "type": "object",
+          "description": "Formatted variant details. Replaces the raw esummary envelope; the unprocessed record for this variant is preserved at raw_data.",
+          "properties": {
+            "variant_id": {
+              "type": "string",
+              "description": "ClinVar Variation ID that was requested"
+            },
+            "accession": {
+              "type": "string",
+              "description": "ClinVar accession (e.g. VCV000012345)"
+            },
+            "obj_type": {
+              "type": "string",
+              "description": "Variant object type (e.g. single nucleotide variant, Deletion)"
+            },
+            "chromosome": {
+              "type": "string",
+              "description": "Chromosome the variant maps to"
+            },
+            "location": {
+              "type": "string",
+              "description": "Cytogenetic band of the variant's first variation location"
+            },
+            "variation_name": {
+              "type": "string",
+              "description": "HGVS-style variation name (e.g. NM_000059.4(BRCA2):c.1234A>G)"
+            },
+            "title": {
+              "type": "string",
+              "description": "ClinVar record title"
+            },
+            "genes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "HGNC symbols of genes overlapping the variant"
+            },
+            "clinical_significance": {
+              "type": "string",
+              "description": "Germline classification description (e.g. Pathogenic, Likely benign, Uncertain significance)"
+            },
+            "review_status": {
+              "type": "string",
+              "description": "ClinVar review status for the germline classification"
+            },
+            "raw_data": {
+              "type": "object",
+              "description": "Unprocessed NCBI esummary record for this variant"
+            }
+          }
+        },
+        "variant_id": {
+          "type": "string",
+          "description": "Input variant ID"
+        },
+        "url": {
+          "type": "string",
+          "description": "API URL used"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "variant_id": "12345"
+      },
+      {
+        "variant_id": "4813039"
+      }
+    ],
+    "label": [
+      "ClinVar",
+      "Variant",
+      "Details"
+    ],
+    "metadata": {
+      "tags": [
+        "variant",
+        "details",
+        "clinical"
+      ],
+      "difficulty_level": "easy",
+      "estimated_execution_time": "< 3 seconds"
+    }
+  },
+  {
+    "type": "ClinVarGetClinicalSignificance",
+    "name": "ClinVar_get_clinical_significance",
+    "description": "Get clinical significance information for a variant from ClinVar. Returns pathogenicity classification and clinical interpretations.",
+    "parameter": {
+      "type": "object",
+      "properties": {
+        "variant_id": {
+          "type": "string",
+          "description": "ClinVar variant ID (e.g., '12345', '123456')"
+        }
+      },
+      "required": [
+        "variant_id"
+      ]
+    },
+    "fields": {
+      "endpoint": "/esummary.fcgi",
+      "return_format": "JSON"
+    },
+    "return_schema": {
+      "type": "object",
+      "description": "ClinVar clinical significance data",
+      "properties": {
+        "status": {
+          "type": "string",
+          "description": "Status of the request"
+        },
+        "data": {
+          "type": "object",
+          "description": "Formatted clinical significance. Replaces the raw esummary envelope; the unprocessed record for this variant is preserved at raw_data.",
+          "properties": {
+            "variant_id": {
+              "type": "string",
+              "description": "ClinVar Variation ID that was requested"
+            },
+            "germline_classification": {
+              "type": "object",
+              "description": "Germline classification for the variant",
+              "properties": {
+                "description": {
+                  "type": "string",
+                  "description": "Classification text"
+                },
+                "review_status": {
+                  "type": "string",
+                  "description": "ClinVar review status for this classification"
+                },
+                "last_evaluated": {
+                  "type": "string",
+                  "description": "Date the classification was last evaluated"
+                },
+                "fda_recognized": {
+                  "type": "string",
+                  "description": "FDA-recognized database designation, when present"
+                },
+                "traits": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Trait/condition names associated with the classification"
+                }
+              }
+            },
+            "clinical_impact": {
+              "type": "object",
+              "description": "Clinical impact classification (somatic variants)",
+              "properties": {
+                "description": {
+                  "type": "string",
+                  "description": "Classification text"
+                },
+                "review_status": {
+                  "type": "string",
+                  "description": "ClinVar review status for this classification"
+                },
+                "last_evaluated": {
+                  "type": "string",
+                  "description": "Date the classification was last evaluated"
+                }
+              }
+            },
+            "oncogenicity": {
+              "type": "object",
+              "description": "Oncogenicity classification",
+              "properties": {
+                "description": {
+                  "type": "string",
+                  "description": "Classification text"
+                },
+                "review_status": {
+                  "type": "string",
+                  "description": "ClinVar review status for this classification"
+                },
+                "last_evaluated": {
+                  "type": "string",
+                  "description": "Date the classification was last evaluated"
+                }
+              }
+            },
+            "raw_data": {
+              "type": "object",
+              "description": "Unprocessed NCBI esummary record for this variant"
+            }
+          }
+        },
+        "variant_id": {
+          "type": "string",
+          "description": "Input variant ID"
+        },
+        "url": {
+          "type": "string",
+          "description": "API URL used"
+        }
+      }
+    },
+    "test_examples": [
+      {
+        "variant_id": "12345"
+      },
+      {
+        "variant_id": "4813039"
+      }
+    ],
+    "label": [
+      "ClinVar",
+      "Clinical",
+      "Significance"
+    ],
+    "metadata": {
+      "tags": [
+        "clinical",
+        "pathogenicity",
+        "significance"
+      ],
+      "difficulty_level": "easy",
+      "estimated_execution_time": "< 3 seconds"
+    }
+  }
 ]

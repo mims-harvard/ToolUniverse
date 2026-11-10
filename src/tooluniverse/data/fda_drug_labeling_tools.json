@@ -3022,6 +3022,46 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "openfda.pharm_class_moa": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "FDA's own structured mechanism-of-action class for the product, e.g. ['Cyclooxygenase Inhibitors [MoA]']. This is the curated one-line answer to the question this tool is named for; the label section this tool reports is free text written by the manufacturer. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.pharm_class_epc": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "FDA's established pharmacologic class, e.g. ['Nonsteroidal Anti-inflammatory Drug [EPC]'] -- what the product IS, where pharm_class_moa is what it DOES. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.pharm_class_cs": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "FDA's chemical-structure class, e.g. ['Anti-Inflammatory Agents, Non-Steroidal [CS]']. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.nui": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "NUI identifiers of the pharmacologic classes above, e.g. ['N0000000160', 'M0001335']. Join on these instead of string-matching a class label. Null when the label's openFDA block is unresolved."
               }
             }
           }
@@ -3209,6 +3249,46 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.pharm_class_moa": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "FDA's own structured mechanism-of-action class for the product, e.g. ['Cyclooxygenase Inhibitors [MoA]']. This is the curated one-line answer to the question this tool is named for; the label section this tool reports is free text written by the manufacturer. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.pharm_class_epc": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "FDA's established pharmacologic class, e.g. ['Nonsteroidal Anti-inflammatory Drug [EPC]'] -- what the product IS, where pharm_class_moa is what it DOES. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.pharm_class_cs": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "FDA's chemical-structure class, e.g. ['Anti-Inflammatory Agents, Non-Steroidal [CS]']. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.nui": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "NUI identifiers of the pharmacologic classes above, e.g. ['N0000000160', 'M0001335']. Join on these instead of string-matching a class label. Null when the label's openFDA block is unresolved."
               }
             }
           }
@@ -5785,6 +5865,46 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "openfda.pharm_class_moa": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "FDA's own structured mechanism-of-action class for the product, e.g. ['Cyclooxygenase Inhibitors [MoA]']. This is the curated one-line answer to the question this tool is named for; the label section this tool reports is free text written by the manufacturer. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.pharm_class_epc": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "FDA's established pharmacologic class, e.g. ['Nonsteroidal Anti-inflammatory Drug [EPC]'] -- what the product IS, where pharm_class_moa is what it DOES. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.pharm_class_cs": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "FDA's chemical-structure class, e.g. ['Anti-Inflammatory Agents, Non-Steroidal [CS]']. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.nui": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "NUI identifiers of the pharmacologic classes above, e.g. ['N0000000160', 'M0001335']. Join on these instead of string-matching a class label. Null when the label's openFDA block is unresolved."
               }
             }
           }
@@ -5985,6 +6105,46 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.pharm_class_moa": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "FDA's own structured mechanism-of-action class for the product, e.g. ['Cyclooxygenase Inhibitors [MoA]']. This is the curated one-line answer to the question this tool is named for; the label section this tool reports is free text written by the manufacturer. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.pharm_class_epc": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "FDA's established pharmacologic class, e.g. ['Nonsteroidal Anti-inflammatory Drug [EPC]'] -- what the product IS, where pharm_class_moa is what it DOES. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.pharm_class_cs": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "FDA's chemical-structure class, e.g. ['Anti-Inflammatory Agents, Non-Steroidal [CS]']. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.nui": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "NUI identifiers of the pharmacologic classes above, e.g. ['N0000000160', 'M0001335']. Join on these instead of string-matching a class label. Null when the label's openFDA block is unresolved."
               }
             }
           }
@@ -16904,6 +17064,46 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.pharm_class_moa": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "FDA's own structured mechanism-of-action class for the product, e.g. ['Cyclooxygenase Inhibitors [MoA]']. This is the curated one-line answer to the question this tool is named for; the label section this tool reports is free text written by the manufacturer. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.pharm_class_epc": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "FDA's established pharmacologic class, e.g. ['Nonsteroidal Anti-inflammatory Drug [EPC]'] -- what the product IS, where pharm_class_moa is what it DOES. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.pharm_class_cs": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "FDA's chemical-structure class, e.g. ['Anti-Inflammatory Agents, Non-Steroidal [CS]']. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.nui": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "NUI identifiers of the pharmacologic classes above, e.g. ['N0000000160', 'M0001335']. Join on these instead of string-matching a class label. Null when the label's openFDA block is unresolved."
               }
             }
           }
@@ -17132,6 +17332,46 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "openfda.pharm_class_moa": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "FDA's own structured mechanism-of-action class for the product, e.g. ['Cyclooxygenase Inhibitors [MoA]']. This is the curated one-line answer to the question this tool is named for; the label section this tool reports is free text written by the manufacturer. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.pharm_class_epc": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "FDA's established pharmacologic class, e.g. ['Nonsteroidal Anti-inflammatory Drug [EPC]'] -- what the product IS, where pharm_class_moa is what it DOES. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.pharm_class_cs": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "FDA's chemical-structure class, e.g. ['Anti-Inflammatory Agents, Non-Steroidal [CS]']. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.nui": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "NUI identifiers of the pharmacologic classes above, e.g. ['N0000000160', 'M0001335']. Join on these instead of string-matching a class label. Null when the label's openFDA block is unresolved."
               }
             }
           }
@@ -21025,6 +21265,46 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "openfda.pharm_class_moa": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "FDA's own structured mechanism-of-action class for the product, e.g. ['Cyclooxygenase Inhibitors [MoA]']. This is the curated one-line answer to the question this tool is named for; the label section this tool reports is free text written by the manufacturer. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.pharm_class_epc": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "FDA's established pharmacologic class, e.g. ['Nonsteroidal Anti-inflammatory Drug [EPC]'] -- what the product IS, where pharm_class_moa is what it DOES. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.pharm_class_cs": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "FDA's chemical-structure class, e.g. ['Anti-Inflammatory Agents, Non-Steroidal [CS]']. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.nui": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "NUI identifiers of the pharmacologic classes above, e.g. ['N0000000160', 'M0001335']. Join on these instead of string-matching a class label. Null when the label's openFDA block is unresolved."
               }
             }
           }
@@ -21212,6 +21492,46 @@
                   "type": "string"
                 },
                 "description": "Routes of administration openFDA resolved for the product, e.g. ['ORAL'] or ['EPIDURAL', 'INTRAMUSCULAR']. Travels with every label as identity, so an oral label can be told from an injectable one. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.pharm_class_moa": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "FDA's own structured mechanism-of-action class for the product, e.g. ['Cyclooxygenase Inhibitors [MoA]']. This is the curated one-line answer to the question this tool is named for; the label section this tool reports is free text written by the manufacturer. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.pharm_class_epc": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "FDA's established pharmacologic class, e.g. ['Nonsteroidal Anti-inflammatory Drug [EPC]'] -- what the product IS, where pharm_class_moa is what it DOES. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.pharm_class_cs": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "FDA's chemical-structure class, e.g. ['Anti-Inflammatory Agents, Non-Steroidal [CS]']. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.nui": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "NUI identifiers of the pharmacologic classes above, e.g. ['N0000000160', 'M0001335']. Join on these instead of string-matching a class label. Null when the label's openFDA block is unresolved."
               }
             }
           }
@@ -21848,6 +22168,46 @@
               "set_id": {
                 "type": "string",
                 "description": "SPL set id: the stable identifier of the LABEL, constant across its versions while 'id' changes. Pass it to FDA_get_drug_name_by_set_id to re-fetch this label."
+              },
+              "openfda.pharm_class_moa": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "FDA's own structured mechanism-of-action class for the product, e.g. ['Cyclooxygenase Inhibitors [MoA]']. This is the curated one-line answer to the question this tool is named for; the label section this tool reports is free text written by the manufacturer. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.pharm_class_epc": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "FDA's established pharmacologic class, e.g. ['Nonsteroidal Anti-inflammatory Drug [EPC]'] -- what the product IS, where pharm_class_moa is what it DOES. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.pharm_class_cs": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "FDA's chemical-structure class, e.g. ['Anti-Inflammatory Agents, Non-Steroidal [CS]']. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.nui": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "NUI identifiers of the pharmacologic classes above, e.g. ['N0000000160', 'M0001335']. Join on these instead of string-matching a class label. Null when the label's openFDA block is unresolved."
               }
             }
           }
@@ -22048,6 +22408,46 @@
                   "type": "string"
                 },
                 "description": "The 'pharmacokinetics' section as the HTML table markup SPL carries it, when the label formats that section as a table. Measured over 500 labels: no section ever had a table without its prose, and every distinct word of a sampled table also appeared in 'pharmacokinetics' - so this is the same content, not extra content. Read it when the row and column structure carries the meaning (which drug, which effect, which clinical comment), which the prose flattens into one string. Null when the label has no pharmacokinetics table."
+              },
+              "openfda.pharm_class_moa": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "FDA's own structured mechanism-of-action class for the product, e.g. ['Cyclooxygenase Inhibitors [MoA]']. This is the curated one-line answer to the question this tool is named for; the label section this tool reports is free text written by the manufacturer. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.pharm_class_epc": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "FDA's established pharmacologic class, e.g. ['Nonsteroidal Anti-inflammatory Drug [EPC]'] -- what the product IS, where pharm_class_moa is what it DOES. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.pharm_class_cs": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "FDA's chemical-structure class, e.g. ['Anti-Inflammatory Agents, Non-Steroidal [CS]']. Null when the label's openFDA block is unresolved."
+              },
+              "openfda.nui": {
+                "type": [
+                  "array",
+                  "null"
+                ],
+                "items": {
+                  "type": "string"
+                },
+                "description": "NUI identifiers of the pharmacologic classes above, e.g. ['N0000000160', 'M0001335']. Join on these instead of string-matching a class label. Null when the label's openFDA block is unresolved."
               }
             }
           }

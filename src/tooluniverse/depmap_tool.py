@@ -584,6 +584,19 @@ class DepMapTool(BaseTool):
                             "hgnc_id": attrs.get("hgnc_id"),
                             "ensembl_id": attrs.get("ensembl_gene_id"),
                             "exact_match": (symbol.upper() == query_upper),
+                            # The tool's description says it returns "gene IDs
+                            # and annotations" and returned the ids alone.
+                            # hgnc_status is the one that can mislead: a
+                            # withdrawn or merged symbol resolves silently,
+                            # and the caller has no way to see that the
+                            # symbol they searched is no longer the current
+                            # one. location is the cytogenetic locus, and
+                            # method_of_action is what a target-validation
+                            # question asks after essentiality.
+                            "hgnc_status": attrs.get("hgnc_status"),
+                            "location": attrs.get("location"),
+                            "method_of_action": attrs.get("method_of_action"),
+                            "hgnc_merge_comment": attrs.get("hgnc_merge_comment"),
                         }
                     )
 

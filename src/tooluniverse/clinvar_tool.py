@@ -313,6 +313,28 @@ class ClinVarRESTTool(BaseTool):
             "genes": [g.get("symbol", "") for g in vdata.get("genes", [])],
             "clinical_significance": gc.get("description", ""),
             "review_status": gc.get("review_status", ""),
+            # WHAT the classification is for. The row said "Uncertain
+            # significance" and never named a condition, while the esummary
+            # record carried "BRCA1-related disorder" in trait_set. The same
+            # variant can be pathogenic for one condition and benign for
+            # another, so a significance without its condition is not an
+            # answer -- it is a word.
+            "conditions": [
+                t.get("trait_name", "")
+                for t in (gc.get("trait_set") or [])
+                if isinstance(t, dict)
+            ],
+            # And the identifiers that resolve them. A condition name is
+            # ambiguous on its own: "Hereditary cancer-predisposing syndrome"
+            # is one string over many MedGen concepts. Empty for a condition
+            # ClinVar has not cross-referenced.
+            "condition_xrefs": [
+                {"db_source": x.get("db_source"), "db_id": x.get("db_id")}
+                for t in (gc.get("trait_set") or [])
+                if isinstance(t, dict)
+                for x in (t.get("trait_xrefs") or [])
+                if isinstance(x, dict)
+            ],
         }
 
     def _fetch_variant(self, variant_id: str) -> Dict[str, Any]:
@@ -1116,6 +1138,27 @@ class ClinVarGetClinicalSignificance(ClinVarRESTTool):
                 "fda_recognized": germline_class.get("fda_recognized_database", ""),
                 "traits": [
                     trait.get("trait_name", "")
+                    for trait in germline_class.get("trait_set", [])
+                ],
+                # The same conditions with the identifiers that resolve them.
+                # `traits` is a list of names, and a name alone is ambiguous
+                # -- "Hereditary cancer-predisposing syndrome" is one string
+                # covering many MedGen concepts -- so a caller could not join
+                # a ClinVar condition to a disease ontology, or tell two
+                # different conditions sharing a name apart. `traits` keeps
+                # its shape; this is beside it.
+                "trait_details": [
+                    {
+                        "trait_name": trait.get("trait_name", ""),
+                        "xrefs": [
+                            {
+                                "db_source": x.get("db_source"),
+                                "db_id": x.get("db_id"),
+                            }
+                            for x in (trait.get("trait_xrefs") or [])
+                            if isinstance(x, dict)
+                        ],
+                    }
                     for trait in germline_class.get("trait_set", [])
                 ],
             },
