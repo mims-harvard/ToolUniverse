@@ -1,5 +1,6 @@
 """Web search tools for ToolUniverse using DDGS plus opt-in hosted backends
-(Parallel Search MCP, SerpBase, Firecrawl Search, Outcrawl Search, Keenable Search)."""
+(Parallel Search MCP, SerpBase, Firecrawl Search, Outcrawl Search, Keenable Search,
+SpecStream Search API)."""
 
 import importlib.util
 import json
@@ -65,6 +66,16 @@ OUTCRAWL_PROVIDER_NOTICE = (
 )
 # Outcrawl returns at most 20 hits per request.
 _OUTCRAWL_MAX_LIMIT = 20
+
+SPECSTREAM_SEARCH_URL = "https://api.specstream.ai/v1/web-search"
+SPECSTREAM_PROVIDER_NOTICE = (
+    "Query sent to SpecStream's hosted third-party Search API at "
+    f"{SPECSTREAM_SEARCH_URL} (billed per search against the account's "
+    "balance). ToolUniverse region is applied as a country code only by this "
+    "backend; do not submit sensitive or patient-identifying information."
+)
+# ToolUniverse safesearch levels mapped to SpecStream's ``safe`` values.
+_SPECSTREAM_SAFE_LEVELS = {"on": "strict", "moderate": "moderate", "off": "off"}
 
 
 def _firecrawl_country_from_region(region: str) -> str:
@@ -577,6 +588,114 @@ print(json.dumps(results))
 
         return results
 
+    def _search_with_specstream(
+        self,
+        query: str,
+        max_results: int,
+        region: str = "us-en",
+        safesearch: str = "moderate",
+    ) -> List[Dict[str, Any]]:
+        """Search with the SpecStream Search API and normalize its sources.
+
+        Requires SPECSTREAM_API_KEY, resolved per call from the request's
+        credential scope when one is active, otherwise from the environment.
+        ``speed=fast`` returns the ranked results with their snippets and no
+        written answer. The country half of ``region`` is sent as an ISO code
+        and ``safesearch`` maps to ``safe``. Failures come back as a non-2xx
+        status with ``{"error": {"code", "message"}}`` in the body; the body is
+        read first to keep its message, then the status is enforced.
+        """
+        api_key = (self.credential("SPECSTREAM_API_KEY") or "").strip()
+        if not api_key:
+            raise RuntimeError(
+                "SPECSTREAM_API_KEY environment variable is not set. "
+                "Request a key at https://specstream.ai/search-api."
+            )
+
+        params: Dict[str, Any] = {
+            "q": query,
+            "num": max_results,
+            "speed": "fast",
+            "country": _firecrawl_country_from_region(region),
+        }
+        safe = _SPECSTREAM_SAFE_LEVELS.get(safesearch)
+        if safe:
+            params["safe"] = safe
+
+        response = requests.get(
+            SPECSTREAM_SEARCH_URL,
+            params=params,
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "User-Agent": "ToolUniverse/1.0",
+            },
+            timeout=30,
+        )
+
+        try:
+            data = response.json()
+        except ValueError:
+            data = None
+        body_error = None
+        if isinstance(data, dict) and isinstance(data.get("error"), dict):
+            body_error = data["error"].get("message")
+            if not isinstance(body_error, str):
+                body_error = None
+
+        if response.status_code == 401:
+            raise RuntimeError(
+                "SpecStream Search API rejected SPECSTREAM_API_KEY (HTTP 401)."
+            )
+        if response.status_code == 402:
+            detail = f" {body_error}" if body_error else ""
+            raise RuntimeError(
+                "SpecStream Search API account balance or spending limit "
+                f"reached (HTTP 402).{detail}"
+            )
+        if response.status_code == 503:
+            retry_after = response.headers.get("Retry-After")
+            hint = f" Retry after {retry_after} seconds." if retry_after else ""
+            raise RuntimeError(
+                f"SpecStream Search API is busy or the per-minute call limit was "
+                f"reached (HTTP 503).{hint}"
+            )
+        if response.status_code >= 400:
+            message = body_error or response.reason or "request failed"
+            raise RuntimeError(
+                f"SpecStream Search API error (HTTP {response.status_code}): {message}"
+            )
+
+        if not isinstance(data, dict):
+            raise RuntimeError("SpecStream Search API response was not a JSON object")
+        payload_data = data.get("data")
+        sources = (
+            payload_data.get("sources") if isinstance(payload_data, dict) else None
+        )
+        if not isinstance(sources, list):
+            raise RuntimeError("SpecStream Search API response did not include sources")
+
+        results = []
+        for item in sources:
+            if not isinstance(item, dict):
+                continue
+            url = item.get("url")
+            if not isinstance(url, str) or not url:
+                continue
+            title = item.get("title")
+            snippet = item.get("snippet")
+            results.append(
+                {
+                    "title": title if isinstance(title, str) else "",
+                    "url": url,
+                    "snippet": snippet if isinstance(snippet, str) else "",
+                    "rank": len(results) + 1,
+                }
+            )
+            if len(results) >= max_results:
+                break
+
+        return results
+
     def _search_with_fallback(
         self,
         query: str,
@@ -716,6 +835,31 @@ print(json.dumps(results))
 
             # Explicit providers fall back to DDGS auto today. Preserve that
             # contract without adding Keenable to the default provider chain.
+            backends_to_try = ["auto"]
+        elif backend == "specstream":
+            attempted_backends.append("specstream")
+            try:
+                results = self._search_with_specstream(
+                    query=query,
+                    max_results=max_results,
+                    region=region,
+                    safesearch=safesearch,
+                )
+                if results:
+                    return (
+                        results,
+                        "specstream",
+                        attempted_backends,
+                        None,
+                        provider_errors,
+                    )
+                had_empty_success = True
+            except Exception as error:
+                last_error = str(error)
+                provider_errors["specstream"] = str(error)
+
+            # Explicit providers fall back to DDGS auto today. Preserve that
+            # contract without adding SpecStream to the default provider chain.
             backends_to_try = ["auto"]
         elif backend == "auto":
             # Try the explicit DuckDuckGo backend first. It tends to fail with
@@ -1038,6 +1182,8 @@ print(json.dumps(results))
                     response["data"]["provider_notice"] = OUTCRAWL_PROVIDER_NOTICE
                 if "keenable" in attempted_backends:
                     response["data"]["provider_notice"] = KEENABLE_PROVIDER_NOTICE
+                if "specstream" in attempted_backends:
+                    response["data"]["provider_notice"] = SPECSTREAM_PROVIDER_NOTICE
                 return response
 
             # Add rate limiting to be respectful
@@ -1064,6 +1210,8 @@ print(json.dumps(results))
                 result_data["provider_notice"] = OUTCRAWL_PROVIDER_NOTICE
             if "keenable" in attempted_backends:
                 result_data["provider_notice"] = KEENABLE_PROVIDER_NOTICE
+            if "specstream" in attempted_backends:
+                result_data["provider_notice"] = SPECSTREAM_PROVIDER_NOTICE
 
             return {"status": "success", "data": result_data}
 

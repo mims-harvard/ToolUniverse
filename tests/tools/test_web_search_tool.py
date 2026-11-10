@@ -2026,3 +2026,444 @@ def test_auto_backend_does_not_call_keenable(monkeypatch):
     result = tool.run({"query": "q"})
 
     assert result["data"]["backend_used"] != "keenable"
+
+
+# --- SpecStream -----------------------------------------------------------
+
+
+class _FakeSpecStreamResponse:
+    def __init__(self, payload, status_code=200, reason="", headers=None):
+        self._payload = payload
+        self.status_code = status_code
+        self.reason = reason
+        self.headers = headers or {}
+
+    def json(self):
+        if isinstance(self._payload, Exception):
+            raise self._payload
+        return self._payload
+
+
+_SPECSTREAM_RESPONSE = {
+    "data": {
+        "request_id": "req_1",
+        "query": "python asyncio event loop",
+        "kind": "fact",
+        "columns": [],
+        "answer": None,
+        "rows": [],
+        "sources": [
+            {
+                "url": "https://docs.python.org/3/library/asyncio-eventloop.html",
+                "title": "Event Loop",
+                "site": "docs.python.org",
+                "snippet": "The event loop is the core of every asyncio application.",
+                "cited": False,
+                "published": None,
+            }
+        ],
+        "handoff": None,
+        "took_ms": 900,
+        "price_usd": 0.005,
+    }
+}
+
+
+@pytest.mark.unit
+def test_specstream_search_requires_api_key(monkeypatch):
+    monkeypatch.delenv("SPECSTREAM_API_KEY", raising=False)
+
+    def unexpected_get(*args, **kwargs):
+        raise AssertionError("no request without a key")
+
+    monkeypatch.setattr(web_search_tool.requests, "get", unexpected_get)
+
+    with pytest.raises(RuntimeError, match="SPECSTREAM_API_KEY"):
+        _new_tool()._search_with_specstream(query="x", max_results=1)
+
+
+@pytest.mark.unit
+def test_specstream_search_sends_documented_request_and_parses_sources(monkeypatch):
+    monkeypatch.setenv("SPECSTREAM_API_KEY", "  ss-test-key\n")
+    captured = {}
+
+    def fake_get(url, *, params=None, headers=None, timeout=None):
+        captured["url"] = url
+        captured["params"] = params
+        captured["headers"] = headers
+        captured["timeout"] = timeout
+        return _FakeSpecStreamResponse(_SPECSTREAM_RESPONSE)
+
+    monkeypatch.setattr(web_search_tool.requests, "get", fake_get)
+
+    results = _new_tool()._search_with_specstream(
+        query="python asyncio event loop", max_results=5
+    )
+
+    assert captured["url"] == "https://api.specstream.ai/v1/web-search"
+    assert captured["params"] == {
+        "q": "python asyncio event loop",
+        "num": 5,
+        "speed": "fast",
+        "country": "US",
+        "safe": "moderate",
+    }
+    assert captured["headers"]["Authorization"] == "Bearer ss-test-key"
+    assert captured["headers"]["User-Agent"] == "ToolUniverse/1.0"
+    assert captured["timeout"] == 30
+    assert results == [
+        {
+            "title": "Event Loop",
+            "url": "https://docs.python.org/3/library/asyncio-eventloop.html",
+            "snippet": "The event loop is the core of every asyncio application.",
+            "rank": 1,
+        }
+    ]
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    ("region", "safesearch", "country", "safe"),
+    [
+        ("uk-en", "on", "GB", "strict"),
+        ("ja-jp", "off", "JP", "off"),
+        ("de-de", "moderate", "DE", "moderate"),
+    ],
+)
+def test_specstream_search_maps_region_and_safesearch(
+    monkeypatch, region, safesearch, country, safe
+):
+    monkeypatch.setenv("SPECSTREAM_API_KEY", "ss-test-key")
+    captured = {}
+
+    def fake_get(url, *, params=None, headers=None, timeout=None):
+        captured["params"] = params
+        return _FakeSpecStreamResponse(_SPECSTREAM_RESPONSE)
+
+    monkeypatch.setattr(web_search_tool.requests, "get", fake_get)
+
+    _new_tool()._search_with_specstream(
+        query="x", max_results=3, region=region, safesearch=safesearch
+    )
+
+    assert captured["params"]["country"] == country
+    assert captured["params"]["safe"] == safe
+
+
+@pytest.mark.unit
+def test_specstream_search_prefers_the_request_scoped_key(monkeypatch):
+    monkeypatch.setenv("SPECSTREAM_API_KEY", "ss-operator-key")
+    captured = {}
+
+    def fake_get(url, *, params=None, headers=None, timeout=None):
+        captured["headers"] = headers
+        return _FakeSpecStreamResponse(_SPECSTREAM_RESPONSE)
+
+    monkeypatch.setattr(web_search_tool.requests, "get", fake_get)
+    tool = _new_tool()
+
+    with credential_context({"SPECSTREAM_API_KEY": "ss-request-key"}):
+        tool._search_with_specstream(query="x", max_results=1)
+
+    assert captured["headers"]["Authorization"] == "Bearer ss-request-key"
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    ("status_code", "payload", "headers", "pattern"),
+    [
+        (
+            401,
+            {"error": {"code": "invalid_token", "message": "Unknown key"}},
+            None,
+            "HTTP 401",
+        ),
+        (
+            402,
+            {"error": {"code": "insufficient_balance", "message": "Add balance"}},
+            None,
+            "402.*Add balance",
+        ),
+        (
+            503,
+            {"error": {"code": "capacity", "message": "busy"}},
+            {"Retry-After": "7"},
+            "503.*Retry after 7 seconds",
+        ),
+        (
+            422,
+            {"error": {"code": "bad_request", "message": "q is empty"}},
+            None,
+            "422.*q is empty",
+        ),
+        (502, ValueError("not json"), None, "502.*Bad Gateway"),
+    ],
+)
+def test_specstream_search_surfaces_http_errors(
+    monkeypatch, status_code, payload, headers, pattern
+):
+    monkeypatch.setenv("SPECSTREAM_API_KEY", "ss-test-key")
+    monkeypatch.setattr(
+        web_search_tool.requests,
+        "get",
+        lambda *a, **k: _FakeSpecStreamResponse(
+            payload, status_code=status_code, reason="Bad Gateway", headers=headers
+        ),
+    )
+
+    with pytest.raises(RuntimeError, match=pattern):
+        _new_tool()._search_with_specstream(query="x", max_results=1)
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    "payload",
+    [
+        {},
+        {"data": {}},
+        {"data": {"sources": "nope"}},
+        {"data": []},
+        "not a dict",
+        ValueError("not json"),
+    ],
+)
+def test_specstream_search_rejects_malformed_bodies(monkeypatch, payload):
+    monkeypatch.setenv("SPECSTREAM_API_KEY", "ss-test-key")
+    monkeypatch.setattr(
+        web_search_tool.requests,
+        "get",
+        lambda *a, **k: _FakeSpecStreamResponse(payload),
+    )
+
+    with pytest.raises(RuntimeError):
+        _new_tool()._search_with_specstream(query="x", max_results=1)
+
+
+@pytest.mark.unit
+def test_specstream_search_skips_malformed_items_and_truncates(monkeypatch):
+    monkeypatch.setenv("SPECSTREAM_API_KEY", "ss-test-key")
+    sources = [
+        None,
+        {},
+        {"url": ""},
+        {"title": None, "url": "https://example.com/a"},
+        {"title": 12, "url": "https://example.com/b", "snippet": 3},
+        {"title": "C", "url": "https://example.com/c", "snippet": "c"},
+    ]
+    monkeypatch.setattr(
+        web_search_tool.requests,
+        "get",
+        lambda *a, **k: _FakeSpecStreamResponse({"data": {"sources": sources}}),
+    )
+
+    results = _new_tool()._search_with_specstream(query="x", max_results=2)
+
+    assert results == [
+        {"title": "", "url": "https://example.com/a", "snippet": "", "rank": 1},
+        {"title": "", "url": "https://example.com/b", "snippet": "", "rank": 2},
+    ]
+
+
+@pytest.mark.unit
+def test_specstream_backend_reports_success(monkeypatch):
+    tool = _new_tool()
+    monkeypatch.setattr(
+        tool,
+        "_search_with_specstream",
+        lambda **kwargs: [
+            {"title": "R", "url": "https://example.com", "snippet": "s", "rank": 1}
+        ],
+    )
+    monkeypatch.setattr(web_search_tool.time, "sleep", lambda _: None)
+
+    result = tool.run({"query": "test query", "backend": "specstream"})
+
+    assert result["status"] == "success"
+    assert result["data"]["backend_used"] == "specstream"
+    assert result["data"]["attempted_backends"] == ["specstream"]
+    assert "api.specstream.ai" in result["data"]["provider_notice"]
+    assert "patient-identifying" in result["data"]["provider_notice"]
+
+
+@pytest.mark.unit
+def test_specstream_run_forwards_controls_and_clamped_limit(monkeypatch):
+    monkeypatch.setenv("SPECSTREAM_API_KEY", "ss-test-key")
+    captured = {}
+
+    def fake_get(url, *, params=None, headers=None, timeout=None):
+        captured["params"] = params
+        return _FakeSpecStreamResponse(_SPECSTREAM_RESPONSE)
+
+    monkeypatch.setattr(web_search_tool.requests, "get", fake_get)
+    monkeypatch.setattr(web_search_tool.time, "sleep", lambda _: None)
+
+    result = _new_tool().run(
+        {
+            "query": "x",
+            "backend": "specstream",
+            "max_results": 80,
+            "region": "fr-fr",
+            "safesearch": "off",
+        }
+    )
+
+    assert captured["params"] == {
+        "q": "x",
+        "num": 50,
+        "speed": "fast",
+        "country": "FR",
+        "safe": "off",
+    }
+    assert result["data"]["backend_used"] == "specstream"
+
+
+@pytest.mark.unit
+def test_specstream_backend_without_key_falls_back_to_auto(monkeypatch):
+    monkeypatch.delenv("SPECSTREAM_API_KEY", raising=False)
+    tool = _new_tool()
+    monkeypatch.setattr(
+        tool,
+        "_search_with_ddgs",
+        lambda **kwargs: [
+            {"title": "F", "url": "https://fallback.example", "snippet": "", "rank": 1}
+        ],
+    )
+    monkeypatch.setattr(web_search_tool.time, "sleep", lambda _: None)
+
+    result = tool.run({"query": "test query", "backend": "specstream"})
+
+    data = result["data"]
+    assert result["status"] == "success"
+    assert data["backend_used"] == "auto"
+    assert data["attempted_backends"] == ["specstream", "auto"]
+    assert "SPECSTREAM_API_KEY" in data["provider_errors"]["specstream"]
+    assert data["provider_notice"] == web_search_tool.SPECSTREAM_PROVIDER_NOTICE
+
+
+@pytest.mark.unit
+def test_specstream_empty_results_fall_back_without_provider_error(monkeypatch):
+    monkeypatch.setenv("SPECSTREAM_API_KEY", "ss-test-key")
+    tool = _new_tool()
+    monkeypatch.setattr(
+        web_search_tool.requests,
+        "get",
+        lambda *a, **k: _FakeSpecStreamResponse({"data": {"sources": []}}),
+    )
+    monkeypatch.setattr(
+        tool,
+        "_search_with_ddgs",
+        lambda **kwargs: [
+            {"title": "F", "url": "https://fallback.example", "snippet": "", "rank": 1}
+        ],
+    )
+    monkeypatch.setattr(web_search_tool.time, "sleep", lambda _: None)
+
+    result = tool.run({"query": "x", "backend": "specstream"})
+
+    data = result["data"]
+    assert data["attempted_backends"][0] == "specstream"
+    assert data["backend_used"] != "specstream"
+    assert "specstream" not in data.get("provider_errors", {})
+
+
+@pytest.mark.unit
+def test_specstream_all_provider_failure_keeps_disclosure(monkeypatch):
+    tool = _new_tool()
+
+    def always_fail(**kwargs):
+        raise RuntimeError("simulated provider failure")
+
+    monkeypatch.setattr(tool, "_search_with_specstream", always_fail)
+    monkeypatch.setattr(tool, "_search_with_ddgs", always_fail)
+    monkeypatch.setattr(tool, "_search_with_duckduckgo_html", always_fail)
+    monkeypatch.setattr(tool, "_search_with_wikipedia_api", always_fail)
+
+    result = tool.run({"query": "test query", "backend": "specstream"})
+
+    assert result["data"]["backend_used"] == "none"
+    assert result["data"]["all_providers_failed"] is True
+    assert "api.specstream.ai" in result["data"]["provider_notice"]
+
+
+@pytest.mark.unit
+def test_auto_backend_does_not_call_specstream(monkeypatch):
+    tool = _new_tool()
+
+    def unexpected_call(**kwargs):
+        raise AssertionError("SpecStream must remain opt-in")
+
+    monkeypatch.setattr(tool, "_search_with_specstream", unexpected_call)
+    monkeypatch.setattr(
+        tool,
+        "_search_with_ddgs",
+        lambda **kwargs: [
+            {"title": "D", "url": "https://default.example", "snippet": "", "rank": 1}
+        ],
+    )
+    monkeypatch.setattr(web_search_tool.time, "sleep", lambda _: None)
+
+    result = tool.run({"query": "test query", "backend": "auto"})
+
+    assert "specstream" not in result["data"]["attempted_backends"]
+    assert "provider_notice" not in result["data"]
+
+
+@pytest.mark.unit
+def test_api_documentation_search_forwards_specstream_backend(monkeypatch):
+    tool = _new_api_docs_tool()
+    captured = {}
+
+    def fake_search(**kwargs):
+        captured.update(kwargs)
+        return (
+            [{"title": "D", "url": "https://docs.example", "snippet": "", "rank": 1}],
+            "specstream",
+            ["specstream"],
+            None,
+            {},
+        )
+
+    monkeypatch.setattr(tool, "_search_with_fallback", fake_search)
+    monkeypatch.setattr(web_search_tool.time, "sleep", lambda _: None)
+
+    result = tool.run({"query": "FastMCP Client", "backend": "specstream"})
+
+    assert captured["backend"] == "specstream"
+    assert result["data"]["backend_used"] == "specstream"
+    assert "api.specstream.ai" in result["data"]["provider_notice"]
+
+
+@pytest.mark.integration
+@pytest.mark.network
+@pytest.mark.require_api_keys
+def test_specstream_backend_live_call():
+    """Opt-in live check against the real endpoint (excluded by default via the
+    `network` and `require_api_keys` markers). Skips without SPECSTREAM_API_KEY,
+    and whenever SpecStream did not serve the search (the backend then falls
+    back to DDGS, which is correct behavior)."""
+    import os
+
+    if not os.environ.get("SPECSTREAM_API_KEY"):
+        pytest.skip("SPECSTREAM_API_KEY is not set")
+
+    result = _new_tool().run(
+        {
+            "query": "python asyncio event loop",
+            "backend": "specstream",
+            "max_results": 3,
+        }
+    )
+
+    data = result["data"]
+    if data["backend_used"] != "specstream":
+        reason = data.get("provider_errors", {}).get(
+            "specstream", "no provider error reported"
+        )
+        pytest.skip(f"SpecStream did not serve this search: {reason}")
+
+    assert result["status"] == "success"
+    assert 1 <= data["total_results"] <= 3
+    first = data["results"][0]
+    assert first["url"].startswith("http")
+    assert first["rank"] == 1
+    assert "api.specstream.ai" in data["provider_notice"]

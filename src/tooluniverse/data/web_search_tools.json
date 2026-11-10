@@ -2,7 +2,7 @@
   {
     "type": "WebSearchTool",
     "name": "web_search",
-    "description": "General web search using DDGS (Dux Distributed Global Search) supporting multiple search engines including Google, Bing, Brave, Yahoo, and DuckDuckGo. No API keys required. Parallel Search MCP, SerpBase, Firecrawl Search, and Outcrawl Search are opt-in; selecting any of them sends the query to that hosted third-party service, so do not submit sensitive or patient-identifying information. SerpBase additionally requires SERPBASE_API_KEY and returns real Google SERP results (billed per request), useful when DDGS's Google backend is unavailable or rate-limited.",
+    "description": "General web search using DDGS (Dux Distributed Global Search) supporting multiple search engines including Google, Bing, Brave, Yahoo, and DuckDuckGo. No API keys required. Parallel Search MCP, SerpBase, Firecrawl Search, Outcrawl Search, and the SpecStream Search API are opt-in; selecting any of them sends the query to that hosted third-party service, so do not submit sensitive or patient-identifying information. SerpBase additionally requires SERPBASE_API_KEY and returns real Google SERP results (billed per request), useful when DDGS's Google backend is unavailable or rate-limited.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -30,7 +30,7 @@
         },
         "backend": {
           "type": "string",
-          "description": "Search engine backend to use. Selecting 'parallel' sends the query to https://search.parallel.ai/mcp; that backend does not apply ToolUniverse region or safesearch controls. Selecting 'serpbase' sends the query to https://api.serpbase.dev (requires SERPBASE_API_KEY) for real Google SERP results; that backend applies region but not safesearch. Selecting 'firecrawl' sends the query to https://api.firecrawl.dev/v2/search (FIRECRAWL_API_KEY optional); that backend applies region as a country code only and safesearch as a two-state filter ('on' and 'moderate' filter, 'off' does not). Selecting 'outcrawl' sends the query to https://api.outcrawl.ai/v1/search (requires OUTCRAWL_API_KEY); that backend does not apply ToolUniverse region or safesearch controls and returns at most 20 results. Selecting 'keenable' sends the query to https://api.keenable.ai (KEENABLE_API_KEY optional); that backend does not apply ToolUniverse region or safesearch controls.",
+          "description": "Search engine backend to use. Selecting 'parallel' sends the query to https://search.parallel.ai/mcp; that backend does not apply ToolUniverse region or safesearch controls. Selecting 'serpbase' sends the query to https://api.serpbase.dev (requires SERPBASE_API_KEY) for real Google SERP results; that backend applies region but not safesearch. Selecting 'firecrawl' sends the query to https://api.firecrawl.dev/v2/search (FIRECRAWL_API_KEY optional); that backend applies region as a country code only and safesearch as a two-state filter ('on' and 'moderate' filter, 'off' does not). Selecting 'outcrawl' sends the query to https://api.outcrawl.ai/v1/search (requires OUTCRAWL_API_KEY); that backend does not apply ToolUniverse region or safesearch controls and returns at most 20 results. Selecting 'keenable' sends the query to https://api.keenable.ai (KEENABLE_API_KEY optional); that backend does not apply ToolUniverse region or safesearch controls. Selecting 'specstream' sends the query to https://api.specstream.ai/v1/web-search (requires SPECSTREAM_API_KEY); that backend applies region as a country code only and maps safesearch 'on', 'moderate' and 'off' to its strict, moderate and off levels.",
           "enum": [
             "auto",
             "parallel",
@@ -38,6 +38,7 @@
             "firecrawl",
             "outcrawl",
             "keenable",
+            "specstream",
             "google",
             "bing",
             "brave",
@@ -48,7 +49,7 @@
         },
         "region": {
           "type": "string",
-          "description": "Search region/locale for DDGS backends, and country/language for the SerpBase backend (split on the hyphen into gl/hl). Firecrawl uses the country half only as an ISO code ('uk' maps to 'GB', 'ja' to 'JP'); the language half is not applied. Parallel and Outcrawl do not support this control; only the default value is accepted with backend='parallel' or backend='outcrawl'.",
+          "description": "Search region/locale for DDGS backends, and country/language for the SerpBase backend (split on the hyphen into gl/hl). Firecrawl and SpecStream use the country half only as an ISO code ('uk' maps to 'GB', 'ja' to 'JP'); the language half is not applied. Parallel and Outcrawl do not support this control; only the default value is accepted with backend='parallel' or backend='outcrawl'.",
           "enum": [
             "us-en",
             "cn-zh",
@@ -61,7 +62,7 @@
         },
         "safesearch": {
           "type": "string",
-          "description": "Safe search level for DDGS backends. Parallel, SerpBase, and Outcrawl do not support this control; only the default value is accepted with those backends. Firecrawl has a two-state filter: 'on' and 'moderate' both enable it, 'off' leaves it unset.",
+          "description": "Safe search level for DDGS backends. Parallel, SerpBase, and Outcrawl do not support this control; only the default value is accepted with those backends. Firecrawl has a two-state filter: 'on' and 'moderate' both enable it, 'off' leaves it unset. SpecStream maps 'on' to strict, 'moderate' to moderate and 'off' to off.",
           "enum": [
             "on",
             "moderate",
@@ -74,7 +75,7 @@
         "query"
       ]
     },
-    "optional_api_keys": ["SERPBASE_API_KEY", "FIRECRAWL_API_KEY", "OUTCRAWL_API_KEY", "KEENABLE_API_KEY"],
+    "optional_api_keys": ["SERPBASE_API_KEY", "FIRECRAWL_API_KEY", "OUTCRAWL_API_KEY", "KEENABLE_API_KEY", "SPECSTREAM_API_KEY"],
     "api_key_info": {
       "SERPBASE_API_KEY": {
         "domain": "Other",
@@ -103,6 +104,13 @@
         "register_url": "https://keenable.ai/",
         "purpose": "Authenticate the backend='keenable' option against Keenable's keyed Search API (https://api.keenable.ai/v1/search) for the account's rate limits.",
         "without": "backend='keenable' still works keyless via Keenable's public endpoint (https://api.keenable.ai/v1/search/public), which is rate-limited. The default web_search chain is unaffected."
+      },
+      "SPECSTREAM_API_KEY": {
+        "domain": "Other",
+        "type": "secret",
+        "register_url": "https://specstream.ai/search-api",
+        "purpose": "Authenticate the backend='specstream' option (SpecStream Search API, https://api.specstream.ai/v1/web-search). Searches are billed against the account's balance.",
+        "without": "web_search still works via DDGS/Parallel/DuckDuckGo-HTML/Wikipedia; backend='specstream' falls back to the normal DDGS chain without it."
       }
     },
     "return_schema": {
@@ -221,7 +229,7 @@
   {
     "type": "WebAPIDocumentationSearchTool",
     "name": "web_api_documentation_search",
-    "description": "Specialized web search for API documentation, Python packages, and technical resources using DDGS with multiple search engines. Parallel Search MCP, SerpBase, Firecrawl Search, and Outcrawl Search are opt-in; selecting any of them sends the query to that hosted third-party service, so do not submit sensitive information.",
+    "description": "Specialized web search for API documentation, Python packages, and technical resources using DDGS with multiple search engines. Parallel Search MCP, SerpBase, Firecrawl Search, Outcrawl Search, and the SpecStream Search API are opt-in; selecting any of them sends the query to that hosted third-party service, so do not submit sensitive information.",
     "parameter": {
       "type": "object",
       "properties": {
@@ -248,7 +256,7 @@
         },
         "backend": {
           "type": "string",
-          "description": "Search engine backend to use. Selecting 'parallel' sends the query to https://search.parallel.ai/mcp. Selecting 'serpbase' sends the query to https://api.serpbase.dev (requires SERPBASE_API_KEY) for real Google SERP results. Selecting 'firecrawl' sends the query to https://api.firecrawl.dev/v2/search (FIRECRAWL_API_KEY optional). Selecting 'outcrawl' sends the query to https://api.outcrawl.ai/v1/search (requires OUTCRAWL_API_KEY) and returns at most 20 results. Selecting 'keenable' sends the query to https://api.keenable.ai (KEENABLE_API_KEY optional).",
+          "description": "Search engine backend to use. Selecting 'parallel' sends the query to https://search.parallel.ai/mcp. Selecting 'serpbase' sends the query to https://api.serpbase.dev (requires SERPBASE_API_KEY) for real Google SERP results. Selecting 'firecrawl' sends the query to https://api.firecrawl.dev/v2/search (FIRECRAWL_API_KEY optional). Selecting 'outcrawl' sends the query to https://api.outcrawl.ai/v1/search (requires OUTCRAWL_API_KEY) and returns at most 20 results. Selecting 'keenable' sends the query to https://api.keenable.ai (KEENABLE_API_KEY optional). Selecting 'specstream' sends the query to https://api.specstream.ai/v1/web-search (requires SPECSTREAM_API_KEY).",
           "enum": [
             "auto",
             "parallel",
@@ -256,6 +264,7 @@
             "firecrawl",
             "outcrawl",
             "keenable",
+            "specstream",
             "google",
             "bing",
             "brave",
