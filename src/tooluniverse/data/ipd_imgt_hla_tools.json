@@ -875,6 +875,13 @@
                   },
                   "primary_name": {
                     "type": "string"
+                  },
+                  "lab_of_origin": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "description": "The laboratory the cell line came from. Provenance, and the only field that attributes it."
                   }
                 }
               }

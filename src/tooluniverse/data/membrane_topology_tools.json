@@ -384,6 +384,13 @@
                 "null"
               ],
               "description": "Total evidence records available"
+            },
+            "total_experimental_evidence": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "How many experimental observations back the topology, e.g. 1204. The weight behind a membrane-topology call."
             }
           },
           "not": {

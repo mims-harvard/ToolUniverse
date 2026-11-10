@@ -7787,3 +7787,67 @@ def test_the_rest_of_batch_eighty_four():
     assert "transferred from another species" in json.dumps(
         _config("RGD_get_annotations").get("return_schema"))
     assert "unusable" in json.dumps(_config("NCA_compute_parameters").get("return_schema"))
+
+
+def test_an_empty_result_says_why_it_is_empty():
+    """Several tools returned nothing and the reason with it, undeclared.
+
+    DepMap answers "Cell line 'A549' not found" in a `message` field. Without
+    it an empty result and a failed lookup are the same answer, and a caller
+    cannot tell "this cell line has no dependencies recorded" from "this
+    cell line is not in DepMap".
+
+    SYNERGxDB's `combo_score` null is the same shape at field level: null
+    means SYNERGxDB recorded no measurement for that pair, not that the
+    combination showed no synergy.
+    """
+    schema = json.dumps(_config("DepMap_get_cell_line").get("return_schema"))
+    assert '"message"' in schema
+    assert "failed lookup are the same answer" in schema
+    syn = json.dumps(_config("SYNERGxDB_get_combo_matrix").get("return_schema"))
+    assert '"combo_score"' in syn and "not measured" in syn
+
+
+def test_a_dataset_record_pins_the_version_it_saw():
+    """HuggingFace datasets are mutable and `sha` was undeclared.
+
+    A dataset id names a moving target; the commit hash is what pins which
+    revision the record describes. A reproducibility claim made from the id
+    alone is not one.
+    """
+    schema = json.dumps(_config("HuggingFace_search_datasets").get("return_schema"))
+    assert '"sha"' in schema
+    assert "mutable" in schema
+
+
+def test_an_em_map_carries_what_it_takes_to_render_it():
+    """EMDB's three info tools each declared the wrapper and not the block.
+
+    `map` holds the format, size, symmetry and contour level - and without
+    the contour level a map cannot be shown as the depositors saw it.
+    `imaging.base_microscopy_type` separates single-particle from
+    tomography, which decides what the map can be used for at all. `sample`
+    is what was imaged.
+    """
+    for tool, field in (("EMDB_get_map_info", '"map"'),
+                        ("EMDB_get_imaging_info", '"imaging"'),
+                        ("EMDB_get_sample_info", '"sample"')):
+        schema = json.dumps(_config(tool).get("return_schema"))
+        assert field in schema, f"{tool} returns {field} undeclared"
+    assert "contour level" in json.dumps(_config("EMDB_get_map_info").get("return_schema"))
+    assert "single-particle from" in json.dumps(
+        _config("EMDB_get_imaging_info").get("return_schema"))
+
+
+def test_a_hit_the_caller_asked_for_is_marked_as_such():
+    """GWAS marks a study returned because it was named, and it was undeclared.
+
+    `user_requested` true means the row is there because the caller asked
+    for that study, not because it matched the search. The two are different
+    kinds of hit and nothing else in the row distinguishes them, so a search
+    result count that includes them is not a count of matches.
+    """
+    for tool in ("gwas_search_studies", "gwas_get_studies_for_trait"):
+        schema = json.dumps(_config(tool).get("return_schema"))
+        assert '"user_requested"' in schema, f"{tool} returns it undeclared"
+        assert "rather than because it matched the search" in schema

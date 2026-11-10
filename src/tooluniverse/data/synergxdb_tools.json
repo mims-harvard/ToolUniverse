@@ -367,6 +367,13 @@
           "zip_matrix": {
             "type": "number",
             "description": "ZIP synergy matrix value"
+          },
+          "combo_score": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "The combination score for the pair, or null when SYNERGxDB records none for this cell line. Null is 'not measured', not 'no synergy'."
           }
         }
       }

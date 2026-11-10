@@ -959,6 +959,13 @@
           },
           "priority": {
             "type": "string"
+          },
+          "studyId": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Which study the row belongs to. An attribute or sample id is only unique within a study."
           }
         }
       }

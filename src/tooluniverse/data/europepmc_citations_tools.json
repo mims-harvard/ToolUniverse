@@ -584,6 +584,20 @@
                           "array",
                           "null"
                         ]
+                      },
+                      "CategoryLinkCount": {
+                        "type": [
+                          "integer",
+                          "null"
+                        ],
+                        "description": "How many links the category holds."
+                      },
+                      "NameLong": {
+                        "type": [
+                          "string",
+                          "null"
+                        ],
+                        "description": "The category's full name, e.g. 'BioProject'. The short name alone does not say which archive a link points into."
                       }
                     }
                   }

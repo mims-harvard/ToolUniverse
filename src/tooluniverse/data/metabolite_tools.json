@@ -137,6 +137,13 @@
         },
         "count": {
           "type": "integer"
+        },
+        "total_count": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Total records matching, which the returned list alone does not say."
         }
       }
     },
@@ -427,6 +434,13 @@
             "count": {
               "type": "integer",
               "description": "Number of compounds returned"
+            },
+            "total_count": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "description": "Total records matching, which the returned list alone does not say."
             }
           },
           "required": [

@@ -2489,6 +2489,13 @@
           "className": {
             "type": "string",
             "description": "Class name"
+          },
+          "doi": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "DOI of the record, where one exists."
           }
         },
         "description": "Pathway objects containing the UniProt protein"
@@ -3179,6 +3186,16 @@
           "className": {
             "type": "string",
             "description": "Class name"
+          },
+          "synonym": {
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Other names for the term."
           }
         },
         "description": "Disease pathway objects with DOID annotations"

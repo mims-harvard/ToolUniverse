@@ -432,6 +432,13 @@
               "_links": {
                 "type": "object",
                 "description": "API links"
+              },
+              "user_requested": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the study was returned because the caller named it, rather than because it matched the search. The two are different kinds of hit and the row otherwise looks the same."
               }
             }
           }
@@ -1988,6 +1995,13 @@
               "_links": {
                 "type": "object",
                 "description": "API links"
+              },
+              "user_requested": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the study was returned because the caller named it, rather than because it matched the search. The two are different kinds of hit and the row otherwise looks the same."
               }
             }
           }

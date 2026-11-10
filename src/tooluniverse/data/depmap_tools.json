@@ -336,6 +336,13 @@
         },
         "error": {
           "type": "string"
+        },
+        "message": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Why the result is empty, e.g. \"Cell line 'A549' not found\". Without it an empty result and a failed lookup are the same answer."
         }
       }
     },

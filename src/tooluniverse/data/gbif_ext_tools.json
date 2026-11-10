@@ -860,6 +860,13 @@
                 "null"
               ],
               "description": "Records skipped before this page."
+            },
+            "endOfRecords": {
+              "type": [
+                "boolean",
+                "null"
+              ],
+              "description": "True when this page is the last. False means more records match than came back."
             }
           },
           "required": [

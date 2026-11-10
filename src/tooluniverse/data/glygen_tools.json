@@ -629,6 +629,13 @@
                   "null"
                 ],
                 "description": "GlyGen's rendering of the glycan structure, e.g. https://api.glygen.org/glycan/image/G62765YT."
+              },
+              "byonic": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Byonic-format composition string with its mass, e.g. 'HexNAc(2)Hex(8) % 1720.59189791'. The form mass-spectrometry software expects."
               }
             }
           }

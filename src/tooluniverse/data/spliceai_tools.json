@@ -782,6 +782,9 @@
             },
             "scores": {
               "type": "array"
+            },
+            "raw_response": {
+              "description": "The upstream's unmodified reply, kept so a prediction can be checked against what the service actually said."
             }
           }
         },

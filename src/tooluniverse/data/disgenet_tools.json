@@ -1553,6 +1553,13 @@
             },
             "count": {
               "type": "integer"
+            },
+            "gene": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The gene the query resolved to, echoed back. A symbol can resolve to more than one record, so this says which was used."
             }
           }
         }
@@ -2030,6 +2037,13 @@
             },
             "count": {
               "type": "integer"
+            },
+            "gene": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The gene the query resolved to, echoed back. A symbol can resolve to more than one record, so this says which was used."
             }
           }
         }
@@ -2266,6 +2280,13 @@
             },
             "gene_count": {
               "type": "integer"
+            },
+            "disease_code": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "description": "The disease identifier the query resolved to, e.g. 'UMLS_C0006142'."
             }
           }
         }

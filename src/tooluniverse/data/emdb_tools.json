@@ -575,6 +575,9 @@
         },
         "map_size": {
           "type": "integer"
+        },
+        "map": {
+          "description": "The EM map itself: format, size in kbytes, file name, symmetry and the contour level. Without the contour level a map cannot be rendered as the depositors saw it."
         }
       }
     },
@@ -644,6 +647,9 @@
         },
         "ph": {
           "type": "number"
+        },
+        "sample": {
+          "description": "What was imaged: the supramolecule and macromolecule lists that make up the specimen."
         }
       }
     },
@@ -719,6 +725,9 @@
         },
         "temperature": {
           "type": "number"
+        },
+        "imaging": {
+          "description": "How it was imaged, starting with base_microscopy_type - which separates single-particle from tomography, and so what the map can be used for."
         }
       }
     },

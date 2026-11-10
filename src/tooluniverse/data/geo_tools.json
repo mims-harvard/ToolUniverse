@@ -289,6 +289,10 @@
               },
               "description": "The UIDs this response carries, e.g. ['200002606']. The keys of the `result` object, which is keyed by UID."
             }
+          },
+          "additionalProperties": {
+            "type": "object",
+            "description": "One GEO record, keyed by its UID."
           }
         },
         "header": {

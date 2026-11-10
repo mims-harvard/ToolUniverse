@@ -588,6 +588,16 @@
                       }
                     }
                   }
+                },
+                "classes": {
+                  "type": [
+                    "array",
+                    "null"
+                  ],
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Chemical ontology classes for the compound, as MassBank records them. What the molecule IS, where the rest of the block says what it weighs and how it was measured."
                 }
               }
             },
@@ -749,6 +759,13 @@
               "accession": {
                 "type": "string",
                 "description": "MassBank record accession. Resolve full record with MassBank_get_record_by_accession."
+              },
+              "atomcount": {
+                "type": [
+                  "integer",
+                  "null"
+                ],
+                "description": "Number of atoms in the compound."
               }
             }
           }

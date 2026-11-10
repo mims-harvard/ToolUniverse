@@ -626,6 +626,20 @@
                   "null"
                 ],
                 "description": "Last modification timestamp"
+              },
+              "key": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "The upstream's own key for the row; empty string when it sets none."
+              },
+              "sha": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "description": "Commit hash of the dataset revision this record describes. A dataset is mutable, so the sha is what pins which version was seen."
               }
             }
           }

@@ -60,6 +60,13 @@
                 "items": {
                   "type": "string"
                 }
+              },
+              "pediatric": {
+                "type": [
+                  "boolean",
+                  "null"
+                ],
+                "description": "True when the record is paediatric-specific."
               }
             }
           }

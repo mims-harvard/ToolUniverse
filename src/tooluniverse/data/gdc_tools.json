@@ -219,6 +219,13 @@
         },
         "data": {
           "type": "object"
+        },
+        "endpoint": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Which upstream endpoint produced this result. The record of what was actually queried."
         }
       }
     },
@@ -284,6 +291,13 @@
         },
         "data": {
           "type": "object"
+        },
+        "endpoint": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Which upstream endpoint produced this result. The record of what was actually queried."
         }
       }
     },
@@ -351,6 +365,13 @@
         },
         "data": {
           "type": "object"
+        },
+        "endpoint": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Which upstream endpoint produced this result. The record of what was actually queried."
         }
       }
     },
@@ -416,6 +437,13 @@
         },
         "data": {
           "type": "object"
+        },
+        "endpoint": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Which upstream endpoint produced this result. The record of what was actually queried."
         }
       }
     },

@@ -363,6 +363,13 @@
               "notfound": {
                 "type": "boolean",
                 "description": "True if gene was not found"
+              },
+              "_score": {
+                "type": [
+                  "number",
+                  "null"
+                ],
+                "description": "Relevance score for the hit; results come back in descending order of it."
               }
             }
           }
